@@ -1,9 +1,10 @@
-import { isValidRequestCap, parseRequestCapFromBody, type RequestCap } from "./requestCap.ts";
 import {
-  capSettingsWithinBudget,
-  hasRpmOverride,
+  isValidRequestCap,
+  parseRequestCapFromBody,
+  type RequestCap,
   type RequestCapSettings,
-} from "./requestCapPolicy.ts";
+} from "./requestCap.ts";
+import { capSettingsWithinBudget, hasRpmOverride } from "./requestCapPolicy.ts";
 
 export interface LearnedCapPolicyContext {
   provider: string;
@@ -94,7 +95,7 @@ export function restorePersistedLearnedLimits(args: {
     cap: RequestCap,
     source: "persisted"
   ) => RequestCapSettings | null;
-  updateLimiter: (limiter: unknown, settings: Record<string, number>) => void;
+  updateLimiter: (limiter: unknown, settings: Partial<RequestCapSettings>) => void;
 }): number {
   let count = 0;
   for (const [key, dataRaw] of Object.entries(args.parsed)) {

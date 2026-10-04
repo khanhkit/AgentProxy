@@ -5,7 +5,7 @@ import {
   type ProviderCredentials,
 } from "./base.ts";
 import { PROVIDERS } from "../config/constants.ts";
-import { getModelTargetFormat, stripOpencodeModelPrefix } from "../config/providerModels.ts";
+import { stripOpencodeModelPrefix } from "../config/providerModels.ts";
 import {
   injectReasoningContentForThinkingModel,
   isThinkingMessageModel,
@@ -65,16 +65,12 @@ import {
   attemptFor,
   isGatedFreeTierRequest,
   isPremiumOpencodeModel,
-  noteFreeTierOutcome,
   prepareFreeTierRequest,
-  rebuildJsonFromForcedStream,
+  finalizeForcedStreamResult,
   surfaceFromBaseUrl,
 } from "./opencodeFreeTierContract.ts";
 import {
   applyMuseSparkMinOutputTokens,
-  createMuseSparkStreamFinishNormalizer,
-  isResponsesTerminalLine,
-  normalizeMuseSparkFinishReason,
 } from "./opencodeMuseSpark.ts";
 import { currentRequestContext, runInRequestContext } from "./opencodeRequestContext.ts";
 import {
@@ -82,7 +78,9 @@ import {
   retryFreeTierRefusalWithObservedTools,
 } from "./opencodeFreeTierRetry.ts";
 import { withRequestShapeRetry } from "./opencodeRequestShape.ts";
-
+import { parseEffortLevel, resolveOpencodeTargetFormat } from "./opencodeModelUtils.ts";
+import { normalizeMuseSparkResponse } from "./opencodeMuseSparkResponse.ts";
+import { buildAccountView, snapshotAccountEntries, logSkippedCooldownAccounts as logSkippedCooldowns } from "./opencodeAccountView.ts";
 // Re-exported: the free-model catalog moved to the contract module (it decides whether the
 // contract applies), and existing importers keep resolving it from the executor.
 export { isPremiumOpencodeModel };
@@ -118,7 +116,6 @@ import {
   readPoolStrainMarker,
   runParkAndReplay,
 } from "./opencodeParkResume.ts";
-
 /**
  * The main OpenCode Zen host, shared by the `opencode` and `opencode-zen`
  * registry entries. Used to scope the `x-api-key` auth override (#12633) away
@@ -132,92 +129,18 @@ const ZEN_BASE_URL = "https://opencode.ai/zen/v1";
  * stores in `providerSpecificData.fingerprints`). Same shape mimocode uses.
  */
 export type OpencodeAccountProxyConfig = AccountProxyConfig;
-
 export type { ScopedAccount as OpencodeAccountState };
-
-const EFFORT_LEVELS = ["none", "low", "high", "max"] as const;
-
-/**
- * Models on opencode-go that support effort-tier aliases. Each entry maps the
- * canonical base id to the set of effort suffixes the upstream supports.
- *
- * - DeepSeek V4 Pro and Flash: none/low/high/max
- * - glm-5.2: high/max only (Z.AI maps these through the reasoning plane;
- *   low/medium are not supported on the OpenAI transport)
- * - mimo-v2.5: high/max only (same reasoning; Xiaomi MiMo does not document
- *   low/medium effort tiers)
- * - #8353 OpenCode Go registry effort variants (exact suffix sets from
- *   `opencode models opencode-go --verbose`; MiniMax M3 excluded — different
- *   thinking-mode mapping):
- *   grok-4.5 low/medium/high; hy3 none/low/high; kimi-k3 max;
- *   qwen3.6-plus / qwen3.7-max / qwen3.7-plus high/max;
- *   muse-spark-1.2-contributor minimal/low/medium/high/xhigh (no max)
- * - #12674 Muse Spark 1.3 Contributor: minimal/low/medium/high/xhigh (no max),
- *   verified via `opencode models opencode-go --refresh --verbose`
- */
-const EFFORT_TIERS: Record<string, readonly string[]> = {
-  "deepseek-v4-pro": EFFORT_LEVELS,
-  "deepseek-v4-flash": EFFORT_LEVELS,
-  "glm-5.2": ["high", "max"],
-  "mimo-v2.5": ["high", "max"],
-  "grok-4.5": ["low", "medium", "high"],
-  hy3: ["none", "low", "high"],
-  "kimi-k3": ["max"],
-  "qwen3.6-plus": ["high", "max"],
-  "qwen3.7-max": ["high", "max"],
-  "qwen3.7-plus": ["high", "max"],
-  "muse-spark-1.2-contributor": ["minimal", "low", "medium", "high", "xhigh"],
-  "muse-spark-1.3-contributor": ["minimal", "low", "medium", "high", "xhigh"],
-};
-
-/**
- * Parse a model string with an effort-level suffix.
- * e.g. "deepseek-v4-pro-low" → { baseModel: "deepseek-v4-pro", effort: "low" }
- *      "glm-5.2-high"         → { baseModel: "glm-5.2", effort: "high" }
- * Returns null if the model doesn't match any known effort-tier pattern.
- */
-export function parseEffortLevel(model: string): { baseModel: string; effort: string } | null {
-  const m = String(model || "");
-  for (const [baseModel, levels] of Object.entries(EFFORT_TIERS)) {
-    for (const level of levels) {
-      if (m === `${baseModel}-${level}`) {
-        return { baseModel, effort: level };
-      }
-    }
-  }
-  return null;
-}
-
-/**
- * Resolves the registry `targetFormat` for a model, aliasing `provider` first.
- *
- * `PROVIDER_MODELS` is keyed by the provider's public ALIAS (e.g. `"oc"`), not its
- * raw registry id (e.g. `"opencode"`) — mirrors `resolveChatCoreTargetFormat()`
- * (`handlers/chatCore/targetFormat.ts`), which already aliases before calling
- * `getModelTargetFormat()`. Calling it with the raw id here made every entry miss
- * silently (fell through to `"openai"`), while chatCore's own request-body
- * translation (correctly aliased) still switched to the Responses API shape for
- * `targetFormat:"openai-responses"` models — sending a Responses-shaped body to
- * the `/chat/completions` URL this executor's own `buildUrl()` kept selecting.
- * Exported for testability.
- */
-export function resolveOpencodeTargetFormat(provider: string, model: string): string {
-  return getModelTargetFormat(provider, model) || "openai";
-}
-
+export { parseEffortLevel, resolveOpencodeTargetFormat } from "./opencodeModelUtils.ts";
 export {
   MUSE_SPARK_MIN_OUTPUT_TOKENS,
   applyMuseSparkMinOutputTokens,
   createMuseSparkStreamFinishNormalizer,
   normalizeMuseSparkFinishReason,
 } from "./opencodeMuseSpark.ts";
-
 export class OpencodeExecutor extends BaseExecutor {
-  /** Delegates to `isPremiumOpencodeModel`. Exported for testability. */
   static isPremiumModel(model: string, provider: string): boolean {
     return isPremiumOpencodeModel(model, provider);
   }
-
   /**
    * The target format and the client session of the request being served. While `execute()`
    * runs they live in that request's own context (this instance is shared and requests
@@ -244,11 +167,7 @@ export class OpencodeExecutor extends BaseExecutor {
     else this._sessionFallback = value;
   }
   private _surface = () => surfaceFromBaseUrl(this.config?.baseUrl);
-
-  /** Free-tier retry context: the request-scoped contract state the retry helper needs. */
   private freeTierRetryCtx(input: ExecuteInput) {
-    // #14148 moved the contract attempt off the executor: it is keyed by the
-    // request body, so read it back from there instead of a shared field.
     const attempt = attemptFor(input.body);
     return {
       surface: this._surface(),
@@ -259,7 +178,6 @@ export class OpencodeExecutor extends BaseExecutor {
       clientToolNames: attempt?.clientToolNames ?? [],
     };
   }
-
   // Not `private`: passed as the shared pick cursor to
   // pickRotatableAccount(), which needs a plain `{ nextAccountIdx }` shape —
   // TS's private-member nominal check rejects `this` there otherwise.
@@ -268,41 +186,16 @@ export class OpencodeExecutor extends BaseExecutor {
   // Each request still walks its own list (see `opencodeAccountScope.ts`).
   accountHealth = new Map<string, ScopedAccountHealth>();
   get accounts(): ScopedAccount[] {
-    const store = this.accountHealth;
-    // Cold parity with the historical default direct member (read-only).
-    if (store.size === 0) {
-      return [{ fingerprint: "", cooldownUntil: 0, consecutiveFails: 0, proxy: null }];
-    }
-    const live = [...store.entries()].map(([fingerprint]) => ({
-      fingerprint,
-      get cooldownUntil() {
-        return store.get(fingerprint)?.cooldownUntil ?? 0;
-      },
-      set cooldownUntil(value: number) {
-        const current = store.get(fingerprint) ?? { cooldownUntil: 0, consecutiveFails: 0 };
-        store.set(fingerprint, { ...current, cooldownUntil: value });
-      },
-      get consecutiveFails() {
-        return store.get(fingerprint)?.consecutiveFails ?? 0;
-      },
-      set consecutiveFails(value: number) {
-        const current = store.get(fingerprint) ?? { cooldownUntil: 0, consecutiveFails: 0 };
-        store.set(fingerprint, { ...current, consecutiveFails: value });
-      },
-      proxy: null as ScopedAccount["proxy"],
-    }));
-    return live;
+    return buildAccountView(this.accountHealth);
   }
   // Sleep used by the opt-in transient failover pause (#13615). Not `private`:
   // tests swap in a recording fake instead of waiting on real timers.
   transientPauseSleep: (ms: number, signal?: AbortSignal | null) => Promise<boolean> =
     sleepAbortable;
   parkSleep: (ms: number, signal?: AbortSignal | null) => Promise<boolean> = sleepAbortable;
-
   constructor(provider: string) {
     super(provider, PROVIDERS[provider] || PROVIDERS.openai);
   }
-
   /** Round-robin pick from this request's list, skipping members not ready. */
   private pickAccountWith(
     accounts: ScopedAccount[],
@@ -311,170 +204,19 @@ export class OpencodeExecutor extends BaseExecutor {
   ): ScopedAccount {
     return pickRotatableAccount(accounts, this, isReady, keyOfMember);
   }
-
-  /** Snapshot entries for the attribution registry — ids already masked. */
-  private snapshotEntries(
-    accounts: ScopedAccount[],
-    nowMs: number = Date.now()
-  ): RotationAccountSnapshot[] {
-    return accounts.map((a) => ({
-      masked: maskAccountId(a.fingerprint),
-      ready: a.cooldownUntil <= nowMs,
-      cooldownUntilMs: a.cooldownUntil > nowMs ? a.cooldownUntil : null,
-      consecutiveFails: a.consecutiveFails,
-    }));
+  private snapshotEntries(accounts: ScopedAccount[], nowMs: number = Date.now()): RotationAccountSnapshot[] {
+    return snapshotAccountEntries(accounts, nowMs);
   }
-
-  /** Emit one info line per cooldown-skipped account seen this request. */
   private logSkippedCooldownAccounts(
     log: { info?: (...args: unknown[]) => void } | undefined,
     cid: string,
     skippedCooldown: Map<string, number>
   ): void {
-    for (const [fp, until] of skippedCooldown) {
-      const remainingS = Math.max(0, Math.ceil((until - Date.now()) / 1000));
-      log?.info?.(
-        "OPENCODE",
-        `${cid}skipped account ${maskAccountId(fp)} (cooling down, ${remainingS}s remaining)`
-      );
-    }
+    logSkippedCooldowns(log, cid, skippedCooldown);
   }
-
-  /**
-   * Rewrite muse-spark's bogus `finish_reason:"length"` (see the
-   * normalizeMuseSparkFinishReason note) to `"stop"` on both streaming and
-   * non-streaming success responses. Non-muse-spark models pass through
-   * untouched.
-   */
-  /**
-   * Hand a JSON caller a JSON body even though the free-tier contract forced the upstream
-   * request to stream. A streaming caller, a refusal and an already-JSON body pass through.
-   */
-  private finalizeForcedStream(
-    input: ExecuteInput,
-    result: ExecutorExecuteResult
-  ): ExecutorExecuteResult {
-    noteFreeTierOutcome(attemptFor(input.body), "response" in result && !!result.response?.ok);
-    if (input.stream) return result;
-    if (!("response" in result) || !result.response) return result;
-    // Non-null exactly when the contract applied: stands in for the old surface/model guard.
-    const model = attemptFor(input.body)?.model;
-    if (!model) return result;
-    const response = rebuildJsonFromForcedStream(result.response, this._requestFormat, model);
-    return response === result.response ? result : { ...result, response };
+  private finalizeForcedStream(input: ExecuteInput, result: ExecutorExecuteResult): ExecutorExecuteResult {
+    return finalizeForcedStreamResult(input, result, this._requestFormat);
   }
-
-  private normalizeMuseSparkResponse(
-    input: ExecuteInput,
-    result: ExecutorExecuteResult
-  ): ExecutorExecuteResult {
-    const model = String(input.model ?? "");
-    if (!model.startsWith("muse-spark")) return result;
-    if (!("response" in result) || !result.response?.ok || !result.response.body) return result;
-    const bodyObj =
-      input.body && typeof input.body === "object" && !Array.isArray(input.body)
-        ? (input.body as Record<string, unknown>)
-        : null;
-    const rawBudget = bodyObj?.max_tokens;
-    const budget = typeof rawBudget === "number" && Number.isFinite(rawBudget) ? rawBudget : null;
-    const response = result.response;
-    const isSse = response.headers.get("content-type")?.includes("event-stream") ?? false;
-
-    if (!isSse) {
-      // Non-streaming JSON: rewrite in a buffered pass.
-      const stream = new ReadableStream<Uint8Array>({
-        async start(controller) {
-          try {
-            const text = await response.clone().text();
-            let out = text;
-            try {
-              const parsed = JSON.parse(text) as Record<string, unknown>;
-              normalizeMuseSparkFinishReason(parsed, budget);
-              out = JSON.stringify(parsed);
-            } catch {
-              /* not JSON — forward verbatim */
-            }
-            controller.enqueue(new TextEncoder().encode(out));
-          } catch (err) {
-            controller.error(err);
-            return;
-          }
-          controller.close();
-        },
-      });
-      return {
-        ...result,
-        response: new Response(stream, {
-          status: response.status,
-          statusText: response.statusText,
-          headers: response.headers,
-        }),
-      };
-    }
-
-    // Streaming SSE: line-buffered passthrough with finish_reason rewriting.
-    const normalizer = createMuseSparkStreamFinishNormalizer(budget);
-    const decoder = new TextDecoder();
-    const encoder = new TextEncoder();
-    let buffer = "";
-    const reader = response.body.getReader();
-    let closed = false;
-    const stream = new ReadableStream<Uint8Array>({
-      async start(controller) {
-        try {
-          while (!closed) {
-            const { done, value } = await reader.read();
-            if (done) {
-              buffer += decoder.decode();
-              if (buffer.length > 0 && !closed) {
-                controller.enqueue(encoder.encode(normalizer(buffer)));
-              }
-              if (!closed) {
-                closed = true;
-                controller.close();
-              }
-              return;
-            }
-
-            buffer += decoder.decode(value, { stream: true });
-            const lines = buffer.split("\n");
-            buffer = lines.pop() ?? "";
-            for (const line of lines) {
-              const normalized = normalizer(line);
-              controller.enqueue(encoder.encode(normalized + "\n"));
-              if (isResponsesTerminalLine(line)) {
-                // OpenCode Zen sends a ping after response.completed and may keep
-                // the HTTP connection alive. The Responses terminal event is
-                // authoritative; do not let those post-completion pings hold Chat Completions open.
-                closed = true;
-                void reader.cancel().catch(() => undefined);
-                controller.close();
-                return;
-              }
-            }
-          }
-        } catch (err) {
-          if (!closed) {
-            closed = true;
-            controller.error(err);
-          }
-        }
-      },
-      cancel(reason) {
-        closed = true;
-        reader.cancel(reason).catch(() => undefined);
-      },
-    });
-    return {
-      ...result,
-      response: new Response(stream, {
-        status: response.status,
-        statusText: response.statusText,
-        headers: response.headers,
-      }),
-    };
-  }
-
   async execute(input: ExecuteInput) {
     try {
       return await runInRequestContext(() => {
@@ -491,7 +233,6 @@ export class OpencodeExecutor extends BaseExecutor {
       releaseRequestList(input.body, this.accountHealth);
     }
   }
-
   private async executeOnce(input: ExecuteInput) {
     this._requestFormat = resolveOpencodeTargetFormat(this.provider, input.model);
 
@@ -601,7 +342,7 @@ export class OpencodeExecutor extends BaseExecutor {
         if (retryAfterRefusal) {
           return this.finalizeForcedStream(
             input,
-            this.normalizeMuseSparkResponse(input, retryAfterRefusal)
+            normalizeMuseSparkResponse(input, retryAfterRefusal)
           );
         }
         if (single.response.status === 400) {
@@ -620,7 +361,7 @@ export class OpencodeExecutor extends BaseExecutor {
               );
               return this.finalizeForcedStream(
                 input,
-                this.normalizeMuseSparkResponse(input, await guardStall(await super.execute(input)))
+                normalizeMuseSparkResponse(input, await guardStall(await super.execute(input)))
               );
             }
             log?.debug?.(
@@ -629,7 +370,7 @@ export class OpencodeExecutor extends BaseExecutor {
             );
           }
         }
-        return this.finalizeForcedStream(input, this.normalizeMuseSparkResponse(input, single));
+        return this.finalizeForcedStream(input, normalizeMuseSparkResponse(input, single));
       }
 
       // This loop only ever dispatches through super.execute() (the HTTP request
@@ -1000,7 +741,7 @@ export class OpencodeExecutor extends BaseExecutor {
                     this.logSkippedCooldownAccounts(log, cid, skippedCooldown);
                   }
                   noteReplayed();
-                  return this.normalizeMuseSparkResponse(input, p);
+                  return normalizeMuseSparkResponse(input, p);
                 }
                 if (p) {
                   discardResponseBody(abandonedResponse);
@@ -1008,7 +749,7 @@ export class OpencodeExecutor extends BaseExecutor {
                     this.logSkippedCooldownAccounts(log, cid, skippedCooldown);
                   }
                   noteStoredFallback();
-                  return this.normalizeMuseSparkResponse(input, result);
+                  return normalizeMuseSparkResponse(input, result);
                 }
               }
             }
@@ -1119,7 +860,7 @@ export class OpencodeExecutor extends BaseExecutor {
               }
               return await handleLoopFreeTierRefusal(
                 (retried) =>
-                  this.finalizeForcedStream(input, this.normalizeMuseSparkResponse(input, retried)),
+                  this.finalizeForcedStream(input, normalizeMuseSparkResponse(input, retried)),
                 input,
                 result,
                 this.freeTierRetryCtx(input),
@@ -1174,7 +915,7 @@ export class OpencodeExecutor extends BaseExecutor {
           if (attributionOn && skippedCooldown.size > 0) {
             this.logSkippedCooldownAccounts(log, cid, skippedCooldown);
           }
-          return this.finalizeForcedStream(input, this.normalizeMuseSparkResponse(input, result));
+          return this.finalizeForcedStream(input, normalizeMuseSparkResponse(input, result));
         } finally {
           // Single release point for every post-dispatch arm (5xx, 403/451,
           // free-tier, 429, 400, success): the released-guard makes the 429
@@ -1199,7 +940,7 @@ export class OpencodeExecutor extends BaseExecutor {
       }
       return this.finalizeForcedStream(
         input,
-        this.normalizeMuseSparkResponse(
+        normalizeMuseSparkResponse(
           input,
           lastResult ?? (await guardStall(await super.execute(input)))
         )
@@ -1385,10 +1126,10 @@ export class OpencodeExecutor extends BaseExecutor {
 
   transformRequest(
     model: string,
-    body: any,
+    body: unknown,
     stream: boolean,
     credentials: ProviderCredentials
-  ): any {
+  ) {
     let modifiedBody = super.transformRequest(model, body, stream, credentials);
     modifiedBody = this.applyDeepSeekJsonSchemaFallback(model, modifiedBody);
     // Free-tier request contract (see opencodeFreeTierContract.ts): streaming plus a
@@ -1401,7 +1142,7 @@ export class OpencodeExecutor extends BaseExecutor {
       this.provider,
       model,
       this._clientSession,
-      body
+      body && typeof body === "object" ? body : undefined
     );
     modifiedBody = prepared.body;
     // 9router#1442: OpenCode upstreams (e.g. kimi-k2.6 via opencode-go) return

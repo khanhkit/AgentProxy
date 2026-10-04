@@ -504,3 +504,16 @@ export function rebuildJsonFromForcedStream(
     headers,
   });
 }
+
+export function finalizeForcedStreamResult(
+  input: import("./base.ts").ExecuteInput,
+  result: import("./base.ts").ExecutorExecuteResult,
+  requestFormat: string | null
+): import("./base.ts").ExecutorExecuteResult {
+  noteFreeTierOutcome(attemptFor(input.body), "response" in result && !!result.response?.ok);
+  if (input.stream || !("response" in result) || !result.response) return result;
+  const model = attemptFor(input.body)?.model;
+  if (!model) return result;
+  const response = rebuildJsonFromForcedStream(result.response, requestFormat, model);
+  return response === result.response ? result : { ...result, response };
+}
