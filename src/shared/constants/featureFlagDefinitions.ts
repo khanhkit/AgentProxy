@@ -252,6 +252,18 @@ export const FEATURE_FLAG_DEFINITIONS: FeatureFlagDefinition[] = [
     warningLevel: "info",
   },
   {
+    key: "ROTATION_ATTRIBUTION",
+    label: "Rotation Attribution Logging",
+    description:
+      "Opencode rotation records which account served or was skipped (masked ids only, never full account ids) and links proxy log entries to their request, so the operator can tell skipped accounts apart from unused ones. Off by default: no extra log lines, no extra columns written.",
+    descriptionI18nKey: "featureFlagRotationAttributionDescription",
+    category: "network",
+    defaultValue: "false",
+    type: "boolean",
+    requiresRestart: false,
+    warningLevel: "info",
+  },
+  {
     key: "MITM_DISABLE_TLS_VERIFY",
     label: "Disable TLS Verify (MITM)",
     description: "Disable TLS certificate verification for MITM proxy",
@@ -667,6 +679,19 @@ export const FEATURE_FLAG_DEFINITIONS: FeatureFlagDefinition[] = [
     type: "boolean",
     requiresRestart: false,
     warningLevel: "caution",
+  },
+
+  {
+    key: "FREE_BADGE_REQUIRES_PROVIDER_FREE_TIER",
+    label: "Strict Free Badge",
+    description:
+      "Dashboard provider pages: show the Free badge only on signals the provider honors — drops the display-name heuristic, non-boolean free fields and :free suffixes on registered providers without a documented free tier. Off keeps the historical badge rule.",
+    descriptionI18nKey: "featureFlagFreeBadgeRequiresProviderFreeTierDescription",
+    category: "runtime",
+    defaultValue: "false",
+    type: "boolean",
+    requiresRestart: false,
+    warningLevel: "info",
   },
 
   // ──────────────── CLI (5) ────────────────
