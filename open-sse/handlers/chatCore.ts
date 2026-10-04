@@ -271,6 +271,7 @@ import {
 import { stageTrace } from "./chatCore/stageTrace.ts";
 import { attachCompressionUsageReceiptAfterAnalytics as attachCompressionUsageReceiptAfterAnalyticsFor } from "./chatCore/compressionUsageReceipt.ts";
 import { prepareUpstreamBody } from "./chatCore/upstreamBody.ts";
+import { clearRequestRejectedStreak } from "../services/requestRejectedStreak.ts";
 import { getQuotaScopeLabelForProvider } from "../services/antigravityQuotaFamily.ts";
 import { getKimiTemporaryRateLimitResetAt } from "./chatCore/kimiQuotaRecovery.ts";
 import {
@@ -5157,10 +5158,11 @@ async function handleChatCoreInner({
           : responseBody
       );
       effectiveServiceTier = resolveReportedServiceTier(responseBody) ?? effectiveServiceTier;
+      const successConnectionId = getCurrentConnectionId();
+      if (successConnectionId) clearRequestRejectedStreak(successConnectionId);
       if (onRequestSuccess) {
         await onRequestSuccess();
       }
-      const successConnectionId = getCurrentConnectionId();
       await maybeSyncClaudeExtraUsageState({
         provider,
         connectionId: successConnectionId,
@@ -5671,7 +5673,9 @@ async function handleChatCoreInner({
     executeRetry: () => executeProviderRequest(currentModel, false),
   });
 
-  // Notify success - caller can clear error status if needed
+  // Notify success - caller can clear error status if needed.
+  const successConnectionId = getCurrentConnectionId();
+  if (successConnectionId) clearRequestRejectedStreak(successConnectionId);
   if (onRequestSuccess) await onRequestSuccess();
 
   const responseHeaders = assembleStreamingResponseHeaders({

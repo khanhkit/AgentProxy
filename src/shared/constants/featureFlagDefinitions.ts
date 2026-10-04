@@ -633,6 +633,18 @@ export const FEATURE_FLAG_DEFINITIONS: FeatureFlagDefinition[] = [
     warningLevel: "info",
   },
   {
+    key: "ANTIGRAVITY_ACCOUNT_LEASE_ENABLED",
+    label: "Antigravity Account Lease",
+    description:
+      "Reserve the selected Antigravity account for the streaming lifecycle of the request that picked it, so concurrent routing cannot re-pick an account already committed to an in-flight stream. The reservation is scoped to (connection, callable upstream model). When every eligible account is leased for that model, return a structured 503 with bounded Retry-After. Off by default.",
+    descriptionI18nKey: "featureFlagAntigravityAccountLeaseEnabledDescription",
+    category: "runtime",
+    defaultValue: "false",
+    type: "boolean",
+    requiresRestart: false,
+    warningLevel: "caution",
+  },
+  {
     key: "SERVER_OWNED_TOOL_LOOP_ENABLED",
     label: "Server-Owned Tool Loop",
     description:
