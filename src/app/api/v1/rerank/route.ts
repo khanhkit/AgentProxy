@@ -4,13 +4,17 @@ import {
   clearRecoveredProviderState,
 } from "@/sse/services/auth";
 import { withInjectionGuard } from "@/middleware/promptInjectionGuard";
-import { parseRerankModel, getRerankProvider } from "@agentproxy/open-sse/config/rerankRegistry.ts";
+import { parseRerankModel } from "@agentproxy/open-sse/config/rerankRegistry.ts";
 import { errorResponse } from "@agentproxy/open-sse/utils/error.ts";
 import { HTTP_STATUS } from "@agentproxy/open-sse/config/constants.ts";
 import { enforceApiKeyPolicy } from "@/shared/utils/apiKeyPolicy";
 import { v1RerankSchema } from "@/shared/validation/schemas";
 import { isValidationFailure, validateBody } from "@/shared/validation/helpers";
 import { getCachedProviderNodes } from "@/lib/db/readCache";
+import {
+  buildLocalRerankRequestBody,
+  normalizeLocalRerankResponse,
+} from "@/app/api/v1/_shared/rerankLocalNodeShapes";
 import {
   isAllRateLimitedCredentials,
   rateLimitedProviderResponse,
@@ -58,7 +62,7 @@ function buildDynamicRerankProvider(node: any) {
  * Supports cloud providers (Cohere, Together, NVIDIA, Fireworks)
  * and local provider_nodes (oMLX, vLLM, etc.) via dynamic routing.
  */
-async function postHandler(request, context) {
+async function postHandler(request, _context) {
   let rawBody;
   try {
     rawBody = await request.json();
@@ -223,40 +227,31 @@ async function postHandler(request, context) {
 
       const token = credentials?.apiKey || credentials?.accessToken;
       const startTime = Date.now();
+      const upstreamBody = JSON.stringify(
+        buildLocalRerankRequestBody({
+          model: localModel,
+          query: body.query,
+          documents: body.documents,
+          top_n: body.top_n as number | undefined,
+          return_documents: body.return_documents as boolean | undefined,
+        })
+      );
+      const upstreamInit: RequestInit = {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: upstreamBody,
+      };
       try {
-        let res = await fetch(localProvider.baseUrl, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({
-            model: localModel,
-            query: body.query,
-            documents: body.documents,
-            top_n: body.top_n || body.documents.length,
-            return_documents: body.return_documents !== false,
-          }),
-        });
+        let res = await fetch(localProvider.baseUrl, upstreamInit);
 
         // Some local providers (e.g. Infinity, TEI) mount at /rerank rather than /v1/rerank
         if (res.status === 404 && localProvider.baseUrl.endsWith("/v1/rerank")) {
           const fallbackUrl = localProvider.baseUrl.replace(/\/v1\/rerank$/, "/rerank");
           try {
-            const fallbackRes = await fetch(fallbackUrl, {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${token}`,
-              },
-              body: JSON.stringify({
-                model: localModel,
-                query: body.query,
-                documents: body.documents,
-                top_n: body.top_n || body.documents.length,
-                return_documents: body.return_documents !== false,
-              }),
-            });
+            const fallbackRes = await fetch(fallbackUrl, upstreamInit);
             if (fallbackRes.ok || fallbackRes.status !== 404) {
               res = fallbackRes;
             }
@@ -293,7 +288,11 @@ async function postHandler(request, context) {
           return errorResponse(res.status, errorMessage);
         }
 
-        const data = await res.json();
+        const rawData = await res.json();
+        const data = normalizeLocalRerankResponse(rawData, body.documents, {
+          top_n: body.top_n as number | undefined,
+          return_documents: body.return_documents as boolean | undefined,
+        });
         const latencyMs = Date.now() - startTime;
         saveCallLog({
           method: "POST",

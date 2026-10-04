@@ -12,6 +12,11 @@ import { AsyncResource } from "node:async_hooks";
 import Bottleneck from "bottleneck";
 import { applyBottleneckDoExpirePatch, applyBottleneckHeartbeatPatch } from "./bottleneckPatch.ts";
 import { parseRetryAfterFromBody } from "./accountFallback.ts";
+import { isValidRequestCap, parseRequestCapFromBody } from "./rateLimitManager/requestCap.ts";
+import {
+  capSettingsWithinBudget as resolveCapSettingsWithinBudget,
+  hasRpmOverride as hasConnectionRpmOverride,
+} from "./rateLimitManager/requestCapPolicy.ts";
 import { getAntigravityQuotaFamily } from "./antigravityQuotaFamily.ts";
 import { getProviderCategory } from "../config/providerRegistry.ts";
 import { getCodexRateLimitKey } from "../executors/codex.ts";
@@ -50,6 +55,8 @@ interface LearnedLimitEntry {
   limit?: number;
   remaining?: number;
   minTime?: number;
+  capRequests?: number;
+  capWindowMs?: number;
 }
 
 interface LimiterUpdateSettings {
@@ -173,6 +180,28 @@ function resolveRpm(override: number | undefined | null): number {
 // Resolve a minTime override. 0 or missing means "no minimum gap".
 function resolveMinTime(override: number | undefined | null): number {
   return resolveOverride(override, 0);
+}
+
+function hasRpmOverride(connectionId: string): boolean {
+  return hasConnectionRpmOverride(connectionRateLimitOverrides, connectionId);
+}
+
+function capSettingsWithinBudget(
+  provider: string,
+  connectionId: string,
+  cap: { requests: number; windowMs: number },
+  source: "body-stated" | "learned" | "persisted"
+) {
+  return resolveCapSettingsWithinBudget({
+    provider,
+    connectionId,
+    cap,
+    source,
+    globalMinTimeMs: resolveMinTime(currentRequestQueueSettings.minTimeBetweenRequestsMs),
+    connectionMinTimeMs: resolveMinTime(connectionRateLimitOverrides.get(connectionId)?.minTime),
+    queueBudgetMs: resolveRequestQueueMaxWaitMs(provider, undefined, connectionId),
+    warn: (message) => warnRateLimit(message),
+  });
 }
 
 // Resolve a maxConcurrent override. 0 or missing means "effectively infinite".
@@ -486,15 +515,29 @@ export function refreshConnectionRateLimits(connectionId, overrides) {
     connectionRateLimitOverrides.set(connectionId, overrides);
   }
   clearPreservedReplacementSettings(connectionId);
+  let strippedCap = false;
+  for (const [key, entry] of learnedLimits) {
+    if (entry.connectionId === connectionId && entry.capRequests) {
+      const { capRequests: _cap, capWindowMs: _window, ...rest } = entry;
+      learnedLimits.set(key, rest);
+      strippedCap = true;
+    }
+  }
+  if (strippedCap) schedulePersist();
   // Evict limiters referencing this connection so they get recreated on next use
   for (const [key, limiter] of Array.from(limiters)) {
     if (key.includes(connectionId)) {
-      limiters.delete(key);
-      limiterWatchdog.forget(limiter);
-      limiterLastUsed.delete(key);
-      trackAsyncOperation(limiter.disconnect());
+      evictLimiter(key, limiter);
     }
   }
+}
+
+function evictLimiter(key: string, limiter: Bottleneck): void {
+  limiters.delete(key);
+  limiterWatchdog.forget(limiter);
+  limiterLastUsed.delete(key);
+  preservedReplacementSettings.delete(key);
+  trackAsyncOperation(limiter.disconnect());
 }
 
 /**
@@ -549,6 +592,24 @@ function getLimiter(provider, connectionId, model = null) {
           defaults.reservoirRefreshInterval = 60 * 1000;
         }
         // TODO: TPM/TPD integration requires separate token and request buckets.
+      }
+      const learned = learnedLimits.get(key);
+      if (learned?.capRequests && learned.capWindowMs && !hasRpmOverride(connectionId)) {
+        const cap = capSettingsWithinBudget(
+          provider,
+          connectionId,
+          { requests: learned.capRequests, windowMs: learned.capWindowMs },
+          "learned"
+        );
+        if (cap) {
+          defaults.minTime = cap.minTime;
+          defaults.reservoir = cap.reservoirRefreshAmount;
+          defaults.reservoirRefreshAmount = cap.reservoirRefreshAmount;
+          defaults.reservoirRefreshInterval = cap.reservoirRefreshInterval;
+          logRateLimit(
+            `📏 [RATE-LIMIT] ${key} — applying learned cap: ${learned.capRequests} request(s) per ${Math.ceil(learned.capWindowMs / 1000)}s`
+          );
+        }
       }
       options = { ...defaults, id: key };
     }
@@ -1009,13 +1070,17 @@ function recordLearnedLimit(
 ) {
   const key = getLimiterKey(provider, connectionId, model);
   learnedLimits.set(key, {
+    ...learnedLimits.get(key),
     ...limits,
     provider,
     connectionId,
     lastUpdated: Date.now(),
   });
 
-  // Debounce: save at most once per PERSIST_DEBOUNCE_MS
+  schedulePersist();
+}
+
+function schedulePersist(): void {
   if (!persistTimer) {
     persistTimer = setTimeout(async () => {
       persistTimer = null;
@@ -1119,6 +1184,14 @@ async function loadPersistedLimits() {
       const limit = toNumber(data.limit, 0);
       const remaining = toNumber(data.remaining, 0);
       const minTime = toNumber(data.minTime, 0);
+      const capRequests = toNumber(data.capRequests, 0);
+      const capWindowMs = toNumber(data.capWindowMs, 0);
+      const hasCap = isValidRequestCap({ requests: capRequests, windowMs: capWindowMs });
+      if (!hasCap && (data.capRequests !== undefined || data.capWindowMs !== undefined)) {
+        warnRateLimit(
+          `[RATE-LIMIT] ${key} — dropping persisted cap with invalid shape (${String(data.capRequests)} per ${String(data.capWindowMs)}ms)`
+        );
+      }
 
       learnedLimits.set(key, {
         provider,
@@ -1127,12 +1200,24 @@ async function loadPersistedLimits() {
         ...(limit > 0 ? { limit } : {}),
         ...(remaining >= 0 ? { remaining } : {}),
         ...(minTime >= 0 ? { minTime } : {}),
+        ...(hasCap ? { capRequests, capWindowMs } : {}),
       });
 
       // Apply to limiter if it exists and has rate limit enabled
       if (connectionId && enabledConnections.has(connectionId)) {
         const limiter = limiters.get(key);
-        if (limiter && limit > 0) {
+        if (limiter && hasCap && !hasRpmOverride(connectionId)) {
+          const cap = capSettingsWithinBudget(
+            provider,
+            connectionId,
+            { requests: capRequests, windowMs: capWindowMs },
+            "persisted"
+          );
+          if (cap) {
+            updateLimiterSettings(limiter, cap);
+            count++;
+          }
+        } else if (limiter && limit > 0) {
           const inferredMinTime = minTime || Math.max(0, Math.floor(60000 / limit) - 10);
           updateLimiterSettings(limiter, { minTime: inferredMinTime });
           count++;
@@ -1176,4 +1261,38 @@ export function updateFromResponseBody(provider, connectionId, responseBody, sta
       reservoirRefreshInterval: retryAfterMs,
     });
   }
+
+  if (status !== 429) return;
+
+  const cap = parseRequestCapFromBody(responseBody);
+  if (!cap) return;
+
+  const settings = capSettingsWithinBudget(provider, connectionId, cap, "body-stated");
+  if (!settings) return;
+
+  const limiterKey = getLimiterKey(provider, connectionId, model);
+  const existing = limiters.get(limiterKey);
+  if (existing) {
+    evictLimiter(limiterKey, existing);
+  }
+  recordLearnedLimit(
+    provider,
+    connectionId,
+    {
+      limit: Math.max(1, Math.round((cap.requests * 60_000) / cap.windowMs)),
+      minTime: settings.minTime,
+      capRequests: cap.requests,
+      capWindowMs: cap.windowMs,
+    },
+    model
+  );
+  const limiter = getLimiter(provider, connectionId, model);
+  if (hasRpmOverride(connectionId)) {
+    updateLimiterSettings(limiter, { reservoir: 0 });
+    return;
+  }
+  logRateLimit(
+    `🚫 [RATE-LIMIT] ${provider}:${connectionId.slice(0, 8)} — body-stated cap: ${cap.requests} request(s) per ${Math.ceil(cap.windowMs / 1000)}s, pacing at ${settings.minTime}ms`
+  );
+  updateLimiterSettings(limiter, { reservoir: 0, ...settings });
 }
