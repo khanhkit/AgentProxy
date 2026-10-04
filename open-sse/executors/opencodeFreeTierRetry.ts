@@ -1,198 +1,133 @@
-import type { ExecuteInput, ExecutorLog } from "./base.ts";
+import type { default as BaseExecutorType } from "./base.ts";
+import {
+  configuredPlaceholderToolNames,
+  isGatedFreeTierRequest,
+  mergeClientToolsWithObserved,
+  type OpencodeSurface,
+} from "./opencodeFreeTierContract.ts";
 import { isOpencodeFreeTierRefusal } from "./opencodeGeoBlock.ts";
-import { getObservedToolNames, recordAcceptedToolNames } from "./opencodeToolObservation.ts";
-import { generateSessionId } from "../services/sessionManager.ts";
+import { resolveOpencodeTargetFormat } from "./opencode.ts";
 
-const PLACEHOLDER_DESCRIPTION =
-  "Do not call this tool. It exists only for API compatibility and must never be invoked.";
-const PLACEHOLDER_PARAMETERS = { type: "object", properties: {} } as const;
+type ExecutorInput = Parameters<BaseExecutorType["execute"]>[0];
+type ExecutorLog = ExecutorInput["log"];
+type DispatchFn = (retryInput: ExecutorInput) => Promise<{ response: Response }>;
 
-export type ObservedToolsRetryContext = {
+/**
+ * One bounded retry after a free-tier refusal on a gated request that carried
+ * the caller's own tools (not borrowed): rebuild the upstream body with the
+ * observed tool names appended and dispatch once more. Returns the retry
+ * result, or null when no retry applies (not a refusal, not gated, borrowed
+ * tools, or nothing observed to add). A retry that also fails returns the
+ * ORIGINAL refusal — and never touches the observation store, since the names
+ * under test came from the client, not from the store (see
+ * `noteRefusedBorrowedToolNames`, which deliberately ignores own-tools
+ * refusals for the same reason).
+ */
+type RetryCtx = {
+  surface: OpencodeSurface;
   provider: string;
-  model: string;
   requestFormat: string | null;
-  gated: boolean;
-  borrowed?: boolean;
+  clientSession: string | undefined;
+  borrowed: boolean | undefined;
+  clientToolNames: readonly string[];
 };
 
-function findHeader(
-  headers: Record<string, string> | null | undefined,
-  name: string
-): string | undefined {
-  if (!headers) return undefined;
-  return Object.entries(headers).find(([key]) => key.toLowerCase() === name.toLowerCase())?.[1];
+/** Scope guards: refusal status, gated surface+model, own (non-borrowed) tools, object body. */
+function retryScopeApplies(
+  ctx: RetryCtx,
+  input: ExecutorInput,
+  status: number
+): boolean {
+  if (status !== 403 && status !== 451) return false;
+  if (!isGatedFreeTierRequest(ctx.surface, ctx.provider, String(input.model ?? ""))) return false;
+  // Borrowed tools are the store's own names coming back: the retry would add
+  // nothing, and the refusal is already counted by noteFreeTierOutcome below.
+  if (ctx.borrowed) return false;
+  return !!input.body && typeof input.body === "object" && !Array.isArray(input.body);
 }
 
-function observationSession(input: ExecuteInput, provider: string): string | undefined {
-  const direct =
-    findHeader(input.clientHeaders, "x-opencode-session") ||
-    findHeader(input.clientHeaders, "x-session-affinity") ||
-    findHeader(input.clientHeaders, "x-session-id");
-  if (direct) return direct;
-
-  if (!input.body || typeof input.body !== "object" || Array.isArray(input.body)) {
-    return undefined;
+/** Read the refusal body; null when unreadable or not a free-tier refusal. */
+async function readRefusalBody(
+  first: { response: Response },
+  status: number,
+  log: ExecutorLog
+): Promise<string | null> {
+  try {
+    const text = await first.response.clone().text();
+    return isOpencodeFreeTierRefusal(status, text) ? text : null;
+  } catch {
+    log?.debug?.("OPENCODE", "body read failed on free-tier retry check");
+    return null;
   }
-
-  const body = { ...(input.body as Record<string, unknown>) };
-  delete body.tools;
-  return (
-    generateSessionId(body as Parameters<typeof generateSessionId>[0], {
-      provider,
-    }) ?? undefined
-  );
 }
 
-function toolNameOf(tool: unknown): string | null {
-  if (!tool || typeof tool !== "object" || Array.isArray(tool)) return null;
-  const record = tool as Record<string, unknown>;
-  if (typeof record.name === "string") return record.name;
-  const fn = record.function;
-  if (fn && typeof fn === "object" && !Array.isArray(fn)) {
-    const name = (fn as Record<string, unknown>).name;
-    if (typeof name === "string") return name;
-  }
-  return null;
-}
-
-export function clientToolNamesOf(body: unknown): string[] {
-  if (!body || typeof body !== "object" || Array.isArray(body)) return [];
-  const tools = (body as Record<string, unknown>).tools;
-  if (!Array.isArray(tools)) return [];
-  const names: string[] = [];
-  for (const tool of tools) {
-    const name = toolNameOf(tool);
-    if (name && !names.includes(name)) names.push(name);
-  }
-  return names;
-}
-
-function mergeClientToolsWithObserved(
-  body: unknown,
-  requestFormat: string | null,
-  provider: string,
-  model: string,
-  session: string | undefined
-): unknown {
-  if (!body || typeof body !== "object" || Array.isArray(body)) return body;
-  const record = body as Record<string, unknown>;
-  if (!Array.isArray(record.tools) || record.tools.length === 0) return body;
-
-  const own = session ? getObservedToolNames(provider, model, session) : null;
-  const observed = own ?? getObservedToolNames(provider, model);
-  if (!observed || observed.length === 0) return body;
-
-  const have = new Set(clientToolNamesOf(body));
-  const missing = observed.filter((name) => !have.has(name));
-  if (missing.length === 0) return body;
-
-  if (requestFormat === "openai-responses") {
-    return {
-      ...record,
-      tools: [
-        ...record.tools,
-        ...missing.map((name) => ({
-          type: "function",
-          name,
-          description: PLACEHOLDER_DESCRIPTION,
-          parameters: PLACEHOLDER_PARAMETERS,
-        })),
-      ],
-    };
-  }
-
-  if (requestFormat === "openai" || requestFormat === null) {
-    return {
-      ...record,
-      tools: [
-        ...record.tools,
-        ...missing.map((name) => ({
-          type: "function",
-          function: {
-            name,
-            description: PLACEHOLDER_DESCRIPTION,
-            parameters: PLACEHOLDER_PARAMETERS,
-          },
-        })),
-      ],
-    };
-  }
-
-  return body;
-}
-
-export function noteAcceptedObservedTools(
-  ctx: ObservedToolsRetryContext,
-  input: ExecuteInput,
-  result: { response: Response }
-): void {
-  if (!ctx.gated || !result.response.ok) return;
-  const names = clientToolNamesOf(input.body);
-  if (names.length === 0) return;
-  recordAcceptedToolNames(ctx.provider, ctx.model, observationSession(input, ctx.provider), names);
-}
-
-export async function handleFreeTierObservedToolsRefusal<T extends { response: Response }>(
-  ctx: ObservedToolsRetryContext,
-  input: ExecuteInput,
-  first: T,
-  log: ExecutorLog | null | undefined,
+export async function retryFreeTierRefusalWithObservedTools(
+  ctx: RetryCtx,
+  input: ExecutorInput,
+  first: { response: Response },
+  log: ExecutorLog,
   cid: string,
-  dispatch: (retryInput: ExecuteInput) => Promise<T>,
-  knownBodyText?: string | null
-): Promise<T | null> {
-  if (!ctx.gated) return null;
+  dispatch: DispatchFn
+): Promise<{ response: Response } | null> {
   const status = first.response.status;
-  if (status !== 403 && status !== 451) return null;
-
-  let bodyText = knownBodyText;
-  if (bodyText === undefined) {
-    try {
-      bodyText = await first.response.clone().text();
-    } catch {
-      log?.debug?.("OPENCODE", "body read failed on free-tier retry check");
-      return null;
-    }
-  }
-  if (!isOpencodeFreeTierRefusal(status, bodyText ?? null)) return null;
-
-  if (ctx.borrowed) return first;
-
-  const ownNames = clientToolNamesOf(input.body);
-  if (ownNames.length === 0) return first;
-
-  const session = observationSession(input, ctx.provider);
+  if (!retryScopeApplies(ctx, input, status)) return null;
   const merged = mergeClientToolsWithObserved(
     input.body,
-    ctx.requestFormat,
+    ctx.requestFormat ?? resolveOpencodeTargetFormat(ctx.provider, String(input.model ?? "")),
     ctx.provider,
-    ctx.model,
-    session
+    String(input.model ?? ""),
+    ctx.clientSession,
+    configuredPlaceholderToolNames()
   );
-  if (merged === input.body) return first;
-
+  if (merged === input.body) return null;
+  if ((await readRefusalBody(first, status, log)) === null) return null;
   log?.warn?.(
     "OPENCODE",
-    `${cid}free-tier refusal on own tools [${ownNames.join(",")}], retrying once with observed names appended…`
+    `${cid}free-tier refusal on own tools [${ctx.clientToolNames.join(",")}], retrying once with observed names appended…`
   );
-
-  let retry: T;
-  try {
-    retry = await dispatch({ ...input, body: merged });
-  } catch (error) {
-    const name =
-      error && typeof error === "object" && "name" in error
-        ? String((error as { name?: unknown }).name ?? "")
-        : "";
-    if (input.signal?.aborted || name === "AbortError") throw error;
-    log?.warn?.(
-      "OPENCODE",
-      `${cid}free-tier observed-tools retry failed before a response; returning original refusal`
-    );
-    return first;
-  }
-  if (!retry.response.ok) return first;
-
-  recordAcceptedToolNames(ctx.provider, ctx.model, session, clientToolNamesOf(merged));
+  const retry = await dispatch({ ...input, body: merged });
+  if (!retry.response.ok) return { response: first.response };
   return retry;
+}
+
+/**
+ * Serve the rotation loop's free-tier arm: try the observed-tools retry on the
+ * same account proxy, else return the refusal untouched with account health
+ * unchanged (no cooldown, no success — the request, not the account, was
+ * rejected; rotating would only add latency since every sibling gets the same
+ * verdict). The executor callback reuses the loop's own finalize path so the
+ * retry result is shaped exactly like a first-dispatch result.
+ */
+type ShapedResult = { response: Response } | Response;
+
+export async function handleLoopFreeTierRefusal(
+  shape: (retried: { response: Response }) => ShapedResult,
+  input: ExecutorInput,
+  result: { response: Response },
+  ctx: RetryCtx,
+  account: { account: unknown; masked: string; proxyKey: string },
+  log: ExecutorLog,
+  cid: string,
+  hooks: {
+    dispatch: (retryInput: ExecutorInput) => Promise<{ response: Response }>;
+    noteServed: (account: unknown) => void;
+  }
+): Promise<ShapedResult> {
+  const retried = await retryFreeTierRefusalWithObservedTools(
+    ctx,
+    input,
+    result,
+    log,
+    cid,
+    hooks.dispatch
+  );
+  if (retried) {
+    return shape(retried);
+  }
+  log?.warn?.(
+    "OPENCODE",
+    `${cid}free-tier refusal ${result.response.status} on account ${account.masked} (proxy ${account.proxyKey}), returning it unchanged (request-scoped, no rotation)`
+  );
+  hooks.noteServed(account.account);
+  return result;
 }
