@@ -12,11 +12,14 @@ import { AsyncResource } from "node:async_hooks";
 import Bottleneck from "bottleneck";
 import { applyBottleneckDoExpirePatch, applyBottleneckHeartbeatPatch } from "./bottleneckPatch.ts";
 import { parseRetryAfterFromBody } from "./accountFallback.ts";
-import { isValidRequestCap, parseRequestCapFromBody } from "./rateLimitManager/requestCap.ts";
 import {
-  capSettingsWithinBudget as resolveCapSettingsWithinBudget,
-  hasRpmOverride as hasConnectionRpmOverride,
-} from "./rateLimitManager/requestCapPolicy.ts";
+  connectionHasRpmOverride,
+  loadPersistedLearnedLimits as loadPersistedLearnedLimitsFromStore,
+  planBodyCap,
+  resolveLearnedCapSettings,
+  restorePersistedLearnedLimits,
+  stripConnectionCaps,
+} from "./rateLimitManager/learnedCap.ts";
 import { getAntigravityQuotaFamily } from "./antigravityQuotaFamily.ts";
 import { getProviderCategory } from "../config/providerRegistry.ts";
 import { getCodexRateLimitKey } from "../executors/codex.ts";
@@ -41,7 +44,6 @@ import {
 } from "./rateLimitManager/errors";
 import { LimiterWedgeWatchdog, WATCHDOG_INTERVAL_MS } from "./rateLimitManager/wedgeWatchdog";
 import { createCancellableJob } from "./rateLimitManager/queuedJobCancel";
-import { toNumber } from "@/shared/utils/numeric";
 import {
   getExecutorTimeoutMs,
   resolveConnectionTimeoutMs,
@@ -171,19 +173,16 @@ const EFFECTIVELY_INFINITE_CONCURRENCY = 1000;
 function resolveOverride(override: number | undefined | null, fallback: number): number {
   return typeof override === "number" && override > 0 ? override : fallback;
 }
-
 // Resolve an RPM override. 0 or missing means "infinite" (no rate cap).
 function resolveRpm(override: number | undefined | null): number {
   return resolveOverride(override, EFFECTIVELY_INFINITE);
 }
-
 // Resolve a minTime override. 0 or missing means "no minimum gap".
 function resolveMinTime(override: number | undefined | null): number {
   return resolveOverride(override, 0);
 }
-
 function hasRpmOverride(connectionId: string): boolean {
-  return hasConnectionRpmOverride(connectionRateLimitOverrides, connectionId);
+  return connectionHasRpmOverride(connectionRateLimitOverrides, connectionId);
 }
 
 function capSettingsWithinBudget(
@@ -192,23 +191,21 @@ function capSettingsWithinBudget(
   cap: { requests: number; windowMs: number },
   source: "body-stated" | "learned" | "persisted"
 ) {
-  return resolveCapSettingsWithinBudget({
+  return resolveLearnedCapSettings(cap, {
     provider,
     connectionId,
-    cap,
     source,
     globalMinTimeMs: resolveMinTime(currentRequestQueueSettings.minTimeBetweenRequestsMs),
     connectionMinTimeMs: resolveMinTime(connectionRateLimitOverrides.get(connectionId)?.minTime),
     queueBudgetMs: resolveRequestQueueMaxWaitMs(provider, undefined, connectionId),
+    overrides: connectionRateLimitOverrides,
     warn: (message) => warnRateLimit(message),
   });
 }
-
 // Resolve a maxConcurrent override. 0 or missing means "effectively infinite".
 function resolveMaxConcurrent(override: number | undefined | null): number {
   return resolveOverride(override, EFFECTIVELY_INFINITE_CONCURRENCY);
 }
-
 export function resolveRequestQueueMaxWaitMs(
   provider: string,
   configuredMaxWaitMs: number = currentRequestQueueSettings.maxWaitMs,
@@ -490,10 +487,6 @@ export function disableRateLimitProtection(connectionId) {
     }
   }
 }
-
-/**
- * Check if rate limit protection is enabled for a connection
- */
 export function isRateLimitEnabled(connectionId) {
   return enabledConnections.has(connectionId);
 }
@@ -515,20 +508,11 @@ export function refreshConnectionRateLimits(connectionId, overrides) {
     connectionRateLimitOverrides.set(connectionId, overrides);
   }
   clearPreservedReplacementSettings(connectionId);
-  let strippedCap = false;
-  for (const [key, entry] of learnedLimits) {
-    if (entry.connectionId === connectionId && entry.capRequests) {
-      const { capRequests: _cap, capWindowMs: _window, ...rest } = entry;
-      learnedLimits.set(key, rest);
-      strippedCap = true;
-    }
+  if (stripConnectionCaps(learnedLimits, connectionId, (key, entry) => learnedLimits.set(key, entry))) {
+    schedulePersist();
   }
-  if (strippedCap) schedulePersist();
-  // Evict limiters referencing this connection so they get recreated on next use
   for (const [key, limiter] of Array.from(limiters)) {
-    if (key.includes(connectionId)) {
-      evictLimiter(key, limiter);
-    }
+    if (key.includes(connectionId)) evictLimiter(key, limiter);
   }
 }
 
@@ -1023,10 +1007,6 @@ export function getRateLimitStatus(provider, connectionId) {
     done: counts.DONE || 0,
   };
 }
-
-/**
- * Get all active limiters status (for dashboard overview)
- */
 export function getAllRateLimitStatus() {
   const result: Record<string, { queued: number; running: number; executing: number }> = {};
   for (const [key, limiter] of limiters) {
@@ -1039,16 +1019,10 @@ export function getAllRateLimitStatus() {
   }
   return result;
 }
-
-/**
- * Get all learned limits (for dashboard display).
- */
 export function getLearnedLimits() {
   return { ...Object.fromEntries(learnedLimits) };
 }
-
 // ─── Persistence ────────────────────────────────────────────────────────────
-
 async function persistLearnedLimitsNow() {
   try {
     const { updateSettings } = await import("@/lib/db/settings");
@@ -1079,7 +1053,6 @@ function recordLearnedLimit(
 
   schedulePersist();
 }
-
 function schedulePersist(): void {
   if (!persistTimer) {
     persistTimer = setTimeout(async () => {
@@ -1088,7 +1061,6 @@ function schedulePersist(): void {
     }, PERSIST_DEBOUNCE_MS);
   }
 }
-
 export async function __flushLearnedLimitsForTests() {
   if (persistTimer) {
     clearTimeout(persistTimer);
@@ -1099,15 +1071,12 @@ export async function __flushLearnedLimitsForTests() {
     await Promise.allSettled(Array.from(pendingAsyncOperations));
   }
 }
-
 export function __setLimiterFactoryForTests(factory: LimiterFactory): void {
   limiterFactory = factory;
 }
-
 export async function __runLimiterWatchdogForTests(now = Date.now()): Promise<void> {
   await limiterWatchdog.run(now);
 }
-
 export async function __resetRateLimitManagerForTests() {
   if (persistTimer) {
     clearTimeout(persistTimer);
@@ -1142,7 +1111,6 @@ export async function __resetRateLimitManagerForTests() {
     await Promise.allSettled(disconnectPromises);
   }
 }
-
 export async function __getLimiterStateForTests(provider, connectionId, model = null) {
   const key = getLimiterKey(provider, connectionId, model);
   const limiter = limiters.get(key);
@@ -1160,77 +1128,23 @@ export async function __getLimiterStateForTests(provider, connectionId, model = 
   };
 }
 
-/**
- * Load persisted learned limits on startup.
- */
+/** Load persisted learned limits on startup. */
 async function loadPersistedLimits() {
-  try {
-    const { getSettings } = await import("@/lib/db/settings");
-    const settings = await getSettings();
-    const raw = settings?.learnedRateLimits;
-    if (typeof raw !== "string" || raw.trim().length === 0) return;
-
-    const parsed = toRecord(JSON.parse(raw) as unknown);
-    let count = 0;
-
-    for (const [key, dataRaw] of Object.entries(parsed)) {
-      const data = toRecord(dataRaw);
-      const lastUpdated = toNumber(data.lastUpdated, 0);
-      // Skip stale entries (older than 24h)
-      if (lastUpdated > 0 && Date.now() - lastUpdated > 24 * 60 * 60 * 1000) continue;
-
-      const connectionId = typeof data.connectionId === "string" ? data.connectionId : "";
-      const provider = typeof data.provider === "string" ? data.provider : "";
-      const limit = toNumber(data.limit, 0);
-      const remaining = toNumber(data.remaining, 0);
-      const minTime = toNumber(data.minTime, 0);
-      const capRequests = toNumber(data.capRequests, 0);
-      const capWindowMs = toNumber(data.capWindowMs, 0);
-      const hasCap = isValidRequestCap({ requests: capRequests, windowMs: capWindowMs });
-      if (!hasCap && (data.capRequests !== undefined || data.capWindowMs !== undefined)) {
-        warnRateLimit(
-          `[RATE-LIMIT] ${key} — dropping persisted cap with invalid shape (${String(data.capRequests)} per ${String(data.capWindowMs)}ms)`
-        );
-      }
-
-      learnedLimits.set(key, {
-        provider,
-        connectionId,
-        lastUpdated,
-        ...(limit > 0 ? { limit } : {}),
-        ...(remaining >= 0 ? { remaining } : {}),
-        ...(minTime >= 0 ? { minTime } : {}),
-        ...(hasCap ? { capRequests, capWindowMs } : {}),
-      });
-
-      // Apply to limiter if it exists and has rate limit enabled
-      if (connectionId && enabledConnections.has(connectionId)) {
-        const limiter = limiters.get(key);
-        if (limiter && hasCap && !hasRpmOverride(connectionId)) {
-          const cap = capSettingsWithinBudget(
-            provider,
-            connectionId,
-            { requests: capRequests, windowMs: capWindowMs },
-            "persisted"
-          );
-          if (cap) {
-            updateLimiterSettings(limiter, cap);
-            count++;
-          }
-        } else if (limiter && limit > 0) {
-          const inferredMinTime = minTime || Math.max(0, Math.floor(60000 / limit) - 10);
-          updateLimiterSettings(limiter, { minTime: inferredMinTime });
-          count++;
-        }
-      }
-    }
-
-    if (count > 0) {
-      logRateLimit(`📥 [RATE-LIMIT] Restored ${count} learned rate limit(s) from persistence`);
-    }
-  } catch (err) {
-    errorRateLimit("[RATE-LIMIT] Failed to load persisted limits:", err.message);
-  }
+  await loadPersistedLearnedLimitsFromStore({
+    getRaw: async () => (await import("@/lib/db/settings")).getSettings().then((settings) => settings?.learnedRateLimits),
+    restore: (parsed) => restorePersistedLearnedLimits({
+      parsed, nowMs: Date.now(), warn: (message) => warnRateLimit(message),
+      setLearned: (key, entry) => learnedLimits.set(key, entry),
+      isEnabled: (connectionId) => enabledConnections.has(connectionId),
+      getLimiter: (key) => limiters.get(key), hasRpmOverride,
+      resolveCapSettings: (provider, connectionId, cap, source) =>
+        capSettingsWithinBudget(provider, connectionId, cap, source),
+      updateLimiter: (limiter, settings) =>
+        updateLimiterSettings(limiter as Bottleneck, settings as Bottleneck.ConstructorOptions),
+    }),
+    log: (message) => logRateLimit(message),
+    error: (message, error) => errorRateLimit(message, error),
+  });
 }
 
 /**
@@ -1264,35 +1178,22 @@ export function updateFromResponseBody(provider, connectionId, responseBody, sta
 
   if (status !== 429) return;
 
-  const cap = parseRequestCapFromBody(responseBody);
-  if (!cap) return;
-
-  const settings = capSettingsWithinBudget(provider, connectionId, cap, "body-stated");
-  if (!settings) return;
-
-  const limiterKey = getLimiterKey(provider, connectionId, model);
-  const existing = limiters.get(limiterKey);
-  if (existing) {
-    evictLimiter(limiterKey, existing);
-  }
-  recordLearnedLimit(
+  const plan = planBodyCap({
     provider,
     connectionId,
-    {
-      limit: Math.max(1, Math.round((cap.requests * 60_000) / cap.windowMs)),
-      minTime: settings.minTime,
-      capRequests: cap.requests,
-      capWindowMs: cap.windowMs,
-    },
-    model
-  );
+    responseBody,
+    resolveSettings: (cap) => capSettingsWithinBudget(provider, connectionId, cap, "body-stated"),
+  });
+  if (!plan) return;
+  const limiterKey = getLimiterKey(provider, connectionId, model);
+  const existing = limiters.get(limiterKey);
+  if (existing) evictLimiter(limiterKey, existing);
+  recordLearnedLimit(provider, connectionId, plan.learned, model);
   const limiter = getLimiter(provider, connectionId, model);
   if (hasRpmOverride(connectionId)) {
     updateLimiterSettings(limiter, { reservoir: 0 });
     return;
   }
-  logRateLimit(
-    `🚫 [RATE-LIMIT] ${provider}:${connectionId.slice(0, 8)} — body-stated cap: ${cap.requests} request(s) per ${Math.ceil(cap.windowMs / 1000)}s, pacing at ${settings.minTime}ms`
-  );
-  updateLimiterSettings(limiter, { reservoir: 0, ...settings });
+  logRateLimit(`🚫 ${plan.logMessage}`);
+  updateLimiterSettings(limiter, { reservoir: 0, ...plan.settings });
 }

@@ -1186,21 +1186,14 @@ async function styleInstructionReachesUpstream(
     globalThis.fetch = originalFetch;
   }
 }
-
 test("chatCore integration: output styles stay on a security-topic turn when Auto-Clarity is off", async () => {
   assert.equal(await styleInstructionReachesUpstream(false), true);
 });
-
 test("chatCore integration: Auto-Clarity on keeps output styles off a security-topic turn", async () => {
   assert.equal(await styleInstructionReachesUpstream(true), false);
 });
-
 test("chatCore integration: styles picked in the Output Styles panel stay on a security-topic turn when Auto-Clarity is off", async () => {
-  assert.equal(
-    await styleInstructionReachesUpstream(false, [
-      { id: "terse-prose", level: "full" },
-      { id: "less-code", level: "full" },
-    ]),
-    true
-  );
+  assert.equal(await styleInstructionReachesUpstream(false, [
+    { id: "terse-prose", level: "full" }, { id: "less-code", level: "full" },
+  ]), true);
 });
