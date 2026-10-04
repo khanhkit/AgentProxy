@@ -35,9 +35,6 @@
   "src/app/api/cli-tools/grok-build-settings/route.ts": {
     "TS2304": 1
   },
-  "src/app/api/cli-tools/hermes-agent-settings/route.ts": {
-    "TS2345": 1
-  },
   "src/app/api/cli-tools/letta-settings/route.ts": {
     "TS2339": 1
   },
@@ -268,7 +265,7 @@
     "TS2322": 4
   },
   "src/app/api/v1/messages/count_tokens/route.ts": {
-    "TS2339": 2,
+    "TS2339": 1,
     "TS2322": 1
   },
   "src/app/api/v1/music/generations/route.ts": {

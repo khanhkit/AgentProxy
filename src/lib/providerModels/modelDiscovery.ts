@@ -5,6 +5,7 @@ import {
   type SyncedAvailableModel,
 } from "@/lib/db/models";
 import { CANONICAL_EFFORT_VALUES } from "@/shared/reasoning/effortStandardization";
+import type { VertexModelMetadataProvenance } from "@/lib/providerModels/vertexModelMetadata";
 import { isObsoleteKiroModelAlias } from "@agentproxy/open-sse/services/kiroModels.ts";
 import { filterSelectableModels } from "@agentproxy/open-sse/services/modelLifecycle.ts";
 
@@ -53,6 +54,25 @@ function firstPositiveNumber(...candidates: unknown[]): number | undefined {
   return undefined;
 }
 
+
+function parseVertexMetadataProvenance(value: unknown): VertexModelMetadataProvenance | undefined {
+  const provenance = asRecord(value);
+  const vertexDocs = asRecord(provenance.vertexDocs);
+  if (
+    vertexDocs.source !== "google-cloud-docs" ||
+    typeof vertexDocs.sourceUrl !== "string" ||
+    typeof vertexDocs.fetchedAt !== "string" ||
+    vertexDocs.parserVersion !== "vertex-docs-v1" ||
+    vertexDocs.confidence !== "verified" ||
+    !Array.isArray(vertexDocs.fields) ||
+    !vertexDocs.fields.every((field) =>
+      ["contextWindow", "inputTokenLimit", "outputTokenLimit"].includes(String(field))
+    )
+  ) {
+    return undefined;
+  }
+  return value as VertexModelMetadataProvenance;
+}
 function modalitiesIncludeImage(value: unknown): boolean {
   return (
     Array.isArray(value) &&
@@ -479,8 +499,8 @@ export function normalizeDiscoveredModels(
       ...(defaultThinkingEffort !== undefined ? { defaultThinkingEffort } : {}),
       ...(typeof inputTokenLimit === "number" ? { inputTokenLimit } : {}),
       ...(isVertexProvider && typeof contextWindow === "number" ? { contextWindow } : {}),
-      ...(record.metadataProvenance && typeof record.metadataProvenance === "object"
-        ? { metadataProvenance: record.metadataProvenance }
+      ...(isVertexProvider && parseVertexMetadataProvenance(record.metadataProvenance)
+        ? { metadataProvenance: parseVertexMetadataProvenance(record.metadataProvenance)! }
         : {}),
       ...(typeof outputTokenLimit === "number" ? { outputTokenLimit } : {}),
       ...(typeof record.description === "string" ? { description: record.description } : {}),
