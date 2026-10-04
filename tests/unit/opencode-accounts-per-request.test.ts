@@ -4,6 +4,10 @@ import net from "node:net";
 import { OpencodeExecutor } from "../../open-sse/executors/opencode.ts";
 import type { ExecutorLog, ProviderCredentials } from "../../open-sse/executors/base.ts";
 import { resolveProxyForRequest } from "../../open-sse/utils/proxyFetch.ts";
+import {
+  __resetProxyRefusalMemoryForTesting,
+  __resetSlowOverrunsForTesting,
+} from "../../open-sse/utils/proxyRefusalMemory.ts";
 
 /**
  * Per-request account lists on the shared opencode executor instance.
@@ -107,6 +111,8 @@ describe("OpencodeExecutor per-request account lists", () => {
   beforeEach(() => {
     originalFetch = globalThis.fetch;
     observed = [];
+    __resetProxyRefusalMemoryForTesting();
+    __resetSlowOverrunsForTesting();
   });
 
   afterEach(() => {
