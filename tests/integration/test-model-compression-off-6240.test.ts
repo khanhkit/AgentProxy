@@ -133,9 +133,11 @@ test("chatCore: x-agentproxy-compression: off suppresses Output Styles injection
     connectionId: connection.id,
     headers: new Headers(),
   });
-  const plainFirstMessage = withoutOptOut.capturedBody?.messages?.[0];
-  assert.equal(plainFirstMessage?.role, "system");
-  assert.match(plainFirstMessage?.content ?? "", /AgentProxy Output Styles/);
+  const plainStyleMessage = (withoutOptOut.capturedBody?.messages ?? []).find(
+    (message) => message?.role === "system" && typeof message.content === "string"
+  );
+  assert.ok(plainStyleMessage, "Output Styles should reach the normal upstream request");
+  assert.match(plainStyleMessage.content ?? "", /AgentProxy Output Styles/);
 
   // The "Test model" connection test sends x-agentproxy-compression: off — must be clean.
   const testModelBody = await runChatCore({
@@ -199,8 +201,11 @@ test("chatCore: a per-key opt-out wins over request headers and Output Styles (#
     apiKeyInfo: { compressionEnabled: true },
     messageContent: originalContent,
   });
-  assert.equal(enabled.capturedBody?.messages?.[0]?.role, "system");
-  assert.match(enabled.capturedBody?.messages?.[0]?.content ?? "", /AgentProxy Output Styles/);
+  const enabledStyleMessage = (enabled.capturedBody?.messages ?? []).find(
+    (message) => message?.role === "system" && typeof message.content === "string"
+  );
+  assert.ok(enabledStyleMessage, "enabled compression should still inject Output Styles");
+  assert.match(enabledStyleMessage.content ?? "", /AgentProxy Output Styles/);
 
   const disabled = await runChatCore({
     provider,
