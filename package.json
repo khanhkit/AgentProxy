@@ -157,7 +157,7 @@
     "check:env-doc-sync": "node scripts/check/check-env-doc-sync.mjs",
     "check:docs-counts": "node scripts/check/check-docs-counts-sync.mjs",
     "check:deprecated-versions": "node scripts/check/check-deprecated-versions.mjs",
-    "check:compression-budget": "bun scripts/check/check-compression-budget.ts",
+    "check:compression-budget": "node --import tsx scripts/check/check-compression-budget.ts",
     "check:router-eval": "node --import tsx scripts/check/check-router-eval-regression.ts",
     "check:doc-links": "node scripts/check/check-doc-links.mjs",
     "check:fabricated-docs": "node scripts/check/check-fabricated-docs.mjs --strict",
