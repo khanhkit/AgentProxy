@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { spawn, type ChildProcessWithoutNullStreams } from "node:child_process";
 import net from "node:net";
 import test from "node:test";
-import { SignJWT } from "jose";
+import { mintDashboardSessionToken } from "../../src/shared/utils/dashboardSessionToken.ts";
 import WebSocket from "ws";
 
 const PER_PRINCIPAL_LIMIT = 20;
@@ -157,12 +157,7 @@ test(
       assert.equal(close.code, 1013);
       assert.match(close.reason, /principal/i);
 
-      const cookieToken = await new SignJWT({ role: "dashboard" })
-        .setProtectedHeader({ alg: "HS256" })
-        .setSubject("independent-dashboard-user")
-        .setIssuedAt()
-        .setExpirationTime("5m")
-        .sign(new TextEncoder().encode(jwtSecret));
+      const cookieToken = await mintDashboardSessionToken(new TextEncoder().encode(jwtSecret));
 
       const independent = connectWithCookie(port, cookieToken, allowedOrigin);
       sockets.push(independent);
