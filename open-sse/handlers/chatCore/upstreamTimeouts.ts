@@ -246,17 +246,14 @@ export async function executeWithUpstreamStartTimeout<T>({
   const timeoutError = createUpstreamStartTimeoutError(timeoutMs, provider, model);
 
   let timeoutId: ReturnType<typeof setTimeout> | null = null;
-  let abortListener: (() => void) | null = null;
-  let timeoutAbortListener: (() => void) | null = null;
-
   const abortCombined = (source: AbortSignal) => {
     if (combinedController.signal.aborted) return;
-    const reason = source.reason instanceof Error ? source.reason : createAbortError(source);
-    combinedController.abort(reason);
+    combinedController.abort(
+      source.reason instanceof Error ? source.reason : createAbortError(source)
+    );
   };
-
-  abortListener = () => abortCombined(signal);
-  timeoutAbortListener = () => abortCombined(timeoutController.signal);
+  const abortListener = () => abortCombined(signal);
+  const timeoutAbortListener = () => abortCombined(timeoutController.signal);
   signal.addEventListener("abort", abortListener, { once: true });
   timeoutController.signal.addEventListener("abort", timeoutAbortListener, { once: true });
 
@@ -279,18 +276,24 @@ export async function executeWithUpstreamStartTimeout<T>({
   abortPromise.catch(() => {});
   timeoutPromise.catch(() => {});
 
+  let retainClientAbortLink = false;
   try {
-    return await Promise.race([
+    const result = await Promise.race([
       execute(combinedController.signal),
       timeoutPromise,
       abortPromise,
     ]);
+    retainClientAbortLink =
+      isResponseLike(result) ||
+      (Boolean(result) &&
+        typeof result === "object" &&
+        "response" in result &&
+        isResponseLike((result as { response?: unknown }).response));
+    return result;
   } finally {
     if (timeoutId) clearTimeout(timeoutId);
-    if (abortListener) signal.removeEventListener("abort", abortListener);
+    if (!retainClientAbortLink) signal.removeEventListener("abort", abortListener);
     if (abortPromiseListener) signal.removeEventListener("abort", abortPromiseListener);
-    if (timeoutAbortListener) {
-      timeoutController.signal.removeEventListener("abort", timeoutAbortListener);
-    }
+    timeoutController.signal.removeEventListener("abort", timeoutAbortListener);
   }
 }
