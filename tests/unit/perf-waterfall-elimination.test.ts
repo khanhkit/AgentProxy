@@ -51,10 +51,10 @@ test("A1: home page fetches settings + machineId concurrently (#11396)", () => {
 
   const pair = src.match(/const \[settings, machineId\] = await Promise\.all\(\[([\s\S]*?)\]\);/s);
   assert.ok(pair, "expected `[settings, machineId] = await Promise.all([...])`");
-  assert.match(pair![1], /\bgetSettings\(\)/);
+  assert.match(pair![1], /\bloadHomeSettings\(\)/);
   assert.match(pair![1], /\bgetMachineId\(\)/);
   // destructuring order must stay (settings → machineId), or values swap
-  assert.ok(pair![1].indexOf("getSettings()") < pair![1].indexOf("getMachineId()"));
+  assert.ok(pair![1].indexOf("loadHomeSettings()") < pair![1].indexOf("getMachineId()"));
 
   // both values are still consumed exactly as before the batching
   assert.match(src, /setupComplete=\{Boolean\(settings\.setupComplete\)\}/);
