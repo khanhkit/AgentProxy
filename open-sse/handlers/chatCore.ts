@@ -2378,7 +2378,11 @@ async function handleChatCoreInner({
         extractSystemRoleMessages(translatedBody);
       } else {
         // Non-CC path: full normalization including content type conversion.
-        normalizeClaudeUpstreamMessages(translatedBody, { preserveToolResultBlocks: true });
+        // Preserve raw tool_result blocks only for Anthropic-native targets; OpenAI-compatible
+        // CC bridges reject the Anthropic block shape (#13972).
+        normalizeClaudeUpstreamMessages(translatedBody, {
+          preserveToolResultBlocks: targetFormat === FORMATS.CLAUDE,
+        });
       }
     } else if (isClaudePassthrough) {
       // Pure passthrough: forward the body as-is without OpenAI round-trip.
@@ -2429,7 +2433,9 @@ async function handleChatCoreInner({
           ensureCacheControlOnLastUserMessage(translatedBody);
         }
       } else {
-        normalizeClaudeUpstreamMessages(translatedBody, { preserveToolResultBlocks: true });
+        normalizeClaudeUpstreamMessages(translatedBody, {
+          preserveToolResultBlocks: targetFormat === FORMATS.CLAUDE,
+        });
       }
 
       log?.debug?.("FORMAT", `claude passthrough (preserveCache=${preserveCacheControl})`);
@@ -2470,7 +2476,7 @@ async function handleChatCoreInner({
       // are already in Claude format. Applying the prefix turns "Bash" into
       // "proxy_Bash", which Claude rejects ("No such tool available: proxy_Bash").
       if (targetFormat === FORMATS.CLAUDE) {
-        translatedBody._disableToolPrefix = true;
+        if (provider === "claude") translatedBody._disableToolPrefix = true;
         normalizeClaudeUpstreamMessages(translatedBody);
       }
 
