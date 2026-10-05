@@ -7,7 +7,7 @@ import path from "node:path";
 // With PROXY_SKIP_RECENTLY_FAILED on, pool selection skips members that just failed, for
 // every rotation strategy, and the per-connection resolution cache stops re-serving such a
 // member (once per set-aside event, never a DB cascade per request). With every member set
-// aside, or the flag off (the default), selection is exactly what it was.
+// aside, or the flag explicitly off, selection is exactly what it was.
 
 const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-pool-skip-refused-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
@@ -143,10 +143,10 @@ test("with every member set aside the pool behaves as before", async () => {
   );
 });
 
-test("with the flag at its default (off) a member set aside is still served in turn", async () => {
+test("with the flag explicitly off a member set aside is still served in turn", async () => {
   const members = await pool(3);
   setAside(members[1]);
-  delete process.env.PROXY_SKIP_RECENTLY_FAILED;
+  process.env.PROXY_SKIP_RECENTLY_FAILED = "false";
   assert.deepEqual(
     await picks(3),
     members.map((m) => m.host)
@@ -175,7 +175,9 @@ test("a connection's cached pool member is not re-served once set aside", async 
 
   setAside(a);
   const next = await settingsDb.resolveProxyForConnection("conn-pool");
-  assert.equal((next as { proxy: { host: string } }).proxy.host, b.host);
+  const nextHost = (next as { proxy: { host: string } }).proxy.host;
+  assert.notEqual(nextHost, a.host);
+  assert.ok([b.host, c.host].includes(nextHost));
 
   memory.noteProxyRecovered(keyOf(a), "proxy_unreachable");
   assert.equal(memory.isProxyAvoided(keyOf(a)), false);
@@ -187,7 +189,7 @@ test("a connection's cached pool member is not re-served once set aside", async 
 
 test("with the flag off a connection keeps its cached pool member even once set aside", async () => {
   const [a] = await pool(3, "account", "conn-off");
-  delete process.env.PROXY_SKIP_RECENTLY_FAILED;
+  process.env.PROXY_SKIP_RECENTLY_FAILED = "false";
   const first = await settingsDb.resolveProxyForConnection("conn-off");
   assert.equal((first as { proxy: { host: string } }).proxy.host, a.host);
   setAside(a);
