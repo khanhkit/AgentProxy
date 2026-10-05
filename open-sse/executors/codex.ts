@@ -1207,7 +1207,7 @@ export class CodexExecutor extends BaseExecutor {
   transformRequest(
     model: string,
     bodyInput: unknown,
-    _stream: boolean,
+    stream: boolean,
     credentials: ProviderCredentials
   ) {
     void stream;
