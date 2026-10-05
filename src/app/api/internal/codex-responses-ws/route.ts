@@ -24,6 +24,7 @@ import { logger } from "@agentproxy/open-sse/utils/logger.ts";
 import { resolveProxy } from "@agentproxy/open-sse/utils/networkProxy.ts";
 import { withCodexFingerprintCredentials } from "@agentproxy/open-sse/config/codexIdentity.ts";
 import { proxyConfigToUrl } from "@agentproxy/open-sse/utils/proxyDispatcher.ts";
+import { withReasoningRuleContext } from "@agentproxy/open-sse/utils/reasoningRuleContext.ts";
 import {
   attachReasoningRuleDirective,
   applyReasoningRuleDirective,
@@ -563,12 +564,17 @@ async function prepare(body: JsonRecord) {
 
   let responseBodyWithMemory = await maybeInjectResponsesWsMemory(responseBody, metadata);
   let reasoningRouting: JsonRecord | null = null;
+  let reasoningRuleDirective: unknown;
   if (reasoningDecision) {
     const withDirective = attachReasoningRuleDirective(responseBodyWithMemory, reasoningDecision);
+    reasoningRuleDirective = withDirective._agentproxyReasoningRule;
     reasoningRouting = isRecord(withDirective._agentproxyReasoningRouteTrace)
       ? withDirective._agentproxyReasoningRouteTrace
       : null;
-    responseBodyWithMemory = applyReasoningRuleDirective(withDirective) as JsonRecord;
+    responseBodyWithMemory = applyReasoningRuleDirective(
+      withDirective,
+      "openai-responses"
+    ) as JsonRecord;
     delete responseBodyWithMemory._agentproxyReasoningRouteTrace;
   }
   // #8052: the WS bridge previously skipped the whole prompt-compression pipeline that the
@@ -580,7 +586,7 @@ async function prepare(body: JsonRecord) {
     requestId: randomUUID(),
   });
   const credentialsWithFingerprint = withCodexFingerprintCredentials(
-    refreshedCredentials,
+    withReasoningRuleContext(refreshedCredentials, reasoningRuleDirective),
     context.clientHeaders,
     responseBodyWithMemory
   );

@@ -6,6 +6,7 @@ import {
 } from "../../../open-sse/services/compression/compressionWorkerProtocol.ts";
 import {
   closeCompressionWorkerPoolForTests,
+  CompressionWorkerError,
   CompressionWorkerPool,
 } from "../../../open-sse/services/compression/compressionWorkerPool.ts";
 import {
@@ -138,11 +139,14 @@ describe("compression worker execution", () => {
     assert.deepEqual(steps, ["rtk", "caveman"]);
   });
 
-  it("fails open without inline compression when a job times out", async () => {
+  it("marks a worker timeout non-retryable so the public async path can fail open", async () => {
     const pool = new CompressionWorkerPool({ size: 1, timeoutMs: 1, idleMs: 100 });
     try {
-      const result = await pool.run(body, "stacked", { config });
-      assert.deepEqual(result, { body, compressed: false, stats: null });
+      await assert.rejects(
+        pool.run(body, "stacked", { config }),
+        (error: unknown) =>
+          error instanceof CompressionWorkerError && error.retryInProcess === false
+      );
     } finally {
       await pool.close();
     }

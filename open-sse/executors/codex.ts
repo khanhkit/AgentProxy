@@ -39,6 +39,7 @@ import {
 import { getAccessToken } from "../services/tokenRefresh.ts";
 import { sanitizeResponsesInputItems } from "../services/responsesInputSanitizer.ts";
 import { applyReasoningInputPolicy } from "../services/reasoningInputPolicy.ts";
+import { getForcedReasoningEffort } from "../utils/reasoningRuleContext.ts";
 import { normalizeCodexVerbosity } from "../services/codexVerbosity.ts";
 import { getThinkingBudgetConfig, ThinkingMode } from "../services/thinkingBudget.ts";
 import { CORS_HEADERS } from "../utils/cors.ts";
@@ -802,6 +803,22 @@ export class CodexExecutor extends BaseExecutor {
       requestInput.body
     );
     const nextInput = { ...requestInput, credentials };
+    const forcedEffort = getForcedReasoningEffort(credentials);
+    if (forcedEffort) {
+      const nextBody =
+        nextInput.body && typeof nextInput.body === "object"
+          ? (nextInput.body as Record<string, unknown>)
+          : {};
+      nextInput.body = {
+        ...nextBody,
+        reasoning: {
+          ...(nextBody.reasoning && typeof nextBody.reasoning === "object"
+            ? nextBody.reasoning
+            : {}),
+          effort: forcedEffort,
+        },
+      };
+    }
 
     if (isCodexAppServerRequired(nextInput.credentials)) {
       if (!this.appServer) {
@@ -1399,6 +1416,7 @@ export class CodexExecutor extends BaseExecutor {
     // request selected an explicit effort through the model suffix or request fields.
     const clientDisabledReasoning = reasoningRecord?.enabled === false;
     const rawEffort =
+      getForcedReasoningEffort(credentials) ||
       modelEffort ||
       explicitReasoning ||
       requestReasoningEffort ||
