@@ -11,8 +11,10 @@ vi.mock("next/navigation", () => ({ useRouter: () => ({ push: () => {} }) }));
 
 describe("ProviderCard — #6936 audio-transcriptions provider badge", () => {
   let container: HTMLDivElement | null = null;
+  let root: ReturnType<typeof createRoot> | null = null;
 
   afterEach(() => {
+    if (root) { act(() => root?.unmount()); root = null; }
     if (container) {
       document.body.removeChild(container);
       container = null;
@@ -22,7 +24,7 @@ describe("ProviderCard — #6936 audio-transcriptions provider badge", () => {
   it("does NOT label an audio-transcriptions compatible node as Chat", () => {
     container = document.createElement("div");
     document.body.appendChild(container);
-    const root = createRoot(container);
+    root = createRoot(container);
     act(() => {
       root.render(
         <ProviderCard
@@ -47,7 +49,7 @@ describe("ProviderCard — #6936 audio-transcriptions provider badge", () => {
   it("labels an audio-speech compatible node as TTS", () => {
     container = document.createElement("div");
     document.body.appendChild(container);
-    const root = createRoot(container);
+    root = createRoot(container);
     act(() => {
       root.render(
         <ProviderCard
@@ -72,7 +74,7 @@ describe("ProviderCard — #6936 audio-transcriptions provider badge", () => {
   it("still labels a plain chat compatible node as Chat", () => {
     container = document.createElement("div");
     document.body.appendChild(container);
-    const root = createRoot(container);
+    root = createRoot(container);
     act(() => {
       root.render(
         <ProviderCard
