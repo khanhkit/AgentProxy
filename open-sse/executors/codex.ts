@@ -60,7 +60,9 @@ import { isCodexFreePlan, normalizeCodexTools } from "./codex/tools.ts";
 import {
   CODEX_EFFORT_ORDER as EFFORT_ORDER,
   GPT_5_6_ULTRA_ALIAS_MODELS,
+  applyForcedCodexReasoningEffort,
   splitCodexReasoningSuffix,
+  stripUnsupportedCodexReasoningFields,
   type CodexEffortLevel as EffortLevel,
 } from "./codex/reasoningSuffix.ts";
 import { repairMissingCodexToolCallOutputs } from "./codex/toolCallRepair.ts";
@@ -803,22 +805,10 @@ export class CodexExecutor extends BaseExecutor {
       requestInput.body
     );
     const nextInput = { ...requestInput, credentials };
-    const forcedEffort = getForcedReasoningEffort(credentials);
-    if (forcedEffort) {
-      const nextBody =
-        nextInput.body && typeof nextInput.body === "object"
-          ? (nextInput.body as Record<string, unknown>)
-          : {};
-      nextInput.body = {
-        ...nextBody,
-        reasoning: {
-          ...(nextBody.reasoning && typeof nextBody.reasoning === "object"
-            ? nextBody.reasoning
-            : {}),
-          effort: forcedEffort,
-        },
-      };
-    }
+    nextInput.body = applyForcedCodexReasoningEffort(
+      nextInput.body,
+      getForcedReasoningEffort(credentials)
+    );
 
     if (isCodexAppServerRequired(nextInput.credentials)) {
       if (!this.appServer) {
@@ -1432,16 +1422,7 @@ export class CodexExecutor extends BaseExecutor {
     }
 
     // Codex Responses accepts only effort + summary inside reasoning.
-    const wireReasoning =
-      body.reasoning && typeof body.reasoning === "object" && !Array.isArray(body.reasoning)
-        ? (body.reasoning as Record<string, unknown>)
-        : null;
-    if (wireReasoning) {
-      for (const key of Object.keys(wireReasoning)) {
-        if (key !== "effort" && key !== "summary") delete wireReasoning[key];
-      }
-      if (Object.keys(wireReasoning).length === 0) delete body.reasoning;
-    }
+    stripUnsupportedCodexReasoningFields(body);
     ensureCodexReasoningSummary(body);
     if (isCompactRequest) {
       delete body.include;
