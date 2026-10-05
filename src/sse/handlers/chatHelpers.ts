@@ -34,7 +34,6 @@ import {
   runWithAppliedProxyCapture,
   runWithTlsTracking,
   isTlsFingerprintActive,
-  type AppliedProxySink,
 } from "@agentproxy/open-sse/utils/proxyFetch.ts";
 import { resolveProxyForConnection } from "@/lib/db/settings";
 import { hasBlockingProxyAssignment } from "@/lib/db/proxies";
@@ -344,7 +343,7 @@ export async function resolveModelOrError(
 
 export async function checkPipelineGates(
   provider: string,
-  model: string,
+  _model: string,
   options: {
     ignoreCircuitBreaker?: boolean;
     ignoreModelCooldown?: boolean;
@@ -451,7 +450,6 @@ export async function executeChatWithBreaker({
   videoBridgeLog = undefined,
   forcedConnectionId = null,
 }: ExecuteChatWithBreakerOptions): Promise<ExecuteChatWithBreakerResult> {
-  let tlsFingerprintUsed = false;
   const normalizedTrafficType: TrafficType =
     typeof trafficType === "string" && trafficType.trim().toLowerCase() === "shadow"
       ? "shadow"
@@ -1085,6 +1083,7 @@ export async function safeLogEvents({
       rotationAccount: rotationAccount || null,
       correlationId: correlationId || null,
       tlsFingerprint: tlsFingerprintUsed,
+      upstreamStatus: proxyInfo?.upstreamStatus ?? null,
     });
   } catch {}
 
