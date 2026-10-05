@@ -32,15 +32,19 @@ describe("ProviderCard — Kimi (Moonshot AI) founding-friend accent", () => {
   let container: HTMLDivElement | null = null;
   let root: ReturnType<typeof createRoot> | null = null;
 
-  afterEach(() => {
-    if (root) { act(() => root?.unmount()); root = null; }
-    if (container) {
-      document.body.removeChild(container);
-      container = null;
+  function cleanupCard() {
+    if (root) {
+      act(() => root?.unmount());
+      root = null;
     }
-  });
+    container?.remove();
+    container = null;
+  }
+
+  afterEach(cleanupCard);
 
   function renderCard(providerId: string, name: string) {
+    cleanupCard();
     container = document.createElement("div");
     document.body.appendChild(container);
     root = createRoot(container);
