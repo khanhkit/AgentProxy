@@ -147,7 +147,7 @@ export async function GET(request: Request) {
 
     const capped = totalAvailable > limit;
     const count = Math.min(totalAvailable, limit);
-    const filename = `omniroute-${tableName}-${hours}h-${new Date().toISOString().slice(0, 10)}.json`;
+    const filename = `agentproxy-${tableName}-${hours}h-${new Date().toISOString().slice(0, 10)}.json`;
 
     const stream = buildLogExportStream({
       rows,

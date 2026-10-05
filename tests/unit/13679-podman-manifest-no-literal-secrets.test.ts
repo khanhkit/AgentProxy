@@ -4,7 +4,7 @@ import fs from "node:fs";
 import path from "node:path";
 
 const root = process.cwd();
-const manifestPath = path.join(root, "contrib", "podman", "omniroute.container");
+const manifestPath = path.join(root, "contrib", "podman", "agentproxy.container");
 const readmePath = path.join(root, "contrib", "podman", "README.md");
 
 test("Podman Quadlet does not ship literal management or signing secrets", () => {
