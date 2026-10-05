@@ -1238,8 +1238,7 @@ export async function getProviderCredentials(
           ? getModelLockoutInfo(resolvedId, SYNTHETIC_NOAUTH_CONNECTION_ID, requestedModel)
           : null;
         if (modelLockout && modelLockout.remainingMs > 0) {
-          // Not-found style locks stay a plain "no credentials"; any other lock is a
-          // temporary cooldown that the chat handler can wait out or answer with a 429.
+          // Non-not-found locks are temporary cooldowns that the chat handler can surface as 429.
           return isRetryableModelLockoutReason(modelLockout.reason)
             ? buildNoAuthModelCooldown(
                 resolvedId,
@@ -2660,7 +2659,6 @@ export async function markAccountUnavailable(
   try {
     await currentMutex;
 
-    // Request-scoped OpenCode free-tier refusal: do not write any account/model health state.
     if (isOpencodeFreeTierRefusalForProvider(provider, status, errorText)) {
       return { shouldFallback: true, cooldownMs: 0 };
     }

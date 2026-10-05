@@ -380,6 +380,7 @@ async function invokeChatCore({
   managedLease = null,
   cachedSettings = null,
   modelTargetFormat = undefined,
+  credentialTargetFormat = undefined,
 }: any = {}) {
   const calls: any[] = [];
 
@@ -415,13 +416,11 @@ async function invokeChatCore({
           : { provider, model, extendedContext: false },
       credentials: credentials || {
         apiKey: "sk-test",
-        // #13452/#13798: buildUrl() refuses an `*-compatible-*` node with no baseUrl
-        // rather than defaulting to the real OpenAI/Anthropic API, so the default
-        // fixture has to hydrate the connection the way a configured one is. Real
-        // providers keep the empty bag — their URL comes from the registry.
-        providerSpecificData: /-compatible-/.test(provider)
-          ? { baseUrl: "https://compatible.example/v1" }
-          : {},
+        // Compatible-node fixtures need the configured baseUrl instead of a real upstream default.
+        providerSpecificData: {
+          ...(/-compatible-/.test(provider) ? { baseUrl: "https://compatible.example/v1" } : {}),
+          ...(credentialTargetFormat ? { targetFormat: credentialTargetFormat } : {}),
+        },
       },
       log: noopLog(),
       clientRawRequest: {
@@ -794,10 +793,7 @@ test("chatCore carries Chat reasoning_content into official DeepSeek Responses i
     provider: "deepseek",
     model: "deepseek-v4-pro",
     endpoint: "/v1/chat/completions",
-    credentials: {
-      apiKey: "sk-test",
-      providerSpecificData: { targetFormat: "openai-responses" },
-    },
+    credentialTargetFormat: "openai-responses",
     body: {
       model: "deepseek-v4-pro",
       stream: false,
@@ -847,10 +843,7 @@ test("chatCore replays nonstream DeepSeek Responses reasoning across a Chat tool
     provider: "deepseek",
     model: "deepseek-v4-flash",
     endpoint: "/v1/chat/completions",
-    credentials: {
-      apiKey: "sk-test",
-      providerSpecificData: { targetFormat: "openai-responses" },
-    },
+    credentialTargetFormat: "openai-responses",
     body: {
       model: "deepseek-v4-flash",
       stream: false,
@@ -879,10 +872,7 @@ test("chatCore replays nonstream DeepSeek Responses reasoning across a Chat tool
     provider: "deepseek",
     model: "deepseek-v4-flash",
     endpoint: "/v1/chat/completions",
-    credentials: {
-      apiKey: "sk-test",
-      providerSpecificData: { targetFormat: "openai-responses" },
-    },
+    credentialTargetFormat: "openai-responses",
     body: {
       model: "deepseek-v4-flash",
       stream: false,
@@ -912,10 +902,7 @@ test("chatCore replays streamed DeepSeek Responses reasoning across a Chat tool 
     provider: "deepseek",
     model: "deepseek-v4-flash",
     endpoint: "/v1/chat/completions",
-    credentials: {
-      apiKey: "sk-test",
-      providerSpecificData: { targetFormat: "openai-responses" },
-    },
+    credentialTargetFormat: "openai-responses",
     body: {
       model: "deepseek-v4-flash",
       stream: true,
@@ -941,10 +928,7 @@ test("chatCore replays streamed DeepSeek Responses reasoning across a Chat tool 
     provider: "deepseek",
     model: "deepseek-v4-flash",
     endpoint: "/v1/chat/completions",
-    credentials: {
-      apiKey: "sk-test",
-      providerSpecificData: { targetFormat: "openai-responses" },
-    },
+    credentialTargetFormat: "openai-responses",
     body: {
       model: "deepseek-v4-flash",
       stream: false,
@@ -1401,102 +1385,63 @@ test("chatCore normalizes native Claude Code messages for native Claude OAuth pa
   // user msg[2] (was clientMessages[3]): tool_result preserved (preserveToolResultBlocks:true)
   assert.equal(call.body.messages[2].content[0].type, "tool_result");
 });
-test("chatCore preserves Opus 5 mid-conversation system cache breakpoints", async () => {
-  await settingsDb.updateSettings({ alwaysPreserveClientCache: "auto" });
-  invalidateCacheControlSettingsCache();
+for (const model of ["claude-opus-5", "claude-fable-5"]) {
+  test(`chatCore preserves ${model} mid-conversation system cache breakpoints`, async () => {
+    await settingsDb.updateSettings({ alwaysPreserveClientCache: "auto" });
+    invalidateCacheControlSettingsCache();
 
-  const { call, result } = await invokeChatCore({
-    provider: "claude",
-    model: "claude-opus-5",
-    endpoint: "/v1/messages",
-    credentials: { apiKey: "claude-key", providerSpecificData: {} },
-    body: {
-      model: "claude-opus-5",
-      max_tokens: 64,
-      system: [
-        {
-          type: "text",
-          text: "stable system prompt",
-          cache_control: { type: "ephemeral", ttl: "5m" },
-        },
-      ],
-      messages: [
-        { role: "user", content: [{ type: "text", text: "first turn" }] },
-        { role: "assistant", content: [{ type: "text", text: "first response" }] },
-        {
-          role: "system",
-          content: [
-            {
-              type: "text",
-              text: "compact continuation",
-              cache_control: { type: "ephemeral" },
-            },
-          ],
-        },
-        { role: "user", content: [{ type: "text", text: "latest turn" }] },
-      ],
-      tools: [{ name: "Bash", input_schema: { type: "object", properties: {} } }],
-    },
-    userAgent: "Claude-Code/2.1.220",
-    requestHeaders: { "x-app": "cli", "x-claude-code-session-id": "session-123" },
-    responseFormat: "claude",
-  });
+    const { call, result } = await invokeChatCore({
+      provider: "claude",
+      model,
+      endpoint: "/v1/messages",
+      credentials: { apiKey: "claude-key", providerSpecificData: {} },
+      body: {
+        model,
+        max_tokens: 64,
+        system: [
+          {
+            type: "text",
+            text: "stable system prompt",
+            cache_control: { type: "ephemeral", ttl: "5m" },
+          },
+        ],
+        messages: [
+          { role: "user", content: [{ type: "text", text: "first turn" }] },
+          { role: "assistant", content: [{ type: "text", text: "first response" }] },
+          {
+            role: "system",
+            content: [
+              { type: "text", text: "compact continuation", cache_control: { type: "ephemeral" } },
+            ],
+          },
+          { role: "user", content: [{ type: "text", text: "latest turn" }] },
+        ],
+        tools: [{ name: "Bash", input_schema: { type: "object", properties: {} } }],
+      },
+      userAgent: "Claude-Code/2.1.220",
+      requestHeaders: { "x-app": "cli", "x-claude-code-session-id": `session-${model}` },
+      responseFormat: "claude",
+    });
 
-  assert.equal(result.success, true);
-  assert.deepEqual(
-    call.body.messages.map((message: { role: string }) => message.role),
-    ["user", "assistant", "system", "user"]
-  );
-  assert.deepEqual(call.body.messages[2].content[0].cache_control, {
-    type: "ephemeral",
-    ttl: "5m",
+    assert.equal(result.success, true);
+    assert.deepEqual(
+      call.body.messages.map((message: { role: string }) => message.role),
+      ["user", "assistant", "system", "user"]
+    );
+    assert.equal(
+      call.body.system.some((block: { text?: string }) => block.text === "compact continuation"),
+      false
+    );
+    assert.deepEqual(call.body.messages[2].content[0].cache_control, {
+      type: "ephemeral",
+      ttl: "5m",
+    });
+    assert.deepEqual(call.body.messages[3].content[0].cache_control, {
+      type: "ephemeral",
+      ttl: "5m",
+    });
   });
-  assert.equal(
-    call.body.system.some((block: { text?: string }) => block.text === "compact continuation"),
-    false
-  );
-  assert.deepEqual(call.body.messages[3].content[0].cache_control, {
-    type: "ephemeral",
-    ttl: "5m",
-  });
-});
-test("chatCore preserves Fable 5 mid-conversation system cache breakpoints", async () => {
-  await settingsDb.updateSettings({ alwaysPreserveClientCache: "auto" });
-  invalidateCacheControlSettingsCache();
-
-  const { call, result } = await invokeChatCore({
-    provider: "claude",
-    model: "claude-fable-5",
-    endpoint: "/v1/messages",
-    credentials: { apiKey: "claude-key", providerSpecificData: {} },
-    body: {
-      model: "claude-fable-5",
-      max_tokens: 64,
-      system: [{ type: "text", text: "stable system prompt", cache_control: { type: "ephemeral", ttl: "5m" } }],
-      messages: [
-        { role: "user", content: [{ type: "text", text: "first turn" }] },
-        { role: "assistant", content: [{ type: "text", text: "first response" }] },
-        { role: "system", content: [{ type: "text", text: "compact continuation", cache_control: { type: "ephemeral" } }] },
-        { role: "user", content: [{ type: "text", text: "latest turn" }] },
-      ],
-      tools: [{ name: "Bash", input_schema: { type: "object", properties: {} } }],
-    },
-    userAgent: "Claude-Code/2.1.220",
-    requestHeaders: { "x-app": "cli", "x-claude-code-session-id": "session-fable" },
-    responseFormat: "claude",
-  });
-
-  assert.equal(result.success, true);
-  assert.deepEqual(
-    call.body.messages.map((message: { role: string }) => message.role),
-    ["user", "assistant", "system", "user"]
-  );
-  assert.equal(
-    call.body.system.some((item: { text?: string }) => item.text === "compact continuation"),
-    false
-  );
-  assert.deepEqual(call.body.messages[2].content[0].cache_control, { type: "ephemeral", ttl: "5m" });
-});
+}
 
 test("chatCore keeps Claude normalization for non-Claude-Code Claude passthrough", async () => {
   const { call, result } = await invokeChatCore({
@@ -1659,12 +1604,7 @@ function ccBridgeToolResultCall(modelTargetFormat?: string) {
 test("chatCore strips raw tool_result blocks for OpenAI-compatible CC bridge targets", async () => {
   const { call, result } = await ccBridgeToolResultCall("openai");
   assert.equal(result.success, true);
-  for (const message of call.body.messages) {
-    for (const block of message.content) {
-      assert.notEqual(block.type, "tool_result");
-      assert.notEqual(block.type, "tool_use");
-    }
-  }
+  assert.doesNotMatch(JSON.stringify(call.body.messages), /"type":"tool_(?:result|use)"/);
   const flattened = call.body.messages
     .flatMap((message: { content: Array<{ text?: string }> }) => message.content)
     .map((block: { text?: string }) => block.text)
