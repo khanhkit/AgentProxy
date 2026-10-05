@@ -26,6 +26,7 @@ import {
   addProxiesToScopePool,
   bumpProxyRegistryGeneration,
   deleteProxyById,
+  updateProxy,
   upsertProxy,
 } from "../db/proxies";
 import { bumpProxyConfigGeneration } from "../db/settings";
@@ -463,6 +464,18 @@ async function fetchSubscriptionContent(url: string): Promise<string> {
   });
 }
 
+/** Keep only rows this subscription owns; heal transient validation errors, not operator disables. */
+async function keepOwnedSyncedRow(
+  upserted: Awaited<ReturnType<typeof upsertProxy>>,
+  keptIds: string[]
+): Promise<void> {
+  if (upserted.action === "skipped" || !upserted.proxy?.id) return;
+  keptIds.push(upserted.proxy.id);
+  if (upserted.proxy.status === "error") {
+    await updateProxy(upserted.proxy.id, { status: "active" });
+  }
+}
+
 /**
  * Build the URL the reachability probe dials for a validated core entry.
  * The explicit row port keeps the probe and persisted registry target aligned.
@@ -577,18 +590,20 @@ async function syncSubscriptionUnsafe(id: string): Promise<SyncResult> {
   try {
     // Directly-usable nodes → upsert into the registry as a pool.
     for (const node of parsed.nodes) {
-      const upserted = await upsertProxy({
-        name: node.name || `${sub.name} (${node.host}:${node.port})`,
-        type: node.type,
-        host: node.host,
-        port: node.port,
-        username: node.username,
-        password: node.password,
-        source: "subscription",
-        subscriptionId: id,
-        status: "active",
-      });
-      if (upserted.proxy?.id) keptIds.push(upserted.proxy.id);
+      const upserted = await upsertProxy(
+        {
+          name: node.name || `${sub.name} (${node.host}:${node.port})`,
+          type: node.type,
+          host: node.host,
+          port: node.port,
+          username: node.username,
+          password: node.password,
+          source: "subscription",
+          subscriptionId: id,
+        },
+        { claimOwnership: false }
+      );
+      await keepOwnedSyncedRow(upserted, keptIds);
     }
 
     // needsCore nodes → bind each operator-supplied local core endpoint (one
@@ -685,21 +700,23 @@ async function syncSubscriptionUnsafe(id: string): Promise<SyncResult> {
         });
         for (const valid of validEntries) {
           try {
-            const upserted = await upsertProxy({
-              name:
-                validEntries.length > 1
-                  ? `${sub.name} (local core :${valid.port}/${valid.coreType})`
-                  : `${sub.name} (local core)`,
-              type: valid.coreType,
-              host: valid.coreUrl.hostname,
-              port: valid.port,
-              username: valid.username,
-              password: valid.password,
-              source: "subscription",
-              subscriptionId: id,
-              status: "active",
-            });
-            if (upserted.proxy?.id) keptIds.push(upserted.proxy.id);
+            const upserted = await upsertProxy(
+              {
+                name:
+                  validEntries.length > 1
+                    ? `${sub.name} (local core :${valid.port}/${valid.coreType})`
+                    : `${sub.name} (local core)`,
+                type: valid.coreType,
+                host: valid.coreUrl.hostname,
+                port: valid.port,
+                username: valid.username,
+                password: valid.password,
+                source: "subscription",
+                subscriptionId: id,
+              },
+              { claimOwnership: false }
+            );
+            await keepOwnedSyncedRow(upserted, keptIds);
           } catch {
             invalid.push(redactCoreEntryForDetail(valid.entry));
           }
