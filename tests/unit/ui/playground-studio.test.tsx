@@ -118,6 +118,10 @@ vi.mock("react-markdown", () => ({
 
 // ── Import under test ──────────────────────────────────────────────────────────
 
+await import("../../../src/shared/validation/partialWithoutDefaults");
+await import("../../../src/shared/schemas/playground");
+await import("../../../src/app/(dashboard)/dashboard/playground/hooks/useToolsBuilder");
+await import("../../../src/app/(dashboard)/dashboard/playground/components/tabs/BuildTab");
 const { PlaygroundStudio } = await import(
   "../../../src/app/(dashboard)/dashboard/playground/PlaygroundStudio"
 );

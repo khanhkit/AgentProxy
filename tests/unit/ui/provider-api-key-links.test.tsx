@@ -33,8 +33,10 @@ const BASE_PROPS = {
 
 describe("ProviderPageHeader — Get API key link", () => {
   let container: HTMLDivElement | null = null;
+  let root: ReturnType<typeof createRoot> | null = null;
 
   afterEach(() => {
+    if (root) { act(() => root?.unmount()); root = null; }
     if (container) {
       document.body.removeChild(container);
       container = null;
@@ -44,7 +46,7 @@ describe("ProviderPageHeader — Get API key link", () => {
   function renderHeader(overrides: Record<string, unknown> = {}) {
     container = document.createElement("div");
     document.body.appendChild(container);
-    const root = createRoot(container);
+    root = createRoot(container);
     act(() => {
       root.render(
         <ProviderPageHeader

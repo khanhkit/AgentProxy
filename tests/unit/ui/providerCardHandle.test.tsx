@@ -36,9 +36,11 @@ if (typeof Element.prototype.animate === "undefined") {
 
 describe("ProviderCardHandle imperative API", () => {
   let container: HTMLDivElement | null = null;
+  let root: ReturnType<typeof createRoot> | null = null;
   let handle: ProviderCardHandle | null = null;
 
   afterEach(() => {
+    if (root) { act(() => root?.unmount()); root = null; }
     handle = null;
     if (container) {
       document.body.removeChild(container);
@@ -52,7 +54,7 @@ describe("ProviderCardHandle imperative API", () => {
   function renderAndCapture() {
     container = document.createElement("div");
     document.body.appendChild(container);
-    const root = createRoot(container);
+    root = createRoot(container);
     act(() => {
       root.render(
         <ProviderCard
@@ -114,7 +116,7 @@ describe("ProviderCardHandle imperative API", () => {
   it("getProviderId returns the correct id for a different provider", () => {
     container = document.createElement("div");
     document.body.appendChild(container);
-    const root = createRoot(container);
+    root = createRoot(container);
     let h: ProviderCardHandle | null = null;
     act(() => {
       root.render(
