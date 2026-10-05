@@ -79,18 +79,13 @@ test("#11335 the shell is only enabled where argv is literal (Hard Rule #13)", (
   }
 });
 
-test("CLI updater preserves the supported peer-dependency install mode", () => {
+test("CLI updater preserves AgentProxy immutable-version install semantics", () => {
   const src = fs.readFileSync(
     new URL("../../bin/cli/commands/update.mjs", import.meta.url),
     "utf8"
   );
 
-  assert.match(
-    src,
-    /\[DRY RUN\] Would run: npm install -g omniroute@latest --include=optional --legacy-peer-deps/
-  );
-  assert.match(
-    src,
-    /execSync\("npm install -g omniroute@latest --include=optional --legacy-peer-deps"/
-  );
+  assert.match(src, /npm install -g agentproxy@\$\{latest\} --include=optional/);
+  assert.match(src, /Missing or invalid npm integrity metadata for agentproxy@\$\{latest\}/);
+  assert.doesNotMatch(src, /omniroute@latest/);
 });
