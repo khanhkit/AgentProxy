@@ -279,18 +279,15 @@ export async function executeWithUpstreamStartTimeout<T>({
   abortPromise.catch(() => {});
   timeoutPromise.catch(() => {});
 
-  let settled = false;
   try {
-    const result = await Promise.race([
+    return await Promise.race([
       execute(combinedController.signal),
       timeoutPromise,
       abortPromise,
     ]);
-    settled = true;
-    return result;
   } finally {
     if (timeoutId) clearTimeout(timeoutId);
-    if (abortListener && !settled) signal.removeEventListener("abort", abortListener);
+    if (abortListener) signal.removeEventListener("abort", abortListener);
     if (abortPromiseListener) signal.removeEventListener("abort", abortPromiseListener);
     if (timeoutAbortListener) {
       timeoutController.signal.removeEventListener("abort", timeoutAbortListener);

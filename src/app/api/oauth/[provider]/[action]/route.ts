@@ -112,8 +112,8 @@ function resolvePublicBaseUrl(request: Request): string {
 // /api/oauth/ is pipeline-public, but these actions start logins and create or
 // overwrite provider connections. Require the same management authority as the
 // neighboring connection-management routes.
-async function requireOAuthRouteAuth(request: Request) {
-  return requireManagementAuth(request, { invalidApiKeyStatus: 401 });
+async function requireOAuthRouteAuth(request: Request, alwaysRequireAuth = false) {
+  return requireManagementAuth(request, { invalidApiKeyStatus: 401, alwaysRequireAuth });
 }
 
 /**
@@ -158,7 +158,7 @@ export async function GET(
   }
 
   const authParams = await params;
-  const authResponse = await requireOAuthRouteAuth(request);
+  const authResponse = await requireOAuthRouteAuth(request, authParams.provider === "ghe-copilot");
   if (authResponse) return authResponse;
 
   try {
@@ -419,7 +419,7 @@ export async function POST(
   }
 
   const authParams = await params;
-  const authResponse = await requireOAuthRouteAuth(request);
+  const authResponse = await requireOAuthRouteAuth(request, authParams.provider === "ghe-copilot");
   if (authResponse) return authResponse;
 
   try {
