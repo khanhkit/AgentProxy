@@ -179,16 +179,12 @@ test("base.fetchRouter — gateway router credential wins over client secrets", 
   }) as typeof fetch;
 
   try {
-    await h.publicFetchRouter(
-      { model: "test" },
-      "/v1/chat/completions",
-      {
-        Authorization: "Bearer client-owned-secret",
-        cookie: "session=client-cookie-secret",
-        "x-api-key": "client-api-secret",
-        "x-request-id": "req-42",
-      },
-    );
+    await h.publicFetchRouter({ model: "test" }, "/v1/chat/completions", {
+      Authorization: "Bearer client-owned-secret",
+      cookie: "session=client-cookie-secret",
+      "x-api-key": "client-api-secret",
+      "x-request-id": "req-42",
+    });
   } finally {
     globalThis.fetch = originalFetch;
     if (originalApiKey === undefined) delete process.env.ROUTER_API_KEY;
@@ -205,19 +201,13 @@ test("base.fetchRouter — gateway router credential wins over client secrets", 
   assert.equal(Array.from(sentHeaders.values()).join("\n").includes("client-api-secret"), false);
 });
 
-test("base.fetchRouter — derives router URL from configured PORT", async () => {
+test("base.fetchRouter — uses the AgentProxy router default when no base URL is configured", async () => {
   const h = new TestHandler();
   const originalFetch = globalThis.fetch;
-  const originalPort = process.env.PORT;
-  const originalApiPort = process.env.API_PORT;
-  const originalBaseUrl = process.env.OMNIROUTE_BASE_URL;
-  const originalGenericBaseUrl = process.env.BASE_URL;
+  const originalBaseUrl = process.env.AGENTPROXY_BASE_URL;
   let capturedUrl = "";
 
-  process.env.PORT = "37128";
-  delete process.env.API_PORT;
-  delete process.env.OMNIROUTE_BASE_URL;
-  delete process.env.BASE_URL;
+  delete process.env.AGENTPROXY_BASE_URL;
   globalThis.fetch = (async (input: RequestInfo | URL) => {
     capturedUrl = String(input);
     return new Response("{}", { status: 200 });
@@ -227,15 +217,9 @@ test("base.fetchRouter — derives router URL from configured PORT", async () =>
     await h.publicFetchRouter({}, "/v1/chat/completions", {});
   } finally {
     globalThis.fetch = originalFetch;
-    if (originalPort === undefined) delete process.env.PORT;
-    else process.env.PORT = originalPort;
-    if (originalApiPort === undefined) delete process.env.API_PORT;
-    else process.env.API_PORT = originalApiPort;
-    if (originalBaseUrl === undefined) delete process.env.OMNIROUTE_BASE_URL;
-    else process.env.OMNIROUTE_BASE_URL = originalBaseUrl;
-    if (originalGenericBaseUrl === undefined) delete process.env.BASE_URL;
-    else process.env.BASE_URL = originalGenericBaseUrl;
+    if (originalBaseUrl === undefined) delete process.env.AGENTPROXY_BASE_URL;
+    else process.env.AGENTPROXY_BASE_URL = originalBaseUrl;
   }
 
-  assert.equal(capturedUrl, "http://localhost:37128/v1/chat/completions");
+  assert.equal(capturedUrl, "http://127.0.0.1:20128/v1/chat/completions");
 });

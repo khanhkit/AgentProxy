@@ -45,7 +45,7 @@ test("cliRuntime enumerates qodercli.cmd under %APPDATA%\\npm on Windows", () =>
   process.env.APPDATA = appData;
 
   const candidates = cliRuntime.getKnownToolPaths("qoder");
-  const expected = path.join(appData, "npm", "qodercli.cmd");
+  const expected = path.win32.join(appData, "npm", "qodercli.cmd");
 
   assert.ok(
     candidates.includes(expected),

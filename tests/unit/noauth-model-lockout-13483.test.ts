@@ -26,7 +26,11 @@ test("noauth provider honors model-only lockout on synthetic connection", async 
 
   recordModelLockoutFailure(provider, "noauth", model, "model_capacity", 400, 1_800_000);
 
-  assert.equal(await auth.getProviderCredentials(provider, null, null, model), null);
+  const credentials = await auth.getProviderCredentials(provider, null, null, model);
+  assert.ok(credentials && "allRateLimited" in credentials && credentials.allRateLimited);
+  assert.equal(credentials.cooldownScope, "model");
+  assert.equal(credentials.cooldownModel, model);
+  assert.equal(credentials.lastErrorCode, 429);
 });
 
 test("noauth provider still returns credentials for a different unlocked model", async () => {
