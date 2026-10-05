@@ -17,6 +17,8 @@
  * `open-sse/translator/request/gemini-to-openai.ts`.
  */
 
+import { createGeminiToolCallIdPairing } from "../../../../../../open-sse/translator/helpers/geminiToolCallIds.ts";
+
 interface GeminiFunctionCall {
   name?: string;
   args?: Record<string, unknown>;
@@ -104,7 +106,10 @@ function newToolCallId(): string {
  * In a non-model content, `inlineData` parts become `image_url` data URLs, as in
  * the Gemini translator. Returns `null` when the content has nothing to contribute.
  */
-function convertContent(content: GeminiContent): InternalMessage | null {
+function convertContent(
+  content: GeminiContent,
+  toolCallIds: ReturnType<typeof createGeminiToolCallIdPairing>
+): InternalMessage | null {
   const parts = content.parts;
   if (!parts || !Array.isArray(parts)) return null;
 
@@ -116,7 +121,7 @@ function convertContent(content: GeminiContent): InternalMessage | null {
         fr.response && "result" in fr.response ? fr.response.result : (fr.response ?? {});
       return {
         role: "tool",
-        tool_call_id: fr.id || fr.name || "",
+        tool_call_id: toolCallIds.responseId(fr),
         content: JSON.stringify(payload ?? {}),
       };
     }
@@ -144,7 +149,7 @@ function convertContent(content: GeminiContent): InternalMessage | null {
     }
     if (part.functionCall) {
       toolCalls.push({
-        id: part.functionCall.id || newToolCallId(),
+        id: toolCallIds.callId(part.functionCall),
         type: "function",
         function: {
           name: part.functionCall.name || "",
@@ -218,9 +223,11 @@ export function convertGeminiToInternal(
 
   // Convert contents to messages (text + tool calls + tool responses)
   if (geminiBody.contents) {
+    const toolCallIds = createGeminiToolCallIdPairing(newToolCallId);
     for (const original of geminiBody.contents) {
       for (const { content, coLocated } of splitFunctionResponses(original)) {
-        const converted = convertContent(content);
+        toolCallIds.beginContent(content);
+        const converted = convertContent(content, toolCallIds);
         // Parts next to the responses that yield nothing (an empty text part) add no message.
         if (converted && (!coLocated || converted.content || converted.tool_calls)) {
           messages.push(converted);

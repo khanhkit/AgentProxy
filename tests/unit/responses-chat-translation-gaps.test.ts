@@ -125,7 +125,6 @@ test("Responses -> Chat rejects input item types without a lossless Chat equival
     { type: "item_reference", id: "item_123" },
     { type: "computer_call_output", call_id: "call_1", output: {} },
     { type: "mcp_call", name: "remote", arguments: "{}" },
-    { type: "web_search_call", id: "search_1" },
     { unexpected: true },
   ]) {
     assert.throws(
@@ -136,6 +135,13 @@ test("Responses -> Chat rejects input item types without a lossless Chat equival
         error.message.includes("input item type")
     );
   }
+});
+
+test("Responses -> Chat skips web_search_call metadata items", () => {
+  assert.deepEqual(
+    translate({ input: [{ type: "web_search_call", id: "search_1" }] }).messages,
+    []
+  );
 });
 
 test("Responses -> Chat converts plaintext agent_message items to assistant history", () => {
