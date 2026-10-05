@@ -285,7 +285,7 @@ export async function executeWithUpstreamStartTimeout<T>({
     ]);
     retainClientAbortLink =
       isResponseLike(result) ||
-      (Boolean(result) &&
+      (result !== null &&
         typeof result === "object" &&
         "response" in result &&
         isResponseLike((result as { response?: unknown }).response));
