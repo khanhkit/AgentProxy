@@ -2157,10 +2157,11 @@ export async function getProviderCredentials(
           _leaseCandidateIds: candidateIds,
         });
       if (options.deferLeaseClaim) {
-        return materializeConnection(connection, options, {
+        const materialized = await materializeConnection(connection, options, {
           commitSelectionSideEffects,
           selectNextLeaseCandidate,
         });
+        return materialized;
       }
       let claim = mutateExclusiveConnectionLease(
         connection,
@@ -2198,11 +2199,12 @@ export async function getProviderCredentials(
       );
     }
 
-    return materializeConnection(connection, options, {
+    const materialized = await materializeConnection(connection, options, {
       exclusiveLease,
       routingLease: reserved.lease,
       requestedModel,
     });
+    return materialized;
   } finally {
     selectionLock?.release();
   }
