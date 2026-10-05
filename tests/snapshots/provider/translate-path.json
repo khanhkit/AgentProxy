@@ -111,6 +111,29 @@
       "stream": "https://apihub.agnes-ai.com/v1/chat/completions"
     }
   },
+  "agnes-cn": {
+    "format": "openai",
+    "headers": {
+      "apiKey": {
+        "Accept": "text/event-stream",
+        "Authorization": "Bearer <TOK>",
+        "Content-Type": "application/json"
+      },
+      "nonStream": {
+        "Authorization": "Bearer <TOK>",
+        "Content-Type": "application/json"
+      },
+      "oauth": {
+        "Accept": "text/event-stream",
+        "Authorization": "Bearer <TOK>",
+        "Content-Type": "application/json"
+      }
+    },
+    "url": {
+      "nonStream": "https://api.agnes-ai.cn/v1/chat/completions",
+      "stream": "https://api.agnes-ai.cn/v1/chat/completions"
+    }
+  },
   "agy": {
     "format": "antigravity",
     "headers": {
@@ -1656,7 +1679,7 @@
     }
   },
   "deepseek": {
-    "format": "openai-responses",
+    "format": "openai",
     "headers": {
       "apiKey": {
         "Accept": "text/event-stream",
@@ -1674,8 +1697,8 @@
       }
     },
     "url": {
-      "nonStream": "https://api.deepseek.com/responses",
-      "stream": "https://api.deepseek.com/responses"
+      "nonStream": "https://api.deepseek.com/chat/completions",
+      "stream": "https://api.deepseek.com/chat/completions"
     }
   },
   "deepseek-web": {
@@ -2412,29 +2435,6 @@
     "url": {
       "nonStream": "https://generativelanguage.googleapis.com/v1beta/models/test-model:generateContent",
       "stream": "https://generativelanguage.googleapis.com/v1beta/models/test-model:streamGenerateContent?alt=sse"
-    }
-  },
-  "gemini-business": {
-    "format": "openai",
-    "headers": {
-      "apiKey": {
-        "Accept": "text/event-stream",
-        "Authorization": "Bearer <TOK>",
-        "Content-Type": "application/json"
-      },
-      "nonStream": {
-        "Authorization": "Bearer <TOK>",
-        "Content-Type": "application/json"
-      },
-      "oauth": {
-        "Accept": "text/event-stream",
-        "Authorization": "Bearer <TOK>",
-        "Content-Type": "application/json"
-      }
-    },
-    "url": {
-      "nonStream": "https://business.gemini.google/home",
-      "stream": "https://business.gemini.google/home"
     }
   },
   "gemini-web": {
@@ -4057,19 +4057,25 @@
       "apiKey": {
         "Accept": "text/event-stream",
         "Authorization": "Bearer <TOK>",
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
+        "User-Agent": "muse-build/1.3.0 (interactive; macos-aarch64; build ac7280f2aca67769d1455a8847bb502b617d50f6)"
       },
       "nonStream": {
         "Authorization": "Bearer <TOK>",
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
+        "User-Agent": "muse-build/1.3.0 (interactive; macos-aarch64; build ac7280f2aca67769d1455a8847bb502b617d50f6)"
       },
       "oauth": {
         "Accept": "text/event-stream",
         "Authorization": "Bearer <TOK>",
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
+        "User-Agent": "muse-build/1.3.0 (interactive; macos-aarch64; build ac7280f2aca67769d1455a8847bb502b617d50f6)"
       }
     },
-    "url": {}
+    "url": {
+      "nonStream": "https://api.meta.ai/v1/responses",
+      "stream": "https://api.meta.ai/v1/responses"
+    }
   },
   "muse-spark-web": {
     "format": "openai",
@@ -5518,29 +5524,6 @@
       "stream": "https://ai.sumopod.com/v1/chat/completions"
     }
   },
-  "suno": {
-    "format": "openai",
-    "headers": {
-      "apiKey": {
-        "Accept": "text/event-stream",
-        "Authorization": "Bearer <TOK>",
-        "Content-Type": "application/json"
-      },
-      "nonStream": {
-        "Authorization": "Bearer <TOK>",
-        "Content-Type": "application/json"
-      },
-      "oauth": {
-        "Accept": "text/event-stream",
-        "Authorization": "Bearer <TOK>",
-        "Content-Type": "application/json"
-      }
-    },
-    "url": {
-      "nonStream": "https://studio-api.suno.ai/api/generate/v2/",
-      "stream": "https://studio-api.suno.ai/api/generate/v2/"
-    }
-  },
   "synthetic": {
     "format": "openai",
     "headers": {
@@ -6373,6 +6356,29 @@
     "url": {
       "nonStream": "https://token-plan-sgp.xiaomimimo.com/v1",
       "stream": "https://token-plan-sgp.xiaomimimo.com/v1"
+    }
+  },
+  "xkiro": {
+    "format": "openai",
+    "headers": {
+      "apiKey": {
+        "Accept": "text/event-stream",
+        "Authorization": "Bearer <TOK>",
+        "Content-Type": "application/json"
+      },
+      "nonStream": {
+        "Authorization": "Bearer <TOK>",
+        "Content-Type": "application/json"
+      },
+      "oauth": {
+        "Accept": "text/event-stream",
+        "Authorization": "Bearer <TOK>",
+        "Content-Type": "application/json"
+      }
+    },
+    "url": {
+      "nonStream": "https://api.xkiro.com/v1/chat/completions",
+      "stream": "https://api.xkiro.com/v1/chat/completions"
     }
   },
   "yi": {

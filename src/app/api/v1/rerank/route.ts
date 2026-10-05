@@ -10,7 +10,7 @@ import { HTTP_STATUS } from "@agentproxy/open-sse/config/constants.ts";
 import { enforceApiKeyPolicy } from "@/shared/utils/apiKeyPolicy";
 import { v1RerankSchema } from "@/shared/validation/schemas";
 import { isValidationFailure, validateBody } from "@/shared/validation/helpers";
-import { getCachedProviderNodes } from "@/lib/db/readCache";
+import { loadRerankProviderNodes } from "@/app/api/v1/_shared/rerankProviderNodes";
 import {
   buildLocalRerankRequestBody,
   normalizeLocalRerankResponse,
@@ -39,24 +39,6 @@ export async function OPTIONS() {
 }
 
 /**
- * Build dynamic rerank provider from a local provider_node.
- * Local OpenAI-compatible backends (oMLX, vLLM, etc.) expose /v1/rerank
- * under the same base URL as chat.
- */
-function buildDynamicRerankProvider(node: any) {
-  // Strip trailing /v1 if present — we'll add /rerank
-  let base = node.baseUrl || "";
-  if (base.endsWith("/v1")) base = base.slice(0, -3);
-  return {
-    id: node.prefix,
-    baseUrl: `${base}/v1/rerank`,
-    authType: "apikey",
-    authHeader: "bearer",
-    providerId: node.id, // full provider connection ID for credential lookup
-  };
-}
-
-/**
  * POST /v1/rerank - Cohere-compatible rerank endpoint
  *
  * Supports cloud providers (Cohere, Together, NVIDIA, Fireworks)
@@ -80,35 +62,7 @@ async function postHandler(request, _context) {
   const policy = await enforceApiKeyPolicy(request, body.model);
   if (policy.rejection) return policy.rejection;
 
-  // Load local provider_nodes for rerank routing (localhost only)
-  let localProviders: ReturnType<typeof buildDynamicRerankProvider>[] = [];
-  try {
-    const nodes = await getCachedProviderNodes();
-    localProviders = (Array.isArray(nodes) ? nodes : [])
-      .filter((n: any) => {
-        try {
-          const hostname = new URL(n.baseUrl).hostname;
-          // Strictly matching 172.16.0.0/12 (Docker/local) and explicitly blocking ::1 per SSRF hardening
-          return (
-            hostname === "localhost" ||
-            hostname === "127.0.0.1" ||
-            /^172\.(1[6-9]|2[0-9]|3[0-1])\.\d{1,3}\.\d{1,3}$/.test(hostname)
-          );
-        } catch {
-          return false;
-        }
-      })
-      .map((n) => {
-        try {
-          return buildDynamicRerankProvider(n);
-        } catch {
-          return null;
-        }
-      })
-      .filter((p): p is NonNullable<typeof p> => p !== null);
-  } catch {
-    // Non-critical — continue with cloud providers only
-  }
+  const localProviders = await loadRerankProviderNodes();
 
   // Try cloud registry first
   const { provider, model: modelId } = parseRerankModel(body.model);
