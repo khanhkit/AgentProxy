@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import {
+  OPENCODE_SESSION_PATTERN,
   clientSuppliedOpencodeSession,
   forwardOpencodeClientHeaders,
 } from "../../open-sse/utils/opencodeHeaders.ts";
@@ -34,15 +35,18 @@ test("explicit OpenCode session wins over native aliases", () => {
   );
 });
 
-test("executor carries Claude metadata identity to upstream headers", () => {
+test("executor carries Claude metadata identity through canonical upstream sessions", () => {
   const executor = new OpencodeExecutor("opencode-go");
-  const build = (id: string) =>
-    executor.buildHeaders(null, true, null, body.model, {}, {
-      ...body,
-      metadata: { user_id: JSON.stringify({ session_id: id }) },
-    });
-  assert.equal(build("conversation-a")["x-opencode-session"], "conversation-a");
-  assert.equal(build("conversation-b")["x-opencode-session"], "conversation-b");
+  const build = (id: string) => executor.buildHeaders(null, true, null, body.model, {}, {
+    ...body,
+    metadata: { user_id: JSON.stringify({ session_id: id }) },
+  })["x-opencode-session"];
+  const a = build("conversation-a");
+  const b = build("conversation-b");
+  assert.match(a, OPENCODE_SESSION_PATTERN);
+  assert.match(b, OPENCODE_SESSION_PATTERN);
+  assert.notEqual(a, b);
+  assert.equal(build("conversation-a"), a);
 });
 
 test("Responses input participates in fallback fingerprinting", () => {
