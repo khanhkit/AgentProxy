@@ -1072,7 +1072,7 @@ test("chat pipeline converts Claude SSE streams into OpenAI SSE output", async (
 
   const raw = await response.text();
   assert.equal(response.status, 200);
-  assert.equal(response.headers.get("Content-Type"), "text/event-stream");
+  assert.equal(response.headers.get("Content-Type"), "text/event-stream; charset=utf-8");
   assert.match(raw, /chat\.completion\.chunk/);
   assert.match(raw, /Streamed Claude chunk/);
   assert.match(raw, /\[DONE\]/);
@@ -1165,7 +1165,7 @@ test("chat pipeline treats Accept text/event-stream as streaming mode and return
 
   const raw = await response.text();
   assert.equal(response.status, 200);
-  assert.equal(response.headers.get("Content-Type"), "text/event-stream");
+  assert.equal(response.headers.get("Content-Type"), "text/event-stream; charset=utf-8");
   assert.ok(response.headers.get("X-AgentProxy-Session-Id"));
   assert.match(raw, /Accept header stream/);
   assert.match(raw, /\[DONE\]/);
