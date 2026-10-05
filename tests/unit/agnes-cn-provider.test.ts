@@ -82,7 +82,10 @@ test("agnes-cn is LLM-only and has dashboard metadata", () => {
 test("every current locale carries an agnes-cn onboarding description", () => {
   const dir = path.join(REPO_ROOT, "src/i18n/messages");
   const files = fs.readdirSync(dir).filter((file) => file.endsWith(".json"));
-  assert.equal(files.length, 51);
+  const configuredLocales = JSON.parse(
+    fs.readFileSync(path.join(REPO_ROOT, "config/i18n.json"), "utf8")
+  ).locales.length;
+  assert.equal(files.length, configuredLocales);
   for (const file of files) {
     const messages = JSON.parse(fs.readFileSync(path.join(dir, file), "utf8"));
     const description = messages?.providers?.onboardingProviderDescriptions?.["agnes-cn"];

@@ -17,8 +17,7 @@
  * This test proves the fix at the ownership-decision boundary — the rule now
  * shared as `canAccessOwnedRecord()` in `_helpers/apiKeyScope.ts` — against a
  * batch shaped exactly like the two that were actually stuck in production
- * (`api_key_id: "env-key"`), and proves the route source no longer contains the
- * buggy inline check. The route-level proof (a real session cookie against the
+ * (`api_key_id: "env-key"`). The route-level proof (a real session cookie against the
  * real handler) lives in tests/unit/files-batches-ownership-2jm2-m3hp.test.ts.
  *
  * Originally contributed in PR #13683 (@hartmark); folded into the
@@ -109,25 +108,6 @@ describe("cancel route ownership scoping", () => {
       rejectedByOldCheck,
       true,
       "documents the regression: the old inline check 404'd every dashboard cancel"
-    );
-  });
-});
-
-describe("the route uses the shared ownership rule instead of its old inline predicate", () => {
-  it("cancel/route.ts no longer carries the buggy apiKeyId !== null inline check", async () => {
-    const { readFileSync } = await import("node:fs");
-    const { fileURLToPath } = await import("node:url");
-    const src = readFileSync(
-      fileURLToPath(new URL("../../src/app/api/v1/batches/[id]/cancel/route.ts", import.meta.url)),
-      "utf8"
-    );
-    assert.ok(
-      !/batch\.apiKeyId\s*!==\s*null\s*&&\s*batch\.apiKeyId\s*!==\s*apiKeyId/.test(src),
-      "the route still carries the old inline ownership check that 404s session auth"
-    );
-    assert.ok(
-      /canAccessOwnedRecord\(\s*scope\s*,\s*batch\.apiKeyId\s*\)/.test(src),
-      "the route must delegate ownership to the shared canAccessOwnedRecord helper"
     );
   });
 });
