@@ -3795,7 +3795,8 @@
     "triStateInherit": "inherit",
     "connectionAwareExpansionOn": "On",
     "connectionAwareExpansionOff": "Off",
-    "promptCacheAffinityHint": "Prompt-cache locality routing takes precedence over round-robin/weighted rotation across pinned accounts. Turn it off under Settings, Combo defaults, if you need strict rotation."
+    "promptCacheAffinityHint": "Prompt-cache locality routing takes precedence over round-robin/weighted rotation across pinned accounts. Turn it off under Settings, Combo defaults, if you need strict rotation.",
+    "stickyLimitInherit": "ఇన్‌హెరిట్"
   },
   "costs": {
     "title": "ఖర్చులు",
@@ -4972,7 +4973,7 @@
     "compressionLogTitle": "కంప్రెషన్ లాగ్",
     "compressionLogEmpty": "ఇంకా కంప్రెస్డ్ అభ్యర్థనలు లేవు. కంప్రెషన్ ప్రారంభించబడి అభ్యర్థనలు ప్రాసెస్ చేయబడినప్పుడు కంప్రెషన్ గణాంకాలు ఇక్కడ కనిపిస్తాయి.",
     "tokens": "టోకెన్లు",
-    "exportTruncated": "__MISSING__:Export truncated: only {exported} of {total} log entries were included. Pick a shorter time range to export the rest."
+    "exportTruncated": "ఎగుమతి కుదించబడింది: {total} లాగ్ నమోదుల్లో {exported} మాత్రమే చేర్చబడ్డాయి. మిగతావి ఎగుమతి చేయడానికి తక్కువ సమయ పరిధిని ఎంచుకోండి."
   },
   "onboarding": {
     "welcome": "స్వాగతం",
@@ -6328,7 +6329,8 @@
       "kiro": "ఉచిత శ్రేణి: 50 క్రెడిట్‌లు/నెల (~25K–100K టోకెన్‌లు). ⚠️ Kiro ToS థర్డ్-పార్టీ ప్రాక్సీ/హార్నెస్ వినియోగాన్ని నిషేధిస్తుంది.",
       "codex": "ప్రస్తుత OAuth flowతో OpenAI Codexని కనెక్ట్ చేయండి.",
       "qwen": "ప్రస్తుత OAuth flowతో Qwen Codeని కనెక్ట్ చేయండి.",
-      "github-models": "github.com/settings/tokens వద్ద 'models: read' స్కోప్‌తో GitHub PATని సృష్టించండి"
+      "github-models": "github.com/settings/tokens వద్ద 'models: read' స్కోప్‌తో GitHub PATని సృష్టించండి",
+      "agnes-cn": "api.agnes-ai.cn కోసం జారీ చేసిన API keyతో Agnes AI (China)ను కనెక్ట్ చేయండి. apihub.agnes-ai.com నుండి పొందిన keys పని చేయవు."
     },
     "passthroughModelsDescription": "{provider} ప్రొవైడర్-స్థానిక మోడల్ IDలను అంగీకరిస్తుంది. /మోడల్స్ నుండి దిగుమతి చేయండి లేదా రూటింగ్ కోసం అనుకూల IDలను జోడించండి.",
     "bedrockModelsDescription": "అమెజాన్ బెడ్‌రాక్ మోడల్‌లు AWS ప్రాంతం ద్వారా స్కోప్ చేయబడ్డాయి. /మోడల్స్ నుండి దిగుమతి చేయండి లేదా ఎంచుకున్న ప్రాంతంలో ప్రారంభించబడిన బెడ్‌రాక్ మోడల్ IDలను జోడించండి.",
@@ -6489,7 +6491,9 @@
     "failedClearConnectionCooldown": "కూల్డౌన్ను తొలగించడం విఫలమైంది",
     "importFromFileDownloadTemplate": "CSV టెంప్లేట్ను డౌన్లోడ్ చేయండి",
     "importFromFileMoreErrors": "+{count} మరిన్ని",
-    "importFromFileSchemaHint": "CSV కాలమ్లు స్థాన క్రమంలో ఉంటాయి: provider, name, apiKey, baseUrl (ఐచ్ఛికం), priority (ఐచ్ఛికం). provider కాలమ్లో ఇప్పటికే ఉన్న నిర్వహిత ప్రొవైడర్ id లేదా ఇప్పటికే నమోదైన OpenAI/Anthropic-అనుకూల నోడ్ id ఉండాలి — ఈ దిగుమతి కొత్త ఎండ్పాయింట్ నోడ్లను సృష్టించదు."
+    "importFromFileSchemaHint": "CSV కాలమ్లు స్థాన క్రమంలో ఉంటాయి: provider, name, apiKey, baseUrl (ఐచ్ఛికం), priority (ఐచ్ఛికం). provider కాలమ్లో ఇప్పటికే ఉన్న నిర్వహిత ప్రొవైడర్ id లేదా ఇప్పటికే నమోదైన OpenAI/Anthropic-అనుకూల నోడ్ id ఉండాలి — ఈ దిగుమతి కొత్త ఎండ్పాయింట్ నోడ్లను సృష్టించదు.",
+    "vertexCredentialHint": "API keys ఎంపిక చేసిన ప్రాజెక్ట్ కేటలాగ్ను ఉపయోగిస్తాయి. Service Account JSON ప్రత్యక్ష Model Garden డిస్కవరీని ప్రారంభిస్తుంది.",
+    "vertexCredentialLabel": "API Key లేదా Service Account JSON"
   },
   "settings": {
     "title": "సెట్టింగ్లు",
@@ -8597,6 +8601,10 @@
       "compressToolResults": {
         "label": "సక్రియంగా పొడవైన సాధన ఫలితాలను కత్తిరించండి",
         "description": "Lite కంప్రెషన్ సమయంలో 2,000 అక్షరాల కంటే ఎక్కువ టూల్ ఫలితాలను కత్తిరిస్తుంది. సందర్భం మోడల్ బడ్జెట్‌ను మించితే అత్యవసర ఓవర్‌ఫ్లో రక్షణ ఇంకా కంటెంట్‌ను కత్తిరించవచ్చు."
+      },
+      "maxToolLength": {
+        "description": "Character cap for proactive tool-result truncation. Default 2000. Override with AGENTPROXY_LITE_MAX_TOOL_LENGTH when this field is unset.",
+        "label": "Maximum tool-result length"
       }
     },
     "engineFields": {
@@ -9712,7 +9720,14 @@
     "kiloPassPaid": "చెల్లించినది",
     "kiloPassRemaining": "మిగిలినది",
     "kiloPassRenews": "{count} రోజుల్లో పునరుద్ధరించబడుతుంది",
-    "kiloPassUsageLabel": "ఈ నెల వినియోగం"
+    "kiloPassUsageLabel": "ఈ నెల వినియోగం",
+    "glmConfirmRedeemFiveHourResetCredit": "రిడీమ్ చేయడం ద్వారా 5-గంటల వినియోగ విండో వెంటనే రీసెట్ అవుతుంది మరియు ఈ కార్డు శాశ్వతంగా వినియోగించబడుతుంది.",
+    "glmConfirmRedeemResetCredit": "రిడీమ్ చేయడం ద్వారా ఎంచుకున్న వినియోగ విండో వెంటనే రీసెట్ అవుతుంది మరియు ఈ కార్డు శాశ్వతంగా వినియోగించబడుతుంది.",
+    "glmConfirmRedeemWeekResetCredit": "రిడీమ్ చేయడం ద్వారా వారపు వినియోగ విండో వెంటనే రీసెట్ అవుతుంది మరియు ఈ కార్డు శాశ్వతంగా వినియోగించబడుతుంది.",
+    "glmResetCreditFiveHourTitle": "5-గంటల విండో రీసెట్",
+    "glmResetCreditsModalExplainer": "రీసెట్ కార్డులు గడువు ముగిసే సమయం ఆధారంగా క్రమబద్ధీకరించబడ్డాయి. మీరు రీసెట్ చేయాలనుకునే 5-గంటల లేదా వారపు విండోను ఎంచుకోండి.",
+    "glmResetCreditsModalTitle": "GLM Coding Plan రీసెట్ కార్డులు",
+    "glmResetCreditWeekTitle": "వారపు విండో రీసెట్"
   },
   "modals": {
     "waitingAuth": "అనుమతి కోసం వేచి ఉంది",
@@ -12703,7 +12718,12 @@
     "createDahlTokenFailed": "Dahl టోకెన్ సృష్టించడంలో విఫలమైంది",
     "providerProxy": "ప్రాక్సీ",
     "providerProxyConfigureHint": "ప్రాక్సీని కాన్ఫిగర్ చేయండి",
-    "providerProxyTitleConfigured": "ప్రాక్సీ కాన్ఫిగర్ చేయబడింది: {host}"
+    "providerProxyTitleConfigured": "ప్రాక్సీ కాన్ఫిగర్ చేయబడింది: {host}",
+    "directEgress": "ప్రత్యక్షం (ప్రాక్సీ లేకుండా)",
+    "inheritConnectionOption": "స్వంత ప్రాక్సీ లేదు (కనెక్షన్‌ను వారసత్వంగా)",
+    "inheritedPool": "కనెక్షన్ పూల్ వారసత్వం ({count})",
+    "inheritedProxy": "కనెక్షన్ వారసత్వం: {host}",
+    "poolEmptyBlocked": "పూల్ ఖాళీ — అభ్యర్థనలు విఫలమవుతాయి (ప్రత్యక్షం కాదు)"
   },
   "gamification": {
     "leaderboardScopes": {
@@ -13063,6 +13083,13 @@
       "SERVER_OWNED_TOOL_LOOP_ENABLED": {
         "label": "సర్వర్ యాజమాన్యంలోని టూల్ లూప్",
         "description": "మోడల్ క్లయింట్ ఉపయోగించగల ప్రతిస్పందనను అందించే వరకు నాన్-స్ట్రీమింగ్, సర్వర్ యాజమాన్యంలోని టూల్ కాల్లను కొనసాగించండి."
+      },
+      "PROTECTED_PRIORITY_INFRA_502_ENABLED": {
+        "description": "కోటా మాత్రమే ఉన్న ఫాల్బ్యాక్ ప్రాధాన్యత లక్ష్యం, కోటా కారణం కాదని నిరూపితమైన కారణంతో కాంబోను ఆపినప్పుడు 503కి బదులుగా 502తో సమాధానం ఇవ్వండి: తెరిచి ఉన్న ప్రొవైడర్ సర్క్యూట్ బ్రేకర్ లేదా అంచనా ఆధారిత లేటెన్సీ స్కిప్.",
+        "label": "రక్షిత-ప్రాధాన్యత ఇన్ఫ్రా నిలిపివేతలను 502గా చూపించండి"
+      },
+      "STREAM_RECOVERY_TOOLCALL_ORDER_FIX": {
+        "description": "మిడ్-స్ట్రీమ్ కొనసాగింపును టూల్-కాల్కు సురక్షితంగా చేయండి: టూల్ కాల్ పంపిన తర్వాత (ఇంకా ప్రోగ్రెస్లో ఉన్నా లేదా ఇప్పటికే పూర్తయినా) కట్ అయిన స్ట్రీమ్ను ఎప్పుడూ పునఃప్రారంభించవద్దు; అలాగే మొత్తం రీట్రై బడ్జెట్ను ఉపయోగించకుండా, ఒక ఖాళీ కొనసాగింపు తర్వాత ఆపివేయండి."
       }
     }
   },
@@ -14191,5 +14218,6 @@
     "partnerLinkNote": "భాగస్వామి లింక్",
     "dismissAriaLabel": "మూసివేయి"
   },
-  "featureFlagAgentProxyDisableThinkingLevelVariantsDescription": "/v1/models కేటలాగ్లో ఆలోచనా స్థాయి వేరియంట్ల (ఉదా. -low, -medium, -high) సృష్టిని నిలిపివేయండి."
+  "featureFlagAgentProxyDisableThinkingLevelVariantsDescription": "/v1/models కేటలాగ్లో ఆలోచనా స్థాయి వేరియంట్ల (ఉదా. -low, -medium, -high) సృష్టిని నిలిపివేయండి.",
+  "featureFlagProxyPoolSharedEgressOrderDescription": "egress చిరునామా ప్రకారం కోటా విభజించబడే ప్రొవైడర్ల కోసం, ఇటీవల తిరస్కరించబడిన సభ్యుని గమనించిన egress చిరునామాను పంచుకునే pool సభ్యుడిని ఆరోగ్యకరమైన సభ్యుల కంటే వెంటనే కింద ఉంచుతుంది. క్రమం మాత్రమే, ఎప్పుడూ మినహాయించదు. ఇది చదివే తిరస్కరణ సంకేతాన్ని ఉత్పత్తి చేసే PROXY_SKIP_RECENTLY_FAILED అవసరం. డిఫాల్ట్‌గా ఆఫ్: ఎంపిక క్రమం సరిగ్గా సాధారణ రొటేషనే."
 }

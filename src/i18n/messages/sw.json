@@ -3795,7 +3795,8 @@
     "triStateInherit": "inherit",
     "connectionAwareExpansionOn": "On",
     "connectionAwareExpansionOff": "Off",
-    "promptCacheAffinityHint": "Prompt-cache locality routing takes precedence over round-robin/weighted rotation across pinned accounts. Turn it off under Settings, Combo defaults, if you need strict rotation."
+    "promptCacheAffinityHint": "Prompt-cache locality routing takes precedence over round-robin/weighted rotation across pinned accounts. Turn it off under Settings, Combo defaults, if you need strict rotation.",
+    "stickyLimitInherit": "kurithi"
   },
   "costs": {
     "title": "Gharama",
@@ -4972,7 +4973,7 @@
     "compressionLogTitle": "Kumbukumbu ya Mbanzo",
     "compressionLogEmpty": "Hakuna maombi yaliyobanwa bado. Takwimu za mbanzo zitaonekana hapa wakati maombi yanapochakatwa huku mbanzo ukiwa umewezeshwa.",
     "tokens": "tokeni",
-    "exportTruncated": "__MISSING__:Export truncated: only {exported} of {total} log entries were included. Pick a shorter time range to export the rest."
+    "exportTruncated": "Uhamishaji umefupishwa: ni maingizo {exported} tu kati ya {total} ya kumbukumbu yaliyojumuishwa. Chagua kipindi kifupi zaidi ili kuhamisha yaliyobaki."
   },
   "onboarding": {
     "welcome": "Karibu",
@@ -6328,7 +6329,8 @@
       "kiro": "Kiwango cha bure: mikopo 50/mwezi (~tokeni 25K–100K). ⚠️ Kiro ToS inakataza matumizi ya proksi/harness ya wahusika wengine.",
       "codex": "Unganisha OpenAI Codex na mtiririko uliopo wa OAuth.",
       "qwen": "Unganisha Qwen Code na mtiririko uliopo wa OAuth.",
-      "github-models": "Unda PAT ya GitHub yenye upeo wa 'models: read' kwenye github.com/settings/tokens"
+      "github-models": "Unda PAT ya GitHub yenye upeo wa 'models: read' kwenye github.com/settings/tokens",
+      "agnes-cn": "Unganisha Agnes AI (Uchina) kwa kutumia ufunguo wa API uliotolewa kwa ajili ya api.agnes-ai.cn. Funguo kutoka apihub.agnes-ai.com hazitafanya kazi."
     },
     "passthroughModelsDescription": "{provider} inakubali vitambulisho vya asili vya mtoa huduma. Ingiza kutoka /miundo au ongeza vitambulisho maalum vya kuelekeza.",
     "bedrockModelsDescription": "Mitindo ya Amazon Bedrock inatolewa na eneo la AWS. Ingiza kutoka /miundo au ongeza vitambulisho vya muundo wa Bedrock vilivyowezeshwa katika eneo lililochaguliwa.",
@@ -6489,7 +6491,9 @@
     "failedClearConnectionCooldown": "Imeshindwa kufuta muda wa kusubiri",
     "importFromFileDownloadTemplate": "Pakua kiolezo cha CSV",
     "importFromFileMoreErrors": "+{count} zaidi",
-    "importFromFileSchemaHint": "Safu wima za CSV zinategemea mpangilio: provider, name, apiKey, baseUrl (si lazima), priority (si lazima). Safu wima ya provider lazima iwe kitambulisho cha mtoa huduma anayesimamiwa ambacho tayari kipo au kitambulisho cha nodi inayooana na OpenAI/Anthropic ambacho tayari kimesajiliwa — uingizaji huu hauundi nodi mpya za endpoint."
+    "importFromFileSchemaHint": "Safu wima za CSV zinategemea mpangilio: provider, name, apiKey, baseUrl (si lazima), priority (si lazima). Safu wima ya provider lazima iwe kitambulisho cha mtoa huduma anayesimamiwa ambacho tayari kipo au kitambulisho cha nodi inayooana na OpenAI/Anthropic ambacho tayari kimesajiliwa — uingizaji huu hauundi nodi mpya za endpoint.",
+    "vertexCredentialHint": "Funguo za API hutumia katalogi ya mradi iliyoratibiwa. JSON ya Akaunti ya Huduma huwezesha ugunduzi wa moja kwa moja wa Model Garden.",
+    "vertexCredentialLabel": "Ufunguo wa API au JSON ya Akaunti ya Huduma"
   },
   "settings": {
     "title": "Mipangilio",
@@ -8597,6 +8601,10 @@
       "compressToolResults": {
         "label": "Kukata matokeo marefu ya zana kwa njia ya kujiandaa",
         "description": "__MISSING__:Truncates long tool results during Lite compression. The Maximum tool-result length field (or AGENTPROXY_LITE_MAX_TOOL_LENGTH when that field is unset) sets the cap. Emergency overflow protection may still trim content when the context exceeds the model budget."
+      },
+      "maxToolLength": {
+        "description": "Character cap for proactive tool-result truncation. Default 2000. Override with AGENTPROXY_LITE_MAX_TOOL_LENGTH when this field is unset.",
+        "label": "Maximum tool-result length"
       }
     },
     "engineFields": {
@@ -9712,7 +9720,14 @@
     "kiloPassPaid": "Imelipwa",
     "kiloPassRemaining": "Iliyobaki",
     "kiloPassRenews": "Inasasishwa baada ya siku {count}",
-    "kiloPassUsageLabel": "Matumizi ya mwezi huu"
+    "kiloPassUsageLabel": "Matumizi ya mwezi huu",
+    "glmConfirmRedeemFiveHourResetCredit": "Kukomboa huweka upya mara moja kipindi cha matumizi cha saa 5 na kutumia kadi hii kabisa.",
+    "glmConfirmRedeemResetCredit": "Kukomboa huweka upya mara moja kipindi cha matumizi kilichochaguliwa na kutumia kadi hii kabisa.",
+    "glmConfirmRedeemWeekResetCredit": "Kukomboa huweka upya mara moja kipindi cha matumizi cha kila wiki na kutumia kadi hii kabisa.",
+    "glmResetCreditFiveHourTitle": "Kuweka upya kipindi cha saa 5",
+    "glmResetCreditsModalExplainer": "Kadi za kuweka upya zimepangwa kulingana na muda wa kuisha. Chagua kipindi cha saa 5 au cha kila wiki unachotaka kuweka upya.",
+    "glmResetCreditsModalTitle": "Kadi za kuweka upya GLM Coding Plan",
+    "glmResetCreditWeekTitle": "Kuweka upya kipindi cha kila wiki"
   },
   "modals": {
     "waitingAuth": "Inasubiri Uidhinishaji",
@@ -12703,7 +12718,12 @@
     "createDahlTokenFailed": "Imeshindikana kuunda token ya Dahl",
     "providerProxy": "Proksi",
     "providerProxyConfigureHint": "Sanidi proxy",
-    "providerProxyTitleConfigured": "Proxy imewekwa: {host}"
+    "providerProxyTitleConfigured": "Proxy imewekwa: {host}",
+    "directEgress": "Moja kwa moja (bila proksi)",
+    "inheritConnectionOption": "Hakuna proksi binafsi (inarithi muunganisho)",
+    "inheritedPool": "Inarithi dimbwi la miunganisho ({count})",
+    "inheritedProxy": "Inarithi muunganisho: {host}",
+    "poolEmptyBlocked": "Dimbwi tupu — maombi yanashindwa (siyo moja kwa moja)"
   },
   "gamification": {
     "leaderboardScopes": {
@@ -13063,6 +13083,13 @@
       "SERVER_OWNED_TOOL_LOOP_ENABLED": {
         "label": "Mzunguko wa Zana Unaomilikiwa na Seva",
         "description": "Endelea na miito ya zana inayomilikiwa na seva isiyotiririshwa hadi modeli irudishe jibu linaloweza kutumiwa na kiteja."
+      },
+      "PROTECTED_PRIORITY_INFRA_502_ENABLED": {
+        "description": "Jibu 502 badala ya 503 wakati lengo la kipaumbele lenye mbadala wa mgawo pekee linaposimamisha mseto kwa sababu ambayo kwa hakika si mgawo: kivunja saketi cha mtoa huduma kilicho wazi au urukaji unaotabiriwa kutokana na muda wa kusubiri.",
+        "label": "Kusimamishwa kwa Miundombinu ya Kipaumbele Kilicholindwa kama 502"
+      },
+      "STREAM_RECOVERY_TOOLCALL_ORDER_FIX": {
+        "description": "Fanya mwendelezo wa katikati ya mtiririko uwe salama kwa miito ya zana: usiwahi kuendelea na mtiririko uliokatika baada ya wito wa zana kutumwa (ukiwa bado unaendelea au tayari umekamilika), na usitishe baada ya mwendelezo mmoja mtupu badala ya kutumia bajeti yote ya majaribio upya."
       }
     }
   },
@@ -14191,5 +14218,6 @@
     "partnerLinkNote": "Kiungo cha mshirika",
     "dismissAriaLabel": "Funga"
   },
-  "featureFlagAgentProxyDisableThinkingLevelVariantsDescription": "Zima uundaji wa vibadala vya kiwango cha kufikiri (k.m. -low, -medium, -high) katika katalogi ya /v1/models."
+  "featureFlagAgentProxyDisableThinkingLevelVariantsDescription": "Zima uundaji wa vibadala vya kiwango cha kufikiri (k.m. -low, -medium, -high) katika katalogi ya /v1/models.",
+  "featureFlagProxyPoolSharedEgressOrderDescription": "Kwa watoa huduma ambao mgao wao hugawanywa kwa anwani ya egress, humweka mwanachama wa pool anayeshiriki anwani ya egress iliyoonekana ya mwanachama aliyekataliwa hivi karibuni chini kidogo ya wanachama wenye afya. Mpangilio tu, kamwe haondolewi. Inahitaji PROXY_SKIP_RECENTLY_FAILED, ambayo huzalisha ishara ya kukataliwa inayoisoma. Imezimwa kwa chaguomsingi: mpangilio wa uteuzi ni mzunguko wa kawaida kabisa."
 }

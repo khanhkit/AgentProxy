@@ -3193,7 +3193,13 @@
     "cliproxyapiUnknown": "Nepoznato",
     "cliproxyapiUpdate": "Ažuriraj",
     "cliproxyapiUpdateAvailable": "Dostupno ažuriranje: v{current} → v{latest}",
-    "cliproxyapiVersion": "Verzija"
+    "cliproxyapiVersion": "Verzija",
+    "hermesRoleMoaAggregator": "MoA agregator",
+    "hermesRoleMoaAggregatorDesc": "Model za sintezu Mixture-of-Agents",
+    "hermesRoleMoaReference": "MoA referenca",
+    "hermesRoleMoaReferenceDesc": "Referentni model za Mixture-of-Agents",
+    "hermesRoleReview": "Pregled",
+    "hermesRoleReviewDesc": "Potpuni pregled koda putem podagenta"
   },
   "combos": {
     "title": "Kombinacije",
@@ -3424,7 +3430,9 @@
       "failoverBeforeRetry": "Kada je omogućeno, svaka greška na upstream-u pokreće trenutni prelazak (failover) na sljedeću combo metu, preskačući sve pokušaje i fallback URL-ove.",
       "maxSetRetries": "Broj puta ponovnog pokušaja za cijeli set meta kada svaka meta zakaže. 0 = bez ponovnog pokušaja na nivou seta.",
       "setRetryDelayMs": "Kašnjenje između pokušaja ponovnog slanja na nivou seta, dajući vremena za rješavanje prolaznih problema.",
-      "disableSessionStickiness": "Rotirajte na različitu vezu pri svakom zahtjevu umjesto fiksiranja cijelog razgovora na jednu vezu putem hash-a prve poruke. Nadjačava globalni default. Ostavite na Inherit kako biste sačuvali prompt-cache pogodke za razgovore u više krugova."
+      "disableSessionStickiness": "Rotirajte na različitu vezu pri svakom zahtjevu umjesto fiksiranja cijelog razgovora na jednu vezu putem hash-a prve poruke. Nadjačava globalni default. Ostavite na Inherit kako biste sačuvali prompt-cache pogodke za razgovore u više krugova.",
+      "connectionAwareExpansion": "Kada je uključeno, ova kombinacija proširuje svaki korak na nivou provajdera u ciljeve po računu prije rotacije. Nasljedstvo koristi globalni podrazumijevani (isključeno). Isključeno zadržava rotaciju na nivou provajdera.",
+      "stickyLimit": "Veličina serije sa rotacijom: uzastopni uspješni zahtjevi poslani jednom cilju prije rotacije na sljedeći. Prazno nasljeđuje globalnu postavku Sticky Limit; 1 onemogućava grupisanje (čista rotacija jednog zahtjeva)."
     },
     "templatesTitle": "Brzi šabloni",
     "templatesDescription": "Primijenite početni profil, zatim prilagodite modele i konfiguraciju.",
@@ -3778,7 +3786,17 @@
     "duplicateAutoComboSnapshotMsg": "Ovo će napraviti snapshot povezanih providera/modela koji odgovaraju ovom šablonu u uredivi combo.",
     "duplicateAutoComboFailedPrefix": "Neuspjelo dupliranje auto-comba:",
     "duplicateAutoComboUnknownError": "Nepoznata greška",
-    "duplicateAutoComboTitle": "Kreiraj statični combo iz {name}"
+    "duplicateAutoComboTitle": "Kreiraj statični combo iz {name}",
+    "connectionAwareExpansion": "Proširenje svjesno veze",
+    "connectionAwareExpansionOff": "Isključeno",
+    "connectionAwareExpansionOn": "Uključeno",
+    "promptCacheAffinityHint": "Usmjeravanje lokalnosti predmemorije zahtjeva ima prioritet nad rotacijom po principu round-robin/težinskoj rotaciji među fiksiranim računima. Isključite to u Postavkama, Podrazumijevane kombinacije, ako vam je potrebna stroga rotacija.",
+    "stickyLimitEffective": "Efektivno {value} ({source})",
+    "stickyLimitSourceCombo": "kombinacija",
+    "stickyLimitSourceComboDefaults": "podrazumijevane kombinacije",
+    "stickyLimitSourceGlobal": "globalni podrazumijevani",
+    "triStateInherit": "naslijedi",
+    "stickyLimitInherit": "naslijedi"
   },
   "costs": {
     "title": "Troškovi",
@@ -4955,7 +4973,7 @@
     "compressionLogTitle": "Log kompresije",
     "compressionLogEmpty": "Još nema kompresovanih zahtjeva. Statistika kompresije će se pojaviti ovdje kada se zahtjevi obrađuju sa omogućenom kompresijom.",
     "tokens": "tokena",
-    "exportTruncated": "__MISSING__:Export truncated: only {exported} of {total} log entries were included. Pick a shorter time range to export the rest."
+    "exportTruncated": "Izvoz je skraćen: uključeno je samo {exported} od {total} zapisa dnevnika. Odaberite kraći vremenski raspon da izvezete ostatak."
   },
   "onboarding": {
     "welcome": "Dobrodošli",
@@ -6314,7 +6332,8 @@
       "kiro": "Besplatni nivo: 50 kredita/mjesec (~25K–100K tokena). ⚠️ Kiro ToS zabranjuje korištenje proxy-ja/harness-a trećih strana.",
       "codex": "Povežite OpenAI Codex pomoću postojećeg OAuth toka.",
       "qwen": "Povežite Qwen Code pomoću postojećeg OAuth toka.",
-      "github-models": "Kreirajte GitHub PAT sa 'models: read' scope-om na github.com/settings/tokens"
+      "github-models": "Kreirajte GitHub PAT sa 'models: read' scope-om na github.com/settings/tokens",
+      "agnes-cn": "Poveži Agnes AI (Kina) pomoću API ključa izdanog za api.agnes-ai.cn. Ključevi sa apihub.agnes-ai.com neće raditi."
     },
     "passthroughModelsDescription": "{provider} prihvata izvorne ID-ove modela provajdera. Uvezite sa /models ili dodajte prilagođene ID-ove za rutiranje.",
     "bedrockModelsDescription": "Amazon Bedrock modeli su ograničeni po AWS regionu. Uvezite sa /models ili dodajte Bedrock ID-ove modela koji su omogućeni u odabranom regionu.",
@@ -6472,7 +6491,9 @@
     "savedModelEndpointSettings": "Spremljene postavke krajnje tačke modela",
     "searchByModelAria": "Pretraži po modelu",
     "selectSupportedEndpoint": "Odaberite barem jednu podržanu krajnju tačku",
-    "antigravityClientProfileHarness": "Harness / CLI"
+    "antigravityClientProfileHarness": "Harness / CLI",
+    "vertexCredentialHint": "API ključevi koriste kurirani katalog projekata. Service Account JSON omogućava live Model Garden otkrivanje.",
+    "vertexCredentialLabel": "API ključ ili Service Account JSON"
   },
   "settings": {
     "title": "Postavke",
@@ -8579,7 +8600,11 @@
       },
       "compressToolResults": {
         "label": "Proaktivno skrati dugačke rezultate alata",
-        "description": "Skraćuje dugačke rezultate alata tokom Lite kompresije. Polje Maksimalna dužina rezultata alata (ili OMNIROUTE_LITE_MAX_TOOL_LENGTH kada je to polje prazno) postavlja ograničenje. Hitna zaštita od prelijevanja može i dalje trimovati sadržaj kada kontekst premaši budžet modela."
+        "description": "Skraćuje dugačke rezultate alata tokom Lite kompresije. Polje Maksimalna dužina rezultata alata (ili AGENTPROXY_LITE_MAX_TOOL_LENGTH kada je to polje prazno) postavlja ograničenje. Hitna zaštita od prelijevanja može i dalje trimovati sadržaj kada kontekst premaši budžet modela."
+      },
+      "maxToolLength": {
+        "description": "Ograničenje karaktera za proaktivno skraćivanje rezultata alata. Podrazumijevano 2000. Prepišite sa AGENTPROXY_LITE_MAX_TOOL_LENGTH kada je ovo polje prazno.",
+        "label": "Maksimalna dužina rezultata alata"
       }
     },
     "engineFields": {
@@ -9695,7 +9720,14 @@
     "updatedShort": "Ažurirano",
     "lastRefreshed": "Posljednje osvježavanje",
     "providerQuota": "Kvota provajdera",
-    "providerQuotaHomeHint": "Status uživo kroz povezane račune"
+    "providerQuotaHomeHint": "Status uživo kroz povezane račune",
+    "glmConfirmRedeemFiveHourResetCredit": "Iskorištavanje odmah resetuje 5-satni prozor upotrebe i trajno troši ovu karticu.",
+    "glmConfirmRedeemResetCredit": "Iskorištavanje odmah resetuje odabrani prozor upotrebe i trajno troši ovu karticu.",
+    "glmConfirmRedeemWeekResetCredit": "Iskorištavanje odmah resetuje sedmični prozor upotrebe i trajno troši ovu karticu.",
+    "glmResetCreditFiveHourTitle": "Reset 5-satnog prozora",
+    "glmResetCreditsModalExplainer": "Kartice za resetovanje su sortirane prema datumu isteka. Odaberite 5-satni ili sedmični prozor koji želite resetovati.",
+    "glmResetCreditsModalTitle": "GLM Coding Plan kartice za resetovanje",
+    "glmResetCreditWeekTitle": "Reset sedmičnog prozora"
   },
   "modals": {
     "waitingAuth": "Čekanje autorizacije",
@@ -10961,7 +10993,9 @@
     "poolAddMember": "Dodaj",
     "poolAddFailed": "Neuspješno dodavanje proxy-ja u pool",
     "poolSelectProxy": "Odaberite proxy…",
-    "poolSaveFailed": "Neuspješno spremanje dodjele pool-a"
+    "poolSaveFailed": "Neuspješno spremanje dodjele pool-a",
+    "poolEgressFailuresByExit": "Neuspjesi preko {exit}: {count}",
+    "poolEgressFailuresUnattributed": "Neuspjesi bez pripisanog izlaza: {count}"
   },
   "playground": {
     "title": "Testno okruženje za modele",
@@ -11302,7 +11336,11 @@
       "duration": "Trajanje",
       "time": "Vrijeme",
       "conversation": "Konverzacija",
-      "ttft": "TTFT"
+      "ttft": "TTFT",
+      "contentProvenance": "Odgovor",
+      "contentEmpty": "Prazan odgovor",
+      "usageAbsent": "Broj tokena nije prijavljen",
+      "usageEstimated": "Broj tokena je procijenjen"
     },
     "loadingLogs": "Učitavanje dnevnika.",
     "noLogs": "Još nema dnevnika. Napravite nekoliko API poziva kako biste ih vidjeli ovdje.",
@@ -11962,7 +12000,11 @@
       "goNow": "Idi sada",
       "message": "MITM Proxy se sada nalazi pod AgentBridge-om.",
       "title": "Ova stranica je pomjerena"
-    }
+    },
+    "resetAgent": "Vrati zadano",
+    "resetAgentConfirm": "Vratiti zadano?",
+    "resetDone": "Zadani DNS je vraćen za {agent}. Potpuno zatvorite aplikaciju (ne samo minimizirajte) i ponovo je otvorite da bi promjena stupila na snagu.",
+    "resetting": "Vraćanje…"
   },
   "providerStats": {
     "unknownError": "Nepoznata greška",
@@ -12676,7 +12718,12 @@
     "createDahlTokenFailed": "Neuspjelo kreiranje Dahl tokena",
     "providerProxy": "Proxy",
     "providerProxyConfigureHint": "Konfigurišite proxy",
-    "providerProxyTitleConfigured": "Proxy konfigurisan: {host}"
+    "providerProxyTitleConfigured": "Proxy konfigurisan: {host}",
+    "directEgress": "Direktno (bez proxyja)",
+    "inheritConnectionOption": "Bez vlastitog proxyja (nasljeđuje konekciju)",
+    "inheritedPool": "Nasljeđuje bazen konekcija ({count})",
+    "inheritedProxy": "Nasljeđuje konekciju: {host}",
+    "poolEmptyBlocked": "Bazen prazan — zahtjevi ne uspijevaju (ne direktno)"
   },
   "gamification": {
     "leaderboardScopes": {
@@ -13036,6 +13083,13 @@
       "SERVER_OWNED_TOOL_LOOP_ENABLED": {
         "label": "Server-Owned Tool Loop",
         "description": "Nastavi ne-streaming pozive alata kojima upravlja server sve dok model ne vrati odgovor upotrebljiv za klijenta."
+      },
+      "PROTECTED_PRIORITY_INFRA_502_ENABLED": {
+        "description": "Odgovori sa 502 umjesto 503 kada prioritetna meta samo za fallback kvote zaustavi combo iz razloga koji dokazivo nije kvota: otvoreni circuit breaker provajdera ili prediktivno preskakanje latencije.",
+        "label": "Zaustavljanja infrastrukture sa zaštićenim prioritetom kao 502"
+      },
+      "STREAM_RECOVERY_TOOLCALL_ORDER_FIX": {
+        "description": "Učini nastavak usred stream-a sigurnim za pozive alata: nikada ne nastavljaj prekinuti stream nakon što je poziv alata poslan (još uvijek u toku ili već završen), i zaustavi se nakon jednog praznog nastavka umjesto korištenja cijelog budžeta za ponovni pokušaj."
       }
     }
   },
@@ -13956,7 +14010,12 @@
     "hour": "sat",
     "day": "dan",
     "unknownModel": "nepoznato",
-    "pending": "na čekanju"
+    "pending": "na čekanju",
+    "allApiKeys": "Svi API ključevi",
+    "apiKey": "API ključ",
+    "mcpTool": "MCP alat",
+    "scope": "Opseg",
+    "mcp": "MCP"
   },
   "metadata": {
     "compressionTitle": "Kompresija",
@@ -14159,5 +14218,6 @@
     "partnerLinkNote": "Partnerski link",
     "dismissAriaLabel": "Zatvori"
   },
-  "featureFlagAgentProxyDisableThinkingLevelVariantsDescription": "Onemogućite generisanje varijanti nivoa razmišljanja (npr. -low, -medium, -high) u /v1/models katalogu."
+  "featureFlagAgentProxyDisableThinkingLevelVariantsDescription": "Onemogućite generisanje varijanti nivoa razmišljanja (npr. -low, -medium, -high) u /v1/models katalogu.",
+  "featureFlagProxyPoolSharedEgressOrderDescription": "Za provajdere čija se kvota raspodjeljuje po izlaznoj (egress) adresi, rangira člana poola koji dijeli uočenu egress adresu nedavno odbijenog člana odmah ispod zdravih članova. Samo redoslijed, nikada isključenje. Zahtijeva PROXY_SKIP_RECENTLY_FAILED, koji proizvodi signal odbijanja koji čita. Isključeno po defaultu: redoslijed odabira je tačno obična rotacija."
 }

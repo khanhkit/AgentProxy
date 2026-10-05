@@ -3795,7 +3795,8 @@
     "triStateInherit": "inherit",
     "connectionAwareExpansionOn": "On",
     "connectionAwareExpansionOff": "Off",
-    "promptCacheAffinityHint": "Prompt-cache locality routing takes precedence over round-robin/weighted rotation across pinned accounts. Turn it off under Settings, Combo defaults, if you need strict rotation."
+    "promptCacheAffinityHint": "Prompt-cache locality routing takes precedence over round-robin/weighted rotation across pinned accounts. Turn it off under Settings, Combo defaults, if you need strict rotation.",
+    "stickyLimitInherit": "ارث‌بری"
   },
   "costs": {
     "title": "هزینهها",
@@ -4972,7 +4973,7 @@
     "compressionLogTitle": "لاگ فشرده‌سازی",
     "compressionLogEmpty": "هنوز هیچ درخواست فشرده‌شده‌ای وجود ندارد. آمار فشرده‌سازی زمانی که درخواست‌ها با فشرده‌سازی فعال پردازش شوند، در اینجا نمایش داده خواهد شد.",
     "tokens": "توکن‌ها",
-    "exportTruncated": "__MISSING__:Export truncated: only {exported} of {total} log entries were included. Pick a shorter time range to export the rest."
+    "exportTruncated": "خروجی کوتاه شد: فقط {exported} مورد از {total} ورودی گزارش گنجانده شد. برای خروجی گرفتن از بقیه، بازه زمانی کوتاه‌تری انتخاب کنید."
   },
   "onboarding": {
     "welcome": "خوش آمدید",
@@ -6328,7 +6329,8 @@
       "kiro": "طرح رایگان: ۵۰ اعتبار/ماه (~۲۵ هزار–۱۰۰ هزار توکن). ⚠️ شرایط خدمات Kiro استفاده از پروکسی/هارنس شخص ثالث را ممنوع می‌کند.",
       "codex": "اتصال OpenAI Codex با جریان OAuth موجود.",
       "qwen": "اتصال Qwen Code با جریان OAuth موجود.",
-      "github-models": "یک GitHub PAT با محدوده (scope) 'models: read' در github.com/settings/tokens ایجاد کنید"
+      "github-models": "یک GitHub PAT با محدوده (scope) 'models: read' در github.com/settings/tokens ایجاد کنید",
+      "agnes-cn": "Agnes AI (China) را با استفاده از یک کلید API صادرشده برای api.agnes-ai.cn متصل کنید. کلیدهای apihub.agnes-ai.com کار نخواهند کرد."
     },
     "passthroughModelsDescription": "{provider} شناسه های مدل بومی ارائه دهنده را می پذیرد. از /models وارد کنید یا شناسه های سفارشی را برای مسیریابی اضافه کنید.",
     "bedrockModelsDescription": "مدل‌های بستر آمازون بر اساس منطقه AWS تعیین می‌شوند. از /models وارد کنید یا شناسه‌های مدل Bedrock را که در منطقه انتخابی فعال شده است اضافه کنید.",
@@ -6489,7 +6491,9 @@
     "failedClearConnectionCooldown": "رفع دورهٔ انتظار ناموفق بود",
     "importFromFileDownloadTemplate": "دانلود الگوی CSV",
     "importFromFileMoreErrors": "‏+{count} مورد دیگر",
-    "importFromFileSchemaHint": "ستونهای CSV ترتیبی هستند: provider، name، apiKey، baseUrl (اختیاری)، priority (اختیاری). ستون provider باید شناسهٔ یک ارائهدهندهٔ مدیریتشدهٔ موجود یا شناسهٔ یک گرهٔ سازگار با OpenAI/Anthropic باشد که از قبل ثبت شده است — این درونریزی گرههای نقطهٔ پایانی جدید ایجاد نمیکند."
+    "importFromFileSchemaHint": "ستونهای CSV ترتیبی هستند: provider، name، apiKey، baseUrl (اختیاری)، priority (اختیاری). ستون provider باید شناسهٔ یک ارائهدهندهٔ مدیریتشدهٔ موجود یا شناسهٔ یک گرهٔ سازگار با OpenAI/Anthropic باشد که از قبل ثبت شده است — این درونریزی گرههای نقطهٔ پایانی جدید ایجاد نمیکند.",
+    "vertexCredentialHint": "کلیدهای API از کاتالوگ منتخب پروژه استفاده میکنند. JSON حساب سرویس امکان شناسایی زنده مدلها در Model Garden را فراهم میکند.",
+    "vertexCredentialLabel": "کلید API یا JSON حساب سرویس"
   },
   "settings": {
     "title": "تنظیمات",
@@ -8597,6 +8601,10 @@
       "compressToolResults": {
         "label": "به‌طور پیش‌گیرانه نتایج طولانی ابزار را کوتاه کنید",
         "description": "__MISSING__:Truncates long tool results during Lite compression. The Maximum tool-result length field (or AGENTPROXY_LITE_MAX_TOOL_LENGTH when that field is unset) sets the cap. Emergency overflow protection may still trim content when the context exceeds the model budget."
+      },
+      "maxToolLength": {
+        "description": "Character cap for proactive tool-result truncation. Default 2000. Override with AGENTPROXY_LITE_MAX_TOOL_LENGTH when this field is unset.",
+        "label": "Maximum tool-result length"
       }
     },
     "engineFields": {
@@ -9712,7 +9720,14 @@
     "kiloPassPaid": "پرداخت‌شده",
     "kiloPassRemaining": "باقی‌مانده",
     "kiloPassRenews": "تمدید در {count} روز",
-    "kiloPassUsageLabel": "مصرف این ماه"
+    "kiloPassUsageLabel": "مصرف این ماه",
+    "glmConfirmRedeemFiveHourResetCredit": "استفاده از کارت، بازه مصرف ۵ ساعته را فوراً بازنشانی و این کارت را برای همیشه مصرف میکند.",
+    "glmConfirmRedeemResetCredit": "استفاده از کارت، بازه مصرف انتخابشده را فوراً بازنشانی و این کارت را برای همیشه مصرف میکند.",
+    "glmConfirmRedeemWeekResetCredit": "استفاده از کارت، بازه مصرف هفتگی را فوراً بازنشانی و این کارت را برای همیشه مصرف میکند.",
+    "glmResetCreditFiveHourTitle": "بازنشانی بازه ۵ ساعته",
+    "glmResetCreditsModalExplainer": "کارتهای بازنشانی بر اساس زمان انقضا مرتب شدهاند. بازه ۵ ساعته یا هفتگی موردنظرتان را برای بازنشانی انتخاب کنید.",
+    "glmResetCreditsModalTitle": "کارتهای بازنشانی GLM Coding Plan",
+    "glmResetCreditWeekTitle": "بازنشانی بازه هفتگی"
   },
   "modals": {
     "waitingAuth": "در انتظار تأیید مجوز",
@@ -12703,7 +12718,12 @@
     "createDahlTokenFailed": "ایجاد توکن دال ناموفق بود",
     "providerProxy": "پراکسی",
     "providerProxyConfigureHint": "تنظیم پروکسی",
-    "providerProxyTitleConfigured": "پروکسی پیکربندی شده: {host}"
+    "providerProxyTitleConfigured": "پروکسی پیکربندی شده: {host}",
+    "directEgress": "مستقیم (بدون پروکسی)",
+    "inheritConnectionOption": "بدون پروکسی اختصاصی (اتصال را به ارث می‌برد)",
+    "inheritedPool": "استخر اتصال را به ارث می‌برد ({count})",
+    "inheritedProxy": "اتصال را به ارث می‌برد: {host}",
+    "poolEmptyBlocked": "استخر خالی است — درخواست‌ها ناموفق می‌شوند (نه مستقیم)"
   },
   "gamification": {
     "leaderboardScopes": {
@@ -13063,6 +13083,13 @@
       "SERVER_OWNED_TOOL_LOOP_ENABLED": {
         "label": "حلقهٔ ابزار تحت کنترل سرور",
         "description": "فراخوانیهای غیراستریمی ابزار تحت کنترل سرور را تا زمانی ادامه دهید که مدل پاسخی قابلاستفاده برای کلاینت برگرداند."
+      },
+      "PROTECTED_PRIORITY_INFRA_502_ENABLED": {
+        "description": "هنگامی که یک مقصد اولویتدار که فقط در صورت اتمام سهمیه به آن رجوع میشود، ترکیب را به علتی متوقف میکند که اثباتاً مربوط به سهمیه نیست—یعنی باز بودن قطعکنندهٔ مدار ارائهدهنده یا رد پیشبینانه بهدلیل تأخیر—بهجای 503، پاسخ 502 بدهید.",
+        "label": "توقفهای زیرساختی با اولویت محافظتشده بهصورت 502"
+      },
+      "STREAM_RECOVERY_TOOLCALL_ORDER_FIX": {
+        "description": "ادامه دادن در میانهٔ جریان را برای فراخوانی ابزار ایمن کنید: پس از ارسال فراخوانی ابزار (چه هنوز در حال اجرا باشد و چه پایان یافته باشد)، هرگز جریان قطعشده را از سر نگیرید و بهجای استفاده از کل بودجهٔ تلاش مجدد، پس از یک ادامهٔ خالی متوقف شوید."
       }
     }
   },
@@ -14191,5 +14218,6 @@
     "partnerLinkNote": "پیوند شریک",
     "dismissAriaLabel": "بستن"
   },
-  "featureFlagAgentProxyDisableThinkingLevelVariantsDescription": "تولید گونههای سطح تفکر (برای مثال -low، -medium و -high) را در کاتالوگ /v1/models غیرفعال کنید."
+  "featureFlagAgentProxyDisableThinkingLevelVariantsDescription": "تولید گونههای سطح تفکر (برای مثال -low، -medium و -high) را در کاتالوگ /v1/models غیرفعال کنید.",
+  "featureFlagProxyPoolSharedEgressOrderDescription": "برای ارائه‌دهندگانی که سهمیه‌شان بر اساس نشانی خروجی (egress) تقسیم می‌شود، عضوی از pool را که نشانی egress مشاهده‌شدهٔ یک عضو اخیراً ردشده را به اشتراک دارد، درست پایین‌تر از اعضای سالم قرار می‌دهد. فقط ترتیب، هرگز حذف نمی‌شود. به PROXY_SKIP_RECENTLY_FAILED نیاز دارد که سیگنال ردی را که می‌خواند تولید می‌کند. به‌طور پیش‌فرض خاموش: ترتیب انتخاب دقیقاً همان چرخش ساده است."
 }

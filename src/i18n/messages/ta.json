@@ -3795,7 +3795,8 @@
     "triStateInherit": "inherit",
     "connectionAwareExpansionOn": "On",
     "connectionAwareExpansionOff": "Off",
-    "promptCacheAffinityHint": "Prompt-cache locality routing takes precedence over round-robin/weighted rotation across pinned accounts. Turn it off under Settings, Combo defaults, if you need strict rotation."
+    "promptCacheAffinityHint": "Prompt-cache locality routing takes precedence over round-robin/weighted rotation across pinned accounts. Turn it off under Settings, Combo defaults, if you need strict rotation.",
+    "stickyLimitInherit": "மரபுரிமை"
   },
   "costs": {
     "title": "செலவுகள்",
@@ -4972,7 +4973,7 @@
     "compressionLogTitle": "சுருக்கப் பதிவு",
     "compressionLogEmpty": "இதுவரை சுருக்கப்பட்ட கோரிக்கைகள் எதுவும் இல்லை. சுருக்கம் இயக்கப்பட்டு கோரிக்கைகள் செயலாக்கப்படும் போது சுருக்கப் புள்ளிவிவரங்கள் இங்கே தோன்றும்.",
     "tokens": "டோக்கன்கள்",
-    "exportTruncated": "__MISSING__:Export truncated: only {exported} of {total} log entries were included. Pick a shorter time range to export the rest."
+    "exportTruncated": "ஏற்றுமதி சுருக்கப்பட்டது: {total} பதிவு உள்ளீடுகளில் {exported} மட்டுமே சேர்க்கப்பட்டன. மீதமுள்ளவற்றை ஏற்றுமதி செய்ய குறுகிய நேர வரம்பைத் தேர்ந்தெடுக்கவும்."
   },
   "onboarding": {
     "welcome": "வரவேற்கிறோம்",
@@ -6328,7 +6329,8 @@
       "kiro": "இலவச அடுக்கு: 50 கிரெடிட்கள்/மாதம் (~25K–100K டோக்கன்கள்). ⚠️ Kiro ToS மூன்றாம் தரப்பு proxy/harness பயன்பாட்டைத் தடைசெய்கிறது.",
       "codex": "தற்போதுள்ள OAuth செயல்முறையுடன் OpenAI Codex-ஐ இணைக்கவும்.",
       "qwen": "தற்போதுள்ள OAuth செயல்முறையுடன் Qwen Code-ஐ இணைக்கவும்.",
-      "github-models": "github.com/settings/tokens இல் 'models: read' வரம்புடன் ஒரு GitHub PAT ஐ உருவாக்கவும்"
+      "github-models": "github.com/settings/tokens இல் 'models: read' வரம்புடன் ஒரு GitHub PAT ஐ உருவாக்கவும்",
+      "agnes-cn": "api.agnes-ai.cn-க்காக வழங்கப்பட்ட API key மூலம் Agnes AI (China)-ஐ இணைக்கவும். apihub.agnes-ai.com-இலிருந்து பெறப்பட்ட keys வேலை செய்யாது."
     },
     "passthroughModelsDescription": "{provider} வழங்குநரின் சொந்த மாதிரி ஐடிகளை ஏற்றுக்கொள்கிறது. /மாடல்களில் இருந்து இறக்குமதி செய்யவும் அல்லது ரூட்டிங் செய்ய தனிப்பயன் ஐடிகளைச் சேர்க்கவும்.",
     "bedrockModelsDescription": "அமேசான் பெட்ராக் மாதிரிகள் AWS பிராந்தியத்தால் ஸ்கோப் செய்யப்படுகின்றன. /மாடல்களில் இருந்து இறக்குமதி செய்யவும் அல்லது தேர்ந்தெடுக்கப்பட்ட பகுதியில் செயல்படுத்தப்பட்ட பெட்ராக் மாடல் ஐடிகளைச் சேர்க்கவும்.",
@@ -6489,7 +6491,9 @@
     "failedClearConnectionCooldown": "Cooldown-ஐ நீக்க முடியவில்லை",
     "importFromFileDownloadTemplate": "CSV வார்ப்புருவைப் பதிவிறக்கவும்",
     "importFromFileMoreErrors": "+{count} மேலும்",
-    "importFromFileSchemaHint": "CSV நெடுவரிசைகள் வரிசை நிலையை அடிப்படையாகக் கொண்டவை: provider, name, apiKey, baseUrl (விருப்பத்தேர்வு), priority (விருப்பத்தேர்வு). provider நெடுவரிசை ஏற்கனவே உள்ள நிர்வகிக்கப்பட்ட வழங்குநர் id அல்லது முன்பே பதிவுசெய்யப்பட்ட OpenAI/Anthropic-இணக்கமான node id ஆக இருக்க வேண்டும் — இந்த இறக்குமதி புதிய endpoint nodes-ஐ உருவாக்காது."
+    "importFromFileSchemaHint": "CSV நெடுவரிசைகள் வரிசை நிலையை அடிப்படையாகக் கொண்டவை: provider, name, apiKey, baseUrl (விருப்பத்தேர்வு), priority (விருப்பத்தேர்வு). provider நெடுவரிசை ஏற்கனவே உள்ள நிர்வகிக்கப்பட்ட வழங்குநர் id அல்லது முன்பே பதிவுசெய்யப்பட்ட OpenAI/Anthropic-இணக்கமான node id ஆக இருக்க வேண்டும் — இந்த இறக்குமதி புதிய endpoint nodes-ஐ உருவாக்காது.",
+    "vertexCredentialHint": "API keys, தேர்ந்தெடுக்கப்பட்ட project catalog-ஐப் பயன்படுத்துகின்றன. Service Account JSON, நேரடி Model Garden கண்டறிதலைச் செயல்படுத்துகிறது.",
+    "vertexCredentialLabel": "API Key அல்லது Service Account JSON"
   },
   "settings": {
     "title": "அமைப்புகள்",
@@ -8597,6 +8601,10 @@
       "compressToolResults": {
         "label": "முன்னெச்சரிக்கையாக நீண்ட கருவி முடிவுகளை குறைக்கவும்",
         "description": "Lite சுருக்கத்தின் போது 2,000 எழுத்துக்களை மீறிய கருவி முடிவுகளை குறுக்குகிறது. சூடான overflow பாதுகாப்பு, மாடல் பட்ஜெட்டை மீறும் போது உள்ளடக்கத்தை இன்னும் குறைக்கலாம்."
+      },
+      "maxToolLength": {
+        "description": "Character cap for proactive tool-result truncation. Default 2000. Override with AGENTPROXY_LITE_MAX_TOOL_LENGTH when this field is unset.",
+        "label": "Maximum tool-result length"
       }
     },
     "engineFields": {
@@ -9712,7 +9720,14 @@
     "kiloPassPaid": "செலுத்தப்பட்டது",
     "kiloPassRemaining": "மீதமுள்ளது",
     "kiloPassRenews": "{count} நாட்களில் புதுப்பிக்கப்படும்",
-    "kiloPassUsageLabel": "இந்த மாத பயன்பாடு"
+    "kiloPassUsageLabel": "இந்த மாத பயன்பாடு",
+    "glmConfirmRedeemFiveHourResetCredit": "மீட்டெடுத்தவுடன், 5 மணிநேர பயன்பாட்டுக் காலச் சாளரம் உடனடியாக மீட்டமைக்கப்பட்டு, இந்த அட்டை நிரந்தரமாகப் பயன்படுத்தப்பட்டுவிடும்.",
+    "glmConfirmRedeemResetCredit": "மீட்டெடுத்தவுடன், தேர்ந்தெடுக்கப்பட்ட பயன்பாட்டுக் காலச் சாளரம் உடனடியாக மீட்டமைக்கப்பட்டு, இந்த அட்டை நிரந்தரமாகப் பயன்படுத்தப்பட்டுவிடும்.",
+    "glmConfirmRedeemWeekResetCredit": "மீட்டெடுத்தவுடன், வாராந்திர பயன்பாட்டுக் காலச் சாளரம் உடனடியாக மீட்டமைக்கப்பட்டு, இந்த அட்டை நிரந்தரமாகப் பயன்படுத்தப்பட்டுவிடும்.",
+    "glmResetCreditFiveHourTitle": "5 மணிநேர காலச் சாளரத்தை மீட்டமை",
+    "glmResetCreditsModalExplainer": "மீட்டமைப்பு அட்டைகள் காலாவதித் தேதியின்படி வரிசைப்படுத்தப்பட்டுள்ளன. நீங்கள் மீட்டமைக்க விரும்பும் 5 மணிநேர அல்லது வாராந்திர காலச் சாளரத்தைத் தேர்ந்தெடுக்கவும்.",
+    "glmResetCreditsModalTitle": "GLM Coding Plan மீட்டமைப்பு அட்டைகள்",
+    "glmResetCreditWeekTitle": "வாராந்திர காலச் சாளரத்தை மீட்டமை"
   },
   "modals": {
     "waitingAuth": "அங்கீகாரத்திற்காகக் காத்திருக்கிறது",
@@ -12703,7 +12718,12 @@
     "createDahlTokenFailed": "Dahl டோக்கன் உருவாக்குவதில் தோல்வி அடைந்தது",
     "providerProxy": "பிராக்சி",
     "providerProxyConfigureHint": "பிராக்ஸியை கட்டமைக்கவும்",
-    "providerProxyTitleConfigured": "பிராக்ஸி அமைக்கப்பட்டுள்ளது: {host}"
+    "providerProxyTitleConfigured": "பிராக்ஸி அமைக்கப்பட்டுள்ளது: {host}",
+    "directEgress": "நேரடி (ப்ராக்ஸி இல்லை)",
+    "inheritConnectionOption": "சொந்த ப்ராக்ஸி இல்லை (இணைப்பை மரபுரிமை)",
+    "inheritedPool": "இணைப்பு தொகுப்பு மரபுரிமை ({count})",
+    "inheritedProxy": "இணைப்பு மரபுரிமை: {host}",
+    "poolEmptyBlocked": "தொகுப்பு காலி — கோரிக்கைகள் தோல்வி (நேரடி அல்ல)"
   },
   "gamification": {
     "leaderboardScopes": {
@@ -13063,6 +13083,13 @@
       "SERVER_OWNED_TOOL_LOOP_ENABLED": {
         "label": "சேவையகத்தால் நிர்வகிக்கப்படும் கருவிச் சுழற்சி",
         "description": "மாதிரி கிளையன்ட் பயன்படுத்தக்கூடிய பதிலை வழங்கும் வரை, ஸ்ட்ரீமிங் அல்லாத சேவையகத்தால் நிர்வகிக்கப்படும் கருவி அழைப்புகளைத் தொடரவும்."
+      },
+      "PROTECTED_PRIORITY_INFRA_502_ENABLED": {
+        "description": "ஒதுக்கீடு-மட்டுமே-மாற்றுவழி முன்னுரிமை இலக்கு, ஒதுக்கீட்டால் ஏற்படவில்லை என உறுதியாக நிரூபிக்கக்கூடிய காரணத்திற்காக combo வை நிறுத்தும்போது 503க்குப் பதிலாக 502 எனப் பதிலளிக்கவும்: திறந்த provider circuit breaker அல்லது முன்கணிப்பு தாமதத் தவிர்ப்பு.",
+        "label": "பாதுகாக்கப்பட்ட-முன்னுரிமை உள்கட்டமைப்பு நிறுத்தங்கள் 502 ஆக"
+      },
+      "STREAM_RECOVERY_TOOLCALL_ORDER_FIX": {
+        "description": "ஸ்ட்ரீமின் நடுவிலான தொடர்ச்சியைக் கருவி-அழைப்புக்குப் பாதுகாப்பானதாக மாற்றவும்: கருவி அழைப்பு அனுப்பப்பட்ட பிறகு துண்டிக்கப்பட்ட ஸ்ட்ரீமை ஒருபோதும் மீண்டும் தொடர வேண்டாம் (அது இன்னும் செயல்பாட்டில் இருந்தாலும் அல்லது ஏற்கனவே முடிந்திருந்தாலும்), மேலும் முழு மறுமுயற்சி வரம்பைப் பயன்படுத்துவதற்குப் பதிலாக ஒரு வெற்று தொடர்ச்சிக்குப் பிறகு நிறுத்தவும்."
       }
     }
   },
@@ -14191,5 +14218,6 @@
     "partnerLinkNote": "கூட்டாளர் இணைப்பு",
     "dismissAriaLabel": "மூடு"
   },
-  "featureFlagAgentProxyDisableThinkingLevelVariantsDescription": "/v1/models பட்டியலில் thinking level variants (எ.கா. -low, -medium, -high) உருவாக்கப்படுவதை முடக்கவும்."
+  "featureFlagAgentProxyDisableThinkingLevelVariantsDescription": "/v1/models பட்டியலில் thinking level variants (எ.கா. -low, -medium, -high) உருவாக்கப்படுவதை முடக்கவும்.",
+  "featureFlagProxyPoolSharedEgressOrderDescription": "egress முகவரியின்படி ஒதுக்கீடு பிரிக்கப்படும் வழங்குநர்களுக்கு, சமீபத்தில் மறுக்கப்பட்ட உறுப்பினரின் கவனிக்கப்பட்ட egress முகவரியைப் பகிரும் pool உறுப்பினரை ஆரோக்கியமான உறுப்பினர்களுக்கு நேர் கீழே வைக்கிறது. வரிசை மட்டுமே, ஒருபோதும் விலக்கப்படாது. அது படிக்கும் மறுப்பு சமிக்ஞையை உருவாக்கும் PROXY_SKIP_RECENTLY_FAILED தேவை. இயல்பாக முடக்கம்: தேர்வு வரிசை சரியாக சாதாரண சுழற்சியே."
 }

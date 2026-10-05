@@ -3193,7 +3193,13 @@
     "cliproxyapiUnknown": "မသိရပါ",
     "cliproxyapiUpdate": "အပ်ဒိတ်လုပ်ရန်",
     "cliproxyapiUpdateAvailable": "အပ်ဒိတ်ရရှိနိုင်သည်- v{current} → v{latest}",
-    "cliproxyapiVersion": "ဗားရှင်း"
+    "cliproxyapiVersion": "ဗားရှင်း",
+    "hermesRoleMoaAggregator": "MoA ပေါင်းစည်းကိရိယာ",
+    "hermesRoleMoaAggregatorDesc": "Mixture-of-Agents ပေါင်းစပ်မော်ဒယ်",
+    "hermesRoleMoaReference": "MoA ရည်ညွှန်းချက်",
+    "hermesRoleMoaReferenceDesc": "Mixture-of-Agents ရည်ညွှန်းမော်ဒယ်",
+    "hermesRoleReview": "ပြန်လည်သုံးသပ်ချက်",
+    "hermesRoleReviewDesc": "Subagent အပြည့်အစုံ ကုဒ်ပြန်လည်သုံးသပ်ချက်"
   },
   "combos": {
     "title": "ပေါင်းစပ်မော်ဒယ်များ",
@@ -3424,7 +3430,9 @@
       "failoverBeforeRetry": "ဖွင့်ထားသည့်အခါ upstream error တစ်ခုခု ဖြစ်ပေါ်လျှင် retry အားလုံးနှင့် fallback URL များကို ကျော်၍ နောက် combo target သို့ ချက်ချင်း failover လုပ်သည်။",
       "maxSetRetries": "target အားလုံး မအောင်မြင်သည့်အခါ target အစုတစ်ခုလုံးကို ထပ်မံကြိုးစားမည့် အကြိမ်အရေအတွက်။ 0 = set အဆင့် retry မရှိပါ။",
       "setRetryDelayMs": "ယာယီပြဿနာများ ပြေလည်ရန် အချိန်ပေးသည့် set-level ပြန်လည်ကြိုးစားမှုများအကြား စောင့်ဆိုင်းချိန်။",
-      "disableSessionStickiness": "စကားဝိုင်းတစ်ခုလုံးကို ပထမမက်ဆေ့ချ် hash ဖြင့် ချိတ်ဆက်မှုတစ်ခုတည်းတွင် ပုံသေထားမည့်အစား တောင်းဆိုမှုတိုင်းတွင် မတူညီသော ချိတ်ဆက်မှုတစ်ခုသို့ ပြောင်းသုံးပါ။ Global မူလသတ်မှတ်ချက်ကို အစားထိုးပါမည်။ အလှည့်များစွာပါသော ချတ်များအတွက် prompt-cache hit များကို ထိန်းသိမ်းရန် Inherit အဖြစ်ထားပါ။"
+      "disableSessionStickiness": "စကားဝိုင်းတစ်ခုလုံးကို ပထမမက်ဆေ့ချ် hash ဖြင့် ချိတ်ဆက်မှုတစ်ခုတည်းတွင် ပုံသေထားမည့်အစား တောင်းဆိုမှုတိုင်းတွင် မတူညီသော ချိတ်ဆက်မှုတစ်ခုသို့ ပြောင်းသုံးပါ။ Global မူလသတ်မှတ်ချက်ကို အစားထိုးပါမည်။ အလှည့်များစွာပါသော ချတ်များအတွက် prompt-cache hit များကို ထိန်းသိမ်းရန် Inherit အဖြစ်ထားပါ။",
+      "connectionAwareExpansion": "When on, this combo expands each provider-level step into per-account targets before rotating. Inherit uses the global default (off). Off keeps provider-level rotation.",
+      "stickyLimit": "Round-robin sticky batch size: consecutive successful requests sent to one target before rotating to the next. Empty inherits the global Sticky Limit setting; 1 disables batching (pure one-request rotation)."
     },
     "templatesTitle": "အမြန်သုံး တမ်းပလိတ်များ",
     "templatesDescription": "အစပြုပရိုဖိုင်တစ်ခုကို အသုံးချပြီးနောက် မော်ဒယ်များနှင့် config ကို ချိန်ညှိပါ။",
@@ -3778,7 +3786,17 @@
     "duplicateAutoComboSnapshotMsg": "ဤလုပ်ဆောင်ချက်သည် လက်ရှိချိတ်ဆက်ထားပြီး ဤတမ်းပလိတ်နှင့် ကိုက်ညီသော ဝန်ဆောင်မှုပေးသူများ/မော်ဒယ်များကို တည်းဖြတ်နိုင်သည့် ပေါင်းစပ်မှုတစ်ခုအဖြစ် လက်ရှိအခြေအနေအတိုင်း မှတ်တမ်းတင်မည်။",
     "duplicateAutoComboFailedPrefix": "အလိုအလျောက်ပေါင်းစပ်မှုကို မိတ္တူပွား၍မရပါ:",
     "duplicateAutoComboUnknownError": "မသိသော အမှား",
-    "duplicateAutoComboTitle": "{name} မှ တည်ငြိမ်သော ပေါင်းစပ်မှုတစ်ခု ဖန်တီးရန်"
+    "duplicateAutoComboTitle": "{name} မှ တည်ငြိမ်သော ပေါင်းစပ်မှုတစ်ခု ဖန်တီးရန်",
+    "stickyLimitEffective": "Effective {value} ({source})",
+    "stickyLimitSourceCombo": "combo",
+    "stickyLimitSourceComboDefaults": "combo defaults",
+    "stickyLimitSourceGlobal": "global default",
+    "connectionAwareExpansion": "Connection-aware expansion",
+    "triStateInherit": "inherit",
+    "connectionAwareExpansionOn": "On",
+    "connectionAwareExpansionOff": "Off",
+    "promptCacheAffinityHint": "Prompt-cache locality routing takes precedence over round-robin/weighted rotation across pinned accounts. Turn it off under Settings, Combo defaults, if you need strict rotation.",
+    "stickyLimitInherit": "မူလဆက်တင်အတိုင်း အသုံးပြုမည်"
   },
   "costs": {
     "title": "ကုန်ကျစရိတ်များ",
@@ -4955,7 +4973,7 @@
     "compressionLogTitle": "ချုံ့ခြင်းမှတ်တမ်း",
     "compressionLogEmpty": "ချုံ့ထားသော တောင်းဆိုမှုများ မရှိသေးပါ။ ချုံ့ခြင်းကို ဖွင့်ထားပြီး တောင်းဆိုမှုများကို လုပ်ဆောင်သည့်အခါ ချုံ့ခြင်းဆိုင်ရာ စာရင်းအင်းများကို ဤနေရာတွင် ပြသပါမည်။",
     "tokens": "တိုကင်များ",
-    "exportTruncated": "__MISSING__:Export truncated: only {exported} of {total} log entries were included. Pick a shorter time range to export the rest."
+    "exportTruncated": "ထုတ်ယူမှုကို ဖြတ်တောက်ထားသည်- မှတ်တမ်း {total} ခုအနက် {exported} ခုသာ ပါဝင်သည်။ ကျန်ရှိသည်များကို ထုတ်ယူရန် ပိုတိုသော အချိန်အပိုင်းအခြားကို ရွေးပါ။"
   },
   "onboarding": {
     "welcome": "ကြိုဆိုပါသည်",
@@ -6314,7 +6332,8 @@
       "kiro": "အခမဲ့အဆင့်- တစ်လလျှင် credit 50 (~25K–100K tokens)။ ⚠️ Kiro ToS သည် ပြင်ပ proxy/harness အသုံးပြုမှုကို တားမြစ်ထားသည်။",
       "codex": "လက်ရှိ OAuth လုပ်ငန်းစဉ်ဖြင့် OpenAI Codex ကို ချိတ်ဆက်ပါ။",
       "qwen": "လက်ရှိ OAuth လုပ်ငန်းစဉ်ဖြင့် Qwen Code ကို ချိတ်ဆက်ပါ။",
-      "github-models": "github.com/settings/tokens တွင် 'models: read' scope ပါဝင်သည့် GitHub PAT တစ်ခု ဖန်တီးပါ"
+      "github-models": "github.com/settings/tokens တွင် 'models: read' scope ပါဝင်သည့် GitHub PAT တစ်ခု ဖန်တီးပါ",
+      "agnes-cn": "api.agnes-ai.cn အတွက် ထုတ်ပေးထားသော API key ဖြင့် Agnes AI (China) ကို ချိတ်ဆက်ပါ။ apihub.agnes-ai.com မှ key များသည် အလုပ်လုပ်မည်မဟုတ်ပါ။"
     },
     "passthroughModelsDescription": "{provider} သည် provider-native model IDs များကို လက်ခံသည်။ /models မှ ထည့်သွင်းပါ သို့မဟုတ် routing အတွက် စိတ်ကြိုက် IDs များ ထည့်ပါ။",
     "bedrockModelsDescription": "Amazon Bedrock မော်ဒယ်များကို AWS region အလိုက် ကန့်သတ်ထားသည်။ /models မှ ထည့်သွင်းပါ သို့မဟုတ် ရွေးချယ်ထားသည့် region တွင် ဖွင့်ထားသော Bedrock model IDs များ ထည့်ပါ။",
@@ -6472,7 +6491,9 @@
     "savedModelEndpointSettings": "မော်ဒယ် endpoint ဆက်တင်များကို သိမ်းဆည်းပြီးပါပြီ",
     "searchByModelAria": "မော်ဒယ်ဖြင့် ရှာဖွေရန်",
     "selectSupportedEndpoint": "ပံ့ပိုးထားသော endpoint အနည်းဆုံးတစ်ခုကို ရွေးချယ်ပါ",
-    "antigravityClientProfileHarness": "Harness / CLI"
+    "antigravityClientProfileHarness": "Harness / CLI",
+    "vertexCredentialHint": "API key များသည် ရွေးချယ်စီစဉ်ထားသော ပရောဂျက်ကတ်တလောက်ကို အသုံးပြုသည်။ Service Account JSON သည် Model Garden ကို တိုက်ရိုက်ရှာဖွေတွေ့ရှိနိုင်စေသည်။",
+    "vertexCredentialLabel": "API Key သို့မဟုတ် Service Account JSON"
   },
   "settings": {
     "title": "ဆက်တင်များ",
@@ -8579,7 +8600,11 @@
       },
       "compressToolResults": {
         "label": "ရှည်လျားသော tool ရလဒ်များကို ကြိုတင်ဖြတ်တောက်ပါ",
-        "description": "Truncates long tool results during Lite compression. The Maximum tool-result length field (or OMNIROUTE_LITE_MAX_TOOL_LENGTH when that field is unset) sets the cap. Emergency overflow protection may still trim content when the context exceeds the model budget."
+        "description": "Truncates long tool results during Lite compression. The Maximum tool-result length field (or AGENTPROXY_LITE_MAX_TOOL_LENGTH when that field is unset) sets the cap. Emergency overflow protection may still trim content when the context exceeds the model budget."
+      },
+      "maxToolLength": {
+        "description": "Character cap for proactive tool-result truncation. Default 2000. Override with AGENTPROXY_LITE_MAX_TOOL_LENGTH when this field is unset.",
+        "label": "Maximum tool-result length"
       }
     },
     "engineFields": {
@@ -9695,7 +9720,14 @@
     "updatedShort": "အပ်ဒိတ်လုပ်ထားသည်",
     "lastRefreshed": "နောက်ဆုံး ပြန်လည်ရယူခဲ့ချိန်",
     "providerQuota": "ဝန်ဆောင်မှုပေးသူ၏ ခွဲတမ်း",
-    "providerQuotaHomeHint": "ချိတ်ဆက်ထားသောအကောင့်များအားလုံး၏ လက်ရှိအခြေအနေ"
+    "providerQuotaHomeHint": "ချိတ်ဆက်ထားသောအကောင့်များအားလုံး၏ လက်ရှိအခြေအနေ",
+    "glmConfirmRedeemFiveHourResetCredit": "အသုံးပြုလိုက်သည်နှင့် ၅ နာရီ အသုံးပြုမှုကာလကို ချက်ချင်းပြန်လည်သတ်မှတ်ပြီး ဤကတ်ကို အပြီးအပိုင် အသုံးပြုကုန်ဆုံးစေမည်။",
+    "glmConfirmRedeemResetCredit": "အသုံးပြုလိုက်သည်နှင့် ရွေးချယ်ထားသော အသုံးပြုမှုကာလကို ချက်ချင်းပြန်လည်သတ်မှတ်ပြီး ဤကတ်ကို အပြီးအပိုင် အသုံးပြုကုန်ဆုံးစေမည်။",
+    "glmConfirmRedeemWeekResetCredit": "အသုံးပြုလိုက်သည်နှင့် အပတ်စဉ် အသုံးပြုမှုကာလကို ချက်ချင်းပြန်လည်သတ်မှတ်ပြီး ဤကတ်ကို အပြီးအပိုင် အသုံးပြုကုန်ဆုံးစေမည်။",
+    "glmResetCreditFiveHourTitle": "၅ နာရီကာလကို ပြန်လည်သတ်မှတ်ခြင်း",
+    "glmResetCreditsModalExplainer": "ပြန်လည်သတ်မှတ်ကတ်များကို သက်တမ်းကုန်ဆုံးချိန်အလိုက် စီထားသည်။ သင်ပြန်လည်သတ်မှတ်လိုသော ၅ နာရီ သို့မဟုတ် အပတ်စဉ်ကာလကို ရွေးချယ်ပါ။",
+    "glmResetCreditsModalTitle": "GLM Coding Plan ပြန်လည်သတ်မှတ်ကတ်များ",
+    "glmResetCreditWeekTitle": "အပတ်စဉ်ကာလကို ပြန်လည်သတ်မှတ်ခြင်း"
   },
   "modals": {
     "waitingAuth": "ခွင့်ပြုချက်ကို စောင့်ဆိုင်းနေသည်",
@@ -10961,7 +10993,9 @@
     "poolAddMember": "ထည့်ရန်",
     "poolAddFailed": "ပရောက်စီကို ပူးလ်ထဲသို့ ထည့်၍ မရပါ",
     "poolSelectProxy": "ပရောက်စီတစ်ခု ရွေးချယ်ပါ…",
-    "poolSaveFailed": "ပူးလ်သတ်မှတ်မှုကို သိမ်းဆည်း၍ မရပါ"
+    "poolSaveFailed": "ပူးလ်သတ်မှတ်မှုကို သိမ်းဆည်း၍ မရပါ",
+    "poolEgressFailuresByExit": "{exit} မှတစ်ဆင့် မအောင်မြင်မှုများ- {count}",
+    "poolEgressFailuresUnattributed": "သတ်မှတ်ထားသော ထွက်ပေါက်မရှိသည့် မအောင်မြင်မှုများ- {count}"
   },
   "playground": {
     "title": "မော်ဒယ် စမ်းသပ်ခန်း",
@@ -11302,7 +11336,11 @@
       "duration": "ကြာချိန်",
       "time": "အချိန်",
       "conversation": "စကားဝိုင်း",
-      "ttft": "TTFT"
+      "ttft": "TTFT",
+      "contentProvenance": "အဖြေ",
+      "contentEmpty": "အဖြေ ဗလာ",
+      "usageAbsent": "token အရေအတွက် မတင်ပြထားပါ",
+      "usageEstimated": "token အရေအတွက် ခန့်မှန်းထားသည်"
     },
     "loadingLogs": "မှတ်တမ်းများကို တင်နေသည်...",
     "noLogs": "မှတ်တမ်းများ မရှိသေးပါ။ ဤနေရာတွင် ကြည့်ရှုရန် API ခေါ်ဆိုမှုအချို့ ပြုလုပ်ပါ။",
@@ -11962,7 +12000,11 @@
       "goNow": "ယခု သွားပါ",
       "message": "MITM Proxy ကို ယခု AgentBridge အောက်သို့ ရွှေ့ထားပါသည်။",
       "title": "ဤစာမျက်နှာကို ရွှေ့ထားပါသည်"
-    }
+    },
+    "resetAgent": "မူလအတိုင်း ပြန်ထားရန်",
+    "resetAgentConfirm": "မူလအတိုင်း ပြန်ထားမလား?",
+    "resetDone": "{agent} အတွက် မူလ DNS ကို ပြန်ထားပြီးပါပြီ။ ပြောင်းလဲမှု အသက်ဝင်စေရန် အက်ပ်ကို လုံးဝပိတ်ပြီး (ချုံ့ထားရုံသာ မဟုတ်ဘဲ) ပြန်ဖွင့်ပါ။",
+    "resetting": "ပြန်ထားနေသည်…"
   },
   "providerStats": {
     "unknownError": "မသိသော အမှား",
@@ -12676,7 +12718,12 @@
     "createDahlTokenFailed": "Dahl token ကို ဖန်တီး၍ မရပါ",
     "providerProxy": "ပရောက်စီ",
     "providerProxyConfigureHint": "ပရောက်စီကို စီစဉ်သတ်မှတ်ရန်",
-    "providerProxyTitleConfigured": "ပရောက်စီကို စီစဉ်သတ်မှတ်ပြီးပါပြီ: {host}"
+    "providerProxyTitleConfigured": "ပရောက်စီကို စီစဉ်သတ်မှတ်ပြီးပါပြီ: {host}",
+    "directEgress": "တိုက်ရိုက် (proxy မပါ)",
+    "inheritConnectionOption": "ကိုယ်ပိုင် proxy မရှိ (ချိတ်ဆက်မှုကို အမွေခံသည်)",
+    "inheritedPool": "ချိတ်ဆက်မှု pool ကို အမွေခံသည် ({count})",
+    "inheritedProxy": "ချိတ်ဆက်မှုကို အမွေခံသည်: {host}",
+    "poolEmptyBlocked": "Pool လွတ်နေသည် — တောင်းဆိုမှုများ ကျရှုံးမည် (တိုက်ရိုက်မဟုတ်)"
   },
   "gamification": {
     "leaderboardScopes": {
@@ -13036,6 +13083,13 @@
       "SERVER_OWNED_TOOL_LOOP_ENABLED": {
         "label": "Server ပိုင် Tool Loop",
         "description": "Model က client အသုံးပြုနိုင်သော response တစ်ခုကို ပြန်ပေးသည်အထိ non-streaming server-owned tool call များကို ဆက်လက်လုပ်ဆောင်ပါ။"
+      },
+      "PROTECTED_PRIORITY_INFRA_502_ENABLED": {
+        "description": "quota ကြောင့်သာ fallback လုပ်သည့် ဦးစားပေး target တစ်ခုက quota မဟုတ်ကြောင်း သက်သေပြနိုင်သော အကြောင်းရင်း—ဖွင့်နေသည့် provider circuit breaker သို့မဟုတ် ကြိုတင်ခန့်မှန်းထားသော latency ကြောင့် ကျော်သွားခြင်း—ကြောင့် ပေါင်းစပ်မှုကို ရပ်တန့်သည့်အခါ 503 အစား 502 ဖြင့် တုံ့ပြန်ပါ။",
+        "label": "ကာကွယ်ထားသော ဦးစားပေး အခြေခံစနစ် ရပ်တန့်မှုများကို 502 အဖြစ် သတ်မှတ်ခြင်း"
+      },
+      "STREAM_RECOVERY_TOOLCALL_ORDER_FIX": {
+        "description": "စီးဆင်းမှုအလယ်တွင် ဆက်လက်လုပ်ဆောင်ခြင်းကို tool-call အတွက် ဘေးကင်းအောင် ပြုလုပ်ပါ။ tool-call တစ်ခု ပို့ပြီးသွားပါက (လုပ်ဆောင်နေဆဲဖြစ်စေ၊ ပြီးဆုံးပြီးဖြစ်စေ) ဖြတ်တောက်သွားသော stream ကို မည်သည့်အခါမျှ ပြန်လည်မဆက်ပါနှင့်။ ထို့ပြင် retry budget အားလုံးကို အသုံးပြုမည့်အစား ဗလာ continuation တစ်ကြိမ်ပြီးနောက် ရပ်တန့်ပါ။"
       }
     }
   },
@@ -13956,7 +14010,12 @@
     "hour": "နာရီ",
     "day": "ရက်",
     "unknownModel": "မသိရ",
-    "pending": "ဆိုင်းငံ့ထားသည်"
+    "pending": "ဆိုင်းငံ့ထားသည်",
+    "allApiKeys": "All API keys",
+    "mcp": "MCP",
+    "mcpTool": "MCP tool",
+    "scope": "Scope",
+    "apiKey": "API key"
   },
   "metadata": {
     "compressionTitle": "ချုံ့ခြင်း",
@@ -14159,5 +14218,6 @@
     "partnerLinkNote": "မိတ်ဖက်လင့်ခ်",
     "dismissAriaLabel": "ပိတ်ရန်"
   },
-  "featureFlagAgentProxyDisableThinkingLevelVariantsDescription": "/v1/models catalog တွင် thinking level မူကွဲများ (ဥပမာ -low, -medium, -high) ဖန်တီးခြင်းကို ပိတ်ပါ။"
+  "featureFlagAgentProxyDisableThinkingLevelVariantsDescription": "/v1/models catalog တွင် thinking level မူကွဲများ (ဥပမာ -low, -medium, -high) ဖန်တီးခြင်းကို ပိတ်ပါ။",
+  "featureFlagProxyPoolSharedEgressOrderDescription": "egress လိပ်စာအလိုက် ကိုတာခွဲဝေသော ပံ့ပိုးသူများအတွက် မကြာသေးမီက ငြင်းပယ်ခံရသော အဖွဲ့ဝင်၏ တွေ့ရှိထားသော egress လိပ်စာကို မျှဝေသည့် pool အဖွဲ့ဝင်ကို ကျန်းမာသော အဖွဲ့ဝင်များ၏ အောက်တွင် ချက်ချင်း နေရာချသည်။ အစီအစဉ်သာ၊ ဘယ်တော့မှ ဖယ်ထုတ်မည်မဟုတ်ပါ။ ၎င်းဖတ်သော ငြင်းပယ်မှုအချက်ပြကို ထုတ်ပေးသည့် PROXY_SKIP_RECENTLY_FAILED လိုအပ်သည်။ မူလအားဖြင့် ပိတ်ထားသည်- ရွေးချယ်မှုအစီအစဉ်သည် ပုံမှန်အလှည့်ကျအတိုင်း အတိအကျဖြစ်သည်။"
 }

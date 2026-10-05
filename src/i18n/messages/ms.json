@@ -3795,7 +3795,8 @@
     "triStateInherit": "inherit",
     "connectionAwareExpansionOn": "On",
     "connectionAwareExpansionOff": "Off",
-    "promptCacheAffinityHint": "Prompt-cache locality routing takes precedence over round-robin/weighted rotation across pinned accounts. Turn it off under Settings, Combo defaults, if you need strict rotation."
+    "promptCacheAffinityHint": "Prompt-cache locality routing takes precedence over round-robin/weighted rotation across pinned accounts. Turn it off under Settings, Combo defaults, if you need strict rotation.",
+    "stickyLimitInherit": "warisi"
   },
   "costs": {
     "title": "Kos",
@@ -4972,7 +4973,7 @@
     "compressionLogTitle": "Log Pemampatan",
     "compressionLogEmpty": "Belum ada permintaan termampat. Statistik pemampatan akan dipaparkan di sini apabila permintaan diproses dengan pemampatan didayakan.",
     "tokens": "token",
-    "exportTruncated": "__MISSING__:Export truncated: only {exported} of {total} log entries were included. Pick a shorter time range to export the rest."
+    "exportTruncated": "Eksport dipendekkan: hanya {exported} daripada {total} entri log disertakan. Pilih julat masa yang lebih pendek untuk mengeksport selebihnya."
   },
   "onboarding": {
     "welcome": "Selamat datang",
@@ -6328,7 +6329,8 @@
       "kiro": "Peringkat percuma: 50 kredit/bulan (~25K–100K token). ⚠️ ToS Kiro melarang penggunaan proksi/harness pihak ketiga.",
       "codex": "Sambungkan OpenAI Codex dengan aliran OAuth sedia ada.",
       "qwen": "Sambungkan Qwen Code dengan aliran OAuth sedia ada.",
-      "github-models": "Cipta PAT GitHub dengan skop 'models: read' di github.com/settings/tokens"
+      "github-models": "Cipta PAT GitHub dengan skop 'models: read' di github.com/settings/tokens",
+      "agnes-cn": "Sambungkan Agnes AI (China) menggunakan API key yang dikeluarkan untuk api.agnes-ai.cn. API key daripada apihub.agnes-ai.com tidak akan berfungsi."
     },
     "passthroughModelsDescription": "{provider} menerima ID model asli pembekal. Import daripada /models atau tambahkan ID tersuai untuk penghalaan.",
     "bedrockModelsDescription": "Model Amazon Bedrock diliputi oleh rantau AWS. Import daripada /models atau tambah ID model Bedrock yang didayakan di rantau yang dipilih.",
@@ -6489,7 +6491,9 @@
     "failedClearConnectionCooldown": "Gagal mengosongkan tempoh tunggu",
     "importFromFileDownloadTemplate": "Muat turun templat CSV",
     "importFromFileMoreErrors": "+{count} lagi",
-    "importFromFileSchemaHint": "Lajur CSV adalah mengikut kedudukan: provider, name, apiKey, baseUrl (pilihan), priority (pilihan). Lajur provider mestilah id penyedia terurus yang sedia ada atau id nod serasi OpenAI/Anthropic yang telah didaftarkan — import ini tidak mencipta nod titik akhir baharu."
+    "importFromFileSchemaHint": "Lajur CSV adalah mengikut kedudukan: provider, name, apiKey, baseUrl (pilihan), priority (pilihan). Lajur provider mestilah id penyedia terurus yang sedia ada atau id nod serasi OpenAI/Anthropic yang telah didaftarkan — import ini tidak mencipta nod titik akhir baharu.",
+    "vertexCredentialHint": "API keys menggunakan katalog projek terpilih. Service Account JSON membolehkan penemuan Model Garden secara langsung.",
+    "vertexCredentialLabel": "API Key atau Service Account JSON"
   },
   "settings": {
     "title": "tetapan",
@@ -8597,6 +8601,10 @@
       "compressToolResults": {
         "label": "Secara proaktif memendekkan hasil alat yang panjang",
         "description": "__MISSING__:Truncates long tool results during Lite compression. The Maximum tool-result length field (or AGENTPROXY_LITE_MAX_TOOL_LENGTH when that field is unset) sets the cap. Emergency overflow protection may still trim content when the context exceeds the model budget."
+      },
+      "maxToolLength": {
+        "description": "Character cap for proactive tool-result truncation. Default 2000. Override with AGENTPROXY_LITE_MAX_TOOL_LENGTH when this field is unset.",
+        "label": "Maximum tool-result length"
       }
     },
     "engineFields": {
@@ -9712,7 +9720,14 @@
     "kiloPassPaid": "Dibayar",
     "kiloPassRemaining": "Baki",
     "kiloPassRenews": "Diperbaharui dalam {count} hari",
-    "kiloPassUsageLabel": "Penggunaan bulan ini"
+    "kiloPassUsageLabel": "Penggunaan bulan ini",
+    "glmConfirmRedeemFiveHourResetCredit": "Penebusan akan menetapkan semula tetingkap penggunaan 5 jam dengan serta-merta dan menggunakan kad ini secara kekal.",
+    "glmConfirmRedeemResetCredit": "Penebusan akan menetapkan semula tetingkap penggunaan yang dipilih dengan serta-merta dan menggunakan kad ini secara kekal.",
+    "glmConfirmRedeemWeekResetCredit": "Penebusan akan menetapkan semula tetingkap penggunaan mingguan dengan serta-merta dan menggunakan kad ini secara kekal.",
+    "glmResetCreditFiveHourTitle": "Tetapkan semula tetingkap 5 jam",
+    "glmResetCreditsModalExplainer": "Kad penetapan semula disusun mengikut tarikh luput. Pilih tetingkap 5 jam atau mingguan yang ingin anda tetapkan semula.",
+    "glmResetCreditsModalTitle": "Kad penetapan semula Pelan Pengekodan GLM",
+    "glmResetCreditWeekTitle": "Tetapkan semula tetingkap mingguan"
   },
   "modals": {
     "waitingAuth": "Menunggu Keizinan",
@@ -12703,7 +12718,12 @@
     "createDahlTokenFailed": "Gagal untuk mencipta token Dahl",
     "providerProxy": "Proksi",
     "providerProxyConfigureHint": "Konfigurasikan proksi",
-    "providerProxyTitleConfigured": "Proksi dikonfigurasikan: {host}"
+    "providerProxyTitleConfigured": "Proksi dikonfigurasikan: {host}",
+    "directEgress": "Langsung (tanpa proksi)",
+    "inheritConnectionOption": "Tiada proksi sendiri (mewarisi sambungan)",
+    "inheritedPool": "Mewarisi kolam sambungan ({count})",
+    "inheritedProxy": "Mewarisi sambungan: {host}",
+    "poolEmptyBlocked": "Kolam kosong — permintaan gagal (bukan langsung)"
   },
   "gamification": {
     "leaderboardScopes": {
@@ -13063,6 +13083,13 @@
       "SERVER_OWNED_TOOL_LOOP_ENABLED": {
         "label": "Gelung Alat Milik Pelayan",
         "description": "Teruskan panggilan alat milik pelayan tanpa penstriman sehingga model mengembalikan respons yang boleh digunakan oleh klien."
+      },
+      "PROTECTED_PRIORITY_INFRA_502_ENABLED": {
+        "description": "Berikan respons 502 dan bukannya 503 apabila sasaran keutamaan yang sandarannya hanya dicetuskan oleh kuota menghentikan gabungan atas sebab yang dapat dibuktikan tidak berkaitan dengan kuota: pemutus litar penyedia yang terbuka atau pelangkauan latensi ramalan.",
+        "label": "Penghentian Infrastruktur Keutamaan Terlindung sebagai 502"
+      },
+      "STREAM_RECOVERY_TOOLCALL_ORDER_FIX": {
+        "description": "Jadikan penyambungan pertengahan strim selamat untuk panggilan alat: jangan sekali-kali sambung semula strim yang terputus selepas panggilan alat dihantar (masih berlangsung atau sudah selesai), dan hentikan selepas satu penyambungan kosong dan bukannya menggunakan keseluruhan had percubaan semula."
       }
     }
   },
@@ -14191,5 +14218,6 @@
     "partnerLinkNote": "Pautan rakan kongsi",
     "dismissAriaLabel": "Tutup"
   },
-  "featureFlagAgentProxyDisableThinkingLevelVariantsDescription": "Lumpuhkan penjanaan varian tahap pemikiran (cth. -low, -medium, -high) dalam katalog /v1/models."
+  "featureFlagAgentProxyDisableThinkingLevelVariantsDescription": "Lumpuhkan penjanaan varian tahap pemikiran (cth. -low, -medium, -high) dalam katalog /v1/models.",
+  "featureFlagProxyPoolSharedEgressOrderDescription": "Bagi pembekal yang kuotanya dibahagikan mengikut alamat egress, meletakkan ahli pool yang berkongsi alamat egress yang diperhatikan bagi ahli yang baru ditolak tepat di bawah ahli yang sihat. Susunan sahaja, tidak pernah dikecualikan. Memerlukan PROXY_SKIP_RECENTLY_FAILED, yang menghasilkan isyarat penolakan yang dibacanya. Dimatikan secara lalai: susunan pemilihan adalah tepat putaran biasa."
 }

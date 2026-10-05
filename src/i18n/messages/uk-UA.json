@@ -3795,7 +3795,8 @@
     "triStateInherit": "inherit",
     "connectionAwareExpansionOn": "On",
     "connectionAwareExpansionOff": "Off",
-    "promptCacheAffinityHint": "Prompt-cache locality routing takes precedence over round-robin/weighted rotation across pinned accounts. Turn it off under Settings, Combo defaults, if you need strict rotation."
+    "promptCacheAffinityHint": "Prompt-cache locality routing takes precedence over round-robin/weighted rotation across pinned accounts. Turn it off under Settings, Combo defaults, if you need strict rotation.",
+    "stickyLimitInherit": "успадкувати"
   },
   "costs": {
     "title": "Витрати",
@@ -4972,7 +4973,7 @@
     "compressionLogTitle": "Лог стиснення",
     "compressionLogEmpty": "Поки що немає стиснутих запитів. Статистика стиснення з'явиться тут, коли запити будуть оброблятися з увімкненим стисненням.",
     "tokens": "токени",
-    "exportTruncated": "__MISSING__:Export truncated: only {exported} of {total} log entries were included. Pick a shorter time range to export the rest."
+    "exportTruncated": "Експорт скорочено: включено лише {exported} із {total} записів журналу. Виберіть коротший часовий діапазон, щоб експортувати решту."
   },
   "onboarding": {
     "welcome": "Ласкаво просимо",
@@ -6328,7 +6329,8 @@
       "kiro": "Безкоштовний рівень: 50 кредитів на місяць (~25K–100K токенів). ⚠️ Умови використання Kiro забороняють використання через сторонні проксі або оболонки.",
       "codex": "Підключіть OpenAI Codex за допомогою наявного процесу OAuth.",
       "qwen": "Підключіть Qwen Code за допомогою наявного процесу OAuth.",
-      "github-models": "Створіть GitHub PAT з областю видимості 'models: read' на github.com/settings/tokens"
+      "github-models": "Створіть GitHub PAT з областю видимості 'models: read' на github.com/settings/tokens",
+      "agnes-cn": "Підключіть Agnes AI (China) за допомогою ключа API, виданого для api.agnes-ai.cn. Ключі з apihub.agnes-ai.com не працюватимуть."
     },
     "passthroughModelsDescription": "{provider} приймає власні ідентифікатори моделі постачальника. Імпортуйте з /models або додайте власні ідентифікатори для маршрутизації.",
     "bedrockModelsDescription": "Моделі Amazon Bedrock залежать від регіону AWS. Імпортуйте з /models або додайте ідентифікатори моделі Bedrock, активовані у вибраному регіоні.",
@@ -6489,7 +6491,9 @@
     "failedClearConnectionCooldown": "Не вдалося скинути період очікування",
     "importFromFileDownloadTemplate": "Завантажити шаблон CSV",
     "importFromFileMoreErrors": "Ще {count}",
-    "importFromFileSchemaHint": "Стовпці CSV є позиційними: provider, name, apiKey, baseUrl (необов’язково), priority (необов’язково). Стовпець provider має містити ідентифікатор наявного керованого провайдера або вже зареєстрований ідентифікатор вузла, сумісного з OpenAI/Anthropic. Цей імпорт не створює нових вузлів кінцевих точок."
+    "importFromFileSchemaHint": "Стовпці CSV є позиційними: provider, name, apiKey, baseUrl (необов’язково), priority (необов’язково). Стовпець provider має містити ідентифікатор наявного керованого провайдера або вже зареєстрований ідентифікатор вузла, сумісного з OpenAI/Anthropic. Цей імпорт не створює нових вузлів кінцевих точок.",
+    "vertexCredentialHint": "Ключі API використовують добірний каталог проєктів. Service Account JSON дає змогу виявляти моделі в Model Garden у реальному часі.",
+    "vertexCredentialLabel": "API Key або Service Account JSON"
   },
   "settings": {
     "title": "Налаштування",
@@ -8597,6 +8601,10 @@
       "compressToolResults": {
         "label": "Проактивно обрізати довгі результати інструментів",
         "description": "Обрізає результати інструменту понад 2,000 символів під час Lite стиснення. Захист від надмірного переповнення може все ще обрізати вміст, коли контекст перевищує бюджет моделі."
+      },
+      "maxToolLength": {
+        "description": "Character cap for proactive tool-result truncation. Default 2000. Override with AGENTPROXY_LITE_MAX_TOOL_LENGTH when this field is unset.",
+        "label": "Maximum tool-result length"
       }
     },
     "engineFields": {
@@ -9712,7 +9720,14 @@
     "kiloPassPaid": "Оплачено",
     "kiloPassRemaining": "Залишилось",
     "kiloPassRenews": "Оновлюється через {count} дн.",
-    "kiloPassUsageLabel": "Використання в цьому місяці"
+    "kiloPassUsageLabel": "Використання в цьому місяці",
+    "glmConfirmRedeemFiveHourResetCredit": "Активація негайно скидає 5-годинне вікно використання й остаточно витрачає цю картку.",
+    "glmConfirmRedeemResetCredit": "Активація негайно скидає вибране вікно використання й остаточно витрачає цю картку.",
+    "glmConfirmRedeemWeekResetCredit": "Активація негайно скидає тижневе вікно використання й остаточно витрачає цю картку.",
+    "glmResetCreditFiveHourTitle": "Скидання 5-годинного вікна",
+    "glmResetCreditsModalExplainer": "Картки скидання впорядковано за терміном дії. Виберіть 5-годинне або тижневе вікно, яке потрібно скинути.",
+    "glmResetCreditsModalTitle": "Картки скидання GLM Coding Plan",
+    "glmResetCreditWeekTitle": "Скидання тижневого вікна"
   },
   "modals": {
     "waitingAuth": "Очікування авторизації",
@@ -12703,7 +12718,12 @@
     "createDahlTokenFailed": "Не вдалося створити токен Dahl",
     "providerProxy": "Проксі",
     "providerProxyConfigureHint": "Налаштувати проксі",
-    "providerProxyTitleConfigured": "Проксі налаштовано: {host}"
+    "providerProxyTitleConfigured": "Проксі налаштовано: {host}",
+    "directEgress": "Напряму (без проксі)",
+    "inheritConnectionOption": "Без власного проксі (успадковує зʼєднання)",
+    "inheritedPool": "Успадковує пул зʼєднань ({count})",
+    "inheritedProxy": "Успадковує зʼєднання: {host}",
+    "poolEmptyBlocked": "Пул порожній — запити не вдаються (не напряму)"
   },
   "gamification": {
     "leaderboardScopes": {
@@ -13063,6 +13083,13 @@
       "SERVER_OWNED_TOOL_LOOP_ENABLED": {
         "label": "Серверний цикл викликів інструментів",
         "description": "Продовжувати керовані сервером непотокові виклики інструментів, доки модель не поверне придатну для використання клієнтом відповідь."
+      },
+      "PROTECTED_PRIORITY_INFRA_502_ENABLED": {
+        "description": "Повертати відповідь 502 замість 503, коли пріоритетна ціль із резервним перемиканням лише в разі вичерпання квоти зупиняє комбінацію з причини, яка доведено не пов’язана з квотою: розімкнений автоматичний вимикач провайдера або пропуск через прогнозовану затримку.",
+        "label": "Зупинки інфраструктури із захищеним пріоритетом як 502"
+      },
+      "STREAM_RECOVERY_TOOLCALL_ORDER_FIX": {
+        "description": "Зробити продовження посеред потоку безпечним для викликів інструментів: ніколи не відновлювати перерваний потік після надсилання виклику інструмента (який усе ще виконується або вже завершився) і зупинятися після одного порожнього продовження замість використання всього бюджету повторних спроб."
       }
     }
   },
@@ -14191,5 +14218,6 @@
     "partnerLinkNote": "Партнерське посилання",
     "dismissAriaLabel": "Закрити"
   },
-  "featureFlagAgentProxyDisableThinkingLevelVariantsDescription": "Вимкнути створення варіантів рівня міркування (наприклад, -low, -medium, -high) у каталозі /v1/models."
+  "featureFlagAgentProxyDisableThinkingLevelVariantsDescription": "Вимкнути створення варіантів рівня міркування (наприклад, -low, -medium, -high) у каталозі /v1/models.",
+  "featureFlagProxyPoolSharedEgressOrderDescription": "Для провайдерів, квота яких розподіляється за вихідною (egress) адресою, ставить учасника pool, що має спільну спостережувану egress-адресу з нещодавно відхиленим учасником, одразу нижче здорових учасників. Лише порядок, ніколи не виключає. Потребує PROXY_SKIP_RECENTLY_FAILED, який створює сигнал відмови, що його він зчитує. Типово вимкнено: порядок вибору — точно звичайна ротація."
 }

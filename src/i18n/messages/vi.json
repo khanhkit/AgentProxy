@@ -4974,7 +4974,7 @@
     "compressionLogTitle": "Nhật ký nén",
     "compressionLogEmpty": "Chưa có yêu cầu nào được nén. Số liệu thống kê nén sẽ xuất hiện ở đây khi các yêu cầu được xử lý với tính năng nén được bật.",
     "tokens": "token",
-    "exportTruncated": "__MISSING__:Export truncated: only {exported} of {total} log entries were included. Pick a shorter time range to export the rest."
+    "exportTruncated": "Bản xuất đã bị cắt bớt: chỉ {exported} trong tổng số {total} mục nhật ký được đưa vào. Hãy chọn khoảng thời gian ngắn hơn để xuất phần còn lại."
   },
   "onboarding": {
     "welcome": "Chào mừng",
@@ -5977,7 +5977,7 @@
     "validationModelIdLabel": "Mô hình xác thực",
     "validationModelIdPlaceholder": "Ví dụ: meta-llama/llama-3.1-8b-instruct",
     "vertexCredentialLabel": "API Key or Service Account JSON",
-    "vertexCredentialHint": "API keys use the curated project catalog. Service Account JSON enables live Model Garden discovery.",
+    "vertexCredentialHint": "Khóa API sử dụng danh mục dự án được tuyển chọn. JSON của Service Account cho phép khám phá Model Garden theo thời gian thực.",
     "vertexServiceAccountPlaceholder": "Dán JSON Tài khoản dịch vụ của bạn ({\"type\":\"service_account\",\"project_id\":\"…\",\"client_email\":\"…\",\"private_key\":\"…\"}) hoặc access_token OAuth",
     "webCookieProviders": "Nhà cung cấp Web Cookie",
     "weeklyShort": "Hàng tuần",

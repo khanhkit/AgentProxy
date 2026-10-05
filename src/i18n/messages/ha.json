@@ -3193,7 +3193,13 @@
     "cliproxyapiUnknown": "Ba a sani ba",
     "cliproxyapiUpdate": "Sabunta",
     "cliproxyapiUpdateAvailable": "Akwai sabuntawa: v{current} → v{latest}",
-    "cliproxyapiVersion": "Siga"
+    "cliproxyapiVersion": "Siga",
+    "hermesRoleMoaAggregator": "Mai tattara MoA",
+    "hermesRoleMoaAggregatorDesc": "Samfurin haɗawa na Mixture-of-Agents",
+    "hermesRoleMoaReference": "Madogarar MoA",
+    "hermesRoleMoaReferenceDesc": "Samfurin madogara na Mixture-of-Agents",
+    "hermesRoleReview": "Bita",
+    "hermesRoleReviewDesc": "Cikakken bitar lambar subagent"
   },
   "combos": {
     "title": "Haɗe-haɗe",
@@ -3424,7 +3430,9 @@
       "failoverBeforeRetry": "Idan an kunna, duk wani kuskuren upstream zai jawo sauyawa nan take zuwa combo target na gaba, tare da tsallake duk sake-gwaje da fallback URLs.",
       "maxSetRetries": "Adadin lokutan sake gwada cikakken rukunin targets idan duk targets suka gaza. 0 = babu sake-gwaji a matakin rukuni.",
       "setRetryDelayMs": "Jinkiri tsakanin yunƙurin sake-gwaji a matakin rukuni, domin bai wa matsalolin wucin gadi lokaci su warware.",
-      "disableSessionStickiness": "Sauya zuwa wata connection daban a kowace buƙata maimakon ɗaure duk tattaunawa da connection guda ta hanyar hash na saƙon farko. Wannan ya rinjayi saitin gama-gari na asali. Bar shi a Inherit domin kiyaye samun prompt-cache a tattaunawa masu zagaye da yawa."
+      "disableSessionStickiness": "Sauya zuwa wata connection daban a kowace buƙata maimakon ɗaure duk tattaunawa da connection guda ta hanyar hash na saƙon farko. Wannan ya rinjayi saitin gama-gari na asali. Bar shi a Inherit domin kiyaye samun prompt-cache a tattaunawa masu zagaye da yawa.",
+      "connectionAwareExpansion": "When on, this combo expands each provider-level step into per-account targets before rotating. Inherit uses the global default (off). Off keeps provider-level rotation.",
+      "stickyLimit": "Round-robin sticky batch size: consecutive successful requests sent to one target before rotating to the next. Empty inherits the global Sticky Limit setting; 1 disables batching (pure one-request rotation)."
     },
     "templatesTitle": "Templates na gaggawa",
     "templatesDescription": "Aiwatar da profile na farawa, sannan daidaita models da config.",
@@ -3778,7 +3786,17 @@
     "duplicateAutoComboSnapshotMsg": "Wannan zai adana kwafin masu samarwa/samfura da aka haɗa a yanzu waɗanda suka dace da wannan samfuri na tsari a matsayin haɗin da za a iya gyarawa.",
     "duplicateAutoComboFailedPrefix": "An kasa yin kwafin haɗin atomatik:",
     "duplicateAutoComboUnknownError": "Kuskuren da ba a sani ba",
-    "duplicateAutoComboTitle": "Ƙirƙiri tsayayyen haɗi daga {name}"
+    "duplicateAutoComboTitle": "Ƙirƙiri tsayayyen haɗi daga {name}",
+    "stickyLimitEffective": "Effective {value} ({source})",
+    "stickyLimitSourceCombo": "combo",
+    "stickyLimitSourceComboDefaults": "combo defaults",
+    "stickyLimitSourceGlobal": "global default",
+    "connectionAwareExpansion": "Connection-aware expansion",
+    "triStateInherit": "inherit",
+    "connectionAwareExpansionOn": "On",
+    "connectionAwareExpansionOff": "Off",
+    "promptCacheAffinityHint": "Prompt-cache locality routing takes precedence over round-robin/weighted rotation across pinned accounts. Turn it off under Settings, Combo defaults, if you need strict rotation.",
+    "stickyLimitInherit": "gaji"
   },
   "costs": {
     "title": "Kuɗaɗen kashewa",
@@ -4955,7 +4973,7 @@
     "compressionLogTitle": "Rajistar Matse Bayanai",
     "compressionLogEmpty": "Babu buƙatun da aka matse tukuna. Ƙididdigar matsawa za ta bayyana a nan idan aka sarrafa buƙatu tare da kunna matsawa.",
     "tokens": "token-token",
-    "exportTruncated": "__MISSING__:Export truncated: only {exported} of {total} log entries were included. Pick a shorter time range to export the rest."
+    "exportTruncated": "An taƙaita fitarwa: an haɗa {exported} kawai daga cikin shigarwar rajista {total}. Zaɓi gajeren zangon lokaci don fitar da sauran."
   },
   "onboarding": {
     "welcome": "Barka da zuwa",
@@ -6314,7 +6332,8 @@
       "kiro": "Matakin kyauta: credits 50/wata (~25K–100K tokens). ⚠️ Kiro ToS ya hana amfani da proxy/harness na ɓangare na uku.",
       "codex": "Haɗa OpenAI Codex ta amfani da tsarin OAuth na yanzu.",
       "qwen": "Haɗa Qwen Code ta amfani da tsarin OAuth na yanzu.",
-      "github-models": "Ƙirƙiri GitHub PAT mai scope na 'models: read' a github.com/settings/tokens"
+      "github-models": "Ƙirƙiri GitHub PAT mai scope na 'models: read' a github.com/settings/tokens",
+      "agnes-cn": "Haɗa Agnes AI (China) da API key da aka bayar don api.agnes-ai.cn. API keys daga apihub.agnes-ai.com ba za su yi aiki ba."
     },
     "passthroughModelsDescription": "{provider} yana karɓar ID na samfuri na asali daga provider. Shigo da su daga /models ko ƙara ID na musamman don routing.",
     "bedrockModelsDescription": "Ana iyakance samfuran Amazon Bedrock bisa yankin AWS. Shigo da su daga /models ko ƙara ID na samfuran Bedrock da aka kunna a yankin da aka zaɓa.",
@@ -6472,7 +6491,9 @@
     "savedModelEndpointSettings": "An adana saitunan endpoint na samfur",
     "searchByModelAria": "Bincika ta model",
     "selectSupportedEndpoint": "Zaɓi aƙalla endpoint ɗaya da ake goyon baya",
-    "antigravityClientProfileHarness": "Harness / CLI"
+    "antigravityClientProfileHarness": "Harness / CLI",
+    "vertexCredentialHint": "API keys suna amfani da kundin projects da aka zaɓa. Service Account JSON yana ba da damar gano Model Garden kai tsaye.",
+    "vertexCredentialLabel": "API Key ko Service Account JSON"
   },
   "settings": {
     "title": "Saituna",
@@ -8579,7 +8600,11 @@
       },
       "compressToolResults": {
         "label": "Datse dogayen sakamakon kayan aiki tun da wuri",
-        "description": "Truncates long tool results during Lite compression. The Maximum tool-result length field (or OMNIROUTE_LITE_MAX_TOOL_LENGTH when that field is unset) sets the cap. Emergency overflow protection may still trim content when the context exceeds the model budget."
+        "description": "Truncates long tool results during Lite compression. The Maximum tool-result length field (or AGENTPROXY_LITE_MAX_TOOL_LENGTH when that field is unset) sets the cap. Emergency overflow protection may still trim content when the context exceeds the model budget."
+      },
+      "maxToolLength": {
+        "description": "Character cap for proactive tool-result truncation. Default 2000. Override with AGENTPROXY_LITE_MAX_TOOL_LENGTH when this field is unset.",
+        "label": "Maximum tool-result length"
       }
     },
     "engineFields": {
@@ -9695,7 +9720,14 @@
     "updatedShort": "An sabunta",
     "lastRefreshed": "Sabuntawa ta ƙarshe",
     "providerQuota": "Ƙayyadadden kason mai bayarwa",
-    "providerQuotaHomeHint": "Matsayi na ainihin lokaci a duk asusun da aka haɗa"
+    "providerQuotaHomeHint": "Matsayi na ainihin lokaci a duk asusun da aka haɗa",
+    "glmConfirmRedeemFiveHourResetCredit": "Amfani da katin nan take zai sake saita tagar amfani ta awa 5 kuma ya cinye wannan kati har abada.",
+    "glmConfirmRedeemResetCredit": "Amfani da katin nan take zai sake saita zaɓaɓɓiyar tagar amfani kuma ya cinye wannan kati har abada.",
+    "glmConfirmRedeemWeekResetCredit": "Amfani da katin nan take zai sake saita tagar amfani ta mako-mako kuma ya cinye wannan kati har abada.",
+    "glmResetCreditFiveHourTitle": "Sake saita tagar awa 5",
+    "glmResetCreditsModalExplainer": "An jera katunan sake saiti bisa lokacin ƙarewarsu. Zaɓi tagar awa 5 ko ta mako-mako da kake son sake saitawa.",
+    "glmResetCreditsModalTitle": "Katunan sake saita Tsarin Coding na GLM",
+    "glmResetCreditWeekTitle": "Sake saita tagar mako-mako"
   },
   "modals": {
     "waitingAuth": "Ana Jiran Izini",
@@ -10961,7 +10993,9 @@
     "poolAddMember": "Ƙara",
     "poolAddFailed": "An kasa ƙara proxy ɗin zuwa pool",
     "poolSelectProxy": "Zaɓi proxy…",
-    "poolSaveFailed": "An kasa adana rabon pool"
+    "poolSaveFailed": "An kasa adana rabon pool",
+    "poolEgressFailuresByExit": "Gazawa ta hanyar {exit}: {count}",
+    "poolEgressFailuresUnattributed": "Gazawa ba tare da hanyar fita da aka danganta ba: {count}"
   },
   "playground": {
     "title": "Filin Gwajin Model",
@@ -11302,7 +11336,11 @@
       "duration": "Tsawon lokaci",
       "time": "Lokaci",
       "conversation": "Tattaunawa",
-      "ttft": "TTFT"
+      "ttft": "TTFT",
+      "contentProvenance": "Amsa",
+      "contentEmpty": "Amsa mara komai",
+      "usageAbsent": "Ba a bayar da adadin token ba",
+      "usageEstimated": "An kiyasta adadin token"
     },
     "loadingLogs": "Ana loda rajistoci...",
     "noLogs": "Babu rajistoci tukuna. Yi wasu kiran API don ganin su a nan.",
@@ -11962,7 +12000,11 @@
       "goNow": "Je yanzu",
       "message": "MITM Proxy yanzu yana ƙarƙashin AgentBridge.",
       "title": "An matsar da wannan shafin"
-    }
+    },
+    "resetAgent": "Mayar da tsoho",
+    "resetAgentConfirm": "A mayar da tsoho?",
+    "resetDone": "An mayar da tsohon DNS na {agent}. Rufe manhajar gaba ɗaya (ba kawai rage ta ba) sannan ka sake buɗe ta domin canjin ya fara aiki.",
+    "resetting": "Ana mayarwa…"
   },
   "providerStats": {
     "unknownError": "Kuskuren da ba a sani ba",
@@ -12676,7 +12718,12 @@
     "createDahlTokenFailed": "An kasa ƙirƙirar Dahl token",
     "providerProxy": "Wakili",
     "providerProxyConfigureHint": "Saita proxy",
-    "providerProxyTitleConfigured": "An saita proxy: {host}"
+    "providerProxyTitleConfigured": "An saita proxy: {host}",
+    "directEgress": "Kai tsaye (babu proxy)",
+    "inheritConnectionOption": "Babu proxy na kansa (yana gadon haɗi)",
+    "inheritedPool": "Yana gadon tafkin haɗi ({count})",
+    "inheritedProxy": "Yana gadon haɗi: {host}",
+    "poolEmptyBlocked": "Tafkin babu kowa — buƙatun suna faduwa (ba kai tsaye ba)"
   },
   "gamification": {
     "leaderboardScopes": {
@@ -13036,6 +13083,13 @@
       "SERVER_OWNED_TOOL_LOOP_ENABLED": {
         "label": "Madaukin Kayan Aiki Mallakar Sabar",
         "description": "Ci gaba da kiran kayan aiki mallakar sabar waɗanda ba na streaming ba har sai samfurin ya dawo da martanin da abokin ciniki zai iya amfani da shi."
+      },
+      "PROTECTED_PRIORITY_INFRA_502_ENABLED": {
+        "description": "A ba da amsar 502 maimakon 503 lokacin da maƙasudin fifiko na quota-only-fallback ya dakatar da combo saboda dalilin da aka tabbatar ba quota ba ne: buɗaɗɗen circuit breaker na provider ko tsallakewa bisa hasashen latency.",
+        "label": "Tsayawar Infra na Protected-Priority a matsayin 502"
+      },
+      "STREAM_RECOVERY_TOOLCALL_ORDER_FIX": {
+        "description": "Tabbatar da ci gaba a tsakiyar kwarara bayan kiran kayan aiki yana da aminci: kada a taɓa ci gaba da kwararar da aka katse bayan an aika kiran kayan aiki (ko har yanzu yana gudana ko ya riga ya ƙare), sannan a dakata bayan ci gaba mara komai guda ɗaya maimakon amfani da duk kasafin sake gwadawa."
       }
     }
   },
@@ -13956,7 +14010,12 @@
     "hour": "awa",
     "day": "rana",
     "unknownModel": "ba a sani ba",
-    "pending": "yana jira"
+    "pending": "yana jira",
+    "allApiKeys": "All API keys",
+    "mcp": "MCP",
+    "mcpTool": "MCP tool",
+    "scope": "Scope",
+    "apiKey": "API key"
   },
   "metadata": {
     "compressionTitle": "Matsewa",
@@ -14159,5 +14218,6 @@
     "partnerLinkNote": "Hanyar haɗin abokin hulɗa",
     "dismissAriaLabel": "Yi watsi"
   },
-  "featureFlagAgentProxyDisableThinkingLevelVariantsDescription": "Kashe samar da nau'ikan matakan tunani (misali -low, -medium, -high) a cikin kundin /v1/models."
+  "featureFlagAgentProxyDisableThinkingLevelVariantsDescription": "Kashe samar da nau'ikan matakan tunani (misali -low, -medium, -high) a cikin kundin /v1/models.",
+  "featureFlagProxyPoolSharedEgressOrderDescription": "Ga masu samarwa waɗanda ake raba adadin amfaninsu bisa adireshin egress, yana sanya memban pool da ke raba adireshin egress da aka lura na memban da aka ƙi kwanan nan a ƙasa da membobi masu lafiya kawai. Tsari kawai, ba a taɓa cirewa ba. Yana buƙatar PROXY_SKIP_RECENTLY_FAILED, wanda ke samar da siginar ƙin da yake karantawa. A kashe ta tsoho: tsarin zaɓi daidai yake da juyawa na yau da kullum."
 }

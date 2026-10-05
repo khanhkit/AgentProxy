@@ -3193,7 +3193,13 @@
     "cliproxyapiUnknown": "Անհայտ",
     "cliproxyapiUpdate": "Թարմացնել",
     "cliproxyapiUpdateAvailable": "Հասանելի է թարմացում՝ v{current} → v{latest}",
-    "cliproxyapiVersion": "Տարբերակ"
+    "cliproxyapiVersion": "Տարբերակ",
+    "hermesRoleMoaAggregator": "MoA ագրեգատոր",
+    "hermesRoleMoaAggregatorDesc": "Mixture-of-Agents սինթեզի մոդել",
+    "hermesRoleMoaReference": "MoA հղում",
+    "hermesRoleMoaReferenceDesc": "Mixture-of-Agents հղման մոդել",
+    "hermesRoleReview": "Վերանայում",
+    "hermesRoleReviewDesc": "Ենթագործակալի կոդի ամբողջական վերանայում"
   },
   "combos": {
     "title": "Կոմբինացիաներ",
@@ -3424,7 +3430,9 @@
       "failoverBeforeRetry": "Միացնելու դեպքում վերին հոսքի ցանկացած սխալի ժամանակ անմիջապես կատարվում է պահուստային անցում դեպի կոմբոյի հաջորդ թիրախը՝ բաց թողնելով բոլոր կրկնափորձերն ու պահուստային URL-ները։",
       "maxSetRetries": "Ամբողջ թիրախային հավաքածուի կրկնափորձերի քանակը, երբ բոլոր թիրախները ձախողվում են։ 0 = հավաքածուի մակարդակով կրկնափորձ չկա։",
       "setRetryDelayMs": "Հավաքածուի մակարդակով կրկնափորձերի միջև ուշացումը, որը ժամանակ է տալիս ժամանակավոր խնդիրների լուծման համար։",
-      "disableSessionStickiness": "Յուրաքանչյուր հարցման դեպքում անցնել այլ կապի՝ ամբողջ զրույցն առաջին հաղորդագրության հեշով մեկ կապին ամրացնելու փոխարեն։ Գերակայում է համընդհանուր լռելյայն կարգավորման նկատմամբ։ Բազմափուլ զրույցներում հուշումների քեշի համընկնումները պահպանելու համար թողեք «Ժառանգել» տարբերակը։"
+      "disableSessionStickiness": "Յուրաքանչյուր հարցման դեպքում անցնել այլ կապի՝ ամբողջ զրույցն առաջին հաղորդագրության հեշով մեկ կապին ամրացնելու փոխարեն։ Գերակայում է համընդհանուր լռելյայն կարգավորման նկատմամբ։ Բազմափուլ զրույցներում հուշումների քեշի համընկնումները պահպանելու համար թողեք «Ժառանգել» տարբերակը։",
+      "connectionAwareExpansion": "When on, this combo expands each provider-level step into per-account targets before rotating. Inherit uses the global default (off). Off keeps provider-level rotation.",
+      "stickyLimit": "Round-robin sticky batch size: consecutive successful requests sent to one target before rotating to the next. Empty inherits the global Sticky Limit setting; 1 disables batching (pure one-request rotation)."
     },
     "templatesTitle": "Արագ ձևանմուշներ",
     "templatesDescription": "Կիրառեք մեկնարկային պրոֆիլ, ապա կարգավորեք մոդելներն ու կազմաձևումը։",
@@ -3778,7 +3786,17 @@
     "duplicateAutoComboSnapshotMsg": "Այս ձևանմուշին համապատասխանող՝ ներկայումս միացված մատակարարների/մոդելների պատճենը կպահվի որպես խմբագրվող կոմբինացիա։",
     "duplicateAutoComboFailedPrefix": "Չհաջողվեց կրկնօրինակել ավտոմատ կոմբինացիան՝",
     "duplicateAutoComboUnknownError": "Անհայտ սխալ",
-    "duplicateAutoComboTitle": "Ստեղծել ստատիկ կոմբինացիա {name}-ից"
+    "duplicateAutoComboTitle": "Ստեղծել ստատիկ կոմբինացիա {name}-ից",
+    "stickyLimitEffective": "Effective {value} ({source})",
+    "stickyLimitSourceCombo": "combo",
+    "stickyLimitSourceComboDefaults": "combo defaults",
+    "stickyLimitSourceGlobal": "global default",
+    "connectionAwareExpansion": "Connection-aware expansion",
+    "triStateInherit": "inherit",
+    "connectionAwareExpansionOn": "On",
+    "connectionAwareExpansionOff": "Off",
+    "promptCacheAffinityHint": "Prompt-cache locality routing takes precedence over round-robin/weighted rotation across pinned accounts. Turn it off under Settings, Combo defaults, if you need strict rotation.",
+    "stickyLimitInherit": "ժառանգել"
   },
   "costs": {
     "title": "Ծախսեր",
@@ -4955,7 +4973,7 @@
     "compressionLogTitle": "Սեղմման մատյան",
     "compressionLogEmpty": "Սեղմված հարցումներ դեռ չկան։ Սեղմման վիճակագրությունը կհայտնվի այստեղ, երբ հարցումները մշակվեն միացված սեղմման գործառույթով։",
     "tokens": "թոքեններ",
-    "exportTruncated": "__MISSING__:Export truncated: only {exported} of {total} log entries were included. Pick a shorter time range to export the rest."
+    "exportTruncated": "Արտահանումը կրճատվել է․ {total} մատյանի գրառումներից ներառվել է միայն {exported}-ը։ Մնացածը արտահանելու համար ընտրեք ավելի կարճ ժամանակահատված։"
   },
   "onboarding": {
     "welcome": "Բարի գալուստ",
@@ -6314,7 +6332,8 @@
       "kiro": "Անվճար մակարդակ՝ ամսական 50 կրեդիտ (~25K–100K թոքեն)։ ⚠️ Kiro-ի ToS-ն արգելում է երրորդ կողմի պրոքսիի/գործիքակազմի օգտագործումը։",
       "codex": "Միացրեք OpenAI Codex-ը առկա OAuth հոսքով։",
       "qwen": "Միացրեք Qwen Code-ը առկա OAuth հոսքով։",
-      "github-models": "Ստեղծեք GitHub PAT՝ 'models: read' տիրույթով, github.com/settings/tokens հասցեում"
+      "github-models": "Ստեղծեք GitHub PAT՝ 'models: read' տիրույթով, github.com/settings/tokens հասցեում",
+      "agnes-cn": "Միացրեք Agnes AI-ին (Չինաստան)՝ api.agnes-ai.cn-ի համար թողարկված API բանալիով։ apihub.agnes-ai.com-ի բանալիները չեն աշխատի։"
     },
     "passthroughModelsDescription": "{provider}-ն ընդունում է մատակարարին բնորոշ մոդելների ID-ներ։ Ներմուծեք /models-ից կամ երթուղավորման համար ավելացրեք հատուկ ID-ներ։",
     "bedrockModelsDescription": "Amazon Bedrock մոդելները սահմանափակված են ըստ AWS տարածաշրջանի։ Ներմուծեք /models-ից կամ ավելացրեք ընտրված տարածաշրջանում միացված Bedrock մոդելների ID-ները։",
@@ -6472,7 +6491,9 @@
     "savedModelEndpointSettings": "Մոդելի վերջնակետի կարգավորումները պահպանվել են",
     "searchByModelAria": "Որոնել ըստ մոդելի",
     "selectSupportedEndpoint": "Ընտրեք առնվազն մեկ աջակցվող վերջնակետ",
-    "antigravityClientProfileHarness": "Harness / CLI"
+    "antigravityClientProfileHarness": "Harness / CLI",
+    "vertexCredentialHint": "API բանալիներն օգտագործում են ընտրված նախագծերի կատալոգը։ Service Account JSON-ը հնարավորություն է տալիս իրական ժամանակում հայտնաբերել Model Garden-ի մոդելները։",
+    "vertexCredentialLabel": "API բանալի կամ ծառայության հաշվի JSON"
   },
   "settings": {
     "title": "Կարգավորումներ",
@@ -8579,7 +8600,11 @@
       },
       "compressToolResults": {
         "label": "Նախապես կրճատել գործիքների երկար արդյունքները",
-        "description": "Truncates long tool results during Lite compression. The Maximum tool-result length field (or OMNIROUTE_LITE_MAX_TOOL_LENGTH when that field is unset) sets the cap. Emergency overflow protection may still trim content when the context exceeds the model budget."
+        "description": "Truncates long tool results during Lite compression. The Maximum tool-result length field (or AGENTPROXY_LITE_MAX_TOOL_LENGTH when that field is unset) sets the cap. Emergency overflow protection may still trim content when the context exceeds the model budget."
+      },
+      "maxToolLength": {
+        "description": "Character cap for proactive tool-result truncation. Default 2000. Override with AGENTPROXY_LITE_MAX_TOOL_LENGTH when this field is unset.",
+        "label": "Maximum tool-result length"
       }
     },
     "engineFields": {
@@ -9695,7 +9720,14 @@
     "updatedShort": "Թարմացվել է",
     "lastRefreshed": "Վերջին թարմացումը",
     "providerQuota": "Մատակարարի քվոտա",
-    "providerQuotaHomeHint": "Միացված հաշիվների ընթացիկ կարգավիճակը"
+    "providerQuotaHomeHint": "Միացված հաշիվների ընթացիկ կարգավիճակը",
+    "glmConfirmRedeemFiveHourResetCredit": "Կիրառելու դեպքում 5-ժամյա օգտագործման ժամանակահատվածն անմիջապես կվերակայվի, իսկ այս քարտը կանվերադարձելիորեն կսպառվի։",
+    "glmConfirmRedeemResetCredit": "Կիրառելու դեպքում ընտրված օգտագործման ժամանակահատվածն անմիջապես կվերակայվի, իսկ այս քարտը կանվերադարձելիորեն կսպառվի։",
+    "glmConfirmRedeemWeekResetCredit": "Կիրառելու դեպքում շաբաթական օգտագործման ժամանակահատվածն անմիջապես կվերակայվի, իսկ այս քարտը կանվերադարձելիորեն կսպառվի։",
+    "glmResetCreditFiveHourTitle": "Վերակայել 5-ժամյա ժամանակահատվածը",
+    "glmResetCreditsModalExplainer": "Վերակայման քարտերը դասավորված են ըստ վավերականության ժամկետի ավարտի։ Ընտրեք 5-ժամյա կամ շաբաթական ժամանակահատվածը, որը ցանկանում եք վերակայել։",
+    "glmResetCreditsModalTitle": "GLM Coding Plan-ի վերակայման քարտեր",
+    "glmResetCreditWeekTitle": "Վերակայել շաբաթական ժամանակահատվածը"
   },
   "modals": {
     "waitingAuth": "Սպասում է լիազորմանը",
@@ -10961,7 +10993,9 @@
     "poolAddMember": "Ավելացնել",
     "poolAddFailed": "Չհաջողվեց պրոքսին ավելացնել պուլին",
     "poolSelectProxy": "Ընտրեք պրոքսի…",
-    "poolSaveFailed": "Չհաջողվեց պահպանել պուլին վերագրումը"
+    "poolSaveFailed": "Չհաջողվեց պահպանել պուլին վերագրումը",
+    "poolEgressFailuresByExit": "Ձախողումներ {exit}-ի միջոցով՝ {count}",
+    "poolEgressFailuresUnattributed": "Ձախողումներ առանց վերագրված ելքի՝ {count}"
   },
   "playground": {
     "title": "Մոդելների փորձարկման հարթակ",
@@ -11302,7 +11336,11 @@
       "duration": "Տևողություն",
       "time": "Ժամանակ",
       "conversation": "Զրույց",
-      "ttft": "TTFT"
+      "ttft": "TTFT",
+      "contentProvenance": "Պատասխան",
+      "contentEmpty": "Դատարկ պատասխան",
+      "usageAbsent": "Թոքենների քանակը չի հաղորդվել",
+      "usageEstimated": "Թոքենների քանակը գնահատված է"
     },
     "loadingLogs": "Գրանցամատյանները բեռնվում են...",
     "noLogs": "Գրանցամատյաններ դեռ չկան։ Կատարեք մի քանի API կանչ՝ դրանք այստեղ տեսնելու համար։",
@@ -11962,7 +12000,11 @@
       "goNow": "Անցնել հիմա",
       "message": "MITM Proxy-ն այժմ գտնվում է AgentBridge-ի բաժնում։",
       "title": "Այս էջը տեղափոխվել է"
-    }
+    },
+    "resetAgent": "Վերականգնել լռելյայնը",
+    "resetAgentConfirm": "Վերականգնե՞լ լռելյայնը",
+    "resetDone": "{agent}-ի լռելյայն DNS-ը վերականգնվեց։ Որպեսզի փոփոխությունն ուժի մեջ մտնի, ամբողջությամբ փակեք հավելվածը (ոչ միայն փոքրացրեք) և նորից բացեք այն։",
+    "resetting": "Վերականգնվում է…"
   },
   "providerStats": {
     "unknownError": "Անհայտ սխալ",
@@ -12676,7 +12718,12 @@
     "createDahlTokenFailed": "Չհաջողվեց ստեղծել Dahl թոքենը",
     "providerProxy": "Պրոքսի",
     "providerProxyConfigureHint": "Կարգավորել պրոքսին",
-    "providerProxyTitleConfigured": "Պրոքսին կարգավորված է՝ {host}"
+    "providerProxyTitleConfigured": "Պրոքսին կարգավորված է՝ {host}",
+    "directEgress": "Ուղիղ (առանց պրոքսիի)",
+    "inheritConnectionOption": "Սեփական պրոքսի չկա (ժառանգում է կապը)",
+    "inheritedPool": "Ժառանգում է կապերի խումբը ({count})",
+    "inheritedProxy": "Ժառանգում է կապը՝ {host}",
+    "poolEmptyBlocked": "Խումբը դատարկ է — հարցումները ձախողվում են (ոչ ուղիղ)"
   },
   "gamification": {
     "leaderboardScopes": {
@@ -13036,6 +13083,13 @@
       "SERVER_OWNED_TOOL_LOOP_ENABLED": {
         "label": "Սերվերի կողմից կառավարվող գործիքային ցիկլ",
         "description": "Շարունակել սերվերի կողմից կառավարվող ոչ հոսքային գործիքային կանչերը, մինչև մոդելը վերադարձնի հաճախորդի համար օգտագործելի պատասխան։"
+      },
+      "PROTECTED_PRIORITY_INFRA_502_ENABLED": {
+        "description": "503-ի փոխարեն պատասխանել 502-ով, երբ միայն քվոտայի պատճառով պահուստային տարբերակ հանդիսացող առաջնահերթ թիրախը դադարեցնում է համակցությունը մի պատճառով, որն ապացուցելիորեն կապված չէ քվոտայի հետ՝ մատակարարի բաց շղթայի անջատիչ կամ կանխատեսվող ուշացման պատճառով բացթողում։",
+        "label": "Պաշտպանված առաջնահերթության ենթակառուցվածքային դադարները՝ որպես 502"
+      },
+      "STREAM_RECOVERY_TOOLCALL_ORDER_FIX": {
+        "description": "Միջհոսքային շարունակությունը դարձնել անվտանգ գործիքային կանչերի համար․ երբեք չվերսկսել ընդհատված հոսքը գործիքային կանչ ուղարկելուց հետո (անկախ նրանից՝ այն դեռ ընթացքի մեջ է, թե արդեն ավարտվել է), և մեկ դատարկ շարունակությունից հետո կանգ առնել՝ կրկնափորձերի ամբողջ սահմանաչափն օգտագործելու փոխարեն։"
       }
     }
   },
@@ -13956,7 +14010,12 @@
     "hour": "ժամ",
     "day": "օր",
     "unknownModel": "անհայտ",
-    "pending": "սպասման մեջ"
+    "pending": "սպասման մեջ",
+    "allApiKeys": "All API keys",
+    "mcp": "MCP",
+    "mcpTool": "MCP tool",
+    "scope": "Scope",
+    "apiKey": "API key"
   },
   "metadata": {
     "compressionTitle": "Սեղմում",
@@ -14159,5 +14218,6 @@
     "partnerLinkNote": "Գործընկերային հղում",
     "dismissAriaLabel": "Փակել"
   },
-  "featureFlagAgentProxyDisableThinkingLevelVariantsDescription": "Անջատել մտածողության մակարդակի տարբերակների (օր.՝ -low, -medium, -high) ստեղծումը /v1/models կատալոգում։"
+  "featureFlagAgentProxyDisableThinkingLevelVariantsDescription": "Անջատել մտածողության մակարդակի տարբերակների (օր.՝ -low, -medium, -high) ստեղծումը /v1/models կատալոգում։",
+  "featureFlagProxyPoolSharedEgressOrderDescription": "Այն մատակարարների համար, որոնց քվոտան բաշխվում է ըստ ելքային (egress) հասցեի, pool-ի այն անդամին, որը կիսում է վերջերս մերժված անդամի դիտարկված egress հասցեն, դասում է անմիջապես առողջ անդամներից ցածր։ Միայն հերթականություն, երբեք չի բացառվում։ Պահանջում է PROXY_SKIP_RECENTLY_FAILED, որը ստեղծում է իր կարդացած մերժման ազդանշանը։ Լռելյայն անջատված է. ընտրության հերթականությունը ճիշտ սովորական ռոտացիան է։"
 }

@@ -4974,7 +4974,7 @@
     "compressionLogTitle": "Log de compactação",
     "compressionLogEmpty": "Ainda não há solicitações compactadas. As estatísticas de compactação aparecerão aqui quando as solicitações forem processadas com a compactação ativada.",
     "tokens": "tokens",
-    "exportTruncated": "__MISSING__:Export truncated: only {exported} of {total} log entries were included. Pick a shorter time range to export the rest."
+    "exportTruncated": "Exportação truncada: apenas {exported} de {total} entradas de log foram incluídas. Escolha um intervalo de tempo menor para exportar o restante."
   },
   "onboarding": {
     "welcome": "Bem-vindo",
@@ -13049,11 +13049,11 @@
         "description": "Permite que a recuperação de stream solicite a resposta novamente e a costure depois que bytes já chegaram ao cliente."
       },
       "STREAM_RECOVERY_TOOLCALL_ORDER_FIX": {
-        "description": "__MISSING__:Make mid-stream continuation tool-call safe: never resume a cut stream after a tool call was sent (still in progress or already finished), and stop after one empty continuation instead of using the whole retry budget."
+        "description": "Torne a continuação no meio do stream segura para chamadas de ferramentas: nunca retome um stream interrompido depois que uma chamada de ferramenta tiver sido enviada (ainda em andamento ou já concluída) e pare após uma continuação vazia em vez de usar todo o orçamento de novas tentativas."
       },
       "PROTECTED_PRIORITY_INFRA_502_ENABLED": {
-        "label": "__MISSING__:Protected-Priority Infra Stops as 502",
-        "description": "__MISSING__:Answer 502 instead of 503 when a quota-only-fallback priority target stops the combo for a cause that is provably not quota: an open provider circuit breaker or a predictive latency skip."
+        "label": "Paradas de infraestrutura de prioridade protegida como 502",
+        "description": "Responda com 502 em vez de 503 quando um alvo prioritário com fallback somente por cota interromper o combo por uma causa comprovadamente não relacionada à cota: um circuit breaker de provedor aberto ou um salto preditivo por latência."
       },
       "MODEL_CATALOG_INCLUDE_NAMES": {
         "description": "Inclui campos de nome amigável para exibição nas respostas de /v1/models. Desative isso para clientes que aceitam apenas IDs de modelo."

@@ -3795,7 +3795,8 @@
     "triStateInherit": "inherit",
     "connectionAwareExpansionOn": "On",
     "connectionAwareExpansionOff": "Off",
-    "promptCacheAffinityHint": "Prompt-cache locality routing takes precedence over round-robin/weighted rotation across pinned accounts. Turn it off under Settings, Combo defaults, if you need strict rotation."
+    "promptCacheAffinityHint": "Prompt-cache locality routing takes precedence over round-robin/weighted rotation across pinned accounts. Turn it off under Settings, Combo defaults, if you need strict rotation.",
+    "stickyLimitInherit": "وراثت میں حاصل کریں"
   },
   "costs": {
     "title": "اخراجات",
@@ -4972,7 +4973,7 @@
     "compressionLogTitle": "کمپریشن لاگ",
     "compressionLogEmpty": "ابھی تک کوئی کمپریسڈ درخواستیں نہیں ہیں۔ جب کمپریشن فعال ہونے کے ساتھ درخواستوں پر کارروائی کی جائے گی تو کمپریشن کے اعدادوشمار یہاں ظاہر ہوں گے۔",
     "tokens": "ٹوکنز",
-    "exportTruncated": "__MISSING__:Export truncated: only {exported} of {total} log entries were included. Pick a shorter time range to export the rest."
+    "exportTruncated": "برآمد مختصر کر دی گئی: {total} لاگ اندراجات میں سے صرف {exported} شامل کیے گئے۔ باقی برآمد کرنے کے لیے کم وقت کی حد منتخب کریں۔"
   },
   "onboarding": {
     "welcome": "خوش آمدید",
@@ -6328,7 +6329,8 @@
       "kiro": "مفت پلان: 50 کریڈٹس/مہینہ (~25K–100K ٹوکنز)۔ ⚠️ Kiro ToS فریقِ ثالث کے پراکسی/ہارنس کے استعمال سے منع کرتا ہے۔",
       "codex": "OpenAI Codex کو موجودہ OAuth فلو سے منسلک کریں۔",
       "qwen": "Qwen Code کو موجودہ OAuth فلو سے منسلک کریں۔",
-      "github-models": "github.com/settings/tokens پر 'models: read' اسکوپ کے ساتھ ایک GitHub PAT بنائیں"
+      "github-models": "github.com/settings/tokens پر 'models: read' اسکوپ کے ساتھ ایک GitHub PAT بنائیں",
+      "agnes-cn": "Agnes AI (China) کو api.agnes-ai.cn کے لیے جاری کردہ API key کے ذریعے منسلک کریں۔ apihub.agnes-ai.com کی keys کام نہیں کریں گی۔"
     },
     "passthroughModelsDescription": "{provider} فراہم کنندہ کے مقامی ماڈل IDs کو قبول کرتا ہے۔ /ماڈلز سے درآمد کریں یا روٹنگ کے لیے حسب ضرورت IDs شامل کریں۔",
     "bedrockModelsDescription": "ایمیزون بیڈرک ماڈلز کا دائرہ AWS ریجن کے ذریعہ کیا گیا ہے۔ /ماڈلز سے درآمد کریں یا منتخب علاقے میں فعال کردہ Bedrock ماڈل IDs شامل کریں۔",
@@ -6489,7 +6491,9 @@
     "failedClearConnectionCooldown": "وقفہ ختم کرنے میں ناکامی",
     "importFromFileDownloadTemplate": "CSV ٹیمپلیٹ ڈاؤن لوڈ کریں",
     "importFromFileMoreErrors": "+{count} مزید",
-    "importFromFileSchemaHint": "CSV کالمز کی ترتیب مقرر ہے: provider, name, apiKey, baseUrl (اختیاری), priority (اختیاری)۔ provider کالم میں موجودہ منظم فراہم کنندہ کی id یا پہلے سے رجسٹر شدہ OpenAI/Anthropic سے مطابقت رکھنے والے نوڈ کی id ہونی چاہیے — یہ درآمد نئے اینڈ پوائنٹ نوڈز تخلیق نہیں کرتی۔"
+    "importFromFileSchemaHint": "CSV کالمز کی ترتیب مقرر ہے: provider, name, apiKey, baseUrl (اختیاری), priority (اختیاری)۔ provider کالم میں موجودہ منظم فراہم کنندہ کی id یا پہلے سے رجسٹر شدہ OpenAI/Anthropic سے مطابقت رکھنے والے نوڈ کی id ہونی چاہیے — یہ درآمد نئے اینڈ پوائنٹ نوڈز تخلیق نہیں کرتی۔",
+    "vertexCredentialHint": "API keys منتخب شدہ پروجیکٹ کیٹلاگ استعمال کرتی ہیں۔ Service Account JSON، Model Garden میں براہ راست دریافت کو فعال کرتا ہے۔",
+    "vertexCredentialLabel": "API Key یا Service Account JSON"
   },
   "settings": {
     "title": "ترتیبات",
@@ -8597,6 +8601,10 @@
       "compressToolResults": {
         "label": "پیشگی طور پر طویل ٹول کے نتائج کو کاٹ دیں",
         "description": "__MISSING__:Truncates long tool results during Lite compression. The Maximum tool-result length field (or AGENTPROXY_LITE_MAX_TOOL_LENGTH when that field is unset) sets the cap. Emergency overflow protection may still trim content when the context exceeds the model budget."
+      },
+      "maxToolLength": {
+        "description": "Character cap for proactive tool-result truncation. Default 2000. Override with AGENTPROXY_LITE_MAX_TOOL_LENGTH when this field is unset.",
+        "label": "Maximum tool-result length"
       }
     },
     "engineFields": {
@@ -9712,7 +9720,14 @@
     "kiloPassPaid": "ادا شدہ",
     "kiloPassRemaining": "باقی",
     "kiloPassRenews": "{count} دنوں میں تجدید ہوگی",
-    "kiloPassUsageLabel": "اس مہینے کا استعمال"
+    "kiloPassUsageLabel": "اس مہینے کا استعمال",
+    "glmConfirmRedeemFiveHourResetCredit": "استعمال کرنے سے 5 گھنٹے کی استعمال کی ونڈو فوراً ری سیٹ ہو جاتی ہے اور یہ کارڈ مستقل طور پر خرچ ہو جاتا ہے۔",
+    "glmConfirmRedeemResetCredit": "استعمال کرنے سے منتخب کردہ استعمال کی ونڈو فوراً ری سیٹ ہو جاتی ہے اور یہ کارڈ مستقل طور پر خرچ ہو جاتا ہے۔",
+    "glmConfirmRedeemWeekResetCredit": "استعمال کرنے سے ہفتہ وار استعمال کی ونڈو فوراً ری سیٹ ہو جاتی ہے اور یہ کارڈ مستقل طور پر خرچ ہو جاتا ہے۔",
+    "glmResetCreditFiveHourTitle": "5 گھنٹے کی ونڈو ری سیٹ کریں",
+    "glmResetCreditsModalExplainer": "ری سیٹ کارڈز میعاد ختم ہونے کے لحاظ سے ترتیب دیے گئے ہیں۔ وہ 5 گھنٹے یا ہفتہ وار ونڈو منتخب کریں جسے آپ ری سیٹ کرنا چاہتے ہیں۔",
+    "glmResetCreditsModalTitle": "GLM Coding Plan ری سیٹ کارڈز",
+    "glmResetCreditWeekTitle": "ہفتہ وار ونڈو ری سیٹ کریں"
   },
   "modals": {
     "waitingAuth": "اجازت کا انتظار ہے",
@@ -12703,7 +12718,12 @@
     "createDahlTokenFailed": "Dahl ٹوکن بنانے میں ناکامی",
     "providerProxy": "پراکسی",
     "providerProxyConfigureHint": "پراکسی ترتیب دیں",
-    "providerProxyTitleConfigured": "پراکسی ترتیب دی گئی: {host}"
+    "providerProxyTitleConfigured": "پراکسی ترتیب دی گئی: {host}",
+    "directEgress": "براہ راست (بغیر پراکسی)",
+    "inheritConnectionOption": "کوئی ذاتی پراکسی نہیں (کنکشن وراثت میں)",
+    "inheritedPool": "کنکشن پول وراثت میں ({count})",
+    "inheritedProxy": "کنکشن وراثت میں: {host}",
+    "poolEmptyBlocked": "پول خالی — درخواستیں ناکام ہوتی ہیں (براہ راست نہیں)"
   },
   "gamification": {
     "leaderboardScopes": {
@@ -13063,6 +13083,13 @@
       "SERVER_OWNED_TOOL_LOOP_ENABLED": {
         "label": "سرور کے زیرِ اختیار ٹول لوپ",
         "description": "غیر اسٹریمنگ، سرور کے زیرِ اختیار ٹول کالز اس وقت تک جاری رکھیں جب تک ماڈل کلائنٹ کے قابلِ استعمال جواب نہ دے۔"
+      },
+      "PROTECTED_PRIORITY_INFRA_502_ENABLED": {
+        "description": "جب صرف کوٹے کے فال بیک والا ترجیحی ہدف کسی ایسی وجہ سے کومبو روک دے جو ثابت شدہ طور پر کوٹے سے متعلق نہ ہو—یعنی کھلا ہوا پرووائیڈر سرکٹ بریکر یا پیش گوئی کی بنیاد پر لیٹنسی اسکیپ—تو 503 کے بجائے 502 جواب دیں۔",
+        "label": "محفوظ ترجیحی انفرا کی بندشیں بطور 502"
+      },
+      "STREAM_RECOVERY_TOOLCALL_ORDER_FIX": {
+        "description": "درمیانی اسٹریم کے تسلسل کو ٹول کال کے لیے محفوظ بنائیں: ٹول کال بھیجے جانے کے بعد کسی منقطع اسٹریم کو کبھی دوبارہ شروع نہ کریں (چاہے وہ اب بھی جاری ہو یا پہلے ہی مکمل ہو چکی ہو)، اور دوبارہ کوشش کا پورا بجٹ استعمال کرنے کے بجائے ایک خالی تسلسل کے بعد رک جائیں۔"
       }
     }
   },
@@ -14191,5 +14218,6 @@
     "partnerLinkNote": "شراکت دار کا لنک",
     "dismissAriaLabel": "بند کریں"
   },
-  "featureFlagAgentProxyDisableThinkingLevelVariantsDescription": "/v1/models کیٹلاگ میں سوچنے کی سطح کی مختلف صورتوں (مثلاً -low، -medium، -high) کی تخلیق غیر فعال کریں۔"
+  "featureFlagAgentProxyDisableThinkingLevelVariantsDescription": "/v1/models کیٹلاگ میں سوچنے کی سطح کی مختلف صورتوں (مثلاً -low، -medium، -high) کی تخلیق غیر فعال کریں۔",
+  "featureFlagProxyPoolSharedEgressOrderDescription": "جن فراہم کنندگان کا کوٹا egress پتے کے لحاظ سے تقسیم ہوتا ہے، ان کے لیے حال ہی میں مسترد کیے گئے رکن کا مشاہدہ شدہ egress پتہ شیئر کرنے والے pool رکن کو صحت مند اراکین کے عین نیچے رکھتا ہے۔ صرف ترتیب، کبھی خارج نہیں کیا جاتا۔ PROXY_SKIP_RECENTLY_FAILED درکار ہے، جو وہ مسترد ہونے کا سگنل پیدا کرتا ہے جسے یہ پڑھتا ہے۔ بطور ڈیفالٹ بند: انتخاب کی ترتیب بالکل سادہ گردش ہے۔"
 }

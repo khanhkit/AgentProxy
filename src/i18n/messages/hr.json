@@ -3815,7 +3815,8 @@
     "triStateInherit": "inherit",
     "connectionAwareExpansionOn": "On",
     "connectionAwareExpansionOff": "Off",
-    "promptCacheAffinityHint": "Prompt-cache locality routing takes precedence over round-robin/weighted rotation across pinned accounts. Turn it off under Settings, Combo defaults, if you need strict rotation."
+    "promptCacheAffinityHint": "Prompt-cache locality routing takes precedence over round-robin/weighted rotation across pinned accounts. Turn it off under Settings, Combo defaults, if you need strict rotation.",
+    "stickyLimitInherit": "naslijedi"
   },
   "costs": {
     "title": "Troškovi",
@@ -4992,7 +4993,7 @@
     "compressionLogTitle": "Zapis kompresije",
     "compressionLogEmpty": "Još nema komprimiranih zahtjeva. Statistika kompresije prikazat će se ovdje kada se zahtjevi obrađuju s omogućenom kompresijom.",
     "tokens": "tokeni",
-    "exportTruncated": "__MISSING__:Export truncated: only {exported} of {total} log entries were included. Pick a shorter time range to export the rest."
+    "exportTruncated": "Izvoz je skraćen: uključeno je samo {exported} od {total} zapisa dnevnika. Odaberite kraći vremenski raspon kako biste izvezli ostatak."
   },
   "onboarding": {
     "welcome": "Dobrodošli",
@@ -6344,7 +6345,8 @@
       "codex": "Povežite OpenAI Codex putem postojećeg OAuth tijeka.",
       "qwen": "Povežite Qwen Code putem postojećeg OAuth tijeka.",
       "github-models": "Kreirajte GitHub PAT s opsegom 'models: read' na github.com/settings/tokens",
-      "seekai": "Izradite API ključ na https://seekai.cc, a zatim ga ovdje zalijepite kao Bearer token. Osnovni URL kompatibilan s OpenAI: https://seekai.cc/v1."
+      "seekai": "Izradite API ključ na https://seekai.cc, a zatim ga ovdje zalijepite kao Bearer token. Osnovni URL kompatibilan s OpenAI: https://seekai.cc/v1.",
+      "agnes-cn": "Poveži Agnes AI (Kina) s pomoću API ključa izdanog za api.agnes-ai.cn. Ključevi s apihub.agnes-ai.com neće raditi."
     },
     "passthroughModelsDescription": "{provider} prihvaća ID-ove modela izvorne za pružatelja. Uvezite iz /models ili dodajte prilagođene ID-ove za usmjeravanje.",
     "bedrockModelsDescription": "Amazon Bedrock modeli ograničeni su na određenu AWS regiju. Uvezite ih iz /models ili dodajte ID-ove Bedrock modela omogućenih u odabranoj regiji.",
@@ -6509,7 +6511,9 @@
     "dailyQuotaResetTimezoneLabel": "Vremenska zona dnevnog poništavanja kvote",
     "dailyQuotaResetTimezoneHint": "Neobavezna IANA vremenska zona koja se upotrebljava kada izvorni poslužitelj izostavi X-RateLimit-Reset. Ostavite prazno kako bi se zadržalo kratko razdoblje čekanja.",
     "dailyQuotaResetHourLabel": "Sat dnevnog poništavanja kvote",
-    "dailyQuotaResetHourHint": "Lokalni sat od 0 do 23 u gore navedenoj vremenskoj zoni. Prazno znači da nema sata na razini čvora."
+    "dailyQuotaResetHourHint": "Lokalni sat od 0 do 23 u gore navedenoj vremenskoj zoni. Prazno znači da nema sata na razini čvora.",
+    "vertexCredentialHint": "API ključevi koriste odabrani katalog projekata. JSON servisnog računa omogućuje otkrivanje modela uživo u katalogu Model Garden.",
+    "vertexCredentialLabel": "API ključ ili JSON servisnog računa"
   },
   "settings": {
     "title": "Postavke",
@@ -8617,6 +8621,10 @@
       "compressToolResults": {
         "label": "Proaktivno skrati duge rezultate alata",
         "description": "__MISSING__:Truncates long tool results during Lite compression. The Maximum tool-result length field (or AGENTPROXY_LITE_MAX_TOOL_LENGTH when that field is unset) sets the cap. Emergency overflow protection may still trim content when the context exceeds the model budget."
+      },
+      "maxToolLength": {
+        "description": "Character cap for proactive tool-result truncation. Default 2000. Override with AGENTPROXY_LITE_MAX_TOOL_LENGTH when this field is unset.",
+        "label": "Maximum tool-result length"
       }
     },
     "engineFields": {
@@ -9732,7 +9740,14 @@
     "updatedShort": "Ažurirano",
     "lastRefreshed": "Posljednje osvježavanje",
     "providerQuota": "Kvota davatelja",
-    "providerQuotaHomeHint": "Stanje uživo na povezanim računima"
+    "providerQuotaHomeHint": "Stanje uživo na povezanim računima",
+    "glmConfirmRedeemFiveHourResetCredit": "Iskorištavanjem se odmah poništava 5-satno razdoblje upotrebe, a ova se kartica trajno troši.",
+    "glmConfirmRedeemResetCredit": "Iskorištavanjem se odmah poništava odabrano razdoblje upotrebe, a ova se kartica trajno troši.",
+    "glmConfirmRedeemWeekResetCredit": "Iskorištavanjem se odmah poništava tjedno razdoblje upotrebe, a ova se kartica trajno troši.",
+    "glmResetCreditFiveHourTitle": "Poništi 5-satno razdoblje",
+    "glmResetCreditsModalExplainer": "Kartice za poništavanje poredane su prema isteku. Odaberite 5-satno ili tjedno razdoblje koje želite poništiti.",
+    "glmResetCreditsModalTitle": "Kartice za poništavanje ograničenja GLM Coding Plana",
+    "glmResetCreditWeekTitle": "Poništi tjedno razdoblje"
   },
   "modals": {
     "waitingAuth": "Čekanje na autorizaciju",
@@ -12723,7 +12738,12 @@
     "createDahlTokenFailed": "Stvaranje Dahl tokena nije uspjelo",
     "providerProxy": "Proxy",
     "providerProxyConfigureHint": "Konfiguriraj proxy",
-    "providerProxyTitleConfigured": "Proxy konfiguriran: {host}"
+    "providerProxyTitleConfigured": "Proxy konfiguriran: {host}",
+    "directEgress": "Izravno (bez proxyja)",
+    "inheritConnectionOption": "Bez vlastitog proxyja (nasljeđuje vezu)",
+    "inheritedPool": "Nasljeđuje bazen veza ({count})",
+    "inheritedProxy": "Nasljeđuje vezu: {host}",
+    "poolEmptyBlocked": "Bazen prazan — zahtjevi ne uspijevaju (ne izravno)"
   },
   "gamification": {
     "leaderboardScopes": {
@@ -13083,6 +13103,13 @@
       "SERVER_OWNED_TOOL_LOOP_ENABLED": {
         "label": "Petlja alata kojom upravlja poslužitelj",
         "description": "Nastavi s nestrujnim pozivima alata kojima upravlja poslužitelj sve dok model ne vrati odgovor koji klijent može upotrijebiti."
+      },
+      "PROTECTED_PRIORITY_INFRA_502_ENABLED": {
+        "description": "Odgovori kodom 502 umjesto 503 kada prioritetno odredište s pričuvnim rješenjem samo za kvotu zaustavi kombinaciju zbog uzroka koji dokazivo nije kvota: otvorenog prekidača strujnog kruga davatelja usluge ili prediktivnog preskakanja zbog latencije.",
+        "label": "Infrastrukturna zaustavljanja zaštićenog prioriteta kao 502"
+      },
+      "STREAM_RECOVERY_TOOLCALL_ORDER_FIX": {
+        "description": "Učini nastavak usred toka sigurnim za pozive alata: nikada ne nastavljaj prekinuti tok nakon što je poziv alata poslan (još traje ili je već dovršen) i zaustavi se nakon jednog praznog nastavka umjesto korištenja cijelog dopuštenog broja ponovnih pokušaja."
       }
     }
   },
@@ -14211,5 +14238,6 @@
     "partnerLinkNote": "Partnerska poveznica",
     "dismissAriaLabel": "Odbaci"
   },
-  "featureFlagAgentProxyDisableThinkingLevelVariantsDescription": "Onemogući generiranje varijanti razine razmišljanja (npr. -low, -medium, -high) u katalogu /v1/models."
+  "featureFlagAgentProxyDisableThinkingLevelVariantsDescription": "Onemogući generiranje varijanti razine razmišljanja (npr. -low, -medium, -high) u katalogu /v1/models.",
+  "featureFlagProxyPoolSharedEgressOrderDescription": "Za pružatelje čija se kvota raspodjeljuje po izlaznoj (egress) adresi, rangira člana poola koji dijeli uočenu egress adresu nedavno odbijenog člana odmah ispod zdravih članova. Samo redoslijed, nikada isključenje. Zahtijeva PROXY_SKIP_RECENTLY_FAILED, koji proizvodi signal odbijanja koji čita. Zadano isključeno: redoslijed odabira je točno obična rotacija."
 }

@@ -3824,7 +3824,8 @@
     "triStateInherit": "inherit",
     "connectionAwareExpansionOn": "On",
     "connectionAwareExpansionOff": "Off",
-    "promptCacheAffinityHint": "Prompt-cache locality routing takes precedence over round-robin/weighted rotation across pinned accounts. Turn it off under Settings, Combo defaults, if you need strict rotation."
+    "promptCacheAffinityHint": "Prompt-cache locality routing takes precedence over round-robin/weighted rotation across pinned accounts. Turn it off under Settings, Combo defaults, if you need strict rotation.",
+    "stickyLimitInherit": "pārmantot"
   },
   "costs": {
     "title": "Izmaksas",
@@ -5001,7 +5002,7 @@
     "compressionLogTitle": "Saspiešanas žurnāls",
     "compressionLogEmpty": "Vēl nav saspiestu pieprasījumu. Saspiešanas statistika parādīsies šeit, kad pieprasījumi tiks apstrādāti ar iespējotu saspiešanu.",
     "tokens": "tokeni",
-    "exportTruncated": "__MISSING__:Export truncated: only {exported} of {total} log entries were included. Pick a shorter time range to export the rest."
+    "exportTruncated": "Eksports tika saīsināts: tika iekļauti tikai {exported} no {total} žurnāla ierakstiem. Lai eksportētu pārējos, izvēlieties īsāku laika diapazonu."
   },
   "onboarding": {
     "welcome": "Laipni lūdzam",
@@ -6353,7 +6354,8 @@
       "codex": "Savienojiet OpenAI Codex, izmantojot esošo OAuth plūsmu.",
       "qwen": "Savienojiet Qwen Code, izmantojot esošo OAuth plūsmu.",
       "github-models": "Izveidojiet GitHub PAT ar 'models: read' tvērumu vietnē github.com/settings/tokens",
-      "seekai": "Izveidojiet API atslēgu vietnē https://seekai.cc un pēc tam ielīmējiet to šeit kā Bearer tokenu. Ar OpenAI saderīgs pamata URL: https://seekai.cc/v1."
+      "seekai": "Izveidojiet API atslēgu vietnē https://seekai.cc un pēc tam ielīmējiet to šeit kā Bearer tokenu. Ar OpenAI saderīgs pamata URL: https://seekai.cc/v1.",
+      "agnes-cn": "Savienojiet Agnes AI (Ķīna), izmantojot vietnei api.agnes-ai.cn izsniegtu API atslēgu. Vietnes apihub.agnes-ai.com atslēgas nedarbosies."
     },
     "passthroughModelsDescription": "{provider} pieņem sniedzēja formāta modeļu ID. Importējiet tos no /models vai pievienojiet pielāgotus ID maršrutēšanai.",
     "bedrockModelsDescription": "Amazon Bedrock modeļi ir piesaistīti AWS reģionam. Importējiet tos no /models vai pievienojiet izvēlētajā reģionā iespējoto Bedrock modeļu ID.",
@@ -6518,7 +6520,9 @@
     "dailyQuotaResetTimezoneLabel": "Dienas kvotas atiestatīšanas laika josla",
     "dailyQuotaResetTimezoneHint": "Neobligāta IANA laika josla, ko izmanto, ja augšupstraumes pakalpojums nenorāda X-RateLimit-Reset. Atstājiet tukšu, lai saglabātu īsu nogaidīšanas periodu.",
     "dailyQuotaResetHourLabel": "Dienas kvotas atiestatīšanas stunda",
-    "dailyQuotaResetHourHint": "Vietējā stunda no 0 līdz 23 iepriekš norādītajā laika joslā. Tukšs lauks nozīmē, ka mezgla līmeņa pulkstenis netiek izmantots."
+    "dailyQuotaResetHourHint": "Vietējā stunda no 0 līdz 23 iepriekš norādītajā laika joslā. Tukšs lauks nozīmē, ka mezgla līmeņa pulkstenis netiek izmantots.",
+    "vertexCredentialHint": "API atslēgas izmanto atlasītu projekta katalogu. Pakalpojuma konta JSON nodrošina Model Garden modeļu dinamisku atklāšanu.",
+    "vertexCredentialLabel": "API atslēga vai pakalpojuma konta JSON"
   },
   "settings": {
     "title": "Iestatījumi",
@@ -8626,6 +8630,10 @@
       "compressToolResults": {
         "label": "Proaktīvi saīsināt garus rīka rezultātus",
         "description": "__MISSING__:Truncates long tool results during Lite compression. The Maximum tool-result length field (or AGENTPROXY_LITE_MAX_TOOL_LENGTH when that field is unset) sets the cap. Emergency overflow protection may still trim content when the context exceeds the model budget."
+      },
+      "maxToolLength": {
+        "description": "Character cap for proactive tool-result truncation. Default 2000. Override with AGENTPROXY_LITE_MAX_TOOL_LENGTH when this field is unset.",
+        "label": "Maximum tool-result length"
       }
     },
     "engineFields": {
@@ -9741,7 +9749,14 @@
     "updatedShort": "Atjaunināts",
     "lastRefreshed": "Pēdējoreiz atsvaidzināts",
     "providerQuota": "Pakalpojuma sniedzēja kvota",
-    "providerQuotaHomeHint": "Pievienoto kontu statuss reāllaikā"
+    "providerQuotaHomeHint": "Pievienoto kontu statuss reāllaikā",
+    "glmConfirmRedeemFiveHourResetCredit": "Izmantojot karti, 5 stundu lietojuma periods tiek nekavējoties atiestatīts un karte tiek neatgriezeniski izlietota.",
+    "glmConfirmRedeemResetCredit": "Izmantojot karti, izvēlētais lietojuma periods tiek nekavējoties atiestatīts un karte tiek neatgriezeniski izlietota.",
+    "glmConfirmRedeemWeekResetCredit": "Izmantojot karti, nedēļas lietojuma periods tiek nekavējoties atiestatīts un karte tiek neatgriezeniski izlietota.",
+    "glmResetCreditFiveHourTitle": "5 stundu perioda atiestatīšana",
+    "glmResetCreditsModalExplainer": "Atiestatīšanas kartes ir sakārtotas pēc derīguma termiņa beigām. Izvēlieties 5 stundu vai nedēļas periodu, kuru vēlaties atiestatīt.",
+    "glmResetCreditsModalTitle": "GLM Coding Plan atiestatīšanas kartes",
+    "glmResetCreditWeekTitle": "Nedēļas perioda atiestatīšana"
   },
   "modals": {
     "waitingAuth": "Tiek gaidīta autorizācija",
@@ -12732,7 +12747,12 @@
     "createDahlTokenFailed": "Neizdevās izveidot Dahl marķieri",
     "providerProxy": "Starpniekserveris",
     "providerProxyConfigureHint": "Konfigurēt starpniekserveri",
-    "providerProxyTitleConfigured": "Starpniekserveris konfigurēts: {host}"
+    "providerProxyTitleConfigured": "Starpniekserveris konfigurēts: {host}",
+    "directEgress": "Tiešs (bez starpniekservera)",
+    "inheritConnectionOption": "Bez sava starpniekservera (manto savienojumu)",
+    "inheritedPool": "Manto savienojumu pūlu ({count})",
+    "inheritedProxy": "Manto savienojumu: {host}",
+    "poolEmptyBlocked": "Pūls tukšs — pieprasījumi neizdodas (ne tieši)"
   },
   "gamification": {
     "leaderboardScopes": {
@@ -13092,6 +13112,13 @@
       "SERVER_OWNED_TOOL_LOOP_ENABLED": {
         "label": "Servera pārvaldīta rīku izsaukumu cilpa",
         "description": "Turpināt servera pārvaldītos rīku izsaukumus bez straumēšanas, līdz modelis atgriež klientam izmantojamu atbildi."
+      },
+      "PROTECTED_PRIORITY_INFRA_502_ENABLED": {
+        "description": "Atbildēt ar 502, nevis 503, ja prioritārais mērķis ar rezerves variantu tikai kvotas izsmelšanas gadījumā aptur Combo tāda iemesla dēļ, kas pierādāmi nav saistīts ar kvotu: atvērts pakalpojumu sniedzēja ķēdes pārtraucējs vai izlaišana prognozēta latentuma dēļ.",
+        "label": "Aizsargātās prioritātes infrastruktūras apturēšana kā 502"
+      },
+      "STREAM_RECOVERY_TOOLCALL_ORDER_FIX": {
+        "description": "Padarīt turpināšanu straumes vidū drošu rīku izsaukumiem: nekad neatsākt pārtrauktu straumi pēc rīka izsaukuma nosūtīšanas (kamēr tas vēl tiek izpildīts vai jau ir pabeigts) un pārtraukt pēc viena tukša turpinājuma, nevis izmantot visu atkārtoto mēģinājumu limitu."
       }
     }
   },
@@ -14220,5 +14247,6 @@
     "partnerLinkNote": "Partnera saite",
     "dismissAriaLabel": "Aizvērt"
   },
-  "featureFlagAgentProxyDisableThinkingLevelVariantsDescription": "Atspējot domāšanas līmeņu variantu (piem., -low, -medium, -high) ģenerēšanu /v1/models katalogā."
+  "featureFlagAgentProxyDisableThinkingLevelVariantsDescription": "Atspējot domāšanas līmeņu variantu (piem., -low, -medium, -high) ģenerēšanu /v1/models katalogā.",
+  "featureFlagProxyPoolSharedEgressOrderDescription": "Pakalpojumu sniedzējiem, kuru kvota tiek dalīta pēc izejošās (egress) adreses, pool dalībnieku, kuram ir kopīga nesen noraidīta dalībnieka novērotā egress adrese, ierindo tieši zem veselajiem dalībniekiem. Tikai secība, nekad netiek izslēgts. Nepieciešams PROXY_SKIP_RECENTLY_FAILED, kas rada tā nolasīto atteikuma signālu. Pēc noklusējuma izslēgts: atlases secība ir tieši parastā rotācija."
 }

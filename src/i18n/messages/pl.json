@@ -3795,7 +3795,8 @@
     "triStateInherit": "inherit",
     "connectionAwareExpansionOn": "On",
     "connectionAwareExpansionOff": "Off",
-    "promptCacheAffinityHint": "Prompt-cache locality routing takes precedence over round-robin/weighted rotation across pinned accounts. Turn it off under Settings, Combo defaults, if you need strict rotation."
+    "promptCacheAffinityHint": "Prompt-cache locality routing takes precedence over round-robin/weighted rotation across pinned accounts. Turn it off under Settings, Combo defaults, if you need strict rotation.",
+    "stickyLimitInherit": "dziedzicz"
   },
   "costs": {
     "title": "Koszty",
@@ -4972,7 +4973,7 @@
     "compressionLogTitle": "Log kompresji",
     "compressionLogEmpty": "Brak jeszcze skompresowanych żądań. Statystyki kompresji pojawią się tutaj, gdy żądania będą przetwarzane z włączoną kompresją.",
     "tokens": "tokeny",
-    "exportTruncated": "__MISSING__:Export truncated: only {exported} of {total} log entries were included. Pick a shorter time range to export the rest."
+    "exportTruncated": "Eksport został skrócony: uwzględniono tylko {exported} z {total} wpisów dziennika. Wybierz krótszy zakres czasu, aby wyeksportować pozostałe."
   },
   "onboarding": {
     "welcome": "Witamy",
@@ -5972,7 +5973,7 @@
     "validationModelIdLabel": "Model weryfikacyjny",
     "validationModelIdPlaceholder": "np. meta-llama/llama-3.1-8b-instruct",
     "vertexCredentialLabel": "API Key or Service Account JSON",
-    "vertexCredentialHint": "API keys use the curated project catalog. Service Account JSON enables live Model Garden discovery.",
+    "vertexCredentialHint": "Klucze API korzystają z wyselekcjonowanego katalogu projektów. Service Account JSON umożliwia wykrywanie modeli na żywo w Model Garden.",
     "vertexServiceAccountPlaceholder": "Wklej Service Account JSON ({\"type\":\"service_account\",\"project_id\":\"…\",\"client_email\":\"…\",\"private_key\":\"…\"}) lub OAuth access_token",
     "webCookieProviders": "Dostawcy korzystający z ciasteczek WWW",
     "weeklyShort": "Tygodniowo",
@@ -9719,7 +9720,14 @@
     "kiloPassPaid": "Opłacone",
     "kiloPassRemaining": "Pozostało",
     "kiloPassRenews": "Odnawia się za {count} dni",
-    "kiloPassUsageLabel": "Zużycie w tym miesiącu"
+    "kiloPassUsageLabel": "Zużycie w tym miesiącu",
+    "glmConfirmRedeemFiveHourResetCredit": "Wykorzystanie karty natychmiast resetuje 5-godzinny okres użycia i trwale zużywa tę kartę.",
+    "glmConfirmRedeemResetCredit": "Wykorzystanie karty natychmiast resetuje wybrany okres użycia i trwale zużywa tę kartę.",
+    "glmConfirmRedeemWeekResetCredit": "Wykorzystanie karty natychmiast resetuje tygodniowy okres użycia i trwale zużywa tę kartę.",
+    "glmResetCreditFiveHourTitle": "Reset okresu 5-godzinnego",
+    "glmResetCreditsModalExplainer": "Karty resetowania są uporządkowane według daty wygaśnięcia. Wybierz 5-godzinny lub tygodniowy okres, który chcesz zresetować.",
+    "glmResetCreditsModalTitle": "Karty resetowania planu GLM Coding",
+    "glmResetCreditWeekTitle": "Reset okresu tygodniowego"
   },
   "modals": {
     "waitingAuth": "Oczekiwanie na autoryzację",
@@ -12710,7 +12718,12 @@
     "createDahlTokenFailed": "Nie udało się utworzyć tokena Dahl",
     "providerProxy": "Serwer proxy",
     "providerProxyConfigureHint": "Skonfiguruj proxy",
-    "providerProxyTitleConfigured": "Proxy skonfigurowany: {host}"
+    "providerProxyTitleConfigured": "Proxy skonfigurowany: {host}",
+    "directEgress": "Bezpośrednio (bez proxy)",
+    "inheritConnectionOption": "Brak własnego proxy (dziedziczy połączenie)",
+    "inheritedPool": "Dziedziczy pulę połączeń ({count})",
+    "inheritedProxy": "Dziedziczy połączenie: {host}",
+    "poolEmptyBlocked": "Pula pusta — żądania nie powiodą się (nie bezpośrednio)"
   },
   "gamification": {
     "leaderboardScopes": {
@@ -13035,11 +13048,11 @@
         "description": "Zezwalaj na odzyskiwanie strumienia w celu ponownego zażądania odpowiedzi i połączenia jej po tym, jak bajty dotarły już do klienta."
       },
       "STREAM_RECOVERY_TOOLCALL_ORDER_FIX": {
-        "description": "__MISSING__:Make mid-stream continuation tool-call safe: never resume a cut stream after a tool call was sent (still in progress or already finished), and stop after one empty continuation instead of using the whole retry budget."
+        "description": "Zapewnij bezpieczeństwo wywołań narzędzi przy kontynuacji w środku strumienia: nigdy nie wznawiaj przerwanego strumienia po wysłaniu wywołania narzędzia (w toku lub już zakończonego) i zakończ po jednej pustej kontynuacji zamiast wykorzystywać cały budżet ponowień."
       },
       "PROTECTED_PRIORITY_INFRA_502_ENABLED": {
-        "label": "__MISSING__:Protected-Priority Infra Stops as 502",
-        "description": "__MISSING__:Answer 502 instead of 503 when a quota-only-fallback priority target stops the combo for a cause that is provably not quota: an open provider circuit breaker or a predictive latency skip."
+        "label": "Zatrzymania infrastruktury chronionego priorytetu jako 502",
+        "description": "Zwracaj 502 zamiast 503, gdy cel priorytetowy z rezerwą wyłącznie kwotową zatrzymuje kombinację z przyczyny, która na pewno nie jest związana z limitem: otwarty wyłącznik obwodu dostawcy albo predykcyjne pominięcie z powodu opóźnienia."
       },
       "MODEL_CATALOG_INCLUDE_NAMES": {
         "description": "Dołączaj przyjazne do wyświetlania pola nazw w odpowiedziach /v1/models. Wyłącz tę opcję dla klientów, którzy akceptują tylko identyfikatory modeli."
@@ -14205,5 +14218,6 @@
     "partnerLinkNote": "Link partnerski",
     "dismissAriaLabel": "Zamknij"
   },
-  "featureFlagAgentProxyDisableThinkingLevelVariantsDescription": "Wyłącz generowanie wariantów poziomu rozumowania (np. -low, -medium, -high) w katalogu /v1/models."
+  "featureFlagAgentProxyDisableThinkingLevelVariantsDescription": "Wyłącz generowanie wariantów poziomu rozumowania (np. -low, -medium, -high) w katalogu /v1/models.",
+  "featureFlagProxyPoolSharedEgressOrderDescription": "W przypadku dostawców, których limit jest przydzielany według adresu wyjściowego (egress), członek poola współdzielący zaobserwowany adres egress niedawno odrzuconego członka jest umieszczany tuż pod zdrowymi członkami. Tylko kolejność, nigdy wykluczenie. Wymaga PROXY_SKIP_RECENTLY_FAILED, który generuje odczytywany sygnał odmowy. Domyślnie wyłączone: kolejność wyboru to dokładnie zwykła rotacja."
 }

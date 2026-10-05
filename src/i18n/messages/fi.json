@@ -3795,7 +3795,8 @@
     "triStateInherit": "inherit",
     "connectionAwareExpansionOn": "On",
     "connectionAwareExpansionOff": "Off",
-    "promptCacheAffinityHint": "Prompt-cache locality routing takes precedence over round-robin/weighted rotation across pinned accounts. Turn it off under Settings, Combo defaults, if you need strict rotation."
+    "promptCacheAffinityHint": "Prompt-cache locality routing takes precedence over round-robin/weighted rotation across pinned accounts. Turn it off under Settings, Combo defaults, if you need strict rotation.",
+    "stickyLimitInherit": "peri"
   },
   "costs": {
     "title": "Kustannukset",
@@ -4972,7 +4973,7 @@
     "compressionLogTitle": "Pakkausloki",
     "compressionLogEmpty": "Ei vielä pakattuja pyyntöjä. Pakkaustilastot näkyvät tässä, kun pyyntöjä käsitellään pakkaus käytössä.",
     "tokens": "tokenit",
-    "exportTruncated": "__MISSING__:Export truncated: only {exported} of {total} log entries were included. Pick a shorter time range to export the rest."
+    "exportTruncated": "Vienti katkaistiin: vain {exported}/{total} lokimerkintää sisällytettiin. Vie loput valitsemalla lyhyempi aikaväli."
   },
   "onboarding": {
     "welcome": "Tervetuloa",
@@ -6328,7 +6329,8 @@
       "kiro": "Maksuton taso: 50 krediittiä kuukaudessa (~25K–100K tokenia). ⚠️ Kiro ToS kieltää kolmannen osapuolen välityspalvelujen ja harness-työkalujen käytön.",
       "codex": "Yhdistä OpenAI Codex olemassa olevalla OAuth-työnkululla.",
       "qwen": "Yhdistä Qwen Code olemassa olevalla OAuth-työnkululla.",
-      "github-models": "Luo GitHub PAT -tunniste 'models: read' -käyttöoikeudella osoitteessa github.com/settings/tokens"
+      "github-models": "Luo GitHub PAT -tunniste 'models: read' -käyttöoikeudella osoitteessa github.com/settings/tokens",
+      "agnes-cn": "Yhdistä Agnes AI (China) osoitteelle api.agnes-ai.cn myönnetyllä API-avaimella. Osoitteesta apihub.agnes-ai.com saadut avaimet eivät toimi."
     },
     "passthroughModelsDescription": "{provider} hyväksyy palveluntarjoajan alkuperäiset mallitunnukset. Tuo /modelsista tai lisää mukautettuja tunnuksia reititystä varten.",
     "bedrockModelsDescription": "Amazon Bedrock -mallit on luokiteltu AWS-alueen mukaan. Tuo osoitteesta /models tai lisää valitulla alueella käytössä olevat kallioperän mallitunnukset.",
@@ -6489,7 +6491,9 @@
     "failedClearConnectionCooldown": "Odotusajan poistaminen epäonnistui",
     "importFromFileDownloadTemplate": "Lataa CSV-malli",
     "importFromFileMoreErrors": "+{count} muuta",
-    "importFromFileSchemaHint": "CSV-sarakkeiden järjestys on kiinteä: provider, name, apiKey, baseUrl (valinnainen), priority (valinnainen). provider-sarakkeen arvon on oltava olemassa olevan hallinnoidun palveluntarjoajan tunnus tai jo rekisteröidyn OpenAI/Anthropic-yhteensopivan solmun tunnus — tämä tuonti ei luo uusia päätepistesolmuja."
+    "importFromFileSchemaHint": "CSV-sarakkeiden järjestys on kiinteä: provider, name, apiKey, baseUrl (valinnainen), priority (valinnainen). provider-sarakkeen arvon on oltava olemassa olevan hallinnoidun palveluntarjoajan tunnus tai jo rekisteröidyn OpenAI/Anthropic-yhteensopivan solmun tunnus — tämä tuonti ei luo uusia päätepistesolmuja.",
+    "vertexCredentialHint": "API Key -avaimet käyttävät kuratoitua projektiluetteloa. Service Account JSON mahdollistaa Model Gardenin reaaliaikaisen haun.",
+    "vertexCredentialLabel": "API Key tai Service Account JSON"
   },
   "settings": {
     "title": "Asetukset",
@@ -8597,6 +8601,10 @@
       "compressToolResults": {
         "label": "Proaktiivisesti lyhennä pitkiä työkalutuloksia",
         "description": "__MISSING__:Truncates long tool results during Lite compression. The Maximum tool-result length field (or AGENTPROXY_LITE_MAX_TOOL_LENGTH when that field is unset) sets the cap. Emergency overflow protection may still trim content when the context exceeds the model budget."
+      },
+      "maxToolLength": {
+        "description": "Character cap for proactive tool-result truncation. Default 2000. Override with AGENTPROXY_LITE_MAX_TOOL_LENGTH when this field is unset.",
+        "label": "Maximum tool-result length"
       }
     },
     "engineFields": {
@@ -9712,7 +9720,14 @@
     "kiloPassPaid": "Maksettu",
     "kiloPassRemaining": "Jäljellä",
     "kiloPassRenews": "Uusiutuu {count} päivän kuluttua",
-    "kiloPassUsageLabel": "Tämän kuun käyttö"
+    "kiloPassUsageLabel": "Tämän kuun käyttö",
+    "glmConfirmRedeemFiveHourResetCredit": "Lunastaminen nollaa 5 tunnin käyttöjakson välittömästi ja kuluttaa tämän kortin pysyvästi.",
+    "glmConfirmRedeemResetCredit": "Lunastaminen nollaa valitun käyttöjakson välittömästi ja kuluttaa tämän kortin pysyvästi.",
+    "glmConfirmRedeemWeekResetCredit": "Lunastaminen nollaa viikoittaisen käyttöjakson välittömästi ja kuluttaa tämän kortin pysyvästi.",
+    "glmResetCreditFiveHourTitle": "5 tunnin jakson nollaus",
+    "glmResetCreditsModalExplainer": "Nollauskortit on järjestetty vanhentumisajan mukaan. Valitse nollattavaksi haluamasi 5 tunnin tai viikoittainen jakso.",
+    "glmResetCreditsModalTitle": "GLM Coding Plan -nollauskortit",
+    "glmResetCreditWeekTitle": "Viikoittaisen jakson nollaus"
   },
   "modals": {
     "waitingAuth": "Odotetaan valtuutusta",
@@ -12703,7 +12718,12 @@
     "createDahlTokenFailed": "Dahl-tokenin luominen epäonnistui",
     "providerProxy": "Välimuisti",
     "providerProxyConfigureHint": "Määritä välityspalvelin",
-    "providerProxyTitleConfigured": "Proxy on määritetty: {host}"
+    "providerProxyTitleConfigured": "Proxy on määritetty: {host}",
+    "directEgress": "Suora (ei välityspalvelinta)",
+    "inheritConnectionOption": "Ei omaa välityspalvelinta (perii yhteyden)",
+    "inheritedPool": "Perii yhteyspoolin ({count})",
+    "inheritedProxy": "Perii yhteyden: {host}",
+    "poolEmptyBlocked": "Pooli tyhjä — pyynnöt epäonnistuvat (ei suoraan)"
   },
   "gamification": {
     "leaderboardScopes": {
@@ -13063,6 +13083,13 @@
       "SERVER_OWNED_TOOL_LOOP_ENABLED": {
         "label": "Palvelimen hallinnoima työkalusilmukka",
         "description": "Jatka palvelimen hallinnoimia suoratoistamattomia työkalukutsuja, kunnes malli palauttaa asiakkaan käytettävissä olevan vastauksen."
+      },
+      "PROTECTED_PRIORITY_INFRA_502_ENABLED": {
+        "description": "Palauta 502 koodin 503 sijaan, kun prioriteettikohde, jota käytetään varavaihtoehtona vain kiintiötilanteessa, pysäyttää yhdistelmän syystä, jonka voidaan varmasti osoittaa olevan muu kuin kiintiö: palveluntarjoajan avoin katkaisija tai ennakoituun viiveeseen perustuva ohitus.",
+        "label": "Suojatun prioriteetin infrastruktuurikeskeytykset 502-virheinä"
+      },
+      "STREAM_RECOVERY_TOOLCALL_ORDER_FIX": {
+        "description": "Tee kesken suoratoiston jatkamisesta turvallista työkalukutsujen kannalta: älä koskaan jatka katkennutta suoratoistoa sen jälkeen, kun työkalukutsu on lähetetty (se on yhä käynnissä tai jo valmistunut), ja lopeta yhden tyhjän jatkoyrityksen jälkeen sen sijaan, että käyttäisit koko uudelleenyritysbudjetin."
       }
     }
   },
@@ -14191,5 +14218,6 @@
     "partnerLinkNote": "Kumppanilinkki",
     "dismissAriaLabel": "Sulje"
   },
-  "featureFlagAgentProxyDisableThinkingLevelVariantsDescription": "Poista käytöstä ajattelutason varianttien (esim. -low, -medium, -high) luonti /v1/models-luettelossa."
+  "featureFlagAgentProxyDisableThinkingLevelVariantsDescription": "Poista käytöstä ajattelutason varianttien (esim. -low, -medium, -high) luonti /v1/models-luettelossa.",
+  "featureFlagProxyPoolSharedEgressOrderDescription": "Palveluntarjoajille, joiden kiintiö jaetaan lähtevän (egress) osoitteen mukaan, sijoittaa poolin jäsenen, joka jakaa äskettäin hylätyn jäsenen havaitun egress-osoitteen, heti terveiden jäsenten alapuolelle. Vain järjestys, ei koskaan poissulkemista. Vaatii PROXY_SKIP_RECENTLY_FAILED-asetuksen, joka tuottaa sen lukeman hylkäyssignaalin. Oletuksena pois päältä: valintajärjestys on täsmälleen tavallinen kierto."
 }

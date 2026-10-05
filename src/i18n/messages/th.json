@@ -3795,7 +3795,8 @@
     "triStateInherit": "inherit",
     "connectionAwareExpansionOn": "On",
     "connectionAwareExpansionOff": "Off",
-    "promptCacheAffinityHint": "Prompt-cache locality routing takes precedence over round-robin/weighted rotation across pinned accounts. Turn it off under Settings, Combo defaults, if you need strict rotation."
+    "promptCacheAffinityHint": "Prompt-cache locality routing takes precedence over round-robin/weighted rotation across pinned accounts. Turn it off under Settings, Combo defaults, if you need strict rotation.",
+    "stickyLimitInherit": "สืบทอด"
   },
   "costs": {
     "title": "ค่าใช้จ่าย",
@@ -4972,7 +4973,7 @@
     "compressionLogTitle": "บันทึกการบีบอัด",
     "compressionLogEmpty": "ยังไม่มีคำขอที่ถูกบีบอัด สถิติการบีบอัดจะแสดงที่นี่เมื่อคำขอถูกประมวลผลโดยเปิดใช้งานการบีบอัด",
     "tokens": "โทเค็น",
-    "exportTruncated": "__MISSING__:Export truncated: only {exported} of {total} log entries were included. Pick a shorter time range to export the rest."
+    "exportTruncated": "การส่งออกถูกตัดทอน: รวมรายการบันทึกเพียง {exported} จาก {total} รายการ เลือกช่วงเวลาที่สั้นลงเพื่อส่งออกรายการที่เหลือ"
   },
   "onboarding": {
     "welcome": "ยินดีต้อนรับ",
@@ -6328,7 +6329,8 @@
       "kiro": "ระดับฟรี: 50 เครดิต/เดือน (~25K–100K โทเค็น) ⚠️ ToS ของ Kiro ห้ามใช้พร็อกซี/harness ของบุคคลที่สาม",
       "codex": "เชื่อมต่อ OpenAI Codex ด้วยโฟลว์ OAuth ที่มีอยู่",
       "qwen": "เชื่อมต่อ Qwen Code ด้วยโฟลว์ OAuth ที่มีอยู่",
-      "github-models": "สร้าง GitHub PAT ที่มีขอบเขต 'models: read' ที่ github.com/settings/tokens"
+      "github-models": "สร้าง GitHub PAT ที่มีขอบเขต 'models: read' ที่ github.com/settings/tokens",
+      "agnes-cn": "เชื่อมต่อ Agnes AI (China) ด้วย API key ที่ออกให้สำหรับ api.agnes-ai.cn โดยคีย์จาก apihub.agnes-ai.com จะใช้ไม่ได้"
     },
     "passthroughModelsDescription": "{provider} ยอมรับ ID โมเดลดั้งเดิมของผู้ให้บริการ นำเข้าจาก /models หรือเพิ่ม ID ที่กำหนดเองสำหรับการกำหนดเส้นทาง",
     "bedrockModelsDescription": "โมเดล Amazon Bedrock มีการกำหนดขอบเขตตามภูมิภาค AWS นำเข้าจาก /models หรือเพิ่มรหัสรุ่น Bedrock ที่เปิดใช้งานในภูมิภาคที่เลือก",
@@ -6489,7 +6491,9 @@
     "failedClearConnectionCooldown": "ล้างช่วงพักการใช้งานไม่สำเร็จ",
     "importFromFileDownloadTemplate": "ดาวน์โหลดเทมเพลต CSV",
     "importFromFileMoreErrors": "+{count} รายการเพิ่มเติม",
-    "importFromFileSchemaHint": "คอลัมน์ CSV เรียงตามตำแหน่งดังนี้: provider, name, apiKey, baseUrl (ไม่บังคับ), priority (ไม่บังคับ) คอลัมน์ provider ต้องเป็น ID ของผู้ให้บริการที่มีการจัดการอยู่แล้ว หรือ ID โหนดที่เข้ากันได้กับ OpenAI/Anthropic และลงทะเบียนไว้แล้ว — การนำเข้านี้จะไม่สร้างโหนดปลายทางใหม่"
+    "importFromFileSchemaHint": "คอลัมน์ CSV เรียงตามตำแหน่งดังนี้: provider, name, apiKey, baseUrl (ไม่บังคับ), priority (ไม่บังคับ) คอลัมน์ provider ต้องเป็น ID ของผู้ให้บริการที่มีการจัดการอยู่แล้ว หรือ ID โหนดที่เข้ากันได้กับ OpenAI/Anthropic และลงทะเบียนไว้แล้ว — การนำเข้านี้จะไม่สร้างโหนดปลายทางใหม่",
+    "vertexCredentialHint": "API keys ใช้แค็ตตาล็อกโปรเจกต์ที่ผ่านการคัดสรร ส่วน Service Account JSON ช่วยให้ค้นหา Model Garden แบบเรียลไทม์ได้",
+    "vertexCredentialLabel": "API Key หรือ Service Account JSON"
   },
   "settings": {
     "title": "การตั้งค่า",
@@ -8597,6 +8601,10 @@
       "compressToolResults": {
         "label": "ตัดผลลัพธ์เครื่องมือที่ยาวเกินไปอย่างมีประสิทธิภาพ",
         "description": "ตัดผลลัพธ์ของเครื่องมือที่มีความยาวเกิน 2,000 ตัวอักษรในระหว่างการบีบอัดแบบ Lite การป้องกันการล débordement ฉุกเฉินอาจยังคงตัดเนื้อหาเมื่อบริบทเกินงบประมาณของโมเดล"
+      },
+      "maxToolLength": {
+        "description": "Character cap for proactive tool-result truncation. Default 2000. Override with AGENTPROXY_LITE_MAX_TOOL_LENGTH when this field is unset.",
+        "label": "Maximum tool-result length"
       }
     },
     "engineFields": {
@@ -9712,7 +9720,14 @@
     "kiloPassPaid": "ชำระแล้ว",
     "kiloPassRemaining": "คงเหลือ",
     "kiloPassRenews": "ต่ออายุในอีก {count} วัน",
-    "kiloPassUsageLabel": "การใช้งานเดือนนี้"
+    "kiloPassUsageLabel": "การใช้งานเดือนนี้",
+    "glmConfirmRedeemFiveHourResetCredit": "การแลกใช้จะรีเซ็ตช่วงเวลาการใช้งาน 5 ชั่วโมงทันที และใช้การ์ดใบนี้อย่างถาวร",
+    "glmConfirmRedeemResetCredit": "การแลกใช้จะรีเซ็ตช่วงเวลาการใช้งานที่เลือกทันที และใช้การ์ดใบนี้อย่างถาวร",
+    "glmConfirmRedeemWeekResetCredit": "การแลกใช้จะรีเซ็ตช่วงเวลาการใช้งานรายสัปดาห์ทันที และใช้การ์ดใบนี้อย่างถาวร",
+    "glmResetCreditFiveHourTitle": "รีเซ็ตช่วงเวลา 5 ชั่วโมง",
+    "glmResetCreditsModalExplainer": "การ์ดรีเซ็ตจะเรียงตามวันหมดอายุ เลือกช่วงเวลา 5 ชั่วโมงหรือรายสัปดาห์ที่ต้องการรีเซ็ต",
+    "glmResetCreditsModalTitle": "การ์ดรีเซ็ตแพ็กเกจ GLM Coding",
+    "glmResetCreditWeekTitle": "รีเซ็ตช่วงเวลารายสัปดาห์"
   },
   "modals": {
     "waitingAuth": "รอการอนุญาต",
@@ -12703,7 +12718,12 @@
     "createDahlTokenFailed": "ไม่สามารถสร้างโทเค็น Dahl ได้",
     "providerProxy": "พร็อกซี",
     "providerProxyConfigureHint": "กำหนดค่าพร็อกซี",
-    "providerProxyTitleConfigured": "กำหนดพร็อกซีแล้ว: {host}"
+    "providerProxyTitleConfigured": "กำหนดพร็อกซีแล้ว: {host}",
+    "directEgress": "โดยตรง (ไม่มีพร็อกซี)",
+    "inheritConnectionOption": "ไม่มีพร็อกซีของตัวเอง (สืบทอดการเชื่อมต่อ)",
+    "inheritedPool": "สืบทอดพูลการเชื่อมต่อ ({count})",
+    "inheritedProxy": "สืบทอดการเชื่อมต่อ: {host}",
+    "poolEmptyBlocked": "พูลว่าง — คำขอจะล้มเหลว (ไม่โดยตรง)"
   },
   "gamification": {
     "leaderboardScopes": {
@@ -13063,6 +13083,13 @@
       "SERVER_OWNED_TOOL_LOOP_ENABLED": {
         "label": "ลูปเครื่องมือที่เซิร์ฟเวอร์เป็นผู้ควบคุม",
         "description": "ดำเนินการเรียกเครื่องมือแบบไม่สตรีมที่เซิร์ฟเวอร์เป็นผู้ควบคุมต่อไป จนกว่าโมเดลจะส่งคืนการตอบกลับที่ไคลเอนต์ใช้งานได้"
+      },
+      "PROTECTED_PRIORITY_INFRA_502_ENABLED": {
+        "description": "ตอบกลับด้วย 502 แทน 503 เมื่อเป้าหมายแบบมีลำดับความสำคัญซึ่งจะใช้ทางเลือกสำรองเฉพาะเมื่อเกิดปัญหาโควตาหยุดคอมโบด้วยสาเหตุที่พิสูจน์ได้ว่าไม่เกี่ยวกับโควตา ได้แก่ เซอร์กิตเบรกเกอร์ของผู้ให้บริการที่เปิดอยู่ หรือการข้ามตามการคาดการณ์เวลาแฝง",
+        "label": "การหยุดจากโครงสร้างพื้นฐานของลำดับความสำคัญแบบมีการป้องกันเป็น 502"
+      },
+      "STREAM_RECOVERY_TOOLCALL_ORDER_FIX": {
+        "description": "ทำให้การดำเนินการต่อกลางสตรีมปลอดภัยสำหรับการเรียกใช้เครื่องมือ: ห้ามดำเนินการต่อจากสตรีมที่ถูกตัดหลังจากส่งการเรียกใช้เครื่องมือแล้ว (ไม่ว่าจะยังดำเนินการอยู่หรือเสร็จสิ้นแล้ว) และหยุดหลังจากการดำเนินการต่อที่ว่างเปล่าหนึ่งครั้ง แทนที่จะใช้โควตาการลองใหม่ทั้งหมด"
       }
     }
   },
@@ -14191,5 +14218,6 @@
     "partnerLinkNote": "ลิงก์พาร์ทเนอร์",
     "dismissAriaLabel": "ปิด"
   },
-  "featureFlagAgentProxyDisableThinkingLevelVariantsDescription": "ปิดใช้งานการสร้างโมเดลรูปแบบย่อยตามระดับการคิด (เช่น -low, -medium, -high) ในแค็ตตาล็อก /v1/models"
+  "featureFlagAgentProxyDisableThinkingLevelVariantsDescription": "ปิดใช้งานการสร้างโมเดลรูปแบบย่อยตามระดับการคิด (เช่น -low, -medium, -high) ในแค็ตตาล็อก /v1/models",
+  "featureFlagProxyPoolSharedEgressOrderDescription": "สำหรับผู้ให้บริการที่แบ่งโควตาตามที่อยู่ egress จะจัดสมาชิก pool ที่ใช้ที่อยู่ egress ที่สังเกตได้ร่วมกับสมาชิกที่เพิ่งถูกปฏิเสธไว้ถัดจากสมาชิกที่ปกติทันที เปลี่ยนเฉพาะลำดับ ไม่มีการตัดออก ต้องใช้ PROXY_SKIP_RECENTLY_FAILED ซึ่งสร้างสัญญาณการปฏิเสธที่ฟีเจอร์นี้อ่าน ปิดโดยค่าเริ่มต้น: ลำดับการเลือกเป็นการหมุนเวียนปกติทุกประการ"
 }

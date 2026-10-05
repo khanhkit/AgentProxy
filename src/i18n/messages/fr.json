@@ -3795,7 +3795,8 @@
     "triStateInherit": "inherit",
     "connectionAwareExpansionOn": "On",
     "connectionAwareExpansionOff": "Off",
-    "promptCacheAffinityHint": "Prompt-cache locality routing takes precedence over round-robin/weighted rotation across pinned accounts. Turn it off under Settings, Combo defaults, if you need strict rotation."
+    "promptCacheAffinityHint": "Prompt-cache locality routing takes precedence over round-robin/weighted rotation across pinned accounts. Turn it off under Settings, Combo defaults, if you need strict rotation.",
+    "stickyLimitInherit": "hériter"
   },
   "costs": {
     "title": "Coûts",
@@ -4972,7 +4973,7 @@
     "compressionLogTitle": "Journal de compression",
     "compressionLogEmpty": "Aucune requête compressée pour le moment. Les statistiques de compression apparaîtront ici lorsque les requêtes seront traitées avec la compression activée.",
     "tokens": "jetons",
-    "exportTruncated": "__MISSING__:Export truncated: only {exported} of {total} log entries were included. Pick a shorter time range to export the rest."
+    "exportTruncated": "Exportation tronquée : seules {exported} entrées de journal sur {total} ont été incluses. Choisissez une période plus courte pour exporter le reste."
   },
   "onboarding": {
     "welcome": "Bienvenue",
@@ -6328,7 +6329,8 @@
       "kiro": "Offre gratuite : 50 crédits/mois (~25K–100K tokens). ⚠️ Les conditions d'utilisation de Kiro interdisent l'utilisation de proxys/harness tiers.",
       "codex": "Connecter OpenAI Codex avec le flux OAuth existant.",
       "qwen": "Connecter Qwen Code avec le flux OAuth existant.",
-      "github-models": "Créez un PAT GitHub avec la portée 'models: read' sur github.com/settings/tokens"
+      "github-models": "Créez un PAT GitHub avec la portée 'models: read' sur github.com/settings/tokens",
+      "agnes-cn": "Connectez Agnes AI (China) avec une API key émise pour api.agnes-ai.cn. Les clés provenant de apihub.agnes-ai.com ne fonctionneront pas."
     },
     "passthroughModelsDescription": "{provider} accepte les ID de modèle natifs du fournisseur. Importez depuis /models ou ajoutez des ID personnalisés pour le routage.",
     "bedrockModelsDescription": "Les modèles Amazon Bedrock sont définis par région AWS. Importez depuis /models ou ajoutez les ID de modèle Bedrock activés dans la région sélectionnée.",
@@ -6489,7 +6491,9 @@
     "failedClearConnectionCooldown": "Impossible de lever le délai d’attente",
     "importFromFileDownloadTemplate": "Télécharger le modèle CSV",
     "importFromFileMoreErrors": "+{count} de plus",
-    "importFromFileSchemaHint": "Les colonnes CSV sont positionnelles : provider, name, apiKey, baseUrl (facultatif), priority (facultatif). La colonne provider doit contenir l’identifiant d’un fournisseur géré existant ou l’identifiant d’un nœud compatible OpenAI/Anthropic déjà enregistré — cette importation ne crée pas de nouveaux nœuds de point de terminaison."
+    "importFromFileSchemaHint": "Les colonnes CSV sont positionnelles : provider, name, apiKey, baseUrl (facultatif), priority (facultatif). La colonne provider doit contenir l’identifiant d’un fournisseur géré existant ou l’identifiant d’un nœud compatible OpenAI/Anthropic déjà enregistré — cette importation ne crée pas de nouveaux nœuds de point de terminaison.",
+    "vertexCredentialHint": "Les API keys utilisent le catalogue de projets sélectionnés. Service Account JSON permet la découverte en direct dans Model Garden.",
+    "vertexCredentialLabel": "API Key or Service Account JSON"
   },
   "settings": {
     "title": "Paramètres",
@@ -8597,6 +8601,10 @@
       "compressToolResults": {
         "label": "Tronquer proactivement les longs résultats d'outils",
         "description": "__MISSING__:Truncates long tool results during Lite compression. The Maximum tool-result length field (or AGENTPROXY_LITE_MAX_TOOL_LENGTH when that field is unset) sets the cap. Emergency overflow protection may still trim content when the context exceeds the model budget."
+      },
+      "maxToolLength": {
+        "description": "Plafond de caractères pour la troncature proactive des résultats d'outil. Défaut 2000. Surcharge via AGENTPROXY_LITE_MAX_TOOL_LENGTH si le champ est vide.",
+        "label": "Longueur maximale des résultats d'outil"
       }
     },
     "engineFields": {
@@ -9712,7 +9720,14 @@
     "kiloPassPaid": "Payé",
     "kiloPassRemaining": "Restant",
     "kiloPassRenews": "Se renouvelle dans {count} jours",
-    "kiloPassUsageLabel": "Utilisation ce mois-ci"
+    "kiloPassUsageLabel": "Utilisation ce mois-ci",
+    "glmConfirmRedeemFiveHourResetCredit": "L’utilisation de cette carte réinitialise immédiatement la fenêtre d’utilisation de 5 heures et consomme définitivement cette carte.",
+    "glmConfirmRedeemResetCredit": "L’utilisation de cette carte réinitialise immédiatement la fenêtre d’utilisation sélectionnée et consomme définitivement cette carte.",
+    "glmConfirmRedeemWeekResetCredit": "L’utilisation de cette carte réinitialise immédiatement la fenêtre d’utilisation hebdomadaire et consomme définitivement cette carte.",
+    "glmResetCreditFiveHourTitle": "Réinitialisation de la fenêtre de 5 heures",
+    "glmResetCreditsModalExplainer": "Les cartes de réinitialisation sont classées par date d’expiration. Choisissez la fenêtre de 5 heures ou hebdomadaire que vous souhaitez réinitialiser.",
+    "glmResetCreditsModalTitle": "Cartes de réinitialisation du GLM Coding Plan",
+    "glmResetCreditWeekTitle": "Réinitialisation de la fenêtre hebdomadaire"
   },
   "modals": {
     "waitingAuth": "En attente d'autorisation",
@@ -12703,7 +12718,12 @@
     "createDahlTokenFailed": "Échec de create Dahl token",
     "providerProxy": "Proxy",
     "providerProxyConfigureHint": "Configurer proxy",
-    "providerProxyTitleConfigured": "Proxy configuré : {host}"
+    "providerProxyTitleConfigured": "Proxy configuré : {host}",
+    "directEgress": "Direct (sans proxy)",
+    "inheritConnectionOption": "Aucun proxy propre (hérite de la connexion)",
+    "inheritedPool": "Hérite du pool de connexions ({count})",
+    "inheritedProxy": "Hérite de la connexion : {host}",
+    "poolEmptyBlocked": "Pool vide — les requêtes échouent (pas direct)"
   },
   "gamification": {
     "leaderboardScopes": {
@@ -13063,6 +13083,13 @@
       "SERVER_OWNED_TOOL_LOOP_ENABLED": {
         "label": "Boucle d’outils gérée par le serveur",
         "description": "Poursuivre les appels d’outils non diffusés en continu et gérés par le serveur jusqu’à ce que le modèle renvoie une réponse exploitable par le client."
+      },
+      "PROTECTED_PRIORITY_INFRA_502_ENABLED": {
+        "description": "Répondre avec 502 au lieu de 503 lorsqu’une cible prioritaire avec repli uniquement en cas de quota arrête la combinaison pour une cause dont il est démontré qu’elle n’est pas liée au quota : un disjoncteur de fournisseur ouvert ou un saut prédictif dû à la latence.",
+        "label": "Arrêts d’infrastructure à priorité protégée en tant que 502"
+      },
+      "STREAM_RECOVERY_TOOLCALL_ORDER_FIX": {
+        "description": "Sécuriser les appels d’outils lors d’une continuation en cours de flux : ne jamais reprendre un flux interrompu après l’envoi d’un appel d’outil (qu’il soit toujours en cours ou déjà terminé), et s’arrêter après une continuation vide au lieu d’utiliser tout le quota de nouvelles tentatives."
       }
     }
   },
@@ -14191,5 +14218,6 @@
     "partnerLinkNote": "Lien partenaire",
     "dismissAriaLabel": "Fermer"
   },
-  "featureFlagAgentProxyDisableThinkingLevelVariantsDescription": "Désactiver la génération des variantes de niveau de réflexion (par ex. -low, -medium, -high) dans le catalogue /v1/models."
+  "featureFlagAgentProxyDisableThinkingLevelVariantsDescription": "Désactiver la génération des variantes de niveau de réflexion (par ex. -low, -medium, -high) dans le catalogue /v1/models.",
+  "featureFlagProxyPoolSharedEgressOrderDescription": "Pour les fournisseurs dont le quota est réparti par adresse d'egress, classe un membre du pool partageant l'adresse d'egress observée d'un membre récemment refusé juste en dessous des membres sains. Ordre uniquement, jamais exclu. Nécessite PROXY_SKIP_RECENTLY_FAILED, qui produit le signal de refus qu'il lit. Désactivé par défaut : l'ordre de sélection est exactement la rotation simple."
 }

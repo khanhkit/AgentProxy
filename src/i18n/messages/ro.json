@@ -3795,7 +3795,8 @@
     "triStateInherit": "inherit",
     "connectionAwareExpansionOn": "On",
     "connectionAwareExpansionOff": "Off",
-    "promptCacheAffinityHint": "Prompt-cache locality routing takes precedence over round-robin/weighted rotation across pinned accounts. Turn it off under Settings, Combo defaults, if you need strict rotation."
+    "promptCacheAffinityHint": "Prompt-cache locality routing takes precedence over round-robin/weighted rotation across pinned accounts. Turn it off under Settings, Combo defaults, if you need strict rotation.",
+    "stickyLimitInherit": "moștenire"
   },
   "costs": {
     "title": "Costuri",
@@ -4972,7 +4973,7 @@
     "compressionLogTitle": "Log de compresie",
     "compressionLogEmpty": "Nu există încă cereri compresate. Statisticile de compresie vor apărea aici când cererile sunt procesate cu compresia activată.",
     "tokens": "tokenuri",
-    "exportTruncated": "__MISSING__:Export truncated: only {exported} of {total} log entries were included. Pick a shorter time range to export the rest."
+    "exportTruncated": "Export trunchiat: au fost incluse doar {exported} din {total} înregistrări de jurnal. Alegeți un interval de timp mai scurt pentru a exporta restul."
   },
   "onboarding": {
     "welcome": "Bun venit",
@@ -6328,7 +6329,8 @@
       "kiro": "Nivel gratuit: 50 de credite/lună (~25K–100K tokenuri). ⚠️ Kiro ToS interzice utilizarea de proxy/harness terțe.",
       "codex": "Conectați OpenAI Codex cu fluxul OAuth existent.",
       "qwen": "Conectați Qwen Code cu fluxul OAuth existent.",
-      "github-models": "Creați un GitHub PAT cu scope-ul 'models: read' la github.com/settings/tokens"
+      "github-models": "Creați un GitHub PAT cu scope-ul 'models: read' la github.com/settings/tokens",
+      "agnes-cn": "Conectează Agnes AI (China) folosind o cheie API emisă pentru api.agnes-ai.cn. Cheile de la apihub.agnes-ai.com nu vor funcționa."
     },
     "passthroughModelsDescription": "{provider} acceptă ID-uri de model native ale furnizorului. Importați din /modele sau adăugați ID-uri personalizate pentru rutare.",
     "bedrockModelsDescription": "Modelele Amazon Bedrock sunt acoperite de regiunea AWS. Importați din /modele sau adăugați ID-uri de model Bedrock activate în regiunea selectată.",
@@ -6489,7 +6491,9 @@
     "failedClearConnectionCooldown": "Ștergerea perioadei de așteptare a eșuat",
     "importFromFileDownloadTemplate": "Descarcă șablonul CSV",
     "importFromFileMoreErrors": "+ încă {count}",
-    "importFromFileSchemaHint": "Coloanele CSV sunt poziționale: provider, name, apiKey, baseUrl (opțional), priority (opțional). Coloana provider trebuie să conțină id-ul unui furnizor gestionat existent sau id-ul unui nod compatibil OpenAI/Anthropic deja înregistrat — acest import nu creează noduri endpoint noi."
+    "importFromFileSchemaHint": "Coloanele CSV sunt poziționale: provider, name, apiKey, baseUrl (opțional), priority (opțional). Coloana provider trebuie să conțină id-ul unui furnizor gestionat existent sau id-ul unui nod compatibil OpenAI/Anthropic deja înregistrat — acest import nu creează noduri endpoint noi.",
+    "vertexCredentialHint": "Cheile API utilizează catalogul de proiecte selecționat. JSON pentru contul de serviciu permite descoperirea în timp real în Model Garden.",
+    "vertexCredentialLabel": "Cheie API sau JSON pentru contul de serviciu"
   },
   "settings": {
     "title": "Setări",
@@ -8597,6 +8601,10 @@
       "compressToolResults": {
         "label": "Trunchiați proactiv rezultatele lungi ale instrumentului",
         "description": "__MISSING__:Truncates long tool results during Lite compression. The Maximum tool-result length field (or AGENTPROXY_LITE_MAX_TOOL_LENGTH when that field is unset) sets the cap. Emergency overflow protection may still trim content when the context exceeds the model budget."
+      },
+      "maxToolLength": {
+        "description": "Character cap for proactive tool-result truncation. Default 2000. Override with AGENTPROXY_LITE_MAX_TOOL_LENGTH when this field is unset.",
+        "label": "Maximum tool-result length"
       }
     },
     "engineFields": {
@@ -9712,7 +9720,14 @@
     "kiloPassPaid": "Plătit",
     "kiloPassRemaining": "Rămas",
     "kiloPassRenews": "Se reînnoiește în {count} zile",
-    "kiloPassUsageLabel": "Utilizarea din această lună"
+    "kiloPassUsageLabel": "Utilizarea din această lună",
+    "glmConfirmRedeemFiveHourResetCredit": "Valorificarea resetează imediat intervalul de utilizare de 5 ore și consumă definitiv acest card.",
+    "glmConfirmRedeemResetCredit": "Valorificarea resetează imediat intervalul de utilizare selectat și consumă definitiv acest card.",
+    "glmConfirmRedeemWeekResetCredit": "Valorificarea resetează imediat intervalul de utilizare săptămânal și consumă definitiv acest card.",
+    "glmResetCreditFiveHourTitle": "Resetarea intervalului de 5 ore",
+    "glmResetCreditsModalExplainer": "Cardurile de resetare sunt ordonate după expirare. Alegeți intervalul de 5 ore sau pe cel săptămânal pe care doriți să îl resetați.",
+    "glmResetCreditsModalTitle": "Carduri de resetare GLM Coding Plan",
+    "glmResetCreditWeekTitle": "Resetarea intervalului săptămânal"
   },
   "modals": {
     "waitingAuth": "În așteptarea autorizației",
@@ -12703,7 +12718,12 @@
     "createDahlTokenFailed": "Nu s-a reușit crearea tokenului Dahl",
     "providerProxy": "Proxy",
     "providerProxyConfigureHint": "Configurează proxy",
-    "providerProxyTitleConfigured": "Proxy configurat: {host}"
+    "providerProxyTitleConfigured": "Proxy configurat: {host}",
+    "directEgress": "Direct (fără proxy)",
+    "inheritConnectionOption": "Fără proxy propriu (moștenește conexiunea)",
+    "inheritedPool": "Moștenește pool-ul de conexiuni ({count})",
+    "inheritedProxy": "Moștenește conexiunea: {host}",
+    "poolEmptyBlocked": "Pool gol — cererile eșuează (nu direct)"
   },
   "gamification": {
     "leaderboardScopes": {
@@ -13063,6 +13083,13 @@
       "SERVER_OWNED_TOOL_LOOP_ENABLED": {
         "label": "Buclă de instrumente gestionată de server",
         "description": "Continuă apelurile de instrumente fără streaming gestionate de server până când modelul returnează un răspuns utilizabil de client."
+      },
+      "PROTECTED_PRIORITY_INFRA_502_ENABLED": {
+        "description": "Răspunde cu 502 în loc de 503 atunci când o țintă prioritară cu fallback exclusiv pentru cotă oprește combinația dintr-o cauză care, în mod demonstrabil, nu ține de cotă: un întrerupător de circuit deschis al furnizorului sau o omitere predictivă bazată pe latență.",
+        "label": "Opriri de infrastructură cu prioritate protejată returnate ca 502"
+      },
+      "STREAM_RECOVERY_TOOLCALL_ORDER_FIX": {
+        "description": "Asigură siguranța continuării în mijlocul fluxului pentru apelurile de instrumente: nu relua niciodată un flux întrerupt după trimiterea unui apel de instrument (aflat încă în desfășurare sau deja finalizat) și oprește-te după o singură continuare fără conținut, în loc să utilizezi întregul buget de reîncercări."
       }
     }
   },
@@ -14191,5 +14218,6 @@
     "partnerLinkNote": "Link de partener",
     "dismissAriaLabel": "Închideți"
   },
-  "featureFlagAgentProxyDisableThinkingLevelVariantsDescription": "Dezactivați generarea variantelor de nivel de gândire (de ex. -low, -medium, -high) în catalogul /v1/models."
+  "featureFlagAgentProxyDisableThinkingLevelVariantsDescription": "Dezactivați generarea variantelor de nivel de gândire (de ex. -low, -medium, -high) în catalogul /v1/models.",
+  "featureFlagProxyPoolSharedEgressOrderDescription": "Pentru furnizorii a căror cotă este împărțită pe adresă de egress, plasează un membru al pool-ului care partajează adresa de egress observată a unui membru refuzat recent imediat sub membrii sănătoși. Doar ordine, niciodată excludere. Necesită PROXY_SKIP_RECENTLY_FAILED, care produce semnalul de refuz pe care îl citește. Dezactivat implicit: ordinea de selecție este exact rotația simplă."
 }

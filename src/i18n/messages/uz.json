@@ -3193,7 +3193,13 @@
     "cliproxyapiUnknown": "Nomaʼlum",
     "cliproxyapiUpdate": "Yangilash",
     "cliproxyapiUpdateAvailable": "Yangilanish mavjud: v{current} → v{latest}",
-    "cliproxyapiVersion": "Versiya"
+    "cliproxyapiVersion": "Versiya",
+    "hermesRoleMoaAggregator": "MoA agregatori",
+    "hermesRoleMoaAggregatorDesc": "Mixture-of-Agents sintez modeli",
+    "hermesRoleMoaReference": "MoA namuna modeli",
+    "hermesRoleMoaReferenceDesc": "Mixture-of-Agents namuna modeli",
+    "hermesRoleReview": "Koʻrib chiqish",
+    "hermesRoleReviewDesc": "Toʻliq subagent kodini koʻrib chiqish"
   },
   "combos": {
     "title": "Kombinatsiyalar",
@@ -3424,7 +3430,9 @@
       "failoverBeforeRetry": "Yoqilganda, yuqori oqimdagi har qanday xato barcha qayta urinishlar va zaxira URL manzillarini o‘tkazib yuborib, darhol keyingi kombinatsiya maqsadiga o‘tishni ishga tushiradi.",
       "maxSetRetries": "Har bir maqsad muvaffaqiyatsiz bo‘lganda to‘liq maqsadlar to‘plamini qayta sinash soni. 0 = to‘plam darajasida qayta urinish yo‘q.",
       "setRetryDelayMs": "Vaqtinchalik muammolar bartaraf bo‘lishi uchun imkon beruvchi to‘plam darajasidagi qayta urinishlar orasidagi kechikish.",
-      "disableSessionStickiness": "Birinchi xabar xeshi orqali butun suhbatni bitta ulanishga biriktirish o‘rniga, har bir so‘rovda boshqa ulanishga o‘ting. Global standart sozlamani bekor qiladi. Ko‘p bosqichli chatlarda prompt keshidan foydalanish imkonini saqlab qolish uchun «Meros qilib olish» holatida qoldiring."
+      "disableSessionStickiness": "Birinchi xabar xeshi orqali butun suhbatni bitta ulanishga biriktirish o‘rniga, har bir so‘rovda boshqa ulanishga o‘ting. Global standart sozlamani bekor qiladi. Ko‘p bosqichli chatlarda prompt keshidan foydalanish imkonini saqlab qolish uchun «Meros qilib olish» holatida qoldiring.",
+      "connectionAwareExpansion": "When on, this combo expands each provider-level step into per-account targets before rotating. Inherit uses the global default (off). Off keeps provider-level rotation.",
+      "stickyLimit": "Round-robin sticky batch size: consecutive successful requests sent to one target before rotating to the next. Empty inherits the global Sticky Limit setting; 1 disables batching (pure one-request rotation)."
     },
     "templatesTitle": "Tezkor shablonlar",
     "templatesDescription": "Boshlang‘ich profilni qo‘llang, so‘ng modellar va konfiguratsiyani sozlang.",
@@ -3778,7 +3786,17 @@
     "duplicateAutoComboSnapshotMsg": "Bu shablonga mos keladigan, hozir ulangan provayderlar/modellarning joriy holatini tahrirlanadigan kombinatsiya sifatida saqlaydi.",
     "duplicateAutoComboFailedPrefix": "Avtomatik kombinatsiyani nusxalab bo‘lmadi:",
     "duplicateAutoComboUnknownError": "Noma’lum xato",
-    "duplicateAutoComboTitle": "{name} asosida statik kombinatsiya yaratish"
+    "duplicateAutoComboTitle": "{name} asosida statik kombinatsiya yaratish",
+    "stickyLimitEffective": "Effective {value} ({source})",
+    "stickyLimitSourceCombo": "combo",
+    "stickyLimitSourceComboDefaults": "combo defaults",
+    "stickyLimitSourceGlobal": "global default",
+    "connectionAwareExpansion": "Connection-aware expansion",
+    "triStateInherit": "inherit",
+    "connectionAwareExpansionOn": "On",
+    "connectionAwareExpansionOff": "Off",
+    "promptCacheAffinityHint": "Prompt-cache locality routing takes precedence over round-robin/weighted rotation across pinned accounts. Turn it off under Settings, Combo defaults, if you need strict rotation.",
+    "stickyLimitInherit": "meros olish"
   },
   "costs": {
     "title": "Xarajatlar",
@@ -4955,7 +4973,7 @@
     "compressionLogTitle": "Siqish jurnali",
     "compressionLogEmpty": "Hali siqilgan soʻrovlar yoʻq. Siqish yoqilgan holda soʻrovlar qayta ishlanganda, siqish statistikasi shu yerda paydo boʻladi.",
     "tokens": "tokenlar",
-    "exportTruncated": "__MISSING__:Export truncated: only {exported} of {total} log entries were included. Pick a shorter time range to export the rest."
+    "exportTruncated": "Eksport qisqartirildi: {total} ta jurnal yozuvidan faqat {exported} tasi kiritildi. Qolganlarini eksport qilish uchun qisqaroq vaqt oralig‘ini tanlang."
   },
   "onboarding": {
     "welcome": "Xush kelibsiz",
@@ -6314,7 +6332,8 @@
       "kiro": "Bepul tarif: oyiga 50 kredit (~25K–100K token). ⚠️ Kiro ToS uchinchi tomon proksi yoki harness vositalaridan foydalanishni taqiqlaydi.",
       "codex": "OpenAI Codexʼni mavjud OAuth jarayoni orqali ulang.",
       "qwen": "Qwen Codeʼni mavjud OAuth jarayoni orqali ulang.",
-      "github-models": "github.com/settings/tokens manzilida 'models: read' vakolat doirasiga ega GitHub PAT yarating"
+      "github-models": "github.com/settings/tokens manzilida 'models: read' vakolat doirasiga ega GitHub PAT yarating",
+      "agnes-cn": "Agnes AI (Xitoy) xizmatiga api.agnes-ai.cn uchun chiqarilgan API kaliti bilan ulaning. apihub.agnes-ai.com kalitlari ishlamaydi."
     },
     "passthroughModelsDescription": "{provider} provayderga xos model IDʼlarini qabul qiladi. /models orqali import qiling yoki marshrutlash uchun maxsus IDʼlarni qoʻshing.",
     "bedrockModelsDescription": "Amazon Bedrock modellari AWS mintaqasi boʻyicha cheklangan. /models orqali import qiling yoki tanlangan mintaqada yoqilgan Bedrock model IDʼlarini qoʻshing.",
@@ -6472,7 +6491,9 @@
     "savedModelEndpointSettings": "Model endpointi sozlamalari saqlandi",
     "searchByModelAria": "Model boʻyicha qidirish",
     "selectSupportedEndpoint": "Kamida bitta qoʻllab-quvvatlanadigan endpointni tanlang",
-    "antigravityClientProfileHarness": "Sinov vositasi / CLI"
+    "antigravityClientProfileHarness": "Sinov vositasi / CLI",
+    "vertexCredentialHint": "API kalitlari saralangan loyihalar katalogidan foydalanadi. Service Account JSON Model Garden modellarini real vaqtda aniqlash imkonini beradi.",
+    "vertexCredentialLabel": "API kaliti yoki Service Account JSON"
   },
   "settings": {
     "title": "Sozlamalar",
@@ -8579,7 +8600,11 @@
       },
       "compressToolResults": {
         "label": "Uzun vosita natijalarini oldindan qisqartirish",
-        "description": "Truncates long tool results during Lite compression. The Maximum tool-result length field (or OMNIROUTE_LITE_MAX_TOOL_LENGTH when that field is unset) sets the cap. Emergency overflow protection may still trim content when the context exceeds the model budget."
+        "description": "Truncates long tool results during Lite compression. The Maximum tool-result length field (or AGENTPROXY_LITE_MAX_TOOL_LENGTH when that field is unset) sets the cap. Emergency overflow protection may still trim content when the context exceeds the model budget."
+      },
+      "maxToolLength": {
+        "description": "Character cap for proactive tool-result truncation. Default 2000. Override with AGENTPROXY_LITE_MAX_TOOL_LENGTH when this field is unset.",
+        "label": "Maximum tool-result length"
       }
     },
     "engineFields": {
@@ -9695,7 +9720,14 @@
     "updatedShort": "Yangilangan",
     "lastRefreshed": "Oxirgi yangilanish",
     "providerQuota": "Provayder kvotasi",
-    "providerQuotaHomeHint": "Ulangan hisoblar bo‘yicha joriy holat"
+    "providerQuotaHomeHint": "Ulangan hisoblar bo‘yicha joriy holat",
+    "glmConfirmRedeemFiveHourResetCredit": "Faollashtirish 5 soatlik foydalanish davrini darhol tiklaydi va bu kartani butunlay sarflaydi.",
+    "glmConfirmRedeemResetCredit": "Faollashtirish tanlangan foydalanish davrini darhol tiklaydi va bu kartani butunlay sarflaydi.",
+    "glmConfirmRedeemWeekResetCredit": "Faollashtirish haftalik foydalanish davrini darhol tiklaydi va bu kartani butunlay sarflaydi.",
+    "glmResetCreditFiveHourTitle": "5 soatlik davrni tiklash",
+    "glmResetCreditsModalExplainer": "Tiklash kartalari amal qilish muddati boʻyicha tartiblangan. Tiklamoqchi boʻlgan 5 soatlik yoki haftalik davrni tanlang.",
+    "glmResetCreditsModalTitle": "GLM Coding Plan hisoblagichini tiklash kartalari",
+    "glmResetCreditWeekTitle": "Haftalik davrni tiklash"
   },
   "modals": {
     "waitingAuth": "Avtorizatsiya kutilmoqda",
@@ -10961,7 +10993,9 @@
     "poolAddMember": "Qo‘shish",
     "poolAddFailed": "Proksini pulga qo‘shib bo‘lmadi",
     "poolSelectProxy": "Proksini tanlang…",
-    "poolSaveFailed": "Pulga biriktirishni saqlab bo‘lmadi"
+    "poolSaveFailed": "Pulga biriktirishni saqlab bo‘lmadi",
+    "poolEgressFailuresByExit": "{exit} orqali nosozliklar: {count}",
+    "poolEgressFailuresUnattributed": "Chiqishi aniqlanmagan nosozliklar: {count}"
   },
   "playground": {
     "title": "Model sinov maydoni",
@@ -11302,7 +11336,11 @@
       "duration": "Davomiylik",
       "time": "Vaqt",
       "conversation": "Suhbat",
-      "ttft": "TTFT"
+      "ttft": "TTFT",
+      "contentProvenance": "Javob",
+      "contentEmpty": "Boʻsh javob",
+      "usageAbsent": "Tokenlar soni xabar qilinmadi",
+      "usageEstimated": "Tokenlar soni taxminiy"
     },
     "loadingLogs": "Jurnallar yuklanmoqda...",
     "noLogs": "Hali jurnallar yoʻq. Ularni bu yerda koʻrish uchun API chaqiruvlarini amalga oshiring.",
@@ -11962,7 +12000,11 @@
       "goNow": "Hozir o‘tish",
       "message": "MITM Proxy endi AgentBridge bo‘limida joylashgan.",
       "title": "Bu sahifa ko‘chirildi"
-    }
+    },
+    "resetAgent": "Standartni tiklash",
+    "resetAgentConfirm": "Standart tiklansinmi?",
+    "resetDone": "{agent} uchun standart DNS tiklandi. O‘zgarish kuchga kirishi uchun ilovani to‘liq yoping (faqat kichraytirmang) va qayta oching.",
+    "resetting": "Tiklanmoqda…"
   },
   "providerStats": {
     "unknownError": "Noma’lum xato",
@@ -12676,7 +12718,12 @@
     "createDahlTokenFailed": "Dahl tokenini yaratib boʻlmadi",
     "providerProxy": "Proksi",
     "providerProxyConfigureHint": "Proksini sozlash",
-    "providerProxyTitleConfigured": "Proksi sozlangan: {host}"
+    "providerProxyTitleConfigured": "Proksi sozlangan: {host}",
+    "directEgress": "To‘g‘ridan-to‘g‘ri (proksisiz)",
+    "inheritConnectionOption": "Shaxsiy proksi yo‘q (ulanishni meros oladi)",
+    "inheritedPool": "Ulanishlar hovuzini meros oladi ({count})",
+    "inheritedProxy": "Ulanishni meros oladi: {host}",
+    "poolEmptyBlocked": "Hovuz bo‘sh — so‘rovlar muvaffaqiyatsiz (to‘g‘ridan-to‘g‘ri emas)"
   },
   "gamification": {
     "leaderboardScopes": {
@@ -13036,6 +13083,13 @@
       "SERVER_OWNED_TOOL_LOOP_ENABLED": {
         "label": "Server tomonidan boshqariladigan vositalar sikli",
         "description": "Model mijoz foydalanishi mumkin boʻlgan javobni qaytarmaguncha server tomonidan boshqariladigan oqimsiz vosita chaqiruvlarini davom ettiring."
+      },
+      "PROTECTED_PRIORITY_INFRA_502_ENABLED": {
+        "description": "Faqat kvota sababli zaxira variantga oʻtadigan ustuvor maqsad comboʼni kvotaga aloqador emasligi isbotlangan sabab — provayderning ochiq circuit breakerʼi yoki bashorat qilingan kechikish tufayli oʻtkazib yuborish — bilan toʻxtatsa, 503 oʻrniga 502 javobini bering.",
+        "label": "Himoyalangan ustuvorlikdagi infratuzilma toʻxtashlariga 502 javobi"
+      },
+      "STREAM_RECOVERY_TOOLCALL_ORDER_FIX": {
+        "description": "Oqim o‘rtasida davom ettirishni tool-call uchun xavfsiz qiling: tool-call yuborilgandan keyin (u hali bajarilayotgan yoki allaqachon tugagan bo‘lsa ham) uzilgan oqimni hech qachon davom ettirmang va qayta urinishlar limitidan to‘liq foydalanish o‘rniga bitta bo‘sh davom ettirishdan keyin to‘xtang."
       }
     }
   },
@@ -13956,7 +14010,12 @@
     "hour": "soat",
     "day": "kun",
     "unknownModel": "noma’lum",
-    "pending": "kutilmoqda"
+    "pending": "kutilmoqda",
+    "allApiKeys": "All API keys",
+    "mcp": "MCP",
+    "mcpTool": "MCP tool",
+    "scope": "Scope",
+    "apiKey": "API key"
   },
   "metadata": {
     "compressionTitle": "Siqish",
@@ -14159,5 +14218,6 @@
     "partnerLinkNote": "Hamkor havolasi",
     "dismissAriaLabel": "Yopish"
   },
-  "featureFlagAgentProxyDisableThinkingLevelVariantsDescription": "/v1/models katalogida fikrlash darajasi variantlarini (masalan, -low, -medium, -high) yaratishni o‘chirib qo‘ying."
+  "featureFlagAgentProxyDisableThinkingLevelVariantsDescription": "/v1/models katalogida fikrlash darajasi variantlarini (masalan, -low, -medium, -high) yaratishni o‘chirib qo‘ying.",
+  "featureFlagProxyPoolSharedEgressOrderDescription": "Kvotasi egress manziliga ko‘ra taqsimlanadigan provayderlar uchun yaqinda rad etilgan a’zoning kuzatilgan egress manzilini baham ko‘radigan pool a’zosini sog‘lom a’zolardan darhol pastga joylashtiradi. Faqat tartib, hech qachon chiqarib tashlanmaydi. U o‘qiydigan rad signalini hosil qiluvchi PROXY_SKIP_RECENTLY_FAILED talab qilinadi. Standart bo‘yicha o‘chiq: tanlash tartibi aynan oddiy rotatsiya."
 }

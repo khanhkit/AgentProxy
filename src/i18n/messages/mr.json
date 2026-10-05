@@ -3833,7 +3833,8 @@
     "triStateInherit": "inherit",
     "connectionAwareExpansionOn": "On",
     "connectionAwareExpansionOff": "Off",
-    "promptCacheAffinityHint": "Prompt-cache locality routing takes precedence over round-robin/weighted rotation across pinned accounts. Turn it off under Settings, Combo defaults, if you need strict rotation."
+    "promptCacheAffinityHint": "Prompt-cache locality routing takes precedence over round-robin/weighted rotation across pinned accounts. Turn it off under Settings, Combo defaults, if you need strict rotation.",
+    "stickyLimitInherit": "इनहेरिट"
   },
   "costs": {
     "title": "खर्च",
@@ -5010,7 +5011,7 @@
     "compressionLogTitle": "कॉम्प्रेशन लॉग",
     "compressionLogEmpty": "अद्याप कोणत्याही कॉम्प्रेस केलेल्या विनंत्या नाहीत. कॉम्प्रेशन सक्षम करून विनंत्यांवर प्रक्रिया केल्यावर कॉम्प्रेशन आकडेवारी येथे दिसेल.",
     "tokens": "टोकन्स",
-    "exportTruncated": "__MISSING__:Export truncated: only {exported} of {total} log entries were included. Pick a shorter time range to export the rest."
+    "exportTruncated": "निर्यात मर्यादित झाले: {total} लॉग नोंदींपैकी फक्त {exported} नोंदी समाविष्ट केल्या. उर्वरित नोंदी निर्यात करण्यासाठी कमी कालावधी निवडा."
   },
   "onboarding": {
     "welcome": "स्वागत आहे",
@@ -6366,7 +6367,8 @@
       "kiro": "मोफत स्तर: 50 क्रेडिट्स/महिना (~25K–100K टोकन्स). ⚠️ Kiro ToS तृतीय-पक्ष प्रॉक्सी/हार्नेसच्या वापरावर बंदी घालते.",
       "codex": "सध्याच्या OAuth फ्लोसह OpenAI Codex कनेक्ट करा.",
       "qwen": "सध्याच्या OAuth फ्लोसह Qwen Code कनेक्ट करा.",
-      "github-models": "github.com/settings/tokens वर 'models: read' स्कोपसह GitHub PAT तयार करा"
+      "github-models": "github.com/settings/tokens वर 'models: read' स्कोपसह GitHub PAT तयार करा",
+      "agnes-cn": "api.agnes-ai.cn साठी जारी केलेली API की वापरून Agnes AI (China) कनेक्ट करा. apihub.agnes-ai.com वरील की कार्य करणार नाहीत."
     },
     "passthroughModelsDescription": "{provider} प्रदाता-नेटिव्ह मॉडेल आयडी स्वीकारते. /मॉडेलमधून आयात करा किंवा राउटिंगसाठी सानुकूल आयडी जोडा.",
     "bedrockModelsDescription": "Amazon बेडरॉक मॉडेल्स AWS क्षेत्राद्वारे व्यापलेले आहेत. /मॉडेल्समधून आयात करा किंवा निवडलेल्या प्रदेशात सक्षम केलेले बेडरॉक मॉडेल आयडी जोडा.",
@@ -6527,7 +6529,9 @@
     "failedClearConnectionCooldown": "कूलडाउन हटवण्यात अयशस्वी",
     "importFromFileDownloadTemplate": "CSV टेम्पलेट डाउनलोड करा",
     "importFromFileMoreErrors": "+{count} आणखी",
-    "importFromFileSchemaHint": "CSV स्तंभ स्थानानुसार आहेत: provider, name, apiKey, baseUrl (पर्यायी), priority (पर्यायी). provider स्तंभामध्ये विद्यमान व्यवस्थापित प्रदाता id किंवा आधीच नोंदणीकृत OpenAI/Anthropic-सुसंगत नोड id असणे आवश्यक आहे — ही आयात नवीन एंडपॉइंट नोड तयार करत नाही."
+    "importFromFileSchemaHint": "CSV स्तंभ स्थानानुसार आहेत: provider, name, apiKey, baseUrl (पर्यायी), priority (पर्यायी). provider स्तंभामध्ये विद्यमान व्यवस्थापित प्रदाता id किंवा आधीच नोंदणीकृत OpenAI/Anthropic-सुसंगत नोड id असणे आवश्यक आहे — ही आयात नवीन एंडपॉइंट नोड तयार करत नाही.",
+    "vertexCredentialHint": "API की निवडक प्रकल्प कॅटलॉग वापरतात. Service Account JSON मुळे Model Garden मधील मॉडेल थेट शोधता येतात.",
+    "vertexCredentialLabel": "API की किंवा Service Account JSON"
   },
   "settings": {
     "title": "सेटिंग्ज",
@@ -8635,6 +8639,10 @@
       "compressToolResults": {
         "label": "सक्रियपणे लांब साधन परिणाम कमी करा",
         "description": "Lite संकुचनादरम्यान 2,000 वर्णांपेक्षा जास्त टूल परिणाम कमी करतो. आपत्कालीन ओव्हरफ्लो संरक्षणाने मॉडेल बजेट ओलांडल्यास सामग्री कमी केली जाऊ शकते."
+      },
+      "maxToolLength": {
+        "description": "Character cap for proactive tool-result truncation. Default 2000. Override with AGENTPROXY_LITE_MAX_TOOL_LENGTH when this field is unset.",
+        "label": "Maximum tool-result length"
       }
     },
     "engineFields": {
@@ -9750,7 +9758,14 @@
     "kiloPassPaid": "भरलेले",
     "kiloPassRemaining": "शिल्लक",
     "kiloPassRenews": "{count} दिवसांत नूतनीकरण होईल",
-    "kiloPassUsageLabel": "या महिन्याचा वापर"
+    "kiloPassUsageLabel": "या महिन्याचा वापर",
+    "glmConfirmRedeemFiveHourResetCredit": "रिडीम केल्यावर 5-तासांची वापर कालमर्यादा त्वरित रीसेट होते आणि हे कार्ड कायमचे वापरले जाते.",
+    "glmConfirmRedeemResetCredit": "रिडीम केल्यावर निवडलेली वापर कालमर्यादा त्वरित रीसेट होते आणि हे कार्ड कायमचे वापरले जाते.",
+    "glmConfirmRedeemWeekResetCredit": "रिडीम केल्यावर साप्ताहिक वापर कालमर्यादा त्वरित रीसेट होते आणि हे कार्ड कायमचे वापरले जाते.",
+    "glmResetCreditFiveHourTitle": "5-तासांची कालमर्यादा रीसेट करा",
+    "glmResetCreditsModalExplainer": "रीसेट कार्डे कालबाह्यता वेळेनुसार क्रमबद्ध केली आहेत. तुम्हाला रीसेट करायची असलेली 5-तासांची किंवा साप्ताहिक कालमर्यादा निवडा.",
+    "glmResetCreditsModalTitle": "GLM Coding Plan रीसेट कार्डे",
+    "glmResetCreditWeekTitle": "साप्ताहिक कालमर्यादा रीसेट करा"
   },
   "modals": {
     "waitingAuth": "अधिकृततेची प्रतीक्षा करत आहे",
@@ -12741,7 +12756,12 @@
     "createDahlTokenFailed": "Dahl टोकन तयार करण्यात अयशस्वी झाले",
     "providerProxy": "प्रॉक्सी",
     "providerProxyConfigureHint": "प्रॉक्सी कॉन्फिगर करा",
-    "providerProxyTitleConfigured": "प्रॉक्सी कॉन्फिगर केले: {host}"
+    "providerProxyTitleConfigured": "प्रॉक्सी कॉन्फिगर केले: {host}",
+    "directEgress": "थेट (प्रॉक्सीशिवाय)",
+    "inheritConnectionOption": "स्वतःची प्रॉक्सी नाही (कनेक्शन वारशाने)",
+    "inheritedPool": "कनेक्शन पूल वारशाने ({count})",
+    "inheritedProxy": "कनेक्शन वारशाने: {host}",
+    "poolEmptyBlocked": "पूल रिकामा — विनंत्या अयशस्वी होतात (थेट नाही)"
   },
   "gamification": {
     "leaderboardScopes": {
@@ -13101,6 +13121,13 @@
       "SERVER_OWNED_TOOL_LOOP_ENABLED": {
         "label": "सर्व्हरच्या मालकीचे टूल लूप",
         "description": "मॉडेल क्लायंटसाठी वापरण्यायोग्य प्रतिसाद देईपर्यंत नॉन-स्ट्रीमिंग, सर्व्हरच्या मालकीचे टूल कॉल सुरू ठेवा."
+      },
+      "PROTECTED_PRIORITY_INFRA_502_ENABLED": {
+        "description": "केवळ-कोटा-फॉलबॅक प्राधान्य लक्ष्याने निश्चितपणे कोटाशी संबंधित नसलेल्या कारणामुळे कॉम्बो थांबवल्यास 503 ऐवजी 502 उत्तर द्या: उघडा प्रोव्हायडर सर्किट ब्रेकर किंवा पूर्वानुमानित विलंब वगळणे.",
+        "label": "संरक्षित-प्राधान्य इन्फ्रा थांब्यांसाठी 502"
+      },
+      "STREAM_RECOVERY_TOOLCALL_ORDER_FIX": {
+        "description": "मध्य-प्रवाह पुढे सुरू ठेवणे टूल-कॉलसाठी सुरक्षित करा: टूल कॉल पाठवल्यानंतर (तो अद्याप सुरू असो किंवा आधीच पूर्ण झालेला असो) खंडित झालेला प्रवाह कधीही पुन्हा सुरू करू नका आणि संपूर्ण पुनर्प्रयत्न मर्यादा वापरण्याऐवजी एकदा रिकामे सातत्य मिळाल्यानंतर थांबा."
       }
     }
   },
@@ -14229,5 +14256,6 @@
     "partnerLinkNote": "भागीदार लिंक",
     "dismissAriaLabel": "बंद करा"
   },
-  "featureFlagAgentProxyDisableThinkingLevelVariantsDescription": "/v1/models कॅटलॉगमध्ये विचार-पातळीच्या प्रकारांची (उदा. -low, -medium, -high) निर्मिती अक्षम करा."
+  "featureFlagAgentProxyDisableThinkingLevelVariantsDescription": "/v1/models कॅटलॉगमध्ये विचार-पातळीच्या प्रकारांची (उदा. -low, -medium, -high) निर्मिती अक्षम करा.",
+  "featureFlagProxyPoolSharedEgressOrderDescription": "ज्या प्रदात्यांचा कोटा egress पत्त्यानुसार विभागला जातो, त्यांच्यासाठी नुकत्याच नाकारलेल्या सदस्याचा निरीक्षित egress पत्ता सामायिक करणाऱ्या pool सदस्याला निरोगी सदस्यांच्या अगदी खाली ठेवते. फक्त क्रम, कधीही वगळले जात नाही. PROXY_SKIP_RECENTLY_FAILED आवश्यक आहे, जो ते वाचत असलेला नकार संकेत निर्माण करतो. डीफॉल्टनुसार बंद: निवड क्रम अगदी साधे रोटेशन आहे."
 }

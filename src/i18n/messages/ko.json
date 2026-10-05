@@ -3795,7 +3795,8 @@
     "triStateInherit": "inherit",
     "connectionAwareExpansionOn": "On",
     "connectionAwareExpansionOff": "Off",
-    "promptCacheAffinityHint": "Prompt-cache locality routing takes precedence over round-robin/weighted rotation across pinned accounts. Turn it off under Settings, Combo defaults, if you need strict rotation."
+    "promptCacheAffinityHint": "Prompt-cache locality routing takes precedence over round-robin/weighted rotation across pinned accounts. Turn it off under Settings, Combo defaults, if you need strict rotation.",
+    "stickyLimitInherit": "상속"
   },
   "costs": {
     "title": "비용",
@@ -4972,7 +4973,7 @@
     "compressionLogTitle": "압축 로그",
     "compressionLogEmpty": "아직 압축된 요청이 없습니다. 압축을 활성화한 상태에서 요청이 처리되면 여기에 압축 통계가 표시됩니다.",
     "tokens": "토큰",
-    "exportTruncated": "__MISSING__:Export truncated: only {exported} of {total} log entries were included. Pick a shorter time range to export the rest."
+    "exportTruncated": "내보내기가 잘렸습니다. 로그 항목 {total}개 중 {exported}개만 포함되었습니다. 나머지를 내보내려면 더 짧은 시간 범위를 선택하세요."
   },
   "onboarding": {
     "welcome": "환영합니다",
@@ -6328,7 +6329,8 @@
       "kiro": "무료 티어: 월 50 크레딧(~25K–100K 토큰). ⚠️ Kiro ToS는 서드파티 프록시/하네스 사용을 금지합니다.",
       "codex": "기존 OAuth 흐름으로 OpenAI Codex를 연결합니다.",
       "qwen": "기존 OAuth 흐름으로 Qwen Code를 연결합니다.",
-      "github-models": "github.com/settings/tokens 에서 'models: read' 범위(scope)를 가진 GitHub PAT를 생성하세요."
+      "github-models": "github.com/settings/tokens 에서 'models: read' 범위(scope)를 가진 GitHub PAT를 생성하세요.",
+      "agnes-cn": "api.agnes-ai.cn에서 발급된 API 키로 Agnes AI(중국)를 연결하세요. apihub.agnes-ai.com에서 발급된 키는 사용할 수 없습니다."
     },
     "passthroughModelsDescription": "{provider}은 공급자 기본 모델 ID를 허용합니다. /models에서 가져오거나 라우팅을 위한 사용자 정의 ID를 추가하세요.",
     "bedrockModelsDescription": "Amazon Bedrock 모델은 AWS 지역별로 범위가 지정됩니다. /models에서 가져오거나 선택한 지역에서 활성화된 Bedrock 모델 ID를 추가하세요.",
@@ -6489,7 +6491,9 @@
     "failedClearConnectionCooldown": "쿨다운을 해제하지 못했습니다.",
     "importFromFileDownloadTemplate": "CSV 템플릿 다운로드",
     "importFromFileMoreErrors": "외 {count}개",
-    "importFromFileSchemaHint": "CSV 열은 provider, name, apiKey, baseUrl(선택 사항), priority(선택 사항) 순서로 배치해야 합니다. provider 열에는 기존의 관리형 제공자 ID 또는 이미 등록된 OpenAI/Anthropic 호환 노드 ID를 입력해야 합니다. 이 가져오기 작업으로 새 엔드포인트 노드가 생성되지는 않습니다."
+    "importFromFileSchemaHint": "CSV 열은 provider, name, apiKey, baseUrl(선택 사항), priority(선택 사항) 순서로 배치해야 합니다. provider 열에는 기존의 관리형 제공자 ID 또는 이미 등록된 OpenAI/Anthropic 호환 노드 ID를 입력해야 합니다. 이 가져오기 작업으로 새 엔드포인트 노드가 생성되지는 않습니다.",
+    "vertexCredentialHint": "API 키는 선별된 프로젝트 카탈로그를 사용합니다. 서비스 계정 JSON을 사용하면 Model Garden을 실시간으로 검색할 수 있습니다.",
+    "vertexCredentialLabel": "API 키 또는 서비스 계정 JSON"
   },
   "settings": {
     "title": "설정",
@@ -8597,6 +8601,10 @@
       "compressToolResults": {
         "label": "긴 도구 결과를 사전적으로 잘라내기",
         "description": "__MISSING__:Truncates long tool results during Lite compression. The Maximum tool-result length field (or AGENTPROXY_LITE_MAX_TOOL_LENGTH when that field is unset) sets the cap. Emergency overflow protection may still trim content when the context exceeds the model budget."
+      },
+      "maxToolLength": {
+        "description": "도구 결과 선행 잘라내기 문자 상한. 기본값 2000. 이 필드를 비우면 AGENTPROXY_LITE_MAX_TOOL_LENGTH로 덮어씁니다.",
+        "label": "최대 도구 결과 길이"
       }
     },
     "engineFields": {
@@ -9712,7 +9720,14 @@
     "kiloPassPaid": "결제됨",
     "kiloPassRemaining": "남음",
     "kiloPassRenews": "{count}일 후 갱신",
-    "kiloPassUsageLabel": "이번 달 사용량"
+    "kiloPassUsageLabel": "이번 달 사용량",
+    "glmConfirmRedeemFiveHourResetCredit": "사용하면 5시간 사용량 기간이 즉시 초기화되며 이 카드는 영구적으로 소모됩니다.",
+    "glmConfirmRedeemResetCredit": "사용하면 선택한 사용량 기간이 즉시 초기화되며 이 카드는 영구적으로 소모됩니다.",
+    "glmConfirmRedeemWeekResetCredit": "사용하면 주간 사용량 기간이 즉시 초기화되며 이 카드는 영구적으로 소모됩니다.",
+    "glmResetCreditFiveHourTitle": "5시간 기간 초기화",
+    "glmResetCreditsModalExplainer": "초기화 카드는 만료일순으로 정렬됩니다. 초기화할 5시간 또는 주간 기간을 선택하세요.",
+    "glmResetCreditsModalTitle": "GLM Coding Plan 초기화 카드",
+    "glmResetCreditWeekTitle": "주간 기간 초기화"
   },
   "modals": {
     "waitingAuth": "승인을 기다리는 중",
@@ -12703,7 +12718,12 @@
     "createDahlTokenFailed": "Dahl 토큰을 생성하지 못했습니다.",
     "providerProxy": "프록시",
     "providerProxyConfigureHint": "프록시 구성",
-    "providerProxyTitleConfigured": "프록시가 구성되었습니다: {host}"
+    "providerProxyTitleConfigured": "프록시가 구성되었습니다: {host}",
+    "directEgress": "직접(프록시 없음)",
+    "inheritConnectionOption": "자체 프록시 없음(연결 상속)",
+    "inheritedPool": "연결 풀 상속({count})",
+    "inheritedProxy": "연결 상속: {host}",
+    "poolEmptyBlocked": "풀 비어 있음 — 요청 실패(직접 아님)"
   },
   "gamification": {
     "leaderboardScopes": {
@@ -13063,6 +13083,13 @@
       "SERVER_OWNED_TOOL_LOOP_ENABLED": {
         "label": "서버 소유 도구 루프",
         "description": "모델이 클라이언트에서 사용할 수 있는 응답을 반환할 때까지 스트리밍이 아닌 서버 소유 도구 호출을 계속합니다."
+      },
+      "PROTECTED_PRIORITY_INFRA_502_ENABLED": {
+        "description": "할당량 전용 폴백 우선순위 대상이 할당량 문제가 아님을 입증할 수 있는 원인, 즉 열린 공급자 회로 차단기 또는 예측적 지연 시간 건너뛰기로 인해 콤보를 중단하는 경우 503 대신 502로 응답합니다.",
+        "label": "보호된 우선순위 인프라 중단을 502로 처리"
+      },
+      "STREAM_RECOVERY_TOOLCALL_ORDER_FIX": {
+        "description": "스트림 중간 이어가기를 도구 호출에 안전하도록 개선: 도구 호출이 전송된 후에는 호출이 아직 진행 중이거나 이미 완료되었는지와 관계없이 중단된 스트림을 절대 재개하지 않으며, 전체 재시도 한도를 사용하는 대신 빈 이어가기 한 번 후 중지합니다."
       }
     }
   },
@@ -14191,5 +14218,6 @@
     "partnerLinkNote": "파트너 링크",
     "dismissAriaLabel": "닫기"
   },
-  "featureFlagAgentProxyDisableThinkingLevelVariantsDescription": "/v1/models 카탈로그에서 사고 수준 변형(예: -low, -medium, -high)이 생성되지 않도록 설정합니다."
+  "featureFlagAgentProxyDisableThinkingLevelVariantsDescription": "/v1/models 카탈로그에서 사고 수준 변형(예: -low, -medium, -high)이 생성되지 않도록 설정합니다.",
+  "featureFlagProxyPoolSharedEgressOrderDescription": "egress 주소 단위로 할당량이 나뉘는 공급자의 경우, 최근 거부된 멤버의 관찰된 egress 주소를 공유하는 pool 멤버를 정상 멤버 바로 아래에 배치합니다. 순서만 바꾸며 절대 제외하지 않습니다. 읽어 들이는 거부 신호를 생성하는 PROXY_SKIP_RECENTLY_FAILED가 필요합니다. 기본값은 꺼짐: 선택 순서는 정확히 일반 순환입니다."
 }

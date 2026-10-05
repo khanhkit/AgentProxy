@@ -3193,7 +3193,13 @@
     "cliproxyapiUnknown": "නොදන්නා",
     "cliproxyapiUpdate": "යාවත්කාලීන කරන්න",
     "cliproxyapiUpdateAvailable": "යාවත්කාලීනයක් ඇත: v{current} → v{latest}",
-    "cliproxyapiVersion": "අනුවාදය"
+    "cliproxyapiVersion": "අනුවාදය",
+    "hermesRoleMoaAggregator": "MoA එකතුකය",
+    "hermesRoleMoaAggregatorDesc": "Mixture-of-Agents සංශ්ලේෂණ ආකෘතිය",
+    "hermesRoleMoaReference": "MoA යොමුව",
+    "hermesRoleMoaReferenceDesc": "Mixture-of-Agents යොමු ආකෘතිය",
+    "hermesRoleReview": "සමාලෝචනය",
+    "hermesRoleReviewDesc": "සම්පූර්ණ උප නියෝජිත කේත සමාලෝචනය"
   },
   "combos": {
     "title": "සංයෝජන",
@@ -3424,7 +3430,9 @@
       "failoverBeforeRetry": "සක්රිය කළ විට, ඕනෑම upstream දෝෂයක් සියලු නැවත උත්සාහ සහ fallback URLs මඟහැර, ඊළඟ සංයෝජන ඉලක්කය වෙත වහාම failover වීමක් සිදු කරයි.",
       "maxSetRetries": "සෑම ඉලක්කයක්ම අසාර්ථක වූ විට සම්පූර්ණ ඉලක්ක කට්ටලය නැවත උත්සාහ කරන වාර ගණන. 0 = කට්ටල මට්ටමේ නැවත උත්සාහයක් නැත.",
       "setRetryDelayMs": "තාවකාලික ගැටලු විසඳීමට කාලය ලබා දෙමින්, කට්ටල මට්ටමේ නැවත උත්සාහයන් අතර ප්රමාදය.",
-      "disableSessionStickiness": "පළමු පණිවිඩයේ hash එක අනුව සම්පූර්ණ සංවාදයක් එක් සම්බන්ධතාවකට ස්ථිර කිරීම වෙනුවට, සෑම ඉල්ලීමකදීම වෙනත් සම්බන්ධතාවකට මාරු වන්න. මෙය ගෝලීය පෙරනිමිය අභිබවා යයි. බහු වාර සංවාද සඳහා prompt-cache ප්රතිලාභ රඳවා ගැනීමට Inherit ලෙස තබන්න."
+      "disableSessionStickiness": "පළමු පණිවිඩයේ hash එක අනුව සම්පූර්ණ සංවාදයක් එක් සම්බන්ධතාවකට ස්ථිර කිරීම වෙනුවට, සෑම ඉල්ලීමකදීම වෙනත් සම්බන්ධතාවකට මාරු වන්න. මෙය ගෝලීය පෙරනිමිය අභිබවා යයි. බහු වාර සංවාද සඳහා prompt-cache ප්රතිලාභ රඳවා ගැනීමට Inherit ලෙස තබන්න.",
+      "connectionAwareExpansion": "When on, this combo expands each provider-level step into per-account targets before rotating. Inherit uses the global default (off). Off keeps provider-level rotation.",
+      "stickyLimit": "Round-robin sticky batch size: consecutive successful requests sent to one target before rotating to the next. Empty inherits the global Sticky Limit setting; 1 disables batching (pure one-request rotation)."
     },
     "templatesTitle": "ඉක්මන් සැකිලි",
     "templatesDescription": "ආරම්භක පැතිකඩක් යොදන්න, ඉන්පසු මාදිලි සහ වින්යාසය සකසන්න.",
@@ -3778,7 +3786,17 @@
     "duplicateAutoComboSnapshotMsg": "මෙමඟින් මෙම අච්චුවට ගැළපෙන, දැනට සම්බන්ධිත සැපයුම්කරුවන්/ආකෘතිවල වත්මන් තත්ත්වය සංස්කරණය කළ හැකි සංයෝජනයක් ලෙස සුරකිනු ඇත.",
     "duplicateAutoComboFailedPrefix": "ස්වයංක්රීය සංයෝජනය අනුපිටපත් කිරීමට අසමත් විය:",
     "duplicateAutoComboUnknownError": "නොදන්නා දෝෂයකි",
-    "duplicateAutoComboTitle": "{name} වෙතින් ස්ථිතික සංයෝජනයක් සාදන්න"
+    "duplicateAutoComboTitle": "{name} වෙතින් ස්ථිතික සංයෝජනයක් සාදන්න",
+    "stickyLimitEffective": "Effective {value} ({source})",
+    "stickyLimitSourceCombo": "combo",
+    "stickyLimitSourceComboDefaults": "combo defaults",
+    "stickyLimitSourceGlobal": "global default",
+    "connectionAwareExpansion": "Connection-aware expansion",
+    "triStateInherit": "inherit",
+    "connectionAwareExpansionOn": "On",
+    "connectionAwareExpansionOff": "Off",
+    "promptCacheAffinityHint": "Prompt-cache locality routing takes precedence over round-robin/weighted rotation across pinned accounts. Turn it off under Settings, Combo defaults, if you need strict rotation.",
+    "stickyLimitInherit": "උරුම කරගන්න"
   },
   "costs": {
     "title": "පිරිවැය",
@@ -4955,7 +4973,7 @@
     "compressionLogTitle": "සම්පීඩන ලොගය",
     "compressionLogEmpty": "තවමත් සම්පීඩිත ඉල්ලීම් නොමැත. සම්පීඩනය සක්රිය කර ඉල්ලීම් සකසන විට සම්පීඩන සංඛ්යාලේඛන මෙහි දිස්වනු ඇත.",
     "tokens": "ටෝකන",
-    "exportTruncated": "__MISSING__:Export truncated: only {exported} of {total} log entries were included. Pick a shorter time range to export the rest."
+    "exportTruncated": "අපනයනය කෙටි කර ඇත: ලොග් ඇතුළත් කිරීම් {total} න් {exported} ක් පමණක් ඇතුළත් කර ඇත. ඉතිරිය අපනයනය කිරීමට කෙටි කාල පරාසයක් තෝරන්න."
   },
   "onboarding": {
     "welcome": "සාදරයෙන් පිළිගනිමු",
@@ -6314,7 +6332,8 @@
       "kiro": "නොමිලේ ස්තරය: මසකට credits 50ක් (~25K–100K tokens). ⚠️ Kiro ToS මඟින් තෙවන පාර්ශ්ව proxy/harness භාවිතය තහනම් කරයි.",
       "codex": "පවතින OAuth ප්රවාහය සමඟ OpenAI Codex සම්බන්ධ කරන්න.",
       "qwen": "පවතින OAuth ප්රවාහය සමඟ Qwen Code සම්බන්ධ කරන්න.",
-      "github-models": "github.com/settings/tokens හි 'models: read' scope එක සහිත GitHub PAT එකක් සාදන්න"
+      "github-models": "github.com/settings/tokens හි 'models: read' scope එක සහිත GitHub PAT එකක් සාදන්න",
+      "agnes-cn": "api.agnes-ai.cn සඳහා නිකුත් කළ API යතුරක් භාවිතයෙන් Agnes AI (China) සම්බන්ධ කරන්න. apihub.agnes-ai.com වෙතින් ලැබුණු යතුරු ක්රියා නොකරයි."
     },
     "passthroughModelsDescription": "{provider} සපයන්නා provider-native model IDs පිළිගනී. /models වෙතින් ආයාත කරන්න හෝ මාර්ගගත කිරීම සඳහා අභිරුචි IDs එක් කරන්න.",
     "bedrockModelsDescription": "Amazon Bedrock models AWS කලාපය අනුව සීමා වේ. /models වෙතින් ආයාත කරන්න හෝ තෝරාගත් කලාපයේ සක්රීය කර ඇති Bedrock model IDs එක් කරන්න.",
@@ -6472,7 +6491,9 @@
     "savedModelEndpointSettings": "සුරැකි ආකෘති අන්ත ලක්ෂ්ය සැකසුම්",
     "searchByModelAria": "ආකෘතිය අනුව සොයන්න",
     "selectSupportedEndpoint": "අවම වශයෙන් සහාය දක්වන එක් අන්ත ලක්ෂ්යයක්වත් තෝරන්න",
-    "antigravityClientProfileHarness": "Harness / CLI"
+    "antigravityClientProfileHarness": "Harness / CLI",
+    "vertexCredentialHint": "API යතුරු තෝරා සකස් කළ ව්යාපෘති නාමාවලිය භාවිත කරයි. සේවා ගිණුම් JSON මඟින් සජීවී Model Garden සොයාගැනීම සක්රිය කරයි.",
+    "vertexCredentialLabel": "API යතුර හෝ සේවා ගිණුම් JSON"
   },
   "settings": {
     "title": "සැකසුම්",
@@ -8579,7 +8600,11 @@
       },
       "compressToolResults": {
         "label": "දිගු මෙවලම් ප්රතිඵල කල්තියා කප්පාදු කරන්න",
-        "description": "Truncates long tool results during Lite compression. The Maximum tool-result length field (or OMNIROUTE_LITE_MAX_TOOL_LENGTH when that field is unset) sets the cap. Emergency overflow protection may still trim content when the context exceeds the model budget."
+        "description": "Truncates long tool results during Lite compression. The Maximum tool-result length field (or AGENTPROXY_LITE_MAX_TOOL_LENGTH when that field is unset) sets the cap. Emergency overflow protection may still trim content when the context exceeds the model budget."
+      },
+      "maxToolLength": {
+        "description": "Character cap for proactive tool-result truncation. Default 2000. Override with AGENTPROXY_LITE_MAX_TOOL_LENGTH when this field is unset.",
+        "label": "Maximum tool-result length"
       }
     },
     "engineFields": {
@@ -9695,7 +9720,14 @@
     "updatedShort": "යාවත්කාලීන කළේ",
     "lastRefreshed": "අවසන් වරට නැවුම් කළේ",
     "providerQuota": "සපයන්නාගේ කෝටාව",
-    "providerQuotaHomeHint": "සම්බන්ධිත ගිණුම්වල සජීවී තත්ත්වය"
+    "providerQuotaHomeHint": "සම්බන්ධිත ගිණුම්වල සජීවී තත්ත්වය",
+    "glmConfirmRedeemFiveHourResetCredit": "මුදාගැනීමෙන් පැය 5ක භාවිත කාල කවුළුව වහාම යළි සැකසෙන අතර මෙම කාඩ්පත ස්ථිරවම වැය වේ.",
+    "glmConfirmRedeemResetCredit": "මුදාගැනීමෙන් තෝරාගත් භාවිත කාල කවුළුව වහාම යළි සැකසෙන අතර මෙම කාඩ්පත ස්ථිරවම වැය වේ.",
+    "glmConfirmRedeemWeekResetCredit": "මුදාගැනීමෙන් සතිපතා භාවිත කාල කවුළුව වහාම යළි සැකසෙන අතර මෙම කාඩ්පත ස්ථිරවම වැය වේ.",
+    "glmResetCreditFiveHourTitle": "පැය 5ක කාල කවුළුව යළි සකසන්න",
+    "glmResetCreditsModalExplainer": "යළි සැකසුම් කාඩ්පත් කල් ඉකුත්වීම අනුව අනුපිළිවෙළට සකසා ඇත. ඔබට යළි සැකසීමට අවශ්ය පැය 5ක හෝ සතිපතා කාල කවුළුව තෝරන්න.",
+    "glmResetCreditsModalTitle": "GLM Coding Plan යළි සැකසුම් කාඩ්පත්",
+    "glmResetCreditWeekTitle": "සතිපතා කාල කවුළුව යළි සකසන්න"
   },
   "modals": {
     "waitingAuth": "අවසරය සඳහා රැඳී සිටී",
@@ -10961,7 +10993,9 @@
     "poolAddMember": "එක් කරන්න",
     "poolAddFailed": "ප්රොක්සිය සංචිතයට එක් කිරීමට අසමත් විය",
     "poolSelectProxy": "ප්රොක්සියක් තෝරන්න…",
-    "poolSaveFailed": "සංචිත පැවරීම සුරැකීමට අසමත් විය"
+    "poolSaveFailed": "සංචිත පැවරීම සුරැකීමට අසමත් විය",
+    "poolEgressFailuresByExit": "{exit} හරහා අසාර්ථකවීම්: {count}",
+    "poolEgressFailuresUnattributed": "නියමිත පිටවීමක් නොමැති අසාර්ථකවීම්: {count}"
   },
   "playground": {
     "title": "ආකෘති අත්හදා බැලීමේ පරිසරය",
@@ -11302,7 +11336,11 @@
       "duration": "කාලසීමාව",
       "time": "වේලාව",
       "conversation": "සංවාදය",
-      "ttft": "TTFT"
+      "ttft": "TTFT",
+      "contentProvenance": "පිළිතුර",
+      "contentEmpty": "හිස් පිළිතුර",
+      "usageAbsent": "ටෝකන ගණන වාර්තා කර නැත",
+      "usageEstimated": "ටෝකන ගණන ඇස්තමේන්තුගත"
     },
     "loadingLogs": "ලොග් පූරණය වෙමින්...",
     "noLogs": "තවම ලොග් නොමැත. ඒවා මෙහි බැලීමට API ඇමතුම් කිහිපයක් කරන්න.",
@@ -11962,7 +12000,11 @@
       "goNow": "දැන් යන්න",
       "message": "MITM Proxy දැන් AgentBridge යටතේ ඇත.",
       "title": "මෙම පිටුව වෙනත් ස්ථානයකට ගෙන ගොස් ඇත"
-    }
+    },
+    "resetAgent": "පෙරනිමිය ප්‍රතිසාධනය කරන්න",
+    "resetAgentConfirm": "පෙරනිමිය ප්‍රතිසාධනය කරන්නද?",
+    "resetDone": "{agent} සඳහා පෙරනිමි DNS ප්‍රතිසාධනය කරන ලදී. වෙනස බලපැවැත්වීමට යෙදුම සම්පූර්ණයෙන්ම වසා (අවම කිරීම පමණක් නොව) නැවත විවෘත කරන්න.",
+    "resetting": "ප්‍රතිසාධනය කරමින්…"
   },
   "providerStats": {
     "unknownError": "නොදන්නා දෝෂයකි",
@@ -12676,7 +12718,12 @@
     "createDahlTokenFailed": "Dahl ටෝකනය සෑදීමට අසමත් විය",
     "providerProxy": "ප්රොක්සි",
     "providerProxyConfigureHint": "ප්රොක්සි වින්යාස කරන්න",
-    "providerProxyTitleConfigured": "ප්රොක්සි වින්යාස කර ඇත: {host}"
+    "providerProxyTitleConfigured": "ප්රොක්සි වින්යාස කර ඇත: {host}",
+    "directEgress": "සෘජු (ප්‍රොක්සි නැතිව)",
+    "inheritConnectionOption": "ස්වන්ත ප්‍රොක්සියක් නැත (සම්බන්ධතාව උරුම වේ)",
+    "inheritedPool": "සම්බන්ධතා තටාකය උරුම වේ ({count})",
+    "inheritedProxy": "සම්බන්ධතාව උරුම වේ: {host}",
+    "poolEmptyBlocked": "තටාකය හිස් — ඉල්ලීම් අසාර්ථකයි (සෘජු නොවේ)"
   },
   "gamification": {
     "leaderboardScopes": {
@@ -13036,6 +13083,13 @@
       "SERVER_OWNED_TOOL_LOOP_ENABLED": {
         "label": "සේවාදායකය සතු මෙවලම් ලූපය",
         "description": "ආකෘතිය සේවාලාභියාට භාවිත කළ හැකි ප්රතිචාරයක් ලබා දෙන තෙක්, ප්රවාහ නොවන සේවාදායකය සතු මෙවලම් ඇමතුම් දිගටම කරගෙන යන්න."
+      },
+      "PROTECTED_PRIORITY_INFRA_502_ENABLED": {
+        "description": "කෝටා පමණක් භාවිත කරන fallback ප්රමුඛතා ඉලක්කයක්, කෝටාව නිසා නොවන බව නිශ්චිතව ඔප්පු කළ හැකි හේතුවක් මත combo එක නවත්වන විට 503 වෙනුවට 502 ලෙස පිළිතුරු දෙන්න: විවෘත සපයන්නාගේ circuit breaker එකක් හෝ පුරෝකථන ප්රමාද මඟහැරීමක්.",
+        "label": "ආරක්ෂිත-ප්රමුඛතා යටිතල පහසුකම් නැවතුම් 502 ලෙස"
+      },
+      "STREAM_RECOVERY_TOOLCALL_ORDER_FIX": {
+        "description": "ප්රවාහය මැද සිදු කරන අඛණ්ඩ කිරීම මෙවලම් ඇමතුම් සඳහා ආරක්ෂිත කරන්න: මෙවලම් ඇමතුමක් යැවීමෙන් පසු කපා හැරුණු ප්රවාහයක් කිසිවිටෙක නැවත ආරම්භ නොකරන්න (එය තවමත් ක්රියාත්මක වෙමින් තිබුණත් හෝ දැනටමත් අවසන් වී තිබුණත්), සහ සම්පූර්ණ නැවත උත්සාහ කිරීමේ සීමාව භාවිත කිරීම වෙනුවට එක් හිස් අඛණ්ඩ කිරීමකින් පසු නවත්වන්න."
       }
     }
   },
@@ -13956,7 +14010,12 @@
     "hour": "පැය",
     "day": "දින",
     "unknownModel": "නොදන්නා",
-    "pending": "පොරොත්තුවෙන්"
+    "pending": "පොරොත්තුවෙන්",
+    "allApiKeys": "All API keys",
+    "mcp": "MCP",
+    "mcpTool": "MCP tool",
+    "scope": "Scope",
+    "apiKey": "API key"
   },
   "metadata": {
     "compressionTitle": "සම්පීඩනය",
@@ -14159,5 +14218,6 @@
     "partnerLinkNote": "හවුල්කරු සබැඳිය",
     "dismissAriaLabel": "ඉවත දමන්න"
   },
-  "featureFlagAgentProxyDisableThinkingLevelVariantsDescription": "/v1/models නාමාවලිය තුළ චින්තන මට්ටමේ ප්රභේද (උදා. -low, -medium, -high) ජනනය කිරීම අක්රිය කරන්න."
+  "featureFlagAgentProxyDisableThinkingLevelVariantsDescription": "/v1/models නාමාවලිය තුළ චින්තන මට්ටමේ ප්රභේද (උදා. -low, -medium, -high) ජනනය කිරීම අක්රිය කරන්න.",
+  "featureFlagProxyPoolSharedEgressOrderDescription": "egress ලිපිනය අනුව කෝටාව බෙදන සපයන්නන් සඳහා, මෑතකදී ප්‍රතික්ෂේප කළ සාමාජිකයෙකුගේ නිරීක්ෂිත egress ලිපිනය බෙදාගන්නා pool සාමාජිකයා සෞඛ්‍ය සම්පන්න සාමාජිකයින්ට වහාම පහළින් තබයි. අනුපිළිවෙල පමණි, කිසි විටෙක බැහැර නොකෙරේ. එය කියවන ප්‍රතික්ෂේප සංඥාව නිපදවන PROXY_SKIP_RECENTLY_FAILED අවශ්‍යයි. පෙරනිමියෙන් අක්‍රියයි: තේරීමේ අනුපිළිවෙල හරියටම සාමාන්‍ය භ්‍රමණයයි."
 }

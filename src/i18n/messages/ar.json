@@ -3795,7 +3795,8 @@
     "triStateInherit": "inherit",
     "connectionAwareExpansionOn": "On",
     "connectionAwareExpansionOff": "Off",
-    "promptCacheAffinityHint": "Prompt-cache locality routing takes precedence over round-robin/weighted rotation across pinned accounts. Turn it off under Settings, Combo defaults, if you need strict rotation."
+    "promptCacheAffinityHint": "Prompt-cache locality routing takes precedence over round-robin/weighted rotation across pinned accounts. Turn it off under Settings, Combo defaults, if you need strict rotation.",
+    "stickyLimitInherit": "توريث"
   },
   "costs": {
     "title": "التكاليف",
@@ -4972,7 +4973,7 @@
     "compressionLogTitle": "سجل الضغط",
     "compressionLogEmpty": "لا توجد طلبات مضغوطة حتى الآن. ستظهر إحصائيات الضغط هنا عند معالجة الطلبات مع تفعيل الضغط.",
     "tokens": "رموز",
-    "exportTruncated": "__MISSING__:Export truncated: only {exported} of {total} log entries were included. Pick a shorter time range to export the rest."
+    "exportTruncated": "تم اقتطاع التصدير: تم تضمين {exported} فقط من أصل {total} إدخالات سجل. اختر نطاقًا زمنيًا أقصر لتصدير الباقي."
   },
   "onboarding": {
     "welcome": "مرحبًا",
@@ -5971,8 +5972,8 @@
     "validationModelIdHint": "النموذج المستخدم للتحقق من الاتصال",
     "validationModelIdLabel": "معرّف نموذج التحقق",
     "validationModelIdPlaceholder": "مثال: gpt-4o-mini",
-    "vertexCredentialLabel": "API Key or Service Account JSON",
-    "vertexCredentialHint": "API keys use the curated project catalog. Service Account JSON enables live Model Garden discovery.",
+    "vertexCredentialLabel": "مفتاح API أو JSON لحساب الخدمة",
+    "vertexCredentialHint": "تستخدم مفاتيح API كتالوج المشروع المنسّق. يتيح JSON لحساب الخدمة الاكتشاف المباشر في Model Garden.",
     "vertexServiceAccountPlaceholder": "ألصق JSON لحساب الخدمة ({\"type\":\"service_account\",\"project_id\":\"…\",\"client_email\":\"…\",\"private_key\":\"…\"}) أو OAuth access_token",
     "webCookieProviders": "مزودو ملفات تعريف ارتباط الويب",
     "weeklyShort": "أسبوعي",
@@ -9719,7 +9720,14 @@
     "kiloPassPaid": "المدفوع",
     "kiloPassRemaining": "المتبقي",
     "kiloPassRenews": "يتجدد خلال {count} أيام",
-    "kiloPassUsageLabel": "استخدام هذا الشهر"
+    "kiloPassUsageLabel": "استخدام هذا الشهر",
+    "glmConfirmRedeemFiveHourResetCredit": "يؤدي الاسترداد الفوري إلى إعادة تعيين نافذة الاستخدام البالغة خمس ساعات واستهلاك هذه البطاقة نهائيًا.",
+    "glmConfirmRedeemResetCredit": "يؤدي الاسترداد الفوري إلى إعادة تعيين نافذة الاستخدام المحددة واستهلاك هذه البطاقة نهائيًا.",
+    "glmConfirmRedeemWeekResetCredit": "يؤدي الاسترداد الفوري إلى إعادة تعيين نافذة الاستخدام الأسبوعية واستهلاك هذه البطاقة نهائيًا.",
+    "glmResetCreditFiveHourTitle": "إعادة تعيين نافذة الخمس ساعات",
+    "glmResetCreditsModalExplainer": "تُرتّب بطاقات إعادة التعيين حسب تاريخ انتهاء الصلاحية. اختر نافذة الخمس ساعات أو النافذة الأسبوعية التي تريد إعادة تعيينها.",
+    "glmResetCreditsModalTitle": "بطاقات إعادة تعيين خطة GLM Coding Plan",
+    "glmResetCreditWeekTitle": "إعادة تعيين النافذة الأسبوعية"
   },
   "modals": {
     "waitingAuth": "في انتظار التصريح",
@@ -12710,7 +12718,12 @@
     "createDahlTokenFailed": "فشل في إنشاء رمز دال",
     "providerProxy": "وكيل",
     "providerProxyConfigureHint": "تكوين الوكيل",
-    "providerProxyTitleConfigured": "تم تكوين الوكيل: {host}"
+    "providerProxyTitleConfigured": "تم تكوين الوكيل: {host}",
+    "directEgress": "مباشر (بدون وكيل)",
+    "inheritConnectionOption": "لا وكيل خاص (يرث الاتصال)",
+    "inheritedPool": "يرث تجمع الاتصالات ({count})",
+    "inheritedProxy": "يرث الاتصال: {host}",
+    "poolEmptyBlocked": "التجمع فارغ — تفشل الطلبات (ليس مباشرًا)"
   },
   "gamification": {
     "leaderboardScopes": {
@@ -13035,11 +13048,11 @@
         "description": "السماح لاسترداد التدفق بطلب الاستجابة مرة أخرى ودمجها بعد وصول البايتات بالفعل إلى العميل."
       },
       "STREAM_RECOVERY_TOOLCALL_ORDER_FIX": {
-        "description": "__MISSING__:Make mid-stream continuation tool-call safe: never resume a cut stream after a tool call was sent (still in progress or already finished), and stop after one empty continuation instead of using the whole retry budget."
+        "description": "اجعل الاستئناف في منتصف التدفق آمناً لاستدعاءات الأدوات: لا تستأنف تدفقاً منقطعاً بعد إرسال استدعاء أداة (سواء كان لا يزال جارياً أو انتهى بالفعل)، وتوقف بعد استئناف فارغ واحد بدلاً من استخدام ميزانية إعادة المحاولة كاملة."
       },
       "PROTECTED_PRIORITY_INFRA_502_ENABLED": {
-        "label": "__MISSING__:Protected-Priority Infra Stops as 502",
-        "description": "__MISSING__:Answer 502 instead of 503 when a quota-only-fallback priority target stops the combo for a cause that is provably not quota: an open provider circuit breaker or a predictive latency skip."
+        "label": "توقفات البنية التحتية ذات الأولوية المحمية كـ 502",
+        "description": "أرجع 502 بدلاً من 503 عندما يوقف هدف ذو أولوية احتياطية للحصة فقط المجموعة لسبب ثبت أنه غير متعلق بالحصة: قاطع دائرة مزود مفتوح أو تخطٍ تنبؤي بسبب زمن الاستجابة."
       },
       "MODEL_CATALOG_INCLUDE_NAMES": {
         "description": "تضمين حقول الأسماء المناسبة للعرض في استجابات /v1/models. عطل هذا للعملاء الذين يقبلون معرفات النماذج فقط."
@@ -14205,5 +14218,6 @@
     "partnerLinkNote": "رابط الشريك",
     "dismissAriaLabel": "إغلاق"
   },
-  "featureFlagAgentProxyDisableThinkingLevelVariantsDescription": "تعطيل إنشاء متغيرات مستوى التفكير (مثل -low و-medium و-high) في كتالوج /v1/models."
+  "featureFlagAgentProxyDisableThinkingLevelVariantsDescription": "تعطيل إنشاء متغيرات مستوى التفكير (مثل -low و-medium و-high) في كتالوج /v1/models.",
+  "featureFlagProxyPoolSharedEgressOrderDescription": "بالنسبة للمزوّدين الذين تُحتسب حصتهم حسب عنوان الخروج (egress)، يضع عضو الـ pool الذي يشارك عنوان الخروج المرصود لعضو رُفض مؤخرًا مباشرةً أسفل الأعضاء السليمين. يغيّر الترتيب فقط، ولا يستبعد أبدًا. يتطلب PROXY_SKIP_RECENTLY_FAILED، الذي يُنتج إشارة الرفض التي يقرؤها. معطّل افتراضيًا: يكون ترتيب الاختيار مطابقًا تمامًا للتدوير العادي."
 }

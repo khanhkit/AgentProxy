@@ -3795,7 +3795,8 @@
     "triStateInherit": "inherit",
     "connectionAwareExpansionOn": "On",
     "connectionAwareExpansionOff": "Off",
-    "promptCacheAffinityHint": "Prompt-cache locality routing takes precedence over round-robin/weighted rotation across pinned accounts. Turn it off under Settings, Combo defaults, if you need strict rotation."
+    "promptCacheAffinityHint": "Prompt-cache locality routing takes precedence over round-robin/weighted rotation across pinned accounts. Turn it off under Settings, Combo defaults, if you need strict rotation.",
+    "stickyLimitInherit": "jiret"
   },
   "costs": {
     "title": "Spejjeż",
@@ -4972,7 +4973,7 @@
     "compressionLogTitle": "Reġistru tal-Kompressjoni",
     "compressionLogEmpty": "Għad m'hemmx talbiet ikkompressati. L-istatistika tal-kompressjoni tidher hawn meta t-talbiet jiġu pproċessati bil-kompressjoni attivata.",
     "tokens": "tokens",
-    "exportTruncated": "__MISSING__:Export truncated: only {exported} of {total} log entries were included. Pick a shorter time range to export the rest."
+    "exportTruncated": "L-esportazzjoni ġiet imqassra: ġew inklużi biss {exported} minn {total} entrata tar-reġistru. Agħżel medda ta’ żmien iqsar biex tesporta l-bqija."
   },
   "onboarding": {
     "welcome": "Merħba",
@@ -6324,7 +6325,8 @@
       "codex": "Qabbad OpenAI Codex mal-fluss OAuth eżistenti.",
       "qwen": "Qabbad Qwen Code mal-fluss OAuth eżistenti.",
       "github-models": "Oħloq GitHub PAT bl-ambitu 'models: read' fuq github.com/settings/tokens",
-      "seekai": "Oħloq API key fuq https://seekai.cc, imbagħad waħħalha hawn bħala Bearer token. URL bażi kompatibbli ma’ OpenAI: https://seekai.cc/v1."
+      "seekai": "Oħloq API key fuq https://seekai.cc, imbagħad waħħalha hawn bħala Bearer token. URL bażi kompatibbli ma’ OpenAI: https://seekai.cc/v1.",
+      "agnes-cn": "Connect Agnes AI (China) with an API key issued for api.agnes-ai.cn. Keys from apihub.agnes-ai.com will not work."
     },
     "passthroughModelsDescription": "{provider} jaċċetta IDs tal-mudelli nattivi għall-fornitur. Importa minn /models jew żid IDs personalizzati għar-routing.",
     "bedrockModelsDescription": "Il-mudelli ta’ Amazon Bedrock huma limitati skont ir-reġjun AWS. Importa minn /models jew żid IDs tal-mudelli Bedrock attivati fir-reġjun magħżul.",
@@ -6489,7 +6491,9 @@
     "dailyQuotaResetTimezoneLabel": "Żona tal-ħin għar-risettjar tal-kwota ta’ kuljum",
     "dailyQuotaResetTimezoneHint": "Żona tal-ħin IANA mhux obbligatorja li tintuża meta s-servizz upstream iħalli barra X-RateLimit-Reset. Ħalliha vojta biex iżżomm perjodu qasir ta’ stennija.",
     "dailyQuotaResetHourLabel": "Siegħa tar-risettjar tal-kwota ta’ kuljum",
-    "dailyQuotaResetHourHint": "Siegħa lokali 0-23 fiż-żona tal-ħin t’hawn fuq. Jekk titħalla vojta, ma jkun hemm l-ebda arloġġ fil-livell tan-nodu."
+    "dailyQuotaResetHourHint": "Siegħa lokali 0-23 fiż-żona tal-ħin t’hawn fuq. Jekk titħalla vojta, ma jkun hemm l-ebda arloġġ fil-livell tan-nodu.",
+    "vertexCredentialHint": "Iċ-ċwievet tal-API jużaw il-katalgu kkurat tal-proġett. Il-JSON tal-Kont tas-Servizz jippermetti l-iskoperta f’ħin reali tal-Model Garden.",
+    "vertexCredentialLabel": "Ċavetta tal-API jew JSON tal-Kont tas-Servizz"
   },
   "settings": {
     "title": "Issettjar",
@@ -8597,6 +8601,10 @@
       "compressToolResults": {
         "label": "Qassar b'mod proattiv ir-riżultati twal tal-għodda",
         "description": "__MISSING__:Truncates long tool results during Lite compression. The Maximum tool-result length field (or AGENTPROXY_LITE_MAX_TOOL_LENGTH when that field is unset) sets the cap. Emergency overflow protection may still trim content when the context exceeds the model budget."
+      },
+      "maxToolLength": {
+        "description": "Character cap for proactive tool-result truncation. Default 2000. Override with AGENTPROXY_LITE_MAX_TOOL_LENGTH when this field is unset.",
+        "label": "Maximum tool-result length"
       }
     },
     "engineFields": {
@@ -9712,7 +9720,14 @@
     "updatedShort": "Aġġornat",
     "lastRefreshed": "Aġġornat l-aħħar darba",
     "providerQuota": "Kwota tal-Fornitur",
-    "providerQuotaHomeHint": "Status f’ħin reali fil-kontijiet konnessi"
+    "providerQuotaHomeHint": "Status f’ħin reali fil-kontijiet konnessi",
+    "glmConfirmRedeemFiveHourResetCredit": "Meta tifdiha, il-perjodu tal-użu ta' 5 sigħat jiġi rrisettjat immedjatament u din il-kard tiġi kkunsmata b'mod permanenti.",
+    "glmConfirmRedeemResetCredit": "Meta tifdiha, il-perjodu tal-użu magħżul jiġi rrisettjat immedjatament u din il-kard tiġi kkunsmata b'mod permanenti.",
+    "glmConfirmRedeemWeekResetCredit": "Meta tifdiha, il-perjodu tal-użu ta' ġimgħa jiġi rrisettjat immedjatament u din il-kard tiġi kkunsmata b'mod permanenti.",
+    "glmResetCreditFiveHourTitle": "Reset tal-perjodu ta' 5 sigħat",
+    "glmResetCreditsModalExplainer": "Il-kards ta' reset huma ordnati skont l-iskadenza. Agħżel il-perjodu ta' 5 sigħat jew ta' ġimgħa li trid tirrisettja.",
+    "glmResetCreditsModalTitle": "Kards ta' reset tal-GLM Coding Plan",
+    "glmResetCreditWeekTitle": "Reset tal-perjodu ta' ġimgħa"
   },
   "modals": {
     "waitingAuth": "Stennija għall-Awtorizzazzjoni",
@@ -12703,7 +12718,12 @@
     "createDahlTokenFailed": "Ma rnexxiex jinħoloq it-token ta’ Dahl",
     "providerProxy": "Proxy",
     "providerProxyConfigureHint": "Ikkonfigura l-proxy",
-    "providerProxyTitleConfigured": "Proxy kkonfigurat: {host}"
+    "providerProxyTitleConfigured": "Proxy kkonfigurat: {host}",
+    "directEgress": "Dirett (bla proxy)",
+    "inheritConnectionOption": "L-ebda proxy proprju (jiret il-konnessjoni)",
+    "inheritedPool": "Jiret il-pool tal-konnessjonijiet ({count})",
+    "inheritedProxy": "Jiret il-konnessjoni: {host}",
+    "poolEmptyBlocked": "Pool vojt — it-talbiet ifallu (mhux dirett)"
   },
   "gamification": {
     "leaderboardScopes": {
@@ -13063,6 +13083,13 @@
       "SERVER_OWNED_TOOL_LOOP_ENABLED": {
         "label": "Ċiklu tal-Għodod Immexxi mis-Server",
         "description": "Kompli s-sejħiet mhux streaming tal-għodod immexxija mis-server sakemm il-mudell jirritorna tweġiba li tista’ tintuża mill-klijent."
+      },
+      "PROTECTED_PRIORITY_INFRA_502_ENABLED": {
+        "description": "Wieġeb b’502 minflok 503 meta mira ta’ prijorità b’fallback għall-kwota biss twaqqaf il-combo għal kawża li jista’ jiġi ppruvat li mhijiex relatata mal-kwota: circuit breaker miftuħ tal-fornitur jew qbiż predittiv minħabba l-latenza.",
+        "label": "Waqfiet tal-Infrastruttura bi Prijorità Protetta bħala 502"
+      },
+      "STREAM_RECOVERY_TOOLCALL_ORDER_FIX": {
+        "description": "Agħmel il-kontinwazzjoni f’nofs il-fluss sikura għas-sejħiet tal-għodod: qatt tkomplix fluss maqtugħ wara li tkun intbagħtet sejħa tal-għodda (kemm jekk għadha għaddejja kif ukoll jekk diġà tlestiet), u waqqaf wara kontinwazzjoni vojta waħda minflok tuża l-baġit kollu tat-tentattivi mill-ġdid."
       }
     }
   },
@@ -14191,5 +14218,6 @@
     "partnerLinkNote": "Link tas-sieħeb",
     "dismissAriaLabel": "Agħlaq"
   },
-  "featureFlagAgentProxyDisableThinkingLevelVariantsDescription": "Itfi l-ġenerazzjoni ta’ varjanti tal-livell ta’ ħsieb (eż. -low, -medium, -high) fil-katalgu /v1/models."
+  "featureFlagAgentProxyDisableThinkingLevelVariantsDescription": "Itfi l-ġenerazzjoni ta’ varjanti tal-livell ta’ ħsieb (eż. -low, -medium, -high) fil-katalgu /v1/models.",
+  "featureFlagProxyPoolSharedEgressOrderDescription": "Għall-fornituri li l-kwota tagħhom hija maqsuma skont l-indirizz tal-egress, jikklassifika membru tal-pool li jaqsam l-indirizz tal-egress osservat ta' membru li ġie rrifjutat reċentement eżatt taħt il-membri f'saħħithom. L-ordni biss, qatt ma jiġi eskluż. Jeħtieġ PROXY_SKIP_RECENTLY_FAILED, li jipproduċi s-sinjal ta' rifjut li jaqra. Mitfi b'mod predefinit: l-ordni tal-għażla hija eżattament ir-rotazzjoni sempliċi."
 }
