@@ -58,7 +58,7 @@ agentproxy mcp restart
 **Example:**
 
 ```bash
-omniroute mcp enable
+agentproxy mcp enable
 ```
 
 ### `mcp disable`
@@ -66,7 +66,7 @@ omniroute mcp enable
 **Example:**
 
 ```bash
-omniroute mcp disable
+agentproxy mcp disable
 ```
 
 ### `mcp call <tool> [argsJson]`

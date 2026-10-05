@@ -22,7 +22,7 @@ Returns system health including uptime, memory, circuit breakers, rate limits
 
 ```bash
 curl https://localhost:20128/api/monitoring/health \
-  -H "Authorization: Bearer $AGENTPROXY_TOKEN"
+  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
 ```
 
 ### GET /api/monitoring/compression
@@ -33,7 +33,7 @@ In-process compression result-memo observability snapshot — size, capacity, li
 
 ```bash
 curl https://localhost:20128/api/monitoring/compression \
-  -H "Authorization: Bearer $AGENTPROXY_TOKEN"
+  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
 ```
 
 ### GET /api/provider-metrics
@@ -42,7 +42,7 @@ GET provider metrics
 
 ```bash
 curl https://localhost:20128/api/provider-metrics \
-  -H "Authorization: Bearer $AGENTPROXY_TOKEN"
+  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
 ```
 
 ## Payloads

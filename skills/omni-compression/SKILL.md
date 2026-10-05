@@ -20,7 +20,7 @@ Preview compression for a message payload
 
 ```bash
 curl -X POST https://localhost:20128/api/compression/preview \
-  -H "Authorization: Bearer $AGENTPROXY_TOKEN" \
+  -H "Authorization: Bearer $OMNIROUTE_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{}'
 ```
@@ -31,7 +31,7 @@ List Caveman compression language packs
 
 ```bash
 curl https://localhost:20128/api/compression/language-packs \
-  -H "Authorization: Bearer $AGENTPROXY_TOKEN"
+  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
 ```
 
 ### GET /api/compression/rules
@@ -40,7 +40,7 @@ List Caveman compression rule metadata
 
 ```bash
 curl https://localhost:20128/api/compression/rules \
-  -H "Authorization: Bearer $AGENTPROXY_TOKEN"
+  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
 ```
 
 ### POST /api/compression/compare
@@ -49,7 +49,7 @@ POST compression › compare
 
 ```bash
 curl -X POST https://localhost:20128/api/compression/compare \
-  -H "Authorization: Bearer $AGENTPROXY_TOKEN" \
+  -H "Authorization: Bearer $OMNIROUTE_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{}'
 ```
@@ -60,7 +60,7 @@ POST compression › compare › verify
 
 ```bash
 curl -X POST https://localhost:20128/api/compression/compare/verify \
-  -H "Authorization: Bearer $AGENTPROXY_TOKEN" \
+  -H "Authorization: Bearer $OMNIROUTE_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{}'
 ```
@@ -71,7 +71,7 @@ GET compression › engines
 
 ```bash
 curl https://localhost:20128/api/compression/engines \
-  -H "Authorization: Bearer $AGENTPROXY_TOKEN"
+  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
 ```
 
 ### POST /api/compression/retrieve
@@ -80,7 +80,7 @@ POST compression › retrieve
 
 ```bash
 curl -X POST https://localhost:20128/api/compression/retrieve \
-  -H "Authorization: Bearer $AGENTPROXY_TOKEN" \
+  -H "Authorization: Bearer $OMNIROUTE_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{}'
 ```
