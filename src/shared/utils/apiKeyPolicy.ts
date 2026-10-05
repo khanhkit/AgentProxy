@@ -500,7 +500,7 @@ function validateKeyStatus(context: PolicyContext): Response | null {
 }
 
 async function validateKeyScheduleAndUsage(context: PolicyContext): Promise<Response | null> {
-  const { request, apiKey, apiKeyInfo } = context;
+  const { request, apiKeyInfo } = context;
   if (apiKeyInfo.accessSchedule?.enabled && !isWithinSchedule(apiKeyInfo.accessSchedule)) {
     const { from, until, tz } = apiKeyInfo.accessSchedule;
     return errorResponse(
@@ -542,7 +542,7 @@ function validateEndpointAccess(context: PolicyContext): Response | null {
 }
 
 async function validateQuotaAccess(context: PolicyContext): Promise<Response | null> {
-  const { apiKey, apiKeyInfo, modelStr } = context;
+  const { apiKeyInfo, modelStr } = context;
   if (!modelStr) return null;
   const allowedQuotas = Array.isArray(apiKeyInfo.allowedQuotas) ? apiKeyInfo.allowedQuotas : [];
   if (isQuotaModelName(modelStr) && allowedQuotas.length === 0) {
@@ -572,10 +572,17 @@ async function validateQuotaAccess(context: PolicyContext): Promise<Response | n
   }
 }
 
+export function isAutoComboDeniedForKey(
+  apiKeyInfo: { allowAutoCombos?: boolean } | null | undefined,
+  modelStr: string | null | undefined
+): boolean {
+  return Boolean(modelStr && isVirtualComboModel(modelStr) && apiKeyInfo?.allowAutoCombos === false);
+}
+
 async function validateModelAccess(context: PolicyContext): Promise<Response | null> {
   const { request, apiKey, apiKeyInfo, modelStr } = context;
   if (!modelStr || apiKeyInfo.allowedQuotas?.length) return null;
-  if (isVirtualComboModel(modelStr) && apiKeyInfo.allowAutoCombos === false) {
+  if (isAutoComboDeniedForKey(apiKeyInfo, modelStr)) {
     return errorResponse(
       HTTP_STATUS.FORBIDDEN,
       `Auto combo "${modelStr}" is disabled for this API key`

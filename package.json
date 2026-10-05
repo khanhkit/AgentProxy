@@ -307,7 +307,8 @@
     "test:benchmark:pipeline-accuracy": "cross-env DISABLE_SQLITE_AUTO_BACKUP=true node --import tsx/esm --import ./open-sse/utils/setupPolyfill.ts --import ./tests/_setup/isolateDataDir.ts --test --test-force-exit --test-concurrency=1 tests/benchmarks/pipeline-accuracy.test.ts",
     "test:services:integration": "cross-env RUN_SERVICES_INT=1 DISABLE_SQLITE_AUTO_BACKUP=true node --import tsx/esm --import ./open-sse/utils/setupPolyfill.ts --import ./tests/_setup/isolateDataDir.ts --test --test-force-exit --test-concurrency=1 \"tests/integration/services/*.test.ts\"",
     "test:deepseek-web:live": "cross-env RUN_DEEPSEEK_WEB_LIVE=1 DISABLE_SQLITE_AUTO_BACKUP=true node --import tsx/esm --import ./open-sse/utils/setupPolyfill.ts --import ./tests/_setup/isolateDataDir.ts --test --test-force-exit --test-concurrency=1 tests/live/deepseek-web-live.test.ts",
-    "check:release-branch-hygiene": "node scripts/check/check-release-branch-hygiene.mjs"
+    "check:release-branch-hygiene": "node scripts/check/check-release-branch-hygiene.mjs",
+    "check:routing-error-guard": "node scripts/check/check-routing-error-guard.mjs"
   },
   "dependencies": {
     "@aws-sdk/client-bedrock-runtime": "^3.1120.0",
