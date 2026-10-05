@@ -74,6 +74,19 @@ function toolOutputContentToString(output: unknown): string {
   return parts.join("\n");
 }
 
+function toolOutputImagesToChatParts(output: unknown): JsonRecord[] {
+  if (!Array.isArray(output)) return [];
+  return output.flatMap((item) => {
+    const rec = toRecord(item);
+    if (rec.type !== "input_image") return [];
+    const url = toString(rec.image_url);
+    if (!url) return [];
+    const image_url: JsonRecord = { url };
+    if (rec.detail !== undefined) image_url.detail = rec.detail;
+    return [{ type: "image_url", image_url }];
+  });
+}
+
 function appendReasoningContent(current: unknown, next: string): string {
   const existing = typeof current === "string" ? current : "";
   return existing ? `${existing}\n\n${next}` : next;
@@ -281,6 +294,8 @@ export function openaiResponsesToOpenAIRequest(
           tool_call_id: toString(item.tool_call_id),
           content: toolOutputContentToString(item.content),
         });
+        const images = toolOutputImagesToChatParts(item.content);
+        if (images.length) messages.push({ role: "user", content: images });
         continue;
       }
 
@@ -421,6 +436,8 @@ export function openaiResponsesToOpenAIRequest(
         tool_call_id: toString(item.call_id),
         content: toolOutputContentToString(item.output),
       });
+      const images = toolOutputImagesToChatParts(item.output);
+      if (images.length) messages.push({ role: "user", content: images });
       continue;
     }
 
@@ -487,6 +504,8 @@ export function openaiResponsesToOpenAIRequest(
         tool_call_id: toString(item.call_id),
         content: toolContent,
       });
+      const images = toolOutputImagesToChatParts(item.output);
+      if (images.length) messages.push({ role: "user", content: images });
       continue;
     }
 

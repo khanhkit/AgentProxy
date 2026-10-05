@@ -188,12 +188,9 @@ function splitFunctionResponses(
     return [{ content, coLocated: false }];
   }
   const others = parts.filter((part) => !part?.functionResponse);
-  const pieces = [
-    {
-      content: { ...content, parts: parts.filter((part) => part?.functionResponse) },
-      coLocated: false,
-    },
-  ];
+  const pieces = parts
+    .filter((part) => part?.functionResponse)
+    .map((part) => ({ content: { ...content, parts: [part] }, coLocated: false }));
   if (others.length > 0) pieces.push({ content: { ...content, parts: others }, coLocated: true });
   return pieces;
 }
