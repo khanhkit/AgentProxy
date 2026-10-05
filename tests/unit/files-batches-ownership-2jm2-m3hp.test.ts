@@ -182,12 +182,12 @@ function assertInvalidKey401(res: Response, body: ErrorBody, label: string) {
 }
 
 describe("canAccessOwnedRecord — the shared 3-way ownership rule", () => {
-  it("a dashboard session may act on any record, owned or not", () => {
+  it("a dashboard session without a key may act on any record; a mixed key remains scoped", () => {
     assert.strictEqual(
       canAccessOwnedRecord({ isSessionAuth: true, apiKeyId: null }, "key-1"),
       true
     );
-    assert.strictEqual(canAccessOwnedRecord({ isSessionAuth: true, apiKeyId: "k" }, "key-1"), true);
+    assert.strictEqual(canAccessOwnedRecord({ isSessionAuth: true, apiKeyId: "k" }, "key-1"), false);
     assert.strictEqual(canAccessOwnedRecord({ isSessionAuth: true, apiKeyId: null }, null), true);
     assert.strictEqual(
       canAccessOwnedRecord({ isSessionAuth: true, apiKeyId: null }, undefined),
