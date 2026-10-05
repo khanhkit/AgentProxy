@@ -65,8 +65,11 @@ export function PoolMemberEgressLines({ query }: { query: string }) {
 
   const has = (t as typeof t & { has?: (key: string) => boolean }).has;
   const canTranslate = (key: string) => typeof has === "function" && has(key);
-  const title = canTranslate("poolMemberEgressHint")
-    ? t("poolMemberEgressHint")
+  const hintKey = "poolMemberEgressHint";
+  const egressKey = "poolMemberEgress";
+  const emptyKey = "poolMemberEgressEmpty";
+  const title = canTranslate(hintKey)
+    ? t(hintKey)
     : "Last observed egress IP for this proxy endpoint.";
 
   return (
@@ -74,16 +77,16 @@ export function PoolMemberEgressLines({ query }: { query: string }) {
       {body.members.map((member) => (
         <p key={`${member.host}:${member.port}`} className="text-xs text-text-muted" title={title}>
           {member.egressIp
-            ? canTranslate("poolMemberEgress")
-              ? t("poolMemberEgress", {
+            ? canTranslate(egressKey)
+              ? t(egressKey, {
                   host: member.host,
                   port: member.port,
                   egressIp: member.egressIp,
                   hours: body.windowHours,
                 })
               : `${member.host}:${member.port} → ${member.egressIp} (last ${body.windowHours}h)`
-            : canTranslate("poolMemberEgressEmpty")
-              ? t("poolMemberEgressEmpty", {
+            : canTranslate(emptyKey)
+              ? t(emptyKey, {
                   host: member.host,
                   port: member.port,
                   hours: body.windowHours,

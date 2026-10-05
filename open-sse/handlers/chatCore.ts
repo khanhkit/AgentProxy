@@ -210,6 +210,7 @@ import {
   isServerOwnedToolLoopEnabled,
 } from "@/shared/utils/featureFlags.ts";
 import { resolveNoAuthEchoModel } from "./chatCore/noAuthEchoModel.ts";
+import { projectRetainedProviderFailureMessage } from "./chatCore/providerFailureRetention.ts";
 import {
   REASONING_BUFFER_MIN_TRIGGER,
   buildReasoningProbeTruncatedResponse,
@@ -4227,7 +4228,7 @@ async function handleChatCoreInner({
       }
       // Classifiers and recovery paths above consume the raw provider wording.
       // Project a separate value only at persistent connection-state boundaries.
-      const persistentMessage = sanitizeErrorMessage(message) || "Provider request failed";
+      const persistentMessage = projectRetainedProviderFailureMessage(message, videoBridgeObserved);
       const errorConnectionId = getCurrentConnectionId();
       if (errorConnectionId && errorType) {
         try {

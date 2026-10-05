@@ -31,11 +31,12 @@ export function CallContentProvenanceBadges({
   const t = useTranslations("requestLogger.detail");
   const keys = getContentProvenanceKeys(hasContent, usageProvenance);
   if (keys.length === 0) return null;
+  const labelKey = "contentProvenance";
+  const has = (t as typeof t & { has?: (key: string) => boolean }).has;
+  const label = typeof has === "function" && has(labelKey) ? t(labelKey) : "Reply";
   return (
     <div>
-      <div className="text-[10px] text-text-muted uppercase tracking-wider mb-1">
-        {t("contentProvenance")}
-      </div>
+      <div className="text-[10px] text-text-muted uppercase tracking-wider mb-1">{label}</div>
       <div className="flex flex-wrap gap-1">
         {keys.map((key) => (
           <span

@@ -85,9 +85,17 @@ export async function retryFreeTierRefusalWithObservedTools(
     "OPENCODE",
     `${cid}free-tier refusal on own tools [${ctx.clientToolNames.join(",")}], retrying once with observed names appended…`
   );
-  const retry = await dispatch({ ...input, body: merged });
-  if (!retry.response.ok) return { response: first.response };
-  return retry;
+  try {
+    const retry = await dispatch({ ...input, body: merged });
+    if (!retry.response.ok) return { response: first.response };
+    return retry;
+  } catch (error) {
+    log?.debug?.(
+      "OPENCODE",
+      `${cid}observed-tools retry transport failed, returning original refusal: ${error instanceof Error ? error.message : String(error)}`
+    );
+    return { response: first.response };
+  }
 }
 
 /**

@@ -237,7 +237,10 @@ async function invokeChatCoreCapturingUpstream(body: Record<string, unknown>) {
   const originalFetch = globalThis.fetch;
   let dispatched = false;
   let sentBodyJson: string | null = null;
-  globalThis.fetch = async (_url: RequestInfo | URL, init: RequestInit = {}) => {
+  globalThis.fetch = async (url: RequestInfo | URL, init: RequestInit = {}) => {
+    if (String(url).includes("/__agentproxy_event")) {
+      return new Response(null, { status: 204 });
+    }
     dispatched = true;
     sentBodyJson = init.body ? String(init.body) : null;
     return new Response(

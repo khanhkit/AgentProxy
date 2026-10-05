@@ -145,7 +145,11 @@ describe("#14464 OpenCode observed accepted-tool completion", () => {
 
     assert.equal(result.response.status, 200);
     assert.equal(call, 3, "warm success + refusal + exactly one retry");
-    assert.deepEqual(seenTools[1].map(toolName), ["glob", "read"]);
+    assert.deepEqual(
+      seenTools[1].map(toolName),
+      ["glob", "read", "edit"],
+      "the observed compatibility name is appended proactively"
+    );
     assert.deepEqual(seenTools[2].map(toolName), ["glob", "read", "edit"]);
     assert.deepEqual(seenTools[2][0], subset[0], "caller tool schema/order preserved");
     assert.deepEqual(seenTools[2][1], subset[1], "caller tool schema/order preserved");

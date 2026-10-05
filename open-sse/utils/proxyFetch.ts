@@ -618,8 +618,10 @@ export async function runWithProxyContext(
         );
         return runDirect();
       }
-    } else {
+    } else if (new URL(resolvedProxyUrl).protocol !== "socks5:") {
       // Fire the probe WITHOUT awaiting; dispatch optimistically below.
+      // SOCKS5 data-plane failures are owned by the SOCKS transport itself; a
+      // bare TCP reachability probe can misclassify a healthy SOCKS endpoint.
       unreachableProbe = isProxyReachable(resolvedProxyUrl);
     }
   }
