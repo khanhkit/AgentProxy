@@ -19,6 +19,7 @@ import {
 } from "../config/codexInstructions.ts";
 import { FETCH_BODY_TIMEOUT_MS, HTTP_STATUS, PROVIDERS } from "../config/constants.ts";
 import { readCodexPeekChunk, buildCodexTimeoutSafePassthroughBody } from "./codex/bodyTimeout.ts";
+import { stripCodexPassthroughRejectedParams } from "./codex/stripPassthroughRejectedParams.ts";
 import {
   CODEX_CLI_RS_ORIGINATOR,
   getCodexClientVersion,
@@ -1206,7 +1207,7 @@ export class CodexExecutor extends BaseExecutor {
   transformRequest(
     model: string,
     bodyInput: unknown,
-    stream: boolean,
+    _stream: boolean,
     credentials: ProviderCredentials
   ) {
     void stream;
@@ -1447,9 +1448,7 @@ export class CodexExecutor extends BaseExecutor {
     // safety_identifier #2770), but the responses->responses passthrough skips
     // translation. `user` is always rejected by Codex /responses, so it is removed
     // unconditionally here (unlike base.ts, which only drops it when empty).
-    delete body.prompt_cache_retention;
-    delete body.safety_identifier;
-    delete body.user;
+    stripCodexPassthroughRejectedParams(cleanModel || model, body);
 
     // Inject prompt_cache_key for Codex prompt caching.
     // The official Codex client sets this to conversation_id (a stable UUID per session).
