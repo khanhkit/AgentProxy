@@ -102,7 +102,7 @@ test("all shell completion scripts advertise manual model commands", async () =>
         const output = execFileSync("/bin/bash", ["--noprofile", "--norc"], {
           input:
             result.out +
-            '\nCOMP_WORDS=(omniroute models "")\nCOMP_CWORD=2\n_omniroute\nprintf "%s\\n" "${COMPREPLY[@]}"\n',
+            '\nCOMP_WORDS=(agentproxy models "")\nCOMP_CWORD=2\n_agentproxy\nprintf "%s\\n" "${COMPREPLY[@]}"\n',
           encoding: "utf8",
           timeout: 5000,
           env: { PATH: "/usr/bin:/bin" },
@@ -120,7 +120,7 @@ test("installed completion includes models registered after completion", async (
   try {
     const result = await invoke(["completion", "install", "bash"], dataDir);
     assert.equal(result.code, 0, result.err);
-    const script = readFileSync(join(dataDir, ".bash_completion.d", "omniroute"), "utf8");
+    const script = readFileSync(join(dataDir, ".bash_completion.d", "agentproxy"), "utf8");
     assert.match(script, /manual add edit remove/);
   } finally {
     rmSync(dataDir, { recursive: true, force: true });

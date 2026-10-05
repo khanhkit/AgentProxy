@@ -4,6 +4,7 @@ import fs from "node:fs";
 import http from "node:http";
 import os from "node:os";
 import path from "node:path";
+import { SignJWT } from "jose";
 
 /**
  * Container-guard homologation for POST /api/cli-tools/apply.
@@ -18,13 +19,18 @@ const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-apply-gu
 const TEST_XDG_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-apply-guard-xdg-"));
 const originalDataDir = process.env.DATA_DIR;
 const originalXdg = process.env.XDG_CONFIG_HOME;
-// Fresh DB without a configured password → management auth is open, so these
-// tests exercise the guard, not the auth stack (covered elsewhere).
+const originalJwtSecret = process.env.JWT_SECRET;
 process.env.DATA_DIR = TEST_DATA_DIR;
 process.env.XDG_CONFIG_HOME = TEST_XDG_DIR;
+process.env.JWT_SECRET = "test-cli-tools-apply-container-guard-secret";
 
 const core = await import("../../../../src/lib/db/core.ts");
 const { POST } = await import("../../../../src/app/api/cli-tools/apply/route.ts");
+const AUTH_COOKIE = `auth_token=${await new SignJWT({ authenticated: true })
+  .setProtectedHeader({ alg: "HS256" })
+  .setIssuedAt()
+  .setExpirationTime("1h")
+  .sign(new TextEncoder().encode(process.env.JWT_SECRET))}`;
 
 const OPENCODE_CONFIG = path.join(TEST_XDG_DIR, "opencode", "opencode.json");
 
@@ -60,7 +66,7 @@ function startCatalogServer(): Promise<string> {
 function applyRequest(body: Record<string, unknown>): Request {
   return new Request("http://localhost:3000/api/cli-tools/apply", {
     method: "POST",
-    headers: { "content-type": "application/json" },
+    headers: { "content-type": "application/json", cookie: AUTH_COOKIE },
     body: JSON.stringify(body),
   });
 }
@@ -95,6 +101,8 @@ describe("POST /api/cli-tools/apply — container guard", () => {
     else process.env.DATA_DIR = originalDataDir;
     if (originalXdg === undefined) delete process.env.XDG_CONFIG_HOME;
     else process.env.XDG_CONFIG_HOME = originalXdg;
+    if (originalJwtSecret === undefined) delete process.env.JWT_SECRET;
+    else process.env.JWT_SECRET = originalJwtSecret;
   });
 
   it("refuses an OpenCode write in container mode with a safe 422", async () => {
