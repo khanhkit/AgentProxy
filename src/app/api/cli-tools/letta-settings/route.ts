@@ -10,6 +10,7 @@ import { isValidationFailure, validateBody } from "@/shared/validation/helpers";
 import { cliAuthOnlyConfigSchema } from "@/shared/validation/schemas/cli";
 import { requireCliToolsAuth } from "@/lib/api/requireCliToolsAuth";
 import { sanitizeErrorMessage } from "@agentproxy/open-sse/utils/error";
+import { resolveAgentProxyBaseUrl } from "@/shared/utils/resolveAgentProxyBaseUrl";
 
 const execAsync = promisify(exec);
 
@@ -74,7 +75,18 @@ const readAuthFile = async () => {
 // ── Check if a base_url points to AgentProxy ──────────────────────────────
 const isAgentProxyUrl = (baseUrl) => {
   if (!baseUrl) return false;
-  return baseUrl.includes(":20128") || baseUrl.includes(":3000") || baseUrl.includes("agentproxy");
+  let runtimePort = "";
+  try {
+    runtimePort = new URL(resolveAgentProxyBaseUrl()).port;
+  } catch {
+    // Keep compatibility checks below if an explicit runtime base URL is malformed.
+  }
+  return (
+    baseUrl.includes(":20128") ||
+    baseUrl.includes(":3000") ||
+    (!!runtimePort && baseUrl.includes(`:${runtimePort}`)) ||
+    baseUrl.includes("agentproxy")
+  );
 };
 
 // ── Check if AgentProxy is configured ─────────────────────────────────────
