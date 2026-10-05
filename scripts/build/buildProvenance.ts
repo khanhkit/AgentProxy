@@ -108,7 +108,16 @@ export function resolveBuildProvenance(input: BuildProvenanceInput): BuildProven
 export function makeGitAncestryProbe(releaseRef: string, cwd: string): (sha: string) => boolean {
   return (sha: string) => {
     try {
-      execFileSync("git", ["merge-base", "--is-ancestor", sha, releaseRef], {
+      const [buildCommit, releaseCommit] = execFileSync(
+        "git",
+        ["rev-parse", `${sha}^{commit}`, `${releaseRef}^{commit}`],
+        { cwd, encoding: "utf8", stdio: ["ignore", "pipe", "ignore"] }
+      )
+        .trim()
+        .split("\n");
+      if (buildCommit === releaseCommit) return true;
+
+      execFileSync("git", ["merge-base", "--is-ancestor", buildCommit, releaseCommit], {
         cwd,
         stdio: "ignore",
       });
