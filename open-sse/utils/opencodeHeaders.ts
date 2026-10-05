@@ -1,7 +1,10 @@
 import { createHash, randomBytes, randomUUID } from "crypto";
 import { setUserAgentHeader } from "../executors/base.ts";
 import { generateSessionId } from "../services/sessionManager.ts";
-import { resolveOpencodeSessionIdentity, type OpencodeSessionBody } from "./opencodeSessionIdentity.ts";
+import {
+  resolveOpencodeSessionIdentity,
+  type OpencodeSessionBody,
+} from "./opencodeSessionIdentity.ts";
 
 /**
  * Default synthesized User-Agent. The upstream only parses the version, so this literal
@@ -179,19 +182,12 @@ export function forwardOpencodeClientHeaders(
     }
   }
 
-  // 3. OpencodeExecutor-only: synthesize session/request id from fallback headers
-  if (options?.synthesizeRequestId && !headers["x-opencode-session"]) {
-    const sessionAffinity =
-      findHeader(clientHeaders, "x-session-affinity") || findHeader(clientHeaders, "x-session-id");
-    if (sessionAffinity) {
-      // Kept as-is here. When identity synthesis is on, applyCliDefaults renders it in the
-      // canonical shape below; with the synthesis opted out this path stays byte-identical
-      // to before, since opting out means no fabricated identity at all.
-      headers["x-opencode-session"] = sessionAffinity;
-
-      if (!headers["x-opencode-request"]) {
-        headers["x-opencode-request"] = randomUUID();
-      }
+  // 3. OpencodeExecutor-only: preserve explicit native conversation identity first.
+  if ((options?.synthesizeRequestId || options?.cliDefaults) && !headers["x-opencode-session"]) {
+    const sessionIdentity = resolveOpencodeSessionIdentity(clientHeaders, options?.sessionBody);
+    if (sessionIdentity) {
+      headers["x-opencode-session"] = sessionIdentity;
+      headers["x-opencode-request"] ||= randomUUID();
     }
   }
 

@@ -145,7 +145,7 @@ test("responses: the placeholder tool is flat and tool_choice stays absent", () 
   assert.equal("tool_choice" in body, false);
 });
 
-test("client-supplied tools are never replaced, and no tool_choice is imposed", () => {
+test("client tools are preserved while the required placeholder is appended", () => {
   const clientTools = [
     { type: "function", function: { name: "search", parameters: { type: "object" } } },
   ];
@@ -153,7 +153,9 @@ test("client-supplied tools are never replaced, and no tool_choice is imposed", 
     { ...CHAT_BODY(), tools: clientTools },
     "openai"
   ) as Record<string, unknown>;
-  assert.deepEqual(body.tools, clientTools);
+  const tools = body.tools as Array<{ function: { name: string } }>;
+  assert.deepEqual(tools[0], clientTools[0]);
+  assert.equal(tools[1].function.name, "_noop");
   assert.equal("tool_choice" in body, false);
   assert.equal(body.stream, true);
 });
