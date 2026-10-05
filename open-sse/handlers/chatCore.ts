@@ -140,7 +140,10 @@ import { FORMATS } from "../translator/formats.ts";
 import { collectCustomToolNamesForSourceFormat } from "../translator/request/openai-responses/additionalTools.ts";
 import { sanitizeKiroTools } from "../utils/kiroSanitizer.ts";
 import { splitMisplacedToolResults } from "../translator/helpers/claudeHelper.ts";
-import { ensureCacheControlOnLastUserMessage, hoistLeadingSystemMessages } from "../services/claudeCodeConstraints.ts";
+import {
+  ensureCacheControlOnLastUserMessage,
+  hoistLeadingSystemMessages,
+} from "../services/claudeCodeConstraints.ts";
 import {
   createSSETransformStreamWithLogger,
   createPassthroughStreamWithLogger,
@@ -511,8 +514,6 @@ async function handleChatCoreInner({
   videoBridgeLog = undefined,
 }) {
   let { provider, model, extendedContext } = modelInfo;
-  // Keep the selected rule across format conversion, retries and refreshed credentials.
-  // Each combo leg gets its own execution context; nothing is written to shared accounts.
   const reasoningRuleDirective = body?._agentproxyReasoningRule;
   // #12150 P1b: true iff the video-bridge guardrail rendered >=1 transcript
   // cue into a replaced part of this request. Gates both request- and
@@ -540,7 +541,6 @@ async function handleChatCoreInner({
   // Per-request trace id + checkpoint helper. Lets us see exactly which await
   // a hung request was sitting on in `[STAGE_TRACE]` log lines. Uses crypto RNG
   // (not Math.random) purely to satisfy CodeQL js/insecure-randomness — this id
-  // is a log-correlation token, not a security secret; keep the full UUID to avoid collisions.
   const traceId = globalThis.crypto.randomUUID();
   // Emit request.started event for real-time dashboard
   setImmediate(() => {
@@ -714,8 +714,7 @@ async function handleChatCoreInner({
     clientRawRequest,
     provider,
     model,
-    // NEXA fusion-idempotency fix: body.messages feeds the key digest so combo-internal sub-requests
-    // (fusion panel + judge share the client's headers) never collide on the raw header key.
+    // Include body.messages so combo-internal sub-requests cannot collide on one header key.
     body,
     apiKeyId: apiKeyInfo?.id ?? null,
     effectiveServiceTier,
@@ -2377,9 +2376,6 @@ async function handleChatCoreInner({
         // without converting file/document blocks, tool history, etc.
         extractSystemRoleMessages(translatedBody);
       } else {
-        // Non-CC path: full normalization including content type conversion.
-        // Preserve raw tool_result blocks only for Anthropic-native targets; OpenAI-compatible
-        // CC bridges reject the Anthropic block shape (#13972).
         normalizeClaudeUpstreamMessages(translatedBody, {
           preserveToolResultBlocks: targetFormat === FORMATS.CLAUDE,
         });
