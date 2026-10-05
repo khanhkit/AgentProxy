@@ -762,6 +762,8 @@ export function openaiResponsesToOpenAIRequest(
       result.tool_choice = { type: "function", function: { name: tc.name } };
     } else if (tcType === "local_shell") {
       result.tool_choice = { type: "function", function: { name: "shell" } };
+    } else if (tcType === "custom" && tc.name !== undefined) {
+      result.tool_choice = { type: "function", function: { name: tc.name } };
     } else if (tcType === "allowed_tools") {
       const mode = toString(tc.mode);
       if (mode !== "auto" && mode !== "required") {
