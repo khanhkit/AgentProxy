@@ -474,6 +474,23 @@ test("aborting the client signal stops the keepalive stream (#2544)", async () =
   assert.equal(await Promise.race([drained, timed]), true, "stream should close after abort");
 });
 
+test("withDeadlineSignal rebuilds request fields without consuming the body", async () => {
+  const request = new Request("http://localhost/v1/chat/completions?x=1", {
+    method: "POST",
+    headers: { "Content-Type": "application/json", "X-Test": "kept" },
+    body: JSON.stringify({ model: "m", stream: false }),
+  });
+
+  const { wrappedReq, deadlineController } = withDeadlineSignal(request);
+
+  assert.equal(wrappedReq.url, request.url);
+  assert.equal(wrappedReq.method, "POST");
+  assert.equal(wrappedReq.headers.get("x-test"), "kept");
+  assert.equal(await wrappedReq.clone().text(), JSON.stringify({ model: "m", stream: false }));
+  assert.equal(deadlineController.signal.aborted, false);
+  assert.notEqual(wrappedReq.signal, request.signal);
+});
+
 // Last-resort slow-path deadline: a handler that never resolves must not hold the
 // client stream forever. At slowPathDeadlineMs the wrapper aborts the internal
 // deadline controller (observable here because the test wires the helper-built

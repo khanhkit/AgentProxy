@@ -295,7 +295,23 @@ export function withDeadlineSignal(request: Request): {
   // admission rebuilds, which both copy headers but mint new signal objects.
   const token = `dl-${Date.now().toString(36)}-${(deadlineTokenSeq += 1)}`;
   headers.set(DEADLINE_TOKEN_HEADER, token);
-  const wrappedReq = new Request(request, { signal: combined, headers });
+  // Rebuild from the URL and explicit fields instead of passing the inbound
+  // Request object to the constructor. Next.js can hand route modules a Request
+  // created by a different bundled undici/Web API realm; `new Request(request, …)`
+  // then tries to read that foreign instance's private `#state` and throws in the
+  // standalone production bundle. URL + explicit init is realm-safe while preserving
+  // the same method/body/header/signal contract. A streamed request body requires
+  // Node's duplex:"half" extension.
+  const init: RequestInit & { duplex?: "half" } = {
+    method: request.method,
+    headers,
+    body: request.body,
+    signal: combined,
+  };
+  if (request.body !== null && request.method !== "GET" && request.method !== "HEAD") {
+    init.duplex = "half";
+  }
+  const wrappedReq = new Request(request.url, init);
   deadlineControllers.set(combined, deadlineController);
   deadlineControllersByToken.set(token, new WeakRef(deadlineController));
   deadlineTokenByController.set(deadlineController, token);
@@ -583,7 +599,7 @@ export async function withEarlyStreamKeepalive(
                   bytesForwarded += value.byteLength;
                 }
               }
-            } catch (readErr) {
+            } catch (_readErr) {
               // Upstream stream failed mid-flight. Only emit an error frame if
               // NO content was forwarded yet — otherwise the client already
               // received partial content and a late error frame would corrupt
