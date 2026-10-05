@@ -313,21 +313,23 @@ export function findInsensitive<T>(
   let index = lowercaseIndexCache.get(obj);
   if (!index) {
     index = new Map();
+    const collisions: string[] = [];
     const firstKeyByLower = new Map<string, string>();
     for (const [k, v] of Object.entries(obj)) {
       const lowerKey = k.toLowerCase();
-      // Warn once at index-build time (not per-lookup) if two keys collide
-      // case-insensitively. Name both original keys so operators can identify
-      // the conflicting upstream rows while preserving first-seen-wins.
       const firstKey = firstKeyByLower.get(lowerKey);
       if (firstKey !== undefined) {
-        console.warn(
-          `[modelMetadataRegistry] findInsensitive: case-insensitive key collision on "${lowerKey}" ("${firstKey}" vs "${k}") — keeping first-seen value, later one discarded`
-        );
+        collisions.push(`"${lowerKey}" ("${firstKey}" vs "${k}")`);
         continue;
       }
       firstKeyByLower.set(lowerKey, k);
       index.set(lowerKey, v);
+    }
+    if (collisions.length) {
+      const sample = collisions.slice(0, 5).join(", ");
+      console.warn(
+        `[modelMetadataRegistry] findInsensitive: ${collisions.length} case-insensitive key collision(s) — keeping first-seen value, later ones discarded. Keys: ${sample}${collisions.length > 5 ? ", …" : ""}`
+      );
     }
     lowercaseIndexCache.set(obj, index);
   }

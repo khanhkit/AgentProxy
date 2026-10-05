@@ -231,7 +231,7 @@ test("chatCore retains exact quota resets from intermediate rotated Codex 429s",
       stream: false,
     },
     responseFactory(_captured: unknown, calls: unknown[]) {
-      if (calls.length < 4) {
+      if (calls.length === 1) {
         return new Response(JSON.stringify({ error: { message: "Codex quota exceeded" } }), {
           status: 429,
           headers: {
