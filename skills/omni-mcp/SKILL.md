@@ -20,7 +20,7 @@ GET mcp › audit
 
 ```bash
 curl https://localhost:20128/api/mcp/audit \
-  -H "Authorization: Bearer $AGENTPROXY_TOKEN"
+  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
 ```
 
 ### GET /api/mcp/audit/stats
@@ -29,7 +29,7 @@ GET mcp › audit › stats
 
 ```bash
 curl https://localhost:20128/api/mcp/audit/stats \
-  -H "Authorization: Bearer $AGENTPROXY_TOKEN"
+  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
 ```
 
 ### GET /api/mcp/sse
@@ -38,7 +38,7 @@ GET mcp › sse
 
 ```bash
 curl https://localhost:20128/api/mcp/sse \
-  -H "Authorization: Bearer $AGENTPROXY_TOKEN"
+  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
 ```
 
 ### POST /api/mcp/sse
@@ -47,7 +47,7 @@ POST mcp › sse
 
 ```bash
 curl -X POST https://localhost:20128/api/mcp/sse \
-  -H "Authorization: Bearer $AGENTPROXY_TOKEN" \
+  -H "Authorization: Bearer $OMNIROUTE_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{}'
 ```
@@ -58,7 +58,7 @@ GET mcp › status
 
 ```bash
 curl https://localhost:20128/api/mcp/status \
-  -H "Authorization: Bearer $AGENTPROXY_TOKEN"
+  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
 ```
 
 ### GET /api/mcp/stream
@@ -67,7 +67,7 @@ GET mcp › stream
 
 ```bash
 curl https://localhost:20128/api/mcp/stream \
-  -H "Authorization: Bearer $AGENTPROXY_TOKEN"
+  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
 ```
 
 ### POST /api/mcp/stream
@@ -76,7 +76,7 @@ POST mcp › stream
 
 ```bash
 curl -X POST https://localhost:20128/api/mcp/stream \
-  -H "Authorization: Bearer $AGENTPROXY_TOKEN" \
+  -H "Authorization: Bearer $OMNIROUTE_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{}'
 ```
@@ -87,7 +87,7 @@ DELETE mcp › stream
 
 ```bash
 curl -X DELETE https://localhost:20128/api/mcp/stream \
-  -H "Authorization: Bearer $AGENTPROXY_TOKEN"
+  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
 ```
 
 ### GET /api/mcp/tools
@@ -96,7 +96,7 @@ GET mcp › tools
 
 ```bash
 curl https://localhost:20128/api/mcp/tools \
-  -H "Authorization: Bearer $AGENTPROXY_TOKEN"
+  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
 ```
 
 ## Payloads
