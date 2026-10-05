@@ -76,6 +76,14 @@ test("cache can be disabled per caller and defaults on", () => {
   assert.equal(step("node-modules")!.if, "inputs.cache == 'true'");
 });
 
+test("cache hits repair a missing OpenCode postinstall artifact before tests run", () => {
+  const repair = action.runs.steps.find((s) => s.name === "Repair cached OpenCode binary");
+  assert.ok(repair, "cached node_modules must validate OpenCode's install-script artifact");
+  assert.equal(repair!.shell, "bash");
+  assert.match(String(repair!.run), /node_modules\/opencode-ai\/bin\/opencode\.exe/);
+  assert.match(String(repair!.run), /node postinstall\.mjs/);
+});
+
 test("every postinstall helper imported by postinstall.mjs is in the cache key", () => {
   const post = fs.readFileSync(
     path.resolve(import.meta.dirname, "../../../scripts/build/postinstall.mjs"),

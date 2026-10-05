@@ -14219,5 +14219,5 @@
     "dismissAriaLabel": "關閉"
   },
   "featureFlagAgentProxyDisableThinkingLevelVariantsDescription": "停用在 /v1/models 目錄中產生思考層級變體（例如 -low、-medium、-high）。",
-  "featureFlagProxyPoolSharedEgressOrderDescription": "對於依 egress 位址分配配額的供應商，將與最近被拒絕成員共用已觀測 egress 位址的 pool 成員排在健康成員之後。僅調整順序，絕不排除。需要 PROXY_SKIP_RECENTLY_FAILED，它會產生本功能讀取的拒絕訊號。預設關閉：選擇順序與一般輪替完全相同。"
+  "featureFlagProxyPoolSharedEgressOrderDescription": "對於依 egress 位址分配配額的提供者，將與最近被拒絕成員共用已觀測 egress 位址的 pool 成員排在健康成員之後。僅調整順序，絕不排除。需要 PROXY_SKIP_RECENTLY_FAILED，它會產生本功能讀取的拒絕訊號。預設關閉：選擇順序與一般輪替完全相同。"
 }
