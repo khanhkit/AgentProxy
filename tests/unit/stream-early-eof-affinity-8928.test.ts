@@ -29,7 +29,7 @@ test("terminal STREAM_EARLY_EOF evicts affinity after the bounded retry (#8928)"
 
   const retryContinue = branch.indexOf("continue;");
   const eviction = branch.indexOf("evictSessionAccountAffinityForConnection(");
-  const terminalReturn = branch.indexOf("return withSelectedConnectionHeader(");
+  const terminalReturn = branch.indexOf("earlyEofFailover.original ??");
 
   assert.ok(retryContinue >= 0, "the existing bounded retry must remain");
   assert.ok(eviction > retryContinue, "eviction must happen only after retry is exhausted");

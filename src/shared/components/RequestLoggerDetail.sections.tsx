@@ -81,8 +81,9 @@ export function PayloadSection({
     if (!notice) return "";
     try {
       const has = (t as typeof t & { has?: (key: string) => boolean }).has;
-      if (typeof has === "function" && has("payloadSizeLimitOmitted")) {
-        return t("payloadSizeLimitOmitted");
+      const key = "payloadSizeLimitOmitted";
+      if (typeof has === "function" && has(key)) {
+        return t(key);
       }
     } catch {
       // AP-ISS-0131 may not have regenerated this translation key yet.

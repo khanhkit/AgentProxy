@@ -55,13 +55,16 @@ export function PoolEgressObservation({ query }: { query: string }) {
 
   const has = (t as typeof t & { has?: (key: string) => boolean }).has;
   const canTranslate = (key: string) => typeof has === "function" && has(key);
+  const emptyKey = "poolEgressObservationEmpty";
+  const observationKey = "poolEgressObservation";
+  const hintKey = "poolEgressObservationHint";
   const text =
     observation.connections === 0
-      ? canTranslate("poolEgressObservationEmpty")
-        ? t("poolEgressObservationEmpty", { hours: observation.windowHours })
+      ? canTranslate(emptyKey)
+        ? t(emptyKey, { hours: observation.windowHours })
         : `No observed egress traffic in the last ${observation.windowHours}h.`
-      : canTranslate("poolEgressObservation")
-        ? t("poolEgressObservation", {
+      : canTranslate(observationKey)
+        ? t(observationKey, {
             exits: observation.distinctExits,
             connections: observation.connections,
             max: observation.maxConnectionsOnOneExit,
@@ -69,8 +72,8 @@ export function PoolEgressObservation({ query }: { query: string }) {
           })
         : `${observation.distinctExits} observed egress IPs served ${observation.connections} connections in the last ${observation.windowHours}h; busiest IP carried ${observation.maxConnectionsOnOneExit}.`;
 
-  const title = canTranslate("poolEgressObservationHint")
-    ? t("poolEgressObservationHint")
+  const title = canTranslate(hintKey)
+    ? t(hintKey)
     : "Read-only observation derived from recent proxy logs.";
 
   return (

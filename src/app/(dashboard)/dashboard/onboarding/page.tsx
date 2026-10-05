@@ -93,11 +93,13 @@ export default function OnboardingWizard() {
     const has = (t as typeof t & { has?: (messageKey: string) => boolean }).has;
     return typeof has === "function" && has(key);
   };
-  const bootstrapTokenHelpText = hasOnboardingMessage("bootstrapTokenHelp")
-    ? t("bootstrapTokenHelp")
+  const bootstrapTokenHelpKey = "bootstrapTokenHelp";
+  const bootstrapTokenLabelKey = "bootstrapTokenLabel";
+  const bootstrapTokenHelpText = hasOnboardingMessage(bootstrapTokenHelpKey)
+    ? t(bootstrapTokenHelpKey)
     : "This connection is not recognized as local. Check the AgentProxy server/container log for the one-time bootstrap token, then paste it here to continue.";
-  const bootstrapTokenLabel = hasOnboardingMessage("bootstrapTokenLabel")
-    ? t("bootstrapTokenLabel")
+  const bootstrapTokenLabel = hasOnboardingMessage(bootstrapTokenLabelKey)
+    ? t(bootstrapTokenLabelKey)
     : "Bootstrap token";
 
   // #14296: attach the operator-supplied bootstrap token when we have one —
