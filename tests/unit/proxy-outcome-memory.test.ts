@@ -4,7 +4,7 @@ import assert from "node:assert/strict";
 // With PROXY_SKIP_RECENTLY_FAILED on, a pool member is set aside only on a refusal the
 // provider really returned through it, and only for a provider inside the refusal scope.
 // Locally generated failures carry no upstream outcome and never set a member aside. With
-// the flag off (the default) nothing is ever written.
+// the flag explicitly off nothing is ever written.
 
 const memory = await import("../../open-sse/utils/proxyRefusalMemory.ts");
 const { noteProxyOutcome } = await import("../../src/sse/handlers/proxyOutcomeMemory.ts");
@@ -91,8 +91,8 @@ test("a second note while the proxy is already set aside changes nothing", () =>
   assert.equal(memory.isProxyAvoided(KEY, start + periodMs + 1000), false);
 });
 
-test("with the flag at its default (off) a received refusal writes nothing", () => {
-  delete process.env.PROXY_SKIP_RECENTLY_FAILED;
+test("with the flag explicitly off a received refusal writes nothing", () => {
+  process.env.PROXY_SKIP_RECENTLY_FAILED = "false";
   for (const provider of egressBucketedLockProviders()) {
     noteProxyOutcome(provider, { proxy: PROXY, upstreamStatus: 429 });
   }
