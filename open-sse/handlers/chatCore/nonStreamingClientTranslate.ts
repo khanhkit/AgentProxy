@@ -31,7 +31,7 @@ import {
 } from "../responseSanitizer.ts";
 import { isStripReasoningRequested } from "./headers.ts";
 import { applyClientUsageBuffer } from "./clientUsageBuffer.ts";
-import { resolveRequestToolIdentity } from "../../translator/response/openai-responses/requestToolIdentity.ts";
+import { applyFunctionCallIdentity } from "../../translator/response/openai-responses/functionCallIdentity.ts";
 
 export type { NonStreamingClientTranslateInput, NonStreamingClientTranslateResult };
 
@@ -155,11 +155,7 @@ export function translateNonStreamingClientResponse(
     if (Array.isArray(responseOutput)) {
       for (const item of responseOutput) {
         if (item?.type !== "function_call" && item?.type !== "custom_tool_call") continue;
-        const identity = resolveRequestToolIdentity(requestToolIdentityMap, item.name);
-        if (identity) {
-          item.namespace = identity.namespace;
-          item.name = identity.name;
-        }
+        applyFunctionCallIdentity(item, requestToolIdentityMap, item.name);
       }
     }
   } else if (clientResponseFormat === FORMATS.OPENAI) {

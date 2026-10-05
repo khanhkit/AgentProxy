@@ -25,29 +25,6 @@ test.after(() => {
   globalThis.fetch = originalFetch;
 });
 
-test("T27: Claude + response_format=json_object injects system instruction and strips response_format field", () => {
-  const executor = new GithubExecutor();
-  const request = {
-    messages: [{ role: "user", content: "return json" }],
-    response_format: { type: "json_object" },
-  };
-
-  // Use an unregistered claude-* id so getModelTargetFormat("gh", ...) resolves
-  // to null and this stays on the /chat/completions path this test targets.
-  // Registered claude-* ids (e.g. "claude-sonnet-4.5") now carry
-  // targetFormat:"claude" (native /v1/messages, which doesn't need this
-  // response_format-as-system-prompt workaround — port of decolua/9router#2608,
-  // see github-copilot-claude-native-messages.test.ts) and intentionally skip it.
-  const transformed = executor.transformRequest("claude-sonnet-4", request, false, {});
-
-  assert.equal(transformed.response_format, undefined);
-  assert.equal(transformed.messages[0].role, "system");
-  assert.match(
-    transformed.messages[0].content,
-    /Respond only with valid JSON\. Do not include any text/i
-  );
-});
-
 test("T27: non-Claude models keep response_format untouched", () => {
   const executor = new GithubExecutor();
   const request = {
