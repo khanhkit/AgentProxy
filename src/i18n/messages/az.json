@@ -3795,7 +3795,8 @@
     "triStateInherit": "inherit",
     "connectionAwareExpansionOn": "On",
     "connectionAwareExpansionOff": "Off",
-    "promptCacheAffinityHint": "Prompt-cache locality routing takes precedence over round-robin/weighted rotation across pinned accounts. Turn it off under Settings, Combo defaults, if you need strict rotation."
+    "promptCacheAffinityHint": "Prompt-cache locality routing takes precedence over round-robin/weighted rotation across pinned accounts. Turn it off under Settings, Combo defaults, if you need strict rotation.",
+    "stickyLimitInherit": "irsən al"
   },
   "costs": {
     "title": "Xərclər",
@@ -4972,7 +4973,7 @@
     "compressionLogTitle": "Sıxılma jurnalı",
     "compressionLogEmpty": "Hələ sıxılmış sorğu yoxdur. Sorğular sıxılma aktiv olduqda emal edildikcə sıxılma statistikası burada görünəcək.",
     "tokens": "tokenlər",
-    "exportTruncated": "__MISSING__:Export truncated: only {exported} of {total} log entries were included. Pick a shorter time range to export the rest."
+    "exportTruncated": "İxrac qısaldıldı: {total} jurnal qeydindən yalnız {exported} daxil edildi. Qalanlarını ixrac etmək üçün daha qısa vaxt aralığı seçin."
   },
   "onboarding": {
     "welcome": "Xoş gəlmisiniz",
@@ -6328,7 +6329,8 @@
       "kiro": "Pulsuz səviyyə: ayda 50 kredit (~25K–100K token). ⚠️ Kiro istifadə şərtləri üçüncü tərəf proksi və ya harness istifadəsini qadağan edir.",
       "codex": "OpenAI Codex-i mövcud OAuth axını ilə qoşun.",
       "qwen": "Qwen Code-u mövcud OAuth axını ilə qoşun.",
-      "github-models": "github.com/settings/tokens ünvanında 'models: read' əhatə dairəsi ilə GitHub PAT yaradın"
+      "github-models": "github.com/settings/tokens ünvanında 'models: read' əhatə dairəsi ilə GitHub PAT yaradın",
+      "agnes-cn": "Agnes AI-yə (Çin) api.agnes-ai.cn üçün verilmiş API açarı ilə qoşulun. apihub.agnes-ai.com saytından alınan açarlar işləməyəcək."
     },
     "passthroughModelsDescription": "{provider} provayderin yerli model identifikatorlarını qəbul edir. /modellərdən idxal edin və ya marşrutlaşdırma üçün fərdi identifikatorlar əlavə edin.",
     "bedrockModelsDescription": "Amazon Bedrock modelləri AWS bölgəsi tərəfindən əhatə olunur. /modellərdən idxal edin və ya seçilmiş regionda aktivləşdirilmiş Bedrock model ID-lərini əlavə edin.",
@@ -6489,7 +6491,9 @@
     "failedClearConnectionCooldown": "Gözləmə müddətini sıfırlamaq alınmadı",
     "importFromFileDownloadTemplate": "CSV şablonunu endir",
     "importFromFileMoreErrors": "+{count} əlavə",
-    "importFromFileSchemaHint": "CSV sütunları mövqeyə görə sıralanır: provider, name, apiKey, baseUrl (istəyə bağlı), priority (istəyə bağlı). provider sütununda mövcud idarə olunan provayder identifikatoru və ya artıq qeydiyyatdan keçmiş OpenAI/Anthropic-uyğun qovşaq identifikatoru olmalıdır — bu idxal yeni son nöqtə qovşaqları yaratmır."
+    "importFromFileSchemaHint": "CSV sütunları mövqeyə görə sıralanır: provider, name, apiKey, baseUrl (istəyə bağlı), priority (istəyə bağlı). provider sütununda mövcud idarə olunan provayder identifikatoru və ya artıq qeydiyyatdan keçmiş OpenAI/Anthropic-uyğun qovşaq identifikatoru olmalıdır — bu idxal yeni son nöqtə qovşaqları yaratmır.",
+    "vertexCredentialHint": "API açarları seçilmiş layihə kataloqundan istifadə edir. Service Account JSON Model Garden-də modellərin canlı aşkarlanmasını təmin edir.",
+    "vertexCredentialLabel": "API açarı və ya Service Account JSON"
   },
   "settings": {
     "title": "Parametrlər",
@@ -8597,6 +8601,10 @@
       "compressToolResults": {
         "label": "Uzun alət nəticələrini proaktiv şəkildə qısaldın",
         "description": "__MISSING__:Truncates long tool results during Lite compression. The Maximum tool-result length field (or AGENTPROXY_LITE_MAX_TOOL_LENGTH when that field is unset) sets the cap. Emergency overflow protection may still trim content when the context exceeds the model budget."
+      },
+      "maxToolLength": {
+        "description": "Character cap for proactive tool-result truncation. Default 2000. Override with AGENTPROXY_LITE_MAX_TOOL_LENGTH when this field is unset.",
+        "label": "Maximum tool-result length"
       }
     },
     "engineFields": {
@@ -9712,7 +9720,14 @@
     "kiloPassPaid": "Ödənilmiş",
     "kiloPassRemaining": "Qalan",
     "kiloPassRenews": "{count} gündən sonra yenilənir",
-    "kiloPassUsageLabel": "Bu ayın istifadəsi"
+    "kiloPassUsageLabel": "Bu ayın istifadəsi",
+    "glmConfirmRedeemFiveHourResetCredit": "İstifadə edildikdə 5 saatlıq istifadə intervalı dərhal sıfırlanır və bu kart birdəfəlik sərf olunur.",
+    "glmConfirmRedeemResetCredit": "İstifadə edildikdə seçilmiş istifadə intervalı dərhal sıfırlanır və bu kart birdəfəlik sərf olunur.",
+    "glmConfirmRedeemWeekResetCredit": "İstifadə edildikdə həftəlik istifadə intervalı dərhal sıfırlanır və bu kart birdəfəlik sərf olunur.",
+    "glmResetCreditFiveHourTitle": "5 saatlıq intervalı sıfırla",
+    "glmResetCreditsModalExplainer": "Sıfırlama kartları son istifadə tarixinə görə sıralanır. Sıfırlamaq istədiyiniz 5 saatlıq və ya həftəlik intervalı seçin.",
+    "glmResetCreditsModalTitle": "GLM Coding Plan sıfırlama kartları",
+    "glmResetCreditWeekTitle": "Həftəlik intervalı sıfırla"
   },
   "modals": {
     "waitingAuth": "Avtorizasiya gözlənilir",
@@ -12703,7 +12718,12 @@
     "createDahlTokenFailed": "Dahl token yaratmaq mümkün olmadı",
     "providerProxy": "Proksi",
     "providerProxyConfigureHint": "Proksi konfiqurasiya et",
-    "providerProxyTitleConfigured": "Proxy konfiqurasiya edilib: {host}"
+    "providerProxyTitleConfigured": "Proxy konfiqurasiya edilib: {host}",
+    "directEgress": "Birbaşa (proksisiz)",
+    "inheritConnectionOption": "Şəxsi proksi yoxdur (bağlantını miras alır)",
+    "inheritedPool": "Bağlantı hovuzunu miras alır ({count})",
+    "inheritedProxy": "Bağlantını miras alır: {host}",
+    "poolEmptyBlocked": "Hovuz boşdur — sorğular uğursuz olur (birbaşa deyil)"
   },
   "gamification": {
     "leaderboardScopes": {
@@ -13063,6 +13083,13 @@
       "SERVER_OWNED_TOOL_LOOP_ENABLED": {
         "label": "Serverə məxsus alət dövrəsi",
         "description": "Model müştərinin istifadə edə biləcəyi cavab qaytaranadək serverə məxsus axınsız alət çağırışlarını davam etdirin."
+      },
+      "PROTECTED_PRIORITY_INFRA_502_ENABLED": {
+        "description": "Yalnız kvota üzrə ehtiyat variant kimi istifadə olunan prioritet hədəf combo-nu kvota ilə əlaqəli olmadığı sübuta yetirilən səbəbdən — provayderin açıq dövrəqırıcısı və ya proqnozlaşdırılan gecikməyə görə ötürülmə — dayandırdıqda 503 əvəzinə 502 cavabı verin.",
+        "label": "Qorunan prioritetli infrastruktur dayanmalarının 502 kimi qaytarılması"
+      },
+      "STREAM_RECOVERY_TOOLCALL_ORDER_FIX": {
+        "description": "Axının ortasında davam etməni alət çağırışları üçün təhlükəsiz edin: alət çağırışı göndərildikdən sonra (hələ davam edirsə və ya artıq tamamlanıbsa) kəsilmiş axını heç vaxt bərpa etməyin və bütün təkrar cəhd limitindən istifadə etmək əvəzinə bir boş davam cəhdindən sonra dayandırın."
       }
     }
   },
@@ -14191,5 +14218,6 @@
     "partnerLinkNote": "Tərəfdaş keçidi",
     "dismissAriaLabel": "Bağla"
   },
-  "featureFlagAgentProxyDisableThinkingLevelVariantsDescription": "/v1/models kataloqunda düşünmə səviyyəsi variantlarının (məsələn, -low, -medium, -high) yaradılmasını deaktiv edin."
+  "featureFlagAgentProxyDisableThinkingLevelVariantsDescription": "/v1/models kataloqunda düşünmə səviyyəsi variantlarının (məsələn, -low, -medium, -high) yaradılmasını deaktiv edin.",
+  "featureFlagProxyPoolSharedEgressOrderDescription": "Kvotası egress ünvanına görə bölünən provayderlər üçün, bu yaxınlarda rədd edilmiş üzvün müşahidə olunan egress ünvanını paylaşan pool üzvünü sağlam üzvlərdən dərhal aşağı sıralayır. Yalnız sıralama, heç vaxt istisna edilmir. Oxuduğu rədd siqnalını yaradan PROXY_SKIP_RECENTLY_FAILED tələb olunur. Defolt olaraq söndürülüb: seçim sırası tam olaraq adi rotasiyadır."
 }

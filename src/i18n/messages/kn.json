@@ -3193,7 +3193,13 @@
     "cliproxyapiUnknown": "ಅಜ್ಞಾತ",
     "cliproxyapiUpdate": "ನವೀಕರಿಸಿ",
     "cliproxyapiUpdateAvailable": "ನವೀಕರಣ ಲಭ್ಯವಿದೆ: v{current} → v{latest}",
-    "cliproxyapiVersion": "ಆವೃತ್ತಿ"
+    "cliproxyapiVersion": "ಆವೃತ್ತಿ",
+    "hermesRoleMoaAggregator": "MoA ಅಗ್ರಿಗೇಟರ್",
+    "hermesRoleMoaAggregatorDesc": "Mixture-of-Agents ಸಿಂಥೆಸಿಸ್ ಮಾಡೆಲ್",
+    "hermesRoleMoaReference": "MoA ರೆಫರೆನ್ಸ್",
+    "hermesRoleMoaReferenceDesc": "Mixture-of-Agents ರೆಫರೆನ್ಸ್ ಮಾಡೆಲ್",
+    "hermesRoleReview": "ಪರಿಶೀಲನೆ",
+    "hermesRoleReviewDesc": "ಸಂಪೂರ್ಣ ಸಬ್ಏಜೆಂಟ್ ಕೋಡ್ ಪರಿಶೀಲನೆ"
   },
   "combos": {
     "title": "ಸಂಯೋಜನೆಗಳು",
@@ -3424,7 +3430,9 @@
       "failoverBeforeRetry": "ಸಕ್ರಿಯಗೊಳಿಸಿದಾಗ, ಯಾವುದೇ ಅಪ್ಸ್ಟ್ರೀಮ್ ದೋಷವು ಎಲ್ಲಾ ಮರುಪ್ರಯತ್ನಗಳು ಮತ್ತು ಫಾಲ್ಬ್ಯಾಕ್ URLಗಳನ್ನು ಬಿಟ್ಟು, ಮುಂದಿನ ಕಾಂಬೊ ಗುರಿಗೆ ತಕ್ಷಣದ ಫೇಲ್ಓವರ್ ಅನ್ನು ಪ್ರಚೋದಿಸುತ್ತದೆ.",
       "maxSetRetries": "ಎಲ್ಲಾ ಗುರಿಗಳೂ ವಿಫಲವಾದಾಗ ಸಂಪೂರ್ಣ ಗುರಿ ಸಮೂಹವನ್ನು ಮರುಪ್ರಯತ್ನಿಸುವ ಸಂಖ್ಯೆ. 0 = ಸಮೂಹ-ಮಟ್ಟದ ಮರುಪ್ರಯತ್ನವಿಲ್ಲ.",
       "setRetryDelayMs": "ಸೆಟ್-ಮಟ್ಟದ ಮರುಪ್ರಯತ್ನಗಳ ನಡುವಿನ ವಿಳಂಬವು ತಾತ್ಕಾಲಿಕ ಸಮಸ್ಯೆಗಳು ಪರಿಹಾರವಾಗಲು ಸಮಯ ನೀಡುತ್ತದೆ.",
-      "disableSessionStickiness": "ಮೊದಲ ಸಂದೇಶದ ಹ್ಯಾಶ್ ಆಧರಿಸಿ ಇಡೀ ಸಂಭಾಷಣೆಯನ್ನು ಒಂದೇ ಸಂಪರ್ಕಕ್ಕೆ ಸ್ಥಿರಗೊಳಿಸುವ ಬದಲು, ಪ್ರತಿ ವಿನಂತಿಯಲ್ಲೂ ಬೇರೆ ಸಂಪರ್ಕಕ್ಕೆ ಬದಲಾಯಿಸಿ. ಇದು ಜಾಗತಿಕ ಡೀಫಾಲ್ಟ್ ಅನ್ನು ಅತಿಕ್ರಮಿಸುತ್ತದೆ. ಬಹು-ತಿರುವಿನ ಚಾಟ್ಗಳಿಗೆ ಪ್ರಾಂಪ್ಟ್-ಕ್ಯಾಶ್ ಹಿಟ್ಗಳನ್ನು ಉಳಿಸಿಕೊಳ್ಳಲು Inherit ಆಯ್ಕೆಯಲ್ಲೇ ಬಿಡಿ."
+      "disableSessionStickiness": "ಮೊದಲ ಸಂದೇಶದ ಹ್ಯಾಶ್ ಆಧರಿಸಿ ಇಡೀ ಸಂಭಾಷಣೆಯನ್ನು ಒಂದೇ ಸಂಪರ್ಕಕ್ಕೆ ಸ್ಥಿರಗೊಳಿಸುವ ಬದಲು, ಪ್ರತಿ ವಿನಂತಿಯಲ್ಲೂ ಬೇರೆ ಸಂಪರ್ಕಕ್ಕೆ ಬದಲಾಯಿಸಿ. ಇದು ಜಾಗತಿಕ ಡೀಫಾಲ್ಟ್ ಅನ್ನು ಅತಿಕ್ರಮಿಸುತ್ತದೆ. ಬಹು-ತಿರುವಿನ ಚಾಟ್ಗಳಿಗೆ ಪ್ರಾಂಪ್ಟ್-ಕ್ಯಾಶ್ ಹಿಟ್ಗಳನ್ನು ಉಳಿಸಿಕೊಳ್ಳಲು Inherit ಆಯ್ಕೆಯಲ್ಲೇ ಬಿಡಿ.",
+      "connectionAwareExpansion": "When on, this combo expands each provider-level step into per-account targets before rotating. Inherit uses the global default (off). Off keeps provider-level rotation.",
+      "stickyLimit": "Round-robin sticky batch size: consecutive successful requests sent to one target before rotating to the next. Empty inherits the global Sticky Limit setting; 1 disables batching (pure one-request rotation)."
     },
     "templatesTitle": "ತ್ವರಿತ ಟೆಂಪ್ಲೇಟ್ಗಳು",
     "templatesDescription": "ಆರಂಭಿಕ ಪ್ರೊಫೈಲ್ ಅನ್ನು ಅನ್ವಯಿಸಿ, ನಂತರ ಮಾಡೆಲ್ಗಳು ಮತ್ತು ಕಾನ್ಫಿಗ್ ಅನ್ನು ಹೊಂದಿಸಿ.",
@@ -3778,7 +3786,17 @@
     "duplicateAutoComboSnapshotMsg": "ಈ ಟೆಂಪ್ಲೇಟ್ಗೆ ಹೊಂದಿಕೆಯಾಗುವ ಪ್ರಸ್ತುತ ಸಂಪರ್ಕಿತ ಪೂರೈಕೆದಾರರು/ಮಾಡೆಲ್ಗಳ ಸ್ನ್ಯಾಪ್ಶಾಟ್ ತೆಗೆದು, ಅದನ್ನು ಸಂಪಾದಿಸಬಹುದಾದ ಕಾಂಬೊ ಆಗಿ ರಚಿಸಲಾಗುತ್ತದೆ.",
     "duplicateAutoComboFailedPrefix": "ಸ್ವಯಂ-ಕಾಂಬೊವನ್ನು ನಕಲಿಸಲು ವಿಫಲವಾಗಿದೆ:",
     "duplicateAutoComboUnknownError": "ಅಜ್ಞಾತ ದೋಷ",
-    "duplicateAutoComboTitle": "{name} ನಿಂದ ಸ್ಥಿರ ಕಾಂಬೊವನ್ನು ರಚಿಸಿ"
+    "duplicateAutoComboTitle": "{name} ನಿಂದ ಸ್ಥಿರ ಕಾಂಬೊವನ್ನು ರಚಿಸಿ",
+    "stickyLimitEffective": "Effective {value} ({source})",
+    "stickyLimitSourceCombo": "combo",
+    "stickyLimitSourceComboDefaults": "combo defaults",
+    "stickyLimitSourceGlobal": "global default",
+    "connectionAwareExpansion": "Connection-aware expansion",
+    "triStateInherit": "inherit",
+    "connectionAwareExpansionOn": "On",
+    "connectionAwareExpansionOff": "Off",
+    "promptCacheAffinityHint": "Prompt-cache locality routing takes precedence over round-robin/weighted rotation across pinned accounts. Turn it off under Settings, Combo defaults, if you need strict rotation.",
+    "stickyLimitInherit": "ವಾರಸಾಗಿ ಪಡೆಯಿರಿ"
   },
   "costs": {
     "title": "ವೆಚ್ಚಗಳು",
@@ -4955,7 +4973,7 @@
     "compressionLogTitle": "ಕಂಪ್ರೆಷನ್ ಲಾಗ್",
     "compressionLogEmpty": "ಇನ್ನೂ ಯಾವುದೇ ಕಂಪ್ರೆಸ್ ಮಾಡಿದ ವಿನಂತಿಗಳಿಲ್ಲ. ಕಂಪ್ರೆಷನ್ ಸಕ್ರಿಯವಾಗಿರುವಾಗ ವಿನಂತಿಗಳನ್ನು ಪ್ರಕ್ರಿಯೆಗೊಳಿಸಿದರೆ, ಕಂಪ್ರೆಷನ್ ಅಂಕಿಅಂಶಗಳು ಇಲ್ಲಿ ಕಾಣಿಸಿಕೊಳ್ಳುತ್ತವೆ.",
     "tokens": "ಟೋಕನ್ಗಳು",
-    "exportTruncated": "__MISSING__:Export truncated: only {exported} of {total} log entries were included. Pick a shorter time range to export the rest."
+    "exportTruncated": "ರಫ್ತು ಕಡಿತಗೊಂಡಿದೆ: {total} ಲಾಗ್ ನಮೂದುಗಳಲ್ಲಿ ಕೇವಲ {exported} ಮಾತ್ರ ಸೇರಿಸಲಾಗಿದೆ. ಉಳಿದವುಗಳನ್ನು ರಫ್ತು ಮಾಡಲು ಕಡಿಮೆ ಸಮಯದ ವ್ಯಾಪ್ತಿಯನ್ನು ಆಯ್ಕೆಮಾಡಿ."
   },
   "onboarding": {
     "welcome": "ಸ್ವಾಗತ",
@@ -6314,7 +6332,8 @@
       "kiro": "ಉಚಿತ ಹಂತ: ತಿಂಗಳಿಗೆ 50 ಕ್ರೆಡಿಟ್ಗಳು (~25K–100K ಟೋಕನ್ಗಳು). ⚠️ Kiro ToS ಮೂರನೇ-ಪಕ್ಷದ proxy/harness ಬಳಕೆಯನ್ನು ನಿಷೇಧಿಸುತ್ತದೆ.",
       "codex": "ಈಗಿರುವ OAuth ಹರಿವಿನ ಮೂಲಕ OpenAI Codex ಅನ್ನು ಸಂಪರ್ಕಿಸಿ.",
       "qwen": "ಈಗಿರುವ OAuth ಹರಿವಿನ ಮೂಲಕ Qwen Code ಅನ್ನು ಸಂಪರ್ಕಿಸಿ.",
-      "github-models": "github.com/settings/tokens ನಲ್ಲಿ 'models: read' ಸ್ಕೋಪ್ನೊಂದಿಗೆ GitHub PAT ರಚಿಸಿ"
+      "github-models": "github.com/settings/tokens ನಲ್ಲಿ 'models: read' ಸ್ಕೋಪ್ನೊಂದಿಗೆ GitHub PAT ರಚಿಸಿ",
+      "agnes-cn": "api.agnes-ai.cn ಗಾಗಿ ನೀಡಲಾದ API ಕೀ ಮೂಲಕ Agnes AI (China) ಅನ್ನು ಸಂಪರ್ಕಿಸಿ. apihub.agnes-ai.com ನ ಕೀಗಳು ಕಾರ್ಯನಿರ್ವಹಿಸುವುದಿಲ್ಲ."
     },
     "passthroughModelsDescription": "{provider} ಪೂರೈಕೆದಾರ-ಸ್ಥಳೀಯ ಮಾಡೆಲ್ IDಗಳನ್ನು ಸ್ವೀಕರಿಸುತ್ತದೆ. /models ನಿಂದ ಆಮದು ಮಾಡಿ ಅಥವಾ ರೂಟಿಂಗ್ಗಾಗಿ ಕಸ್ಟಮ್ IDಗಳನ್ನು ಸೇರಿಸಿ.",
     "bedrockModelsDescription": "Amazon Bedrock ಮಾಡೆಲ್ಗಳು AWS ಪ್ರದೇಶದ ವ್ಯಾಪ್ತಿಗೆ ಒಳಪಟ್ಟಿರುತ್ತವೆ. /models ನಿಂದ ಆಮದು ಮಾಡಿ ಅಥವಾ ಆಯ್ಕೆಮಾಡಿದ ಪ್ರದೇಶದಲ್ಲಿ ಸಕ್ರಿಯಗೊಳಿಸಲಾದ Bedrock ಮಾಡೆಲ್ IDಗಳನ್ನು ಸೇರಿಸಿ.",
@@ -6472,7 +6491,9 @@
     "savedModelEndpointSettings": "ಮಾದರಿ ಎಂಡ್ಪಾಯಿಂಟ್ ಸೆಟ್ಟಿಂಗ್ಗಳನ್ನು ಉಳಿಸಲಾಗಿದೆ",
     "searchByModelAria": "ಮಾದರಿಯ ಮೂಲಕ ಹುಡುಕಿ",
     "selectSupportedEndpoint": "ಬೆಂಬಲಿತ ಎಂಡ್ಪಾಯಿಂಟ್ಗಳಲ್ಲಿ ಕನಿಷ್ಠ ಒಂದನ್ನು ಆಯ್ಕೆಮಾಡಿ",
-    "antigravityClientProfileHarness": "ಹಾರ್ನೆಸ್ / CLI"
+    "antigravityClientProfileHarness": "ಹಾರ್ನೆಸ್ / CLI",
+    "vertexCredentialHint": "API ಕೀಗಳು ಆಯ್ದ ಪ್ರಾಜೆಕ್ಟ್ ಕ್ಯಾಟಲಾಗ್ ಅನ್ನು ಬಳಸುತ್ತವೆ. Service Account JSON ಲೈವ್ Model Garden ಅನ್ವೇಷಣೆಯನ್ನು ಸಕ್ರಿಯಗೊಳಿಸುತ್ತದೆ.",
+    "vertexCredentialLabel": "API ಕೀ ಅಥವಾ Service Account JSON"
   },
   "settings": {
     "title": "ಸೆಟ್ಟಿಂಗ್ಗಳು",
@@ -8579,7 +8600,11 @@
       },
       "compressToolResults": {
         "label": "ಉದ್ದವಾದ ಪರಿಕರ ಫಲಿತಾಂಶಗಳನ್ನು ಪೂರ್ವಭಾವಿಯಾಗಿ ಮೊಟಕುಗೊಳಿಸಿ",
-        "description": "Truncates long tool results during Lite compression. The Maximum tool-result length field (or OMNIROUTE_LITE_MAX_TOOL_LENGTH when that field is unset) sets the cap. Emergency overflow protection may still trim content when the context exceeds the model budget."
+        "description": "Truncates long tool results during Lite compression. The Maximum tool-result length field (or AGENTPROXY_LITE_MAX_TOOL_LENGTH when that field is unset) sets the cap. Emergency overflow protection may still trim content when the context exceeds the model budget."
+      },
+      "maxToolLength": {
+        "description": "Character cap for proactive tool-result truncation. Default 2000. Override with AGENTPROXY_LITE_MAX_TOOL_LENGTH when this field is unset.",
+        "label": "Maximum tool-result length"
       }
     },
     "engineFields": {
@@ -9695,7 +9720,14 @@
     "updatedShort": "ನವೀಕರಿಸಲಾಗಿದೆ",
     "lastRefreshed": "ಕೊನೆಯದಾಗಿ ರಿಫ್ರೆಶ್ ಮಾಡಲಾಗಿದೆ",
     "providerQuota": "ಪೂರೈಕೆದಾರರ ಕೋಟಾ",
-    "providerQuotaHomeHint": "ಸಂಪರ್ಕಿತ ಖಾತೆಗಳಾದ್ಯಂತ ಲೈವ್ ಸ್ಥಿತಿ"
+    "providerQuotaHomeHint": "ಸಂಪರ್ಕಿತ ಖಾತೆಗಳಾದ್ಯಂತ ಲೈವ್ ಸ್ಥಿತಿ",
+    "glmConfirmRedeemFiveHourResetCredit": "ರಿಡೀಮ್ ಮಾಡಿದ ತಕ್ಷಣ 5-ಗಂಟೆಗಳ ಬಳಕೆಯ ವಿಂಡೋ ಮರುಹೊಂದಿಸಲ್ಪಡುತ್ತದೆ ಮತ್ತು ಈ ಕಾರ್ಡ್ ಶಾಶ್ವತವಾಗಿ ಬಳಕೆಯಾಗುತ್ತದೆ.",
+    "glmConfirmRedeemResetCredit": "ರಿಡೀಮ್ ಮಾಡಿದ ತಕ್ಷಣ ಆಯ್ಕೆಮಾಡಿದ ಬಳಕೆಯ ವಿಂಡೋ ಮರುಹೊಂದಿಸಲ್ಪಡುತ್ತದೆ ಮತ್ತು ಈ ಕಾರ್ಡ್ ಶಾಶ್ವತವಾಗಿ ಬಳಕೆಯಾಗುತ್ತದೆ.",
+    "glmConfirmRedeemWeekResetCredit": "ರಿಡೀಮ್ ಮಾಡಿದ ತಕ್ಷಣ ವಾರದ ಬಳಕೆಯ ವಿಂಡೋ ಮರುಹೊಂದಿಸಲ್ಪಡುತ್ತದೆ ಮತ್ತು ಈ ಕಾರ್ಡ್ ಶಾಶ್ವತವಾಗಿ ಬಳಕೆಯಾಗುತ್ತದೆ.",
+    "glmResetCreditFiveHourTitle": "5-ಗಂಟೆಗಳ ವಿಂಡೋ ಮರುಹೊಂದಿಸಿ",
+    "glmResetCreditsModalExplainer": "ಮರುಹೊಂದಿಸುವ ಕಾರ್ಡ್ಗಳನ್ನು ಅವಧಿ ಮುಗಿಯುವಿಕೆಯ ಆಧಾರದ ಮೇಲೆ ಕ್ರಮಗೊಳಿಸಲಾಗಿದೆ. ನೀವು ಮರುಹೊಂದಿಸಲು ಬಯಸುವ 5-ಗಂಟೆಗಳ ಅಥವಾ ವಾರದ ವಿಂಡೋವನ್ನು ಆಯ್ಕೆಮಾಡಿ.",
+    "glmResetCreditsModalTitle": "GLM Coding Plan ಮರುಹೊಂದಿಸುವ ಕಾರ್ಡ್ಗಳು",
+    "glmResetCreditWeekTitle": "ವಾರದ ವಿಂಡೋ ಮರುಹೊಂದಿಸಿ"
   },
   "modals": {
     "waitingAuth": "ದೃಢೀಕರಣಕ್ಕಾಗಿ ಕಾಯಲಾಗುತ್ತಿದೆ",
@@ -10961,7 +10993,9 @@
     "poolAddMember": "ಸೇರಿಸಿ",
     "poolAddFailed": "ಪೂಲ್ಗೆ ಪ್ರಾಕ್ಸಿಯನ್ನು ಸೇರಿಸಲು ವಿಫಲವಾಗಿದೆ",
     "poolSelectProxy": "ಪ್ರಾಕ್ಸಿಯನ್ನು ಆಯ್ಕೆಮಾಡಿ…",
-    "poolSaveFailed": "ಪೂಲ್ ನಿಯೋಜನೆಯನ್ನು ಉಳಿಸಲು ವಿಫಲವಾಗಿದೆ"
+    "poolSaveFailed": "ಪೂಲ್ ನಿಯೋಜನೆಯನ್ನು ಉಳಿಸಲು ವಿಫಲವಾಗಿದೆ",
+    "poolEgressFailuresByExit": "{exit} ಮೂಲಕ ವೈಫಲ್ಯಗಳು: {count}",
+    "poolEgressFailuresUnattributed": "ನಿಗದಿತ ನಿರ್ಗಮನವಿಲ್ಲದ ವೈಫಲ್ಯಗಳು: {count}"
   },
   "playground": {
     "title": "ಮಾದರಿ ಪ್ರಯೋಗಾಂಗಣ",
@@ -11302,7 +11336,11 @@
       "duration": "ಅವಧಿ",
       "time": "ಸಮಯ",
       "conversation": "ಸಂಭಾಷಣೆ",
-      "ttft": "TTFT"
+      "ttft": "TTFT",
+      "contentProvenance": "ಉತ್ತರ",
+      "contentEmpty": "ಖಾಲಿ ಉತ್ತರ",
+      "usageAbsent": "ಟೋಕನ್ ಸಂಖ್ಯೆ ವರದಿಯಾಗಿಲ್ಲ",
+      "usageEstimated": "ಟೋಕನ್ ಸಂಖ್ಯೆ ಅಂದಾಜು"
     },
     "loadingLogs": "ಲಾಗ್ಗಳನ್ನು ಲೋಡ್ ಮಾಡಲಾಗುತ್ತಿದೆ...",
     "noLogs": "ಇನ್ನೂ ಯಾವುದೇ ಲಾಗ್ಗಳಿಲ್ಲ. ಅವುಗಳನ್ನು ಇಲ್ಲಿ ನೋಡಲು ಕೆಲವು API ಕರೆಗಳನ್ನು ಮಾಡಿ.",
@@ -11962,7 +12000,11 @@
       "goNow": "ಈಗಲೇ ಹೋಗಿ",
       "message": "MITM Proxy ಈಗ AgentBridge ಅಡಿಯಲ್ಲಿ ಲಭ್ಯವಿದೆ.",
       "title": "ಈ ಪುಟವನ್ನು ಸ್ಥಳಾಂತರಿಸಲಾಗಿದೆ"
-    }
+    },
+    "resetAgent": "ಡೀಫಾಲ್ಟ್ ಮರುಸ್ಥಾಪಿಸಿ",
+    "resetAgentConfirm": "ಡೀಫಾಲ್ಟ್ ಮರುಸ್ಥಾಪಿಸಬೇಕೆ?",
+    "resetDone": "{agent} ಗಾಗಿ ಡೀಫಾಲ್ಟ್ DNS ಮರುಸ್ಥಾಪಿಸಲಾಗಿದೆ. ಬದಲಾವಣೆ ಜಾರಿಗೆ ಬರಲು ಆ್ಯಪ್ ಅನ್ನು ಸಂಪೂರ್ಣವಾಗಿ ಮುಚ್ಚಿ (ಕೇವಲ ಮಿನಿಮೈಸ್ ಮಾಡಬೇಡಿ) ಮತ್ತು ಮತ್ತೆ ತೆರೆಯಿರಿ.",
+    "resetting": "ಮರುಸ್ಥಾಪಿಸಲಾಗುತ್ತಿದೆ…"
   },
   "providerStats": {
     "unknownError": "ಅಜ್ಞಾತ ದೋಷ",
@@ -12676,7 +12718,12 @@
     "createDahlTokenFailed": "Dahl ಟೋಕನ್ ರಚಿಸಲು ವಿಫಲವಾಗಿದೆ",
     "providerProxy": "ಪ್ರಾಕ್ಸಿ",
     "providerProxyConfigureHint": "ಪ್ರಾಕ್ಸಿಯನ್ನು ಕಾನ್ಫಿಗರ್ ಮಾಡಿ",
-    "providerProxyTitleConfigured": "ಪ್ರಾಕ್ಸಿ ಕಾನ್ಫಿಗರ್ ಮಾಡಲಾಗಿದೆ: {host}"
+    "providerProxyTitleConfigured": "ಪ್ರಾಕ್ಸಿ ಕಾನ್ಫಿಗರ್ ಮಾಡಲಾಗಿದೆ: {host}",
+    "directEgress": "ನೇರ (ಪ್ರಾಕ್ಸಿ ಇಲ್ಲದೆ)",
+    "inheritConnectionOption": "ಸ್ವಂತ ಪ್ರಾಕ್ಸಿ ಇಲ್ಲ (ಸಂಪರ್ಕವನ್ನು ಆನುವಂಶಿಕವಾಗಿ)",
+    "inheritedPool": "ಸಂಪರ್ಕ ಪೂಲ್ ಅನ್ನು ಆನುವಂಶಿಕವಾಗಿ ({count})",
+    "inheritedProxy": "ಸಂಪರ್ಕವನ್ನು ಆನುವಂಶಿಕವಾಗಿ: {host}",
+    "poolEmptyBlocked": "ಪೂಲ್ ಖಾಲಿ — ವಿನಂತಿಗಳು ವಿಫಲವಾಗುತ್ತವೆ (ನೇರವಲ್ಲ)"
   },
   "gamification": {
     "leaderboardScopes": {
@@ -13036,6 +13083,13 @@
       "SERVER_OWNED_TOOL_LOOP_ENABLED": {
         "label": "ಸರ್ವರ್-ಸ್ವಾಮ್ಯದ ಪರಿಕರ ಲೂಪ್",
         "description": "ಮಾದರಿಯು ಕ್ಲೈಂಟ್ಗೆ ಬಳಸಬಹುದಾದ ಪ್ರತಿಕ್ರಿಯೆಯನ್ನು ಹಿಂದಿರುಗಿಸುವವರೆಗೆ ಸ್ಟ್ರೀಮಿಂಗ್ ಅಲ್ಲದ ಸರ್ವರ್-ಸ್ವಾಮ್ಯದ ಪರಿಕರ ಕರೆಗಳನ್ನು ಮುಂದುವರಿಸಿ."
+      },
+      "PROTECTED_PRIORITY_INFRA_502_ENABLED": {
+        "description": "ಕೇವಲ ಕೋಟಾ-ಫಾಲ್ಬ್ಯಾಕ್ ಆದ್ಯತಾ ಗುರಿಯು ಕಾಂಬೊವನ್ನು ಕೋಟಾದ ಕಾರಣವಲ್ಲ ಎಂದು ಖಚಿತವಾಗಿ ಸಾಬೀತುಪಡಿಸಬಹುದಾದ ಕಾರಣಕ್ಕಾಗಿ ನಿಲ್ಲಿಸಿದಾಗ 503 ಬದಲು 502 ಉತ್ತರಿಸಿ: ತೆರೆದ ಪೂರೈಕೆದಾರ ಸರ್ಕ್ಯೂಟ್ ಬ್ರೇಕರ್ ಅಥವಾ ಮುನ್ಸೂಚಕ ಲೇಟೆನ್ಸಿ ಸ್ಕಿಪ್.",
+        "label": "ರಕ್ಷಿತ-ಆದ್ಯತೆಯ ಮೂಲಸೌಕರ್ಯ ನಿಲುಗಡೆಗಳು 502 ಆಗಿ"
+      },
+      "STREAM_RECOVERY_TOOLCALL_ORDER_FIX": {
+        "description": "ಮಧ್ಯ-ಸ್ಟ್ರೀಮ್ ಮುಂದುವರಿಕೆಯನ್ನು ಟೂಲ್-ಕಾಲ್ಗೆ ಸುರಕ್ಷಿತವಾಗಿಸಿ: ಟೂಲ್ ಕಾಲ್ ಕಳುಹಿಸಿದ ನಂತರ ಕಡಿತಗೊಂಡ ಸ್ಟ್ರೀಮ್ ಅನ್ನು ಎಂದಿಗೂ ಪುನರಾರಂಭಿಸಬೇಡಿ (ಅದು ಇನ್ನೂ ಪ್ರಗತಿಯಲ್ಲಿದ್ದರೂ ಅಥವಾ ಈಗಾಗಲೇ ಪೂರ್ಣಗೊಂಡಿದ್ದರೂ), ಮತ್ತು ಸಂಪೂರ್ಣ ಮರುಪ್ರಯತ್ನ ಮಿತಿಯನ್ನು ಬಳಸುವ ಬದಲು ಒಂದು ಖಾಲಿ ಮುಂದುವರಿಕೆಯ ನಂತರ ನಿಲ್ಲಿಸಿ."
       }
     }
   },
@@ -13956,7 +14010,12 @@
     "hour": "ಗಂಟೆ",
     "day": "ದಿನ",
     "unknownModel": "ತಿಳಿದಿಲ್ಲ",
-    "pending": "ಬಾಕಿಯಿದೆ"
+    "pending": "ಬಾಕಿಯಿದೆ",
+    "allApiKeys": "All API keys",
+    "mcp": "MCP",
+    "mcpTool": "MCP tool",
+    "scope": "Scope",
+    "apiKey": "API key"
   },
   "metadata": {
     "compressionTitle": "ಸಂಕುಚನ",
@@ -14159,5 +14218,6 @@
     "partnerLinkNote": "ಪಾಲುದಾರರ ಲಿಂಕ್",
     "dismissAriaLabel": "ವಜಾಗೊಳಿಸಿ"
   },
-  "featureFlagAgentProxyDisableThinkingLevelVariantsDescription": "/v1/models ಕ್ಯಾಟಲಾಗ್ನಲ್ಲಿ ಚಿಂತನಾ ಮಟ್ಟದ ರೂಪಾಂತರಗಳ (ಉದಾ. -low, -medium, -high) ರಚನೆಯನ್ನು ನಿಷ್ಕ್ರಿಯಗೊಳಿಸಿ."
+  "featureFlagAgentProxyDisableThinkingLevelVariantsDescription": "/v1/models ಕ್ಯಾಟಲಾಗ್ನಲ್ಲಿ ಚಿಂತನಾ ಮಟ್ಟದ ರೂಪಾಂತರಗಳ (ಉದಾ. -low, -medium, -high) ರಚನೆಯನ್ನು ನಿಷ್ಕ್ರಿಯಗೊಳಿಸಿ.",
+  "featureFlagProxyPoolSharedEgressOrderDescription": "egress ವಿಳಾಸದ ಪ್ರಕಾರ ಕೋಟಾ ಹಂಚಲಾಗುವ ಪೂರೈಕೆದಾರರಿಗೆ, ಇತ್ತೀಚೆಗೆ ನಿರಾಕರಿಸಲ್ಪಟ್ಟ ಸದಸ್ಯನ ಗಮನಿಸಲಾದ egress ವಿಳಾಸವನ್ನು ಹಂಚಿಕೊಳ್ಳುವ pool ಸದಸ್ಯನನ್ನು ಆರೋಗ್ಯಕರ ಸದಸ್ಯರ ತಕ್ಷಣ ಕೆಳಗೆ ಇರಿಸುತ್ತದೆ. ಕ್ರಮ ಮಾತ್ರ, ಎಂದಿಗೂ ಹೊರಗಿಡುವುದಿಲ್ಲ. PROXY_SKIP_RECENTLY_FAILED ಅಗತ್ಯವಿದೆ, ಅದು ಓದುವ ನಿರಾಕರಣೆ ಸಂಕೇತವನ್ನು ಅದೇ ಉತ್ಪಾದಿಸುತ್ತದೆ. ಡೀಫಾಲ್ಟ್ ಆಗಿ ಆಫ್: ಆಯ್ಕೆ ಕ್ರಮವು ನಿಖರವಾಗಿ ಸಾಮಾನ್ಯ ರೊಟೇಶನ್ ಆಗಿದೆ."
 }

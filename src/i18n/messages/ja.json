@@ -3795,7 +3795,8 @@
     "triStateInherit": "inherit",
     "connectionAwareExpansionOn": "On",
     "connectionAwareExpansionOff": "Off",
-    "promptCacheAffinityHint": "Prompt-cache locality routing takes precedence over round-robin/weighted rotation across pinned accounts. Turn it off under Settings, Combo defaults, if you need strict rotation."
+    "promptCacheAffinityHint": "Prompt-cache locality routing takes precedence over round-robin/weighted rotation across pinned accounts. Turn it off under Settings, Combo defaults, if you need strict rotation.",
+    "stickyLimitInherit": "継承"
   },
   "costs": {
     "title": "コスト",
@@ -4972,7 +4973,7 @@
     "compressionLogTitle": "圧縮ログ",
     "compressionLogEmpty": "圧縮されたリクエストはまだありません。圧縮を有効にしてリクエストが処理されると、ここに圧縮統計が表示されます。",
     "tokens": "トークン",
-    "exportTruncated": "__MISSING__:Export truncated: only {exported} of {total} log entries were included. Pick a shorter time range to export the rest."
+    "exportTruncated": "エクスポートが途中で打ち切られました。{total} 件のログエントリのうち {exported} 件のみが含まれています。残りをエクスポートするには、より短い期間を選択してください。"
   },
   "onboarding": {
     "welcome": "ようこそ",
@@ -6328,7 +6329,8 @@
       "kiro": "無料枠: 50クレジット/月（約25K〜100Kトークン）。⚠️ Kiroの利用規約（ToS）は、サードパーティのプロキシやハーネスの使用を禁止しています。",
       "codex": "既存のOAuthフローを使用してOpenAI Codexに接続します。",
       "qwen": "既存のOAuthフローを使用してQwen Codeに接続します。",
-      "github-models": "github.com/settings/tokens で 'models: read' スコープを持つGitHub PATを作成"
+      "github-models": "github.com/settings/tokens で 'models: read' スコープを持つGitHub PATを作成",
+      "agnes-cn": "api.agnes-ai.cn向けに発行されたAPIキーを使用してAgnes AI (China)に接続します。apihub.agnes-ai.comのキーは使用できません。"
     },
     "passthroughModelsDescription": "{provider} は、プロバイダーネイティブのモデル ID を受け入れます。 /models からインポートするか、ルーティング用のカスタム ID を追加します。",
     "bedrockModelsDescription": "Amazon Bedrock モデルは、AWS リージョンによって範囲が定められています。 /models からインポートするか、選択したリージョンで有効になっている Bedrock モデル ID を追加します。",
@@ -6489,7 +6491,9 @@
     "failedClearConnectionCooldown": "クールダウンを解除できませんでした",
     "importFromFileDownloadTemplate": "CSVテンプレートをダウンロード",
     "importFromFileMoreErrors": "ほか{count}件",
-    "importFromFileSchemaHint": "CSVの列は位置で決まります: provider、name、apiKey、baseUrl（任意）、priority（任意）。provider列には、既存の管理対象プロバイダーID、または登録済みのOpenAI/Anthropic互換ノードIDを指定する必要があります。このインポートでは新しいエンドポイントノードは作成されません。"
+    "importFromFileSchemaHint": "CSVの列は位置で決まります: provider、name、apiKey、baseUrl（任意）、priority（任意）。provider列には、既存の管理対象プロバイダーID、または登録済みのOpenAI/Anthropic互換ノードIDを指定する必要があります。このインポートでは新しいエンドポイントノードは作成されません。",
+    "vertexCredentialHint": "APIキーでは厳選されたプロジェクトカタログを使用します。サービスアカウントJSONを使用すると、Model Gardenのモデルをリアルタイムで検出できます。",
+    "vertexCredentialLabel": "APIキーまたはサービスアカウントJSON"
   },
   "settings": {
     "title": "設定",
@@ -8597,6 +8601,10 @@
       "compressToolResults": {
         "label": "長いツールの結果を積極的に切り詰める",
         "description": "__MISSING__:Truncates long tool results during Lite compression. The Maximum tool-result length field (or AGENTPROXY_LITE_MAX_TOOL_LENGTH when that field is unset) sets the cap. Emergency overflow protection may still trim content when the context exceeds the model budget."
+      },
+      "maxToolLength": {
+        "description": "ツール結果の先行切り捨て文字数上限。デフォルト 2000。未設定時は AGENTPROXY_LITE_MAX_TOOL_LENGTH で上書きできます。",
+        "label": "最大ツール結果長"
       }
     },
     "engineFields": {
@@ -9712,7 +9720,14 @@
     "kiloPassPaid": "支払い済み",
     "kiloPassRemaining": "残り",
     "kiloPassRenews": "{count} 日後に更新",
-    "kiloPassUsageLabel": "今月の使用量"
+    "kiloPassUsageLabel": "今月の使用量",
+    "glmConfirmRedeemFiveHourResetCredit": "使用すると、5時間の使用量枠が直ちにリセットされ、このカードは完全に消費されます。",
+    "glmConfirmRedeemResetCredit": "使用すると、選択した使用量枠が直ちにリセットされ、このカードは完全に消費されます。",
+    "glmConfirmRedeemWeekResetCredit": "使用すると、週間の使用量枠が直ちにリセットされ、このカードは完全に消費されます。",
+    "glmResetCreditFiveHourTitle": "5時間枠をリセット",
+    "glmResetCreditsModalExplainer": "リセットカードは有効期限順に並んでいます。リセットする5時間枠または週間枠を選択してください。",
+    "glmResetCreditsModalTitle": "GLM Coding Plan リセットカード",
+    "glmResetCreditWeekTitle": "週間枠をリセット"
   },
   "modals": {
     "waitingAuth": "承認を待っています",
@@ -12703,7 +12718,12 @@
     "createDahlTokenFailed": "Dahlトークンの作成に失敗しました",
     "providerProxy": "プロキシ",
     "providerProxyConfigureHint": "プロキシを設定する",
-    "providerProxyTitleConfigured": "プロキシが設定されました: {host}"
+    "providerProxyTitleConfigured": "プロキシが設定されました: {host}",
+    "directEgress": "直接(プロキシなし)",
+    "inheritConnectionOption": "独自プロキシなし(接続を継承)",
+    "inheritedPool": "接続プールを継承({count})",
+    "inheritedProxy": "接続を継承:{host}",
+    "poolEmptyBlocked": "プールが空—リクエストは失敗します(直接ではありません)"
   },
   "gamification": {
     "leaderboardScopes": {
@@ -13063,6 +13083,13 @@
       "SERVER_OWNED_TOOL_LOOP_ENABLED": {
         "label": "サーバー主導のツールループ",
         "description": "モデルがクライアントで使用可能なレスポンスを返すまで、非ストリーミングのサーバー主導のツール呼び出しを継続します。"
+      },
+      "PROTECTED_PRIORITY_INFRA_502_ENABLED": {
+        "description": "クォータ枯渇時のみフォールバックする優先ターゲットが、クォータ以外であることが明確に証明できる原因（プロバイダーのサーキットブレーカーが開いている、または予測レイテンシによるスキップ）でコンボを停止した場合、503 ではなく 502 を返します。",
+        "label": "保護優先度のインフラ停止を 502 として処理"
+      },
+      "STREAM_RECOVERY_TOOLCALL_ORDER_FIX": {
+        "description": "ストリーム途中の継続をツール呼び出しに対して安全にします。ツール呼び出しが送信された後は（まだ進行中でも、すでに完了していても）、途切れたストリームを再開せず、再試行回数をすべて使い切るのではなく、空の継続が1回発生した時点で停止します。"
       }
     }
   },
@@ -14191,5 +14218,6 @@
     "partnerLinkNote": "パートナーリンク",
     "dismissAriaLabel": "閉じる"
   },
-  "featureFlagAgentProxyDisableThinkingLevelVariantsDescription": "/v1/modelsカタログで思考レベルのバリアント（例：-low、-medium、-high）を生成しないようにします。"
+  "featureFlagAgentProxyDisableThinkingLevelVariantsDescription": "/v1/modelsカタログで思考レベルのバリアント（例：-low、-medium、-high）を生成しないようにします。",
+  "featureFlagProxyPoolSharedEgressOrderDescription": "egress アドレス単位でクォータが割り当てられるプロバイダーでは、最近拒否されたメンバーの観測済み egress アドレスを共有する pool メンバーを、正常なメンバーのすぐ下に並べます。順序のみで、除外は決してしません。読み取る拒否シグナルを生成する PROXY_SKIP_RECENTLY_FAILED が必要です。既定ではオフ: 選択順序は通常のローテーションそのままです。"
 }

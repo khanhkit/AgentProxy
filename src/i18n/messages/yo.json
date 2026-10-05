@@ -3193,7 +3193,13 @@
     "cliproxyapiUnknown": "A kò mọ̀",
     "cliproxyapiUpdate": "Ṣe ìmúdójúìwọ̀n",
     "cliproxyapiUpdateAvailable": "Ìmúdójúìwọ̀n wà: v{current} → v{latest}",
-    "cliproxyapiVersion": "Ẹ̀yà"
+    "cliproxyapiVersion": "Ẹ̀yà",
+    "hermesRoleMoaAggregator": "Agbajọpọ̀ MoA",
+    "hermesRoleMoaAggregatorDesc": "Àwòṣe ìṣàkópọ̀ Mixture-of-Agents",
+    "hermesRoleMoaReference": "Ìtọ́kasí MoA",
+    "hermesRoleMoaReferenceDesc": "Àwòṣe ìtọ́kasí Mixture-of-Agents",
+    "hermesRoleReview": "Àtúnyẹ̀wò",
+    "hermesRoleReviewDesc": "Àtúnyẹ̀wò kóòdù aṣojú abẹ́lé pípé"
   },
   "combos": {
     "title": "Àwọn àkójọpọ̀",
@@ -3424,7 +3430,9 @@
       "failoverBeforeRetry": "Nígbà tí a bá mú un ṣiṣẹ́, àṣìṣe upstream èyíkéyìí máa ń fa ìyípadà lẹ́sẹ̀kẹsẹ̀ sí ibi-àfojúsùn àpapọ̀ tó kàn, nípa fífo gbogbo àwọn àtúngbìyànjú àti fallback URLs kọjá.",
       "maxSetRetries": "Iye ìgbà láti tún gbogbo àkójọpọ̀ ibi-àfojúsùn gbìyànjú nígbà tí gbogbo ibi-àfojúsùn bá kùnà. 0 = kò sí àtúnwá ní ìpele àkójọpọ̀.",
       "setRetryDelayMs": "Àkókò ìdádúró láàárín àwọn ìgbìyànjú àtúnwá ní ìpele àkójọpọ̀, láti fún àwọn ìṣòro ìgbà díẹ̀ láyè láti yanjú.",
-      "disableSessionStickiness": "Yí padà sí àsopọ̀ míì fún gbogbo ìbéèrè dípò fífi gbogbo ìjíròrò kan mọ́ àsopọ̀ kan nípasẹ̀ hash ìfiránṣẹ́ àkọ́kọ́. Èyí borí ìṣètò àgbáyé àiyipada. Fi sí Jogún láti pa prompt-cache hits mọ́ fún àwọn ìjíròrò ọlọ́pọ̀ ìpele."
+      "disableSessionStickiness": "Yí padà sí àsopọ̀ míì fún gbogbo ìbéèrè dípò fífi gbogbo ìjíròrò kan mọ́ àsopọ̀ kan nípasẹ̀ hash ìfiránṣẹ́ àkọ́kọ́. Èyí borí ìṣètò àgbáyé àiyipada. Fi sí Jogún láti pa prompt-cache hits mọ́ fún àwọn ìjíròrò ọlọ́pọ̀ ìpele.",
+      "connectionAwareExpansion": "When on, this combo expands each provider-level step into per-account targets before rotating. Inherit uses the global default (off). Off keeps provider-level rotation.",
+      "stickyLimit": "Round-robin sticky batch size: consecutive successful requests sent to one target before rotating to the next. Empty inherits the global Sticky Limit setting; 1 disables batching (pure one-request rotation)."
     },
     "templatesTitle": "Àwọn àdàkọ kíákíá",
     "templatesDescription": "Lo prófáìlì ìbẹ̀rẹ̀ kan, lẹ́yìn náà ṣàtúnṣe àwọn àwòṣe àti àtòpọ̀.",
@@ -3778,7 +3786,17 @@
     "duplicateAutoComboSnapshotMsg": "Èyí yóò ṣe ẹ̀dà àwọn olùpèsè/àwọn awoṣe tó sopọ̀ lọ́wọ́lọ́wọ́ tí ó bá àdàkọ yìí mu, yóò sì fi wọ́n sínú àkójọpọ̀ tí a lè ṣàtúnṣe.",
     "duplicateAutoComboFailedPrefix": "Kò ṣeé ṣe láti ṣe ẹ̀dà àkójọpọ̀ aládàáṣiṣẹ́:",
     "duplicateAutoComboUnknownError": "Àṣìṣe àìmọ̀",
-    "duplicateAutoComboTitle": "Ṣẹ̀dá àkójọpọ̀ àìyípadà láti inú {name}"
+    "duplicateAutoComboTitle": "Ṣẹ̀dá àkójọpọ̀ àìyípadà láti inú {name}",
+    "stickyLimitEffective": "Effective {value} ({source})",
+    "stickyLimitSourceCombo": "combo",
+    "stickyLimitSourceComboDefaults": "combo defaults",
+    "stickyLimitSourceGlobal": "global default",
+    "connectionAwareExpansion": "Connection-aware expansion",
+    "triStateInherit": "inherit",
+    "connectionAwareExpansionOn": "On",
+    "connectionAwareExpansionOff": "Off",
+    "promptCacheAffinityHint": "Prompt-cache locality routing takes precedence over round-robin/weighted rotation across pinned accounts. Turn it off under Settings, Combo defaults, if you need strict rotation.",
+    "stickyLimitInherit": "jogún"
   },
   "costs": {
     "title": "Àwọn ìnáwó",
@@ -4955,7 +4973,7 @@
     "compressionLogTitle": "Àkọsílẹ̀ Ìfúnpọ̀",
     "compressionLogEmpty": "Kò tíì sí àwọn ìbéèrè tí a fúnpọ̀. Àwọn ìṣirò ìfúnpọ̀ yóò hàn níbí nígbà tí a bá ṣiṣẹ́ lórí àwọn ìbéèrè pẹ̀lú ìfúnpọ̀ tí a mú ṣiṣẹ́.",
     "tokens": "àwọn tókìnì",
-    "exportTruncated": "__MISSING__:Export truncated: only {exported} of {total} log entries were included. Pick a shorter time range to export the rest."
+    "exportTruncated": "A gé ìkójáde kúrú: {exported} nìkan lára àwọn àkọsílẹ̀ {total} ni a fi sínú rẹ̀. Yan àkókò tó kúrú síi láti kójáde àwọn tó kù."
   },
   "onboarding": {
     "welcome": "Káàbọ̀",
@@ -6314,7 +6332,8 @@
       "kiro": "Ìpele ọ̀fẹ́: kírẹ́díìtì 50/oṣù (~25K–100K tokens). ⚠️ Àwọn ToS Kiro kọ lílo proxy/harness ẹni-kẹta.",
       "codex": "So OpenAI Codex pọ̀ pẹ̀lú ìṣàn OAuth tó wà tẹ́lẹ̀.",
       "qwen": "So Qwen Code pọ̀ pẹ̀lú ìṣàn OAuth tó wà tẹ́lẹ̀.",
-      "github-models": "Ṣẹ̀dá GitHub PAT kan pẹ̀lú àyè 'models: read' ní github.com/settings/tokens"
+      "github-models": "Ṣẹ̀dá GitHub PAT kan pẹ̀lú àyè 'models: read' ní github.com/settings/tokens",
+      "agnes-cn": "So Agnes AI (China) pọ̀ pẹ̀lú API key tí a pèsè fún api.agnes-ai.cn. Àwọn API key láti apihub.agnes-ai.com kò ní ṣiṣẹ́."
     },
     "passthroughModelsDescription": "{provider} ń gba àwọn ID model abinibi-provider. Gbé wọlé láti /models tàbí fi àwọn ID àdáni kún un fún ìdarí ipa-ọ̀nà.",
     "bedrockModelsDescription": "Àwọn model Amazon Bedrock jẹ́ dídín mọ́ agbègbè AWS. Gbé wọlé láti /models tàbí fi àwọn ID model Bedrock tí a ti mú ṣiṣẹ́ ní agbègbè tí a yàn kún un.",
@@ -6472,7 +6491,9 @@
     "savedModelEndpointSettings": "Àwọn ààtò endpoint awoṣe tí a fipamọ́",
     "searchByModelAria": "Ṣàwárí nípa awoṣe",
     "selectSupportedEndpoint": "Yan ó kéré tán endpoint kan tí ó ní àtìlẹ́yìn",
-    "antigravityClientProfileHarness": "Harness / CLI"
+    "antigravityClientProfileHarness": "Harness / CLI",
+    "vertexCredentialHint": "Àwọn kọ́kọ́ API ń lo àkójọ iṣẹ́-àkànṣe tí a ti ṣètò. JSON Àkọọ́lẹ̀ Iṣẹ́ ń mú ìṣàwárí Model Garden tó wà láàyè ṣiṣẹ́.",
+    "vertexCredentialLabel": "Kọ́kọ́rọ́ API tàbí JSON Àkọọ́lẹ̀ Iṣẹ́"
   },
   "settings": {
     "title": "Àwọn Ààtò",
@@ -8579,7 +8600,11 @@
       },
       "compressToolResults": {
         "label": "Gé àwọn àbájáde irinṣẹ́ gígùn kúrú ṣáájú",
-        "description": "Truncates long tool results during Lite compression. The Maximum tool-result length field (or OMNIROUTE_LITE_MAX_TOOL_LENGTH when that field is unset) sets the cap. Emergency overflow protection may still trim content when the context exceeds the model budget."
+        "description": "Truncates long tool results during Lite compression. The Maximum tool-result length field (or AGENTPROXY_LITE_MAX_TOOL_LENGTH when that field is unset) sets the cap. Emergency overflow protection may still trim content when the context exceeds the model budget."
+      },
+      "maxToolLength": {
+        "description": "Character cap for proactive tool-result truncation. Default 2000. Override with AGENTPROXY_LITE_MAX_TOOL_LENGTH when this field is unset.",
+        "label": "Maximum tool-result length"
       }
     },
     "engineFields": {
@@ -9695,7 +9720,14 @@
     "updatedShort": "Ti sọ di tuntun",
     "lastRefreshed": "Ìgbà tí a sọ di tuntun kẹ́yìn",
     "providerQuota": "Ìpín Olùpèsè",
-    "providerQuotaHomeHint": "Ipò lọ́wọ́lọ́wọ́ lórí gbogbo àwọn àkọọ́lẹ̀ tí a so pọ̀"
+    "providerQuotaHomeHint": "Ipò lọ́wọ́lọ́wọ́ lórí gbogbo àwọn àkọọ́lẹ̀ tí a so pọ̀",
+    "glmConfirmRedeemFiveHourResetCredit": "Ríràpadà rẹ̀ yóò tún fèrèsé lílò wákàtí 5 ṣe lẹ́sẹ̀kẹsẹ̀, yóò sì lo káàdì yìí tán pátápátá.",
+    "glmConfirmRedeemResetCredit": "Ríràpadà rẹ̀ yóò tún fèrèsé lílò tí a yàn ṣe lẹ́sẹ̀kẹsẹ̀, yóò sì lo káàdì yìí tán pátápátá.",
+    "glmConfirmRedeemWeekResetCredit": "Ríràpadà rẹ̀ yóò tún fèrèsé lílò ọ̀sọ̀ọ̀sẹ̀ ṣe lẹ́sẹ̀kẹsẹ̀, yóò sì lo káàdì yìí tán pátápátá.",
+    "glmResetCreditFiveHourTitle": "Àtúntò fèrèsé wákàtí 5",
+    "glmResetCreditsModalExplainer": "A ṣètò àwọn káàdì àtúntò ní ìbámu pẹ̀lú àkókò ìparí wọn. Yan fèrèsé wákàtí 5 tàbí fèrèsé ọ̀sọ̀ọ̀sẹ̀ tí o fẹ́ tún ṣe.",
+    "glmResetCreditsModalTitle": "Àwọn káàdì àtúntò GLM Coding Plan",
+    "glmResetCreditWeekTitle": "Àtúntò fèrèsé ọ̀sọ̀ọ̀sẹ̀"
   },
   "modals": {
     "waitingAuth": "Ń dúró de Àṣẹ",
@@ -10961,7 +10993,9 @@
     "poolAddMember": "Ṣàfikún",
     "poolAddFailed": "Kùnà láti ṣàfikún prọ́ṣì náà sí àkójọpọ̀ náà",
     "poolSelectProxy": "Yan prọ́ṣì kan…",
-    "poolSaveFailed": "Kùnà láti fi ìpín àkójọpọ̀ pamọ́"
+    "poolSaveFailed": "Kùnà láti fi ìpín àkójọpọ̀ pamọ́",
+    "poolEgressFailuresByExit": "Àwọn ìkùnà nípasẹ̀ {exit}: {count}",
+    "poolEgressFailuresUnattributed": "Àwọn ìkùnà láìsí ọ̀nà àbájáde tí a yàn: {count}"
   },
   "playground": {
     "title": "Pápá Ìdánwò Àwòṣe",
@@ -11302,7 +11336,11 @@
       "duration": "Iye àkókò",
       "time": "Àkókò",
       "conversation": "Ìjíròrò",
-      "ttft": "TTFT"
+      "ttft": "TTFT",
+      "contentProvenance": "Ìdáhùn",
+      "contentEmpty": "Ìdáhùn òfo",
+      "usageAbsent": "A kò jábọ̀ iye token",
+      "usageEstimated": "Iye token jẹ́ àfojúsùn"
     },
     "loadingLogs": "Ń ṣàkójọpọ̀ àwọn àkọọlẹ̀...",
     "noLogs": "Kò tíì sí àkọọlẹ̀ kankan. Ṣe àwọn ìpè API díẹ̀ láti rí wọn níbí.",
@@ -11962,7 +12000,11 @@
       "goNow": "Lọ báyìí",
       "message": "MITM Proxy wà lábẹ́ AgentBridge báyìí.",
       "title": "A ti gbé ojúewé yìí lọ"
-    }
+    },
+    "resetAgent": "Dá àtilẹ̀wá padà",
+    "resetAgentConfirm": "Ṣé kí a dá àtilẹ̀wá padà?",
+    "resetDone": "A ti dá DNS àtilẹ̀wá padà fún {agent}. Pa ohun èlò náà dé pátápátá (kì í ṣe láti dín in kù nìkan) kí o sì tún un ṣí kí àyípadà náà lè ṣiṣẹ́.",
+    "resetting": "Ń dá padà…"
   },
   "providerStats": {
     "unknownError": "Àṣìṣe àìmọ̀",
@@ -12676,7 +12718,12 @@
     "createDahlTokenFailed": "Ṣíṣẹ̀dá àmì Dahl kùnà",
     "providerProxy": "Aṣojú",
     "providerProxyConfigureHint": "Ṣètò proxy",
-    "providerProxyTitleConfigured": "A ti ṣètò proxy: {host}"
+    "providerProxyTitleConfigured": "A ti ṣètò proxy: {host}",
+    "directEgress": "Taara (laisi proxy)",
+    "inheritConnectionOption": "Ko si proxy tirẹ (jogun asopọ)",
+    "inheritedPool": "Jogun adagun asopọ ({count})",
+    "inheritedProxy": "Jogun asopọ: {host}",
+    "poolEmptyBlocked": "Adagun ṣofo — awọn ibeere kuna (kii ṣe taara)"
   },
   "gamification": {
     "leaderboardScopes": {
@@ -13036,6 +13083,13 @@
       "SERVER_OWNED_TOOL_LOOP_ENABLED": {
         "label": "Àyíká Irinṣẹ́ Tí Sáfà Ń Ṣàkóso",
         "description": "Tẹ̀síwájú pẹ̀lú àwọn ìpè irinṣẹ́ tí sáfà ń ṣàkóso tí kì í sanwọ́ títí tí àwòṣe yóò fi dá ìdáhùn tí oníbàárà lè lò padà."
+      },
+      "PROTECTED_PRIORITY_INFRA_502_ENABLED": {
+        "description": "Dáhùn pẹ̀lú 502 dípò 503 nígbà tí ibi-àfojúsùn tó ní ààyò, tí ìfàsẹ́yìn rẹ̀ jẹ́ fún quota nìkan, bá dá combo dúró nítorí ohun tí a lè fi ẹ̀rí hàn pé kì í ṣe quota: provider circuit breaker tó ṣí tàbí fífo nítorí ìdádúró àsọtẹ́lẹ̀.",
+        "label": "Àwọn Ìdádúró Amáyédẹrùn Tó Ní Ààyò Ààbò Gẹ́gẹ́ Bí 502"
+      },
+      "STREAM_RECOVERY_TOOLCALL_ORDER_FIX": {
+        "description": "Mú kí ìtẹ̀síwájú láàárín ṣiṣan jẹ́ àìléwu fún ìpè irinṣẹ́: má ṣe tẹ̀síwájú ṣiṣan tí a gé lẹ́yìn tí a bá ti fi ìpè irinṣẹ́ ránṣẹ́ (yálà ó ṣì ń lọ tàbí ó ti parí), kí o sì dá dúró lẹ́yìn ìtẹ̀síwájú òfo kan dípò lílo gbogbo iye ìgbìyànjú-àtúnṣe."
       }
     }
   },
@@ -13956,7 +14010,12 @@
     "hour": "Wákàtí",
     "day": "Ọjọ́",
     "unknownModel": "Àìmọ̀",
-    "pending": "Ń dúró de ìmúṣẹ"
+    "pending": "Ń dúró de ìmúṣẹ",
+    "allApiKeys": "All API keys",
+    "mcp": "MCP",
+    "mcpTool": "MCP tool",
+    "scope": "Scope",
+    "apiKey": "API key"
   },
   "metadata": {
     "compressionTitle": "Ìfúnpọ̀",
@@ -14159,5 +14218,6 @@
     "partnerLinkNote": "Ìjápọ̀ aláṣiṣẹ́pọ̀",
     "dismissAriaLabel": "Pa á tì"
   },
-  "featureFlagAgentProxyDisableThinkingLevelVariantsDescription": "Pa ṣíṣẹ̀dá àwọn ẹ̀yà ìpele ìrònú (fún àpẹẹrẹ -low, -medium, -high) nínú àkójọ /v1/models."
+  "featureFlagAgentProxyDisableThinkingLevelVariantsDescription": "Pa ṣíṣẹ̀dá àwọn ẹ̀yà ìpele ìrònú (fún àpẹẹrẹ -low, -medium, -high) nínú àkójọ /v1/models.",
+  "featureFlagProxyPoolSharedEgressOrderDescription": "Fún àwọn olùpèsè tí a pín ìpín wọn gẹ́gẹ́ bí àdírẹ́sì egress, ó máa ń fi ọmọ ẹgbẹ́ pool tí ó pín àdírẹ́sì egress tí a ṣàkíyèsí ti ọmọ ẹgbẹ́ tí a kọ̀ láìpẹ́ yìí sí ìsàlẹ̀ àwọn ọmọ ẹgbẹ́ tí ó ní ìlera ní tààràtà. Ètò nìkan, a kì í yọ ọ́ kúrò láé. Ó nílò PROXY_SKIP_RECENTLY_FAILED, èyí tí ó ń ṣe àmì ìkọ̀sílẹ̀ tí ó ń kà. Ó wà ní pípa ní àìyípadà: ètò yíyàn jẹ́ yíyípo lásán gan-an."
 }

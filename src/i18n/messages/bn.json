@@ -3833,7 +3833,8 @@
     "triStateInherit": "inherit",
     "connectionAwareExpansionOn": "On",
     "connectionAwareExpansionOff": "Off",
-    "promptCacheAffinityHint": "Prompt-cache locality routing takes precedence over round-robin/weighted rotation across pinned accounts. Turn it off under Settings, Combo defaults, if you need strict rotation."
+    "promptCacheAffinityHint": "Prompt-cache locality routing takes precedence over round-robin/weighted rotation across pinned accounts. Turn it off under Settings, Combo defaults, if you need strict rotation.",
+    "stickyLimitInherit": "ইনহেরিট করুন"
   },
   "costs": {
     "title": "খরচ",
@@ -5010,7 +5011,7 @@
     "compressionLogTitle": "কম্প্রেশন লগ",
     "compressionLogEmpty": "এখনও কোনো কম্প্রেস করা রিকোয়েস্ট নেই। কম্প্রেশন সক্রিয় থাকা অবস্থায় রিকোয়েস্ট প্রসেস করা হলে কম্প্রেশন পরিসংখ্যান এখানে প্রদর্শিত হবে।",
     "tokens": "টোকেন",
-    "exportTruncated": "__MISSING__:Export truncated: only {exported} of {total} log entries were included. Pick a shorter time range to export the rest."
+    "exportTruncated": "এক্সপোর্ট সংক্ষিপ্ত করা হয়েছে: {total}টি লগ এন্ট্রির মধ্যে মাত্র {exported}টি অন্তর্ভুক্ত হয়েছে। বাকিগুলো এক্সপোর্ট করতে আরও ছোট সময়সীমা বেছে নিন।"
   },
   "onboarding": {
     "welcome": "স্বাগতম",
@@ -6366,7 +6367,8 @@
       "kiro": "ফ্রি টিয়ার: 50 ক্রেডিট/মাস (~25K–100K টোকেন)। ⚠️ Kiro ToS তৃতীয় পক্ষের প্রক্সি/হারনেস ব্যবহার নিষিদ্ধ করে।",
       "codex": "বিদ্যমান OAuth ফ্লো-এর সাথে OpenAI Codex সংযুক্ত করুন।",
       "qwen": "বিদ্যমান OAuth ফ্লো-এর সাথে Qwen Code সংযুক্ত করুন।",
-      "github-models": "github.com/settings/tokens-এ 'models: read' স্কোপ সহ একটি GitHub PAT তৈরি করুন"
+      "github-models": "github.com/settings/tokens-এ 'models: read' স্কোপ সহ একটি GitHub PAT তৈরি করুন",
+      "agnes-cn": "api.agnes-ai.cn-এর জন্য ইস্যু করা একটি API key দিয়ে Agnes AI (China) সংযুক্ত করুন। apihub.agnes-ai.com-এর keys কাজ করবে না।"
     },
     "passthroughModelsDescription": "{provider} প্রদানকারী-নেটিভ মডেল আইডি গ্রহণ করে। /মডেল থেকে আমদানি করুন বা রাউটিং এর জন্য কাস্টম আইডি যোগ করুন।",
     "bedrockModelsDescription": "অ্যামাজন বেডরক মডেলগুলি AWS অঞ্চল দ্বারা স্কোপ করা হয়েছে৷ /মডেল থেকে আমদানি করুন বা নির্বাচিত অঞ্চলে সক্ষম বেডরক মডেল আইডি যোগ করুন।",
@@ -6527,7 +6529,9 @@
     "failedClearConnectionCooldown": "কুলডাউন সাফ করা যায়নি",
     "importFromFileDownloadTemplate": "CSV টেমপ্লেট ডাউনলোড করুন",
     "importFromFileMoreErrors": "+আরও {count}টি",
-    "importFromFileSchemaHint": "CSV কলামগুলো অবস্থানভিত্তিক: provider, name, apiKey, baseUrl (ঐচ্ছিক), priority (ঐচ্ছিক)। provider কলামে অবশ্যই বিদ্যমান কোনো পরিচালিত প্রোভাইডারের id অথবা ইতোমধ্যে নিবন্ধিত OpenAI/Anthropic-সামঞ্জস্যপূর্ণ নোডের id থাকতে হবে—এই ইমপোর্ট নতুন এন্ডপয়েন্ট নোড তৈরি করে না।"
+    "importFromFileSchemaHint": "CSV কলামগুলো অবস্থানভিত্তিক: provider, name, apiKey, baseUrl (ঐচ্ছিক), priority (ঐচ্ছিক)। provider কলামে অবশ্যই বিদ্যমান কোনো পরিচালিত প্রোভাইডারের id অথবা ইতোমধ্যে নিবন্ধিত OpenAI/Anthropic-সামঞ্জস্যপূর্ণ নোডের id থাকতে হবে—এই ইমপোর্ট নতুন এন্ডপয়েন্ট নোড তৈরি করে না।",
+    "vertexCredentialHint": "API keys নির্বাচিত প্রজেক্ট ক্যাটালগ ব্যবহার করে। Service Account JSON লাইভ Model Garden আবিষ্কার সক্ষম করে।",
+    "vertexCredentialLabel": "API Key or Service Account JSON"
   },
   "settings": {
     "title": "সেটিংস",
@@ -8635,6 +8639,10 @@
       "compressToolResults": {
         "label": "সক্রিয়ভাবে দীর্ঘ টুলের ফলাফল কেটে ফেলুন",
         "description": "লাইট সংকোচনের সময় ২,০০০ অক্ষরের বেশি টুলের ফলাফল কেটে ফেলা হয়। জরুরি ওভারফ্লো সুরক্ষা এখনও কনটেন্ট কেটে ফেলতে পারে যখন প্রসঙ্গ মডেল বাজেট অতিক্রম করে।"
+      },
+      "maxToolLength": {
+        "description": "Character cap for proactive tool-result truncation. Default 2000. Override with AGENTPROXY_LITE_MAX_TOOL_LENGTH when this field is unset.",
+        "label": "Maximum tool-result length"
       }
     },
     "engineFields": {
@@ -9750,7 +9758,14 @@
     "kiloPassPaid": "পরিশোধিত",
     "kiloPassRemaining": "অবশিষ্ট",
     "kiloPassRenews": "{count} দিনের মধ্যে নবায়ন হবে",
-    "kiloPassUsageLabel": "এই মাসের ব্যবহার"
+    "kiloPassUsageLabel": "এই মাসের ব্যবহার",
+    "glmConfirmRedeemFiveHourResetCredit": "রিডিম করলে ৫-ঘণ্টার ব্যবহারের উইন্ডোটি সঙ্গে সঙ্গে রিসেট হবে এবং এই কার্ডটি স্থায়ীভাবে খরচ হয়ে যাবে।",
+    "glmConfirmRedeemResetCredit": "রিডিম করলে নির্বাচিত ব্যবহারের উইন্ডোটি সঙ্গে সঙ্গে রিসেট হবে এবং এই কার্ডটি স্থায়ীভাবে খরচ হয়ে যাবে।",
+    "glmConfirmRedeemWeekResetCredit": "রিডিম করলে সাপ্তাহিক ব্যবহারের উইন্ডোটি সঙ্গে সঙ্গে রিসেট হবে এবং এই কার্ডটি স্থায়ীভাবে খরচ হয়ে যাবে।",
+    "glmResetCreditFiveHourTitle": "৫-ঘণ্টার উইন্ডো রিসেট",
+    "glmResetCreditsModalExplainer": "রিসেট কার্ডগুলো মেয়াদ শেষ হওয়ার সময় অনুযায়ী সাজানো। আপনি যে ৫-ঘণ্টার বা সাপ্তাহিক উইন্ডোটি রিসেট করতে চান, সেটি বেছে নিন।",
+    "glmResetCreditsModalTitle": "GLM Coding Plan রিসেট কার্ড",
+    "glmResetCreditWeekTitle": "সাপ্তাহিক উইন্ডো রিসেট"
   },
   "modals": {
     "waitingAuth": "অনুমোদনের জন্য অপেক্ষা করা হচ্ছে",
@@ -12741,7 +12756,12 @@
     "createDahlTokenFailed": "Dahl টোকেন তৈরি করতে ব্যর্থ হয়েছে",
     "providerProxy": "প্রক্সি",
     "providerProxyConfigureHint": "প্রক্সি কনফিগার করুন",
-    "providerProxyTitleConfigured": "প্রক্সি কনফিগার করা হয়েছে: {host}"
+    "providerProxyTitleConfigured": "প্রক্সি কনফিগার করা হয়েছে: {host}",
+    "directEgress": "সরাসরি (প্রক্সি ছাড়া)",
+    "inheritConnectionOption": "নিজস্ব প্রক্সি নেই (সংযোগ থেকে উত্তরাধিকার)",
+    "inheritedPool": "সংযোগ পুল থেকে উত্তরাধিকার ({count})",
+    "inheritedProxy": "সংযোগ থেকে উত্তরাধিকার: {host}",
+    "poolEmptyBlocked": "পুল খালি — অনুরোধ ব্যর্থ হয় (সরাসরি নয়)"
   },
   "gamification": {
     "leaderboardScopes": {
@@ -13101,6 +13121,13 @@
       "SERVER_OWNED_TOOL_LOOP_ENABLED": {
         "label": "সার্ভার-মালিকানাধীন টুল লুপ",
         "description": "মডেল ক্লায়েন্টে ব্যবহারযোগ্য প্রতিক্রিয়া না দেওয়া পর্যন্ত নন-স্ট্রিমিং সার্ভার-মালিকানাধীন টুল কল চালিয়ে যান।"
+      },
+      "PROTECTED_PRIORITY_INFRA_502_ENABLED": {
+        "description": "শুধু-কোটা-ফলব্যাক অগ্রাধিকার টার্গেট যখন প্রমাণযোগ্যভাবে কোটা-সংক্রান্ত নয় এমন কোনো কারণে combo থামায়—যেমন খোলা provider circuit breaker বা predictive latency skip—তখন 503-এর পরিবর্তে 502 দিয়ে উত্তর দিন।",
+        "label": "সুরক্ষিত-অগ্রাধিকার অবকাঠামোগত স্টপের জন্য 502"
+      },
+      "STREAM_RECOVERY_TOOLCALL_ORDER_FIX": {
+        "description": "স্ট্রিমের মাঝপথে ধারাবাহিকতাকে টুল-কলের জন্য নিরাপদ করুন: কোনো টুল কল পাঠানোর পর কেটে যাওয়া স্ট্রিম কখনো পুনরায় চালু করবেন না (তা এখনও চলমান থাকুক বা ইতিমধ্যে শেষ হয়ে থাকুক), এবং সম্পূর্ণ পুনঃচেষ্টা বাজেট ব্যবহার করার পরিবর্তে একটি খালি ধারাবাহিকতার পর থামুন।"
       }
     }
   },
@@ -14229,5 +14256,6 @@
     "partnerLinkNote": "অংশীদার লিঙ্ক",
     "dismissAriaLabel": "বন্ধ করুন"
   },
-  "featureFlagAgentProxyDisableThinkingLevelVariantsDescription": "/v1/models ক্যাটালগে চিন্তার স্তরের ভ্যারিয়েন্ট (যেমন -low, -medium, -high) তৈরি করা বন্ধ করুন।"
+  "featureFlagAgentProxyDisableThinkingLevelVariantsDescription": "/v1/models ক্যাটালগে চিন্তার স্তরের ভ্যারিয়েন্ট (যেমন -low, -medium, -high) তৈরি করা বন্ধ করুন।",
+  "featureFlagProxyPoolSharedEgressOrderDescription": "যেসব প্রোভাইডারের কোটা egress ঠিকানা অনুযায়ী ভাগ করা হয়, সেগুলোর জন্য সম্প্রতি প্রত্যাখ্যাত সদস্যের পর্যবেক্ষিত egress ঠিকানা ভাগ করে নেওয়া pool সদস্যকে সুস্থ সদস্যদের ঠিক নিচে রাখে। শুধু ক্রম বদলায়, কখনো বাদ দেয় না। PROXY_SKIP_RECENTLY_FAILED প্রয়োজন, যা এটি যে প্রত্যাখ্যান সংকেত পড়ে তা তৈরি করে। ডিফল্টভাবে বন্ধ: নির্বাচনের ক্রম হুবহু সাধারণ রোটেশন।"
 }

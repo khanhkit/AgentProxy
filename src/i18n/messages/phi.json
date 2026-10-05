@@ -3798,7 +3798,8 @@
     "triStateInherit": "inherit",
     "connectionAwareExpansionOn": "On",
     "connectionAwareExpansionOff": "Off",
-    "promptCacheAffinityHint": "Prompt-cache locality routing takes precedence over round-robin/weighted rotation across pinned accounts. Turn it off under Settings, Combo defaults, if you need strict rotation."
+    "promptCacheAffinityHint": "Prompt-cache locality routing takes precedence over round-robin/weighted rotation across pinned accounts. Turn it off under Settings, Combo defaults, if you need strict rotation.",
+    "stickyLimitInherit": "manahin"
   },
   "costs": {
     "title": "Mga gastos",
@@ -4975,7 +4976,7 @@
     "compressionLogTitle": "Log ng Compression",
     "compressionLogEmpty": "Wala pang mga na-compress na request. Lalabas dito ang mga istatistika ng compression kapag naproseso ang mga request nang naka-enable ang compression.",
     "tokens": "mga token",
-    "exportTruncated": "__MISSING__:Export truncated: only {exported} of {total} log entries were included. Pick a shorter time range to export the rest."
+    "exportTruncated": "Naputol ang pag-export: {exported} lang sa {total} log entry ang naisama. Pumili ng mas maikling saklaw ng oras para ma-export ang natitira."
   },
   "onboarding": {
     "welcome": "Maligayang pagdating",
@@ -6331,7 +6332,8 @@
       "kiro": "Libreng tier: 50 credits/buwan (~25K–100K tokens). ⚠️ Ipinagbabawal ng Kiro ToS ang paggamit ng third-party proxy/harness.",
       "codex": "Ikonekta ang OpenAI Codex gamit ang umiiral na OAuth flow.",
       "qwen": "Ikonekta ang Qwen Code gamit ang umiiral na OAuth flow.",
-      "github-models": "Gumawa ng GitHub PAT na may 'models: read' na scope sa github.com/settings/tokens"
+      "github-models": "Gumawa ng GitHub PAT na may 'models: read' na scope sa github.com/settings/tokens",
+      "agnes-cn": "Ikonekta ang Agnes AI (China) gamit ang API key na ibinigay para sa api.agnes-ai.cn. Hindi gagana ang mga key mula sa apihub.agnes-ai.com."
     },
     "passthroughModelsDescription": "Tumatanggap ang {provider} ng mga provider-native na model ID. Mag-import mula sa /models o magdagdag ng mga custom na ID para sa pagruruta.",
     "bedrockModelsDescription": "Ang mga modelo ng Amazon Bedrock ay saklaw ng rehiyon ng AWS. Mag-import mula sa /models o magdagdag ng mga Bedrock model ID na pinagana sa napiling rehiyon.",
@@ -6492,7 +6494,9 @@
     "failedClearConnectionCooldown": "Hindi na-clear ang cooldown",
     "importFromFileDownloadTemplate": "I-download ang template ng CSV",
     "importFromFileMoreErrors": "+{count} pa",
-    "importFromFileSchemaHint": "Nakabatay sa posisyon ang mga column ng CSV: provider, name, apiKey, baseUrl (opsyonal), priority (opsyonal). Ang column na provider ay dapat isang umiiral na ID ng pinamamahalaang provider o ID ng nakarehistro nang node na compatible sa OpenAI/Anthropic — hindi gumagawa ang pag-import na ito ng mga bagong endpoint node."
+    "importFromFileSchemaHint": "Nakabatay sa posisyon ang mga column ng CSV: provider, name, apiKey, baseUrl (opsyonal), priority (opsyonal). Ang column na provider ay dapat isang umiiral na ID ng pinamamahalaang provider o ID ng nakarehistro nang node na compatible sa OpenAI/Anthropic — hindi gumagawa ang pag-import na ito ng mga bagong endpoint node.",
+    "vertexCredentialHint": "Ginagamit ng mga API key ang curated project catalog. Nagbibigay-daan ang Service Account JSON sa live na pagtuklas sa Model Garden.",
+    "vertexCredentialLabel": "API Key or Service Account JSON"
   },
   "settings": {
     "title": "Mga setting",
@@ -8600,6 +8604,10 @@
       "compressToolResults": {
         "label": "Proaktibong putulin ang mahahabang resulta ng tool",
         "description": "__MISSING__:Truncates long tool results during Lite compression. The Maximum tool-result length field (or AGENTPROXY_LITE_MAX_TOOL_LENGTH when that field is unset) sets the cap. Emergency overflow protection may still trim content when the context exceeds the model budget."
+      },
+      "maxToolLength": {
+        "description": "Character cap for proactive tool-result truncation. Default 2000. Override with AGENTPROXY_LITE_MAX_TOOL_LENGTH when this field is unset.",
+        "label": "Maximum tool-result length"
       }
     },
     "engineFields": {
@@ -9715,7 +9723,14 @@
     "kiloPassPaid": "Bayad na",
     "kiloPassRemaining": "Natitira",
     "kiloPassRenews": "Magre-renew sa loob ng {count} araw",
-    "kiloPassUsageLabel": "Paggamit ngayong buwan"
+    "kiloPassUsageLabel": "Paggamit ngayong buwan",
+    "glmConfirmRedeemFiveHourResetCredit": "Agad na nire-reset ng pag-redeem ang 5-oras na window ng paggamit at permanenteng kinokonsumo ang card na ito.",
+    "glmConfirmRedeemResetCredit": "Agad na nire-reset ng pag-redeem ang napiling window ng paggamit at permanenteng kinokonsumo ang card na ito.",
+    "glmConfirmRedeemWeekResetCredit": "Agad na nire-reset ng pag-redeem ang lingguhang window ng paggamit at permanenteng kinokonsumo ang card na ito.",
+    "glmResetCreditFiveHourTitle": "Pag-reset ng 5-oras na window",
+    "glmResetCreditsModalExplainer": "Nakaayos ang mga reset card ayon sa expiration. Piliin ang 5-oras o lingguhang window na gusto mong i-reset.",
+    "glmResetCreditsModalTitle": "Mga reset card ng GLM Coding Plan",
+    "glmResetCreditWeekTitle": "Pag-reset ng lingguhang window"
   },
   "modals": {
     "waitingAuth": "Naghihintay ng Awtorisasyon",
@@ -12706,7 +12721,12 @@
     "createDahlTokenFailed": "Nabigong lumikha ng Dahl token",
     "providerProxy": "Proxy",
     "providerProxyConfigureHint": "I-configure ang proxy",
-    "providerProxyTitleConfigured": "Naka-configure ang Proxy: {host}"
+    "providerProxyTitleConfigured": "Naka-configure ang Proxy: {host}",
+    "directEgress": "Direkta (walang proxy)",
+    "inheritConnectionOption": "Walang sariling proxy (nagmamana ng koneksyon)",
+    "inheritedPool": "Nagmamana ng pool ng koneksyon ({count})",
+    "inheritedProxy": "Nagmamana ng koneksyon: {host}",
+    "poolEmptyBlocked": "Walang laman ang pool — nabibigo ang mga request (hindi direkta)"
   },
   "gamification": {
     "leaderboardScopes": {
@@ -13066,6 +13086,13 @@
       "SERVER_OWNED_TOOL_LOOP_ENABLED": {
         "label": "Tool Loop na Pinamamahalaan ng Server",
         "description": "Ipagpatuloy ang mga non-streaming na tool call na pinamamahalaan ng server hanggang sa magbalik ang modelo ng tugon na magagamit ng client."
+      },
+      "PROTECTED_PRIORITY_INFRA_502_ENABLED": {
+        "description": "Ibalik ang 502 sa halip na 503 kapag pinahinto ng isang priyoridad na target na may fallback para lamang sa quota ang kumbinasyon dahil sa isang sanhi na mapatutunayang hindi quota: isang bukas na circuit breaker ng provider o paglaktaw batay sa hinulaang latency.",
+        "label": "Humihinto bilang 502 ang Protektadong-Priyoridad na Imprastraktura"
+      },
+      "STREAM_RECOVERY_TOOLCALL_ORDER_FIX": {
+        "description": "Gawing ligtas para sa tool call ang pagpapatuloy sa kalagitnaan ng stream: huwag kailanman ipagpatuloy ang naputol na stream matapos maipadala ang isang tool call (isinasagawa pa man o tapos na), at huminto pagkatapos ng isang walang-lamang pagpapatuloy sa halip na gamitin ang buong nakalaang bilang ng retry."
       }
     }
   },
@@ -14194,5 +14221,6 @@
     "partnerLinkNote": "Link ng partner",
     "dismissAriaLabel": "Isara"
   },
-  "featureFlagAgentProxyDisableThinkingLevelVariantsDescription": "Huwag paganahin ang pagbuo ng mga variant ng antas ng pag-iisip (hal. -low, -medium, -high) sa katalogong /v1/models."
+  "featureFlagAgentProxyDisableThinkingLevelVariantsDescription": "Huwag paganahin ang pagbuo ng mga variant ng antas ng pag-iisip (hal. -low, -medium, -high) sa katalogong /v1/models.",
+  "featureFlagProxyPoolSharedEgressOrderDescription": "Para sa mga provider na ang quota ay hinahati ayon sa egress address, inilalagay ang isang miyembro ng pool na kapareho ng naobserbahang egress address ng isang kamakailang tinanggihang miyembro sa ibaba mismo ng malulusog na miyembro. Pagkakasunod-sunod lamang, hindi kailanman inaalis. Kailangan ang PROXY_SKIP_RECENTLY_FAILED, na lumilikha ng signal ng pagtanggi na binabasa nito. Naka-off bilang default: ang pagkakasunod-sunod ng pagpili ay eksaktong ang karaniwang rotation."
 }

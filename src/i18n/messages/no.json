@@ -3795,7 +3795,8 @@
     "triStateInherit": "inherit",
     "connectionAwareExpansionOn": "On",
     "connectionAwareExpansionOff": "Off",
-    "promptCacheAffinityHint": "Prompt-cache locality routing takes precedence over round-robin/weighted rotation across pinned accounts. Turn it off under Settings, Combo defaults, if you need strict rotation."
+    "promptCacheAffinityHint": "Prompt-cache locality routing takes precedence over round-robin/weighted rotation across pinned accounts. Turn it off under Settings, Combo defaults, if you need strict rotation.",
+    "stickyLimitInherit": "arv"
   },
   "costs": {
     "title": "Kostnader",
@@ -4972,7 +4973,7 @@
     "compressionLogTitle": "Komprimeringslogg",
     "compressionLogEmpty": "Ingen komprimerte forespørsler ennå. Komprimeringsstatistikk vil vises her når forespørsler behandles med komprimering aktivert.",
     "tokens": "tokener",
-    "exportTruncated": "__MISSING__:Export truncated: only {exported} of {total} log entries were included. Pick a shorter time range to export the rest."
+    "exportTruncated": "Eksporten ble avkortet: bare {exported} av {total} loggoppføringer ble inkludert. Velg et kortere tidsrom for å eksportere resten."
   },
   "onboarding": {
     "welcome": "Velkommen",
@@ -6328,7 +6329,8 @@
       "kiro": "Gratisnivå: 50 kreditter/måned (~25K–100K tokens). ⚠️ Kiros brukervilkår forbyr bruk av tredjeparts proxy/harness.",
       "codex": "Koble til OpenAI Codex med den eksisterende OAuth-flyten.",
       "qwen": "Koble til Qwen Code med den eksisterende OAuth-flyten.",
-      "github-models": "Opprett et GitHub PAT med 'models: read'-omfang på github.com/settings/tokens"
+      "github-models": "Opprett et GitHub PAT med 'models: read'-omfang på github.com/settings/tokens",
+      "agnes-cn": "Koble Agnes AI (China) til med en API-nøkkel utstedt for api.agnes-ai.cn. Nøkler fra apihub.agnes-ai.com fungerer ikke."
     },
     "passthroughModelsDescription": "{provider} godtar leverandør-native modell-ID-er. Importer fra /models eller legg til egendefinerte ID-er for ruting.",
     "bedrockModelsDescription": "Amazon Bedrock-modeller er omfattet av AWS-regionen. Importer fra /models eller legg til berggrunnsmodell-IDer aktivert i den valgte regionen.",
@@ -6489,7 +6491,9 @@
     "failedClearConnectionCooldown": "Kunne ikke nullstille ventetiden",
     "importFromFileDownloadTemplate": "Last ned CSV-mal",
     "importFromFileMoreErrors": "+{count} flere",
-    "importFromFileSchemaHint": "CSV-kolonnene er posisjonsbaserte: provider, name, apiKey, baseUrl (valgfritt), priority (valgfritt). provider-kolonnen må være en eksisterende administrert leverandør-ID eller en allerede registrert OpenAI/Anthropic-kompatibel node-ID — denne importen oppretter ikke nye endepunktnoder."
+    "importFromFileSchemaHint": "CSV-kolonnene er posisjonsbaserte: provider, name, apiKey, baseUrl (valgfritt), priority (valgfritt). provider-kolonnen må være en eksisterende administrert leverandør-ID eller en allerede registrert OpenAI/Anthropic-kompatibel node-ID — denne importen oppretter ikke nye endepunktnoder.",
+    "vertexCredentialHint": "API-nøkler bruker den kuraterte prosjektkatalogen. JSON for tjenestekonto muliggjør direkte oppdagelse i Model Garden.",
+    "vertexCredentialLabel": "API-nøkkel eller JSON for tjenestekonto"
   },
   "settings": {
     "title": "Innstillinger",
@@ -8597,6 +8601,10 @@
       "compressToolResults": {
         "label": "Proaktivt forkorte lange verktøyresultater",
         "description": "__MISSING__:Truncates long tool results during Lite compression. The Maximum tool-result length field (or AGENTPROXY_LITE_MAX_TOOL_LENGTH when that field is unset) sets the cap. Emergency overflow protection may still trim content when the context exceeds the model budget."
+      },
+      "maxToolLength": {
+        "description": "Character cap for proactive tool-result truncation. Default 2000. Override with AGENTPROXY_LITE_MAX_TOOL_LENGTH when this field is unset.",
+        "label": "Maximum tool-result length"
       }
     },
     "engineFields": {
@@ -9712,7 +9720,14 @@
     "kiloPassPaid": "Betalt",
     "kiloPassRemaining": "Gjenværende",
     "kiloPassRenews": "Fornyes om {count} dager",
-    "kiloPassUsageLabel": "Denne månedens forbruk"
+    "kiloPassUsageLabel": "Denne månedens forbruk",
+    "glmConfirmRedeemFiveHourResetCredit": "Innløsning tilbakestiller 5-timersvinduet for bruk umiddelbart og bruker opp dette kortet permanent.",
+    "glmConfirmRedeemResetCredit": "Innløsning tilbakestiller det valgte bruksvinduet umiddelbart og bruker opp dette kortet permanent.",
+    "glmConfirmRedeemWeekResetCredit": "Innløsning tilbakestiller ukesvinduet for bruk umiddelbart og bruker opp dette kortet permanent.",
+    "glmResetCreditFiveHourTitle": "Tilbakestill 5-timersvindu",
+    "glmResetCreditsModalExplainer": "Tilbakestillingskort sorteres etter utløpstidspunkt. Velg 5-timersvinduet eller ukesvinduet du vil tilbakestille.",
+    "glmResetCreditsModalTitle": "Tilbakestillingskort for GLM Coding Plan",
+    "glmResetCreditWeekTitle": "Tilbakestill ukesvindu"
   },
   "modals": {
     "waitingAuth": "Venter på autorisasjon",
@@ -12703,7 +12718,12 @@
     "createDahlTokenFailed": "Kunne ikke opprette Dahl-token",
     "providerProxy": "Proxy",
     "providerProxyConfigureHint": "Konfigurer proxy",
-    "providerProxyTitleConfigured": "Proxy konfigurert: {host}"
+    "providerProxyTitleConfigured": "Proxy konfigurert: {host}",
+    "directEgress": "Direkte (ingen proxy)",
+    "inheritConnectionOption": "Ingen egen proxy (arver tilkobling)",
+    "inheritedPool": "Arver tilkoblingspool ({count})",
+    "inheritedProxy": "Arver tilkobling: {host}",
+    "poolEmptyBlocked": "Pool tom — forespørsler mislykkes (ikke direkte)"
   },
   "gamification": {
     "leaderboardScopes": {
@@ -13063,6 +13083,13 @@
       "SERVER_OWNED_TOOL_LOOP_ENABLED": {
         "label": "Serverstyrt verktøyløkke",
         "description": "Fortsett ikke-strømmende, serverstyrte verktøykall til modellen returnerer et svar som klienten kan bruke."
+      },
+      "PROTECTED_PRIORITY_INFRA_502_ENABLED": {
+        "description": "Svar med 502 i stedet for 503 når et prioritetsmål med reserve kun ved kvoteproblemer stopper kombinasjonen av en årsak som beviselig ikke skyldes kvoten: en åpen kretsbryter hos leverandøren eller at målet hoppes over på grunn av predikert latenstid.",
+        "label": "Infrastrukturstopp med beskyttet prioritet som 502"
+      },
+      "STREAM_RECOVERY_TOOLCALL_ORDER_FIX": {
+        "description": "Gjør fortsettelse midt i en strøm trygg ved verktøykall: Gjenoppta aldri en avbrutt strøm etter at et verktøykall er sendt (enten det fortsatt pågår eller allerede er fullført), og stopp etter én tom fortsettelse i stedet for å bruke hele budsjettet for nye forsøk."
       }
     }
   },
@@ -14191,5 +14218,6 @@
     "partnerLinkNote": "Partnerlenke",
     "dismissAriaLabel": "Lukk"
   },
-  "featureFlagAgentProxyDisableThinkingLevelVariantsDescription": "Deaktiver generering av varianter for resonneringsnivå (f.eks. -low, -medium, -high) i /v1/models-katalogen."
+  "featureFlagAgentProxyDisableThinkingLevelVariantsDescription": "Deaktiver generering av varianter for resonneringsnivå (f.eks. -low, -medium, -high) i /v1/models-katalogen.",
+  "featureFlagProxyPoolSharedEgressOrderDescription": "For leverandører der kvoten fordeles etter egress-adresse, rangeres et pool-medlem som deler den observerte egress-adressen til et nylig avvist medlem rett under de friske medlemmene. Kun rekkefølge, aldri utelatt. Krever PROXY_SKIP_RECENTLY_FAILED, som produserer avvisningssignalet den leser. Av som standard: utvelgelsesrekkefølgen er nøyaktig den vanlige rotasjonen."
 }

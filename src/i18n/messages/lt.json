@@ -3818,7 +3818,8 @@
     "triStateInherit": "inherit",
     "connectionAwareExpansionOn": "On",
     "connectionAwareExpansionOff": "Off",
-    "promptCacheAffinityHint": "Prompt-cache locality routing takes precedence over round-robin/weighted rotation across pinned accounts. Turn it off under Settings, Combo defaults, if you need strict rotation."
+    "promptCacheAffinityHint": "Prompt-cache locality routing takes precedence over round-robin/weighted rotation across pinned accounts. Turn it off under Settings, Combo defaults, if you need strict rotation.",
+    "stickyLimitInherit": "paveldėti"
   },
   "costs": {
     "title": "Išlaidos",
@@ -4995,7 +4996,7 @@
     "compressionLogTitle": "Glaudinimo žurnalas",
     "compressionLogEmpty": "Suglaudintų užklausų dar nėra. Glaudinimo statistika bus rodoma čia, kai užklausos bus apdorojamos įjungus glaudinimą.",
     "tokens": "tokenai",
-    "exportTruncated": "__MISSING__:Export truncated: only {exported} of {total} log entries were included. Pick a shorter time range to export the rest."
+    "exportTruncated": "Eksportas sutrumpintas: įtraukta tik {exported} iš {total} žurnalo įrašų. Norėdami eksportuoti likusius, pasirinkite trumpesnį laikotarpį."
   },
   "onboarding": {
     "welcome": "Sveiki",
@@ -6347,7 +6348,8 @@
       "codex": "Prijunkite OpenAI Codex naudodami esamą OAuth procesą.",
       "qwen": "Prijunkite Qwen Code naudodami esamą OAuth procesą.",
       "github-models": "Sukurkite GitHub PAT su „models: read“ aprėptimi adresu github.com/settings/tokens",
-      "seekai": "Sukurkite API raktą adresu https://seekai.cc, tada įklijuokite jį čia kaip Bearer prieigos raktą. Su OpenAI suderinamas bazinis URL: https://seekai.cc/v1."
+      "seekai": "Sukurkite API raktą adresu https://seekai.cc, tada įklijuokite jį čia kaip Bearer prieigos raktą. Su OpenAI suderinamas bazinis URL: https://seekai.cc/v1.",
+      "agnes-cn": "Prijunkite Agnes AI (Kinija) naudodami API raktą, išduotą api.agnes-ai.cn. Raktai iš apihub.agnes-ai.com neveiks."
     },
     "passthroughModelsDescription": "{provider} priima teikėjui būdingus modelių ID. Importuokite juos iš /models arba pridėkite pasirinktinius ID maršrutizavimui.",
     "bedrockModelsDescription": "Amazon Bedrock modeliai susieti su AWS regionu. Importuokite juos iš /models arba pridėkite pasirinktame regione įgalintų Bedrock modelių ID.",
@@ -6512,7 +6514,9 @@
     "dailyQuotaResetTimezoneLabel": "Dienos kvotos atnaujinimo laiko juosta",
     "dailyQuotaResetTimezoneHint": "Pasirenkama IANA laiko juosta, naudojama, kai išorinis šaltinis nepateikia X-RateLimit-Reset. Palikite tuščią, kad būtų taikomas trumpas atvėsimo laikotarpis.",
     "dailyQuotaResetHourLabel": "Dienos kvotos atnaujinimo valanda",
-    "dailyQuotaResetHourHint": "Vietinė valanda nuo 0 iki 23 pirmiau nurodytoje laiko juostoje. Tuščia reikšmė reiškia, kad mazgo lygmens laikrodis nenaudojamas."
+    "dailyQuotaResetHourHint": "Vietinė valanda nuo 0 iki 23 pirmiau nurodytoje laiko juostoje. Tuščia reikšmė reiškia, kad mazgo lygmens laikrodis nenaudojamas.",
+    "vertexCredentialHint": "API raktams naudojamas atrinktas projekto katalogas. Paslaugos paskyros JSON suteikia galimybę tiesiogiai aptikti Model Garden modelius.",
+    "vertexCredentialLabel": "API raktas arba paslaugos paskyros JSON"
   },
   "settings": {
     "title": "Nustatymai",
@@ -8620,6 +8624,10 @@
       "compressToolResults": {
         "label": "Iš anksto trumpinti ilgus įrankių rezultatus",
         "description": "__MISSING__:Truncates long tool results during Lite compression. The Maximum tool-result length field (or AGENTPROXY_LITE_MAX_TOOL_LENGTH when that field is unset) sets the cap. Emergency overflow protection may still trim content when the context exceeds the model budget."
+      },
+      "maxToolLength": {
+        "description": "Character cap for proactive tool-result truncation. Default 2000. Override with AGENTPROXY_LITE_MAX_TOOL_LENGTH when this field is unset.",
+        "label": "Maximum tool-result length"
       }
     },
     "engineFields": {
@@ -9735,7 +9743,14 @@
     "updatedShort": "Atnaujinta",
     "lastRefreshed": "Paskutinį kartą atnaujinta",
     "providerQuota": "Teikėjo kvota",
-    "providerQuotaHomeHint": "Būsena realiuoju laiku visose prijungtose paskyrose"
+    "providerQuotaHomeHint": "Būsena realiuoju laiku visose prijungtose paskyrose",
+    "glmConfirmRedeemFiveHourResetCredit": "Panaudojus kortelę, 5 valandų naudojimo laikotarpis nedelsiant nustatomas iš naujo, o ši kortelė negrįžtamai sunaudojama.",
+    "glmConfirmRedeemResetCredit": "Panaudojus kortelę, pasirinktas naudojimo laikotarpis nedelsiant nustatomas iš naujo, o ši kortelė negrįžtamai sunaudojama.",
+    "glmConfirmRedeemWeekResetCredit": "Panaudojus kortelę, savaitės naudojimo laikotarpis nedelsiant nustatomas iš naujo, o ši kortelė negrįžtamai sunaudojama.",
+    "glmResetCreditFiveHourTitle": "5 valandų laikotarpio nustatymas iš naujo",
+    "glmResetCreditsModalExplainer": "Nustatymo iš naujo kortelės surikiuotos pagal galiojimo pabaigą. Pasirinkite 5 valandų arba savaitės laikotarpį, kurį norite nustatyti iš naujo.",
+    "glmResetCreditsModalTitle": "GLM Coding Plan nustatymo iš naujo kortelės",
+    "glmResetCreditWeekTitle": "Savaitės laikotarpio nustatymas iš naujo"
   },
   "modals": {
     "waitingAuth": "Laukiama autorizacijos",
@@ -12726,7 +12741,12 @@
     "createDahlTokenFailed": "Nepavyko sukurti Dahl prieigos rakto",
     "providerProxy": "Tarpinis serveris",
     "providerProxyConfigureHint": "Konfigūruoti tarpinį serverį",
-    "providerProxyTitleConfigured": "Tarpinis serveris sukonfigūruotas: {host}"
+    "providerProxyTitleConfigured": "Tarpinis serveris sukonfigūruotas: {host}",
+    "directEgress": "Tiesiogiai (be tarpinio serverio)",
+    "inheritConnectionOption": "Be savo tarpinio serverio (paveldi ryšį)",
+    "inheritedPool": "Paveldi ryšių telkinį ({count})",
+    "inheritedProxy": "Paveldi ryšį: {host}",
+    "poolEmptyBlocked": "Telkinys tuščias — užklausos nepavyksta (ne tiesiogiai)"
   },
   "gamification": {
     "leaderboardScopes": {
@@ -13086,6 +13106,13 @@
       "SERVER_OWNED_TOOL_LOOP_ENABLED": {
         "label": "Serverio valdomas įrankių ciklas",
         "description": "Tęsti serverio valdomus nesrautinius įrankių iškvietimus, kol modelis pateiks klientui tinkamą atsakymą."
+      },
+      "PROTECTED_PRIORITY_INFRA_502_ENABLED": {
+        "description": "Grąžinti 502, o ne 503, kai prioritetinis tik atsarginiam perėjimui dėl kvotos skirtas tikslas sustabdo derinį dėl priežasties, kuri akivaizdžiai nesusijusi su kvota: atviro teikėjo grandinės pertraukiklio arba praleidimo dėl prognozuojamos delsos.",
+        "label": "Apsaugoto prioriteto infrastruktūros sustabdymai pateikiami kaip 502"
+      },
+      "STREAM_RECOVERY_TOOLCALL_ORDER_FIX": {
+        "description": "Užtikrinti saugų įrankio iškvietimą tęsiant srautą nuo vidurio: niekada neatnaujinti nutraukto srauto po to, kai buvo išsiųstas įrankio iškvietimas (jis vis dar vykdomas arba jau baigtas), ir sustoti po vieno tuščio tęsinio, užuot išnaudojus visą pakartotinių bandymų limitą."
       }
     }
   },
@@ -14214,5 +14241,6 @@
     "partnerLinkNote": "Partnerio nuoroda",
     "dismissAriaLabel": "Uždaryti"
   },
-  "featureFlagAgentProxyDisableThinkingLevelVariantsDescription": "Išjungti mąstymo lygio variantų (pvz., -low, -medium, -high) generavimą /v1/models kataloge."
+  "featureFlagAgentProxyDisableThinkingLevelVariantsDescription": "Išjungti mąstymo lygio variantų (pvz., -low, -medium, -high) generavimą /v1/models kataloge.",
+  "featureFlagProxyPoolSharedEgressOrderDescription": "Tiekėjams, kurių kvota skirstoma pagal išeinantį (egress) adresą, pool narį, besidalijantį neseniai atmesto nario pastebėtu egress adresu, rikiuoja iškart po sveikų narių. Tik eiliškumas, niekada neatmetama. Reikalingas PROXY_SKIP_RECENTLY_FAILED, kuris sukuria jo skaitomą atmetimo signalą. Pagal numatytuosius nustatymus išjungta: pasirinkimo tvarka yra lygiai paprasta rotacija."
 }

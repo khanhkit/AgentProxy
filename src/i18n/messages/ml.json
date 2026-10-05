@@ -3193,7 +3193,13 @@
     "cliproxyapiUnknown": "അജ്ഞാതം",
     "cliproxyapiUpdate": "അപ്ഡേറ്റ് ചെയ്യുക",
     "cliproxyapiUpdateAvailable": "അപ്ഡേറ്റ് ലഭ്യമാണ്: v{current} → v{latest}",
-    "cliproxyapiVersion": "പതിപ്പ്"
+    "cliproxyapiVersion": "പതിപ്പ്",
+    "hermesRoleMoaAggregator": "MoA അഗ്രിഗേറ്റർ",
+    "hermesRoleMoaAggregatorDesc": "Mixture-of-Agents സിന്തസിസ് മോഡൽ",
+    "hermesRoleMoaReference": "MoA റഫറൻസ്",
+    "hermesRoleMoaReferenceDesc": "Mixture-of-Agents റഫറൻസ് മോഡൽ",
+    "hermesRoleReview": "റിവ്യൂ",
+    "hermesRoleReviewDesc": "പൂർണ്ണ സബ്-ഏജന്റ് കോഡ് റിവ്യൂ"
   },
   "combos": {
     "title": "കോംബോകൾ",
@@ -3424,7 +3430,9 @@
       "failoverBeforeRetry": "പ്രവർത്തനക്ഷമമാക്കിയാൽ, ഏതൊരു അപ്സ്ട്രീം പിശകും എല്ലാ വീണ്ടും ശ്രമങ്ങളും ഫാൾബാക്ക് URLs-ഉം ഒഴിവാക്കി അടുത്ത കോംബോ ടാർഗറ്റിലേക്ക് ഉടനടി ഫെയിൽഓവർ ചെയ്യാൻ ഇടയാക്കും.",
       "maxSetRetries": "എല്ലാ ടാർഗറ്റുകളും പരാജയപ്പെടുമ്പോൾ പൂർണ്ണ ടാർഗറ്റ് സെറ്റ് വീണ്ടും ശ്രമിക്കേണ്ട തവണകളുടെ എണ്ണം. 0 = സെറ്റ്-തല വീണ്ടും ശ്രമമില്ല.",
       "setRetryDelayMs": "സെറ്റ്-തലത്തിലുള്ള പുനഃശ്രമങ്ങൾക്കിടയിലെ കാലതാമസം; താൽക്കാലിക പ്രശ്നങ്ങൾ പരിഹരിക്കപ്പെടാൻ ഇത് സമയം നൽകുന്നു.",
-      "disableSessionStickiness": "ആദ്യ സന്ദേശത്തിന്റെ ഹാഷ് അടിസ്ഥാനമാക്കി ഒരു സംഭാഷണം മുഴുവൻ ഒരേ കണക്ഷനിൽ നിലനിർത്തുന്നതിനുപകരം, ഓരോ അഭ്യർത്ഥനയിലും മറ്റൊരു കണക്ഷനിലേക്ക് മാറുക. ഇത് ആഗോള ഡിഫോൾട്ടിനെ അസാധുവാക്കുന്നു. ഒന്നിലധികം ഘട്ടങ്ങളുള്ള ചാറ്റുകളിൽ പ്രോംപ്റ്റ്-കാഷ് ഹിറ്റുകൾ നിലനിർത്താൻ Inherit എന്നതിൽ തുടരുക."
+      "disableSessionStickiness": "ആദ്യ സന്ദേശത്തിന്റെ ഹാഷ് അടിസ്ഥാനമാക്കി ഒരു സംഭാഷണം മുഴുവൻ ഒരേ കണക്ഷനിൽ നിലനിർത്തുന്നതിനുപകരം, ഓരോ അഭ്യർത്ഥനയിലും മറ്റൊരു കണക്ഷനിലേക്ക് മാറുക. ഇത് ആഗോള ഡിഫോൾട്ടിനെ അസാധുവാക്കുന്നു. ഒന്നിലധികം ഘട്ടങ്ങളുള്ള ചാറ്റുകളിൽ പ്രോംപ്റ്റ്-കാഷ് ഹിറ്റുകൾ നിലനിർത്താൻ Inherit എന്നതിൽ തുടരുക.",
+      "connectionAwareExpansion": "When on, this combo expands each provider-level step into per-account targets before rotating. Inherit uses the global default (off). Off keeps provider-level rotation.",
+      "stickyLimit": "Round-robin sticky batch size: consecutive successful requests sent to one target before rotating to the next. Empty inherits the global Sticky Limit setting; 1 disables batching (pure one-request rotation)."
     },
     "templatesTitle": "ദ്രുത ടെംപ്ലേറ്റുകൾ",
     "templatesDescription": "ഒരു ആരംഭ പ്രൊഫൈൽ പ്രയോഗിച്ച ശേഷം മോഡലുകളും കോൺഫിഗറേഷനും ക്രമീകരിക്കുക.",
@@ -3778,7 +3786,17 @@
     "duplicateAutoComboSnapshotMsg": "ഈ ടെംപ്ലേറ്റുമായി പൊരുത്തപ്പെടുന്ന, നിലവിൽ കണക്റ്റ് ചെയ്തിരിക്കുന്ന പ്രൊവൈഡർമാരുടെയും മോഡലുകളുടെയും ഒരു സ്നാപ്പ്ഷോട്ട് എഡിറ്റ് ചെയ്യാവുന്ന കോംബോയാക്കി മാറ്റും.",
     "duplicateAutoComboFailedPrefix": "ഓട്ടോ-കോംബോ പകർത്തുന്നതിൽ പരാജയപ്പെട്ടു:",
     "duplicateAutoComboUnknownError": "അജ്ഞാത പിശക്",
-    "duplicateAutoComboTitle": "{name}-ൽ നിന്ന് ഒരു സ്റ്റാറ്റിക് കോംബോ സൃഷ്ടിക്കുക"
+    "duplicateAutoComboTitle": "{name}-ൽ നിന്ന് ഒരു സ്റ്റാറ്റിക് കോംബോ സൃഷ്ടിക്കുക",
+    "stickyLimitEffective": "Effective {value} ({source})",
+    "stickyLimitSourceCombo": "combo",
+    "stickyLimitSourceComboDefaults": "combo defaults",
+    "stickyLimitSourceGlobal": "global default",
+    "connectionAwareExpansion": "Connection-aware expansion",
+    "triStateInherit": "inherit",
+    "connectionAwareExpansionOn": "On",
+    "connectionAwareExpansionOff": "Off",
+    "promptCacheAffinityHint": "Prompt-cache locality routing takes precedence over round-robin/weighted rotation across pinned accounts. Turn it off under Settings, Combo defaults, if you need strict rotation.",
+    "stickyLimitInherit": "പാരമ്പര്യമായി ലഭിക്കുക"
   },
   "costs": {
     "title": "ചെലവുകൾ",
@@ -4955,7 +4973,7 @@
     "compressionLogTitle": "കംപ്രഷൻ ലോഗ്",
     "compressionLogEmpty": "ഇതുവരെ കംപ്രസ് ചെയ്ത അഭ്യർത്ഥനകളൊന്നുമില്ല. കംപ്രഷൻ പ്രവർത്തനക്ഷമമാക്കി അഭ്യർത്ഥനകൾ പ്രോസസ് ചെയ്യുമ്പോൾ കംപ്രഷൻ സ്ഥിതിവിവരക്കണക്കുകൾ ഇവിടെ ദൃശ്യമാകും.",
     "tokens": "ടോക്കണുകൾ",
-    "exportTruncated": "__MISSING__:Export truncated: only {exported} of {total} log entries were included. Pick a shorter time range to export the rest."
+    "exportTruncated": "കയറ്റുമതി ചുരുക്കി: {total} ലോഗ് എൻട്രികളിൽ {exported} എണ്ണം മാത്രമാണ് ഉൾപ്പെടുത്തിയത്. ശേഷിക്കുന്നവ കയറ്റുമതി ചെയ്യാൻ കുറച്ചുകൂടി ചെറിയ സമയപരിധി തിരഞ്ഞെടുക്കുക."
   },
   "onboarding": {
     "welcome": "സ്വാഗതം",
@@ -6314,7 +6332,8 @@
       "kiro": "സൗജന്യ ടിയർ: പ്രതിമാസം 50 ക്രെഡിറ്റുകൾ (~25K–100K tokens). ⚠️ Kiro ToS മൂന്നാം കക്ഷി proxy/harness ഉപയോഗം നിരോധിക്കുന്നു.",
       "codex": "നിലവിലുള്ള OAuth പ്രവാഹം ഉപയോഗിച്ച് OpenAI Codex കണക്റ്റ് ചെയ്യുക.",
       "qwen": "നിലവിലുള്ള OAuth പ്രവാഹം ഉപയോഗിച്ച് Qwen Code കണക്റ്റ് ചെയ്യുക.",
-      "github-models": "github.com/settings/tokens-ൽ 'models: read' സ്കോപ്പുള്ള ഒരു GitHub PAT സൃഷ്ടിക്കുക"
+      "github-models": "github.com/settings/tokens-ൽ 'models: read' സ്കോപ്പുള്ള ഒരു GitHub PAT സൃഷ്ടിക്കുക",
+      "agnes-cn": "api.agnes-ai.cn-നായി നൽകിയ API കീ ഉപയോഗിച്ച് Agnes AI (China)-യുമായി കണക്റ്റ് ചെയ്യുക. apihub.agnes-ai.com-ൽ നിന്നുള്ള കീകൾ പ്രവർത്തിക്കില്ല."
     },
     "passthroughModelsDescription": "{provider} പ്രൊവൈഡർ-നേറ്റീവ് മോഡൽ ID-കൾ സ്വീകരിക്കുന്നു. /models-ൽ നിന്ന് ഇമ്പോർട്ട് ചെയ്യുക അല്ലെങ്കിൽ റൂട്ടിംഗിനായി ഇഷ്ടാനുസൃത ID-കൾ ചേർക്കുക.",
     "bedrockModelsDescription": "Amazon Bedrock മോഡലുകൾ AWS മേഖല അനുസരിച്ചാണ് പരിധിനിർണ്ണയിച്ചിരിക്കുന്നത്. /models-ൽ നിന്ന് ഇമ്പോർട്ട് ചെയ്യുക അല്ലെങ്കിൽ തിരഞ്ഞെടുത്ത മേഖലയിൽ പ്രവർത്തനക്ഷമമാക്കിയ Bedrock മോഡൽ ID-കൾ ചേർക്കുക.",
@@ -6472,7 +6491,9 @@
     "savedModelEndpointSettings": "സംരക്ഷിച്ച മോഡൽ എൻഡ്പോയിന്റ് ക്രമീകരണങ്ങൾ",
     "searchByModelAria": "മോഡൽ അനുസരിച്ച് തിരയുക",
     "selectSupportedEndpoint": "പിന്തുണയ്ക്കുന്ന ഒരു എൻഡ്പോയിന്റെങ്കിലും തിരഞ്ഞെടുക്കുക",
-    "antigravityClientProfileHarness": "ഹാർനെസ് / CLI"
+    "antigravityClientProfileHarness": "ഹാർനെസ് / CLI",
+    "vertexCredentialHint": "API കീകൾ തിരഞ്ഞെടുത്ത പ്രോജക്റ്റ് കാറ്റലോഗ് ഉപയോഗിക്കുന്നു. Service Account JSON തത്സമയ Model Garden കണ്ടെത്തൽ പ്രവർത്തനക്ഷമമാക്കുന്നു.",
+    "vertexCredentialLabel": "API കീ അല്ലെങ്കിൽ Service Account JSON"
   },
   "settings": {
     "title": "ക്രമീകരണങ്ങൾ",
@@ -8579,7 +8600,11 @@
       },
       "compressToolResults": {
         "label": "ദൈർഘ്യമേറിയ ടൂൾ ഫലങ്ങൾ മുൻകൂട്ടി വെട്ടിച്ചുരുക്കുക",
-        "description": "Truncates long tool results during Lite compression. The Maximum tool-result length field (or OMNIROUTE_LITE_MAX_TOOL_LENGTH when that field is unset) sets the cap. Emergency overflow protection may still trim content when the context exceeds the model budget."
+        "description": "Truncates long tool results during Lite compression. The Maximum tool-result length field (or AGENTPROXY_LITE_MAX_TOOL_LENGTH when that field is unset) sets the cap. Emergency overflow protection may still trim content when the context exceeds the model budget."
+      },
+      "maxToolLength": {
+        "description": "Character cap for proactive tool-result truncation. Default 2000. Override with AGENTPROXY_LITE_MAX_TOOL_LENGTH when this field is unset.",
+        "label": "Maximum tool-result length"
       }
     },
     "engineFields": {
@@ -9695,7 +9720,14 @@
     "updatedShort": "പുതുക്കിയത്",
     "lastRefreshed": "അവസാനം പുതുക്കിയത്",
     "providerQuota": "ദാതാവിന്റെ ക്വോട്ട",
-    "providerQuotaHomeHint": "ബന്ധിപ്പിച്ച അക്കൗണ്ടുകളിലുടനീളമുള്ള തത്സമയ നില"
+    "providerQuotaHomeHint": "ബന്ധിപ്പിച്ച അക്കൗണ്ടുകളിലുടനീളമുള്ള തത്സമയ നില",
+    "glmConfirmRedeemFiveHourResetCredit": "റിഡീം ചെയ്യുമ്പോൾ 5 മണിക്കൂർ ഉപയോഗ വിൻഡോ ഉടൻ റീസെറ്റ് ചെയ്യപ്പെടുകയും ഈ കാർഡ് ശാശ്വതമായി ഉപയോഗിക്കപ്പെടുകയും ചെയ്യും.",
+    "glmConfirmRedeemResetCredit": "റിഡീം ചെയ്യുമ്പോൾ തിരഞ്ഞെടുത്ത ഉപയോഗ വിൻഡോ ഉടൻ റീസെറ്റ് ചെയ്യപ്പെടുകയും ഈ കാർഡ് ശാശ്വതമായി ഉപയോഗിക്കപ്പെടുകയും ചെയ്യും.",
+    "glmConfirmRedeemWeekResetCredit": "റിഡീം ചെയ്യുമ്പോൾ പ്രതിവാര ഉപയോഗ വിൻഡോ ഉടൻ റീസെറ്റ് ചെയ്യപ്പെടുകയും ഈ കാർഡ് ശാശ്വതമായി ഉപയോഗിക്കപ്പെടുകയും ചെയ്യും.",
+    "glmResetCreditFiveHourTitle": "5 മണിക്കൂർ വിൻഡോ റീസെറ്റ്",
+    "glmResetCreditsModalExplainer": "റീസെറ്റ് കാർഡുകൾ കാലഹരണപ്പെടുന്ന സമയത്തിന്റെ ക്രമത്തിലാണ് നൽകിയിരിക്കുന്നത്. നിങ്ങൾ റീസെറ്റ് ചെയ്യാൻ ആഗ്രഹിക്കുന്ന 5 മണിക്കൂർ അല്ലെങ്കിൽ പ്രതിവാര വിൻഡോ തിരഞ്ഞെടുക്കുക.",
+    "glmResetCreditsModalTitle": "GLM Coding Plan റീസെറ്റ് കാർഡുകൾ",
+    "glmResetCreditWeekTitle": "പ്രതിവാര വിൻഡോ റീസെറ്റ്"
   },
   "modals": {
     "waitingAuth": "അംഗീകാരത്തിനായി കാത്തിരിക്കുന്നു",
@@ -10961,7 +10993,9 @@
     "poolAddMember": "ചേർക്കുക",
     "poolAddFailed": "പൂളിലേക്ക് പ്രോക്സി ചേർക്കുന്നതിൽ പരാജയപ്പെട്ടു",
     "poolSelectProxy": "ഒരു പ്രോക്സി തിരഞ്ഞെടുക്കുക…",
-    "poolSaveFailed": "പൂൾ അസൈൻമെന്റ് സംരക്ഷിക്കുന്നതിൽ പരാജയപ്പെട്ടു"
+    "poolSaveFailed": "പൂൾ അസൈൻമെന്റ് സംരക്ഷിക്കുന്നതിൽ പരാജയപ്പെട്ടു",
+    "poolEgressFailuresByExit": "{exit} വഴിയുള്ള പരാജയങ്ങൾ: {count}",
+    "poolEgressFailuresUnattributed": "നിർണ്ണയിച്ച എക്സിറ്റ് ഇല്ലാത്ത പരാജയങ്ങൾ: {count}"
   },
   "playground": {
     "title": "മോഡൽ പ്ലേഗ്രൗണ്ട്",
@@ -11302,7 +11336,11 @@
       "duration": "ദൈർഘ്യം",
       "time": "സമയം",
       "conversation": "സംഭാഷണം",
-      "ttft": "TTFT"
+      "ttft": "TTFT",
+      "contentProvenance": "മറുപടി",
+      "contentEmpty": "ശൂന്യമായ മറുപടി",
+      "usageAbsent": "ടോക്കൺ എണ്ണം റിപ്പോർട്ട് ചെയ്തിട്ടില്ല",
+      "usageEstimated": "ടോക്കൺ എണ്ണം ഏകദേശം"
     },
     "loadingLogs": "ലോഗുകൾ ലോഡ് ചെയ്യുന്നു...",
     "noLogs": "ഇതുവരെ ലോഗുകളൊന്നുമില്ല. അവ ഇവിടെ കാണാൻ കുറച്ച് API കോളുകൾ നടത്തുക.",
@@ -11962,7 +12000,11 @@
       "goNow": "ഇപ്പോൾ പോകുക",
       "message": "MITM Proxy ഇപ്പോൾ AgentBridge-ന് കീഴിലാണ്.",
       "title": "ഈ പേജ് മറ്റൊരിടത്തേക്ക് മാറ്റിയിരിക്കുന്നു"
-    }
+    },
+    "resetAgent": "ഡിഫോൾട്ട് പുനഃസ്ഥാപിക്കുക",
+    "resetAgentConfirm": "ഡിഫോൾട്ട് പുനഃസ്ഥാപിക്കണോ?",
+    "resetDone": "{agent}-നുള്ള ഡിഫോൾട്ട് DNS പുനഃസ്ഥാപിച്ചു. മാറ്റം പ്രാബല്യത്തിൽ വരാൻ ആപ്പ് പൂർണ്ണമായി അടയ്ക്കുക (മിനിമൈസ് ചെയ്താൽ പോരാ), തുടർന്ന് വീണ്ടും തുറക്കുക.",
+    "resetting": "പുനഃസ്ഥാപിക്കുന്നു…"
   },
   "providerStats": {
     "unknownError": "അജ്ഞാത പിശക്",
@@ -12676,7 +12718,12 @@
     "createDahlTokenFailed": "Dahl ടോക്കൺ സൃഷ്ടിക്കുന്നതിൽ പരാജയപ്പെട്ടു",
     "providerProxy": "പ്രോക്സി",
     "providerProxyConfigureHint": "പ്രോക്സി കോൺഫിഗർ ചെയ്യുക",
-    "providerProxyTitleConfigured": "പ്രോക്സി കോൺഫിഗർ ചെയ്തു: {host}"
+    "providerProxyTitleConfigured": "പ്രോക്സി കോൺഫിഗർ ചെയ്തു: {host}",
+    "directEgress": "നേരിട്ട് (പ്രോക്സി ഇല്ലാതെ)",
+    "inheritConnectionOption": "സ്വന്തം പ്രോക്സി ഇല്ല (കണക്ഷൻ പാരമ്പര്യമായി)",
+    "inheritedPool": "കണക്ഷൻ പൂൾ പാരമ്പര്യമായി ({count})",
+    "inheritedProxy": "കണക്ഷൻ പാരമ്പര്യമായി: {host}",
+    "poolEmptyBlocked": "പൂൾ ശൂന്യം — അഭ്യർത്ഥനകൾ പരാജയപ്പെടുന്നു (നேരിട്ടല്ല)"
   },
   "gamification": {
     "leaderboardScopes": {
@@ -13036,6 +13083,13 @@
       "SERVER_OWNED_TOOL_LOOP_ENABLED": {
         "label": "സെർവർ ഉടമസ്ഥതയിലുള്ള ടൂൾ ലൂപ്പ്",
         "description": "മോഡൽ ക്ലയന്റിന് ഉപയോഗിക്കാവുന്ന പ്രതികരണം നൽകുന്നതുവരെ സ്ട്രീമിംഗ് അല്ലാത്ത, സെർവർ ഉടമസ്ഥതയിലുള്ള ടൂൾ കോളുകൾ തുടരുക."
+      },
+      "PROTECTED_PRIORITY_INFRA_502_ENABLED": {
+        "description": "ക്വോട്ട-മാത്രം-ഫാൾബാക്ക് മുൻഗണനാ ടാർഗറ്റ്, ക്വോട്ട കാരണമല്ലെന്ന് തെളിയിക്കാവുന്ന ഒരു കാരണത്താൽ കോംബോ നിർത്തുമ്പോൾ 503-ന് പകരം 502 നൽകുക: തുറന്ന പ്രൊവൈഡർ സർക്യൂട്ട് ബ്രേക്കർ അല്ലെങ്കിൽ പ്രവചനാത്മക ലേറ്റൻസി സ്കിപ്പ്.",
+        "label": "സംരക്ഷിത-മുൻഗണന ഇൻഫ്രാ സ്റ്റോപ്പുകൾ 502 ആയി"
+      },
+      "STREAM_RECOVERY_TOOLCALL_ORDER_FIX": {
+        "description": "മിഡ്-സ്ട്രീം തുടർച്ചയിലെ ടൂൾ കോൾ സുരക്ഷിതമാക്കുക: ഒരു ടൂൾ കോൾ അയച്ചതിന് ശേഷം (ഇപ്പോഴും പുരോഗതിയിലായാലും ഇതിനകം പൂർത്തിയായാലും) മുറിഞ്ഞ സ്ട്രീം ഒരിക്കലും പുനരാരംഭിക്കരുത്; മുഴുവൻ റീട്രൈ ബജറ്റും ഉപയോഗിക്കുന്നതിന് പകരം ഒരു ശൂന്യ തുടർച്ചയ്ക്ക് ശേഷം നിർത്തുക."
       }
     }
   },
@@ -13956,7 +14010,12 @@
     "hour": "മണിക്കൂർ",
     "day": "ദിവസം",
     "unknownModel": "അജ്ഞാതം",
-    "pending": "കാത്തിരിക്കുന്നു"
+    "pending": "കാത്തിരിക്കുന്നു",
+    "allApiKeys": "All API keys",
+    "mcp": "MCP",
+    "mcpTool": "MCP tool",
+    "scope": "Scope",
+    "apiKey": "API key"
   },
   "metadata": {
     "compressionTitle": "കംപ്രഷൻ",
@@ -14159,5 +14218,6 @@
     "partnerLinkNote": "പങ്കാളി ലിങ്ക്",
     "dismissAriaLabel": "അടയ്ക്കുക"
   },
-  "featureFlagAgentProxyDisableThinkingLevelVariantsDescription": "/v1/models കാറ്റലോഗിൽ ചിന്താതല വേരിയന്റുകൾ (ഉദാ. -low, -medium, -high) സൃഷ്ടിക്കുന്നത് പ്രവർത്തനരഹിതമാക്കുക."
+  "featureFlagAgentProxyDisableThinkingLevelVariantsDescription": "/v1/models കാറ്റലോഗിൽ ചിന്താതല വേരിയന്റുകൾ (ഉദാ. -low, -medium, -high) സൃഷ്ടിക്കുന്നത് പ്രവർത്തനരഹിതമാക്കുക.",
+  "featureFlagProxyPoolSharedEgressOrderDescription": "egress വിലാസം അനുസരിച്ച് ക്വോട്ട വിഭജിക്കുന്ന ദാതാക്കൾക്കായി, അടുത്തിടെ നിരസിക്കപ്പെട്ട അംഗത്തിന്റെ നിരീക്ഷിച്ച egress വിലാസം പങ്കിടുന്ന pool അംഗത്തെ ആരോഗ്യമുള്ള അംഗങ്ങൾക്ക് തൊട്ടുതാഴെ സ്ഥാപിക്കുന്നു. ക്രമം മാത്രം, ഒരിക്കലും ഒഴിവാക്കില്ല. അത് വായിക്കുന്ന നിരസിക്കൽ സിഗ്നൽ ഉണ്ടാക്കുന്ന PROXY_SKIP_RECENTLY_FAILED ആവശ്യമാണ്. സ്ഥിരസ്ഥിതിയായി ഓഫ്: തിരഞ്ഞെടുപ്പ് ക്രമം കൃത്യമായും സാധാരണ റൊട്ടേഷൻ തന്നെ."
 }

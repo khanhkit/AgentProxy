@@ -3854,7 +3854,8 @@
     "triStateInherit": "inherit",
     "connectionAwareExpansionOn": "On",
     "connectionAwareExpansionOff": "Off",
-    "promptCacheAffinityHint": "Prompt-cache locality routing takes precedence over round-robin/weighted rotation across pinned accounts. Turn it off under Settings, Combo defaults, if you need strict rotation."
+    "promptCacheAffinityHint": "Prompt-cache locality routing takes precedence over round-robin/weighted rotation across pinned accounts. Turn it off under Settings, Combo defaults, if you need strict rotation.",
+    "stickyLimitInherit": "faigh le hoidhreacht"
   },
   "costs": {
     "title": "Costais",
@@ -5031,7 +5032,7 @@
     "compressionLogTitle": "Loga Comhbhrú",
     "compressionLogEmpty": "Níl aon iarratas comhbhrúite fós. Beidh staitisticí comhbhrú le feiceáil anseo nuair a phróiseáiltear iarratais le comhbhrú cumasaithe.",
     "tokens": "comharthaí",
-    "exportTruncated": "__MISSING__:Export truncated: only {exported} of {total} log entries were included. Pick a shorter time range to export the rest."
+    "exportTruncated": "Giorraíodh an t-easpórtáil: níor cuireadh san áireamh ach {exported} as {total} iontráil loga. Roghnaigh raon ama níos giorra chun an chuid eile a easpórtáil."
   },
   "onboarding": {
     "welcome": "Fáilte",
@@ -6383,7 +6384,8 @@
       "codex": "Ceangail OpenAI Codex leis an sreabhadh OAuth atá ann cheana.",
       "qwen": "Ceangail Qwen Code leis an sreabhadh OAuth atá ann cheana.",
       "github-models": "Cruthaigh PAT GitHub le scóip 'models: read' ag github.com/settings/tokens",
-      "seekai": "Cruthaigh eochair API ag https://seekai.cc, ansin greamaigh anseo í mar chomhartha Bearer. Bun-URL atá comhoiriúnach le OpenAI: https://seekai.cc/v1."
+      "seekai": "Cruthaigh eochair API ag https://seekai.cc, ansin greamaigh anseo í mar chomhartha Bearer. Bun-URL atá comhoiriúnach le OpenAI: https://seekai.cc/v1.",
+      "agnes-cn": "Ceangail Agnes AI (an tSín) le heochair API arna heisiúint do api.agnes-ai.cn. Ní oibreoidh eochracha ó apihub.agnes-ai.com."
     },
     "passthroughModelsDescription": "Glacann {provider} le haitheantais samhlacha atá dúchasach don soláthraí. Iompórtáil ó /models nó cuir aitheantais shaincheaptha leis le haghaidh ródaithe.",
     "bedrockModelsDescription": "Tá samhlacha Amazon Bedrock teoranta de réir réigiún AWS. Iompórtáil ó /models nó cuir aitheantais samhlacha Bedrock atá cumasaithe sa réigiún roghnaithe leis.",
@@ -6548,7 +6550,9 @@
     "dailyQuotaResetTimezoneLabel": "Crios ama athshocraithe an chuóta laethúil",
     "dailyQuotaResetTimezoneHint": "Crios ama roghnach IANA a úsáidtear nuair a fhágann an tseirbhís réamhtheachtach X-RateLimit-Reset ar lár. Fág folamh é chun tréimhse ghearr fuaraithe a choinneáil.",
     "dailyQuotaResetHourLabel": "Uair athshocraithe an chuóta laethúil",
-    "dailyQuotaResetHourHint": "Uair áitiúil 0-23 sa chrios ama thuas. Má fhágtar folamh é, ní bheidh clog ar leibhéal an nóid ann."
+    "dailyQuotaResetHourHint": "Uair áitiúil 0-23 sa chrios ama thuas. Má fhágtar folamh é, ní bheidh clog ar leibhéal an nóid ann.",
+    "vertexCredentialHint": "Úsáideann eochracha API catalóg choimeádta na dtionscadal. Cumasaíonn JSON Cuntais Seirbhíse aimsiú beo in Model Garden.",
+    "vertexCredentialLabel": "Eochair API nó JSON Cuntais Seirbhíse"
   },
   "settings": {
     "title": "Socruithe",
@@ -8656,6 +8660,10 @@
       "compressToolResults": {
         "label": "Bearr torthaí fada uirlisí go réamhghníomhach",
         "description": "__MISSING__:Truncates long tool results during Lite compression. The Maximum tool-result length field (or AGENTPROXY_LITE_MAX_TOOL_LENGTH when that field is unset) sets the cap. Emergency overflow protection may still trim content when the context exceeds the model budget."
+      },
+      "maxToolLength": {
+        "description": "Character cap for proactive tool-result truncation. Default 2000. Override with AGENTPROXY_LITE_MAX_TOOL_LENGTH when this field is unset.",
+        "label": "Maximum tool-result length"
       }
     },
     "engineFields": {
@@ -9771,7 +9779,14 @@
     "updatedShort": "Nuashonraithe",
     "lastRefreshed": "Athnuachan deireanach",
     "providerQuota": "Cuóta Soláthraí",
-    "providerQuotaHomeHint": "Stádas beo trasna na gcuntas nasctha"
+    "providerQuotaHomeHint": "Stádas beo trasna na gcuntas nasctha",
+    "glmConfirmRedeemFiveHourResetCredit": "Má fhuasclaítear é, athshocraítear an fhuinneog úsáide 5 huaire láithreach agus ídítear an cárta seo go buan.",
+    "glmConfirmRedeemResetCredit": "Má fhuasclaítear é, athshocraítear an fhuinneog úsáide roghnaithe láithreach agus ídítear an cárta seo go buan.",
+    "glmConfirmRedeemWeekResetCredit": "Má fhuasclaítear é, athshocraítear an fhuinneog úsáide sheachtainiúil láithreach agus ídítear an cárta seo go buan.",
+    "glmResetCreditFiveHourTitle": "Athshocrú na fuinneoige 5 huaire",
+    "glmResetCreditsModalExplainer": "Tá na cártaí athshocraithe curtha in ord de réir a ndáta éaga. Roghnaigh an fhuinneog 5 huaire nó an fhuinneog sheachtainiúil is mian leat a athshocrú.",
+    "glmResetCreditsModalTitle": "Cártaí athshocraithe GLM Coding Plan",
+    "glmResetCreditWeekTitle": "Athshocrú na fuinneoige seachtainiúla"
   },
   "modals": {
     "waitingAuth": "Ag fanacht le húdarú",
@@ -12762,7 +12777,12 @@
     "createDahlTokenFailed": "Theip ar chomhartha Dahl a chruthú",
     "providerProxy": "Seachfhreastalaí",
     "providerProxyConfigureHint": "Cumraigh seachfhreastalaí",
-    "providerProxyTitleConfigured": "Seachfhreastalaí cumraithe: {host}"
+    "providerProxyTitleConfigured": "Seachfhreastalaí cumraithe: {host}",
+    "directEgress": "Díreach (gan seachfhreastalaí)",
+    "inheritConnectionOption": "Gan seachfhreastalaí féin (oidhríonn nasc)",
+    "inheritedPool": "Oidhreacht linn nasc ({count})",
+    "inheritedProxy": "Oidhreacht nasc: {host}",
+    "poolEmptyBlocked": "Linn folamh — teipeann ar iarratais (ní díreach)"
   },
   "gamification": {
     "leaderboardScopes": {
@@ -13122,6 +13142,13 @@
       "SERVER_OWNED_TOOL_LOOP_ENABLED": {
         "label": "Lúb Uirlisí faoi Úinéireacht an Fhreastalaí",
         "description": "Lean ar aghaidh le glaonna uirlise neamhshruthaithe atá faoi úinéireacht an fhreastalaí go dtí go gcuirfidh an tsamhail freagra ar fáil is féidir leis an gcliant a úsáid."
+      },
+      "PROTECTED_PRIORITY_INFRA_502_ENABLED": {
+        "description": "Tabhair freagra 502 in ionad 503 nuair a stopann sprioc tosaíochta le cúltaca cuóta amháin an teaglama ar chúis ar féidir a chruthú nach mbaineann sí le cuóta: scoradán ciorcaid oscailte soláthraí nó scipeáil thuarthach de bharr aga folaigh.",
+        "label": "Stadanna Bonneagair Tosaíochta Cosanta mar 502"
+      },
+      "STREAM_RECOVERY_TOOLCALL_ORDER_FIX": {
+        "description": "Cinntigh go bhfuil leanúint i lár srutha sábháilte do ghlaonna uirlise: ná hathchrom riamh ar shruth teasctha tar éis glao uirlise a bheith seolta (bíodh sé fós ar bun nó críochnaithe cheana féin), agus stad tar éis aon leanúint fholamh amháin in ionad an buiséad iomlán atrialacha a úsáid."
       }
     }
   },
@@ -14250,5 +14277,6 @@
     "partnerLinkNote": "Nasc comhpháirtíochta",
     "dismissAriaLabel": "Dún"
   },
-  "featureFlagAgentProxyDisableThinkingLevelVariantsDescription": "Díchumasaigh giniúint leaganacha leibhéil smaointeoireachta (m.sh. -low, -medium, -high) i gcatalóg /v1/models."
+  "featureFlagAgentProxyDisableThinkingLevelVariantsDescription": "Díchumasaigh giniúint leaganacha leibhéil smaointeoireachta (m.sh. -low, -medium, -high) i gcatalóg /v1/models.",
+  "featureFlagProxyPoolSharedEgressOrderDescription": "Do sholáthraithe a roinntear a gcuóta de réir seoladh egress, rangaíonn sé ball den pool a roinneann an seoladh egress breathnaithe atá ag ball a diúltaíodh le déanaí díreach faoi bhun na mball sláintiúil. Ord amháin, ní eisiatar riamh. Teastaíonn PROXY_SKIP_RECENTLY_FAILED, a tháirgeann an comhartha diúltaithe a léann sé. As de réir réamhshocraithe: is é an t-ord roghnúcháin go díreach an gnáth-rothlú."
 }

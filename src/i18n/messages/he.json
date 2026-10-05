@@ -3795,7 +3795,8 @@
     "triStateInherit": "inherit",
     "connectionAwareExpansionOn": "On",
     "connectionAwareExpansionOff": "Off",
-    "promptCacheAffinityHint": "Prompt-cache locality routing takes precedence over round-robin/weighted rotation across pinned accounts. Turn it off under Settings, Combo defaults, if you need strict rotation."
+    "promptCacheAffinityHint": "Prompt-cache locality routing takes precedence over round-robin/weighted rotation across pinned accounts. Turn it off under Settings, Combo defaults, if you need strict rotation.",
+    "stickyLimitInherit": "ירושה"
   },
   "costs": {
     "title": "עלויות",
@@ -4972,7 +4973,7 @@
     "compressionLogTitle": "יומן דחיסה",
     "compressionLogEmpty": "אין עדיין בקשות דחוסות. נתוני דחיסה יופיעו כאן כאשר בקשות יעובדו עם דחיסה מופעלת.",
     "tokens": "טוקנים",
-    "exportTruncated": "__MISSING__:Export truncated: only {exported} of {total} log entries were included. Pick a shorter time range to export the rest."
+    "exportTruncated": "הייצוא נקטע: נכללו רק {exported} מתוך {total} רשומות יומן. בחר טווח זמן קצר יותר כדי לייצא את השאר."
   },
   "onboarding": {
     "welcome": "ברוך הבא",
@@ -6328,7 +6329,8 @@
       "kiro": "מסלול חינמי: 50 קרדיטים לחודש (~25K–100K טוקנים). ⚠️ תנאי השימוש של Kiro אוסרים על שימוש בפרוקסי/harness של צד שלישי.",
       "codex": "חבר את OpenAI Codex באמצעות תהליך ה-OAuth הקיים.",
       "qwen": "חבר את Qwen Code באמצעות תהליך ה-OAuth הקיים.",
-      "github-models": "צור GitHub PAT עם הרשאת 'models: read' ב-github.com/settings/tokens"
+      "github-models": "צור GitHub PAT עם הרשאת 'models: read' ב-github.com/settings/tokens",
+      "agnes-cn": "יש לחבר את Agnes AI (China) באמצעות מפתח API שהונפק עבור api.agnes-ai.cn. מפתחות מ-apihub.agnes-ai.com לא יעבדו."
     },
     "passthroughModelsDescription": "{provider} מקבל מזהי מודל מקוריים של ספק. ייבא מ /models או הוסף מזהים מותאמים אישית לניתוב.",
     "bedrockModelsDescription": "הדגמים של Amazon Bedrock נמצאים לפי אזור AWS. ייבא מ-/models או הוסף מזהי דגמי Bedrock המופעלים באזור הנבחר.",
@@ -6489,7 +6491,9 @@
     "failedClearConnectionCooldown": "ניקוי תקופת ההמתנה נכשל",
     "importFromFileDownloadTemplate": "הורדת תבנית CSV",
     "importFromFileMoreErrors": "ועוד {count}",
-    "importFromFileSchemaHint": "עמודות ה-CSV הן לפי מיקום: provider, name, apiKey, baseUrl (אופציונלי), priority (אופציונלי). העמודה provider חייבת להכיל מזהה קיים של ספק מנוהל או מזהה של צומת תואם OpenAI/Anthropic שכבר נרשם — ייבוא זה אינו יוצר צומתי נקודת קצה חדשים."
+    "importFromFileSchemaHint": "עמודות ה-CSV הן לפי מיקום: provider, name, apiKey, baseUrl (אופציונלי), priority (אופציונלי). העמודה provider חייבת להכיל מזהה קיים של ספק מנוהל או מזהה של צומת תואם OpenAI/Anthropic שכבר נרשם — ייבוא זה אינו יוצר צומתי נקודת קצה חדשים.",
+    "vertexCredentialHint": "מפתחות API משתמשים בקטלוג הפרויקטים האצור. Service Account JSON מאפשר גילוי בזמן אמת ב-Model Garden.",
+    "vertexCredentialLabel": "API Key או Service Account JSON"
   },
   "settings": {
     "title": "הגדרות",
@@ -8597,6 +8601,10 @@
       "compressToolResults": {
         "label": "בצורה פרואקטיבית לקצר תוצאות כלי ארוכות",
         "description": "__MISSING__:Truncates long tool results during Lite compression. The Maximum tool-result length field (or AGENTPROXY_LITE_MAX_TOOL_LENGTH when that field is unset) sets the cap. Emergency overflow protection may still trim content when the context exceeds the model budget."
+      },
+      "maxToolLength": {
+        "description": "Character cap for proactive tool-result truncation. Default 2000. Override with AGENTPROXY_LITE_MAX_TOOL_LENGTH when this field is unset.",
+        "label": "Maximum tool-result length"
       }
     },
     "engineFields": {
@@ -9712,7 +9720,14 @@
     "kiloPassPaid": "שולם",
     "kiloPassRemaining": "נותר",
     "kiloPassRenews": "מתחדש בעוד {count} ימים",
-    "kiloPassUsageLabel": "השימוש החודש"
+    "kiloPassUsageLabel": "השימוש החודש",
+    "glmConfirmRedeemFiveHourResetCredit": "המימוש מאפס מיד את חלון השימוש של 5 שעות וצורך את הכרטיס הזה לצמיתות.",
+    "glmConfirmRedeemResetCredit": "המימוש מאפס מיד את חלון השימוש שנבחר וצורך את הכרטיס הזה לצמיתות.",
+    "glmConfirmRedeemWeekResetCredit": "המימוש מאפס מיד את חלון השימוש השבועי וצורך את הכרטיס הזה לצמיתות.",
+    "glmResetCreditFiveHourTitle": "איפוס חלון של 5 שעות",
+    "glmResetCreditsModalExplainer": "כרטיסי האיפוס מסודרים לפי מועד התפוגה. בחרו את החלון של 5 שעות או את החלון השבועי שברצונכם לאפס.",
+    "glmResetCreditsModalTitle": "כרטיסי איפוס של GLM Coding Plan",
+    "glmResetCreditWeekTitle": "איפוס חלון שבועי"
   },
   "modals": {
     "waitingAuth": "ממתין לאישור",
@@ -12703,7 +12718,12 @@
     "createDahlTokenFailed": "נכשל ביצירת טוקן דל",
     "providerProxy": "פרוקסי",
     "providerProxyConfigureHint": "הגדר פרוקסי",
-    "providerProxyTitleConfigured": "פרוקסי מוגדר: {host}"
+    "providerProxyTitleConfigured": "פרוקסי מוגדר: {host}",
+    "directEgress": "ישיר (ללא proxy)",
+    "inheritConnectionOption": "אין proxy משלו (יורש את החיבור)",
+    "inheritedPool": "יורש את מאגר החיבורים ({count})",
+    "inheritedProxy": "יורש את החיבור: {host}",
+    "poolEmptyBlocked": "המאגר ריק — בקשות נכשלות (לא ישיר)"
   },
   "gamification": {
     "leaderboardScopes": {
@@ -13063,6 +13083,13 @@
       "SERVER_OWNED_TOOL_LOOP_ENABLED": {
         "label": "לולאת כלים בניהול השרת",
         "description": "המשיכו לבצע קריאות לא-מוזרמות לכלים בניהול השרת עד שהמודל יחזיר תגובה שהלקוח יכול להשתמש בה."
+      },
+      "PROTECTED_PRIORITY_INFRA_502_ENABLED": {
+        "description": "יש להשיב ב-502 במקום ב-503 כאשר יעד בעדיפות שמאפשר גיבוי רק במקרה של מכסה עוצר את השילוב מסיבה שניתן להוכיח שאינה קשורה למכסה: מפסק מעגל פתוח של ספק או דילוג חזוי בשל זמן השהיה.",
+        "label": "עצירות תשתית בעדיפות מוגנת מוחזרות כ-502"
+      },
+      "STREAM_RECOVERY_TOOLCALL_ORDER_FIX": {
+        "description": "הפיכת המשך באמצע זרם לבטוח עבור קריאות לכלים: לעולם אין לחדש זרם שנקטע לאחר שנשלחה קריאה לכלי (בין שהיא עדיין מתבצעת ובין שכבר הסתיימה), ויש לעצור לאחר ניסיון המשך ריק אחד במקום לנצל את כל מכסת הניסיונות החוזרים."
       }
     }
   },
@@ -14191,5 +14218,6 @@
     "partnerLinkNote": "קישור שותפים",
     "dismissAriaLabel": "סגירה"
   },
-  "featureFlagAgentProxyDisableThinkingLevelVariantsDescription": "השבתת היצירה של וריאציות של רמת החשיבה (למשל -low, -medium, -high) בקטלוג /v1/models."
+  "featureFlagAgentProxyDisableThinkingLevelVariantsDescription": "השבתת היצירה של וריאציות של רמת החשיבה (למשל -low, -medium, -high) בקטלוג /v1/models.",
+  "featureFlagProxyPoolSharedEgressOrderDescription": "עבור ספקים שהמכסה שלהם מחולקת לפי כתובת יציאה (egress), ממקם חבר pool החולק את כתובת ה-egress שנצפתה של חבר שנדחה לאחרונה מיד מתחת לחברים התקינים. סדר בלבד, לעולם לא החרגה. דורש את PROXY_SKIP_RECENTLY_FAILED, שמפיק את אות הדחייה שהוא קורא. כבוי כברירת מחדל: סדר הבחירה הוא בדיוק הסבב הרגיל."
 }

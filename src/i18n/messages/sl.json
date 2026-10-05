@@ -3798,7 +3798,8 @@
     "triStateInherit": "inherit",
     "connectionAwareExpansionOn": "On",
     "connectionAwareExpansionOff": "Off",
-    "promptCacheAffinityHint": "Prompt-cache locality routing takes precedence over round-robin/weighted rotation across pinned accounts. Turn it off under Settings, Combo defaults, if you need strict rotation."
+    "promptCacheAffinityHint": "Prompt-cache locality routing takes precedence over round-robin/weighted rotation across pinned accounts. Turn it off under Settings, Combo defaults, if you need strict rotation.",
+    "stickyLimitInherit": "podeduj"
   },
   "costs": {
     "title": "Stroški",
@@ -4975,7 +4976,7 @@
     "compressionLogTitle": "Dnevnik stiskanja",
     "compressionLogEmpty": "Stisnjenih zahtev še ni. Statistični podatki o stiskanju se bodo prikazali tukaj, ko bodo zahteve obdelane z omogočenim stiskanjem.",
     "tokens": "žetoni",
-    "exportTruncated": "__MISSING__:Export truncated: only {exported} of {total} log entries were included. Pick a shorter time range to export the rest."
+    "exportTruncated": "Izvoz je bil skrajšan: vključenih je bilo le {exported} od {total} dnevniških vnosov. Za izvoz preostalih izberite krajše časovno obdobje."
   },
   "onboarding": {
     "welcome": "Dobrodošli",
@@ -6327,7 +6328,8 @@
       "codex": "Povežite OpenAI Codex z obstoječim postopkom OAuth.",
       "qwen": "Povežite Qwen Code z obstoječim postopkom OAuth.",
       "github-models": "Ustvarite GitHub PAT z obsegom »models: read« na github.com/settings/tokens",
-      "seekai": "Ustvarite ključ API na https://seekai.cc, nato pa ga sem prilepite kot žeton Bearer. Osnovni URL, združljiv z OpenAI: https://seekai.cc/v1."
+      "seekai": "Ustvarite ključ API na https://seekai.cc, nato pa ga sem prilepite kot žeton Bearer. Osnovni URL, združljiv z OpenAI: https://seekai.cc/v1.",
+      "agnes-cn": "Povežite Agnes AI (Kitajska) s ključem API, izdanim za api.agnes-ai.cn. Ključi z apihub.agnes-ai.com ne bodo delovali."
     },
     "passthroughModelsDescription": "{provider} sprejema izvorne ID-je modelov ponudnika. Uvozite jih iz /models ali dodajte ID-je po meri za usmerjanje.",
     "bedrockModelsDescription": "Modeli Amazon Bedrock so omejeni na regijo AWS. Uvozite jih iz /models ali dodajte ID-je modelov Bedrock, omogočene v izbrani regiji.",
@@ -6492,7 +6494,9 @@
     "dailyQuotaResetTimezoneLabel": "Časovni pas dnevne ponastavitve kvote",
     "dailyQuotaResetTimezoneHint": "Izbirni časovni pas IANA, uporabljen, kadar nadrejena storitev izpusti X-RateLimit-Reset. Pustite prazno, da ohranite kratko obdobje čakanja.",
     "dailyQuotaResetHourLabel": "Ura dnevne ponastavitve kvote",
-    "dailyQuotaResetHourHint": "Lokalna ura od 0 do 23 v zgornjem časovnem pasu. Prazno pomeni, da ni ure na ravni vozlišča."
+    "dailyQuotaResetHourHint": "Lokalna ura od 0 do 23 v zgornjem časovnem pasu. Prazno pomeni, da ni ure na ravni vozlišča.",
+    "vertexCredentialHint": "Ključi API uporabljajo skrbno izbran katalog projektov. JSON računa storitve omogoča sprotno odkrivanje v Model Garden.",
+    "vertexCredentialLabel": "Ključ API ali JSON računa storitve"
   },
   "settings": {
     "title": "Nastavitve",
@@ -8600,6 +8604,10 @@
       "compressToolResults": {
         "label": "Vnaprej skrajšaj dolge rezultate orodij",
         "description": "__MISSING__:Truncates long tool results during Lite compression. The Maximum tool-result length field (or AGENTPROXY_LITE_MAX_TOOL_LENGTH when that field is unset) sets the cap. Emergency overflow protection may still trim content when the context exceeds the model budget."
+      },
+      "maxToolLength": {
+        "description": "Character cap for proactive tool-result truncation. Default 2000. Override with AGENTPROXY_LITE_MAX_TOOL_LENGTH when this field is unset.",
+        "label": "Maximum tool-result length"
       }
     },
     "engineFields": {
@@ -9715,7 +9723,14 @@
     "updatedShort": "Posodobljeno",
     "lastRefreshed": "Nazadnje osveženo",
     "providerQuota": "Kvota ponudnika",
-    "providerQuotaHomeHint": "Stanje povezanih računov v živo"
+    "providerQuotaHomeHint": "Stanje povezanih računov v živo",
+    "glmConfirmRedeemFiveHourResetCredit": "Unovčenje takoj ponastavi 5-urno obdobje uporabe in trajno porabi to kartico.",
+    "glmConfirmRedeemResetCredit": "Unovčenje takoj ponastavi izbrano obdobje uporabe in trajno porabi to kartico.",
+    "glmConfirmRedeemWeekResetCredit": "Unovčenje takoj ponastavi tedensko obdobje uporabe in trajno porabi to kartico.",
+    "glmResetCreditFiveHourTitle": "Ponastavitev 5-urnega obdobja",
+    "glmResetCreditsModalExplainer": "Kartice za ponastavitev so razvrščene po datumu poteka. Izberite 5-urno ali tedensko obdobje, ki ga želite ponastaviti.",
+    "glmResetCreditsModalTitle": "Kartice za ponastavitev paketa GLM Coding Plan",
+    "glmResetCreditWeekTitle": "Ponastavitev tedenskega obdobja"
   },
   "modals": {
     "waitingAuth": "Čakanje na avtorizacijo",
@@ -12706,7 +12721,12 @@
     "createDahlTokenFailed": "Žetona Dahl ni bilo mogoče ustvariti",
     "providerProxy": "Posredniški strežnik",
     "providerProxyConfigureHint": "Nastavi posredniški strežnik",
-    "providerProxyTitleConfigured": "Posredniški strežnik je nastavljen: {host}"
+    "providerProxyTitleConfigured": "Posredniški strežnik je nastavljen: {host}",
+    "directEgress": "Neposredno (brez proxyja)",
+    "inheritConnectionOption": "Brez lastnega proxyja (podeduje povezavo)",
+    "inheritedPool": "Podeduje bazen povezav ({count})",
+    "inheritedProxy": "Podeduje povezavo: {host}",
+    "poolEmptyBlocked": "Bazen prazen — zahteve ne uspejo (ne neposredno)"
   },
   "gamification": {
     "leaderboardScopes": {
@@ -13066,6 +13086,13 @@
       "SERVER_OWNED_TOOL_LOOP_ENABLED": {
         "label": "Strežniško upravljana zanka orodij",
         "description": "Nadaljuj nepretočne strežniško upravljane klice orodij, dokler model ne vrne odziva, uporabnega za odjemalca."
+      },
+      "PROTECTED_PRIORITY_INFRA_502_ENABLED": {
+        "description": "Odgovori s 502 namesto 503, ko prednostni cilj z nadomestno uporabo samo ob izčrpani kvoti ustavi kombinacijo zaradi vzroka, ki dokazljivo ni povezan s kvoto: odprtega odklopnika ponudnika ali preskoka zaradi napovedane zakasnitve.",
+        "label": "Infrastrukturne zaustavitve z zaščiteno prioriteto kot 502"
+      },
+      "STREAM_RECOVERY_TOOLCALL_ORDER_FIX": {
+        "description": "Poskrbi, da bo nadaljevanje sredi toka varno za klice orodij: nikoli ne nadaljuj prekinjenega toka po poslanem klicu orodja (ki še vedno poteka ali je že končan) in se ustavi po enem praznem nadaljevanju, namesto da porabiš celoten proračun ponovnih poskusov."
       }
     }
   },
@@ -14194,5 +14221,6 @@
     "partnerLinkNote": "Partnerska povezava",
     "dismissAriaLabel": "Zapri"
   },
-  "featureFlagAgentProxyDisableThinkingLevelVariantsDescription": "Onemogoči ustvarjanje različic ravni razmišljanja (npr. -low, -medium, -high) v katalogu /v1/models."
+  "featureFlagAgentProxyDisableThinkingLevelVariantsDescription": "Onemogoči ustvarjanje različic ravni razmišljanja (npr. -low, -medium, -high) v katalogu /v1/models.",
+  "featureFlagProxyPoolSharedEgressOrderDescription": "Za ponudnike, katerih kvota se deli po izhodnem (egress) naslovu, uvrsti člana poola, ki si deli opaženi egress naslov nedavno zavrnjenega člana, tik pod zdrave člane. Samo vrstni red, nikoli izključitev. Zahteva PROXY_SKIP_RECENTLY_FAILED, ki ustvari signal zavrnitve, ki ga bere. Privzeto izklopljeno: vrstni red izbire je natanko navadna rotacija."
 }

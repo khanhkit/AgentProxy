@@ -3795,7 +3795,8 @@
     "triStateInherit": "inherit",
     "connectionAwareExpansionOn": "On",
     "connectionAwareExpansionOff": "Off",
-    "promptCacheAffinityHint": "Prompt-cache locality routing takes precedence over round-robin/weighted rotation across pinned accounts. Turn it off under Settings, Combo defaults, if you need strict rotation."
+    "promptCacheAffinityHint": "Prompt-cache locality routing takes precedence over round-robin/weighted rotation across pinned accounts. Turn it off under Settings, Combo defaults, if you need strict rotation.",
+    "stickyLimitInherit": "öröklés"
   },
   "costs": {
     "title": "Költségek",
@@ -4972,7 +4973,7 @@
     "compressionLogTitle": "Tömörítési napló",
     "compressionLogEmpty": "Még nincsenek tömörített kérések. A tömörítési statisztikák itt fognak megjelenni, ha a kérések feldolgozása engedélyezett tömörítéssel történik.",
     "tokens": "tokenek",
-    "exportTruncated": "__MISSING__:Export truncated: only {exported} of {total} log entries were included. Pick a shorter time range to export the rest."
+    "exportTruncated": "Az export csonkolva lett: a(z) {total} naplóbejegyzésből csak {exported} került bele. A többi exportálásához válassz rövidebb időtartományt."
   },
   "onboarding": {
     "welcome": "Üdvözöljük",
@@ -6328,7 +6329,8 @@
       "kiro": "Ingyenes csomag: havi 50 kredit (~25K–100K token). ⚠️ A Kiro felhasználási feltételei tiltják a külső proxykkal és futtatókeretekkel való használatot.",
       "codex": "Csatlakoztasd az OpenAI Codex szolgáltatást a meglévő OAuth-folyamattal.",
       "qwen": "Csatlakoztasd a Qwen Code szolgáltatást a meglévő OAuth-folyamattal.",
-      "github-models": "Hozzon létre egy GitHub PAT-ot 'models: read' hatókörrel a github.com/settings/tokens oldalon"
+      "github-models": "Hozzon létre egy GitHub PAT-ot 'models: read' hatókörrel a github.com/settings/tokens oldalon",
+      "agnes-cn": "Csatlakoztasd az Agnes AI (China) szolgáltatást az api.agnes-ai.cn címhez kiadott API-kulccsal. Az apihub.agnes-ai.com címről származó kulcsok nem működnek."
     },
     "passthroughModelsDescription": "Az {provider} elfogadja a szolgáltató natív modellazonosítóit. Importáljon a /models-ból, vagy adjon hozzá egyéni azonosítókat az útválasztáshoz.",
     "bedrockModelsDescription": "Az Amazon Bedrock modellek hatóköre az AWS régió szerint történik. Importáljon a /models mappából, vagy adja hozzá a kiválasztott régióban engedélyezett Bedrock modellazonosítókat.",
@@ -6489,7 +6491,9 @@
     "failedClearConnectionCooldown": "Nem sikerült törölni a várakozási időt",
     "importFromFileDownloadTemplate": "CSV-sablon letöltése",
     "importFromFileMoreErrors": "+ további {count}",
-    "importFromFileSchemaHint": "A CSV-oszlopok sorrendje kötött: provider, name, apiKey, baseUrl (nem kötelező), priority (nem kötelező). A provider oszlopnak egy meglévő felügyelt szolgáltatói azonosítót vagy egy már regisztrált, OpenAI/Anthropic-kompatibilis csomópontazonosítót kell tartalmaznia — ez az importálás nem hoz létre új végpontcsomópontokat."
+    "importFromFileSchemaHint": "A CSV-oszlopok sorrendje kötött: provider, name, apiKey, baseUrl (nem kötelező), priority (nem kötelező). A provider oszlopnak egy meglévő felügyelt szolgáltatói azonosítót vagy egy már regisztrált, OpenAI/Anthropic-kompatibilis csomópontazonosítót kell tartalmaznia — ez az importálás nem hoz létre új végpontcsomópontokat.",
+    "vertexCredentialHint": "Az API-kulcsok a válogatott projektkatalógust használják. A szolgáltatásfiók JSON-ja lehetővé teszi a Model Garden élő feltérképezését.",
+    "vertexCredentialLabel": "API-kulcs vagy szolgáltatásfiók JSON-ja"
   },
   "settings": {
     "title": "Beállítások elemre",
@@ -8597,6 +8601,10 @@
       "compressToolResults": {
         "label": "Proaktívan vágja le a hosszú eszközeredményeket",
         "description": "__MISSING__:Truncates long tool results during Lite compression. The Maximum tool-result length field (or AGENTPROXY_LITE_MAX_TOOL_LENGTH when that field is unset) sets the cap. Emergency overflow protection may still trim content when the context exceeds the model budget."
+      },
+      "maxToolLength": {
+        "description": "Character cap for proactive tool-result truncation. Default 2000. Override with AGENTPROXY_LITE_MAX_TOOL_LENGTH when this field is unset.",
+        "label": "Maximum tool-result length"
       }
     },
     "engineFields": {
@@ -9712,7 +9720,14 @@
     "kiloPassPaid": "Kifizetve",
     "kiloPassRemaining": "Fennmaradó",
     "kiloPassRenews": "Megújul {count} nap múlva",
-    "kiloPassUsageLabel": "E havi használat"
+    "kiloPassUsageLabel": "E havi használat",
+    "glmConfirmRedeemFiveHourResetCredit": "A beváltás azonnal visszaállítja az 5 órás használati időszakot, és véglegesen felhasználja ezt a kártyát.",
+    "glmConfirmRedeemResetCredit": "A beváltás azonnal visszaállítja a kiválasztott használati időszakot, és véglegesen felhasználja ezt a kártyát.",
+    "glmConfirmRedeemWeekResetCredit": "A beváltás azonnal visszaállítja a heti használati időszakot, és véglegesen felhasználja ezt a kártyát.",
+    "glmResetCreditFiveHourTitle": "Az 5 órás időszak visszaállítása",
+    "glmResetCreditsModalExplainer": "A visszaállítási kártyák lejárat szerint vannak rendezve. Válaszd ki a visszaállítani kívánt 5 órás vagy heti időszakot.",
+    "glmResetCreditsModalTitle": "A GLM Coding Plan visszaállítási kártyái",
+    "glmResetCreditWeekTitle": "A heti időszak visszaállítása"
   },
   "modals": {
     "waitingAuth": "Várakozás az engedélyezésre",
@@ -12703,7 +12718,12 @@
     "createDahlTokenFailed": "Sikertelen a Dahl token létrehozása",
     "providerProxy": "Proxy",
     "providerProxyConfigureHint": "Proxy beállítása",
-    "providerProxyTitleConfigured": "Proxy beállítva: {host}"
+    "providerProxyTitleConfigured": "Proxy beállítva: {host}",
+    "directEgress": "Közvetlen (proxy nélkül)",
+    "inheritConnectionOption": "Nincs saját proxy (a kapcsolatot örökli)",
+    "inheritedPool": "Örökölt kapcsolati készlet ({count})",
+    "inheritedProxy": "Örökölt kapcsolat: {host}",
+    "poolEmptyBlocked": "A készlet üres — a kérések meghiúsulnak (nem közvetlen)"
   },
   "gamification": {
     "leaderboardScopes": {
@@ -13063,6 +13083,13 @@
       "SERVER_OWNED_TOOL_LOOP_ENABLED": {
         "label": "Kiszolgáló által kezelt eszközhívási ciklus",
         "description": "A kiszolgáló által kezelt, nem streamelt eszközhívások folytatása addig, amíg a modell az ügyfél által használható választ nem ad."
+      },
+      "PROTECTED_PRIORITY_INFRA_502_ENABLED": {
+        "description": "503 helyett 502-es választ adjon, amikor egy csak kvóta esetén tartalékként használt prioritási cél olyan okból állítja le a kombinációt, amely bizonyíthatóan nem kvótával kapcsolatos: nyitott szolgáltatói megszakító vagy prediktív késleltetés miatti kihagyás.",
+        "label": "Védett prioritású infrastruktúra-leállások 502-es hibaként"
+      },
+      "STREAM_RECOVERY_TOOLCALL_ORDER_FIX": {
+        "description": "Az adatfolyam menet közbeni folytatásának biztonságossá tétele eszközhívások esetén: soha ne folytasson megszakadt adatfolyamot egy eszközhívás elküldése után (akár még folyamatban van, akár már befejeződött), és egyetlen üres folytatás után álljon le a teljes újrapróbálkozási keret felhasználása helyett."
       }
     }
   },
@@ -14191,5 +14218,6 @@
     "partnerLinkNote": "Partnerlink",
     "dismissAriaLabel": "Bezárás"
   },
-  "featureFlagAgentProxyDisableThinkingLevelVariantsDescription": "Letiltja a gondolkodási szint szerinti változatok (pl. -low, -medium, -high) létrehozását a /v1/models katalógusban."
+  "featureFlagAgentProxyDisableThinkingLevelVariantsDescription": "Letiltja a gondolkodási szint szerinti változatok (pl. -low, -medium, -high) létrehozását a /v1/models katalógusban.",
+  "featureFlagProxyPoolSharedEgressOrderDescription": "Azoknál a szolgáltatóknál, amelyek kvótája kimenő (egress) cím szerint oszlik meg, a pool azon tagját, amely egy nemrég elutasított tag megfigyelt egress címén osztozik, közvetlenül az egészséges tagok alá sorolja. Csak sorrend, soha nem zár ki. Szükséges hozzá a PROXY_SKIP_RECENTLY_FAILED, amely az általa olvasott elutasítási jelet előállítja. Alapértelmezetten ki: a kiválasztási sorrend pontosan az egyszerű rotáció."
 }

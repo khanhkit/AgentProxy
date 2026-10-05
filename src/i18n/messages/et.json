@@ -3814,7 +3814,8 @@
     "triStateInherit": "inherit",
     "connectionAwareExpansionOn": "On",
     "connectionAwareExpansionOff": "Off",
-    "promptCacheAffinityHint": "Prompt-cache locality routing takes precedence over round-robin/weighted rotation across pinned accounts. Turn it off under Settings, Combo defaults, if you need strict rotation."
+    "promptCacheAffinityHint": "Prompt-cache locality routing takes precedence over round-robin/weighted rotation across pinned accounts. Turn it off under Settings, Combo defaults, if you need strict rotation.",
+    "stickyLimitInherit": "päri"
   },
   "costs": {
     "title": "Kulud",
@@ -4991,7 +4992,7 @@
     "compressionLogTitle": "Tihenduslogi",
     "compressionLogEmpty": "Tihendatud päringuid veel pole. Tihendusstatistika kuvatakse siin, kui päringuid töödeldakse lubatud tihendusega.",
     "tokens": "tokenid",
-    "exportTruncated": "__MISSING__:Export truncated: only {exported} of {total} log entries were included. Pick a shorter time range to export the rest."
+    "exportTruncated": "Eksport kärbiti: {total} logikirjest kaasati ainult {exported}. Ülejäänute eksportimiseks valige lühem ajavahemik."
   },
   "onboarding": {
     "welcome": "Tere tulemast",
@@ -6343,7 +6344,8 @@
       "codex": "Ühenda OpenAI Codex olemasoleva OAuth-vooga.",
       "qwen": "Ühenda Qwen Code olemasoleva OAuth-vooga.",
       "github-models": "Loo aadressil github.com/settings/tokens GitHub PAT õigusega „models: read”",
-      "seekai": "Looge API-võti aadressil https://seekai.cc ja kleepige see siia Bearer-tokenina. OpenAI-ühilduv baas-URL: https://seekai.cc/v1."
+      "seekai": "Looge API-võti aadressil https://seekai.cc ja kleepige see siia Bearer-tokenina. OpenAI-ühilduv baas-URL: https://seekai.cc/v1.",
+      "agnes-cn": "Ühenda Agnes AI (China) API-võtmega, mis on väljastatud domeeni api.agnes-ai.cn jaoks. Domeenist apihub.agnes-ai.com pärinevad võtmed ei tööta."
     },
     "passthroughModelsDescription": "{provider} aktsepteerib teenusepakkuja omavormingus mudeli-ID-sid. Impordi need lehelt /models või lisa marsruutimiseks kohandatud ID-d.",
     "bedrockModelsDescription": "Amazon Bedrocki mudelid on seotud AWS-i piirkonnaga. Impordi need lehelt /models või lisa valitud piirkonnas lubatud Bedrocki mudelite ID-d.",
@@ -6508,7 +6510,9 @@
     "dailyQuotaResetTimezoneLabel": "Päevakvoodi lähtestamise ajavöönd",
     "dailyQuotaResetTimezoneHint": "Valikuline IANA ajavöönd, mida kasutatakse juhul, kui ülesvooluteenus jätab X-RateLimit-Reset päise saatmata. Lühikese ooteaja säilitamiseks jätke tühjaks.",
     "dailyQuotaResetHourLabel": "Päevakvoodi lähtestamise tund",
-    "dailyQuotaResetHourHint": "Kohalik tund vahemikus 0–23 ülaltoodud ajavööndis. Tühi väärtus tähendab, et sõlme tasemel kella ei kasutata."
+    "dailyQuotaResetHourHint": "Kohalik tund vahemikus 0–23 ülaltoodud ajavööndis. Tühi väärtus tähendab, et sõlme tasemel kella ei kasutata.",
+    "vertexCredentialHint": "API-võtmed kasutavad kureeritud projektikataloogi. Teenusekonto JSON võimaldab Model Gardeni reaalajas avastamist.",
+    "vertexCredentialLabel": "API-võti või teenusekonto JSON"
   },
   "settings": {
     "title": "Seaded",
@@ -8616,6 +8620,10 @@
       "compressToolResults": {
         "label": "Kärbi pikad tööriistatulemused ennetavalt",
         "description": "__MISSING__:Truncates long tool results during Lite compression. The Maximum tool-result length field (or AGENTPROXY_LITE_MAX_TOOL_LENGTH when that field is unset) sets the cap. Emergency overflow protection may still trim content when the context exceeds the model budget."
+      },
+      "maxToolLength": {
+        "description": "Character cap for proactive tool-result truncation. Default 2000. Override with AGENTPROXY_LITE_MAX_TOOL_LENGTH when this field is unset.",
+        "label": "Maximum tool-result length"
       }
     },
     "engineFields": {
@@ -9731,7 +9739,14 @@
     "updatedShort": "Uuendatud",
     "lastRefreshed": "Viimati värskendatud",
     "providerQuota": "Teenusepakkuja kvoot",
-    "providerQuotaHomeHint": "Ühendatud kontode reaalajas olek"
+    "providerQuotaHomeHint": "Ühendatud kontode reaalajas olek",
+    "glmConfirmRedeemFiveHourResetCredit": "Lunastamine lähtestab 5-tunnise kasutusperioodi kohe ja kasutab selle kaardi jäädavalt ära.",
+    "glmConfirmRedeemResetCredit": "Lunastamine lähtestab valitud kasutusperioodi kohe ja kasutab selle kaardi jäädavalt ära.",
+    "glmConfirmRedeemWeekResetCredit": "Lunastamine lähtestab nädalase kasutusperioodi kohe ja kasutab selle kaardi jäädavalt ära.",
+    "glmResetCreditFiveHourTitle": "5-tunnise perioodi lähtestamine",
+    "glmResetCreditsModalExplainer": "Lähtestuskaardid on järjestatud aegumise järgi. Valige 5-tunnine või nädalane periood, mille soovite lähtestada.",
+    "glmResetCreditsModalTitle": "GLM Coding Plani lähtestuskaardid",
+    "glmResetCreditWeekTitle": "Nädalase perioodi lähtestamine"
   },
   "modals": {
     "waitingAuth": "Autoriseerimise ootel",
@@ -12722,7 +12737,12 @@
     "createDahlTokenFailed": "Dahl-tokeni loomine ebaõnnestus",
     "providerProxy": "Puhverserver",
     "providerProxyConfigureHint": "Seadista puhverserver",
-    "providerProxyTitleConfigured": "Puhverserver on seadistatud: {host}"
+    "providerProxyTitleConfigured": "Puhverserver on seadistatud: {host}",
+    "directEgress": "Otse (puhverserverita)",
+    "inheritConnectionOption": "Isiklikku puhverserverit pole (pärib ühenduse)",
+    "inheritedPool": "Pärib ühenduste kogumi ({count})",
+    "inheritedProxy": "Pärib ühenduse: {host}",
+    "poolEmptyBlocked": "Kogum tühi — päringud ebaõnnestuvad (mitte otse)"
   },
   "gamification": {
     "leaderboardScopes": {
@@ -13082,6 +13102,13 @@
       "SERVER_OWNED_TOOL_LOOP_ENABLED": {
         "label": "Serveri hallatav tööriistatsükkel",
         "description": "Jätka serveri hallatavate voogedastuseta tööriistakutsete tegemist, kuni mudel tagastab kliendi jaoks kasutatava vastuse."
+      },
+      "PROTECTED_PRIORITY_INFRA_502_ENABLED": {
+        "description": "Vasta 503 asemel 502-ga, kui ainult kvoodipõhise varuvariandiga prioriteetne sihtmärk peatab combo põhjusel, mis pole tõendatavalt kvoodiga seotud: teenusepakkuja avatud kaitselüliti või prognoosiv latentsuse tõttu vahelejätmine.",
+        "label": "Kaitstud prioriteediga taristu peatamised kui 502"
+      },
+      "STREAM_RECOVERY_TOOLCALL_ORDER_FIX": {
+        "description": "Muuda voo keskel jätkamine tööriistakutse korral ohutuks: ära jätka kunagi katkestatud voogu pärast tööriistakutse saatmist (olenemata sellest, kas see on veel pooleli või juba lõpetatud) ning lõpeta pärast üht tühja jätkamist, selle asemel et kasutada ära kogu korduskatsete limiit."
       }
     }
   },
@@ -14210,5 +14237,6 @@
     "partnerLinkNote": "Partnerlink",
     "dismissAriaLabel": "Sulge"
   },
-  "featureFlagAgentProxyDisableThinkingLevelVariantsDescription": "Keela mõtlemistaseme variantide (nt -low, -medium, -high) loomine /v1/models kataloogis."
+  "featureFlagAgentProxyDisableThinkingLevelVariantsDescription": "Keela mõtlemistaseme variantide (nt -low, -medium, -high) loomine /v1/models kataloogis.",
+  "featureFlagProxyPoolSharedEgressOrderDescription": "Teenusepakkujate puhul, kelle kvoot jagatakse väljuva (egress) aadressi järgi, paigutab pooli liikme, kes jagab hiljuti tagasi lükatud liikme täheldatud egress-aadressi, kohe tervete liikmete alla. Ainult järjestus, kunagi ei välistata. Vajab PROXY_SKIP_RECENTLY_FAILED-i, mis tekitab loetava keeldumissignaali. Vaikimisi väljas: valikujärjestus on täpselt tavaline rotatsioon."
 }

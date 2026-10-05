@@ -3867,7 +3867,8 @@
     "triStateInherit": "inherit",
     "connectionAwareExpansionOn": "On",
     "connectionAwareExpansionOff": "Off",
-    "promptCacheAffinityHint": "Prompt-cache locality routing takes precedence over round-robin/weighted rotation across pinned accounts. Turn it off under Settings, Combo defaults, if you need strict rotation."
+    "promptCacheAffinityHint": "Prompt-cache locality routing takes precedence over round-robin/weighted rotation across pinned accounts. Turn it off under Settings, Combo defaults, if you need strict rotation.",
+    "stickyLimitInherit": "herdar"
   },
   "costs": {
     "title": "Custos",
@@ -5044,7 +5045,7 @@
     "compressionLogTitle": "Registo de Compressão",
     "compressionLogEmpty": "Ainda não existem pedidos comprimidos. As estatísticas de compressão aparecerão aqui quando os pedidos forem processados com a compressão ativada.",
     "tokens": "tokens",
-    "exportTruncated": "__MISSING__:Export truncated: only {exported} of {total} log entries were included. Pick a shorter time range to export the rest."
+    "exportTruncated": "Exportação truncada: foram incluídas apenas {exported} de {total} entradas de registo. Escolha um intervalo de tempo mais curto para exportar as restantes."
   },
   "onboarding": {
     "welcome": "Bem vindo",
@@ -6043,8 +6044,8 @@
     "validationModelIdHint": "Validation Model Id Hint",
     "validationModelIdLabel": "Validation Model Id Label",
     "validationModelIdPlaceholder": "Validation Model Id Placeholder",
-    "vertexCredentialLabel": "API Key or Service Account JSON",
-    "vertexCredentialHint": "API keys use the curated project catalog. Service Account JSON enables live Model Garden discovery.",
+    "vertexCredentialLabel": "Chave de API ou JSON da conta de serviço",
+    "vertexCredentialHint": "As chaves de API utilizam o catálogo de projetos selecionado. O JSON da conta de serviço permite a deteção em tempo real no Model Garden.",
     "vertexServiceAccountPlaceholder": "Cola o teu JSON de Service Account ({\"type\":\"service_account\",\"project_id\":\"…\",\"client_email\":\"…\",\"private_key\":\"…\"})",
     "webCookieProviders": "Fornecedores de Cookies Web",
     "weeklyShort": "Semanal",
@@ -9791,7 +9792,14 @@
     "kiloPassPaid": "Pago",
     "kiloPassRemaining": "Restante",
     "kiloPassRenews": "Renova em {count} dias",
-    "kiloPassUsageLabel": "Utilização deste mês"
+    "kiloPassUsageLabel": "Utilização deste mês",
+    "glmConfirmRedeemFiveHourResetCredit": "O resgate repõe imediatamente o período de utilização de 5 horas e consome permanentemente este cartão.",
+    "glmConfirmRedeemResetCredit": "O resgate repõe imediatamente o período de utilização selecionado e consome permanentemente este cartão.",
+    "glmConfirmRedeemWeekResetCredit": "O resgate repõe imediatamente o período de utilização semanal e consome permanentemente este cartão.",
+    "glmResetCreditFiveHourTitle": "Reposição do período de 5 horas",
+    "glmResetCreditsModalExplainer": "Os cartões de reposição são ordenados por data de expiração. Escolha o período de 5 horas ou semanal que pretende repor.",
+    "glmResetCreditsModalTitle": "Cartões de reposição do GLM Coding Plan",
+    "glmResetCreditWeekTitle": "Reposição do período semanal"
   },
   "modals": {
     "waitingAuth": "Aguardando autorização",
@@ -12782,7 +12790,12 @@
     "createDahlTokenFailed": "Falha ao criar o token Dahl",
     "providerProxy": "Proxy",
     "providerProxyConfigureHint": "Configurar proxy",
-    "providerProxyTitleConfigured": "Proxy configurado: {host}"
+    "providerProxyTitleConfigured": "Proxy configurado: {host}",
+    "directEgress": "Direto (sem proxy)",
+    "inheritConnectionOption": "Sem proxy próprio (herda a ligação)",
+    "inheritedPool": "Herda o pool de ligações ({count})",
+    "inheritedProxy": "Herda a ligação: {host}",
+    "poolEmptyBlocked": "Pool vazio — os pedidos falham (não direto)"
   },
   "gamification": {
     "leaderboardScopes": {
@@ -13107,11 +13120,11 @@
         "description": "Permitir que a recuperação de stream solicite a resposta novamente e a junte após os bytes já terem chegado ao cliente."
       },
       "STREAM_RECOVERY_TOOLCALL_ORDER_FIX": {
-        "description": "__MISSING__:Make mid-stream continuation tool-call safe: never resume a cut stream after a tool call was sent (still in progress or already finished), and stop after one empty continuation instead of using the whole retry budget."
+        "description": "Torne a continuação a meio do stream segura para chamadas de ferramentas: nunca retome um stream interrompido depois de uma chamada de ferramenta ter sido enviada (ainda em curso ou já concluída) e pare após uma continuação vazia em vez de usar todo o orçamento de novas tentativas."
       },
       "PROTECTED_PRIORITY_INFRA_502_ENABLED": {
-        "label": "__MISSING__:Protected-Priority Infra Stops as 502",
-        "description": "__MISSING__:Answer 502 instead of 503 when a quota-only-fallback priority target stops the combo for a cause that is provably not quota: an open provider circuit breaker or a predictive latency skip."
+        "label": "Interrupções de infraestrutura de prioridade protegida como 502",
+        "description": "Responda com 502 em vez de 503 quando um alvo prioritário com fallback apenas por quota interromper o combo por uma causa comprovadamente não relacionada com quota: um circuit breaker do fornecedor aberto ou um salto preditivo por latência."
       },
       "MODEL_CATALOG_INCLUDE_NAMES": {
         "description": "Incluir campos de nome fáceis de ler nas respostas de /v1/models. Desative isto para clientes que aceitam apenas IDs de modelo."
@@ -14277,5 +14290,6 @@
     "partnerLinkNote": "Link de parceiro",
     "dismissAriaLabel": "Dispensar"
   },
-  "featureFlagAgentProxyDisableThinkingLevelVariantsDescription": "Desative a geração de variantes de nível de pensamento (por exemplo, -low, -medium, -high) no catálogo /v1/models."
+  "featureFlagAgentProxyDisableThinkingLevelVariantsDescription": "Desative a geração de variantes de nível de pensamento (por exemplo, -low, -medium, -high) no catálogo /v1/models.",
+  "featureFlagProxyPoolSharedEgressOrderDescription": "Para fornecedores cuja quota é repartida por endereço de egress, coloca um membro do pool que partilha o endereço de egress observado de um membro recentemente recusado imediatamente abaixo dos membros saudáveis. Apenas ordenação, nunca é excluído. Requer PROXY_SKIP_RECENTLY_FAILED, que produz o sinal de recusa que lê. Desativado por predefinição: a ordem de seleção é exatamente a rotação simples."
 }

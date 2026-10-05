@@ -3795,7 +3795,8 @@
     "triStateInherit": "inherit",
     "connectionAwareExpansionOn": "On",
     "connectionAwareExpansionOff": "Off",
-    "promptCacheAffinityHint": "Prompt-cache locality routing takes precedence over round-robin/weighted rotation across pinned accounts. Turn it off under Settings, Combo defaults, if you need strict rotation."
+    "promptCacheAffinityHint": "Prompt-cache locality routing takes precedence over round-robin/weighted rotation across pinned accounts. Turn it off under Settings, Combo defaults, if you need strict rotation.",
+    "stickyLimitInherit": "overerven"
   },
   "costs": {
     "title": "Kosten",
@@ -4972,7 +4973,7 @@
     "compressionLogTitle": "Compressielogboek",
     "compressionLogEmpty": "Nog geen gecomprimeerde aanvragen. Compressiestatistieken verschijnen hier wanneer aanvragen worden verwerkt met compressie ingeschakeld.",
     "tokens": "tokens",
-    "exportTruncated": "__MISSING__:Export truncated: only {exported} of {total} log entries were included. Pick a shorter time range to export the rest."
+    "exportTruncated": "Export afgekapt: slechts {exported} van {total} logboekvermeldingen zijn opgenomen. Kies een korter tijdsbereik om de rest te exporteren."
   },
   "onboarding": {
     "welcome": "Welkom",
@@ -6328,7 +6329,8 @@
       "kiro": "Gratis tier: 50 credits/maand (~25K–100K tokens). ⚠️ Kiro ToS verbiedt het gebruik van externe proxy/harness.",
       "codex": "Verbind OpenAI Codex met de bestaande OAuth-flow.",
       "qwen": "Verbind Qwen Code met de bestaande OAuth-flow.",
-      "github-models": "Maak een GitHub PAT aan met de scope 'models: read' op github.com/settings/tokens"
+      "github-models": "Maak een GitHub PAT aan met de scope 'models: read' op github.com/settings/tokens",
+      "agnes-cn": "Verbind Agnes AI (China) met een API-sleutel die is uitgegeven voor api.agnes-ai.cn. Sleutels van apihub.agnes-ai.com werken niet."
     },
     "passthroughModelsDescription": "{provider} accepteert provider-native model-ID's. Importeer uit /models of voeg aangepaste ID's toe voor routering.",
     "bedrockModelsDescription": "Amazon Bedrock-modellen zijn afgestemd op de AWS-regio. Importeer uit /models of voeg Bedrock-model-ID's toe die zijn ingeschakeld in de geselecteerde regio.",
@@ -6489,7 +6491,9 @@
     "failedClearConnectionCooldown": "Wissen van de afkoelperiode mislukt",
     "importFromFileDownloadTemplate": "CSV-sjabloon downloaden",
     "importFromFileMoreErrors": "+{count} meer",
-    "importFromFileSchemaHint": "CSV-kolommen zijn positioneel: provider, name, apiKey, baseUrl (optioneel), priority (optioneel). De kolom provider moet een bestaande beheerde provider-id of een reeds geregistreerde OpenAI/Anthropic-compatibele node-id bevatten — met deze import worden geen nieuwe endpointnodes aangemaakt."
+    "importFromFileSchemaHint": "CSV-kolommen zijn positioneel: provider, name, apiKey, baseUrl (optioneel), priority (optioneel). De kolom provider moet een bestaande beheerde provider-id of een reeds geregistreerde OpenAI/Anthropic-compatibele node-id bevatten — met deze import worden geen nieuwe endpointnodes aangemaakt.",
+    "vertexCredentialHint": "API-sleutels gebruiken de gecureerde projectcatalogus. Service Account-JSON maakt live modeldetectie in Model Garden mogelijk.",
+    "vertexCredentialLabel": "API-sleutel of Service Account-JSON"
   },
   "settings": {
     "title": "Instellingen",
@@ -8597,6 +8601,10 @@
       "compressToolResults": {
         "label": "Proactief lange toolresultaten inkorten",
         "description": "__MISSING__:Truncates long tool results during Lite compression. The Maximum tool-result length field (or AGENTPROXY_LITE_MAX_TOOL_LENGTH when that field is unset) sets the cap. Emergency overflow protection may still trim content when the context exceeds the model budget."
+      },
+      "maxToolLength": {
+        "description": "Tekenlimiet voor proactief inkorten. Standaard 2000. Overschrijf met AGENTPROXY_LITE_MAX_TOOL_LENGTH als het veld leeg is.",
+        "label": "Maximale toolresultaatlengte"
       }
     },
     "engineFields": {
@@ -9712,7 +9720,14 @@
     "kiloPassPaid": "Betaald",
     "kiloPassRemaining": "Resterend",
     "kiloPassRenews": "Verlengt over {count} dagen",
-    "kiloPassUsageLabel": "Verbruik van deze maand"
+    "kiloPassUsageLabel": "Verbruik van deze maand",
+    "glmConfirmRedeemFiveHourResetCredit": "Bij inwisseling wordt het gebruiksvenster van 5 uur onmiddellijk gereset en deze kaart definitief verbruikt.",
+    "glmConfirmRedeemResetCredit": "Bij inwisseling wordt het geselecteerde gebruiksvenster onmiddellijk gereset en deze kaart definitief verbruikt.",
+    "glmConfirmRedeemWeekResetCredit": "Bij inwisseling wordt het wekelijkse gebruiksvenster onmiddellijk gereset en deze kaart definitief verbruikt.",
+    "glmResetCreditFiveHourTitle": "Venster van 5 uur resetten",
+    "glmResetCreditsModalExplainer": "Resetkaarten zijn gerangschikt op vervaldatum. Kies het venster van 5 uur of het weekvenster dat je wilt resetten.",
+    "glmResetCreditsModalTitle": "Resetkaarten voor GLM Coding Plan",
+    "glmResetCreditWeekTitle": "Weekvenster resetten"
   },
   "modals": {
     "waitingAuth": "Wachten op toestemming",
@@ -12703,7 +12718,12 @@
     "createDahlTokenFailed": "Mislukt om Dahl-token te maken",
     "providerProxy": "Proxy",
     "providerProxyConfigureHint": "Configureer proxy",
-    "providerProxyTitleConfigured": "Proxy geconfigureerd: {host}"
+    "providerProxyTitleConfigured": "Proxy geconfigureerd: {host}",
+    "directEgress": "Direct (geen proxy)",
+    "inheritConnectionOption": "Geen eigen proxy (erft verbinding)",
+    "inheritedPool": "Erft verbindingspool ({count})",
+    "inheritedProxy": "Erft verbinding: {host}",
+    "poolEmptyBlocked": "Pool leeg — verzoeken mislukken (niet direct)"
   },
   "gamification": {
     "leaderboardScopes": {
@@ -13063,6 +13083,13 @@
       "SERVER_OWNED_TOOL_LOOP_ENABLED": {
         "label": "Door de server beheerde toolcyclus",
         "description": "Ga door met niet-streamende, door de server beheerde toolaanroepen totdat het model een voor de client bruikbaar antwoord retourneert."
+      },
+      "PROTECTED_PRIORITY_INFRA_502_ENABLED": {
+        "description": "Antwoord met 502 in plaats van 503 wanneer een prioriteitsdoel met uitsluitend quota als fallback de combo stopt vanwege een oorzaak waarvan aantoonbaar is dat die niet quotagerelateerd is: een open circuitbreaker van een provider of het overslaan vanwege voorspelde latentie.",
+        "label": "Infrastructuurstops met beschermde prioriteit als 502"
+      },
+      "STREAM_RECOVERY_TOOLCALL_ORDER_FIX": {
+        "description": "Maak voortzetting halverwege een stream veilig voor toolaanroepen: hervat nooit een afgebroken stream nadat een toolaanroep is verzonden (ongeacht of deze nog wordt uitgevoerd of al is voltooid) en stop na één lege voortzetting in plaats van het volledige aantal nieuwe pogingen te benutten."
       }
     }
   },
@@ -14191,5 +14218,6 @@
     "partnerLinkNote": "Partnerlink",
     "dismissAriaLabel": "Sluiten"
   },
-  "featureFlagAgentProxyDisableThinkingLevelVariantsDescription": "Schakel het genereren van varianten op denkniveau (bijv. -low, -medium, -high) in de catalogus /v1/models uit."
+  "featureFlagAgentProxyDisableThinkingLevelVariantsDescription": "Schakel het genereren van varianten op denkniveau (bijv. -low, -medium, -high) in de catalogus /v1/models uit.",
+  "featureFlagProxyPoolSharedEgressOrderDescription": "Voor providers waarvan het quotum per egress-adres wordt verdeeld, wordt een pool-lid dat het waargenomen egress-adres deelt met een recent geweigerd lid direct onder de gezonde leden gerangschikt. Alleen volgorde, nooit uitgesloten. Vereist PROXY_SKIP_RECENTLY_FAILED, dat het weigeringssignaal produceert dat het leest. Standaard uit: de selectievolgorde is precies de gewone rotatie."
 }

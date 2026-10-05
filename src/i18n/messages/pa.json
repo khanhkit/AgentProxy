@@ -3193,7 +3193,13 @@
     "cliproxyapiUnknown": "ਅਣਜਾਣ",
     "cliproxyapiUpdate": "ਅੱਪਡੇਟ ਕਰੋ",
     "cliproxyapiUpdateAvailable": "ਅੱਪਡੇਟ ਉਪਲਬਧ ਹੈ: v{current} → v{latest}",
-    "cliproxyapiVersion": "ਵਰਜਨ"
+    "cliproxyapiVersion": "ਵਰਜਨ",
+    "hermesRoleMoaAggregator": "MoA ਐਗਰੀਗੇਟਰ",
+    "hermesRoleMoaAggregatorDesc": "Mixture-of-Agents ਸਿੰਥੇਸਿਸ ਮਾਡਲ",
+    "hermesRoleMoaReference": "MoA ਸੰਦਰਭ",
+    "hermesRoleMoaReferenceDesc": "Mixture-of-Agents ਸੰਦਰਭ ਮਾਡਲ",
+    "hermesRoleReview": "ਸਮੀਖਿਆ",
+    "hermesRoleReviewDesc": "ਪੂਰੀ ਸਬ-ਏਜੰਟ ਕੋਡ ਸਮੀਖਿਆ"
   },
   "combos": {
     "title": "ਕੌਂਬੋ",
@@ -3424,7 +3430,9 @@
       "failoverBeforeRetry": "ਸਮਰੱਥ ਹੋਣ 'ਤੇ, ਕੋਈ ਵੀ ਅੱਪਸਟ੍ਰੀਮ ਗਲਤੀ ਸਾਰੀਆਂ ਮੁੜ ਕੋਸ਼ਿਸ਼ਾਂ ਅਤੇ ਫਾਲਬੈਕ URLs ਨੂੰ ਛੱਡ ਕੇ ਅਗਲੇ ਕੰਬੋ ਟਾਰਗੇਟ ਵੱਲ ਤੁਰੰਤ ਫੇਲਓਵਰ ਸ਼ੁਰੂ ਕਰਦੀ ਹੈ।",
       "maxSetRetries": "ਜਦੋਂ ਸਾਰੇ ਟਾਰਗੇਟ ਅਸਫਲ ਹੋ ਜਾਣ, ਤਾਂ ਪੂਰੇ ਟਾਰਗੇਟ ਸੈੱਟ ਦੀ ਮੁੜ ਕੋਸ਼ਿਸ਼ ਕਰਨ ਦੀ ਗਿਣਤੀ। 0 = ਕੋਈ ਸੈੱਟ-ਪੱਧਰੀ ਮੁੜ ਕੋਸ਼ਿਸ਼ ਨਹੀਂ।",
       "setRetryDelayMs": "ਸੈੱਟ-ਪੱਧਰੀ ਮੁੜ-ਕੋਸ਼ਿਸ਼ਾਂ ਵਿਚਕਾਰ ਦੇਰੀ, ਤਾਂ ਜੋ ਅਸਥਾਈ ਸਮੱਸਿਆਵਾਂ ਨੂੰ ਹੱਲ ਹੋਣ ਲਈ ਸਮਾਂ ਮਿਲ ਸਕੇ।",
-      "disableSessionStickiness": "ਪਹਿਲੇ ਸੁਨੇਹੇ ਦੇ ਹੈਸ਼ ਰਾਹੀਂ ਪੂਰੀ ਗੱਲਬਾਤ ਨੂੰ ਇੱਕ ਕਨੈਕਸ਼ਨ ਨਾਲ ਜੋੜ ਕੇ ਰੱਖਣ ਦੀ ਬਜਾਏ, ਹਰ ਬੇਨਤੀ ਲਈ ਕਿਸੇ ਵੱਖਰੇ ਕਨੈਕਸ਼ਨ 'ਤੇ ਬਦਲੋ। ਇਹ ਗਲੋਬਲ ਡਿਫੌਲਟ ਨੂੰ ਓਵਰਰਾਈਡ ਕਰਦਾ ਹੈ। ਬਹੁ-ਵਾਰੀ ਚੈਟਾਂ ਲਈ ਪ੍ਰੌਮਪਟ-ਕੈਸ਼ ਹਿੱਟਾਂ ਨੂੰ ਬਰਕਰਾਰ ਰੱਖਣ ਵਾਸਤੇ Inherit 'ਤੇ ਛੱਡੋ।"
+      "disableSessionStickiness": "ਪਹਿਲੇ ਸੁਨੇਹੇ ਦੇ ਹੈਸ਼ ਰਾਹੀਂ ਪੂਰੀ ਗੱਲਬਾਤ ਨੂੰ ਇੱਕ ਕਨੈਕਸ਼ਨ ਨਾਲ ਜੋੜ ਕੇ ਰੱਖਣ ਦੀ ਬਜਾਏ, ਹਰ ਬੇਨਤੀ ਲਈ ਕਿਸੇ ਵੱਖਰੇ ਕਨੈਕਸ਼ਨ 'ਤੇ ਬਦਲੋ। ਇਹ ਗਲੋਬਲ ਡਿਫੌਲਟ ਨੂੰ ਓਵਰਰਾਈਡ ਕਰਦਾ ਹੈ। ਬਹੁ-ਵਾਰੀ ਚੈਟਾਂ ਲਈ ਪ੍ਰੌਮਪਟ-ਕੈਸ਼ ਹਿੱਟਾਂ ਨੂੰ ਬਰਕਰਾਰ ਰੱਖਣ ਵਾਸਤੇ Inherit 'ਤੇ ਛੱਡੋ।",
+      "connectionAwareExpansion": "When on, this combo expands each provider-level step into per-account targets before rotating. Inherit uses the global default (off). Off keeps provider-level rotation.",
+      "stickyLimit": "Round-robin sticky batch size: consecutive successful requests sent to one target before rotating to the next. Empty inherits the global Sticky Limit setting; 1 disables batching (pure one-request rotation)."
     },
     "templatesTitle": "ਤੁਰੰਤ ਟੈਂਪਲੇਟ",
     "templatesDescription": "ਇੱਕ ਸ਼ੁਰੂਆਤੀ ਪ੍ਰੋਫਾਈਲ ਲਾਗੂ ਕਰੋ, ਫਿਰ ਮਾਡਲਾਂ ਅਤੇ ਸੰਰਚਨਾ ਨੂੰ ਵਿਵਸਥਿਤ ਕਰੋ।",
@@ -3778,7 +3786,17 @@
     "duplicateAutoComboSnapshotMsg": "ਇਹ ਇਸ ਟੈਂਪਲੇਟ ਨਾਲ ਮੇਲ ਖਾਂਦੇ ਮੌਜੂਦਾ ਕਨੈਕਟ ਕੀਤੇ ਪ੍ਰਦਾਤਾਵਾਂ/ਮਾਡਲਾਂ ਦਾ ਸਨੈਪਸ਼ਾਟ ਲੈ ਕੇ ਇੱਕ ਸੰਪਾਦਨਯੋਗ ਕੌਂਬੋ ਬਣਾਏਗਾ।",
     "duplicateAutoComboFailedPrefix": "ਆਟੋ-ਕੌਂਬੋ ਦੀ ਨਕਲ ਬਣਾਉਣ ਵਿੱਚ ਅਸਫਲ:",
     "duplicateAutoComboUnknownError": "ਅਣਜਾਣ ਗਲਤੀ",
-    "duplicateAutoComboTitle": "{name} ਤੋਂ ਇੱਕ ਸਥਿਰ ਕੌਂਬੋ ਬਣਾਓ"
+    "duplicateAutoComboTitle": "{name} ਤੋਂ ਇੱਕ ਸਥਿਰ ਕੌਂਬੋ ਬਣਾਓ",
+    "stickyLimitEffective": "Effective {value} ({source})",
+    "stickyLimitSourceCombo": "combo",
+    "stickyLimitSourceComboDefaults": "combo defaults",
+    "stickyLimitSourceGlobal": "global default",
+    "connectionAwareExpansion": "Connection-aware expansion",
+    "triStateInherit": "inherit",
+    "connectionAwareExpansionOn": "On",
+    "connectionAwareExpansionOff": "Off",
+    "promptCacheAffinityHint": "Prompt-cache locality routing takes precedence over round-robin/weighted rotation across pinned accounts. Turn it off under Settings, Combo defaults, if you need strict rotation.",
+    "stickyLimitInherit": "ਵਿਰਾਸਤ ਵਿੱਚ ਲਵੋ"
   },
   "costs": {
     "title": "ਲਾਗਤਾਂ",
@@ -4955,7 +4973,7 @@
     "compressionLogTitle": "ਕੰਪ੍ਰੈਸ਼ਨ ਲੌਗ",
     "compressionLogEmpty": "ਹਾਲੇ ਕੋਈ ਕੰਪ੍ਰੈੱਸ ਕੀਤੀ ਬੇਨਤੀ ਨਹੀਂ ਹੈ। ਜਦੋਂ ਕੰਪ੍ਰੈਸ਼ਨ ਯੋਗ ਕਰਕੇ ਬੇਨਤੀਆਂ ਪ੍ਰੋਸੈਸ ਕੀਤੀਆਂ ਜਾਣਗੀਆਂ, ਤਾਂ ਕੰਪ੍ਰੈਸ਼ਨ ਅੰਕੜੇ ਇੱਥੇ ਦਿਖਾਈ ਦੇਣਗੇ।",
     "tokens": "ਟੋਕਨ",
-    "exportTruncated": "__MISSING__:Export truncated: only {exported} of {total} log entries were included. Pick a shorter time range to export the rest."
+    "exportTruncated": "ਐਕਸਪੋਰਟ ਘਟਾਇਆ ਗਿਆ: {total} ਲੌਗ ਐਂਟਰੀਆਂ ਵਿੱਚੋਂ ਸਿਰਫ਼ {exported} ਸ਼ਾਮਲ ਕੀਤੀਆਂ ਗਈਆਂ। ਬਾਕੀ ਨੂੰ ਐਕਸਪੋਰਟ ਕਰਨ ਲਈ ਹੋਰ ਛੋਟੀ ਸਮਾਂ-ਸੀਮਾ ਚੁਣੋ।"
   },
   "onboarding": {
     "welcome": "ਜੀ ਆਇਆਂ ਨੂੰ",
@@ -6314,7 +6332,8 @@
       "kiro": "ਮੁਫ਼ਤ ਟੀਅਰ: 50 ਕ੍ਰੈਡਿਟ/ਮਹੀਨਾ (~25K–100K ਟੋਕਨ)। ⚠️ Kiro ToS ਵਿੱਚ ਤੀਜੀ-ਧਿਰ ਪ੍ਰਾਕਸੀ/ਹਾਰਨੈੱਸ ਦੀ ਵਰਤੋਂ ਦੀ ਮਨਾਹੀ ਹੈ।",
       "codex": "ਮੌਜੂਦਾ OAuth ਫ਼ਲੋ ਨਾਲ OpenAI Codex ਨੂੰ ਕਨੈਕਟ ਕਰੋ।",
       "qwen": "ਮੌਜੂਦਾ OAuth ਫ਼ਲੋ ਨਾਲ Qwen Code ਨੂੰ ਕਨੈਕਟ ਕਰੋ।",
-      "github-models": "github.com/settings/tokens ਉੱਤੇ 'models: read' ਸਕੋਪ ਵਾਲਾ GitHub PAT ਬਣਾਓ"
+      "github-models": "github.com/settings/tokens ਉੱਤੇ 'models: read' ਸਕੋਪ ਵਾਲਾ GitHub PAT ਬਣਾਓ",
+      "agnes-cn": "Agnes AI (ਚੀਨ) ਨੂੰ api.agnes-ai.cn ਲਈ ਜਾਰੀ ਕੀਤੀ API ਕੁੰਜੀ ਨਾਲ ਕਨੈਕਟ ਕਰੋ। apihub.agnes-ai.com ਦੀਆਂ ਕੁੰਜੀਆਂ ਕੰਮ ਨਹੀਂ ਕਰਨਗੀਆਂ।"
     },
     "passthroughModelsDescription": "{provider} ਪ੍ਰਦਾਤਾ-ਮੂਲ ਮਾਡਲ IDs ਸਵੀਕਾਰ ਕਰਦਾ ਹੈ। /models ਤੋਂ ਇੰਪੋਰਟ ਕਰੋ ਜਾਂ ਰੂਟਿੰਗ ਲਈ ਕਸਟਮ IDs ਸ਼ਾਮਲ ਕਰੋ।",
     "bedrockModelsDescription": "Amazon Bedrock ਮਾਡਲਾਂ ਦਾ ਦਾਇਰਾ AWS ਖੇਤਰ ਅਨੁਸਾਰ ਹੁੰਦਾ ਹੈ। /models ਤੋਂ ਇੰਪੋਰਟ ਕਰੋ ਜਾਂ ਚੁਣੇ ਹੋਏ ਖੇਤਰ ਵਿੱਚ ਸਮਰੱਥ ਕੀਤੀਆਂ Bedrock ਮਾਡਲ IDs ਸ਼ਾਮਲ ਕਰੋ।",
@@ -6472,7 +6491,9 @@
     "savedModelEndpointSettings": "ਮਾਡਲ ਐਂਡਪੌਇੰਟ ਸੈਟਿੰਗਾਂ ਸੰਭਾਲੀਆਂ ਗਈਆਂ",
     "searchByModelAria": "ਮਾਡਲ ਦੁਆਰਾ ਖੋਜੋ",
     "selectSupportedEndpoint": "ਘੱਟੋ-ਘੱਟ ਇੱਕ ਸਮਰਥਿਤ ਐਂਡਪੌਇੰਟ ਚੁਣੋ",
-    "antigravityClientProfileHarness": "ਹਾਰਨੈੱਸ / CLI"
+    "antigravityClientProfileHarness": "ਹਾਰਨੈੱਸ / CLI",
+    "vertexCredentialHint": "API ਕੁੰਜੀਆਂ ਚੁਣੇ ਹੋਏ ਪ੍ਰੋਜੈਕਟ ਕੈਟਾਲਾਗ ਦੀ ਵਰਤੋਂ ਕਰਦੀਆਂ ਹਨ। Service Account JSON ਲਾਈਵ Model Garden ਖੋਜ ਨੂੰ ਸਮਰੱਥ ਬਣਾਉਂਦਾ ਹੈ।",
+    "vertexCredentialLabel": "API ਕੁੰਜੀ ਜਾਂ Service Account JSON"
   },
   "settings": {
     "title": "ਸੈਟਿੰਗਾਂ",
@@ -8579,7 +8600,11 @@
       },
       "compressToolResults": {
         "label": "ਲੰਬੇ ਟੂਲ ਨਤੀਜਿਆਂ ਨੂੰ ਸਰਗਰਮੀ ਨਾਲ ਕੱਟੋ",
-        "description": "Truncates long tool results during Lite compression. The Maximum tool-result length field (or OMNIROUTE_LITE_MAX_TOOL_LENGTH when that field is unset) sets the cap. Emergency overflow protection may still trim content when the context exceeds the model budget."
+        "description": "Truncates long tool results during Lite compression. The Maximum tool-result length field (or AGENTPROXY_LITE_MAX_TOOL_LENGTH when that field is unset) sets the cap. Emergency overflow protection may still trim content when the context exceeds the model budget."
+      },
+      "maxToolLength": {
+        "description": "Character cap for proactive tool-result truncation. Default 2000. Override with AGENTPROXY_LITE_MAX_TOOL_LENGTH when this field is unset.",
+        "label": "Maximum tool-result length"
       }
     },
     "engineFields": {
@@ -9695,7 +9720,14 @@
     "updatedShort": "ਅੱਪਡੇਟ ਕੀਤਾ",
     "lastRefreshed": "ਆਖਰੀ ਵਾਰ ਰਿਫ੍ਰੈਸ਼ ਕੀਤਾ",
     "providerQuota": "ਪ੍ਰਦਾਤਾ ਕੋਟਾ",
-    "providerQuotaHomeHint": "ਕਨੈਕਟ ਕੀਤੇ ਖਾਤਿਆਂ ਦੀ ਲਾਈਵ ਸਥਿਤੀ"
+    "providerQuotaHomeHint": "ਕਨੈਕਟ ਕੀਤੇ ਖਾਤਿਆਂ ਦੀ ਲਾਈਵ ਸਥਿਤੀ",
+    "glmConfirmRedeemFiveHourResetCredit": "ਰਿਡੀਮ ਕਰਨ ਨਾਲ 5-ਘੰਟੇ ਦੀ ਵਰਤੋਂ ਵਿੰਡੋ ਤੁਰੰਤ ਰੀਸੈੱਟ ਹੋ ਜਾਂਦੀ ਹੈ ਅਤੇ ਇਹ ਕਾਰਡ ਸਥਾਈ ਤੌਰ 'ਤੇ ਵਰਤਿਆ ਜਾਂਦਾ ਹੈ।",
+    "glmConfirmRedeemResetCredit": "ਰਿਡੀਮ ਕਰਨ ਨਾਲ ਚੁਣੀ ਗਈ ਵਰਤੋਂ ਵਿੰਡੋ ਤੁਰੰਤ ਰੀਸੈੱਟ ਹੋ ਜਾਂਦੀ ਹੈ ਅਤੇ ਇਹ ਕਾਰਡ ਸਥਾਈ ਤੌਰ 'ਤੇ ਵਰਤਿਆ ਜਾਂਦਾ ਹੈ।",
+    "glmConfirmRedeemWeekResetCredit": "ਰਿਡੀਮ ਕਰਨ ਨਾਲ ਹਫ਼ਤਾਵਾਰੀ ਵਰਤੋਂ ਵਿੰਡੋ ਤੁਰੰਤ ਰੀਸੈੱਟ ਹੋ ਜਾਂਦੀ ਹੈ ਅਤੇ ਇਹ ਕਾਰਡ ਸਥਾਈ ਤੌਰ 'ਤੇ ਵਰਤਿਆ ਜਾਂਦਾ ਹੈ।",
+    "glmResetCreditFiveHourTitle": "5-ਘੰਟੇ ਦੀ ਵਿੰਡੋ ਰੀਸੈੱਟ",
+    "glmResetCreditsModalExplainer": "ਰੀਸੈੱਟ ਕਾਰਡਾਂ ਨੂੰ ਮਿਆਦ ਪੁੱਗਣ ਦੇ ਕ੍ਰਮ ਅਨੁਸਾਰ ਰੱਖਿਆ ਗਿਆ ਹੈ। ਉਹ 5-ਘੰਟੇ ਜਾਂ ਹਫ਼ਤਾਵਾਰੀ ਵਿੰਡੋ ਚੁਣੋ ਜਿਸਨੂੰ ਤੁਸੀਂ ਰੀਸੈੱਟ ਕਰਨਾ ਚਾਹੁੰਦੇ ਹੋ।",
+    "glmResetCreditsModalTitle": "GLM Coding Plan ਰੀਸੈੱਟ ਕਾਰਡ",
+    "glmResetCreditWeekTitle": "ਹਫ਼ਤਾਵਾਰੀ ਵਿੰਡੋ ਰੀਸੈੱਟ"
   },
   "modals": {
     "waitingAuth": "ਅਧਿਕਾਰ ਦੀ ਉਡੀਕ",
@@ -10961,7 +10993,9 @@
     "poolAddMember": "ਜੋੜੋ",
     "poolAddFailed": "ਪੂਲ ਵਿੱਚ ਪ੍ਰੌਕਸੀ ਜੋੜਨ ਵਿੱਚ ਅਸਫਲ",
     "poolSelectProxy": "ਇੱਕ ਪ੍ਰੌਕਸੀ ਚੁਣੋ…",
-    "poolSaveFailed": "ਪੂਲ ਅਸਾਈਨਮੈਂਟ ਸੰਭਾਲਣ ਵਿੱਚ ਅਸਫਲ"
+    "poolSaveFailed": "ਪੂਲ ਅਸਾਈਨਮੈਂਟ ਸੰਭਾਲਣ ਵਿੱਚ ਅਸਫਲ",
+    "poolEgressFailuresByExit": "{exit} ਰਾਹੀਂ ਅਸਫਲਤਾਵਾਂ: {count}",
+    "poolEgressFailuresUnattributed": "ਨਿਰਧਾਰਤ ਐਗਜ਼ਿਟ ਤੋਂ ਬਿਨਾਂ ਅਸਫਲਤਾਵਾਂ: {count}"
   },
   "playground": {
     "title": "ਮਾਡਲ ਪਲੇਗ੍ਰਾਊਂਡ",
@@ -11302,7 +11336,11 @@
       "duration": "ਮਿਆਦ",
       "time": "ਸਮਾਂ",
       "conversation": "ਗੱਲਬਾਤ",
-      "ttft": "TTFT"
+      "ttft": "TTFT",
+      "contentProvenance": "ਜਵਾਬ",
+      "contentEmpty": "ਖਾਲੀ ਜਵਾਬ",
+      "usageAbsent": "ਟੋਕਨ ਗਿਣਤੀ ਦੀ ਰਿਪੋਰਟ ਨਹੀਂ ਕੀਤੀ ਗਈ",
+      "usageEstimated": "ਟੋਕਨ ਗਿਣਤੀ ਅਨੁਮਾਨਿਤ"
     },
     "loadingLogs": "ਲੌਗ ਲੋਡ ਕੀਤੇ ਜਾ ਰਹੇ ਹਨ...",
     "noLogs": "ਹਾਲੇ ਕੋਈ ਲੌਗ ਨਹੀਂ ਹਨ। ਉਹਨਾਂ ਨੂੰ ਇੱਥੇ ਦੇਖਣ ਲਈ ਕੁਝ API ਕਾਲਾਂ ਕਰੋ।",
@@ -11962,7 +12000,11 @@
       "goNow": "ਹੁਣੇ ਜਾਓ",
       "message": "MITM Proxy ਹੁਣ AgentBridge ਦੇ ਅਧੀਨ ਹੈ।",
       "title": "ਇਹ ਪੰਨਾ ਤਬਦੀਲ ਕਰ ਦਿੱਤਾ ਗਿਆ ਹੈ"
-    }
+    },
+    "resetAgent": "ਡਿਫ਼ੌਲਟ ਮੁੜ ਬਹਾਲ ਕਰੋ",
+    "resetAgentConfirm": "ਡਿਫ਼ੌਲਟ ਮੁੜ ਬਹਾਲ ਕਰਨਾ ਹੈ?",
+    "resetDone": "{agent} ਲਈ ਡਿਫ਼ੌਲਟ DNS ਮੁੜ ਬਹਾਲ ਕੀਤਾ ਗਿਆ। ਬਦਲਾਅ ਲਾਗੂ ਕਰਨ ਲਈ ਐਪ ਨੂੰ ਪੂਰੀ ਤਰ੍ਹਾਂ ਬੰਦ ਕਰੋ (ਸਿਰਫ਼ ਮਿਨੀਮਾਈਜ਼ ਨਹੀਂ) ਅਤੇ ਦੁਬਾਰਾ ਖੋਲ੍ਹੋ।",
+    "resetting": "ਮੁੜ ਬਹਾਲ ਕੀਤਾ ਜਾ ਰਿਹਾ ਹੈ…"
   },
   "providerStats": {
     "unknownError": "ਅਣਜਾਣ ਗਲਤੀ",
@@ -12676,7 +12718,12 @@
     "createDahlTokenFailed": "Dahl ਟੋਕਨ ਬਣਾਉਣ ਵਿੱਚ ਅਸਫਲ",
     "providerProxy": "ਪ੍ਰੌਕਸੀ",
     "providerProxyConfigureHint": "ਪ੍ਰੌਕਸੀ ਸੰਰਚਿਤ ਕਰੋ",
-    "providerProxyTitleConfigured": "ਪ੍ਰੌਕਸੀ ਸੰਰਚਿਤ ਹੈ: {host}"
+    "providerProxyTitleConfigured": "ਪ੍ਰੌਕਸੀ ਸੰਰਚਿਤ ਹੈ: {host}",
+    "directEgress": "ਸਿੱਧਾ (ਬਿਨਾਂ ਪ੍ਰੌਕਸੀ)",
+    "inheritConnectionOption": "ਕੋਈ ਨਿੱਜੀ ਪ੍ਰੌਕਸੀ ਨਹੀਂ (ਕਨੈਕਸ਼ਨ ਵਿਰਾਸਤ)",
+    "inheritedPool": "ਕਨੈਕਸ਼ਨ ਪੂਲ ਵਿਰਾਸਤ ({count})",
+    "inheritedProxy": "ਕਨੈਕਸ਼ਨ ਵਿਰਾਸਤ: {host}",
+    "poolEmptyBlocked": "ਪੂਲ ਖਾਲੀ — ਬੇਨਤੀਆਂ ਅਸਫਲ (ਸਿੱਧਾ ਨਹੀਂ)"
   },
   "gamification": {
     "leaderboardScopes": {
@@ -13036,6 +13083,13 @@
       "SERVER_OWNED_TOOL_LOOP_ENABLED": {
         "label": "ਸਰਵਰ-ਮਲਕੀਅਤ ਵਾਲਾ ਟੂਲ ਲੂਪ",
         "description": "ਸਰਵਰ-ਮਲਕੀਅਤ ਵਾਲੀਆਂ ਗੈਰ-ਸਟ੍ਰੀਮਿੰਗ ਟੂਲ ਕਾਲਾਂ ਨੂੰ ਉਦੋਂ ਤੱਕ ਜਾਰੀ ਰੱਖੋ ਜਦੋਂ ਤੱਕ ਮਾਡਲ ਕਲਾਇੰਟ ਲਈ ਵਰਤਣਯੋਗ ਜਵਾਬ ਨਾ ਦੇਵੇ।"
+      },
+      "PROTECTED_PRIORITY_INFRA_502_ENABLED": {
+        "description": "ਜਦੋਂ ਸਿਰਫ਼-ਕੋਟਾ-ਫਾਲਬੈਕ ਤਰਜੀਹੀ ਟਾਰਗੇਟ ਕਿਸੇ ਅਜਿਹੇ ਕਾਰਨ ਕਰਕੇ ਕੌਂਬੋ ਨੂੰ ਰੋਕਦਾ ਹੈ ਜੋ ਸਾਬਤ ਤੌਰ 'ਤੇ ਕੋਟਾ ਨਹੀਂ ਹੈ, ਤਾਂ 503 ਦੀ ਬਜਾਏ 502 ਨਾਲ ਜਵਾਬ ਦਿਓ: ਇੱਕ ਖੁੱਲ੍ਹਾ ਪ੍ਰਦਾਤਾ ਸਰਕਿਟ ਬ੍ਰੇਕਰ ਜਾਂ ਪੂਰਵ-ਅਨੁਮਾਨਿਤ ਲੇਟੈਂਸੀ ਸਕਿਪ।",
+        "label": "ਸੁਰੱਖਿਅਤ-ਤਰਜੀਹ ਵਾਲਾ ਬੁਨਿਆਦੀ ਢਾਂਚਾ 502 ਵਜੋਂ ਰੁਕ ਜਾਂਦਾ ਹੈ"
+      },
+      "STREAM_RECOVERY_TOOLCALL_ORDER_FIX": {
+        "description": "ਮੱਧ-ਸਟ੍ਰੀਮ ਜਾਰੀਕਰਨ ਨੂੰ ਟੂਲ-ਕਾਲ ਲਈ ਸੁਰੱਖਿਅਤ ਬਣਾਓ: ਟੂਲ-ਕਾਲ ਭੇਜੇ ਜਾਣ ਤੋਂ ਬਾਅਦ ਕਦੇ ਵੀ ਕੱਟੀ ਹੋਈ ਸਟ੍ਰੀਮ ਨੂੰ ਮੁੜ ਸ਼ੁਰੂ ਨਾ ਕਰੋ (ਭਾਵੇਂ ਇਹ ਹਾਲੇ ਜਾਰੀ ਹੋਵੇ ਜਾਂ ਪਹਿਲਾਂ ਹੀ ਮੁਕੰਮਲ ਹੋ ਚੁੱਕੀ ਹੋਵੇ), ਅਤੇ ਪੂਰਾ ਮੁੜ-ਕੋਸ਼ਿਸ਼ ਬਜਟ ਵਰਤਣ ਦੀ ਬਜਾਏ ਇੱਕ ਖਾਲੀ ਜਾਰੀਕਰਨ ਤੋਂ ਬਾਅਦ ਰੁਕ ਜਾਓ।"
       }
     }
   },
@@ -13956,7 +14010,12 @@
     "hour": "ਘੰਟਾ",
     "day": "ਦਿਨ",
     "unknownModel": "ਅਣਜਾਣ",
-    "pending": "ਲੰਬਿਤ"
+    "pending": "ਲੰਬਿਤ",
+    "allApiKeys": "All API keys",
+    "mcp": "MCP",
+    "mcpTool": "MCP tool",
+    "scope": "Scope",
+    "apiKey": "API key"
   },
   "metadata": {
     "compressionTitle": "ਕੰਪ੍ਰੈਸ਼ਨ",
@@ -14159,5 +14218,6 @@
     "partnerLinkNote": "ਭਾਈਵਾਲ ਲਿੰਕ",
     "dismissAriaLabel": "ਬੰਦ ਕਰੋ"
   },
-  "featureFlagAgentProxyDisableThinkingLevelVariantsDescription": "/v1/models ਕੈਟਾਲਾਗ ਵਿੱਚ ਸੋਚਣ ਦੇ ਪੱਧਰ ਦੇ ਰੂਪਾਂ (ਉਦਾਹਰਨ ਲਈ -low, -medium, -high) ਦੀ ਰਚਨਾ ਨੂੰ ਅਯੋਗ ਕਰੋ।"
+  "featureFlagAgentProxyDisableThinkingLevelVariantsDescription": "/v1/models ਕੈਟਾਲਾਗ ਵਿੱਚ ਸੋਚਣ ਦੇ ਪੱਧਰ ਦੇ ਰੂਪਾਂ (ਉਦਾਹਰਨ ਲਈ -low, -medium, -high) ਦੀ ਰਚਨਾ ਨੂੰ ਅਯੋਗ ਕਰੋ।",
+  "featureFlagProxyPoolSharedEgressOrderDescription": "ਜਿਨ੍ਹਾਂ ਪ੍ਰਦਾਤਾਵਾਂ ਦਾ ਕੋਟਾ egress ਪਤੇ ਅਨੁਸਾਰ ਵੰਡਿਆ ਜਾਂਦਾ ਹੈ, ਉਨ੍ਹਾਂ ਲਈ ਹਾਲ ਹੀ ਵਿੱਚ ਰੱਦ ਕੀਤੇ ਮੈਂਬਰ ਦਾ ਦੇਖਿਆ ਗਿਆ egress ਪਤਾ ਸਾਂਝਾ ਕਰਨ ਵਾਲੇ pool ਮੈਂਬਰ ਨੂੰ ਤੰਦਰੁਸਤ ਮੈਂਬਰਾਂ ਦੇ ਬਿਲਕੁਲ ਹੇਠਾਂ ਰੱਖਦਾ ਹੈ। ਸਿਰਫ਼ ਕ੍ਰਮ, ਕਦੇ ਵੀ ਬਾਹਰ ਨਹੀਂ ਕੀਤਾ ਜਾਂਦਾ। PROXY_SKIP_RECENTLY_FAILED ਲੋੜੀਂਦਾ ਹੈ, ਜੋ ਉਹ ਰੱਦ ਸੰਕੇਤ ਪੈਦਾ ਕਰਦਾ ਹੈ ਜੋ ਇਹ ਪੜ੍ਹਦਾ ਹੈ। ਡਿਫ਼ਾਲਟ ਰੂਪ ਵਿੱਚ ਬੰਦ: ਚੋਣ ਕ੍ਰਮ ਬਿਲਕੁਲ ਸਧਾਰਨ ਰੋਟੇਸ਼ਨ ਹੈ।"
 }

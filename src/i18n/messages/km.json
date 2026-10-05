@@ -3193,7 +3193,13 @@
     "cliproxyapiUnknown": "មិនស្គាល់",
     "cliproxyapiUpdate": "ធ្វើបច្ចុប្បន្នភាព",
     "cliproxyapiUpdateAvailable": "មានបច្ចុប្បន្នភាព៖ v{current} → v{latest}",
-    "cliproxyapiVersion": "កំណែ"
+    "cliproxyapiVersion": "កំណែ",
+    "hermesRoleMoaAggregator": "ឧបករណ៍បូកសរុប MoA",
+    "hermesRoleMoaAggregatorDesc": "ម៉ូដែលសំយោគ Mixture-of-Agents",
+    "hermesRoleMoaReference": "ម៉ូដែលយោង MoA",
+    "hermesRoleMoaReferenceDesc": "ម៉ូដែលយោង Mixture-of-Agents",
+    "hermesRoleReview": "ពិនិត្យឡើងវិញ",
+    "hermesRoleReviewDesc": "ការពិនិត្យកូដ subagent ពេញលេញ"
   },
   "combos": {
     "title": "បន្សំ",
@@ -3424,7 +3430,9 @@
       "failoverBeforeRetry": "នៅពេលបើកដំណើរការ កំហុស upstream ណាមួយនឹងជំរុញឱ្យប្តូរទៅគោលដៅបន្ទាប់ក្នុងក្រុមបន្សំភ្លាមៗ ដោយរំលងការព្យាយាមឡើងវិញ និង URL ជម្រើសបម្រុងទាំងអស់។",
       "maxSetRetries": "ចំនួនដងដែលត្រូវព្យាយាមសំណុំគោលដៅទាំងមូលឡើងវិញ នៅពេលគោលដៅទាំងអស់បរាជ័យ។ 0 = មិនព្យាយាមឡើងវិញនៅកម្រិតសំណុំ។",
       "setRetryDelayMs": "ការពន្យារពេលរវាងការព្យាយាមឡើងវិញនៅកម្រិតសំណុំ ដើម្បីទុកពេលឱ្យបញ្ហាបណ្ដោះអាសន្នត្រូវបានដោះស្រាយ។",
-      "disableSessionStickiness": "ប្ដូរទៅការតភ្ជាប់ផ្សេងរាល់ពេលមានសំណើ ជំនួសឱ្យការចងការសន្ទនាទាំងមូលទៅនឹងការតភ្ជាប់តែមួយដោយប្រើ hash នៃសារដំបូង។ វានឹងកំណត់ជំនួសលំនាំដើមសកល។ ទុកជា Inherit ដើម្បីរក្សាការចូលប្រើ prompt-cache សម្រាប់ការជជែកច្រើនវគ្គ។"
+      "disableSessionStickiness": "ប្ដូរទៅការតភ្ជាប់ផ្សេងរាល់ពេលមានសំណើ ជំនួសឱ្យការចងការសន្ទនាទាំងមូលទៅនឹងការតភ្ជាប់តែមួយដោយប្រើ hash នៃសារដំបូង។ វានឹងកំណត់ជំនួសលំនាំដើមសកល។ ទុកជា Inherit ដើម្បីរក្សាការចូលប្រើ prompt-cache សម្រាប់ការជជែកច្រើនវគ្គ។",
+      "connectionAwareExpansion": "When on, this combo expands each provider-level step into per-account targets before rotating. Inherit uses the global default (off). Off keeps provider-level rotation.",
+      "stickyLimit": "Round-robin sticky batch size: consecutive successful requests sent to one target before rotating to the next. Empty inherits the global Sticky Limit setting; 1 disables batching (pure one-request rotation)."
     },
     "templatesTitle": "ពុម្ពរហ័ស",
     "templatesDescription": "អនុវត្តទម្រង់ចាប់ផ្ដើម បន្ទាប់មកកែសម្រួលម៉ូដែល និងការកំណត់រចនាសម្ព័ន្ធ។",
@@ -3778,7 +3786,17 @@
     "duplicateAutoComboSnapshotMsg": "វានឹងថតស្ថានភាពបច្ចុប្បន្ននៃអ្នកផ្តល់សេវា/ម៉ូដែលដែលបានតភ្ជាប់ និងត្រូវគ្នានឹងគំរូនេះ ទៅជាបន្សំដែលអាចកែសម្រួលបាន។",
     "duplicateAutoComboFailedPrefix": "មិនអាចចម្លងបន្សំស្វ័យប្រវត្តិបានទេ៖",
     "duplicateAutoComboUnknownError": "កំហុសដែលមិនស្គាល់",
-    "duplicateAutoComboTitle": "បង្កើតបន្សំថេរពី {name}"
+    "duplicateAutoComboTitle": "បង្កើតបន្សំថេរពី {name}",
+    "stickyLimitEffective": "Effective {value} ({source})",
+    "stickyLimitSourceCombo": "combo",
+    "stickyLimitSourceComboDefaults": "combo defaults",
+    "stickyLimitSourceGlobal": "global default",
+    "connectionAwareExpansion": "Connection-aware expansion",
+    "triStateInherit": "inherit",
+    "connectionAwareExpansionOn": "On",
+    "connectionAwareExpansionOff": "Off",
+    "promptCacheAffinityHint": "Prompt-cache locality routing takes precedence over round-robin/weighted rotation across pinned accounts. Turn it off under Settings, Combo defaults, if you need strict rotation.",
+    "stickyLimitInherit": "ទទួលតាម"
   },
   "costs": {
     "title": "ការចំណាយ",
@@ -4955,7 +4973,7 @@
     "compressionLogTitle": "កំណត់ហេតុនៃការបង្ហាប់",
     "compressionLogEmpty": "មិនទាន់មានសំណើដែលបានបង្ហាប់ទេ។ ស្ថិតិនៃការបង្ហាប់នឹងបង្ហាញនៅទីនេះ នៅពេលសំណើត្រូវបានដំណើរការដោយបើកការបង្ហាប់។",
     "tokens": "តូខឹន",
-    "exportTruncated": "__MISSING__:Export truncated: only {exported} of {total} log entries were included. Pick a shorter time range to export the rest."
+    "exportTruncated": "ការនាំចេញត្រូវបានកាត់ខ្លី៖ បានរួមបញ្ចូលតែ {exported} ក្នុងចំណោមកំណត់ហេតុ {total} ប៉ុណ្ណោះ។ ជ្រើសរើសចន្លោះពេលខ្លីជាងនេះ ដើម្បីនាំចេញផ្នែកដែលនៅសល់។"
   },
   "onboarding": {
     "welcome": "សូមស្វាគមន៍",
@@ -6314,7 +6332,8 @@
       "kiro": "កម្រិតឥតគិតថ្លៃ៖ 50 ក្រេឌីត/ខែ (~25K–100K tokens)។ ⚠️ លក្ខខណ្ឌប្រើប្រាស់ Kiro ហាមឃាត់ការប្រើប្រាស់ proxy/harness របស់ភាគីទីបី។",
       "codex": "ភ្ជាប់ OpenAI Codex ដោយប្រើលំហូរ OAuth ដែលមានស្រាប់។",
       "qwen": "ភ្ជាប់ Qwen Code ដោយប្រើលំហូរ OAuth ដែលមានស្រាប់។",
-      "github-models": "បង្កើត GitHub PAT ដែលមាន scope 'models: read' នៅ github.com/settings/tokens"
+      "github-models": "បង្កើត GitHub PAT ដែលមាន scope 'models: read' នៅ github.com/settings/tokens",
+      "agnes-cn": "ភ្ជាប់ Agnes AI (China) ដោយប្រើ API key ដែលបានចេញសម្រាប់ api.agnes-ai.cn។ API key ពី apihub.agnes-ai.com នឹងមិនដំណើរការទេ។"
     },
     "passthroughModelsDescription": "{provider} ទទួលយក ID ម៉ូដែលដើមរបស់ provider។ នាំចូលពី /models ឬបន្ថែម ID ផ្ទាល់ខ្លួនសម្រាប់ការកំណត់ផ្លូវ។",
     "bedrockModelsDescription": "ម៉ូដែល Amazon Bedrock ត្រូវបានកំណត់តាមតំបន់ AWS។ នាំចូលពី /models ឬបន្ថែម ID ម៉ូដែល Bedrock ដែលបានបើកប្រើក្នុងតំបន់ដែលបានជ្រើសរើស។",
@@ -6472,7 +6491,9 @@
     "savedModelEndpointSettings": "បានរក្សាទុកការកំណត់ចំណុចចុងរបស់ម៉ូដែល",
     "searchByModelAria": "ស្វែងរកតាមម៉ូដែល",
     "selectSupportedEndpoint": "ជ្រើសរើសចំណុចចុងដែលគាំទ្រយ៉ាងហោចណាស់មួយ",
-    "antigravityClientProfileHarness": "Harness / CLI"
+    "antigravityClientProfileHarness": "Harness / CLI",
+    "vertexCredentialHint": "API keys ប្រើកាតាឡុកគម្រោងដែលបានជ្រើសរើស។ Service Account JSON បើកការស្វែងរក Model Garden ផ្ទាល់។",
+    "vertexCredentialLabel": "API Key ឬ Service Account JSON"
   },
   "settings": {
     "title": "ការកំណត់",
@@ -8579,7 +8600,11 @@
       },
       "compressToolResults": {
         "label": "កាត់លទ្ធផលឧបករណ៍វែងៗជាមុន",
-        "description": "Truncates long tool results during Lite compression. The Maximum tool-result length field (or OMNIROUTE_LITE_MAX_TOOL_LENGTH when that field is unset) sets the cap. Emergency overflow protection may still trim content when the context exceeds the model budget."
+        "description": "Truncates long tool results during Lite compression. The Maximum tool-result length field (or AGENTPROXY_LITE_MAX_TOOL_LENGTH when that field is unset) sets the cap. Emergency overflow protection may still trim content when the context exceeds the model budget."
+      },
+      "maxToolLength": {
+        "description": "Character cap for proactive tool-result truncation. Default 2000. Override with AGENTPROXY_LITE_MAX_TOOL_LENGTH when this field is unset.",
+        "label": "Maximum tool-result length"
       }
     },
     "engineFields": {
@@ -9695,7 +9720,14 @@
     "updatedShort": "បានធ្វើបច្ចុប្បន្នភាព",
     "lastRefreshed": "បានធ្វើឱ្យស្រស់ចុងក្រោយ",
     "providerQuota": "កូតារបស់អ្នកផ្តល់សេវា",
-    "providerQuotaHomeHint": "ស្ថានភាពផ្ទាល់នៅទូទាំងគណនីដែលបានភ្ជាប់"
+    "providerQuotaHomeHint": "ស្ថានភាពផ្ទាល់នៅទូទាំងគណនីដែលបានភ្ជាប់",
+    "glmConfirmRedeemFiveHourResetCredit": "ការប្រើកាតភ្លាមៗនឹងកំណត់ចន្លោះពេលប្រើប្រាស់ 5 ម៉ោងឡើងវិញ ហើយប្រើកាតនេះអស់ជាអចិន្ត្រៃយ៍។",
+    "glmConfirmRedeemResetCredit": "ការប្រើកាតភ្លាមៗនឹងកំណត់ចន្លោះពេលប្រើប្រាស់ដែលបានជ្រើសរើសឡើងវិញ ហើយប្រើកាតនេះអស់ជាអចិន្ត្រៃយ៍។",
+    "glmConfirmRedeemWeekResetCredit": "ការប្រើកាតភ្លាមៗនឹងកំណត់ចន្លោះពេលប្រើប្រាស់ប្រចាំសប្តាហ៍ឡើងវិញ ហើយប្រើកាតនេះអស់ជាអចិន្ត្រៃយ៍។",
+    "glmResetCreditFiveHourTitle": "កំណត់ចន្លោះពេល 5 ម៉ោងឡើងវិញ",
+    "glmResetCreditsModalExplainer": "កាតកំណត់ឡើងវិញត្រូវបានតម្រៀបតាមពេលផុតកំណត់។ ជ្រើសរើសចន្លោះពេល 5 ម៉ោង ឬប្រចាំសប្តាហ៍ដែលអ្នកចង់កំណត់ឡើងវិញ។",
+    "glmResetCreditsModalTitle": "កាតកំណត់ឡើងវិញសម្រាប់ GLM Coding Plan",
+    "glmResetCreditWeekTitle": "កំណត់ចន្លោះពេលប្រចាំសប្តាហ៍ឡើងវិញ"
   },
   "modals": {
     "waitingAuth": "កំពុងរង់ចាំការផ្តល់សិទ្ធិ",
@@ -10961,7 +10993,9 @@
     "poolAddMember": "បន្ថែម",
     "poolAddFailed": "បានបរាជ័យក្នុងការបន្ថែមប្រូកស៊ីទៅក្រុម",
     "poolSelectProxy": "ជ្រើសរើសប្រូកស៊ី…",
-    "poolSaveFailed": "បានបរាជ័យក្នុងការរក្សាទុកការចាត់តាំងទៅក្រុម"
+    "poolSaveFailed": "បានបរាជ័យក្នុងការរក្សាទុកការចាត់តាំងទៅក្រុម",
+    "poolEgressFailuresByExit": "ការបរាជ័យតាមរយៈ {exit}: {count}",
+    "poolEgressFailuresUnattributed": "ការបរាជ័យដែលគ្មានច្រកចេញកំណត់: {count}"
   },
   "playground": {
     "title": "កន្លែងសាកល្បងម៉ូដែល",
@@ -11302,7 +11336,11 @@
       "duration": "រយៈពេល",
       "time": "ពេលវេលា",
       "conversation": "ការសន្ទនា",
-      "ttft": "TTFT"
+      "ttft": "TTFT",
+      "contentProvenance": "ការឆ្លើយតប",
+      "contentEmpty": "ការឆ្លើយតបទទេ",
+      "usageAbsent": "ចំនួន token មិនត្រូវបានរាយការណ៍",
+      "usageEstimated": "ចំនួន token ជាការប៉ាន់ស្មាន"
     },
     "loadingLogs": "កំពុងផ្ទុកកំណត់ហេតុ...",
     "noLogs": "មិនទាន់មានកំណត់ហេតុទេ។ ធ្វើការហៅ API មួយចំនួន ដើម្បីមើលពួកវានៅទីនេះ។",
@@ -11962,7 +12000,11 @@
       "goNow": "ទៅឥឡូវនេះ",
       "message": "ឥឡូវនេះ MITM Proxy ស្ថិតនៅក្រោម AgentBridge។",
       "title": "ទំព័រនេះត្រូវបានផ្លាស់ទី"
-    }
+    },
+    "resetAgent": "ស្ដារលំនាំដើម",
+    "resetAgentConfirm": "ស្ដារលំនាំដើមឬ?",
+    "resetDone": "DNS លំនាំដើមសម្រាប់ {agent} ត្រូវបានស្ដារ។ សូមបិទកម្មវិធីទាំងស្រុង (មិនមែនគ្រាន់តែបង្រួម) ហើយបើកវាម្ដងទៀត ដើម្បីឱ្យការផ្លាស់ប្ដូរមានប្រសិទ្ធភាព។",
+    "resetting": "កំពុងស្ដារ…"
   },
   "providerStats": {
     "unknownError": "កំហុសមិនស្គាល់",
@@ -12676,7 +12718,12 @@
     "createDahlTokenFailed": "បរាជ័យក្នុងការបង្កើតថូខឹន Dahl",
     "providerProxy": "ប្រូកស៊ី",
     "providerProxyConfigureHint": "កំណត់រចនាសម្ព័ន្ធប្រូកស៊ី",
-    "providerProxyTitleConfigured": "បានកំណត់រចនាសម្ព័ន្ធប្រូកស៊ី៖ {host}"
+    "providerProxyTitleConfigured": "បានកំណត់រចនាសម្ព័ន្ធប្រូកស៊ី៖ {host}",
+    "directEgress": "ផ្ទាល់ (គ្មានប្រូកស៊ី)",
+    "inheritConnectionOption": "គ្មានប្រូកស៊ីផ្ទាល់ខ្លួន (ទទួលមរតកការតភ្ជាប់)",
+    "inheritedPool": "ទទួលមរតកបណ្តុំការតភ្ជាប់ ({count})",
+    "inheritedProxy": "ទទួលមរតកការតភ្ជាប់: {host}",
+    "poolEmptyBlocked": "បណ្តុំទទេ — សំណើបរាជ័យ (មិនផ្ទាល់)"
   },
   "gamification": {
     "leaderboardScopes": {
@@ -13036,6 +13083,13 @@
       "SERVER_OWNED_TOOL_LOOP_ENABLED": {
         "label": "រង្វិលជុំ Tool ដែលគ្រប់គ្រងដោយ Server",
         "description": "បន្តការហៅ tool ដែលគ្រប់គ្រងដោយ server ដោយមិនប្រើ streaming រហូតដល់ model ត្រឡប់ response ដែល client អាចប្រើបាន។"
+      },
+      "PROTECTED_PRIORITY_INFRA_502_ENABLED": {
+        "description": "ឆ្លើយតបដោយ 502 ជំនួសឱ្យ 503 នៅពេលគោលដៅអាទិភាព quota-only-fallback បញ្ឈប់ combo ដោយសារមូលហេតុដែលអាចបញ្ជាក់បានថាមិនមែនជា quota៖ ឧបករណ៍បំបែកសៀគ្វីរបស់អ្នកផ្តល់សេវាដែលបើក ឬការរំលងដោយសារការព្យាករណ៍ភាពយឺតយ៉ាវ។",
+        "label": "ការបញ្ឈប់ហេដ្ឋារចនាសម្ព័ន្ធអាទិភាពដែលបានការពារ ជា 502"
+      },
+      "STREAM_RECOVERY_TOOLCALL_ORDER_FIX": {
+        "description": "ធ្វើឱ្យការបន្តពាក់កណ្តាល stream មានសុវត្ថិភាពសម្រាប់ការហៅ tool៖ កុំបន្ត stream ដែលត្រូវបានកាត់ផ្តាច់ បន្ទាប់ពីការហៅ tool ត្រូវបានផ្ញើរួច (កំពុងដំណើរការ ឬបានបញ្ចប់រួចហើយ) ហើយបញ្ឈប់បន្ទាប់ពីការបន្តទទេមួយដង ជំនួសឱ្យការប្រើប្រាស់ថវិកាសាកល្បងឡើងវិញទាំងមូល។"
       }
     }
   },
@@ -13956,7 +14010,12 @@
     "hour": "ម៉ោង",
     "day": "ថ្ងៃ",
     "unknownModel": "មិនស្គាល់",
-    "pending": "កំពុងរង់ចាំ"
+    "pending": "កំពុងរង់ចាំ",
+    "allApiKeys": "All API keys",
+    "mcp": "MCP",
+    "mcpTool": "MCP tool",
+    "scope": "Scope",
+    "apiKey": "API key"
   },
   "metadata": {
     "compressionTitle": "ការបង្ហាប់",
@@ -14159,5 +14218,6 @@
     "partnerLinkNote": "តំណដៃគូ",
     "dismissAriaLabel": "បិទ"
   },
-  "featureFlagAgentProxyDisableThinkingLevelVariantsDescription": "បិទការបង្កើតវ៉ារ្យ៉ង់កម្រិតនៃការគិត (ឧ. -low, -medium, -high) នៅក្នុងកាតាឡុក /v1/models។"
+  "featureFlagAgentProxyDisableThinkingLevelVariantsDescription": "បិទការបង្កើតវ៉ារ្យ៉ង់កម្រិតនៃការគិត (ឧ. -low, -medium, -high) នៅក្នុងកាតាឡុក /v1/models។",
+  "featureFlagProxyPoolSharedEgressOrderDescription": "សម្រាប់អ្នកផ្តល់សេវាដែលកូតាត្រូវបានបែងចែកតាមអាសយដ្ឋាន egress វាដាក់សមាជិក pool ដែលចែករំលែកអាសយដ្ឋាន egress ដែលបានសង្កេតឃើញរបស់សមាជិកដែលទើបត្រូវបានបដិសេធ នៅពីក្រោមសមាជិកដែលមានសុខភាពល្អភ្លាមៗ។ តែលំដាប់ប៉ុណ្ណោះ មិនដែលដកចេញទេ។ ត្រូវការ PROXY_SKIP_RECENTLY_FAILED ដែលបង្កើតសញ្ញាបដិសេធដែលវាអាន។ បិទតាមលំនាំដើម៖ លំដាប់ជ្រើសរើសគឺជាការបង្វិលធម្មតាដដែល។"
 }

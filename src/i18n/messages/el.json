@@ -3863,7 +3863,8 @@
     "triStateInherit": "inherit",
     "connectionAwareExpansionOn": "On",
     "connectionAwareExpansionOff": "Off",
-    "promptCacheAffinityHint": "Prompt-cache locality routing takes precedence over round-robin/weighted rotation across pinned accounts. Turn it off under Settings, Combo defaults, if you need strict rotation."
+    "promptCacheAffinityHint": "Prompt-cache locality routing takes precedence over round-robin/weighted rotation across pinned accounts. Turn it off under Settings, Combo defaults, if you need strict rotation.",
+    "stickyLimitInherit": "κληρονόμηση"
   },
   "costs": {
     "title": "Κόστη",
@@ -5040,7 +5041,7 @@
     "compressionLogTitle": "Καταγραφή Συμπίεσης",
     "compressionLogEmpty": "Δεν υπάρχουν συμπιεσμένα αιτήματα ακόμα. Τα στατιστικά συμπίεσης θα εμφανιστούν εδώ όταν επεξεργαστούν αιτήματα με ενεργοποιημένη τη συμπίεση.",
     "tokens": "token",
-    "exportTruncated": "__MISSING__:Export truncated: only {exported} of {total} log entries were included. Pick a shorter time range to export the rest."
+    "exportTruncated": "Η εξαγωγή περικόπηκε: συμπεριλήφθηκαν μόνο {exported} από τις {total} καταχωρίσεις αρχείου καταγραφής. Επιλέξτε μικρότερο χρονικό εύρος για να εξαγάγετε τις υπόλοιπες."
   },
   "onboarding": {
     "welcome": "Καλώς ορίσατε",
@@ -6392,7 +6393,8 @@
       "codex": "Συνδέστε το OpenAI Codex με την υπάρχουσα ροή OAuth.",
       "qwen": "Συνδέστε το Qwen Code με την υπάρχουσα ροή OAuth.",
       "github-models": "Δημιουργήστε ένα GitHub PAT με εμβέλεια 'models: read' στο github.com/settings/tokens",
-      "seekai": "Δημιουργήστε ένα κλειδί API στη διεύθυνση https://seekai.cc και, στη συνέχεια, επικολλήστε το εδώ ως διακριτικό Bearer. Βασικό URL συμβατό με OpenAI: https://seekai.cc/v1."
+      "seekai": "Δημιουργήστε ένα κλειδί API στη διεύθυνση https://seekai.cc και, στη συνέχεια, επικολλήστε το εδώ ως διακριτικό Bearer. Βασικό URL συμβατό με OpenAI: https://seekai.cc/v1.",
+      "agnes-cn": "Συνδέστε το Agnes AI (China) με ένα κλειδί API που έχει εκδοθεί για το api.agnes-ai.cn. Τα κλειδιά από το apihub.agnes-ai.com δεν λειτουργούν."
     },
     "passthroughModelsDescription": "Το {provider} δέχεται εγγενή αναγνωριστικά μοντέλων του παρόχου. Εισαγάγετε τα από το /models ή προσθέστε προσαρμοσμένα αναγνωριστικά για δρομολόγηση.",
     "bedrockModelsDescription": "Τα μοντέλα Amazon Bedrock ορίζονται ανά περιοχή AWS. Εισαγάγετε από το /models ή προσθέστε αναγνωριστικά μοντέλων Bedrock που είναι ενεργοποιημένα στην επιλεγμένη περιοχή.",
@@ -6557,7 +6559,9 @@
     "dailyQuotaResetTimezoneLabel": "Ζώνη ώρας ημερήσιας επαναφοράς ορίου χρήσης",
     "dailyQuotaResetTimezoneHint": "Προαιρετική ζώνη ώρας IANA που χρησιμοποιείται όταν η ανάντη υπηρεσία παραλείπει το X-RateLimit-Reset. Αφήστε το κενό για να διατηρηθεί μια σύντομη περίοδος αναμονής.",
     "dailyQuotaResetHourLabel": "Ώρα ημερήσιας επαναφοράς ορίου χρήσης",
-    "dailyQuotaResetHourHint": "Τοπική ώρα 0-23 στην παραπάνω ζώνη ώρας. Αν είναι κενό, δεν χρησιμοποιείται ρολόι σε επίπεδο κόμβου."
+    "dailyQuotaResetHourHint": "Τοπική ώρα 0-23 στην παραπάνω ζώνη ώρας. Αν είναι κενό, δεν χρησιμοποιείται ρολόι σε επίπεδο κόμβου.",
+    "vertexCredentialHint": "Τα κλειδιά API χρησιμοποιούν τον επιμελημένο κατάλογο έργων. Το JSON λογαριασμού υπηρεσίας ενεργοποιεί τη δυναμική ανακάλυψη του Model Garden.",
+    "vertexCredentialLabel": "Κλειδί API ή JSON λογαριασμού υπηρεσίας"
   },
   "settings": {
     "title": "Ρυθμίσεις",
@@ -8665,6 +8669,10 @@
       "compressToolResults": {
         "label": "Προληπτική περικοπή μεγάλων αποτελεσμάτων εργαλείων",
         "description": "Περικόπτει αποτελέσματα εργαλείων άνω των 2.000 χαρακτήρων κατά τη συμπίεση Lite. Η έκτακτη προστασία υπερχείλισης ενδέχεται να περικόψει περαιτέρω περιεχόμενο όταν το πλαίσιο υπερβαίνει τον προϋπολογισμό του μοντέλου."
+      },
+      "maxToolLength": {
+        "description": "Character cap for proactive tool-result truncation. Default 2000. Override with AGENTPROXY_LITE_MAX_TOOL_LENGTH when this field is unset.",
+        "label": "Maximum tool-result length"
       }
     },
     "engineFields": {
@@ -9780,7 +9788,14 @@
     "updatedShort": "Ενημερώθηκε",
     "lastRefreshed": "Τελευταία ανανέωση",
     "providerQuota": "Όριο παρόχου",
-    "providerQuotaHomeHint": "Ζωντανή κατάσταση σε όλους τους συνδεδεμένους λογαριασμούς"
+    "providerQuotaHomeHint": "Ζωντανή κατάσταση σε όλους τους συνδεδεμένους λογαριασμούς",
+    "glmConfirmRedeemFiveHourResetCredit": "Η εξαργύρωση επαναφέρει αμέσως το 5ωρο χρονικό παράθυρο χρήσης και καταναλώνει οριστικά αυτή την κάρτα.",
+    "glmConfirmRedeemResetCredit": "Η εξαργύρωση επαναφέρει αμέσως το επιλεγμένο χρονικό παράθυρο χρήσης και καταναλώνει οριστικά αυτή την κάρτα.",
+    "glmConfirmRedeemWeekResetCredit": "Η εξαργύρωση επαναφέρει αμέσως το εβδομαδιαίο χρονικό παράθυρο χρήσης και καταναλώνει οριστικά αυτή την κάρτα.",
+    "glmResetCreditFiveHourTitle": "Επαναφορά 5ωρου χρονικού παραθύρου",
+    "glmResetCreditsModalExplainer": "Οι κάρτες επαναφοράς ταξινομούνται κατά ημερομηνία λήξης. Επιλέξτε το 5ωρο ή το εβδομαδιαίο χρονικό παράθυρο που θέλετε να επαναφέρετε.",
+    "glmResetCreditsModalTitle": "Κάρτες επαναφοράς του GLM Coding Plan",
+    "glmResetCreditWeekTitle": "Επαναφορά εβδομαδιαίου χρονικού παραθύρου"
   },
   "modals": {
     "waitingAuth": "Αναμονή εξουσιοδότησης",
@@ -12771,7 +12786,12 @@
     "createDahlTokenFailed": "Αποτυχία δημιουργίας διακριτικού Dahl",
     "providerProxy": "Διακομιστής μεσολάβησης",
     "providerProxyConfigureHint": "Ρύθμιση διακομιστή μεσολάβησης",
-    "providerProxyTitleConfigured": "Ρυθμίστηκε διακομιστής μεσολάβησης: {host}"
+    "providerProxyTitleConfigured": "Ρυθμίστηκε διακομιστής μεσολάβησης: {host}",
+    "directEgress": "Απευθείας (χωρίς proxy)",
+    "inheritConnectionOption": "Χωρίς δικό του proxy (κληρονομεί τη σύνδεση)",
+    "inheritedPool": "Κληρονομεί το pool συνδέσεων ({count})",
+    "inheritedProxy": "Κληρονομεί τη σύνδεση: {host}",
+    "poolEmptyBlocked": "Το pool άδειο — τα αιτήματα αποτυγχάνουν (όχι απευθείας)"
   },
   "gamification": {
     "leaderboardScopes": {
@@ -13131,6 +13151,13 @@
       "SERVER_OWNED_TOOL_LOOP_ENABLED": {
         "label": "Βρόχος εργαλείων υπό τον έλεγχο του διακομιστή",
         "description": "Συνέχιση των κλήσεων εργαλείων χωρίς ροή που ελέγχονται από τον διακομιστή, έως ότου το μοντέλο επιστρέψει μια απόκριση αξιοποιήσιμη από τον πελάτη."
+      },
+      "PROTECTED_PRIORITY_INFRA_502_ENABLED": {
+        "description": "Απαντήστε με 502 αντί για 503 όταν ένας στόχος προτεραιότητας με εναλλακτική μόνο λόγω εξάντλησης ποσόστωσης διακόπτει το combo για αιτία που αποδεδειγμένα δεν σχετίζεται με την ποσόστωση: έναν ανοικτό διακόπτη κυκλώματος παρόχου ή μια προγνωστική παράλειψη λόγω καθυστέρησης.",
+        "label": "Διακοπές υποδομής προστατευμένης προτεραιότητας ως 502"
+      },
+      "STREAM_RECOVERY_TOOLCALL_ORDER_FIX": {
+        "description": "Κάντε τη συνέχιση στο μέσο της ροής ασφαλή για κλήσεις εργαλείων: μην συνεχίζετε ποτέ μια διακοπείσα ροή αφού έχει σταλεί μια κλήση εργαλείου (είτε βρίσκεται ακόμη σε εξέλιξη είτε έχει ήδη ολοκληρωθεί) και σταματήστε μετά από μία κενή συνέχιση αντί να χρησιμοποιήσετε ολόκληρο το όριο επαναλήψεων."
       }
     }
   },
@@ -14259,5 +14286,6 @@
     "partnerLinkNote": "Σύνδεσμος συνεργάτη",
     "dismissAriaLabel": "Κλείσιμο"
   },
-  "featureFlagAgentProxyDisableThinkingLevelVariantsDescription": "Απενεργοποίηση της δημιουργίας παραλλαγών επιπέδου σκέψης (π.χ. -low, -medium, -high) στον κατάλογο /v1/models."
+  "featureFlagAgentProxyDisableThinkingLevelVariantsDescription": "Απενεργοποίηση της δημιουργίας παραλλαγών επιπέδου σκέψης (π.χ. -low, -medium, -high) στον κατάλογο /v1/models.",
+  "featureFlagProxyPoolSharedEgressOrderDescription": "Για παρόχους των οποίων το όριο χρήσης κατανέμεται ανά διεύθυνση εξόδου (egress), κατατάσσει ένα μέλος του pool που μοιράζεται την παρατηρούμενη διεύθυνση egress ενός μέλους που απορρίφθηκε πρόσφατα ακριβώς κάτω από τα υγιή μέλη. Μόνο σειρά, ποτέ αποκλεισμός. Απαιτεί το PROXY_SKIP_RECENTLY_FAILED, που παράγει το σήμα απόρριψης που διαβάζει. Απενεργοποιημένο από προεπιλογή: η σειρά επιλογής είναι ακριβώς η απλή εναλλαγή."
 }

@@ -3193,7 +3193,13 @@
     "cliproxyapiUnknown": "Amaghị",
     "cliproxyapiUpdate": "Melite",
     "cliproxyapiUpdateAvailable": "Mmelite dị: v{current} → v{latest}",
-    "cliproxyapiVersion": "Ụdị"
+    "cliproxyapiVersion": "Ụdị",
+    "hermesRoleMoaAggregator": "Nchịkọta MoA",
+    "hermesRoleMoaAggregatorDesc": "Ụdị njikọta Mixture-of-Agents",
+    "hermesRoleMoaReference": "Ntụaka MoA",
+    "hermesRoleMoaReferenceDesc": "Ụdị ntụaka Mixture-of-Agents",
+    "hermesRoleReview": "Nnyocha",
+    "hermesRoleReviewDesc": "Nnyocha koodu subagent zuru oke"
   },
   "combos": {
     "title": "Ngwakọta",
@@ -3424,7 +3430,9 @@
       "failoverBeforeRetry": "Mgbe enyere ya ikike, njehie upstream ọ bụla na-akpalite ịgafe ozugbo na combo target na-esote, na-amafere retries na fallback URLs niile.",
       "maxSetRetries": "Ọnụọgụ ugboro a ga-anwaleghachi target set zuru ezu mgbe target niile dara. 0 = enweghị set-level retry.",
       "setRetryDelayMs": "Oge nkwụsị n'etiti mbọ set-level retry, iji nye nsogbu na-adịru nwa oge ohere idozi onwe ha.",
-      "disableSessionStickiness": "Gbanwee gaa na connection dị iche n'arịrịọ ọ bụla kama ijikọ mkparịta ụka dum na otu connection site na hash nke ozi mbụ. Nke a na-akagbu global default. Hapụ ya na Inherit iji chekwaa prompt-cache hits maka nkata nwere ọtụtụ ntụgharị."
+      "disableSessionStickiness": "Gbanwee gaa na connection dị iche n'arịrịọ ọ bụla kama ijikọ mkparịta ụka dum na otu connection site na hash nke ozi mbụ. Nke a na-akagbu global default. Hapụ ya na Inherit iji chekwaa prompt-cache hits maka nkata nwere ọtụtụ ntụgharị.",
+      "connectionAwareExpansion": "When on, this combo expands each provider-level step into per-account targets before rotating. Inherit uses the global default (off). Off keeps provider-level rotation.",
+      "stickyLimit": "Round-robin sticky batch size: consecutive successful requests sent to one target before rotating to the next. Empty inherits the global Sticky Limit setting; 1 disables batching (pure one-request rotation)."
     },
     "templatesTitle": "Templates ngwa ngwa",
     "templatesDescription": "Tinye profaịlụ mmalite, wee hazie models na config.",
@@ -3778,7 +3786,17 @@
     "duplicateAutoComboSnapshotMsg": "Nke a ga-echekwa ọnọdụ ndị na-eweta ọrụ/model ejikọrọ ugbu a dabara na ndebiri a n'ime ngwakọta a pụrụ idezi.",
     "duplicateAutoComboFailedPrefix": "Ime oyiri nke ngwakọta akpaka dara:",
     "duplicateAutoComboUnknownError": "Njehie amaghị ama",
-    "duplicateAutoComboTitle": "Mepụta ngwakọta anaghị agbanwe agbanwe site na {name}"
+    "duplicateAutoComboTitle": "Mepụta ngwakọta anaghị agbanwe agbanwe site na {name}",
+    "stickyLimitEffective": "Effective {value} ({source})",
+    "stickyLimitSourceCombo": "combo",
+    "stickyLimitSourceComboDefaults": "combo defaults",
+    "stickyLimitSourceGlobal": "global default",
+    "connectionAwareExpansion": "Connection-aware expansion",
+    "triStateInherit": "inherit",
+    "connectionAwareExpansionOn": "On",
+    "connectionAwareExpansionOff": "Off",
+    "promptCacheAffinityHint": "Prompt-cache locality routing takes precedence over round-robin/weighted rotation across pinned accounts. Turn it off under Settings, Combo defaults, if you need strict rotation.",
+    "stickyLimitInherit": "keta"
   },
   "costs": {
     "title": "Ọnụ ahịa",
@@ -4955,7 +4973,7 @@
     "compressionLogTitle": "Ndekọ Mkpakọ",
     "compressionLogEmpty": "Enwebeghị arịrịọ ndị e ji mkpakọ hazie. Ọnụọgụ mkpakọ ga-apụta ebe a mgbe a haziri arịrịọ mgbe agbanyere mkpakọ.",
     "tokens": "token",
-    "exportTruncated": "__MISSING__:Export truncated: only {exported} of {total} log entries were included. Pick a shorter time range to export the rest."
+    "exportTruncated": "Ebelatara mbupụ ahụ: naanị {exported} n'ime ndekọ {total} ka etinyere. Họrọ oge dị mkpụmkpụ iji bupụ ndị fọdụrụ."
   },
   "onboarding": {
     "welcome": "Nnọọ",
@@ -6314,7 +6332,8 @@
       "kiro": "Ọkwa efu: kredit 50 kwa ọnwa (~token 25K–100K). ⚠️ ToS Kiro machibidoro ojiji proxy/harness nke ndị ọzọ.",
       "codex": "Jikọọ OpenAI Codex site na usoro OAuth dị ugbu a.",
       "qwen": "Jikọọ Qwen Code site na usoro OAuth dị ugbu a.",
-      "github-models": "Mepụta GitHub PAT nwere scope 'models: read' na github.com/settings/tokens"
+      "github-models": "Mepụta GitHub PAT nwere scope 'models: read' na github.com/settings/tokens",
+      "agnes-cn": "Jikọọ Agnes AI (China) site na API key e nyere maka api.agnes-ai.cn. Igodo sitere na apihub.agnes-ai.com agaghị arụ ọrụ."
     },
     "passthroughModelsDescription": "{provider} na-anabata ID ụdị nke provider n’onwe ya. Bubata ha site na /models ma ọ bụ tinye ID ahaziri iche maka routing.",
     "bedrockModelsDescription": "A na-ekewa ụdị Amazon Bedrock dịka mpaghara AWS si dị. Bubata ha site na /models ma ọ bụ tinye ID ụdị Bedrock enyere ikike na mpaghara ahọpụtara.",
@@ -6472,7 +6491,9 @@
     "savedModelEndpointSettings": "Echekwara ntọala ebe njedebe model",
     "searchByModelAria": "Jiri model chọọ",
     "selectSupportedEndpoint": "Họrọ opekata mpe otu ebe njedebe akwadoro",
-    "antigravityClientProfileHarness": "Ngwa Nnwale / CLI"
+    "antigravityClientProfileHarness": "Ngwa Nnwale / CLI",
+    "vertexCredentialHint": "API keys na-eji katalọgụ project ahọpụtara. Service Account JSON na-eme ka nchọpụta Model Garden dị ugbu a rụọ ọrụ.",
+    "vertexCredentialLabel": "API Key ma ọ bụ Service Account JSON"
   },
   "settings": {
     "title": "Ntọala",
@@ -8579,7 +8600,11 @@
       },
       "compressToolResults": {
         "label": "Buru ụzọ belata nsonaazụ ngwaọrụ ndị toro ogologo",
-        "description": "Truncates long tool results during Lite compression. The Maximum tool-result length field (or OMNIROUTE_LITE_MAX_TOOL_LENGTH when that field is unset) sets the cap. Emergency overflow protection may still trim content when the context exceeds the model budget."
+        "description": "Truncates long tool results during Lite compression. The Maximum tool-result length field (or AGENTPROXY_LITE_MAX_TOOL_LENGTH when that field is unset) sets the cap. Emergency overflow protection may still trim content when the context exceeds the model budget."
+      },
+      "maxToolLength": {
+        "description": "Character cap for proactive tool-result truncation. Default 2000. Override with AGENTPROXY_LITE_MAX_TOOL_LENGTH when this field is unset.",
+        "label": "Maximum tool-result length"
       }
     },
     "engineFields": {
@@ -9695,7 +9720,14 @@
     "updatedShort": "Emelitere",
     "lastRefreshed": "Oge ikpeazụ emere ka ọ dị ọhụrụ",
     "providerQuota": "Oke ojiji onye na-eweta ọrụ",
-    "providerQuotaHomeHint": "Ọnọdụ ozugbo n'ofe akaụntụ ejikọrọ"
+    "providerQuotaHomeHint": "Ọnọdụ ozugbo n'ofe akaụntụ ejikọrọ",
+    "glmConfirmRedeemFiveHourResetCredit": "Ịgbapụta ya ozugbo ga-arụgharị windo ojiji awa 5 ma mee ka kaadị a gwụ kpamkpam.",
+    "glmConfirmRedeemResetCredit": "Ịgbapụta ya ozugbo ga-arụgharị windo ojiji ahọpụtara ma mee ka kaadị a gwụ kpamkpam.",
+    "glmConfirmRedeemWeekResetCredit": "Ịgbapụta ya ozugbo ga-arụgharị windo ojiji izu ụka ma mee ka kaadị a gwụ kpamkpam.",
+    "glmResetCreditFiveHourTitle": "Nrụgharị windo awa 5",
+    "glmResetCreditsModalExplainer": "A haziri kaadị nrụgharị dịka oge ngafe ha si dị. Họrọ windo awa 5 ma ọ bụ nke izu ụka ịchọrọ ịrụgharị.",
+    "glmResetCreditsModalTitle": "Kaadị nrụgharị GLM Coding Plan",
+    "glmResetCreditWeekTitle": "Nrụgharị windo izu ụka"
   },
   "modals": {
     "waitingAuth": "Na-eche maka ikike",
@@ -10961,7 +10993,9 @@
     "poolAddMember": "Tinye",
     "poolAddFailed": "Enweghị ike ịtinye proksi ahụ na pool",
     "poolSelectProxy": "Họrọ proxy…",
-    "poolSaveFailed": "Enweghị ike ichekwa nkesa pool"
+    "poolSaveFailed": "Enweghị ike ichekwa nkesa pool",
+    "poolEgressFailuresByExit": "Ọdịda site na {exit}: {count}",
+    "poolEgressFailuresUnattributed": "Ọdịda na-enweghị ụzọ ọpụpụ ekenyere: {count}"
   },
   "playground": {
     "title": "Ebe Nnwale Model",
@@ -11302,7 +11336,11 @@
       "duration": "Ogologo oge",
       "time": "Oge",
       "conversation": "Mkparịta ụka",
-      "ttft": "TTFT"
+      "ttft": "TTFT",
+      "contentProvenance": "Nzaghachi",
+      "contentEmpty": "Nzaghachi efu",
+      "usageAbsent": "Akọpụtaghị ọnụ ọgụgụ token",
+      "usageEstimated": "E mere atụmatụ ọnụ ọgụgụ token"
     },
     "loadingLogs": "Na-ebunye ndekọ...",
     "noLogs": "Enwebeghị ndekọ ọ bụla. Mee ụfọdụ oku API ka ị hụ ha ebe a.",
@@ -11962,7 +12000,11 @@
       "goNow": "Gaa ugbu a",
       "message": "MITM Proxy dị ugbu a n'okpuru AgentBridge.",
       "title": "Ebugharịla ibe a"
-    }
+    },
+    "resetAgent": "Weghachi ndabara",
+    "resetAgentConfirm": "Weghachi ndabara?",
+    "resetDone": "Eweghachiri DNS ndabara maka {agent}. Mechie ngwa ahụ kpamkpam (ọ bụghị naanị ibelata ya) wee meghee ya ọzọ ka mgbanwe ahụ rụọ ọrụ.",
+    "resetting": "Na-eweghachi…"
   },
   "providerStats": {
     "unknownError": "Njehie amaghị ama",
@@ -12676,7 +12718,12 @@
     "createDahlTokenFailed": "Ịmepụta token Dahl dara",
     "providerProxy": "Proxy",
     "providerProxyConfigureHint": "Hazie proxy",
-    "providerProxyTitleConfigured": "Ahaziela proxy: {host}"
+    "providerProxyTitleConfigured": "Ahaziela proxy: {host}",
+    "directEgress": "Ozugbo (enweghị proxy)",
+    "inheritConnectionOption": "Enweghị proxy nkeonwe (na-eketa njikọ)",
+    "inheritedPool": "Na-eketa ọdọ njikọ ({count})",
+    "inheritedProxy": "Na-eketa njikọ: {host}",
+    "poolEmptyBlocked": "Ọdọ tọgbọrọ — arịrịọ na-ada (ọ bụghị ozugbo)"
   },
   "gamification": {
     "leaderboardScopes": {
@@ -13036,6 +13083,13 @@
       "SERVER_OWNED_TOOL_LOOP_ENABLED": {
         "label": "Okirikiri Ngwaọrụ nke Sava Na-achịkwa",
         "description": "Gaa n'ihu na oku ngwaọrụ sava na-achịkwa ndị na-abụghị streaming ruo mgbe model weghachiri nzaghachi onye ahịa nwere ike iji."
+      },
+      "PROTECTED_PRIORITY_INFRA_502_ENABLED": {
+        "description": "Zaghachi 502 kama 503 mgbe ebumnuche prioriti quota-only-fallback kwụsịrị combo n'ihi ihe e gosipụtara na ọ bụghị quota: provider circuit breaker mepere emepe ma ọ bụ predictive latency skip.",
+        "label": "Nkwụsị Akụrụngwa nke Prioriti Echedoro dịka 502"
+      },
+      "STREAM_RECOVERY_TOOLCALL_ORDER_FIX": {
+        "description": "Mee ka continuation n’etiti stream dị nchebe maka tool call: agala n’ihu ọzọ na stream e kwụsịrị mgbe ezipụchara tool call (ma ọ ka na-aga n’ihu ma ọ bụ na ọ gwụla), kwụsịkwa mgbe continuation efu mere otu ugboro kama iji retry budget niile."
       }
     }
   },
@@ -13956,7 +14010,12 @@
     "hour": "elekere",
     "day": "ụbọchị",
     "unknownModel": "amaghị",
-    "pending": "na-echere"
+    "pending": "na-echere",
+    "allApiKeys": "All API keys",
+    "mcp": "MCP",
+    "mcpTool": "MCP tool",
+    "scope": "Scope",
+    "apiKey": "API key"
   },
   "metadata": {
     "compressionTitle": "Mkpakọ",
@@ -14159,5 +14218,6 @@
     "partnerLinkNote": "Njikọ onye mmekọ",
     "dismissAriaLabel": "Mechie"
   },
-  "featureFlagAgentProxyDisableThinkingLevelVariantsDescription": "Gbanyụọ imepụta ụdị ọkwa echiche dị iche iche (dịka -low, -medium, -high) na katalọgụ /v1/models."
+  "featureFlagAgentProxyDisableThinkingLevelVariantsDescription": "Gbanyụọ imepụta ụdị ọkwa echiche dị iche iche (dịka -low, -medium, -high) na katalọgụ /v1/models.",
+  "featureFlagProxyPoolSharedEgressOrderDescription": "Maka ndị na-enye ọrụ ndị a na-ekesa quota ha site na adreesị egress, ọ na-etinye onye otu pool nke na-ekerịta adreesị egress a hụrụ nke onye otu a jụrụ n'oge na-adịbeghị anya n'okpuru ndị otu dị mma ozugbo. Naanị usoro, a naghị ewepụ ya ma ọlị. Ọ chọrọ PROXY_SKIP_RECENTLY_FAILED, nke na-emepụta akara ịjụ ọ na-agụ. Agbanyụrụ na ndabara: usoro nhọrọ bụ kpọmkwem ntụgharị nkịtị."
 }

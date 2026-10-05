@@ -3795,7 +3795,8 @@
     "triStateInherit": "inherit",
     "connectionAwareExpansionOn": "On",
     "connectionAwareExpansionOff": "Off",
-    "promptCacheAffinityHint": "Prompt-cache locality routing takes precedence over round-robin/weighted rotation across pinned accounts. Turn it off under Settings, Combo defaults, if you need strict rotation."
+    "promptCacheAffinityHint": "Prompt-cache locality routing takes precedence over round-robin/weighted rotation across pinned accounts. Turn it off under Settings, Combo defaults, if you need strict rotation.",
+    "stickyLimitInherit": "zdediť"
   },
   "costs": {
     "title": "náklady",
@@ -4972,7 +4973,7 @@
     "compressionLogTitle": "Záznam kompresie",
     "compressionLogEmpty": "Zatiaľ žiadne komprimované požiadavky. Štatistiky kompresie sa zobrazia tu, keď budú požiadavky spracované s povolenou kompresiou.",
     "tokens": "tokeny",
-    "exportTruncated": "__MISSING__:Export truncated: only {exported} of {total} log entries were included. Pick a shorter time range to export the rest."
+    "exportTruncated": "Export bol skrátený: zahrnutých bolo iba {exported} z {total} záznamov denníka. Ak chcete exportovať zvyšok, vyberte kratší časový rozsah."
   },
   "onboarding": {
     "welcome": "Vitajte",
@@ -6328,7 +6329,8 @@
       "kiro": "Bezplatná úroveň: 50 kreditov/mesiac (~25k – 100k tokenov). ⚠️ Podmienky používania (ToS) Kiro zakazujú používanie proxy/harness tretích strán.",
       "codex": "Pripojte OpenAI Codex pomocou existujúceho toku OAuth.",
       "qwen": "Pripojte Qwen Code pomocou existujúceho toku OAuth.",
-      "github-models": "Vytvorte si GitHub PAT s rozsahom 'models: read' na adrese github.com/settings/tokens"
+      "github-models": "Vytvorte si GitHub PAT s rozsahom 'models: read' na adrese github.com/settings/tokens",
+      "agnes-cn": "Pripojte Agnes AI (Čína) pomocou kľúča API vydaného pre api.agnes-ai.cn. Kľúče z apihub.agnes-ai.com nebudú fungovať."
     },
     "passthroughModelsDescription": "{provider} akceptuje ID modelu natívneho poskytovateľa. Importujte z /models alebo pridajte vlastné ID pre smerovanie.",
     "bedrockModelsDescription": "Modely Amazon Bedrock sú vymedzené podľa regiónu AWS. Importovať z /models alebo pridať ID modelu Bedrock povolené vo vybranom regióne.",
@@ -6489,7 +6491,9 @@
     "failedClearConnectionCooldown": "Čakaciu lehotu sa nepodarilo zrušiť",
     "importFromFileDownloadTemplate": "Stiahnuť šablónu CSV",
     "importFromFileMoreErrors": "+{count} ďalších",
-    "importFromFileSchemaHint": "Stĺpce CSV sú pozičné: provider, name, apiKey, baseUrl (voliteľné), priority (voliteľné). Stĺpec provider musí obsahovať existujúce ID spravovaného poskytovateľa alebo ID už zaregistrovaného uzla kompatibilného s OpenAI/Anthropic — tento import nevytvára nové uzly koncových bodov."
+    "importFromFileSchemaHint": "Stĺpce CSV sú pozičné: provider, name, apiKey, baseUrl (voliteľné), priority (voliteľné). Stĺpec provider musí obsahovať existujúce ID spravovaného poskytovateľa alebo ID už zaregistrovaného uzla kompatibilného s OpenAI/Anthropic — tento import nevytvára nové uzly koncových bodov.",
+    "vertexCredentialHint": "API keys používajú spravovaný katalóg projektov. Service Account JSON umožňuje aktuálne vyhľadávanie v Model Garden.",
+    "vertexCredentialLabel": "API Key alebo Service Account JSON"
   },
   "settings": {
     "title": "Nastavenia",
@@ -8597,6 +8601,10 @@
       "compressToolResults": {
         "label": "Proaktívne skrátiť dlhé výsledky nástroja",
         "description": "__MISSING__:Truncates long tool results during Lite compression. The Maximum tool-result length field (or AGENTPROXY_LITE_MAX_TOOL_LENGTH when that field is unset) sets the cap. Emergency overflow protection may still trim content when the context exceeds the model budget."
+      },
+      "maxToolLength": {
+        "description": "Character cap for proactive tool-result truncation. Default 2000. Override with AGENTPROXY_LITE_MAX_TOOL_LENGTH when this field is unset.",
+        "label": "Maximum tool-result length"
       }
     },
     "engineFields": {
@@ -9712,7 +9720,14 @@
     "kiloPassPaid": "Zaplatené",
     "kiloPassRemaining": "Zostáva",
     "kiloPassRenews": "Obnovuje sa o {count} dní",
-    "kiloPassUsageLabel": "Využitie za tento mesiac"
+    "kiloPassUsageLabel": "Využitie za tento mesiac",
+    "glmConfirmRedeemFiveHourResetCredit": "Uplatnením sa okamžite obnoví 5-hodinové obdobie používania a táto karta sa natrvalo spotrebuje.",
+    "glmConfirmRedeemResetCredit": "Uplatnením sa okamžite obnoví vybrané obdobie používania a táto karta sa natrvalo spotrebuje.",
+    "glmConfirmRedeemWeekResetCredit": "Uplatnením sa okamžite obnoví týždenné obdobie používania a táto karta sa natrvalo spotrebuje.",
+    "glmResetCreditFiveHourTitle": "Obnovenie 5-hodinového obdobia",
+    "glmResetCreditsModalExplainer": "Karty na obnovenie sú zoradené podľa dátumu vypršania platnosti. Vyberte 5-hodinové alebo týždenné obdobie, ktoré chcete obnoviť.",
+    "glmResetCreditsModalTitle": "Karty na obnovenie plánu GLM Coding Plan",
+    "glmResetCreditWeekTitle": "Obnovenie týždenného obdobia"
   },
   "modals": {
     "waitingAuth": "Čaká sa na autorizáciu",
@@ -12703,7 +12718,12 @@
     "createDahlTokenFailed": "Nepodarilo sa vytvoriť token Dahl",
     "providerProxy": "Proxy",
     "providerProxyConfigureHint": "Nastaviť proxy",
-    "providerProxyTitleConfigured": "Proxy je nakonfigurovaný: {host}"
+    "providerProxyTitleConfigured": "Proxy je nakonfigurovaný: {host}",
+    "directEgress": "Priamo (bez proxy)",
+    "inheritConnectionOption": "Bez vlastnej proxy (dedí pripojenie)",
+    "inheritedPool": "Dedí fond pripojení ({count})",
+    "inheritedProxy": "Dedí pripojenie: {host}",
+    "poolEmptyBlocked": "Fond prázdny — požiadavky zlyhajú (nie priamo)"
   },
   "gamification": {
     "leaderboardScopes": {
@@ -13063,6 +13083,13 @@
       "SERVER_OWNED_TOOL_LOOP_ENABLED": {
         "label": "Nástrojová slučka riadená serverom",
         "description": "Pokračovať v nestreamovaných volaniach nástrojov riadených serverom, kým model nevráti odpoveď použiteľnú klientom."
+      },
+      "PROTECTED_PRIORITY_INFRA_502_ENABLED": {
+        "description": "Odpovedať kódom 502 namiesto 503, keď prioritný cieľ so záložnou možnosťou iba pri vyčerpaní kvóty zastaví kombináciu z dôvodu, ktorý preukázateľne nesúvisí s kvótou: otvorený istič poskytovateľa alebo prediktívne preskočenie z dôvodu latencie.",
+        "label": "Infraštruktúrne zastavenia s chránenou prioritou ako 502"
+      },
+      "STREAM_RECOVERY_TOOLCALL_ORDER_FIX": {
+        "description": "Zaistiť bezpečné pokračovanie uprostred streamu pri volaniach nástrojov: nikdy neobnoviť prerušený stream po odoslaní volania nástroja (či už stále prebieha, alebo už bolo dokončené) a po jednom prázdnom pokračovaní sa zastaviť namiesto využitia celého limitu opakovaných pokusov."
       }
     }
   },
@@ -14191,5 +14218,6 @@
     "partnerLinkNote": "Partnerský odkaz",
     "dismissAriaLabel": "Zavrieť"
   },
-  "featureFlagAgentProxyDisableThinkingLevelVariantsDescription": "Zakázať generovanie variantov úrovne uvažovania (napr. -low, -medium, -high) v katalógu /v1/models."
+  "featureFlagAgentProxyDisableThinkingLevelVariantsDescription": "Zakázať generovanie variantov úrovne uvažovania (napr. -low, -medium, -high) v katalógu /v1/models.",
+  "featureFlagProxyPoolSharedEgressOrderDescription": "Pri poskytovateľoch, ktorých kvóta sa rozdeľuje podľa výstupnej (egress) adresy, zaradí člena poolu, ktorý zdieľa pozorovanú egress adresu nedávno odmietnutého člena, tesne pod zdravých členov. Iba poradie, nikdy nevylučuje. Vyžaduje PROXY_SKIP_RECENTLY_FAILED, ktorý vytvára signál odmietnutia, ktorý číta. Predvolene vypnuté: poradie výberu je presne obyčajná rotácia."
 }

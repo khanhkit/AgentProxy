@@ -3795,7 +3795,8 @@
     "triStateInherit": "繼承",
     "connectionAwareExpansionOn": "開",
     "connectionAwareExpansionOff": "關",
-    "promptCacheAffinityHint": "提示快取親和會優先於輪詢/加權在已釘帳號之間的輪轉。若需要嚴格輪轉，請到設定 → 組合預設關閉該選項。"
+    "promptCacheAffinityHint": "提示快取親和會優先於輪詢/加權在已釘帳號之間的輪轉。若需要嚴格輪轉，請到設定 → 組合預設關閉該選項。",
+    "stickyLimitInherit": "繼承"
   },
   "costs": {
     "title": "成本",
@@ -4972,7 +4973,7 @@
     "compressionLogTitle": "壓縮日誌",
     "compressionLogEmpty": "尚未有壓縮請求。啟用壓縮處理請求時，壓縮統計資訊將出現在此處。",
     "tokens": "權杖",
-    "exportTruncated": "__MISSING__:Export truncated: only {exported} of {total} log entries were included. Pick a shorter time range to export the rest."
+    "exportTruncated": "匯出已截斷：{total} 筆日誌中僅包含 {exported} 筆。請選擇較短的時間範圍以匯出其餘日誌。"
   },
   "onboarding": {
     "welcome": "歡迎",
@@ -5971,8 +5972,8 @@
     "validationModelIdHint": "用於驗證此提供者連線的模型 ID。",
     "validationModelIdLabel": "驗證模型 ID",
     "validationModelIdPlaceholder": "輸入用於測試的模型 ID",
-    "vertexCredentialLabel": "API Key or Service Account JSON",
-    "vertexCredentialHint": "API keys use the curated project catalog. Service Account JSON enables live Model Garden discovery.",
+    "vertexCredentialLabel": "API 金鑰或服務帳戶 JSON",
+    "vertexCredentialHint": "API 金鑰會使用精選的專案目錄。服務帳戶 JSON 則可啟用即時 Model Garden 探索。",
     "vertexServiceAccountPlaceholder": "貼上 Service Account JSON（{\"type\":\"service_account\"...}）或 OAuth access_token",
     "webCookieProviders": "Web Cookie Provider",
     "weeklyShort": "每週",
@@ -9719,7 +9720,14 @@
     "kiloPassPaid": "已付費",
     "kiloPassRemaining": "剩餘",
     "kiloPassRenews": "{count} 天後續訂",
-    "kiloPassUsageLabel": "本月用量"
+    "kiloPassUsageLabel": "本月用量",
+    "glmConfirmRedeemFiveHourResetCredit": "兌換後將立即重設 5 小時使用時段，並永久消耗此卡。",
+    "glmConfirmRedeemResetCredit": "兌換後將立即重設所選的使用時段，並永久消耗此卡。",
+    "glmConfirmRedeemWeekResetCredit": "兌換後將立即重設每週使用時段，並永久消耗此卡。",
+    "glmResetCreditFiveHourTitle": "重設 5 小時時段",
+    "glmResetCreditsModalExplainer": "重設卡依到期時間排序。請選擇要重設的 5 小時或每週時段。",
+    "glmResetCreditsModalTitle": "GLM Coding Plan 重設卡",
+    "glmResetCreditWeekTitle": "重設每週時段"
   },
   "modals": {
     "waitingAuth": "等待授權",
@@ -12710,7 +12718,12 @@
     "createDahlTokenFailed": "無法創建 Dahl 令牌",
     "providerProxy": "代理伺服器",
     "providerProxyConfigureHint": "配置代理",
-    "providerProxyTitleConfigured": "代理已配置：{host}"
+    "providerProxyTitleConfigured": "代理已配置：{host}",
+    "directEgress": "直連(無代理)",
+    "inheritConnectionOption": "無自有代理(繼承連線)",
+    "inheritedPool": "繼承連線集區({count})",
+    "inheritedProxy": "繼承連線:{host}",
+    "poolEmptyBlocked": "集區為空——請求將失敗(非直連)"
   },
   "gamification": {
     "leaderboardScopes": {
@@ -13035,11 +13048,11 @@
         "description": "允許串流復原在位元組已到達用戶端後再次請求回應並將其拼接。"
       },
       "STREAM_RECOVERY_TOOLCALL_ORDER_FIX": {
-        "description": "__MISSING__:Make mid-stream continuation tool-call safe: never resume a cut stream after a tool call was sent (still in progress or already finished), and stop after one empty continuation instead of using the whole retry budget."
+        "description": "確保串流中途續傳對工具呼叫安全：送出工具呼叫後（無論仍在進行或已經完成）絕不恢復被截斷的串流，並在一次空續傳後停止，而不是耗盡全部重試預算。"
       },
       "PROTECTED_PRIORITY_INFRA_502_ENABLED": {
-        "label": "__MISSING__:Protected-Priority Infra Stops as 502",
-        "description": "__MISSING__:Answer 502 instead of 503 when a quota-only-fallback priority target stops the combo for a cause that is provably not quota: an open provider circuit breaker or a predictive latency skip."
+        "label": "受保護優先級的基礎設施中止回傳 502",
+        "description": "當僅配額回退的優先級目標因已明確證明並非配額問題的原因而中止組合時，回傳 502 而不是 503：提供者斷路器處於開啟狀態，或因預測延遲而跳過。"
       },
       "MODEL_CATALOG_INCLUDE_NAMES": {
         "description": "在 /v1/models 回應中包含顯示友善的名稱欄位。對於僅接受模型 ID 的用戶端請停用此項。"
@@ -14205,5 +14218,6 @@
     "partnerLinkNote": "合作夥伴連結",
     "dismissAriaLabel": "關閉"
   },
-  "featureFlagAgentProxyDisableThinkingLevelVariantsDescription": "停用在 /v1/models 目錄中產生思考層級變體（例如 -low、-medium、-high）。"
+  "featureFlagAgentProxyDisableThinkingLevelVariantsDescription": "停用在 /v1/models 目錄中產生思考層級變體（例如 -low、-medium、-high）。",
+  "featureFlagProxyPoolSharedEgressOrderDescription": "對於依 egress 位址分配配額的供應商，將與最近被拒絕成員共用已觀測 egress 位址的 pool 成員排在健康成員之後。僅調整順序，絕不排除。需要 PROXY_SKIP_RECENTLY_FAILED，它會產生本功能讀取的拒絕訊號。預設關閉：選擇順序與一般輪替完全相同。"
 }

@@ -3795,7 +3795,8 @@
     "triStateInherit": "inherit",
     "connectionAwareExpansionOn": "On",
     "connectionAwareExpansionOff": "Off",
-    "promptCacheAffinityHint": "Prompt-cache locality routing takes precedence over round-robin/weighted rotation across pinned accounts. Turn it off under Settings, Combo defaults, if you need strict rotation."
+    "promptCacheAffinityHint": "Prompt-cache locality routing takes precedence over round-robin/weighted rotation across pinned accounts. Turn it off under Settings, Combo defaults, if you need strict rotation.",
+    "stickyLimitInherit": "eredita"
   },
   "costs": {
     "title": "Costi",
@@ -4972,7 +4973,7 @@
     "compressionLogTitle": "Log di compressione",
     "compressionLogEmpty": "Nessuna richiesta compressa finora. Le statistiche di compressione appariranno qui quando le richieste verranno elaborate con la compressione abilitata.",
     "tokens": "token",
-    "exportTruncated": "__MISSING__:Export truncated: only {exported} of {total} log entries were included. Pick a shorter time range to export the rest."
+    "exportTruncated": "Esportazione troncata: sono state incluse solo {exported} voci di registro su {total}. Seleziona un intervallo di tempo più breve per esportare le restanti."
   },
   "onboarding": {
     "welcome": "Benvenuto",
@@ -6328,7 +6329,8 @@
       "kiro": "Piano gratuito: 50 crediti/mese (~25K–100K token). ⚠️ I ToS di Kiro vietano l'uso di proxy/harness di terze parti.",
       "codex": "Connetti OpenAI Codex al flusso OAuth esistente.",
       "qwen": "Connetti Qwen Code al flusso OAuth esistente.",
-      "github-models": "Crea un PAT di GitHub con ambito 'models: read' su github.com/settings/tokens"
+      "github-models": "Crea un PAT di GitHub con ambito 'models: read' su github.com/settings/tokens",
+      "agnes-cn": "Connetti Agnes AI (China) con una chiave API rilasciata per api.agnes-ai.cn. Le chiavi di apihub.agnes-ai.com non funzioneranno."
     },
     "passthroughModelsDescription": "{provider} accetta ID modello nativi del provider. Importa da /modelli o aggiungi ID personalizzati per il routing.",
     "bedrockModelsDescription": "I modelli Amazon Bedrock hanno come ambito la regione AWS. Importa da /models o aggiungi gli ID modello Bedrock abilitati nella regione selezionata.",
@@ -6489,7 +6491,9 @@
     "failedClearConnectionCooldown": "Impossibile azzerare il tempo di attesa",
     "importFromFileDownloadTemplate": "Scarica il modello CSV",
     "importFromFileMoreErrors": "+{count} altri",
-    "importFromFileSchemaHint": "Le colonne CSV sono posizionali: provider, name, apiKey, baseUrl (facoltativo), priority (facoltativo). La colonna provider deve contenere l'id di un provider gestito esistente o l'id di un nodo compatibile con OpenAI/Anthropic già registrato; questa importazione non crea nuovi nodi endpoint."
+    "importFromFileSchemaHint": "Le colonne CSV sono posizionali: provider, name, apiKey, baseUrl (facoltativo), priority (facoltativo). La colonna provider deve contenere l'id di un provider gestito esistente o l'id di un nodo compatibile con OpenAI/Anthropic già registrato; questa importazione non crea nuovi nodi endpoint.",
+    "vertexCredentialHint": "Le chiavi API utilizzano il catalogo di progetti selezionato. Il JSON del Service Account consente il rilevamento in tempo reale di Model Garden.",
+    "vertexCredentialLabel": "Chiave API o JSON del Service Account"
   },
   "settings": {
     "title": "Impostazioni",
@@ -8597,6 +8601,10 @@
       "compressToolResults": {
         "label": "Truncare proattivamente i risultati degli strumenti lunghi",
         "description": "__MISSING__:Truncates long tool results during Lite compression. The Maximum tool-result length field (or AGENTPROXY_LITE_MAX_TOOL_LENGTH when that field is unset) sets the cap. Emergency overflow protection may still trim content when the context exceeds the model budget."
+      },
+      "maxToolLength": {
+        "description": "Limite di caratteri per il troncamento proattivo. Predefinito 2000. Sovrascrivibile con AGENTPROXY_LITE_MAX_TOOL_LENGTH se il campo è vuoto.",
+        "label": "Lunghezza massima del risultato strumento"
       }
     },
     "engineFields": {
@@ -9712,7 +9720,14 @@
     "kiloPassPaid": "Pagato",
     "kiloPassRemaining": "Rimanente",
     "kiloPassRenews": "Si rinnova tra {count} giorni",
-    "kiloPassUsageLabel": "Utilizzo di questo mese"
+    "kiloPassUsageLabel": "Utilizzo di questo mese",
+    "glmConfirmRedeemFiveHourResetCredit": "Il riscatto ripristina immediatamente la finestra di utilizzo di 5 ore e consuma definitivamente questa carta.",
+    "glmConfirmRedeemResetCredit": "Il riscatto ripristina immediatamente la finestra di utilizzo selezionata e consuma definitivamente questa carta.",
+    "glmConfirmRedeemWeekResetCredit": "Il riscatto ripristina immediatamente la finestra di utilizzo settimanale e consuma definitivamente questa carta.",
+    "glmResetCreditFiveHourTitle": "Ripristino della finestra di 5 ore",
+    "glmResetCreditsModalExplainer": "Le carte di ripristino sono ordinate per scadenza. Scegli la finestra di 5 ore o settimanale che desideri ripristinare.",
+    "glmResetCreditsModalTitle": "Carte di ripristino del GLM Coding Plan",
+    "glmResetCreditWeekTitle": "Ripristino della finestra settimanale"
   },
   "modals": {
     "waitingAuth": "In attesa di autorizzazione",
@@ -12703,7 +12718,12 @@
     "createDahlTokenFailed": "Impossibile creare il token Dahl",
     "providerProxy": "Proxy",
     "providerProxyConfigureHint": "Configura proxy",
-    "providerProxyTitleConfigured": "Proxy configurato: {host}"
+    "providerProxyTitleConfigured": "Proxy configurato: {host}",
+    "directEgress": "Diretto (senza proxy)",
+    "inheritConnectionOption": "Nessun proxy proprio (eredita la connessione)",
+    "inheritedPool": "Eredita il pool di connessioni ({count})",
+    "inheritedProxy": "Eredita la connessione: {host}",
+    "poolEmptyBlocked": "Pool vuoto — le richieste falliscono (non diretto)"
   },
   "gamification": {
     "leaderboardScopes": {
@@ -13063,6 +13083,13 @@
       "SERVER_OWNED_TOOL_LOOP_ENABLED": {
         "label": "Ciclo degli strumenti gestito dal server",
         "description": "Continua le chiamate non in streaming agli strumenti gestiti dal server finché il modello non restituisce una risposta utilizzabile dal client."
+      },
+      "PROTECTED_PRIORITY_INFRA_502_ENABLED": {
+        "description": "Rispondi con 502 anziché 503 quando una destinazione prioritaria con fallback basato esclusivamente sulla quota interrompe la combo per una causa dimostrabilmente non correlata alla quota: un circuit breaker del provider aperto o un'esclusione predittiva dovuta alla latenza.",
+        "label": "Arresti dell'infrastruttura con priorità protetta come 502"
+      },
+      "STREAM_RECOVERY_TOOLCALL_ORDER_FIX": {
+        "description": "Rendi sicura la continuazione a metà flusso dopo una chiamata a uno strumento: non riprendere mai un flusso interrotto dopo l'invio di una chiamata a uno strumento (ancora in corso o già terminata) e interrompi dopo una continuazione vuota anziché utilizzare l'intero numero di tentativi disponibili."
       }
     }
   },
@@ -14191,5 +14218,6 @@
     "partnerLinkNote": "Link del partner",
     "dismissAriaLabel": "Ignora"
   },
-  "featureFlagAgentProxyDisableThinkingLevelVariantsDescription": "Disabilita la generazione delle varianti del livello di ragionamento (ad es. -low, -medium, -high) nel catalogo /v1/models."
+  "featureFlagAgentProxyDisableThinkingLevelVariantsDescription": "Disabilita la generazione delle varianti del livello di ragionamento (ad es. -low, -medium, -high) nel catalogo /v1/models.",
+  "featureFlagProxyPoolSharedEgressOrderDescription": "Per i provider la cui quota è ripartita per indirizzo di egress, colloca un membro del pool che condivide l'indirizzo di egress osservato di un membro rifiutato di recente subito sotto i membri sani. Solo ordinamento, mai escluso. Richiede PROXY_SKIP_RECENTLY_FAILED, che produce il segnale di rifiuto che legge. Disattivato per impostazione predefinita: l'ordine di selezione è esattamente la rotazione semplice."
 }
