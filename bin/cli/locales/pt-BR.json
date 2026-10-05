@@ -299,7 +299,7 @@
   },
   "health": {
     "description": "Verificar saúde do servidor e status dos componentes",
-    "noServer": "Servidor não está em execução. Inicie com: omniroute serve",
+    "noServer": "Servidor não está em execução. Inicie com: agentproxy serve",
     "title": "Saúde",
     "status": "Status: {status}",
     "uptime": "Tempo de atividade: {uptime}",

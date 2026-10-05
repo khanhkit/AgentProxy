@@ -35,14 +35,9 @@ for (const [modelId, desc, expected] of MIMO_V25_CASES) {
   });
 }
 
-test("mimo-v2.5 heuristic is correct (no false positive from mimo-vl fragment)", () => {
-  // mimo-vl matches "mimo-vl-a3b", not "mimo-v2.5"
+test("mimo-v2.5 heuristic explicitly includes the vision base model but not -pro", () => {
   assert.equal(isVisionModelId("mimo-vl-a3b"), true, "mimo-vl must be detected as vision");
-  assert.equal(
-    isVisionModelId("mimo-v2.5"),
-    false,
-    "mimo-v2.5 must NOT match the mimo-vl heuristic"
-  );
-  // But getResolvedModelCapabilities still returns true via ModelSpec
+  assert.equal(isVisionModelId("mimo-v2.5"), true, "mimo-v2.5 is explicitly vision-capable");
+  assert.equal(isVisionModelId("mimo-v2.5-pro"), false, "mimo-v2.5-pro stays text-only");
   assert.equal(getResolvedModelCapabilities("mimo-v2.5").supportsVision, true);
 });

@@ -495,11 +495,13 @@ test("handleResponsesCore restores custom tools nested in namespaces", async () 
         },
       ],
     },
-    responseFactory: () => buildToolCallSseResponse("exec", '{"input":"pong"}'),
+    responseFactory: () => buildToolCallSseResponse("commands__exec", '{"input":"pong"}'),
   });
 
   const sse = await result.response.text();
   assert.match(sse, /"type":"custom_tool_call"/);
+  assert.match(sse, /"name":"exec"/);
+  assert.match(sse, /"namespace":"commands"/);
   assert.doesNotMatch(sse, /"type":"function_call","arguments"/);
 });
 
@@ -521,7 +523,7 @@ test("handleResponsesCore injects SSE keepalive frames for Responses streams", a
 
     const sse = await result.response.text();
 
-    assert.match(sse, /data: \{"type":"response\.in_progress"\}/);
+    assert.match(sse, /data: \{"type":"response\.in_progress",/);
     assert.match(sse, /event: response\.created/);
     assert.match(sse, /data: \[DONE\]/);
   } finally {
