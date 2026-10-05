@@ -108,10 +108,12 @@ test("diagnostic header merges without case duplicates", async () => {
 });
 
 test("slow build converging after two timeouts serves 200 on next retry", async () => {
-  const slowBuilder = async () => {
-    await new Promise((r) => setTimeout(r, 120));
-    return payload("late-good");
-  };
+  let resolveBuild!: (value: catalogCache.CatalogPayload) => void;
+  const pendingBuild = new Promise<catalogCache.CatalogPayload>((resolve) => {
+    resolveBuild = resolve;
+  });
+  const slowBuilder = () => pendingBuild;
+
   const first = await catalogCache.resolveCachedCatalogResponse(
     request(),
     { corsHeaders: {}, diagnosticHeaders: {} },
@@ -124,7 +126,9 @@ test("slow build converging after two timeouts serves 200 on next retry", async 
     slowBuilder
   );
   assert.equal(second.status, 503);
-  await new Promise((r) => setTimeout(r, 200));
+
+  resolveBuild(payload("late-good"));
+  await catalogCache.__flushCatalogBackgroundRefreshForTest();
   const third = await catalogCache.resolveCachedCatalogResponse(
     request(),
     { corsHeaders: {}, diagnosticHeaders: {} },

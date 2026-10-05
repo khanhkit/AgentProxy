@@ -465,6 +465,7 @@ export const updateComboSchema = z
       value.strategy === undefined &&
       value.config === undefined &&
       value.isActive === undefined &&
+      value.isHidden === undefined &&
       value.allowedProviders === undefined &&
       value.allowedModelFamilies === undefined &&
       value.system_message === undefined &&
