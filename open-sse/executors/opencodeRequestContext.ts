@@ -32,3 +32,7 @@ export function runInRequestContext<T>(fn: () => T): T {
 export function currentRequestContext(): RequestContext | undefined {
   return store.getStore();
 }
+
+/** Backward-compatible names retained for callers from the original isolation patch. */
+export const runInOpencodeRequestContext = runInRequestContext;
+export const currentOpencodeRequestContext = currentRequestContext;
