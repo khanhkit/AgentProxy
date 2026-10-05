@@ -12,7 +12,7 @@ import assert from "node:assert/strict";
 const RUN_ARG_INDEX = 4;
 
 function installMockDb(run: (...args: unknown[]) => unknown) {
-  globalThis.__omnirouteMcpAuditDb = {
+  globalThis.__agentproxyMcpAuditDb = {
     prepare: () => ({ run, get: () => undefined, all: () => [] }),
     pragma: () => undefined,
     close: () => undefined,
@@ -28,7 +28,7 @@ test("logToolCall stamps the resolved caller id, not OMNIROUTE_API_KEY_ID", asyn
   });
   t.after(() => {
     delete process.env.OMNIROUTE_API_KEY_ID;
-    globalThis.__omnirouteMcpAuditDb = undefined;
+    globalThis.__agentproxyMcpAuditDb = undefined;
   });
 
   const audit = await import("../../open-sse/mcp-server/audit.ts");
@@ -47,7 +47,7 @@ test("logToolCall writes null when no caller id resolves and the env id is unset
     bound.push(args);
   });
   t.after(() => {
-    globalThis.__omnirouteMcpAuditDb = undefined;
+    globalThis.__agentproxyMcpAuditDb = undefined;
   });
 
   const audit = await import("../../open-sse/mcp-server/audit.ts");
@@ -65,7 +65,7 @@ test("logToolCall writes null when the resolver returns an empty string", async 
     bound.push(args);
   });
   t.after(() => {
-    globalThis.__omnirouteMcpAuditDb = undefined;
+    globalThis.__agentproxyMcpAuditDb = undefined;
   });
 
   const audit = await import("../../open-sse/mcp-server/audit.ts");
