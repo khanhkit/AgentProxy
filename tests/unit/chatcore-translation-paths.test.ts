@@ -2953,10 +2953,11 @@ test("chatCore records Claude prompt cache and cache usage metadata in call logs
   assert.equal(result.success, true);
   assert.ok(detail);
   assert.equal(detail.requestBody._agentproxy.claudePromptCache.applied, true);
-  // Breakpoints: system[2] (1), message content (1), assistant response (1). Tools cache_control is stripped by base.ts.
-  assert.equal(detail.requestBody._agentproxy.claudePromptCache.totalBreakpoints, 3);
+  // Final outbound breakpoints: system[2] + user content. Native Claude strips tool
+  // cache_control and the invalid trailing assistant turn before dispatch/log accounting.
+  assert.equal(detail.requestBody._agentproxy.claudePromptCache.totalBreakpoints, 2);
   assert.equal(detail.responseBody._agentproxy.claudePromptCache.applied, true);
-  assert.equal(detail.responseBody._agentproxy.claudePromptCache.totalBreakpoints, 3);
+  assert.equal(detail.responseBody._agentproxy.claudePromptCache.totalBreakpoints, 2);
   assert.equal(typeof detail.responseBody._agentproxy.claudePromptCache.anthropicBeta, "string");
   assert.match(detail.responseBody._agentproxy.claudePromptCache.anthropicBeta, /prompt-caching/i);
   assert.deepEqual(detail.responseBody._agentproxy.claudePromptCacheUsage, {

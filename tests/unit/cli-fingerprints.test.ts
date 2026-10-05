@@ -1,9 +1,8 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 
-const { applyFingerprint, stripInternalBodyFields } = await import(
-  "../../open-sse/config/cliFingerprints.ts"
-);
+const { applyFingerprint, stripInternalBodyFields } =
+  await import("../../open-sse/config/cliFingerprints.ts");
 
 test("stripInternalBodyFields removes AgentProxy-owned markers but keeps client underscore fields", () => {
   const body = {
@@ -25,6 +24,16 @@ test("stripInternalBodyFields removes AgentProxy-owned markers but keeps client 
     model: "gpt-test",
     _custom_private: "client-value",
   });
+});
+
+test("stripInternalBodyFields preserves executor-consumed markers only when requested", () => {
+  const body = { _nativeCodexPassthrough: true, _agentproxyResponsesStore: false };
+  assert.deepEqual(
+    stripInternalBodyFields(body, {
+      preserve: ["_nativeCodexPassthrough", "_agentproxyResponsesStore"],
+    }),
+    body
+  );
 });
 
 test("Codex CLI fingerprint orders prompt_cache_key before include", () => {

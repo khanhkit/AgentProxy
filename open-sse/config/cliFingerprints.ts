@@ -236,7 +236,6 @@ export function orderHeaders(
   if (!headerOrder?.length || !headers) return headers;
 
   const result: Record<string, string> = {};
-  const remaining = new Map<string, string>();
 
   // Build case-insensitive lookup
   const headerMap = new Map<string, [string, string]>();
@@ -284,7 +283,7 @@ export function stripInternalBodyFields(
   const preserve = new Set(options.preserve ?? []);
 
   for (const field of INTERNAL_BODY_FIELDS) {
-    delete record[field];
+    if (!preserve.has(field)) delete record[field];
   }
   for (const key of Object.keys(record)) {
     if (key.startsWith(INTERNAL_BODY_FIELD_PREFIX) && !preserve.has(key)) {

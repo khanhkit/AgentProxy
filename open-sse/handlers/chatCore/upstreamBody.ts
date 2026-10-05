@@ -313,10 +313,11 @@ export async function prepareUpstreamBody(opts: PrepareUpstreamBodyOptions): Pro
   // serialize the request. The Responses store marker is intentionally preserved
   // here because CodexExecutor consumes it after this boundary; applyFingerprint
   // strips any surviving internal marker at final serialization.
-  bodyToSend = stripInternalBodyFields(
-    { ...bodyToSend },
-    { preserve: ["_agentproxyResponsesStore"] }
-  ) as Body;
+  const executorMarkers = ["_agentproxyResponsesStore"];
+  if (provider === "codex" || provider === "chatgpt-web-codex") {
+    executorMarkers.push("_nativeCodexPassthrough");
+  }
+  bodyToSend = stripInternalBodyFields({ ...bodyToSend }, { preserve: executorMarkers }) as Body;
 
   return bodyToSend;
 }
