@@ -1,6 +1,5 @@
 import { z } from "zod";
 import { CORS_HEADERS, handleCorsOptions } from "@/shared/utils/cors";
-import { callCloudWithMachineId } from "@/shared/utils/cloud";
 import { handleChat } from "@/sse/handlers/chat";
 import { generateRequestId } from "@/shared/utils/requestId";
 import { resolveIncomingCorrelationId } from "@/shared/utils/correlationPreserve.ts";
@@ -169,6 +168,23 @@ export async function POST(request) {
             );
           }
 
+        const { blocked, result } = injectionGuard(parsedBody);
+        if (blocked) {
+          return finishAdmission(
+            new Response(
+              JSON.stringify({
+                error: {
+                  message: "Request blocked: potential prompt injection detected",
+                  type: "injection_detected",
+                  code: "SECURITY_001",
+                  detections: result.detections.length,
+                },
+              }),
+              { status: 400, headers: { ...CORS_HEADERS, "Content-Type": "application/json" } }
+            )
+          );
+        }
+
           // Self-hosted unified entry (D4 — RIC-738): when a provider config is
           // present, divert BEFORE the cloud-only model retirement/alias checks so
           // self-hosted model ids (`local/llama3`, `ollama/qwen2`, ...) never trip
@@ -229,22 +245,6 @@ export async function POST(request) {
           });
         }
 
-        const { blocked, result } = injectionGuard(parsedBody);
-        if (blocked) {
-          return finishAdmission(
-            new Response(
-              JSON.stringify({
-                error: {
-                  message: "Request blocked: potential prompt injection detected",
-                  type: "injection_detected",
-                  code: "SECURITY_001",
-                  detections: result.detections.length,
-                },
-              }),
-              { status: 400, headers: { ...CORS_HEADERS, "Content-Type": "application/json" } }
-            )
-          );
-        }
       }
     } catch (error) {
       console.error("[SECURITY] Prompt injection guard failed:", error);
