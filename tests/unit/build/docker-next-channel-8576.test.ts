@@ -70,6 +70,7 @@ test("Trivy exceptions are explicit, reviewable, and time-bounded", () => {
     "CVE-2026-78409",
     "CVE-2026-78410",
     "CVE-2026-9538",
+    "CVE-2025-68121",
   ];
   for (const cve of expected) {
     assert.match(ignore, new RegExp(`- id: ${cve}\\n(?:[\\s\\S]*?\\n)?\\s+expired_at: 2026-10-15`));

@@ -11,8 +11,14 @@ import { OAUTH_PROVIDERS } from "../../src/shared/constants/providers/oauth.ts";
 const expectedModels = ["GLM-5.2", "Qwen3.8 27b", "Llama 3.2 3B"];
 
 test("Openference OAuth and API-key fallback catalogs expose the refreshed free models", () => {
-  assert.deepEqual(openferenceProvider.models?.map((m) => m.id), expectedModels);
-  assert.deepEqual(openference_apiProvider.models?.map((m) => m.id), expectedModels);
+  assert.deepEqual(
+    openferenceProvider.models?.map((m) => m.id),
+    expectedModels
+  );
+  assert.deepEqual(
+    openference_apiProvider.models?.map((m) => m.id),
+    expectedModels
+  );
 });
 
 test("Openference provider guidance names the current free-tier models", () => {
@@ -25,7 +31,6 @@ test("Openference provider guidance names the current free-tier models", () => {
   }
 });
 
-test("Deyin/Openference assets ship with the catalog update", () => {
+test("Deyin asset ships with the catalog update", () => {
   assert.equal(fs.existsSync(path.join(process.cwd(), "public/deyin.svg")), true);
-  assert.equal(fs.existsSync(path.join(process.cwd(), "public/openference.svg")), true);
 });

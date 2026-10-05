@@ -152,6 +152,10 @@ test("v1 management proxies main route covers auth, lookup variants, update and 
     assert.equal(deleteAuthRes.status, 401);
   });
 
+  // The INITIAL_PASSWORD auth probe persists setupComplete=true; reset before the
+  // unauthenticated fresh-install CRUD branch so the two scenarios stay isolated.
+  await resetStorage();
+
   const providerConn = await providersDb.createProviderConnection({
     provider: "openai",
     authType: "apikey",
