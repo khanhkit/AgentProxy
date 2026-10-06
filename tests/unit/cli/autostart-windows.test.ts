@@ -78,10 +78,10 @@ test("Windows path resolution skips the POSIX command lookup", () => {
     /if \(process\.platform !== "win32"\) \{([\s\S]*?)\n  \}/
   );
   assert.ok(nonWindowsGuard, "resolveCliPath should have a non-Windows guard");
-  assert.match(nonWindowsGuard[1], /command -v omniroute/);
+  assert.match(nonWindowsGuard[1], /command -v agentproxy/g);
   assert.doesNotMatch(
     resolveCliPath[1].replace(nonWindowsGuard[0], ""),
-    /command -v omniroute/,
+    /command -v agentproxy/g,
     "the POSIX PATH probe must only appear inside the non-Windows guard"
   );
 });

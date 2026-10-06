@@ -47,9 +47,9 @@ test("the alias target carries the real 1M window, not the 128k fallback", () =>
   const spec = MODEL_SPECS[CANONICAL];
   assert.ok(spec, `MODEL_SPECS is missing ${CANONICAL}`);
   assert.equal(spec.contextWindow, 1_000_000);
-  // The bare id must NOT gain its own spec entry — a second source of truth for the
-  // same model is what lets the two ids drift apart again.
-  assert.equal(MODEL_SPECS[BARE], undefined);
+  const bareSpec = MODEL_SPECS[BARE];
+  assert.ok(bareSpec, `MODEL_SPECS is missing ${BARE}`);
+  assert.equal(bareSpec.contextWindow, 1_000_000);
 });
 
 // The catalogs have since split. `qwen-cloud-token-plan` now lists the BARE

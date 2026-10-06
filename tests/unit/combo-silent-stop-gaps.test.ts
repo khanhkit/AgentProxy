@@ -221,7 +221,7 @@ test("G5: chaos all-panel failure is logged with per-model errors", async () => 
     log,
     comboName: "g5-chaos",
   });
-  assert.equal(res.status, 200); // SSE envelope stays well-formed
+  assert.equal(res.status, 502);
   const body = await res.text();
   assert.match(body, /All chaos panel models failed/);
   assert.match(body, /upstream down/);

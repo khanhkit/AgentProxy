@@ -35,6 +35,8 @@ const QUOTA_PATTERNS: ReadonlyArray<RegExp> = [
   /monthly.*limit/i,
   /monthly.*quota/i,
   /per.?month.*limit/i,
+  /limit(?:ed)? to .*?(?:api )?calls? (?:per|\/) month/i,
+  /requests?\/month.*allowance.*exhaust/i,
   /quota.*exceed/i,
   /exceed.*quota/i,
   /insufficient.*quota/i,
@@ -43,6 +45,8 @@ const QUOTA_PATTERNS: ReadonlyArray<RegExp> = [
   /out of credits/i,
   /hard.?limit/i,
   /plan.*limit/i,
+  /used all the included free usage/i,
+  /rolling 24-hour window.*tokens \(actual\/limit\)/i,
 
   // Antigravity / Cloud Code quota exhaustion ("Individual quota reached.
   // Contact your administrator to enable overages. Resets in 164h27m24s.").

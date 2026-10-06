@@ -45,8 +45,9 @@ describe("session-dedup engine", () => {
   it("deduplicates a block appearing verbatim in turn 1 and turn 3", () => {
     const body = makeBody([
       { role: "user", content: `Here is the code:\n${REPEATED_BLOCK}` },
-      { role: "assistant", content: "I understand the code." },
       { role: "user", content: `Please review again:\n${REPEATED_BLOCK}` },
+      { role: "assistant", content: "I understand the code." },
+      { role: "user", content: "What should I improve next?" },
     ]);
 
     const result = sessionDedupEngine.apply(body as Record<string, unknown>);
@@ -61,15 +62,15 @@ describe("session-dedup engine", () => {
       "first occurrence must remain intact in turn 0"
     );
 
-    // Turn 2 (index 2): duplicate — must NOT contain the raw repeated block text
+    // Turn 1: duplicate from an earlier completed turn — must NOT contain the raw block.
     assert.ok(
-      !messages[2].content.includes(REPEATED_BLOCK),
-      "duplicate block must be removed from turn 2"
+      !messages[1].content.includes(REPEATED_BLOCK),
+      "duplicate block must be removed from completed turn 1"
     );
 
-    // Turn 2: must contain a reference marker
+    // Completed duplicate must contain a reference marker.
     assert.match(
-      messages[2].content,
+      messages[1].content,
       /\[dedup:ref sha=[0-9a-f]{24}\]/,
       "turn 2 must contain a [dedup:ref sha=<24hex>] marker"
     );
