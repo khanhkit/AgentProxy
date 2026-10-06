@@ -14,7 +14,7 @@ test("auth-less host:port produces socks5 entry with generated name (default typ
   assert.equal(e.type, "socks5");
   assert.equal(e.username, "");
   assert.equal(e.password, "");
-  assert.equal(e.status, "active");
+  assert.equal("status" in e, false);
   assert.match(e.name, /127\.0\.0\.1:7897/);
 });
 
@@ -230,7 +230,7 @@ test("pipe-delimited minimal NAME|HOST|PORT defaults type to socks5", () => {
   assert.equal(errors.length, 0);
   assert.equal(entries.length, 1);
   assert.equal(entries[0].type, "socks5");
-  assert.equal(entries[0].status, "active");
+  assert.equal("status" in entries[0], false);
 });
 
 test("pipe-delimited missing NAME produces error", () => {

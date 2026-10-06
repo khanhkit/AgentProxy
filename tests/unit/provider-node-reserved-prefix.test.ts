@@ -178,8 +178,10 @@ test("shared set size includes live REGISTRY and all retired web-provider tombst
   // #14217 retires gemini-business and its distinct alias gembiz. The current
   // AgentProxy live set measured 408 immediately before this retirement and 406
   // after removing those two REGISTRY prefixes, with no tombstones added.
+  // AP-ISS-0130 then adds Agnes CN (id + alias), Lyceum (id=alias), and xKiro
+  // (id only), taking the deduplicated AgentProxy set from 406 to 410.
   // Measured from RESERVED_PROVIDER_PREFIXES on this head; do not copy upstream literals.
-  assert.equal(RESERVED_PREFIX_COUNT, 406);
+  assert.equal(RESERVED_PREFIX_COUNT, 410);
 });
 
 test("isReservedProviderPrefix rejects non-string input", () => {

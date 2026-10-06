@@ -19,7 +19,7 @@ import { SignJWT } from "jose";
  * used by cline/forge/openclaw/grok-build/jcode-settings: an inline
  * `if (!apiKey) return 400` guard plus a hand-rolled `getApiKeyById` lookup,
  * instead of the shared `resolveApiKey(keyId, apiKey)`. That helper resolves by
- * keyId first, then falls back to the submitted apiKey, then to `sk_omniroute`.
+ * keyId first, then falls back to the submitted apiKey, then to the canonical `sk_agentproxy` placeholder.
  *
  * This test drives the real POST handler end-to-end (real DB-backed API key,
  * real JWT auth cookie) and asserts the value written into auth.json.
@@ -100,11 +100,11 @@ test("#13563: POST codex-settings with empty apiKey resolves the real key from k
   assert.equal(readWrittenApiKey(), created.key);
 });
 
-test("#13563: POST codex-settings with empty apiKey and no keyId writes sk_omniroute instead of 400", async () => {
+test("#13563: POST codex-settings with empty apiKey and no keyId writes sk_agentproxy instead of 400", async () => {
   const response = await post({ apiKey: "" });
 
   assert.equal(response.status, 200);
-  assert.equal(readWrittenApiKey(), "sk_omniroute");
+  assert.equal(readWrittenApiKey(), "sk_agentproxy");
 });
 
 test("#13563: POST codex-settings with an explicit apiKey still writes it verbatim", async () => {
