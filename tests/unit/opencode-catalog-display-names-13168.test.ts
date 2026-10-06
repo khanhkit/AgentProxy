@@ -46,7 +46,7 @@ describe("opencode config generator — catalog display-name precedence (#13168)
   it("1. an existing custom name wins over any catalog name", async () => {
     const configPath = writeTempConfig({
       provider: {
-        omniroute: {
+        agentproxy: {
           models: {
             "vendor/model-a": { name: "My Custom Label" },
           },
@@ -67,7 +67,7 @@ describe("opencode config generator — catalog display-name precedence (#13168)
         configPath,
       });
       const cfg = JSON.parse(out);
-      assert.strictEqual(cfg.provider.omniroute.models["vendor/model-a"].name, "My Custom Label");
+      assert.strictEqual(cfg.provider.agentproxy.models["vendor/model-a"].name, "My Custom Label");
     } finally {
       stub.restore();
       fs.rmSync(path.dirname(configPath), { recursive: true, force: true });
@@ -96,7 +96,7 @@ describe("opencode config generator — catalog display-name precedence (#13168)
         configPath,
       });
       const cfg = JSON.parse(out);
-      assert.strictEqual(cfg.provider.omniroute.models["vendor/model-b"].name, "Pretty Name");
+      assert.strictEqual(cfg.provider.agentproxy.models["vendor/model-b"].name, "Pretty Name");
     } finally {
       stub.restore();
       fs.rmSync(tmpDir, { recursive: true, force: true });
@@ -120,7 +120,7 @@ describe("opencode config generator — catalog display-name precedence (#13168)
         configPath,
       });
       const cfg = JSON.parse(out);
-      assert.strictEqual(cfg.provider.omniroute.models["vendor/model-c"].name, "Native Label");
+      assert.strictEqual(cfg.provider.agentproxy.models["vendor/model-c"].name, "Native Label");
     } finally {
       stub.restore();
       fs.rmSync(tmpDir, { recursive: true, force: true });
@@ -140,7 +140,7 @@ describe("opencode config generator — catalog display-name precedence (#13168)
         configPath,
       });
       const cfg = JSON.parse(out);
-      assert.strictEqual(cfg.provider.omniroute.models["auto/chat-turbo"].name, "Auto Chat Turbo");
+      assert.strictEqual(cfg.provider.agentproxy.models["auto/chat-turbo"].name, "Auto Chat Turbo");
     } finally {
       stub.restore();
       fs.rmSync(tmpDir, { recursive: true, force: true });
@@ -161,7 +161,7 @@ describe("opencode config generator — catalog display-name precedence (#13168)
       });
       const cfg = JSON.parse(out);
       assert.strictEqual(
-        cfg.provider.omniroute.models["custom-vendor/raw-model-id"].name,
+        cfg.provider.agentproxy.models["custom-vendor/raw-model-id"].name,
         "custom-vendor/raw-model-id"
       );
     } finally {

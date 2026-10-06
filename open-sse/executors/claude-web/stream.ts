@@ -10,7 +10,10 @@ export interface ClaudeWebStreamOptions {
   onComplete(result: { assistantText: string; stopReason: string }): void;
   onFailure(): void;
   log?: ExecutorLog | null;
+  toolUseIdleFinishMs?: number;
 }
+
+export const DEFAULT_TOOL_USE_IDLE_FINISH_MS = 3000;
 
 type StreamPhase = "awaiting_message" | "in_message" | "stopped" | "failed";
 type BlockKind = "thinking" | "text" | "tool_use" | "other";
@@ -386,9 +389,42 @@ function dispatchProtocolEvent(
   }
 }
 
+const IDLE_TIMEOUT = Symbol("claude-web-idle-timeout");
+
+function raceNextFrame(
+  sseIterator: AsyncIterator<string, void, void>,
+  ms: number
+): Promise<IteratorResult<string, void> | typeof IDLE_TIMEOUT> {
+  return new Promise((resolve, reject) => {
+    const timer = setTimeout(() => resolve(IDLE_TIMEOUT), ms);
+    sseIterator.next().then(
+      (result) => {
+        clearTimeout(timer);
+        resolve(result);
+      },
+      (error: unknown) => {
+        clearTimeout(timer);
+        reject(error as Error);
+      }
+    );
+  });
+}
+
+function updateToolFinishArmed(
+  armed: boolean,
+  eventType: string,
+  semanticEvent: SemanticEvent | null,
+  state: ProtocolState
+): boolean {
+  if (eventType === "content_block_start" || eventType === "message_delta") return false;
+  if (semanticEvent?.kind === "tool_call") return state.openBlocks.size === 0;
+  return armed;
+}
+
 async function* parseClaudeWebEvents(
   source: ReadableStream<Uint8Array>,
-  control: StreamControl
+  control: StreamControl,
+  toolUseIdleFinishMs: number = DEFAULT_TOOL_USE_IDLE_FINISH_MS
 ): AsyncGenerator<SemanticEvent, void, void> {
   const state: ProtocolState = {
     phase: "awaiting_message",
@@ -396,26 +432,46 @@ async function* parseClaudeWebEvents(
     toolBlocks: new Map(),
     stopReason: "end_turn",
   };
+  const sseIterator = decodeSseData(source, control)[Symbol.asyncIterator]();
+  let toolFinishArmed = false;
 
-  for await (const data of decodeSseData(source, control)) {
-    if (data === "[DONE]") {
-      protocolFailure(state, "DONE arrived before message_stop");
+  try {
+    while (true) {
+      const next = toolFinishArmed
+        ? await raceNextFrame(sseIterator, toolUseIdleFinishMs)
+        : await sseIterator.next();
+      if (next === IDLE_TIMEOUT) {
+        if (control.reader) await control.reader.cancel().catch(() => {});
+        state.phase = "stopped";
+        yield { kind: "finish", stopReason: "tool_use" };
+        return;
+      }
+      if (next.done || typeof next.value !== "string") break;
+
+      const data = next.value;
+      if (data === "[DONE]") {
+        protocolFailure(state, "DONE arrived before message_stop");
+      }
+
+      const { event, eventType } = parseProtocolEvent(data, state);
+      if (KNOWN_METADATA_EVENTS.has(eventType)) {
+        toolFinishArmed = updateToolFinishArmed(toolFinishArmed, eventType, null, state);
+        yield { kind: "metadata", eventType, data: projectMetadataEvent(eventType, event) };
+        continue;
+      }
+
+      const semanticEvent = dispatchProtocolEvent(eventType, event, state);
+      toolFinishArmed = updateToolFinishArmed(toolFinishArmed, eventType, semanticEvent, state);
+      if (!semanticEvent) continue;
+      yield semanticEvent;
+      if (semanticEvent.kind === "finish") return;
     }
 
-    const { event, eventType } = parseProtocolEvent(data, state);
-    if (KNOWN_METADATA_EVENTS.has(eventType)) {
-      yield { kind: "metadata", eventType, data: projectMetadataEvent(eventType, event) };
-      continue;
-    }
-
-    const semanticEvent = dispatchProtocolEvent(eventType, event, state);
-    if (!semanticEvent) continue;
-    yield semanticEvent;
-    if (semanticEvent.kind === "finish") return;
+    if (control.cancelled) return;
+    throw new ClaudeWebProtocolError("Claude Web stream ended before message_stop");
+  } finally {
+    await sseIterator.return?.().catch(() => {});
   }
-
-  if (control.cancelled) return;
-  throw new ClaudeWebProtocolError("Claude Web stream ended before message_stop");
 }
 
 function openAiFinishReason(stopReason: string): string {
@@ -512,7 +568,7 @@ async function createBufferedResponse(
   const control: StreamControl = { reader: null, cancelled: false };
 
   try {
-    for await (const event of parseClaudeWebEvents(source, control)) {
+    for await (const event of parseClaudeWebEvents(source, control, options.toolUseIdleFinishMs)) {
       if (event.kind === "content") assistantText += event.text;
       if (event.kind === "reasoning") reasoningText += event.text;
       if (event.kind === "tool_call") {
@@ -762,7 +818,7 @@ function createStreamingResponse(
     id: `chatcmpl-${randomUUID()}`,
     created: Math.floor(Date.now() / 1000),
     control,
-    iterator: parseClaudeWebEvents(source, control)[Symbol.asyncIterator](),
+    iterator: parseClaudeWebEvents(source, control, options.toolUseIdleFinishMs)[Symbol.asyncIterator](),
     pendingChunks: [],
     assistantText: "",
     outcome: "pending",
