@@ -98,8 +98,8 @@ async function main(): Promise<void> {
 
     const writerDrained = await callLogs.waitForCallLogSaves(10_000);
     assert.equal(writerDrained, true, "call-log write must drain");
-    // #13546: each attempt's row is keyed on traceId, not the shared pendingRequestId.
-    const persisted = await callLogs.getCallLogById(traceId);
+    // #14474: traceId is the correlation key; DB row ids stay unique across retries/fallbacks.
+    const [persisted] = await callLogs.getCallLogs({ correlationId: traceId, limit: 1 });
     assert.ok(persisted, "failed attempt must still be available to internal diagnostics");
     assert.equal(persisted.error, "Error: Provider failed in <path> with api_key='[REDACTED]'");
     assert.doesNotMatch(persisted.error ?? "", /sk-live-dashboard-secret|\/srv\/agentproxy|\n/);
@@ -109,7 +109,8 @@ async function main(): Promise<void> {
         JSON.stringify({
           delivered,
           replayMatches: JSON.stringify(replayed.payload) === JSON.stringify(delivered),
-          persistedSafe: persisted.error === "Error: Provider failed in <path> with api_key='[REDACTED]'",
+          persistedSafe:
+            persisted.error === "Error: Provider failed in <path> with api_key='[REDACTED]'",
           writerDrained,
         })
     );
