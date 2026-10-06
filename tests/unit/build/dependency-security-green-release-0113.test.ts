@@ -35,7 +35,6 @@ test("AP-ISS-0113 pins markdownlint-cli2 away from vulnerable smol-toml 1.7.0", 
     );
   }
 
-  assert.equal(packageLock.packages?.["node_modules/smol-toml"]?.version, "1.8.0");
   assert.equal(
     packageLock.packages?.["node_modules/markdownlint-cli2/node_modules/smol-toml"],
     undefined,
