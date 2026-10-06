@@ -380,7 +380,7 @@
     "remark-gfm": "^4.0.1",
     "safe-regex": "^2.1.1",
     "selfsigned": "^5.5.0",
-    "sharp": "^0.35.4",
+    "sharp": "^0.35.5",
     "smol-toml": "1.9.0",
     "socks": "^2.8.7",
     "sql.js": "^1.14.2",
@@ -500,11 +500,10 @@
   },
   "overrides": {
     "browserslist": "^4.28.8",
-    "joi": "^18.2.8",
+    "joi": "^18.2.9",
     "onnxruntime-node": "1.30.0",
     "eslint-plugin-react-hooks": "7.1.1",
     "fast-xml-parser": "^5.10.1",
-    "sharp": "^0.35.4",
     "postcss": "^8.5.18",
     "ip-address": "^10.7.2",
     "qs": "^6.16.0",
@@ -530,7 +529,7 @@
       "undici": "^6.29.0"
     },
     "concurrently": {
-      "shell-quote": "^1.9.0"
+      "shell-quote": "^1.11.0"
     },
     "adm-zip": "0.6.1",
     "promptfoo": {
@@ -577,7 +576,14 @@
     "http-cache-semantics": "^4.2.0",
     "markdown-it": "^15.0.2",
     "@grpc/grpc-js": "^1.14.5",
-    "brace-expansion": "^5.0.12"
+    "brace-expansion": "^5.0.12",
+    "postcss-selector-parser": "^7.1.6",
+    "source-map-js": "^1.2.2",
+    "compression": "^1.8.2",
+    "shell-quote": "^1.11.0",
+    "ibm-cloud-sdk-core": {
+      "axios": "^1.20.0"
+    }
   },
   "packageManager": "npm@12.0.2"
 }
