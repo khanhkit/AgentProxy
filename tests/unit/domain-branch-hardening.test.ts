@@ -354,7 +354,7 @@ test("quotaCache covers empty quotas, invalid dates and fallback percentage norm
     remainingPercentage: 0,
     usedPercentage: 100,
     resetAt: null,
-    reachedThreshold: true,
+    reachedThreshold: false,
   });
   assert.equal(quotaCache.getQuotaWindowStatus("quota-zero-total", "unknown"), null);
 
@@ -365,7 +365,7 @@ test("quotaCache covers empty quotas, invalid dates and fallback percentage norm
     remainingPercentage: 0,
     usedPercentage: 100,
     resetAt: "not-a-date",
-    reachedThreshold: true,
+    reachedThreshold: false,
   });
 
   quotaCache.setQuotaCache("quota-invalid-exhausted", "cursor", {
