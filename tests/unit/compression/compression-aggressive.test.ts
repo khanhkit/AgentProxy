@@ -186,7 +186,15 @@ describe("Integration: strategySelector → aggressive pipeline", () => {
       aggressive: DEFAULT_AGGRESSIVE_CONFIG,
     };
 
-    const mode = selectCompressionStrategy(config, null, 0);
+    const mode = selectCompressionStrategy(
+      config,
+      null,
+      0,
+      undefined,
+      undefined,
+      {},
+      "allow-lossy"
+    );
     assert.equal(mode, "aggressive");
   });
 });

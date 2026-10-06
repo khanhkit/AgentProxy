@@ -190,11 +190,10 @@ export function applyRulesToText(
   rules: CavemanRule[]
 ): { text: string; appliedRules: string[] } {
   let result = text;
-  const lowerResult = text.toLowerCase();
   const appliedRules: string[] = [];
 
   for (const rule of rules) {
-    if (!shouldAttemptRule(rule, lowerResult)) continue;
+    if (!shouldAttemptRule(rule, result.toLowerCase())) continue;
 
     const before = result;
     const { pattern, replacement } = rule;

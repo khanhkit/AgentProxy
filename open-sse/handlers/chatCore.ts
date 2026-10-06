@@ -5945,6 +5945,7 @@ async function handleChatCoreInner({
       apiKeyId: apiKeyInfo?.id ?? undefined,
       streamUsage,
       log,
+      videoTranscriptSensitive: videoBridgeObserved,
     });
 
     // Plugin onStreamComplete hook — fire-and-forget, fail-open (#9571)

@@ -14,13 +14,5 @@ test("Codex reasoning honors enabled:false and whitelists wire keys", () => {
     source,
     /clientDisabledReasoning \? "none" : fallbackReasoningEffort/
   );
-  assert.match(source, /const wireReasoning =/);
-  assert.match(
-    source,
-    /if \(key !== "effort" && key !== "summary"\) delete wireReasoning\[key\]/
-  );
-  assert.match(
-    source,
-    /if \(Object\.keys\(wireReasoning\)\.length === 0\) delete body\.reasoning/
-  );
+  assert.match(source, /stripUnsupportedCodexReasoningFields\(body\)/);
 });

@@ -80,6 +80,7 @@ import {
 import { buildProviderModelsUrl, getDiscoveryClientVersionOptions } from "./discoveryClientVersion";
 import { getAdobeModels } from "./adobeFireflyDiscovery";
 import { parseGeminiModelsList } from "@/lib/providerModels/geminiModelsParser";
+import * as tokenPlan from "@/lib/providerModels/tokenPlanModelDiscovery";
 import { getSyncedAvailableModels, getCustomModels, getModelIsHidden } from "@/lib/db/models";
 import { isConnectionUnavailableToAuxiliaryActivity } from "@/lib/exclusiveLeaseIsolation";
 import { fetchCursorAgentModels } from "@/lib/providerModels/cursorAgent";
@@ -1933,6 +1934,31 @@ export async function GET(
           { error: `Failed to fetch models: ${sanitizeErrorMessage(error)}` },
           { status: 502 }
         );
+      }
+    }
+
+    if (tokenPlan.isTokenPlanCatalogProvider(provider)) {
+      const cachedResponse = maybeReturnCachedDiscovery();
+      if (cachedResponse) return cachedResponse;
+      const disabledResponse = maybeReturnAutoFetchDisabled();
+      if (disabledResponse) return disabledResponse;
+      try {
+        const models = await tokenPlan.discoverTokenPlanModels(
+          provider,
+          connection.providerSpecificData,
+          proxy
+        );
+        return buildApiDiscoveryResponse(models, undefined, {
+          catalogMode: "live_token_plan_catalog",
+          catalogScope: "product",
+        });
+      } catch {
+        const fallback = buildDiscoveryFallbackResponse({
+          cacheWarning: "Token Plan live catalog unavailable — using cached catalog",
+          localWarning: "Token Plan live catalog unavailable — using local catalog",
+        });
+        if (fallback) return fallback;
+        return errorResponse(502, "Token Plan live catalog unavailable. Please try again later.");
       }
     }
 

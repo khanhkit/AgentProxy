@@ -12,6 +12,7 @@ import {
   sleepAbortable,
 } from "../../open-sse/executors/opencodeTransientFailure.ts";
 import { resolveProxyForRequest } from "../../open-sse/utils/proxyFetch.ts";
+import { __resetProxyRefusalMemoryForTesting } from "../../open-sse/utils/proxyRefusalMemory.ts";
 import { resetDbInstance } from "../../src/lib/db/core.ts";
 
 // #13615 rework: the failover pause is opt-in (OPENCODE_TRANSIENT_FAILOVER_BACKOFF,
@@ -111,6 +112,7 @@ describe("opencode rotation with OPENCODE_TRANSIENT_FAILOVER_BACKOFF", () => {
     originalFetch = globalThis.fetch;
     priorFlag = process.env[FLAG];
     process.env[FLAG] = "true";
+    __resetProxyRefusalMemoryForTesting();
     observed = [];
     upstream = [];
     sleeps = [];
@@ -252,6 +254,7 @@ describe("opencode rotation with OPENCODE_TRANSIENT_FAILOVER_BACKOFF", () => {
     await mixedResponse.body?.cancel();
 
     for (const breaker of [{ status: 429 }, { status: 403, body: GEO_BODY }]) {
+      __resetProxyRefusalMemoryForTesting();
       sleeps = [];
       events = [];
       const exec = newExecutor();
