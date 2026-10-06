@@ -64,6 +64,8 @@ interface ProxyLogEntry {
   tlsFingerprint: boolean;
   /** HTTP status the provider actually returned; null when no response was received. */
   upstreamStatus: number | null;
+  rotationAccount: string | null;
+  correlationId: string | null;
 }
 
 type ProxyLogInput = Partial<ProxyLogEntry> & {
@@ -124,6 +126,8 @@ function loadFromDb() {
         account: row.account || null,
         tlsFingerprint: row.tls_fingerprint === 1,
         upstreamStatus: typeof row.upstream_status === "number" ? row.upstream_status : null,
+        rotationAccount: row.rotation_account || null,
+        correlationId: row.correlation_id || null,
       });
     }
 
@@ -213,6 +217,8 @@ export function logProxyEvent(entry: ProxyLogInput) {
     account: entry.account || null,
     tlsFingerprint: entry.tlsFingerprint || false,
     upstreamStatus: entry.upstreamStatus ?? null,
+    rotationAccount: entry.rotationAccount ?? null,
+    correlationId: entry.correlationId ?? null,
   };
 
   // Structured egress line so the operator can confirm, in the proxy logs, which
@@ -303,10 +309,10 @@ export function flushProxyLogsSync() {
     const insertStmt = db.prepare(
       `INSERT INTO proxy_logs (id, timestamp, status, proxy_type, proxy_host, proxy_port, proxy_name,
         level, level_id, provider, target_url, public_ip, egress_ip, latency_ms, error,
-        connection_id, combo_id, account, tls_fingerprint, upstream_status)
+        connection_id, combo_id, account, tls_fingerprint, upstream_status, rotation_account, correlation_id)
       VALUES (@id, @timestamp, @status, @proxyType, @proxyHost, @proxyPort, @proxyName,
         @level, @levelId, @provider, @targetUrl, @clientIp, @egressIp, @latencyMs, @error,
-        @connectionId, @comboId, @account, @tlsFingerprint, @upstreamStatus)`
+        @connectionId, @comboId, @account, @tlsFingerprint, @upstreamStatus, @rotationAccount, @correlationId)`
     );
 
     const transaction = db.transaction((entries: ProxyLogEntry[]) => {
@@ -332,6 +338,8 @@ export function flushProxyLogsSync() {
           account: item.account,
           tlsFingerprint: item.tlsFingerprint ? 1 : 0,
           upstreamStatus: item.upstreamStatus,
+          rotationAccount: item.rotationAccount,
+          correlationId: item.correlationId,
         });
       }
     });
