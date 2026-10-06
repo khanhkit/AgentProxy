@@ -19,13 +19,16 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import test from "node:test";
+import { SignJWT } from "jose";
 import type { NextRequest } from "next/server";
 
 const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omni-rule12-sweep-"));
 const ORIGINAL_DATA_DIR = process.env.DATA_DIR;
+const ORIGINAL_JWT_SECRET = process.env.JWT_SECRET;
 
-// Set DATA_DIR before importing anything that touches the DB.
+// Set process-global test inputs before importing anything that touches auth or the DB.
 process.env.DATA_DIR = TEST_DATA_DIR;
+process.env.JWT_SECRET = "rule12-sweep-jwt-secret";
 
 const core = await import("../../src/lib/db/core.ts");
 const compressionRoute = await import("../../src/app/api/settings/compression/route.ts");
@@ -46,8 +49,16 @@ function makeLeakyError(): Error {
   return err;
 }
 
-function makeRequest(url: string, options?: RequestInit): NextRequest {
-  return new Request(url, options) as unknown as NextRequest;
+async function makeRequest(url: string, options?: RequestInit): Promise<NextRequest> {
+  const secret = new TextEncoder().encode(process.env.JWT_SECRET);
+  const token = await new SignJWT({ authenticated: true })
+    .setProtectedHeader({ alg: "HS256" })
+    .setIssuedAt()
+    .setExpirationTime("1h")
+    .sign(secret);
+  const headers = new Headers(options?.headers);
+  headers.set("cookie", `auth_token=${token}`);
+  return new Request(url, { ...options, headers }) as unknown as NextRequest;
 }
 
 // Sanity: the sanitizer really does strip these leaks (guards the test itself —
@@ -77,15 +88,8 @@ function patchPrepareToThrow(sqlMatch: string): () => void {
   };
 }
 
-function patchPragmaToThrow(): () => void {
-  const db = core.getDbInstance();
-  const orig = db.pragma.bind(db);
-  (db as unknown as { pragma: unknown }).pragma = () => {
-    throw makeLeakyError();
-  };
-  return () => {
-    (db as unknown as { pragma: unknown }).pragma = orig;
-  };
+function patchHealthCheckPrepareToThrow(): () => void {
+  return patchPrepareToThrow("SELECT value FROM db_meta WHERE key = 'schema_version'");
 }
 
 // A leak assertion applied to any string field of an error body.
@@ -105,13 +109,18 @@ test.after(() => {
   } else {
     process.env.DATA_DIR = ORIGINAL_DATA_DIR;
   }
+  if (ORIGINAL_JWT_SECRET === undefined) {
+    delete process.env.JWT_SECRET;
+  } else {
+    process.env.JWT_SECRET = ORIGINAL_JWT_SECRET;
+  }
 });
 
 test("GET /api/settings/compression → 500 body is sanitized (shape { error })", async () => {
   const restore = patchPrepareToThrow("FROM key_value WHERE namespace = ?");
   try {
     const res = await compressionRoute.GET(
-      makeRequest("http://localhost/api/settings/compression")
+      await makeRequest("http://localhost/api/settings/compression")
     );
     assert.equal(res.status, 500);
     const body = (await res.json()) as { error: string };
@@ -125,7 +134,7 @@ test("GET /api/settings/compression → 500 body is sanitized (shape { error })"
 test("GET /api/cache/entries → 500 body is sanitized (shape { error })", async () => {
   const restore = patchPrepareToThrow("semantic_cache");
   try {
-    const res = await cacheEntriesRoute.GET(makeRequest("http://localhost/api/cache/entries"));
+    const res = await cacheEntriesRoute.GET(await makeRequest("http://localhost/api/cache/entries"));
     assert.equal(res.status, 500);
     const body = (await res.json()) as { error: string };
     assert.equal(typeof body.error, "string");
@@ -136,9 +145,9 @@ test("GET /api/cache/entries → 500 body is sanitized (shape { error })", async
 });
 
 test("GET /api/db/health → 500 body is sanitized (shape { error: { message } })", async () => {
-  const restore = patchPragmaToThrow();
+  const restore = patchHealthCheckPrepareToThrow();
   try {
-    const res = await dbHealthRoute.GET(makeRequest("http://localhost/api/db/health"));
+    const res = await dbHealthRoute.GET(await makeRequest("http://localhost/api/db/health"));
     assert.equal(res.status, 500);
     const body = (await res.json()) as { error: { message: string } };
     assert.equal(typeof body.error.message, "string");

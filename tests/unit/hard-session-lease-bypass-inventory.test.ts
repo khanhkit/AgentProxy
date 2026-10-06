@@ -13,6 +13,7 @@ type BypassClass = "A" | "B" | "C";
 
 const EXPECTED: Record<InventoryKind, Record<string, number>> = {
   credential: {
+    "open-sse/handlers/chatCore.ts": 1,
     "open-sse/services/imageCombo.ts": 1,
     "open-sse/services/speechCombo.ts": 1,
     "open-sse/services/videoCombo.ts": 2,
@@ -23,6 +24,7 @@ const EXPECTED: Record<InventoryKind, Record<string, number>> = {
     "src/app/api/memory/rerank-providers/route.ts": 1,
     "src/app/api/search/providers/route.ts": 3,
     "src/app/api/v1/_shared/elevenLabsProxy.ts": 1,
+    "src/app/api/v1/_shared/fishAudioProxy.ts": 1,
     "src/app/api/v1/audio/speech/route.ts": 1,
     "src/app/api/v1/_shared/videoModelResolution.ts": 1,
     "src/app/api/v1/audio/transcriptions/route.ts": 2,
@@ -50,7 +52,7 @@ const EXPECTED: Record<InventoryKind, Record<string, number>> = {
     // credentials through getProviderCredentials with the connection allowlist
     // from resolveLocalSyncedEndpointRoute, and handles allRateLimited, so it is
     // fenced the same way as the two pre-existing sites.
-    "src/lib/embeddings/service.ts": 3,
+    "src/lib/embeddings/service.ts": 4,
     // PR #11390: second site is the generic derived-provider listing fallback —
     // read-only key presence probe used to decide whether a configured chat
     // provider may appear in the memory embedding-source dropdown.
@@ -82,7 +84,9 @@ const EXPECTED: Record<InventoryKind, Record<string, number>> = {
     "open-sse/handlers/chatCore.ts": 2,
     // Reactive refresh CAS rereads stay inside the centrally fenced chat request path.
     "open-sse/handlers/chatCore/pipelineCredentialRefresh.ts": 2,
+    "open-sse/handlers/chatCore/requestRejectedFailure.ts": 1,
     "open-sse/handlers/cursorCliProxy.ts": 1,
+    "open-sse/handlers/search/searchProxy.ts": 1,
     "open-sse/services/alibabaFreeTier.ts": 1,
     "open-sse/services/alibabaFreeTierQuotaFetcher.ts": 1,
     // Family cooldown persist looks the row up to write PSD, not dispatch.
@@ -112,6 +116,7 @@ const EXPECTED: Record<InventoryKind, Record<string, number>> = {
     "src/app/api/provider-nodes/[id]/route.ts": 1,
     "src/app/api/providers/[id]/chatgpt-web-codex-doctor/route.ts": 1,
     "src/app/api/providers/[id]/refresh-token/route.ts": 1,
+    "src/app/api/providers/[id]/test/route.ts": 1,
     "src/app/api/providers/bulk/route.ts": 1,
     "src/app/api/providers/client/route.ts": 1,
     "src/app/api/providers/free-onboarding/route.ts": 2,
@@ -119,10 +124,11 @@ const EXPECTED: Record<InventoryKind, Record<string, number>> = {
     // Base drift (already present before #11754 boarded, from earlier-merged
     // #11698/#11720 retirement PRs): a third getProviderConnections-family
     // call site landed here without a golden-inventory update at the time.
-    "src/app/api/providers/route.ts": 3,
+    "src/app/api/providers/route.ts": 4,
     "src/app/api/providers/test-batch/route.ts": 2,
     "src/app/api/rate-limits/route.ts": 1,
     "src/app/api/services/dario/admin/import-from-agentproxy/route.ts": 2,
+    "src/app/api/settings/cache-config/embeddingOptions.ts": 1,
     "src/app/api/settings/export-json/route.ts": 1,
     "src/app/api/settings/qdrant/embedding-models/route.ts": 1,
     "src/app/api/settings/route.ts": 1,
@@ -174,7 +180,7 @@ const EXPECTED: Record<InventoryKind, Record<string, number>> = {
     "src/lib/quota/connectionRecovery.ts": 2,
     "src/lib/sync/bundle.ts": 1,
     // #11495: verify-only sweep queries oauth + cookie connections
-    "src/lib/tokenHealthCheck.ts": 2,
+    "src/lib/tokenHealthCheck.ts": 3,
     "src/lib/tokenHealthCheckCopilot.ts": 1,
     "src/lib/usage/callLogs.ts": 1,
     "src/lib/usage/codexResetCredits.ts": 1,
@@ -190,7 +196,7 @@ const EXPECTED: Record<InventoryKind, Record<string, number>> = {
     "src/shared/services/codexCatalogRevalidation.ts": 2,
     "src/shared/services/modelSyncScheduler.ts": 1,
     "src/sse/handlers/chatHelpers.ts": 1,
-    "src/sse/services/auth.ts": 4,
+    "src/sse/services/auth.ts": 5,
   },
 };
 

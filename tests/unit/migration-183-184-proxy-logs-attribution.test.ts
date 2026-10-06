@@ -25,15 +25,15 @@ for (const file of [
 ]) {
   fs.copyFileSync(path.join(repoMigrations, file), path.join(migrationsDir, file));
 }
-const originalMigrationsDir = process.env.OMNIROUTE_MIGRATIONS_DIR;
-process.env.OMNIROUTE_MIGRATIONS_DIR = migrationsDir;
+const originalMigrationsDir = process.env.AGENTPROXY_MIGRATIONS_DIR;
+process.env.AGENTPROXY_MIGRATIONS_DIR = migrationsDir;
 
 const { runMigrations } = await import("../../src/lib/db/migrationRunner.ts");
 
 test.after(() => {
   fs.rmSync(migrationsDir, { recursive: true, force: true, maxRetries: 5, retryDelay: 100 });
-  if (originalMigrationsDir === undefined) delete process.env.OMNIROUTE_MIGRATIONS_DIR;
-  else process.env.OMNIROUTE_MIGRATIONS_DIR = originalMigrationsDir;
+  if (originalMigrationsDir === undefined) delete process.env.AGENTPROXY_MIGRATIONS_DIR;
+  else process.env.AGENTPROXY_MIGRATIONS_DIR = originalMigrationsDir;
 });
 
 function columns(db: Database.Database, table: string): string[] {
@@ -43,15 +43,33 @@ function columns(db: Database.Database, table: string): string[] {
 }
 
 function ledger(db: Database.Database) {
-  return db.prepare("SELECT version, name FROM _omniroute_migrations ORDER BY version").all();
+  return db.prepare("SELECT version, name FROM _agentproxy_migrations ORDER BY version").all();
 }
 
 function legacyDb(withNewColumns: boolean): Database.Database {
   const db = new Database(":memory:");
   db.exec(
-    `CREATE TABLE proxy_logs (id TEXT PRIMARY KEY${
-      withNewColumns ? ", rotation_account TEXT, correlation_id TEXT" : ""
-    });`
+    `CREATE TABLE proxy_logs (
+      id TEXT PRIMARY KEY,
+      timestamp TEXT NOT NULL,
+      status TEXT,
+      proxy_type TEXT,
+      proxy_host TEXT,
+      proxy_port INTEGER,
+      level TEXT,
+      level_id TEXT,
+      provider TEXT,
+      target_url TEXT,
+      public_ip TEXT,
+      latency_ms INTEGER DEFAULT 0,
+      error TEXT,
+      connection_id TEXT,
+      combo_id TEXT,
+      account TEXT,
+      tls_fingerprint INTEGER DEFAULT 0${
+        withNewColumns ? ", rotation_account TEXT, correlation_id TEXT" : ""
+      }
+    );`
   );
   return db;
 }

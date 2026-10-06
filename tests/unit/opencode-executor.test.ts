@@ -239,7 +239,7 @@ describe("OpencodeExecutor", () => {
       // A paid model carries the client's non-streaming expectation through. A free-tier
       // model does not: the gated tier only answers streamed requests, so the executor
       // announces the event stream and the JSON body is rebuilt from it.
-      const result = await zenExecutor.execute(createInput("gpt-5.6-luna", false));
+      const result = await zenExecutor.execute(createInput("gpt-5.4", false));
 
       assert.deepEqual(result.headers, {
         Authorization: "Bearer test-key",
