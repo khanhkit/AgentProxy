@@ -150,8 +150,16 @@ test("trackPendingRequest reuses the same id across a combo's target-attempt ret
   });
 
   assert.equal(secondId, firstId, "retry attempt must reuse the first attempt's id");
-  assert.equal(getPendingById().has(firstId), true, "reused id is live again under the new attempt");
-  assert.equal(getPendingById().get(firstId)?.model, "model-b", "entry reflects the NEW attempt's target");
+  assert.equal(
+    getPendingById().has(firstId),
+    true,
+    "reused id is live again under the new attempt"
+  );
+  assert.equal(
+    getPendingById().get(firstId)?.model,
+    "model-b",
+    "entry reflects the NEW attempt's target"
+  );
 
   clearPendingRequests();
 });
@@ -250,16 +258,23 @@ test("entries without an account are marked in the map and still fall under the 
     assert.ok(typeof marked?.sweptAt === "number");
     assert.equal(getPendingRequests().byModel["m (p)"], 1);
 
-    // The cap is the only removal path and still reaches map-only entries:
-    // age sweep marks but never removes, so push past the cap with fresh
-    // entries sharing one account (bounded: exactly the cap overflow).
-    for (let i = 0; i < 5000; i++) {
+    // Fill exactly to the cap through normal tracking, then add one map-only
+    // detail synchronously. This avoids racing the module's 5-minute reaper on
+    // slow CI while still exercising the cap's map-only removal path.
+    for (let i = 0; i < 4999; i++) {
       trackPendingRequest("m", "p", "c-fresh-cap", true);
     }
-    assert.ok(getPendingById().size > 5000);
-    const sizeBefore = getPendingById().size;
+    assert.equal(getPendingById().size, 5000);
+    getPendingById().set("map-only-overflow", {
+      id: "map-only-overflow",
+      model: "m",
+      provider: "p",
+      connectionId: null,
+      startedAt: now,
+    });
+    assert.equal(getPendingById().size, 5001);
     const removedByCap = sweepStalePendingRequests(now, HOUR_MS);
-    assert.equal(removedByCap, sizeBefore - 5000);
+    assert.equal(removedByCap, 1);
     assert.equal(getPendingById().size, 5000);
     assert.equal(getPendingById().has(requestId), false);
   } finally {
