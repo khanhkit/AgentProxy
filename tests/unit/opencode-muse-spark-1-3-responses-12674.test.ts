@@ -72,7 +72,7 @@ test("executor resolves muse-spark-1.3 models to the Responses API", () => {
   }
 });
 
-test("Responses-format executor hits /responses while preserving AgentProxy Bearer auth", () => {
+test("Responses-format executor hits /responses with Zen x-api-key auth", () => {
   for (const { id } of PROVIDERS) {
     for (const modelId of MODEL_IDS) {
       const executor = new OpencodeExecutor(id);
@@ -83,8 +83,8 @@ test("Responses-format executor hits /responses while preserving AgentProxy Bear
         `${id}/${modelId} must build a /responses URL, got ${url}`
       );
       const headers = executor.buildHeaders({ apiKey: "sk-test" }, true, null, modelId);
-      assert.equal(headers["Authorization"], "Bearer sk-test");
-      assert.equal(headers["x-api-key"], undefined);
+      assert.equal(headers["Authorization"], undefined);
+      assert.equal(headers["x-api-key"], "sk-test");
     }
   }
 });
