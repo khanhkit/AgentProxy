@@ -44,6 +44,7 @@ test("findAiAttribution: keeps human co-authors, product names in prose, and ord
     "Adds the Copilot chat catalog from the account's live listing.",
     "Refs #14436 — the gate that rejects `Co-Authored-By: Claude …` in commit metadata",
     "Signed-off-by: Jane Doe <jane@example.com>",
+    "Signed-off-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>",
   ];
   assert.deepEqual(findAiAttribution(clean.join("\n")), []);
 });
