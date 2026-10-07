@@ -1010,11 +1010,14 @@ export function createResponsesWsProxy({
           forwarding
         );
         if (!auth.ok) {
-          // Do NOT forward the internal fetch's response headers onto the raw
-          // upgrade socket — they carry chunked transfer-encoding + Next security
-          // headers that collide with writeHttpError's Content-Length framing.
-          // The sanitized JSON body alone is enough for the client.
-          writeHttpError(socket, auth.status, auth.text || "{}");
+          // Do NOT forward the internal fetch's response headers or raw body onto the
+          // public upgrade socket. The internal auth route has a fixed JSON error
+          // contract; parse and re-serialize only its public code/message fields.
+          const parsedAuthError = parseJsonRecord(auth.text);
+          const rawError = isRecord(parsedAuthError?.error) ? parsedAuthError.error : null;
+          const code = isText(rawError?.code) ? rawError.code : "ws_auth_failed";
+          const message = isText(rawError?.message) ? rawError.message : "WebSocket authentication failed";
+          writeHttpError(socket, auth.status, JSON.stringify({ error: { code, message } }));
           return true;
         }
 

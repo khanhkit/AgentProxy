@@ -152,6 +152,6 @@ test("Vertex API-key discovery extracts its consumer project without probing Mod
   assert.deepEqual(result.models, []);
   assert.equal(result.projectId, "project-from-key");
   assert.equal(urls.length, 1);
-  assert.ok(urls[0].includes("generativelanguage.googleapis.com"));
+  assert.ok(new URL(urls[0]).hostname === "generativelanguage.googleapis.com");
   assert.ok(!urls[0].includes("/publishers/"));
 });
