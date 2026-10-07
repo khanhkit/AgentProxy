@@ -40,6 +40,14 @@ import {
   AUTHZ_HEADER_PEER_LOCALITY,
 } from "@/server/authz/headers";
 import { readSubjectFromHeaders } from "@/server/authz/assertAuth";
+import {
+  DASHBOARD_SESSION_COOKIE,
+  REVOKED_SESSIONS_SETTING,
+  SESSIONS_VALID_AFTER_SETTING,
+  getDashboardJwtSecret,
+  mintDashboardSessionToken,
+  verifyDashboardSessionToken,
+} from "@/shared/utils/dashboardSessionToken";
 
 /**
  * Force this route to run dynamically per-request and never be cached/prerendered.
@@ -226,7 +234,12 @@ export async function GET(request: Request) {
   try {
     const settings = await getSettings();
     const settingsRevision = await getSettingsRevision();
-    const { password, ...safeSettings } = settings;
+    const {
+      password,
+      [SESSIONS_VALID_AFTER_SETTING]: _sessionsValidAfter,
+      [REVOKED_SESSIONS_SETTING]: _revokedSessions,
+      ...safeSettings
+    } = settings;
 
     const runtimePorts = getRuntimePorts();
     const cloudUrl = process.env.CLOUD_URL || process.env.NEXT_PUBLIC_CLOUD_URL || null;
@@ -273,6 +286,16 @@ export async function GET(request: Request) {
     console.log("Error getting settings:", error);
     return NextResponse.json({ error: "Failed to load settings" }, { status: 500 });
   }
+}
+
+function readCookie(request: Request, name: string): string | null {
+  for (const part of (request.headers.get("cookie") || "").split(";")) {
+    const separator = part.indexOf("=");
+    if (separator > 0 && part.slice(0, separator).trim() === name) {
+      return part.slice(separator + 1).trim() || null;
+    }
+  }
+  return null;
 }
 
 export async function PATCH(request: Request) {
@@ -426,10 +449,15 @@ export async function PATCH(request: Request) {
     // currentPassword (or the cold-boot exception fired). The gate already
     // included `newPassword` in SECURITY_IMPACTING_KEYS, so no separate
     // verify happens here — strictly hashing + body rewriting.
+    const passwordChanged = Boolean(body.newPassword);
     if (body.newPassword) {
       body.password = await hashManagementPassword(body.newPassword);
+      body[SESSIONS_VALID_AFTER_SETTING] = Math.floor(Date.now() / 1000);
       delete body.newPassword;
     }
+    const callerSession = passwordChanged
+      ? await verifyDashboardSessionToken(readCookie(request, DASHBOARD_SESSION_COOKIE))
+      : null;
     delete body.currentPassword;
     delete body.expectedRevision;
 
@@ -536,12 +564,35 @@ export async function PATCH(request: Request) {
       // Audit failure must never break the write — swallow.
     }
 
-    const { password, ...safeSettings } = settings;
+    const {
+      password,
+      [SESSIONS_VALID_AFTER_SETTING]: _sessionsValidAfter,
+      [REVOKED_SESSIONS_SETTING]: _revokedSessions,
+      ...safeSettings
+    } = settings;
     const settingsRevision = await getSettingsRevision();
-    return NextResponse.json(
+    const response = NextResponse.json(
       { ...safeSettings, settingsRevision },
       { headers: settingsResponseHeaders(settingsRevision) }
     );
+    const secret = getDashboardJwtSecret();
+    if (callerSession && secret) {
+      const forwardedProto = (request.headers.get("x-forwarded-proto") || "")
+        .split(",")[0]
+        .trim()
+        .toLowerCase();
+      response.cookies.set(DASHBOARD_SESSION_COOKIE, await mintDashboardSessionToken(secret), {
+        httpOnly: true,
+        secure:
+          process.env.AUTH_COOKIE_SECURE === "true" ||
+          forwardedProto === "https" ||
+          new URL(request.url).protocol === "https:",
+        sameSite: "lax",
+        path: "/",
+        maxAge: 60 * 60 * 24 * 30,
+      });
+    }
+    return response;
   } catch (error) {
     console.log("Error updating settings:", error);
     return NextResponse.json({ error: "Failed to update settings" }, { status: 500 });

@@ -83,7 +83,7 @@ async function main(): Promise<void> {
     assert.equal(delivered.model, "private-model");
     assert.equal(delivered.provider, "private-provider");
     assert.ok(delivered.latencyMs >= 0);
-    assert.equal(delivered.error, "Error: Provider failed in <path>");
+    assert.equal(delivered.error, "Error: Provider failed in <path> with api_key='[REDACTED]'");
     assert.doesNotMatch(delivered.error, /sk-live-dashboard-secret|\/srv\/agentproxy|\n/);
 
     const replayed = eventBus
@@ -98,9 +98,10 @@ async function main(): Promise<void> {
 
     const writerDrained = await callLogs.waitForCallLogSaves(10_000);
     assert.equal(writerDrained, true, "call-log write must drain");
-    const persisted = await callLogs.getCallLogById(callLogId);
+    // #14474: traceId is the correlation key; DB row ids stay unique across retries/fallbacks.
+    const [persisted] = await callLogs.getCallLogs({ correlationId: traceId, limit: 1 });
     assert.ok(persisted, "failed attempt must still be available to internal diagnostics");
-    assert.equal(persisted.error, "Error: Provider failed in <path>");
+    assert.equal(persisted.error, "Error: Provider failed in <path> with api_key='[REDACTED]'");
     assert.doesNotMatch(persisted.error ?? "", /sk-live-dashboard-secret|\/srv\/agentproxy|\n/);
 
     console.log(
@@ -108,7 +109,8 @@ async function main(): Promise<void> {
         JSON.stringify({
           delivered,
           replayMatches: JSON.stringify(replayed.payload) === JSON.stringify(delivered),
-          persistedSafe: persisted.error === "Error: Provider failed in <path>",
+          persistedSafe:
+            persisted.error === "Error: Provider failed in <path> with api_key='[REDACTED]'",
           writerDrained,
         })
     );

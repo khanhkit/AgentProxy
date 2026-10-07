@@ -26,16 +26,10 @@ test("pt-BR has acpAgents namespace", () => {
 
 // ─── PT-BR page titles ────────────────────────────────────────────────────────
 
-test("pt-BR cliCode.pageTitle is 'CLI Code's'", () => {
-  assert.equal(pt.cliCode.pageTitle, "CLI Code's");
-});
-
-test("pt-BR cliAgents.pageTitle is 'CLI Agents'", () => {
-  assert.equal(pt.cliAgents.pageTitle, "CLI Agents");
-});
-
-test("pt-BR acpAgents.pageTitle is 'ACP Agents'", () => {
-  assert.equal(pt.acpAgents.pageTitle, "ACP Agents");
+test("pt-BR CLI page titles stay localized", () => {
+  assert.equal(pt.cliCode.pageTitle, "Códigos da CLI");
+  assert.equal(pt.cliAgents.pageTitle, "Agentes de CLI");
+  assert.equal(pt.acpAgents.pageTitle, "Agentes ACP");
 });
 
 // ─── PT-BR cliCommon content ──────────────────────────────────────────────────

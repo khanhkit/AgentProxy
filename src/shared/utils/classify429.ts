@@ -35,6 +35,8 @@ const QUOTA_PATTERNS: ReadonlyArray<RegExp> = [
   /monthly.*limit/i,
   /monthly.*quota/i,
   /per.?month.*limit/i,
+  /limit(?:ed)? to .*?(?:api )?calls? (?:per|\/) month/i,
+  /requests?\/month.*allowance.*exhaust/i,
   /quota.*exceed/i,
   /exceed.*quota/i,
   /insufficient.*quota/i,
@@ -43,6 +45,8 @@ const QUOTA_PATTERNS: ReadonlyArray<RegExp> = [
   /out of credits/i,
   /hard.?limit/i,
   /plan.*limit/i,
+  /used all the included free usage/i,
+  /rolling 24-hour window.*tokens \(actual\/limit\)/i,
 
   // Antigravity / Cloud Code quota exhaustion ("Individual quota reached.
   // Contact your administrator to enable overages. Resets in 164h27m24s.").
@@ -99,6 +103,25 @@ const QUOTA_PATTERNS: ReadonlyArray<RegExp> = [
   /organization TPD rate limit/i,
   /\bTPD rate limit\b/i,
   /insufficient balance/i,
+
+  // CJK long-window quota exhaustion.
+  /\[1308\]/,
+  /\[1310\]/,
+  /usage limit reached for \d+\s*hour/i,
+  /使用上限/,
+  /限额将在/,
+  /已达?到.*上限/,
+  /额度已用尽/,
+  /额度已用完/,
+  /今日调用上限/,
+  /调用上限/,
+  /配额[已超]/,
+  /超出.*配额/,
+  /クォータに達しました/,
+  /上限に達しました/,
+  /利用制限に達しました/,
+  /할당량을 초과/,
+  /사용 한도를 초과/,
 ];
 
 /**

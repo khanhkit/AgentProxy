@@ -34,6 +34,7 @@ import {
   shouldAutoRefresh,
   shouldTriggerInfiniteScroll,
 } from "./requestLoggerSignature";
+import { getResilienceBadges } from "./requestLoggerResilience";
 import {
   DEFAULT_REFRESH_INTERVAL_SEC,
   clampRefreshIntervalSec,
@@ -1399,14 +1400,23 @@ const RequestLoggerV2 = forwardRef<RequestLoggerV2Handle, { initialSelectedId?: 
                             {isActive ? (
                               <span className="text-text-muted text-[10px]">—</span>
                             ) : (
-                              <span
-                                className={`inline-block px-2 py-0.5 rounded text-[9px] font-bold uppercase ${cacheSourceMeta?.className || ""}`}
-                                title={
-                                  isSemanticCache ? t("semanticCacheHit") : t("upstreamResponse")
-                                }
-                              >
-                                {isSemanticCache ? t("semantic") : t("upstream")}
-                              </span>
+                              <>
+                                <span
+                                  className={`inline-block px-2 py-0.5 rounded text-[9px] font-bold uppercase ${cacheSourceMeta?.className || ""}`}
+                                  title={
+                                    isSemanticCache ? t("semanticCacheHit") : t("upstreamResponse")
+                                  }
+                                >
+                                  {isSemanticCache ? t("semantic") : t("upstream")}
+                                </span>
+                                {getResilienceBadges(log.resilienceActions, (key, values) =>
+                                  t(`detail.${key}`, values)
+                                ).map((badge) => (
+                                  <span key={badge.key} title={badge.title}>
+                                    [{badge.label}]
+                                  </span>
+                                ))}
+                              </>
                             )}
                           </td>
                         )}

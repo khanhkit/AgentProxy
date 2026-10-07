@@ -94,6 +94,11 @@ async function postWrongPassword(trustedPeerIp: string) {
         // Model the real authz pipeline: raw forwarding evidence is untrusted;
         // the route consumes only the verified peer IP stamped by the pipeline.
         "x-agentproxy-trusted-peer-ip": trustedPeerIp,
+        "x-agentproxy-peer-locality": ipUtils.classifyIpScope(trustedPeerIp) === "loopback"
+          ? "loopback"
+          : ipUtils.classifyIpScope(trustedPeerIp) === "private"
+            ? "lan"
+            : "remote",
       },
       body: JSON.stringify({ password: "wrong-password" }),
     })

@@ -31,6 +31,7 @@ import {
 } from "../responseSanitizer.ts";
 import { isStripReasoningRequested } from "./headers.ts";
 import { applyClientUsageBuffer } from "./clientUsageBuffer.ts";
+import { applyFunctionCallIdentity } from "../../translator/response/openai-responses/functionCallIdentity.ts";
 
 export type { NonStreamingClientTranslateInput, NonStreamingClientTranslateResult };
 
@@ -54,10 +55,12 @@ export function translateNonStreamingClientResponse(
     model,
     requestBody,
     responseToolNameMap,
+    customToolNames,
     requestToolIdentityMap,
     reasoningCacheScope,
     clientHeaders,
     isClaudeCodeCompatible,
+    requestedThinking,
     phase,
   } = input;
 
@@ -72,7 +75,8 @@ export function translateNonStreamingClientResponse(
         responsePayloadFormat,
         clientResponseFormat,
         responseToolNameMap,
-        responseToolSchemas
+        responseToolSchemas,
+        requestedThinking
       )
     : responseBody;
   const responseForMemoryExtraction = translatedResponse;
@@ -115,6 +119,7 @@ export function translateNonStreamingClientResponse(
       cacheReasoningFromAssistantMessage(msg, provider, model, {
         scope: reasoningCacheScope,
         historyMessages: Array.isArray(historyMessages) ? historyMessages : [],
+        videoTranscriptSensitive: input.videoTranscriptSensitive,
       });
     }
   } catch {
@@ -124,16 +129,36 @@ export function translateNonStreamingClientResponse(
   // ── Sanitize response for SDK compatibility ────────────────────────────────
   if (clientResponseFormat === FORMATS.OPENAI_RESPONSES) {
     translatedResponse = sanitizeResponsesApiResponse(translatedResponse);
-    // Restore {namespace, name} on function_call items for round-trip closure (#7936)
     const responseOutput = translatedResponse?.output;
-    if (requestToolIdentityMap && Array.isArray(responseOutput)) {
+    if (customToolNames && Array.isArray(responseOutput)) {
       for (const item of responseOutput) {
-        if (item?.type !== "function_call") continue;
-        const identity = requestToolIdentityMap.get(item.name);
-        if (identity) {
-          item.namespace = identity.namespace;
-          item.name = identity.name;
+        if (item?.type !== "function_call" || !customToolNames.has(item.name)) continue;
+        let rawInput = item.arguments;
+        if (typeof item.arguments === "string") {
+          try {
+            const parsed = JSON.parse(item.arguments);
+            if (parsed && typeof parsed.input === "string") rawInput = parsed.input;
+          } catch {
+            // Non-JSON arguments are already the best available raw input.
+          }
+        } else if (
+          item.arguments &&
+          typeof item.arguments === "object" &&
+          typeof item.arguments.input === "string"
+        ) {
+          rawInput = item.arguments.input;
         }
+        item.type = "custom_tool_call";
+        item.input = typeof rawInput === "string" ? rawInput : JSON.stringify(rawInput ?? "");
+        item.status ??= "completed";
+        delete item.arguments;
+      }
+    }
+    // Restore {namespace, name} on callable items for round-trip closure.
+    if (Array.isArray(responseOutput)) {
+      for (const item of responseOutput) {
+        if (item?.type !== "function_call" && item?.type !== "custom_tool_call") continue;
+        applyFunctionCallIdentity(item, requestToolIdentityMap, item.name);
       }
     }
   } else if (clientResponseFormat === FORMATS.OPENAI) {

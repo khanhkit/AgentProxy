@@ -203,8 +203,13 @@ test("v1 image routes fail closed for the retired ChatGPT Web alias without netw
 test("v1 image models GET exposes image-only modalities for credential-backed image-only models", async () => {
   await seedConnection("topaz", { apiKey: "topaz-key" });
   await seedConnection("stability-ai", { apiKey: "stability-key" });
+  const catalogKey = await apiKeysDb.createApiKey("image-catalog", "machine-image-catalog", []);
 
-  const response = await imageRoute.GET();
+  const response = await imageRoute.GET(
+    new Request("http://localhost/v1/images/generations", {
+      headers: { Authorization: `Bearer ${catalogKey.key}` },
+    })
+  );
   const body = (await response.json()) as { data: ImageModelRow[] };
   const byId = new Map(body.data.map((item) => [item.id, item]));
 
@@ -216,15 +221,20 @@ test("v1 image models GET exposes image-only modalities for credential-backed im
 
 test("v1 image models GET exposes current Codex image models and hides inactive providers", async () => {
   await seedConnection("codex", { apiKey: "codex-key" });
+  const catalogKey = await apiKeysDb.createApiKey("codex-image-catalog", "machine-codex-image", []);
 
-  const response = await imageRoute.GET();
+  const response = await imageRoute.GET(
+    new Request("http://localhost/v1/images/generations", {
+      headers: { Authorization: `Bearer ${catalogKey.key}` },
+    })
+  );
   const body = (await response.json()) as { data: Array<{ id: string }> };
   const ids = body.data.map((item) => item.id);
 
   assert.equal(response.status, 200);
   assert.deepEqual(
     ids.filter((id) => id.startsWith("codex/")),
-    ["codex/gpt-5.6-sol", "codex/gpt-5.6-terra", "codex/gpt-5.6-luna"]
+    ["codex/gpt-5.6-sol-image", "codex/gpt-5.6-terra-image", "codex/gpt-5.6-luna-image"]
   );
   assert.ok(!ids.includes("codex/gpt-5.5"));
   assert.ok(!ids.includes("openai/gpt-image-2"));

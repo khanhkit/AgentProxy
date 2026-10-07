@@ -20,7 +20,7 @@ List routing combos
 
 ```bash
 curl https://localhost:20128/api/combos \
-  -H "Authorization: Bearer $AGENTPROXY_TOKEN"
+  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
 ```
 
 ### POST /api/combos
@@ -29,7 +29,7 @@ Create routing combo
 
 ```bash
 curl -X POST https://localhost:20128/api/combos \
-  -H "Authorization: Bearer $AGENTPROXY_TOKEN" \
+  -H "Authorization: Bearer $OMNIROUTE_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{}'
 ```
@@ -40,7 +40,7 @@ Get combo by ID
 
 ```bash
 curl https://localhost:20128/api/combos/{id} \
-  -H "Authorization: Bearer $AGENTPROXY_TOKEN"
+  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
 ```
 
 ### PUT /api/combos/{id}
@@ -51,7 +51,7 @@ Partial update: the body is merged onto the stored combo, so a field left out ke
 
 ```bash
 curl -X PUT https://localhost:20128/api/combos/{id} \
-  -H "Authorization: Bearer $AGENTPROXY_TOKEN" \
+  -H "Authorization: Bearer $OMNIROUTE_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{}'
 ```
@@ -64,7 +64,7 @@ Partial update: the body is merged onto the stored combo, so a field left out ke
 
 ```bash
 curl -X PATCH https://localhost:20128/api/combos/{id} \
-  -H "Authorization: Bearer $AGENTPROXY_TOKEN" \
+  -H "Authorization: Bearer $OMNIROUTE_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{}'
 ```
@@ -75,7 +75,7 @@ Delete combo
 
 ```bash
 curl -X DELETE https://localhost:20128/api/combos/{id} \
-  -H "Authorization: Bearer $AGENTPROXY_TOKEN"
+  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
 ```
 
 ### GET /api/combos/metrics
@@ -84,7 +84,7 @@ Get combo metrics
 
 ```bash
 curl https://localhost:20128/api/combos/metrics \
-  -H "Authorization: Bearer $AGENTPROXY_TOKEN"
+  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
 ```
 
 ### POST /api/combos/test
@@ -93,7 +93,7 @@ Test a combo configuration
 
 ```bash
 curl -X POST https://localhost:20128/api/combos/test \
-  -H "Authorization: Bearer $AGENTPROXY_TOKEN" \
+  -H "Authorization: Bearer $OMNIROUTE_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{}'
 ```
@@ -106,7 +106,7 @@ Returns all registered fallback chains for model routing.
 
 ```bash
 curl https://localhost:20128/api/fallback/chains \
-  -H "Authorization: Bearer $AGENTPROXY_TOKEN"
+  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
 ```
 
 ### POST /api/fallback/chains
@@ -117,7 +117,7 @@ Registers a fallback routing chain for a model.
 
 ```bash
 curl -X POST https://localhost:20128/api/fallback/chains \
-  -H "Authorization: Bearer $AGENTPROXY_TOKEN" \
+  -H "Authorization: Bearer $OMNIROUTE_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{}'
 ```
@@ -128,7 +128,7 @@ Delete fallback chain
 
 ```bash
 curl -X DELETE https://localhost:20128/api/fallback/chains \
-  -H "Authorization: Bearer $AGENTPROXY_TOKEN"
+  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
 ```
 
 ### GET /api/combos/auto
@@ -137,7 +137,7 @@ GET combos › auto
 
 ```bash
 curl https://localhost:20128/api/combos/auto \
-  -H "Authorization: Bearer $AGENTPROXY_TOKEN"
+  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
 ```
 
 ### GET /api/combos/builder/options
@@ -146,7 +146,7 @@ GET combos › builder › options
 
 ```bash
 curl https://localhost:20128/api/combos/builder/options \
-  -H "Authorization: Bearer $AGENTPROXY_TOKEN"
+  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
 ```
 
 ### POST /api/combos/duplicate
@@ -155,7 +155,7 @@ POST combos › duplicate
 
 ```bash
 curl -X POST https://localhost:20128/api/combos/duplicate \
-  -H "Authorization: Bearer $AGENTPROXY_TOKEN" \
+  -H "Authorization: Bearer $OMNIROUTE_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{}'
 ```
@@ -166,7 +166,7 @@ POST combos › reorder
 
 ```bash
 curl -X POST https://localhost:20128/api/combos/reorder \
-  -H "Authorization: Bearer $AGENTPROXY_TOKEN" \
+  -H "Authorization: Bearer $OMNIROUTE_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{}'
 ```

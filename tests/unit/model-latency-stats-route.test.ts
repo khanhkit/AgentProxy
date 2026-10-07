@@ -190,14 +190,14 @@ test("model latency stats route returns sanitized 500 body when the aggregate th
   // the route's catch block has to produce a real sanitized 500 — no
   // module-namespace mocking (ESM bindings here are non-writable at runtime
   // under node:test) and no fabricated error message.
-  core.closeDbInstance();
+  const request = await makeManagementSessionRequest(
+    "http://localhost/api/usage/model-latency-stats"
+  );
   const db = core.getDbInstance();
-  db.close();
+  db.exec("DROP TABLE usage_history");
 
   try {
-    const response = await route.GET(
-      await makeManagementSessionRequest("http://localhost/api/usage/model-latency-stats")
-    );
+    const response = await route.GET(request);
     assert.equal(response.status, 500);
     const body = await response.json();
 

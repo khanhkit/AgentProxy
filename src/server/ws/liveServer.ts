@@ -18,7 +18,6 @@
  */
 
 import { WebSocketServer, WebSocket } from "ws";
-import { jwtVerify } from "jose";
 import { createServer, type IncomingMessage, type ServerResponse } from "http";
 import { createHash, randomUUID } from "crypto";
 
@@ -33,6 +32,8 @@ import type { DashboardEventName, DashboardChannel } from "@/lib/events/types";
 import { CHANNEL_EVENTS, getChannelForEvent } from "@/lib/events/types";
 import { isAutomatedTestProcess, isBuildProcess } from "@/shared/utils/testProcess";
 import { applyCustomHttpServerTimeouts } from "@/shared/utils/runtimeTimeouts";
+import { verifyDashboardSessionToken } from "@/shared/utils/dashboardSessionToken";
+import { hasProxyHopHeader } from "@/server/authz/proxyHeaders";
 
 import {
   attachRequestStreamGuards,
@@ -135,6 +136,48 @@ function loadAuthModule(): Promise<typeof import("../../sse/services/auth.ts")> 
   return authModulePromise;
 }
 
+/**
+ * True only when the real TCP peer is local. Forwarding headers indicate a
+ * reverse-proxy/tunnel hop and therefore disable the fresh-install bypass.
+ */
+function isLocalWsPeer(request: import("http").IncomingMessage): boolean {
+  if (hasProxyHopHeader(request.headers)) return false;
+
+  let peer = request.socket?.remoteAddress ?? null;
+  if (!peer) return false;
+  peer = peer.replace(/^::ffff:/i, "");
+  return peer === "127.0.0.1" || peer === "::1" || peer === "localhost";
+}
+
+/**
+ * Mirror the dashboard anonymous/open-mode semantics without importing
+ * Next.js-only auth helpers into the LiveWS sidecar.
+ */
+async function isLiveWsAuthRequired(request: import("http").IncomingMessage): Promise<boolean> {
+  try {
+    const { getSettings } = await import("@/lib/db/settings");
+    const settings = await getSettings();
+
+    if (settings.requireLogin === false) return false;
+
+    const hasPassword = typeof settings.password === "string" && settings.password.length > 0;
+    const hasOidc =
+      settings.oidcEnabled === true &&
+      typeof settings.oidcIssuer === "string" &&
+      settings.oidcIssuer.trim().length > 0;
+
+    if (!hasPassword && !hasOidc && !process.env.INITIAL_PASSWORD) {
+      const host = process.env.LIVE_WS_HOST || DEFAULT_HOST;
+      const loopbackBound = host === "127.0.0.1" || host === "::1" || host === "localhost";
+      if (loopbackBound && settings.setupComplete !== true && isLocalWsPeer(request)) return false;
+    }
+
+    return true;
+  } catch {
+    return true;
+  }
+}
+
 type AuthorizedConnection = WsAuthResult & { principalKey?: string };
 
 function hashPrincipal(kind: string, value: string): string {
@@ -145,6 +188,10 @@ async function authorizeConnection(
   request: import("http").IncomingMessage
 ): Promise<AuthorizedConnection> {
   const sessionId = randomUUID().slice(0, 8);
+
+  if (!(await isLiveWsAuthRequired(request))) {
+    return { authorized: true, sessionId };
+  }
 
   // Token MUST come from the Authorization header (or X-Live-WS-Token).
   // Query-string tokens leak into access logs, browser history, and Referer
@@ -212,8 +259,8 @@ async function getDashboardCookiePrincipal(
   const token = getCookieValueFromHeader(request.headers, "auth_token");
   if (!token || !process.env.JWT_SECRET) return null;
   try {
-    const secret = new TextEncoder().encode(process.env.JWT_SECRET);
-    const { payload } = await jwtVerify(token, secret);
+    const payload = await verifyDashboardSessionToken(token);
+    if (!payload) return null;
     const subject = typeof payload.sub === "string" ? payload.sub.trim() : "";
     const remoteAddress = request.socket?.remoteAddress || "unknown";
     return subject ? `dashboard:${subject}` : `ip:${remoteAddress}`;

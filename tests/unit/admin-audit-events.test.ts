@@ -114,6 +114,7 @@ test("auth login route records failed password attempts", async () => {
       method: "POST",
       headers: {
         "content-type": "application/json",
+        "x-agentproxy-peer-locality": "remote",
         "x-agentproxy-trusted-peer-ip": "198.51.100.22",
         "x-request-id": "req-auth-failed",
       },

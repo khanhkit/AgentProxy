@@ -5,6 +5,7 @@ import {
   type SyncedAvailableModel,
 } from "@/lib/db/models";
 import { CANONICAL_EFFORT_VALUES } from "@/shared/reasoning/effortStandardization";
+import type { VertexModelMetadataProvenance } from "@/lib/providerModels/vertexModelMetadata";
 import { isObsoleteKiroModelAlias } from "@agentproxy/open-sse/services/kiroModels.ts";
 import { filterSelectableModels } from "@agentproxy/open-sse/services/modelLifecycle.ts";
 
@@ -16,6 +17,26 @@ function asRecord(value: unknown): JsonRecord {
 
 function toNonEmptyString(value: unknown): string | null {
   return typeof value === "string" && value.trim().length > 0 ? value.trim() : null;
+}
+
+function isZeroPrice(value: unknown): boolean {
+  if (typeof value === "number") return value === 0;
+  if (typeof value !== "string" || value.trim().length === 0) return false;
+  const parsed = Number(value);
+  return Number.isFinite(parsed) && parsed === 0;
+}
+
+function hasLiveFreeEvidence(
+  id: string,
+  record: JsonRecord,
+  promptPrice: string | number | undefined,
+  completionPrice: string | number | undefined
+): boolean {
+  return (
+    record.isFree === true ||
+    id.endsWith(":free") ||
+    (isZeroPrice(promptPrice) && isZeroPrice(completionPrice))
+  );
 }
 
 /**
@@ -33,6 +54,25 @@ function firstPositiveNumber(...candidates: unknown[]): number | undefined {
   return undefined;
 }
 
+
+function parseVertexMetadataProvenance(value: unknown): VertexModelMetadataProvenance | undefined {
+  const provenance = asRecord(value);
+  const vertexDocs = asRecord(provenance.vertexDocs);
+  if (
+    vertexDocs.source !== "google-cloud-docs" ||
+    typeof vertexDocs.sourceUrl !== "string" ||
+    typeof vertexDocs.fetchedAt !== "string" ||
+    vertexDocs.parserVersion !== "vertex-docs-v1" ||
+    vertexDocs.confidence !== "verified" ||
+    !Array.isArray(vertexDocs.fields) ||
+    !vertexDocs.fields.every((field) =>
+      ["contextWindow", "inputTokenLimit", "outputTokenLimit"].includes(String(field))
+    )
+  ) {
+    return undefined;
+  }
+  return value as VertexModelMetadataProvenance;
+}
 function modalitiesIncludeImage(value: unknown): boolean {
   return (
     Array.isArray(value) &&
@@ -59,6 +99,14 @@ export function detectVisionInput(record: JsonRecord): boolean {
     const [inputPart] = modality.toLowerCase().split("->");
     if ((inputPart || "").includes("image")) return true;
   }
+
+  if (
+    Array.isArray(record.labels) &&
+    record.labels.some((entry) => toNonEmptyString(entry)?.toLowerCase() === "vision")
+  ) {
+    return true;
+  }
+
   return false;
 }
 
@@ -97,6 +145,43 @@ const effortListSchema = z.array(z.unknown());
 
 const supportedReasoningLevelsSchema = z.object({ supported_reasoning_levels: z.unknown() });
 const thinkingLevelsSchema = z.object({ thinking: z.object({ levels: z.unknown() }).partial() });
+
+const vendorRouteReasoningCapabilitySchema = z.object({
+  effort_values: z.array(z.unknown()).optional(),
+});
+const vendorRoutesSchema = z.record(z.string(), z.unknown());
+
+function parseVendorRouteEffortValues(record: JsonRecord): string[][] {
+  const vendorsParsed = vendorRoutesSchema.safeParse(record.vendors);
+  if (!vendorsParsed.success) return [];
+
+  const perVendor: string[][] = [];
+  for (const vendorValue of Object.values(vendorsParsed.data)) {
+    const vendorRecord = asRecord(vendorValue);
+    const reasoningParsed = vendorRouteReasoningCapabilitySchema.safeParse(
+      asRecord(vendorRecord.capabilities).reasoning
+    );
+    if (!reasoningParsed.success) continue;
+
+    const efforts = Array.from(
+      new Set(
+        (reasoningParsed.data.effort_values ?? [])
+          .filter((effort): effort is string => typeof effort === "string" && effort.length > 0)
+          .map(normalizeSupportedEffort)
+      )
+    );
+    if (efforts.length > 0) perVendor.push(efforts);
+  }
+  return perVendor;
+}
+
+function vendorRouteSharedEfforts(record: JsonRecord): string[] | undefined {
+  const perVendor = parseVendorRouteEffortValues(record);
+  if (perVendor.length === 0) return undefined;
+  return perVendor.reduce((shared, efforts) =>
+    shared.filter((effort) => efforts.includes(effort))
+  );
+}
 
 // Maps common upstream synonyms onto AgentProxy's canonical effort vocabulary
 // (`src/shared/reasoning/effortStandardization.ts`). Values already in
@@ -166,7 +251,40 @@ export function detectDefaultThinkingEffort(record: JsonRecord): string | undefi
     const raw = parsed.data.default_effort;
     if (typeof raw === "string" && raw.length > 0) return normalizeSupportedEffort(raw);
   }
+
+  const shared = vendorRouteSharedEfforts(record);
+  if (shared && shared.length > 0 && !hasUsableDeclaredEffortList(record)) {
+    const ranked = shared
+      .map((tier) => ({
+        tier,
+        rank: (CANONICAL_EFFORT_VALUES as readonly string[]).indexOf(tier),
+      }))
+      .filter((entry) => entry.rank >= 0)
+      .sort((a, b) => b.rank - a.rank);
+    if (ranked.length > 0) return ranked[0]!.tier;
+  }
   return undefined;
+}
+
+function hasUsableDeclaredEffortList(record: JsonRecord): boolean {
+  if (
+    Array.isArray(record.supportedThinkingEfforts) &&
+    record.supportedThinkingEfforts.some(
+      (effort) => typeof effort === "string" && effort.length > 0
+    )
+  ) {
+    return true;
+  }
+
+  for (const holder of [record.reasoning, asRecord(record.metadata).reasoning]) {
+    const parsed = reasoningSupportedEffortsSchema.safeParse(holder);
+    if (!parsed.success || !parsed.data) continue;
+    const raw = parsed.data.supported_efforts;
+    if (Array.isArray(raw) && raw.some((effort) => typeof effort === "string" && effort.length > 0)) {
+      return true;
+    }
+  }
+  return false;
 }
 
 /**
@@ -216,6 +334,11 @@ export function detectSupportedThinkingEfforts(record: JsonRecord): string[] | u
   // #9160: fall back to `capabilities.effort_tiers` before the legacy fields.
   // AgentProxy's own catalog surfaces effort tiers inside `capabilities.effort_tiers`,
   // which the existing `parseEffortList` already handles (string arrays).
+  const shared = vendorRouteSharedEfforts(record);
+  if (shared !== undefined) {
+    return shared.length > 0 ? shared : [];
+  }
+
   const capabilitiesRecord = asRecord(record.capabilities);
   const capabilitiesParsed = effortListSchema.safeParse(capabilitiesRecord.effort_tiers);
   if (capabilitiesParsed.success) {
@@ -246,7 +369,8 @@ function hasDeclaredEffortList(record: JsonRecord): boolean {
   if (Array.isArray(asRecord(record.reasoning).supported_efforts)) return true;
   if (Array.isArray(asRecord(record.capabilities).effort_tiers)) return true;
   if (Array.isArray(record.supported_reasoning_levels)) return true;
-  return Array.isArray(asRecord(record.thinking).levels);
+  if (Array.isArray(asRecord(record.thinking).levels)) return true;
+  return parseVendorRouteEffortValues(record).length > 0;
 }
 
 export function isAutoFetchModelsEnabled(providerSpecificData: unknown): boolean {
@@ -306,18 +430,34 @@ export function normalizeDiscoveredModels(
 
     const topProvider = asRecord(record.top_provider);
 
-    // OpenRouter (and similar passthrough catalogs) report the context window as
-    // `context_length` / `top_provider.context_length`, not `inputTokenLimit`.
-    // Fall back across those names so synced models carry a real window instead
-    // of the provider default (128K). Explicit `inputTokenLimit` still wins. #3202
-    const inputTokenLimit = firstPositiveNumber(
-      record.inputTokenLimit,
+    // Keep the total context window distinct from an explicit maximum-input limit. Existing
+    // providers historically stored context_length as inputTokenLimit, so retain that compatibility
+    // outside Vertex while persisting the separate contextWindow field for Vertex consumers.
+    const contextWindow = firstPositiveNumber(
       record.context_length,
       record.contextLength,
+      record.contextWindow,
       topProvider.context_length
+    );
+    const isVertexProvider = providerId === "vertex" || providerId === "vertex-partner";
+    const inputTokenLimit = firstPositiveNumber(
+      record.inputTokenLimit,
+      ...(isVertexProvider
+        ? []
+        : [
+            contextWindow,
+            record.max_model_len,
+            record.maxModelLen,
+            record.max_input_tokens,
+            record.maxInputTokens,
+          ]),
+      ...(!isVertexProvider ? [topProvider.context_length] : [])
     );
     const outputTokenLimit = firstPositiveNumber(
       record.outputTokenLimit,
+      record.max_output_tokens,
+      record.maxOutputTokens,
+      record.max_tokens,
       topProvider.max_completion_tokens
     );
 
@@ -328,6 +468,18 @@ export function normalizeDiscoveredModels(
     // models reached the catalog with no vision flag and vision-capable models
     // (which work at request time) showed up as non-vision after import.
     const supportsVision = detectVisionInput(record);
+    const pricing = asRecord(record.pricing);
+    const promptPrice =
+      typeof pricing.prompt === "string" || typeof pricing.prompt === "number"
+        ? pricing.prompt
+        : undefined;
+    const completionPrice =
+      typeof pricing.completion === "string" || typeof pricing.completion === "number"
+        ? pricing.completion
+        : undefined;
+    // Persist only evidence present in this discovery payload. Static catalog
+    // membership is intentionally not evidence about this connection's economics.
+    const isFree = hasLiveFreeEvidence(id, record, promptPrice, completionPrice);
 
     deduped.set(id, {
       id,
@@ -346,6 +498,10 @@ export function normalizeDiscoveredModels(
       ...(supportedThinkingEfforts !== undefined ? { supportedThinkingEfforts } : {}),
       ...(defaultThinkingEffort !== undefined ? { defaultThinkingEffort } : {}),
       ...(typeof inputTokenLimit === "number" ? { inputTokenLimit } : {}),
+      ...(isVertexProvider && typeof contextWindow === "number" ? { contextWindow } : {}),
+      ...(isVertexProvider && parseVertexMetadataProvenance(record.metadataProvenance)
+        ? { metadataProvenance: parseVertexMetadataProvenance(record.metadataProvenance)! }
+        : {}),
       ...(typeof outputTokenLimit === "number" ? { outputTokenLimit } : {}),
       ...(typeof record.description === "string" ? { description: record.description } : {}),
       ...(typeof record.supportsThinking === "boolean"
@@ -356,6 +512,7 @@ export function normalizeDiscoveredModels(
       ...(record.alwaysThinking === true ? { alwaysThinking: true } : {}),
       ...(typeof record.supportsTools === "boolean" ? { supportsTools: record.supportsTools } : {}),
       ...(typeof record.supportsVideo === "boolean" ? { supportsVideo: record.supportsVideo } : {}),
+      ...(isFree ? { isFree: true } : {}),
       ...(supportsVision ? { supportsVision: true } : {}),
     });
   }

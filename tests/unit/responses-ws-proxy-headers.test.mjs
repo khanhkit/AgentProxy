@@ -116,3 +116,24 @@ test("upgrade exceptions are logged server-side but never reflected in the HTTP 
     console.error = originalError;
   }
 });
+
+
+test("auth error body is projected onto the fixed public schema", async () => {
+  const sock = fakeSocket();
+  const canary = "SECRET_STACK /srv/private/auth.ts:42";
+  const proxy = createResponsesWsProxy({
+    baseUrl: "http://127.0.0.1:20128",
+    bridgeSecret: "bridge-secret",
+    fetchImpl: async () => new Response(JSON.stringify({ error: { code: "ws_auth_invalid", message: "Invalid WebSocket credential", debug: canary }, stack: canary }), { status: 403 }),
+    wsFactory: async () => { throw new Error("must not reach upstream websocket factory"); },
+  });
+  const handled = await proxy.handleUpgrade({
+    url: "/v1/responses?api_key=test",
+    headers: { upgrade: "websocket", "sec-websocket-key": "dGhlIHNhbXBsZSBub25jZQ==" },
+    socket: { remoteAddress: "127.0.0.1" },
+  }, sock, Buffer.alloc(0));
+  assert.equal(handled, true);
+  const body = Buffer.isBuffer(sock._body) ? sock._body.toString("utf8") : String(sock._body ?? "");
+  assert.deepEqual(JSON.parse(body), { error: { code: "ws_auth_invalid", message: "Invalid WebSocket credential" } });
+  assert.doesNotMatch(body, /SECRET_STACK|\/srv\/private/);
+});

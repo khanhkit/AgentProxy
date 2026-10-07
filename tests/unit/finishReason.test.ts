@@ -50,6 +50,22 @@ test("case-insensitive matching", () => {
   assert.equal(normalizeOpenAICompatibleFinishReason("MALFORMED_RESPONSE"), "content_filter");
 });
 
+test("Claude stop reasons map to exact OpenAI equivalents", () => {
+  assert.equal(normalizeOpenAICompatibleFinishReason("end_turn"), "stop");
+  assert.equal(normalizeOpenAICompatibleFinishReason("stop_sequence"), "stop");
+  assert.equal(normalizeOpenAICompatibleFinishReason("pause_turn"), "stop");
+  assert.equal(normalizeOpenAICompatibleFinishReason("tool_use"), "tool_calls");
+  assert.equal(normalizeOpenAICompatibleFinishReason("refusal"), "content_filter");
+  assert.equal(normalizeOpenAICompatibleFinishReason("model_context_window_exceeded"), "length");
+  assert.equal(normalizeOpenAICompatibleFinishReason("END_TURN"), "stop");
+  assert.equal(normalizeOpenAICompatibleFinishReason("Tool_Use"), "tool_calls");
+});
+
+test("abort finish reasons still pass through raw", () => {
+  assert.equal(normalizeOpenAICompatibleFinishReason("malformed_function_call"), "malformed_function_call");
+  assert.equal(normalizeOpenAICompatibleFinishReason("unexpected_tool_call"), "unexpected_tool_call");
+});
+
 test("unknown reason passes through as-is", () => {
   assert.equal(normalizeOpenAICompatibleFinishReason("some_new_reason"), "some_new_reason");
 });

@@ -1,6 +1,6 @@
-import { jwtVerify } from "jose";
 import { getSettings } from "@/lib/db/settings";
 import { validateApiKey } from "@/lib/db/apiKeys";
+import { verifyDashboardSessionToken } from "@/shared/utils/dashboardSessionToken";
 
 export const DEFAULT_WS_PATH = "/v1/ws";
 const WS_QUERY_TOKEN_KEYS = ["api_key", "token", "access_token"];
@@ -44,12 +44,7 @@ async function hasValidSessionCookie(request: Request): Promise<boolean> {
   const token = getCookieValue(request.headers.get("cookie"), "auth_token");
   if (!token) return false;
 
-  try {
-    await jwtVerify(token, new TextEncoder().encode(secretValue));
-    return true;
-  } catch {
-    return false;
-  }
+  return Boolean(await verifyDashboardSessionToken(token));
 }
 
 export function extractWsTokenFromUrl(input: string | URL): string | null {

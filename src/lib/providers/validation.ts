@@ -108,6 +108,7 @@ import {
 } from "./validation/webCookie";
 import { validateAiHordeProvider } from "./validation/aihorde";
 import { validateDifyProvider } from "./validation/dify";
+import { validateZyloApiProvider } from "./validation/zylo";
 import { validateAdobeFireflyProvider } from "./validation/adobeFirefly";
 import {
   validateV0VercelProvider,
@@ -241,6 +242,8 @@ export async function validateProviderApiKey({ provider, apiKey, providerSpecifi
     // #5422: auth-only probe — Bytez 404s on every chat model until the account adds it to
     // its catalog, so the generic chat probe can't validate a fresh key.
     bytez: validateBytezProvider,
+    "zylo-api": validateZyloApiProvider,
+    zylo: validateZyloApiProvider,
     deepgram: validateDeepgramProvider,
     assemblyai: validateAssemblyAIProvider,
     "rev-ai": validateRevAiProvider,

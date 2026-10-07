@@ -1,16 +1,22 @@
 import { NextResponse } from "next/server";
 export const dynamic = "force-dynamic";
 import { listBatches } from "@/lib/db/batches";
-import { requireManagementAuth } from "@/lib/api/requireManagementAuth";
+import {
+  getPolicyAwareApiKeyRequestScope,
+  resolveListScope,
+} from "@/app/api/v1/_helpers/apiKeyScope";
 
 export async function GET(request: Request) {
-  const authError = await requireManagementAuth(request);
-  if (authError) return authError;
+  const scope = await getPolicyAwareApiKeyRequestScope(request);
+  if (scope.rejection) return scope.rejection;
+  const listScope = resolveListScope(scope);
+  if (listScope.mode === "rejected") return listScope.response;
 
   try {
     const url = new URL(request.url);
     const limit = Number.parseInt(url.searchParams.get("limit") || "100", 10);
-    const batches = listBatches(undefined, limit);
+    const ownerFilter = listScope.mode === "api_key" ? listScope.apiKeyId : undefined;
+    const batches = listBatches(ownerFilter, limit);
     return NextResponse.json({ batches });
   } catch (error) {
     console.log("Error fetching batches:", error);

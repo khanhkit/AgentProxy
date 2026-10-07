@@ -26,6 +26,8 @@ const { buildAntigravityUpstreamError } =
   await import("../../open-sse/executors/antigravityUpstreamError.ts");
 const { OAUTH_TEST_CONFIG } =
   await import("../../src/app/api/providers/[id]/test/oauthTestConfig.ts");
+const { clearAntigravityProjectCache } =
+  await import("../../open-sse/services/antigravityProjectBootstrap.ts");
 
 const GEO_BODY = {
   error: {
@@ -174,7 +176,7 @@ test("antigravity/agy connection test probes streamGenerateContent, not userinfo
     assert.equal(typeof entry.buildProbe, "function", `${provider} uses a buildProbe`);
 
     const probe = await entry.buildProbe(
-      { providerSpecificData: { clientProfile: "ide" } },
+      { providerSpecificData: { clientProfile: "ide", projectId: "project-test" } },
       "sk-test-token"
     );
     assert.match(probe.url, /v1internal:streamGenerateContent\?alt=sse/);
@@ -183,7 +185,44 @@ test("antigravity/agy connection test probes streamGenerateContent, not userinfo
     assert.equal(probe.headers["Content-Type"], "application/json");
     assert.ok(probe.body, "probe carries a minimal generation body");
     const parsedBody = JSON.parse(probe.body as string);
-    assert.ok(Array.isArray(parsedBody.contents));
-    assert.equal(parsedBody.generationConfig.maxOutputTokens, 1);
+    assert.equal(parsedBody.project, "project-test");
+    assert.match(parsedBody.requestId, /^agent\//);
+    assert.equal(parsedBody.model, "gemini-3.1-flash-lite");
+    assert.equal(parsedBody.userAgent, "antigravity");
+    assert.equal(parsedBody.requestType, "agent");
+    assert.ok(Array.isArray(parsedBody.request?.contents));
+    assert.equal(parsedBody.request.generationConfig.maxOutputTokens, 1);
+  }
+});
+
+test("antigravity connection test discovers a project when none is stored", async () => {
+  const entry = OAUTH_TEST_CONFIG.antigravity;
+  assert.ok(entry?.buildProbe);
+
+  clearAntigravityProjectCache();
+  const originalFetch = globalThis.fetch;
+  try {
+    globalThis.fetch = (async (input: RequestInfo | URL) => {
+      if (String(input).includes("loadCodeAssist")) {
+        return new Response(
+          JSON.stringify({ cloudaicompanionProject: { id: "discovered-project-456" } }),
+          { status: 200, headers: { "Content-Type": "application/json" } }
+        );
+      }
+      return new Response("Not found", { status: 404 });
+    }) as typeof fetch;
+
+    const probe = await entry.buildProbe({ providerSpecificData: {} }, "sk-discovery-token");
+    const parsedBody = JSON.parse(probe.body as string);
+    assert.equal(parsedBody.project, "discovered-project-456");
+    assert.match(parsedBody.requestId, /^agent\//);
+    assert.equal(parsedBody.model, "gemini-3.1-flash-lite");
+    assert.equal(parsedBody.userAgent, "antigravity");
+    assert.equal(parsedBody.requestType, "agent");
+    assert.ok(Array.isArray(parsedBody.request?.contents));
+    assert.equal(parsedBody.request.generationConfig.maxOutputTokens, 1);
+  } finally {
+    globalThis.fetch = originalFetch;
+    clearAntigravityProjectCache();
   }
 });

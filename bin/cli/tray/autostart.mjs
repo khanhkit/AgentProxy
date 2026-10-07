@@ -13,11 +13,13 @@ const LINUX_DESKTOP_NAME = "agentproxy.desktop";
 function resolveCliPath() {
   const candidates = [];
   if (process.argv[1]) candidates.push(process.argv[1]);
-  try {
-    const which = execSync("command -v agentproxy 2>/dev/null", { encoding: "utf8" }).trim();
-    if (which) candidates.push(which);
-  } catch {
-    // command -v unavailable
+  if (process.platform !== "win32") {
+    try {
+      const which = execSync("command -v agentproxy 2>/dev/null", { encoding: "utf8" }).trim();
+      if (which) candidates.push(which);
+    } catch {
+      // command -v unavailable
+    }
   }
   candidates.push(join(dirname(fileURLToPath(import.meta.url)), "..", "..", "agentproxy.mjs"));
 
@@ -259,7 +261,7 @@ export function isLaunchdAgentLoaded(runList) {
  * managing under our agent label.
  *
  * `launchctl unload`/`load -w` for a user-domain agent sends SIGTERM to the
- * running process. When the running AgentProxy cli was itself spawned by the
+ * running process. When the running OmniRoute cli was itself spawned by the
  * autostart launchd agent (autostart was enabled, then the machine rebooted,
  * then the user clicked the tray "Disable Autostart" item), an unload would
  * kill the very process executing the click handler — the tray icon would
@@ -365,7 +367,7 @@ function winStartupPath() {
 }
 
 /**
- * Builds the VBScript source that launches AgentProxy with WSH's Run method
+ * Builds the VBScript source that launches OmniRoute with WSH's Run method
  * using SW_HIDE (0) so no console window appears.
  *
  * 9Router uses the same pattern: a .vbs file in the Startup folder that calls

@@ -19,12 +19,16 @@ import {
 } from "../config/codexInstructions.ts";
 import { FETCH_BODY_TIMEOUT_MS, HTTP_STATUS, PROVIDERS } from "../config/constants.ts";
 import { readCodexPeekChunk, buildCodexTimeoutSafePassthroughBody } from "./codex/bodyTimeout.ts";
+import { loadDynamicModule } from "./codex/wreqLoader.ts";
+import { stripCodexPassthroughRejectedParams } from "./codex/stripPassthroughRejectedParams.ts";
 import {
   CODEX_CLI_RS_ORIGINATOR,
   getCodexClientVersion,
+  getCodexClientVersionFromHeaders,
   getCodexUserAgent,
   normalizeCodexSessionId,
 } from "../config/codexClient.ts";
+import type { KeyHealth } from "../services/apiKeyRotator.ts";
 import {
   applyCodexClientIdentityHeaders,
   applyCodexClientMetadata,
@@ -35,6 +39,7 @@ import {
 import { getAccessToken } from "../services/tokenRefresh.ts";
 import { sanitizeResponsesInputItems } from "../services/responsesInputSanitizer.ts";
 import { applyReasoningInputPolicy } from "../services/reasoningInputPolicy.ts";
+import { getForcedReasoningEffort } from "../utils/reasoningRuleContext.ts";
 import { normalizeCodexVerbosity } from "../services/codexVerbosity.ts";
 import { getThinkingBudgetConfig, ThinkingMode } from "../services/thinkingBudget.ts";
 import { CORS_HEADERS } from "../utils/cors.ts";
@@ -55,11 +60,14 @@ import { isCodexFreePlan, normalizeCodexTools } from "./codex/tools.ts";
 import {
   CODEX_EFFORT_ORDER as EFFORT_ORDER,
   GPT_5_6_ULTRA_ALIAS_MODELS,
+  applyForcedCodexReasoningEffort,
   splitCodexReasoningSuffix,
+  stripUnsupportedCodexReasoningFields,
   type CodexEffortLevel as EffortLevel,
 } from "./codex/reasoningSuffix.ts";
 import { repairMissingCodexToolCallOutputs } from "./codex/toolCallRepair.ts";
 import { resolveAppServerConfig } from "./codex/appServerConfig.ts";
+import { getResponsesSubpath } from "./codex/responsesSubpath.ts";
 import { CodexAppServerExecutor } from "./codex-app-server.ts";
 // Re-exported for external importers (tests + provider services).
 export { isCodexFreePlan, normalizeCodexTools } from "./codex/tools.ts";
@@ -76,7 +84,7 @@ type WreqWebSocket = {
   close: (code?: number, reason?: string) => void;
   onmessage: ((event: { data: unknown }) => void) | null;
   onerror: ((event: { message?: string }) => void) | null;
-  onclose: (() => void) | null;
+  onclose: ((event?: { code?: number; reason?: string }) => void) | null;
 };
 type WebsocketFn = (url: string, opts?: Record<string, unknown>) => Promise<WreqWebSocket>;
 type ResponsesMessageInput = { role?: unknown; phase?: unknown; content?: unknown };
@@ -90,7 +98,7 @@ function getCodexWebSocketTransport(): WebsocketFn | null {
   if (_wreqChecked) return _websocketFn;
   _wreqChecked = true;
   try {
-    const mod = _wreqRequire("wreq-js") as { websocket?: WebsocketFn };
+    const mod = loadDynamicModule(_wreqRequire, "wreq-js") as { websocket?: WebsocketFn };
     _websocketFn = typeof mod.websocket === "function" ? mod.websocket : null;
   } catch {
     console.warn("[codex] wreq-js import failed, websocket disabled");
@@ -286,30 +294,6 @@ function stripOrphanedCodexFunctionCallOutputs(body: Record<string, unknown>): v
       `[Codex] stripOrphanedCodexFunctionCallOutputs: removed ${removedCount} orphaned function_call_output item(s)`
     );
   }
-}
-
-function getResponsesSubpath(endpointPath: unknown): string | null {
-  let normalizedEndpoint = String(endpointPath || "");
-  while (normalizedEndpoint.endsWith("/") && normalizedEndpoint.length > 0) {
-    normalizedEndpoint = normalizedEndpoint.slice(0, -1);
-  }
-
-  const lower = normalizedEndpoint.toLowerCase();
-  if (lower === "responses" || lower.endsWith("/responses")) {
-    return "";
-  }
-
-  const responsesSlash = "/responses/";
-  const idx = lower.lastIndexOf(responsesSlash);
-  if (idx !== -1) {
-    return normalizedEndpoint.slice(idx + "/responses".length);
-  }
-
-  if (lower.startsWith("responses/")) {
-    return normalizedEndpoint.slice("responses".length);
-  }
-
-  return null;
 }
 
 export function isCompactResponsesEndpoint(endpointPath: unknown): boolean {
@@ -821,6 +805,10 @@ export class CodexExecutor extends BaseExecutor {
       requestInput.body
     );
     const nextInput = { ...requestInput, credentials };
+    nextInput.body = applyForcedCodexReasoningEffort(
+      nextInput.body,
+      getForcedReasoningEffort(credentials)
+    );
 
     if (isCodexAppServerRequired(nextInput.credentials)) {
       if (!this.appServer) {
@@ -957,8 +945,9 @@ export class CodexExecutor extends BaseExecutor {
       }
     };
 
-    const failController = (code: string, _message: string) => {
+    const failController = (code: string, message: string) => {
       if (closed) return;
+      nextInput.log?.warn?.("CODEX", `WebSocket stream failed (${code}): ${message}`);
       const controller = streamController;
       const payload = JSON.stringify({
         type: "response.failed",
@@ -971,6 +960,7 @@ export class CodexExecutor extends BaseExecutor {
       try {
         controller?.enqueue(encoder.encode(`event: response.failed\ndata: ${payload}\n\n`));
       } catch {
+        console.warn("[codex] failController: failed to enqueue response.failed");
         // Downstream closed before the failure could be delivered.
       }
       finishStream({ reason: "upstream_failed" });
@@ -1027,8 +1017,19 @@ export class CodexExecutor extends BaseExecutor {
               event.message || "Codex upstream WebSocket error"
             );
           };
-          ws.onclose = () => {
-            finishStream({ reason: "upstream_closed", closeSocket: false });
+          ws.onclose = (event) => {
+            // A close after a terminal event already finished the stream — no-op.
+            // A close before any terminal event means the upstream died mid-response:
+            // emit a terminal response.failed instead of ending the client stream as
+            // if it completed normally (silent truncation).
+            if (closed) return;
+            const closeDetail = event
+              ? ` (code ${event.code ?? "unknown"}${event.reason ? `: ${event.reason}` : ""})`
+              : "";
+            failController(
+              "upstream_websocket_closed",
+              `Codex upstream WebSocket closed before a terminal response event${closeDetail}`
+            );
           };
           if (!closed) {
             await prl.captureCurrentProviderBody(url, headers, bodyString, nextInput.log);
@@ -1088,11 +1089,30 @@ export class CodexExecutor extends BaseExecutor {
    * Always request event-stream from upstream, even when client requested stream=false.
    * Includes chatgpt-account-id header for strict workspace binding.
    */
-  buildHeaders(credentials: ProviderCredentials, stream = true) {
+  buildHeaders(
+    credentials: ProviderCredentials,
+    _stream = true,
+    clientHeaders?: Record<string, string> | null,
+    model?: string,
+    health?: Record<string, KeyHealth>
+  ) {
     const isCompactRequest = isCompactResponsesEndpoint(credentials?.requestEndpointPath);
-    const headers = super.buildHeaders(credentials, isCompactRequest ? false : true);
-    headers.Version = getCodexClientVersion();
-    setUserAgentHeader(headers, getCodexUserAgent());
+    const headers = super.buildHeaders(
+      credentials,
+      isCompactRequest ? false : true,
+      clientHeaders,
+      model,
+      health
+    );
+
+    // Forward the CALLER's own Codex client version upstream instead of a pinned
+    // default. The ChatGPT backend gates newer models on the reported client
+    // version (e.g. "The 'gpt-6-astra' model requires a newer version of Codex"),
+    // so a hardcoded value silently rots whenever the user upgrades their CLI.
+    // Falls back to the configured/default version when the caller sends none.
+    const clientVersion = getCodexClientVersionFromHeaders(clientHeaders);
+    headers.Version = clientVersion ?? getCodexClientVersion();
+    setUserAgentHeader(headers, getCodexUserAgent(clientVersion));
 
     // Add workspace binding header if workspaceId is persisted
     const workspaceId = credentials?.providerSpecificData?.workspaceId;
@@ -1382,8 +1402,15 @@ export class CodexExecutor extends BaseExecutor {
     // Issue #2331: model suffix aliases (for example gpt-5.5-xhigh) represent an
     // explicit model selection, so they must override client-injected defaults such
     // as OpenCode's automatic reasoning.effort=medium for GPT-5-family requests.
+    // OpenRouter-style enabled:false disables connection defaults unless the
+    // request selected an explicit effort through the model suffix or request fields.
+    const clientDisabledReasoning = reasoningRecord?.enabled === false;
     const rawEffort =
-      modelEffort || explicitReasoning || requestReasoningEffort || fallbackReasoningEffort;
+      getForcedReasoningEffort(credentials) ||
+      modelEffort ||
+      explicitReasoning ||
+      requestReasoningEffort ||
+      (clientDisabledReasoning ? "none" : fallbackReasoningEffort);
 
     if (rawEffort) {
       const clampedEffort = clampEffort(cleanModel, rawEffort);
@@ -1393,6 +1420,9 @@ export class CodexExecutor extends BaseExecutor {
         effort: clampedEffort === "ultra" ? "max" : clampedEffort,
       };
     }
+
+    // Codex Responses accepts only effort + summary inside reasoning.
+    stripUnsupportedCodexReasoningFields(body);
     ensureCodexReasoningSummary(body);
     if (isCompactRequest) {
       delete body.include;
@@ -1418,9 +1448,7 @@ export class CodexExecutor extends BaseExecutor {
     // safety_identifier #2770), but the responses->responses passthrough skips
     // translation. `user` is always rejected by Codex /responses, so it is removed
     // unconditionally here (unlike base.ts, which only drops it when empty).
-    delete body.prompt_cache_retention;
-    delete body.safety_identifier;
-    delete body.user;
+    stripCodexPassthroughRejectedParams(cleanModel || model, body);
 
     // Inject prompt_cache_key for Codex prompt caching.
     // The official Codex client sets this to conversation_id (a stable UUID per session).

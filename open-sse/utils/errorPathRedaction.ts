@@ -464,11 +464,11 @@ function findUnquotedPathEnd(
   let hasFilesystemEvidence = false;
   let hasUnresolvedFragments = false;
 
-  const resolveEndpoint = (): number => {
-    if (hasUnresolvedFragments) {
-      return failClosedAmbiguity || hasFilesystemEvidence ? value.length : -1;
-    }
+  const resolveEndpoint = (ignoreAmbiguity = false): number => {
     if (resolvedExtensionEnd >= 0) return resolvedExtensionEnd;
+    if (hasUnresolvedFragments && !ignoreAmbiguity) {
+      return failClosedAmbiguity ? value.length : -1;
+    }
     if (hasFilesystemEvidence && lastPathTokenEnd >= 0) return lastPathTokenEnd;
     if (
       acceptFirstTokenPunctuation &&
@@ -608,15 +608,23 @@ function redactUnquotedAbsolutePathSpans(value: string): string {
     // arbitrary extensionless POSIX text falls back to token-level handling so
     // ordinary `/x/y` route text is not redacted indiscriminately.
     const isKnownPosixPath = isKnownPosixFilesystemPathAt(value, index);
+    if (isPosixPath && !isKnownPosixPath) {
+      const tokenEnd = findTokenEnd(value, index);
+      const trimmedTokenEnd = trimPathSpanEnd(value, index, tokenEnd);
+      if (trimmedTokenEnd < tokenEnd) {
+        index = tokenEnd;
+        continue;
+      }
+    }
     const pathEnd = findUnquotedPathEnd(
       value,
       index,
-      isWindowsPath || isFileUriPath || isKnownPosixPath,
-      isWindowsPath || isFileUriPath || isKnownPosixPath,
+      isWindowsPath || isFileUriPath || isKnownPosixPath || isPosixPath,
+      isWindowsPath || isFileUriPath || isKnownPosixPath || isPosixPath,
       isWindowsPath || isFileUriPath || isKnownPosixPath
     );
     if (pathEnd < 0) {
-      const mustFailClosed = isWindowsPath || isFileUriPath || isKnownPosixPath;
+      const mustFailClosed = isWindowsPath || isFileUriPath || isKnownPosixPath || isPosixPath;
       if (mustFailClosed) {
         // An unequivocal filesystem prefix with an unknowable endpoint must
         // fail closed over the rest of the first line rather than expose a

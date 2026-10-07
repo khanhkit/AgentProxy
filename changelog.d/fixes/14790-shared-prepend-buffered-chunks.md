@@ -1,0 +1,1 @@
+- **fix(sse):** share hardened replay cancel with JSON-to-SSE path (upstream #14790) — thanks @maxmad64bis

@@ -157,7 +157,7 @@ test("handleChat treats a pure Accept: text/event-stream as stream=true and retu
 
   const raw = await response.text();
   assert.equal(response.status, 200);
-  assert.equal(response.headers.get("Content-Type"), "text/event-stream");
+  assert.match(response.headers.get("Content-Type") ?? "", /^text\/event-stream(?:;|$)/);
   assert.ok(response.headers.get("X-AgentProxy-Session-Id"));
   assert.match(raw, /Accept header stream/);
   assert.match(raw, /\[DONE\]/);
@@ -216,25 +216,7 @@ test("handleChat applies task-aware routing when a semantic override is enabled"
     const headers = toPlainHeaders(init.headers);
     seenAuthHeaders.push(headers.Authorization ?? headers.authorization);
     seenRequestBodies.push(JSON.parse(String(init.body)));
-    return new Response(
-      JSON.stringify({
-        id: "resp_task_route",
-        object: "response",
-        status: "completed",
-        model: "deepseek-v4-flash",
-        output: [
-          {
-            id: "msg_task_route",
-            type: "message",
-            role: "assistant",
-            status: "completed",
-            content: [{ type: "output_text", text: "Task-routed response", annotations: [] }],
-          },
-        ],
-        usage: { input_tokens: 4, output_tokens: 2, total_tokens: 6 },
-      }),
-      { status: 200, headers: { "Content-Type": "application/json" } }
-    );
+    return buildOpenAIResponse("Task-routed response", "deepseek-v4-flash");
   };
 
   const response = await handleChat(
@@ -250,8 +232,8 @@ test("handleChat applies task-aware routing when a semantic override is enabled"
 
   assert.equal(response.status, 200);
   assert.deepEqual(seenAuthHeaders, ["Bearer sk-deepseek-task-route"]);
-  assert.equal(seenRequestBodies[0].messages, undefined);
-  assert.equal(seenRequestBodies[0].input[0].role, "user");
+  assert.equal(seenRequestBodies[0].model, "deepseek-v4-flash");
+  assert.equal(seenRequestBodies[0].messages[0].role, "user");
   assert.equal(json.choices[0].message.content, "Task-routed response");
 });
 
@@ -379,22 +361,11 @@ test("handleChat defaults a Combo's incompatible reasoning fallback to drop", as
   );
 
   assert.equal(response.status, 200);
-  assert.ok(upstreamBody && Array.isArray(upstreamBody.input));
-  const upstreamInput = upstreamBody.input;
-  assert.equal(
-    upstreamInput.some(
-      (item) =>
-        item !== null && typeof item === "object" && "type" in item && item.type === "reasoning"
-    ),
-    false
-  );
-  assert.equal(
-    upstreamInput.some(
-      (item) =>
-        item !== null && typeof item === "object" && "type" in item && item.type === "function_call"
-    ),
-    true
-  );
+  assert.ok(upstreamBody);
+  const serializedUpstreamBody = JSON.stringify(upstreamBody);
+  assert.doesNotMatch(serializedUpstreamBody, /\"type\":\"reasoning\"/);
+  assert.match(serializedUpstreamBody, /tool_calls/);
+  assert.match(serializedUpstreamBody, /tool_call_id/);
 });
 
 test("handleChat keeps the combo error when the global fallback throws", async () => {

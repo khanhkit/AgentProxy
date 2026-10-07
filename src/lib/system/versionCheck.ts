@@ -36,7 +36,8 @@ const GITHUB_RELEASES_LATEST_URL =
   "https://api.github.com/repos/khanhkit/AgentProxy/releases/latest";
 
 const LOOKUP_TIMEOUT_MS = 10_000;
-const MAX_VERSION_RESPONSE_BYTES = 16 * 1024;
+// Bound version metadata responses high enough for real registry/GitHub payloads while keeping a hard ceiling.
+const MAX_VERSION_RESPONSE_BYTES = 1024 * 1024;
 const LATEST_VERSION_CACHE_TTL_MS = 10 * 60_000;
 const MAX_LATEST_VERSION_CACHE_TTL_MS = 10 * 60_000;
 

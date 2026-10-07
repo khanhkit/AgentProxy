@@ -30,6 +30,7 @@ export interface CuratedSkillEntry {
   description: string;
   category: SkillCategory;
   area: SkillArea;
+  cliBinary?: string;
   icon?: string;
   isEntry?: boolean;
   isNew?: boolean;
@@ -291,6 +292,7 @@ export const CURATED_SKILLS: CuratedSkillEntry[] = [
       "Query available AI models, list model aliases, and browse the full model catalog from the CLI. Filter by provider, search by capability, and resolve model name variants.",
     category: "cli",
     area: "cli-models",
+    cliBinary: "agentproxy",
     icon: "neurology",
   },
   {

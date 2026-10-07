@@ -316,7 +316,17 @@ export function markBatchItemError(
 
 export function listBatches(apiKeyId?: string, limit: number = 20, after?: string): BatchRecord[] {
   const db = getDbInstance();
-  const afterBatch = after ? getBatch(after) : null;
+  const resolvedAfterBatch = after ? getBatch(after) : null;
+  // #14481 item 5/LEDGER-20: `getBatch()` applies no owner filter, so an
+  // `after` cursor belonging to a DIFFERENT tenant used to still resolve and
+  // its `created_at` was used as the pagination bound — an existence +
+  // timestamp oracle for another tenant's batch. When this call IS
+  // owner-scoped (`apiKeyId` set), treat a foreign-owned cursor exactly like
+  // an unknown one (ignore it) instead of trusting its timestamp.
+  const afterBatch =
+    apiKeyId && resolvedAfterBatch && resolvedAfterBatch.apiKeyId !== apiKeyId
+      ? null
+      : resolvedAfterBatch;
   let rows: any[];
   if (apiKeyId) {
     if (afterBatch) {
@@ -377,6 +387,27 @@ export function getTerminalBatches(): BatchRecord[] {
   return rows.map((row) => parseBatchRow(row));
 }
 
+export function isFileReferencedByOtherBatch(fileId: string, excludeBatchIds: string[]): boolean {
+  const db = getDbInstance();
+  if (excludeBatchIds.length === 0) {
+    return Boolean(
+      db
+        .prepare(
+          "SELECT 1 FROM batches WHERE input_file_id = ? OR output_file_id = ? OR error_file_id = ? LIMIT 1"
+        )
+        .get(fileId, fileId, fileId)
+    );
+  }
+  const marks = excludeBatchIds.map(() => "?").join(",");
+  return Boolean(
+    db
+      .prepare(
+        `SELECT 1 FROM batches WHERE (input_file_id = ? OR output_file_id = ? OR error_file_id = ?) AND id NOT IN (${marks}) LIMIT 1`
+      )
+      .get(fileId, fileId, fileId, ...excludeBatchIds)
+  );
+}
+
 export function deleteBatch(id: string): boolean {
   const db = getDbInstance();
   const batch = getBatch(id);
@@ -384,22 +415,22 @@ export function deleteBatch(id: string): boolean {
 
   db.prepare("DELETE FROM batch_item_checkpoints WHERE batch_id = ?").run(id);
 
-  // Soft-delete associated files (input, output, error)
-  if (batch.inputFileId) {
+  // Soft-delete associated files only when no surviving sibling batch still references them.
+  if (batch.inputFileId && !isFileReferencedByOtherBatch(batch.inputFileId, [id])) {
     try {
       deleteFile(batch.inputFileId);
     } catch {
       /* ignore */
     }
   }
-  if (batch.outputFileId) {
+  if (batch.outputFileId && !isFileReferencedByOtherBatch(batch.outputFileId, [id])) {
     try {
       deleteFile(batch.outputFileId);
     } catch {
       /* ignore */
     }
   }
-  if (batch.errorFileId) {
+  if (batch.errorFileId && !isFileReferencedByOtherBatch(batch.errorFileId, [id])) {
     try {
       deleteFile(batch.errorFileId);
     } catch {
@@ -601,7 +632,9 @@ export function deleteTerminalBatchesOlderThan(days: number): {
       }
     }
 
-    const hasMore = Boolean(db.prepare(`SELECT 1 FROM batches WHERE ${terminalWhere} LIMIT 1`).get(cutoff));
+    const hasMore = Boolean(
+      db.prepare(`SELECT 1 FROM batches WHERE ${terminalWhere} LIMIT 1`).get(cutoff)
+    );
     return {
       deletedBatches: batchResult.changes,
       deletedFiles,

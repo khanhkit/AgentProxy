@@ -123,10 +123,7 @@ export function getExecutorTimeoutMs(
     // Defensive backstop for direct callers: resolveConnectionTimeoutMs is the
     // gate (it rejects out-of-range values so the chain falls through); this
     // clamp only caps values a future caller could pass unvetted.
-    return Math.min(
-      Math.max(0, Math.floor(connectionTimeoutMs)),
-      MAX_PROVIDER_SPECIFIC_TIMEOUT_MS
-    );
+    return Math.min(Math.max(0, Math.floor(connectionTimeoutMs)), MAX_PROVIDER_SPECIFIC_TIMEOUT_MS);
   }
   const modelOverride = resolveModelTimeoutOverride(provider, model);
   if (modelOverride !== undefined) return modelOverride;
@@ -249,17 +246,14 @@ export async function executeWithUpstreamStartTimeout<T>({
   const timeoutError = createUpstreamStartTimeoutError(timeoutMs, provider, model);
 
   let timeoutId: ReturnType<typeof setTimeout> | null = null;
-  let abortListener: (() => void) | null = null;
-  let timeoutAbortListener: (() => void) | null = null;
-
   const abortCombined = (source: AbortSignal) => {
     if (combinedController.signal.aborted) return;
-    const reason = source.reason instanceof Error ? source.reason : createAbortError(source);
-    combinedController.abort(reason);
+    combinedController.abort(
+      source.reason instanceof Error ? source.reason : createAbortError(source)
+    );
   };
-
-  abortListener = () => abortCombined(signal);
-  timeoutAbortListener = () => abortCombined(timeoutController.signal);
+  const abortListener = () => abortCombined(signal);
+  const timeoutAbortListener = () => abortCombined(timeoutController.signal);
   signal.addEventListener("abort", abortListener, { once: true });
   timeoutController.signal.addEventListener("abort", timeoutAbortListener, { once: true });
 
@@ -271,17 +265,35 @@ export async function executeWithUpstreamStartTimeout<T>({
     }, timeoutMs);
   });
 
+  let abortPromiseListener: (() => void) | null = null;
   const abortPromise = new Promise<never>((_, reject) => {
-    signal.addEventListener("abort", () => reject(createAbortError(signal)), { once: true });
+    abortPromiseListener = () => reject(createAbortError(signal));
+    signal.addEventListener("abort", abortPromiseListener, { once: true });
   });
+  // execute() may throw synchronously before Promise.race subscribes. Mark the
+  // side promises handled so a later client/hedge abort cannot surface as an
+  // orphaned unhandledRejection. Promise.race still observes them normally.
+  abortPromise.catch(() => {});
+  timeoutPromise.catch(() => {});
 
+  let retainClientAbortLink = false;
   try {
-    return await Promise.race([execute(combinedController.signal), timeoutPromise, abortPromise]);
+    const result = await Promise.race([
+      execute(combinedController.signal),
+      timeoutPromise,
+      abortPromise,
+    ]);
+    retainClientAbortLink =
+      isResponseLike(result) ||
+      (result !== null &&
+        typeof result === "object" &&
+        "response" in result &&
+        isResponseLike((result as { response?: unknown }).response));
+    return result;
   } finally {
     if (timeoutId) clearTimeout(timeoutId);
-    if (abortListener) signal.removeEventListener("abort", abortListener);
-    if (timeoutAbortListener) {
-      timeoutController.signal.removeEventListener("abort", timeoutAbortListener);
-    }
+    if (!retainClientAbortLink) signal.removeEventListener("abort", abortListener);
+    if (abortPromiseListener) signal.removeEventListener("abort", abortPromiseListener);
+    timeoutController.signal.removeEventListener("abort", timeoutAbortListener);
   }
 }

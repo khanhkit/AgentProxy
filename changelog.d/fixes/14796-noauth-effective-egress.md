@@ -1,0 +1,1 @@
+- **fix(dashboard):** proxyless account cards show the connection's effective egress instead of a misleading direct label (upstream #14796) — thanks @maxmad64bis

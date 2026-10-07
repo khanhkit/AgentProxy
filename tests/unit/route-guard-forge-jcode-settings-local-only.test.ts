@@ -40,9 +40,9 @@ test("sibling cli-tools spawn-capable settings routes stay LOCAL_ONLY", () => {
   assert.equal(isLocalOnlyPath("/api/cli-tools/grok-build-settings"), true);
 });
 
-test("non-spawning cli-tools routes are NOT over-gated by this entry", () => {
-  // The new prefixes must not accidentally widen to the whole /api/cli-tools/ subtree,
-  // which remote dashboards legitimately use.
-  assert.equal(isLocalOnlyPath("/api/cli-tools/all-statuses"), false);
+test("route guard stays narrow beyond known spawn-capable cli-tools routes", () => {
+  // all-statuses runs getCliRuntimeStatus() for every tool and is therefore LOCAL_ONLY.
+  // keys remains remote-dashboard-safe and guards against widening the whole subtree.
+  assert.equal(isLocalOnlyPath("/api/cli-tools/all-statuses"), true);
   assert.equal(isLocalOnlyPath("/api/cli-tools/keys"), false);
 });

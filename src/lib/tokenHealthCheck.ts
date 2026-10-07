@@ -11,9 +11,14 @@
  * updates the DB, and logs the result.
  */
 
-import { getProviderConnections, updateProviderConnection } from "@/lib/db/providers";
+import {
+  getProviderConnections,
+  getProviderConnectionById,
+  updateProviderConnection,
+} from "@/lib/db/providers";
 import { getCachedProviderConnectionById } from "@/lib/db/readCache";
-import { getSettings, resolveProxyForConnection } from "@/lib/db/settings";
+import { getSettings } from "@/lib/db/settings";
+import { resolveGuardedProxyConfig } from "@/lib/tokenHealthCheckProxyGuard";
 import {
   getAccessToken,
   getDeprecationNotice,
@@ -30,6 +35,7 @@ import {
   checkWebCookieConnectionIfNeeded,
   isWebCookieHealthProbeCandidate,
 } from "@/lib/tokenHealthCheckWebCookie";
+import { isInRefreshBackoff } from "@/lib/tokenRefreshCircuit";
 
 const LOG_PREFIX = "[HealthCheck]";
 const TRUE_ENV_VALUES = new Set(["1", "true", "yes", "on"]);
@@ -37,6 +43,24 @@ const TICK_MS = 60 * 1000; // sweep interval: every 60 seconds (restored — #77
 const DEFAULT_BATCH_SIZE = 20;
 const DEFAULT_HEALTH_CHECK_INTERVAL_MIN = 60; // default per-connection interval
 const EXPIRED_RETRY_MAX = 3; // max retry attempts for expired connections before giving up
+const ROTATING_REFRESH_PROVIDERS = new Set([
+  "codex",
+  "openai",
+  "kimi-coding",
+  "cline",
+  "kiro",
+  "amazon-q",
+  "gitlab-duo",
+  "claude",
+  "openference",
+]);
+
+export function shouldNullRefreshTokenAfterUnrecoverable(provider: unknown): boolean {
+  const id = String(provider || "").toLowerCase();
+  if (id === "claude") return false;
+  return ROTATING_REFRESH_PROVIDERS.has(id);
+}
+
 const EXPIRED_RETRY_BACKOFF_MIN = 5; // backoff between expired retries (minutes)
 
 function isBuildProcess(): boolean {
@@ -60,29 +84,44 @@ export function extractResolvedProxyConfig(resolvedProxy: unknown) {
   return resolvedProxy ?? null;
 }
 
+const NUMERIC_STRING = /^\d+(?:\.\d+)?$/;
+
+export function parseTokenExpiryMs(expiresAt: unknown): number {
+  if (typeof expiresAt === "number") {
+    if (!Number.isFinite(expiresAt) || expiresAt <= 0) return 0;
+    return expiresAt < 1e12 ? expiresAt * 1000 : expiresAt;
+  }
+
+  if (typeof expiresAt === "string") {
+    const trimmed = expiresAt.trim();
+    if (!trimmed) return 0;
+
+    if (NUMERIC_STRING.test(trimmed)) {
+      const numeric = Number(trimmed);
+      if (!Number.isFinite(numeric) || numeric <= 0) return 0;
+      return numeric < 1e12 ? numeric * 1000 : numeric;
+    }
+
+    const parsed = new Date(trimmed).getTime();
+    return Number.isFinite(parsed) ? parsed : 0;
+  }
+
+  return 0;
+}
+
 function getEffectiveTokenExpiryIso(conn: any): string | null {
   if (!conn || typeof conn !== "object") return null;
   return conn.tokenExpiresAt || conn.expiresAt || null;
 }
 
 function getEffectiveTokenExpiryMs(conn: any): number {
-  const effectiveExpiry = getEffectiveTokenExpiryIso(conn);
-  if (!effectiveExpiry) return 0;
-  const expiryMs = new Date(effectiveExpiry).getTime();
-  return Number.isFinite(expiryMs) ? expiryMs : 0;
+  return parseTokenExpiryMs(getEffectiveTokenExpiryIso(conn));
 }
 
 const TOKEN_EXPIRY_BUFFER = 5 * 60 * 1000; // 5 minutes
 
 function getCopilotTokenExpiryMs(expiresAt: unknown): number {
-  if (typeof expiresAt === "number" && Number.isFinite(expiresAt)) {
-    return expiresAt < 1e12 ? expiresAt * 1000 : expiresAt;
-  }
-  if (typeof expiresAt === "string" && expiresAt.trim()) {
-    const parsed = new Date(expiresAt).getTime();
-    return Number.isFinite(parsed) ? parsed : 0;
-  }
-  return 0;
+  return parseTokenExpiryMs(expiresAt);
 }
 
 // Providers whose OAuth flow yields only a GitHub-style access token (no
@@ -173,12 +212,7 @@ export function getRefreshBackoffUntil(streak: number, now: string): string {
   return new Date(new Date(now).getTime() + backoffMin * 60 * 1000).toISOString();
 }
 
-export function isInRefreshBackoff(conn: any, nowMs: number): boolean {
-  const until = conn?.providerSpecificData?.refreshCircuit?.until;
-  if (typeof until !== "string") return false;
-  const untilMs = new Date(until).getTime();
-  return Number.isFinite(untilMs) && untilMs > nowMs;
-}
+export { isInRefreshBackoff };
 
 export function buildRefreshFailureUpdate(
   conn: any,
@@ -701,8 +735,11 @@ export async function checkConnection(conn) {
 
       let refreshedProviderSpecificData: Record<string, unknown> | null = null;
       const hideLogs = await shouldHideLogs();
-      const proxyResolution = await resolveProxyForConnection(conn.id);
-      const proxyConfig = extractResolvedProxyConfig(proxyResolution);
+      const { proxyConfig, blocked } = await resolveGuardedProxyConfig(conn.id, conn.provider);
+      if (blocked) {
+        logWarn(`#13470 proxy-pool guard: skipping Copilot refresh for ${conn.id}`);
+        return;
+      }
       const healthCheckLog = {
         info: (tag: string, msg: string) => {
           if (!hideLogs) console.log(LOG_PREFIX, `[${tag}]`, msg);
@@ -867,17 +904,6 @@ export async function checkConnection(conn) {
   // and is the root cause of "adding account B invalidates account A" reports.
   // The interval path is kept ONLY for non-rotating providers where token state can
   // drift silently (e.g. cookie-based, opaque sessions without expires_at).
-  const ROTATING_REFRESH_PROVIDERS = new Set([
-    "codex",
-    "openai",
-    "kimi-coding",
-    "cline",
-    "kiro",
-    "amazon-q",
-    "gitlab-duo",
-    "claude",
-    "openference",
-  ]);
   const isRotatingProvider = ROTATING_REFRESH_PROVIDERS.has(
     String(conn.provider || "").toLowerCase()
   );
@@ -908,8 +934,11 @@ export async function checkConnection(conn) {
   };
 
   const hideLogs = await shouldHideLogs();
-  const proxyResolution = await resolveProxyForConnection(conn.id);
-  const proxyConfig = extractResolvedProxyConfig(proxyResolution);
+  const { proxyConfig, blocked } = await resolveGuardedProxyConfig(conn.id, conn.provider);
+  if (blocked) {
+    logWarn(`#13470 proxy-pool guard: skipping token refresh for ${conn.id}`);
+    return;
+  }
 
   const healthCheckLog = {
     info: (tag: string, msg: string) => {
@@ -1066,7 +1095,7 @@ export async function checkConnection(conn) {
   // Once used, the old token is permanently invalidated.
   // Retrying will never succeed → deactivate and stop the loop.
   if (isUnrecoverableRefreshError(result)) {
-    const currentConnection = await getCachedProviderConnectionById(conn.id);
+    const currentConnection = await getProviderConnectionById(conn.id);
     const credentialsChangedSinceSweep =
       !!currentConnection &&
       (currentConnection.refreshToken !== attemptedRefreshToken ||
@@ -1126,7 +1155,7 @@ export async function checkConnection(conn) {
       // gemini) the stored refresh_token is the user's only recovery
       // artifact — nulling it caused #3679 (the connection reports "No valid refresh
       // token available" and can never recover even after re-activation). Preserve it.
-      ...(isRotatingProvider ? { refreshToken: null } : {}),
+      ...(shouldNullRefreshTokenAfterUnrecoverable(conn.provider) ? { refreshToken: null } : {}),
     });
     logError(
       `${LOG_PREFIX} ✗ ${conn.provider}/${getConnectionLogLabel(conn)} — ` +

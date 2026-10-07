@@ -365,9 +365,14 @@ test("modelSyncScheduler starts once, honors env interval and syncs only active 
     scheduler.startModelSyncScheduler("http://127.0.0.1:7777", 1000);
     scheduler.startModelSyncScheduler("http://127.0.0.1:8888", 9999);
 
-    assert.equal(timers.timeouts.length, 1);
-    assert.equal(timers.timeouts[0].ms, 5000);
+    assert.equal(timers.timeouts.length, 2);
+    assert.equal(timers.timeouts[0].ms, scheduler.MODEL_SYNC_STARTUP_DELAY_MS);
     assert.equal(timers.timeouts[0].unrefCalled, true);
+    assert.equal(timers.timeouts[1].ms, scheduler.MODEL_SYNC_STAGGER_OFFSET_MS);
+    assert.equal(timers.timeouts[1].unrefCalled, true);
+    assert.equal(timers.intervals.length, 0, "recurring interval must wait for the phase offset");
+
+    timers.timeouts[1].fn();
     assert.equal(timers.intervals.length, 1);
     assert.equal(timers.intervals[0].ms, 6 * 60 * 60 * 1000);
     assert.equal(timers.intervals[0].unrefCalled, true);
@@ -445,7 +450,7 @@ test("modelSyncScheduler skips empty cycles and tolerates failing sync requests"
 test("test 12: default interval is 6h; env hours override; no-arg uses default", async () => {
   const source = fs.readFileSync(
     path.join(process.cwd(), "src/shared/services/modelSyncScheduler.ts"),
-    "utf8",
+    "utf8"
   );
   assert.match(source, /DEFAULT_INTERVAL_MS\s*=\s*6\s*\*\s*60\s*\*\s*60\s*\*\s*1000/);
   assert.doesNotMatch(source, /DEFAULT_INTERVAL_MS\s*=\s*24\s*\*\s*60\s*\*\s*60\s*\*\s*1000/);
@@ -457,8 +462,70 @@ test("test 12: default interval is 6h; env hours override; no-arg uses default",
 test("test 12: MODEL_SYNC_INTERVAL_HOURS still wins over default", () => {
   const source = fs.readFileSync(
     path.join(process.cwd(), "src/shared/services/modelSyncScheduler.ts"),
-    "utf8",
+    "utf8"
   );
   assert.match(source, /MODEL_SYNC_INTERVAL_HOURS/);
   assert.match(source, /envHours \* 60 \* 60 \* 1000/);
+});
+
+async function flushModelSyncMicrotasks(times = 20) {
+  for (let i = 0; i < times; i++) {
+    await new Promise((resolve) => setImmediate(resolve));
+  }
+}
+
+test("model sync bounds one cycle to the configured concurrency cap", async () => {
+  const connectionCount = 12;
+  for (let i = 0; i < connectionCount; i++) {
+    await providersDb.createProviderConnection({
+      provider: "openai",
+      authType: "apikey",
+      name: `Bounded Auto Sync ${i}`,
+      apiKey: `gw-auth-placeholder-${i}`,
+      providerSpecificData: { autoSync: true },
+    });
+  }
+
+  const timers = installTimerStubs();
+  const originalFetch = globalThis.fetch;
+  let inFlight = 0;
+  let peak = 0;
+  let releaseGate: (() => void) | undefined;
+  const gate = new Promise<void>((resolve) => {
+    releaseGate = resolve;
+  });
+
+  globalThis.fetch = async () => {
+    inFlight += 1;
+    peak = Math.max(peak, inFlight);
+    await gate;
+    inFlight -= 1;
+    return new Response(JSON.stringify({ syncedModels: 1 }), {
+      status: 200,
+      headers: { "Content-Type": "application/json" },
+    });
+  };
+
+  try {
+    const scheduler = await loadScheduler("bounded-cycle-concurrency");
+    assert.equal(scheduler.MODEL_SYNC_CYCLE_CONCURRENCY, 4);
+    scheduler.startModelSyncScheduler("http://127.0.0.1:7777", 1000);
+    assert.equal(timers.timeouts[0].ms, scheduler.MODEL_SYNC_STARTUP_DELAY_MS);
+    const cycle = timers.timeouts[0].fn();
+    await flushModelSyncMicrotasks();
+    assert.equal(peak, scheduler.MODEL_SYNC_CYCLE_CONCURRENCY);
+    assert.equal(inFlight, scheduler.MODEL_SYNC_CYCLE_CONCURRENCY);
+    releaseGate?.();
+    await cycle;
+    assert.equal(peak, scheduler.MODEL_SYNC_CYCLE_CONCURRENCY);
+    scheduler.stopModelSyncScheduler();
+  } finally {
+    globalThis.fetch = originalFetch;
+    timers.restore();
+  }
+});
+
+test("first model-sync cycle waits until after startup cleanup", async () => {
+  const scheduler = await loadScheduler("startup-delay-constant");
+  assert.equal(scheduler.MODEL_SYNC_STARTUP_DELAY_MS, 90_000);
 });

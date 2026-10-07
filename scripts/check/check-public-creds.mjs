@@ -101,7 +101,7 @@ const ENV_KEY_RE = /(clientId|clientSecret|apiKey)Env\s*:/;
 export const KNOWN_LITERAL_CREDS = new Set([
   "open-sse/services/usage/minimax.ts:213:minimax", // TODO(6A.8): pre-existing FP — TS fn-param type, not a credential (getMiniMaxUsage signature)
   "open-sse/services/usage/minimax.ts:213:minimax-cn", // TODO(6A.8): pre-existing FP — TS fn-param type, not a credential (getMiniMaxUsage signature)
-  "open-sse/executors/zcodeProtocol.ts:313:agentproxy-${process.pid}", // local per-process ZCode handshake ID, not an upstream credential
+  "open-sse/executors/zcodeProtocol.ts:318:agentproxy-${process.pid}", // local per-process ZCode handshake ID, not an upstream credential
 ]);
 
 /**

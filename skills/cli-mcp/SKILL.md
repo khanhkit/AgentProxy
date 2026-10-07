@@ -49,6 +49,26 @@ Restart the MCP server
 agentproxy mcp restart
 ```
 
+### `mcp enable`
+
+**Flags:**
+
+- `--transport <transport>`
+
+**Example:**
+
+```bash
+agentproxy mcp enable
+```
+
+### `mcp disable`
+
+**Example:**
+
+```bash
+agentproxy mcp disable
+```
+
 ### `mcp call <tool> [argsJson]`
 
 **Flags:**

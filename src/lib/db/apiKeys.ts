@@ -15,12 +15,15 @@ import { getDbInstance, rowToCamel } from "./core";
 import { backupDbFile } from "./backup";
 import { registerDbStateResetter } from "./stateReset";
 import { invalidateReasoningRoutingRuleCache } from "./reasoningRoutingRules";
-import { getKeyGroupsForApiKey, checkKeyModelAccess } from "./apiKeyGroups";
+import { checkKeyModelAccess } from "./apiKeyGroups";
 import { API_KEY_COLUMN_FALLBACKS } from "./apiKeyColumnFallbacks";
+import { SYNTHETIC_ENV_API_KEY_ID } from "@/shared/constants/apiKeyIdentities";
+import { timingSafeCompare } from "@/shared/utils/timingSafeCompare";
 import { parseApiKeyUsageLimitFields } from "./apiKeyUsageLimitFields";
 import { setNoLog } from "../compliance/noLog";
 import { resolveModelAlias } from "@agentproxy/open-sse/services/modelDeprecation.ts";
 import { getProviderAlias, resolveProviderId } from "@/shared/constants/providers";
+import { isSelfLoopBearer, selfLoopKeyOverrides } from "./apiKeys/selfLoopKey";
 import { getSyncedAvailableModelsByConnection, getCustomModels, getModelIsHidden } from "./models";
 import {
   CLAUDE_CODE_PROVIDER_PREFIXES,
@@ -31,7 +34,6 @@ import {
   addProviderAliasScopedCandidates,
   modelPatternMatches,
   hasClaudeCodeWildcardPermission,
-  matchesWildcardPattern,
 } from "./apiKeys/modelPermissions";
 import { ALL_COMBOS_ACCESS_RULE } from "@/shared/constants/comboAccess";
 import {
@@ -89,6 +91,7 @@ interface CreateApiKeyOptions {
   allowedModels?: string[];
   allowedCombos?: string[];
   allowedConnections?: string[];
+  expiresAt?: string | null;
 }
 
 export type { AccessSchedule, RateLimitRule } from "./apiKeys/types";
@@ -284,7 +287,7 @@ function toRecord(value: unknown): JsonRecord {
 
 function isConfiguredEnvApiKey(key: string): boolean {
   const envKey = process.env.AGENTPROXY_API_KEY || process.env.ROUTER_API_KEY;
-  return Boolean(envKey && key === envKey);
+  return Boolean(envKey && timingSafeCompare(key, envKey));
 }
 
 function isRedisAuthCacheEnabled(): boolean {
@@ -378,6 +381,15 @@ async function getModelPermissionCandidates(modelId: string): Promise<string[]> 
   }
 
   return Array.from(candidates);
+}
+
+export async function isModelBlockedByPatterns(
+  blockedModels: string[] | null | undefined,
+  modelId: string
+): Promise<boolean> {
+  if (!blockedModels?.length) return false;
+  const candidates = await getModelPermissionCandidates(modelId);
+  return blockedModels.some((pattern) => modelPatternMatches(pattern, candidates));
 }
 
 async function getPublishedModelLookupTarget(
@@ -498,7 +510,7 @@ function getPreparedStatements(db: ApiKeysDbLike): ApiKeysStatements {
       "SELECT id, name, machine_id, model_access_mode, allowed_models, blocked_models, allowed_combos, allowed_connections, allowed_quotas, no_log, auto_resolve, is_active, access_schedule, max_requests_per_day, max_requests_per_minute, throttle_delay_ms, max_sessions, revoked_at, expires_at, ip_allowlist, scopes, rate_limits, is_banned, key_hash, allowed_endpoints, stream_default_mode, cache_default_mode, disable_non_public_models, allow_usage_command, usage_limit_enabled, daily_usage_limit_usd, weekly_usage_limit_usd, chaos_mode_enabled, compression_enabled, allow_auto_combos, catalog_scope, proxy_id FROM api_keys WHERE key_hash = ?"
     );
     _stmtInsertKey = db.prepare(
-      "INSERT INTO api_keys (id, name, key, key_ciphertext, machine_id, model_access_mode, allowed_models, allowed_combos, allowed_connections, no_log, created_at, key_prefix, key_hash, scopes) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+      "INSERT INTO api_keys (id, name, key, key_ciphertext, machine_id, model_access_mode, allowed_models, allowed_combos, allowed_connections, no_log, created_at, key_prefix, key_hash, scopes, expires_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
     );
     _stmtDeleteKey = db.prepare("DELETE FROM api_keys WHERE id = ?");
   }
@@ -617,7 +629,7 @@ export async function getExclusiveLeaseConnectionIds(): Promise<Set<string>> {
  * inactive, banned, or hard-lease key, and it never widens a key's allowedModels.
  */
 export async function pickApiKeyForInternalUse(
-  purpose: "combo-health-check" | "cloud-sync-verify" | "internal-probe" = "internal-probe"
+  _purpose: "combo-health-check" | "cloud-sync-verify" | "internal-probe" = "internal-probe"
 ): Promise<string | null> {
   try {
     const keys = (await getApiKeys()) as Array<{
@@ -877,6 +889,7 @@ export async function createApiKey(
     noLog: false,
     allowUsageCommand: false,
     createdAt: now,
+    expiresAt: options.expiresAt ?? null,
     scopes,
   };
 
@@ -895,7 +908,8 @@ export async function createApiKey(
     apiKey.createdAt,
     apiKey.key.slice(0, 12),
     keyHash,
-    JSON.stringify(scopes)
+    JSON.stringify(scopes),
+    apiKey.expiresAt
   );
   setNoLog(apiKey.id, false);
 
@@ -1035,7 +1049,7 @@ export async function setApiKeyExpiry(id: string, expiresAt: string | null): Pro
 export async function validateApiKey(key: string | null | undefined) {
   if (!key || typeof key !== "string") return false;
 
-  if (isConfiguredEnvApiKey(key)) return true;
+  if (isConfiguredEnvApiKey(key) || isSelfLoopBearer(key)) return true;
 
   const now = Date.now();
   const hashedKey = await hashKey(key);
@@ -1140,7 +1154,7 @@ export async function getApiKeyMetadata(
   const now = Date.now();
 
   // persistent env-var key support (persistent passthrough keys) (#1350)
-  if (isConfiguredEnvApiKey(key)) {
+  if (isConfiguredEnvApiKey(key) || isSelfLoopBearer(key)) {
     // ─── Env-key management-scope bypass ──────────────────────────────────
     // The deployment-time env key (`AGENTPROXY_API_KEY` / `ROUTER_API_KEY`)
     // is granted the "manage" scope unconditionally. This is intentional:
@@ -1164,7 +1178,7 @@ export async function getApiKeyMetadata(
     // / CI / first-boot scenarios. If you need to disable env-key access,
     // unset the env var instead.
     return {
-      id: "env-key",
+      id: SYNTHETIC_ENV_API_KEY_ID,
       name: "Environment Key",
       machineId: "server-env",
       modelAccessMode: "all",
@@ -1201,6 +1215,7 @@ export async function getApiKeyMetadata(
       compressionEnabled: true,
       allowAutoCombos: true,
       catalogScope: "all",
+      ...selfLoopKeyOverrides(key),
     };
   }
 

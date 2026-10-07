@@ -16,6 +16,8 @@
 // of inventing a separate constant — same magnitude the codebase already
 // applies whether the failure is a 429 or a network-level throw.
 import { TRANSIENT_COOLDOWN_MS, COOLDOWN_MS } from "../config/errorConfig.ts";
+import { isProxySkipRecentlyFailedEnabled } from "@/shared/utils/featureFlags";
+import { isProxyAvoided, proxyEgressKey } from "../utils/proxyRefusalMemory.ts";
 
 /** Per-account proxy configuration, persisted by NoAuthAccountCard under
  * `providerSpecificData.accountProxies` (keyed by the account id, which the UI
@@ -67,20 +69,86 @@ export function isAccountReady(account: RotatableAccount): boolean {
  * mimocode's JWT-freshness-aware variant). */
 export function pickAccount<T extends RotatableAccount>(
   accounts: T[],
-  state: { nextAccountIdx: number },
-  isReady: (account: T) => boolean = isAccountReady
+  state: { nextAccountIdx: number; lastHealthyFingerprint?: string },
+  isReady: (account: T) => boolean = isAccountReady,
+  keyOfMember: RotationEgressKeyOf = defaultRotationEgressKeyOf
 ): T {
+  const serve = (idx: number): T => {
+    const account = accounts[idx];
+    state.nextAccountIdx = (idx + 1) % accounts.length;
+    if (isStickyDrainEnabled()) state.lastHealthyFingerprint = account.fingerprint;
+    return account;
+  };
+
+  const stickyIdx = stickyServeIndex(accounts, state, isReady, keyOfMember);
+  if (stickyIdx !== null) return serve(stickyIdx);
+
   for (let i = 0; i < accounts.length; i++) {
     const idx = (state.nextAccountIdx + i) % accounts.length;
-    const acct = accounts[idx];
-    if (isReady(acct)) {
-      state.nextAccountIdx = (idx + 1) % accounts.length;
-      return acct;
-    }
+    if (isReady(accounts[idx]) && !isStoreDrained(accounts[idx], keyOfMember)) return serve(idx);
   }
+
+  for (let i = 0; i < accounts.length; i++) {
+    const idx = (state.nextAccountIdx + i) % accounts.length;
+    if (isReady(accounts[idx])) return serve(idx);
+  }
+
   const fallbackIdx = state.nextAccountIdx % accounts.length;
   state.nextAccountIdx = (state.nextAccountIdx + 1) % accounts.length;
   return accounts[fallbackIdx];
+}
+
+/** Key derivation for the refusal store, injectable for pool-served members. */
+export type RotationEgressKeyOf = (account: RotatableAccount) => string | null;
+
+/** Default derivation: the account's own egress key (direct never). */
+const defaultRotationEgressKeyOf: RotationEgressKeyOf = (account) => proxyEgressKey(account.proxy);
+
+function isStickyDrainEnabled(): boolean {
+  try {
+    return isProxySkipRecentlyFailedEnabled();
+  } catch {
+    return false;
+  }
+}
+
+function stickyServeIndex<T extends RotatableAccount>(
+  accounts: T[],
+  state: { nextAccountIdx: number; lastHealthyFingerprint?: string },
+  isReady: (account: T) => boolean,
+  keyOfMember: RotationEgressKeyOf = defaultRotationEgressKeyOf
+): number | null {
+  if (!isStickyDrainEnabled() || !hasStoreHistory(accounts, keyOfMember)) return null;
+  const wanted = state.lastHealthyFingerprint;
+  if (!wanted) return null;
+  const sticky = accounts.findIndex((account) => account.fingerprint === wanted);
+  if (
+    sticky === -1 ||
+    !isReady(accounts[sticky]) ||
+    isStoreDrained(accounts[sticky], keyOfMember)
+  ) {
+    return null;
+  }
+  if (state.nextAccountIdx <= sticky) return null;
+  const cursorIdx = state.nextAccountIdx % accounts.length;
+  if (isReady(accounts[cursorIdx]) && !isStoreDrained(accounts[cursorIdx], keyOfMember))
+    return null;
+  return sticky;
+}
+
+function isStoreDrained(
+  account: RotatableAccount,
+  keyOfMember: RotationEgressKeyOf = defaultRotationEgressKeyOf
+): boolean {
+  if (!isStickyDrainEnabled()) return false;
+  return isProxyAvoided(keyOfMember(account));
+}
+
+function hasStoreHistory(
+  accounts: RotatableAccount[],
+  keyOfMember: RotationEgressKeyOf = defaultRotationEgressKeyOf
+): boolean {
+  return accounts.some((account) => isProxyAvoided(keyOfMember(account)));
 }
 
 export function markCooldown(account: RotatableAccount, kind: CooldownKind = "transient"): void {
@@ -104,6 +172,31 @@ export function markSuccess(account: RotatableAccount): void {
 export function maskAccountId(fingerprint: string): string {
   if (!fingerprint) return "direct";
   return `${fingerprint.slice(0, 8)}…`;
+}
+
+/** One per-account rotation entry, keyed by connection id (never a fingerprint). */
+export interface RotationAccountSnapshot {
+  /** Already-masked id (`maskAccountId` output) — never the full fingerprint. */
+  masked: string;
+  ready: boolean;
+  cooldownUntilMs: number | null;
+  consecutiveFails: number;
+}
+
+const rotationSnapshots = new Map<string, RotationAccountSnapshot[]>();
+
+/** Record the current rotation state for a connection (sync, in-memory only). */
+export function recordRotationSnapshot(
+  connectionKey: string,
+  entries: RotationAccountSnapshot[]
+): void {
+  rotationSnapshots.set(connectionKey, [...entries]);
+}
+
+/** Read the last recorded rotation state (no side effects — never clears). */
+export function readRotationSnapshot(connectionKey: string): RotationAccountSnapshot[] | null {
+  const snap = rotationSnapshots.get(connectionKey);
+  return snap ? [...snap] : null;
 }
 
 /**

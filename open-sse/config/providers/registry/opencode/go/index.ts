@@ -13,6 +13,8 @@ export const opencode_goProvider: RegistryEntry = {
   authHeader: "Authorization",
   authPrefix: "Bearer",
   defaultContextLength: 200000,
+  requestDefaults: { maxTokens: 16_384 },
+  fetchStartTimeoutCapMs: 600_000,
   models: [
     // Port from decolua/9router 8efacc11: align with official Go endpoints —
     // glm-5.2 is now advertised and Kimi chat traffic must route through
@@ -110,6 +112,13 @@ export const opencode_goProvider: RegistryEntry = {
     {
       id: "qwen3.7-plus-max",
       name: "Qwen3.7 Plus (max effort)",
+      targetFormat: "claude",
+      supportsVision: false,
+      supportsReasoning: true,
+    },
+    {
+      id: "qwen3.8-max",
+      name: "Qwen3.8 Max",
       targetFormat: "claude",
       supportsVision: false,
       supportsReasoning: true,
@@ -218,6 +227,78 @@ export const opencode_goProvider: RegistryEntry = {
     {
       id: "muse-spark-1.2-contributor-xhigh",
       name: "Muse Spark 1.2 Contributor (xhigh effort)",
+      contextLength: 1048576,
+      maxOutputTokens: 131072,
+      supportsReasoning: true,
+      supportsVision: true,
+      supportsAudio: true,
+      supportsVideo: true,
+      targetFormat: "openai-responses",
+    },
+    // #12674: Muse Spark 1.3 Contributor — base + effort-tier aliases from the
+    // OpenCode Go registry (`opencode models opencode-go --refresh --verbose`;
+    // exact suffix set: minimal/low/medium/high/xhigh, no max — same as 1.2).
+    // Upstream serves Muse Spark only on the Responses API; without
+    // targetFormat:"openai-responses" these fall through to /chat/completions
+    // and the upstream returns 500 (same class as #12196).
+    {
+      id: "muse-spark-1.3-contributor",
+      name: "Muse Spark 1.3 Contributor",
+      contextLength: 1048576,
+      maxOutputTokens: 131072,
+      supportsReasoning: true,
+      supportsVision: true,
+      supportsAudio: true,
+      supportsVideo: true,
+      targetFormat: "openai-responses",
+    },
+    {
+      id: "muse-spark-1.3-contributor-minimal",
+      name: "Muse Spark 1.3 Contributor (minimal effort)",
+      contextLength: 1048576,
+      maxOutputTokens: 131072,
+      supportsReasoning: true,
+      supportsVision: true,
+      supportsAudio: true,
+      supportsVideo: true,
+      targetFormat: "openai-responses",
+    },
+    {
+      id: "muse-spark-1.3-contributor-low",
+      name: "Muse Spark 1.3 Contributor (low effort)",
+      contextLength: 1048576,
+      maxOutputTokens: 131072,
+      supportsReasoning: true,
+      supportsVision: true,
+      supportsAudio: true,
+      supportsVideo: true,
+      targetFormat: "openai-responses",
+    },
+    {
+      id: "muse-spark-1.3-contributor-medium",
+      name: "Muse Spark 1.3 Contributor (medium effort)",
+      contextLength: 1048576,
+      maxOutputTokens: 131072,
+      supportsReasoning: true,
+      supportsVision: true,
+      supportsAudio: true,
+      supportsVideo: true,
+      targetFormat: "openai-responses",
+    },
+    {
+      id: "muse-spark-1.3-contributor-high",
+      name: "Muse Spark 1.3 Contributor (high effort)",
+      contextLength: 1048576,
+      maxOutputTokens: 131072,
+      supportsReasoning: true,
+      supportsVision: true,
+      supportsAudio: true,
+      supportsVideo: true,
+      targetFormat: "openai-responses",
+    },
+    {
+      id: "muse-spark-1.3-contributor-xhigh",
+      name: "Muse Spark 1.3 Contributor (xhigh effort)",
       contextLength: 1048576,
       maxOutputTokens: 131072,
       supportsReasoning: true,

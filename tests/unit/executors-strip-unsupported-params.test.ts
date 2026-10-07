@@ -158,12 +158,14 @@ test("stripUnsupportedParams: nvidia non-glm-5 model keeps reasoning", () => {
   assert.ok(body.reasoning !== undefined, "reasoning must survive for non-glm-5 nvidia model");
 });
 
-test("STRIP_RULES is non-empty and every rule has a drop list or a clamp mechanism", () => {
+test("STRIP_RULES is non-empty and every rule has an active mutation", () => {
   assert.ok(__STRIP_RULES_FOR_TEST.length > 0);
   for (const rule of __STRIP_RULES_FOR_TEST) {
     const hasDrop = Array.isArray(rule.drop) && rule.drop.length > 0;
     const hasClamp = rule.clampToModelMaxOutput === true || Number.isFinite(rule.maxOutputCap);
-    assert.ok(hasDrop || hasClamp, "rule must either drop params or clamp max output");
+    const hasThinkingMap =
+      !!rule.mapThinkingType && Object.keys(rule.mapThinkingType).length > 0;
+    assert.ok(hasDrop || hasClamp || hasThinkingMap, "rule must mutate at least one parameter");
     assert.ok(typeof rule.match === "function" || rule.match instanceof RegExp);
   }
 });

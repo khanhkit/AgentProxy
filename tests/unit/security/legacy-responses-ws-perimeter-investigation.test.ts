@@ -3,7 +3,6 @@ import assert from "node:assert/strict";
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
-import { SignJWT } from "jose";
 
 const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-legacy-ws-perimeter-"));
 const ORIGINAL_DATA_DIR = process.env.DATA_DIR;
@@ -22,6 +21,7 @@ const core = await import("../../../src/lib/db/core.ts");
 const apiKeysDb = await import("../../../src/lib/db/apiKeys.ts");
 const { updateSettings } = await import("../../../src/lib/db/settings.ts");
 const route = await import("../../../src/app/api/internal/codex-responses-ws/route.ts");
+const { mintDashboardSessionToken } = await import("../../../src/shared/utils/dashboardSessionToken.ts");
 const { createResponsesWsProxy } = await import("../../../scripts/dev/responses-ws-proxy.mjs");
 
 function resetStorage() {
@@ -32,11 +32,7 @@ function resetStorage() {
 }
 
 async function sessionToken() {
-  return await new SignJWT({ sub: "ap-iss-0047-session" })
-    .setProtectedHeader({ alg: "HS256" })
-    .setIssuedAt()
-    .setExpirationTime("10m")
-    .sign(new TextEncoder().encode(process.env.JWT_SECRET));
+  return await mintDashboardSessionToken(new TextEncoder().encode(process.env.JWT_SECRET));
 }
 
 function authenticateRequest({

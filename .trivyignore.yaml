@@ -31,3 +31,6 @@ vulnerabilities:
   - id: CVE-2026-9538
     expired_at: 2026-10-15
     statement: "Debian trixie fix is deferred; AgentProxy runtime does not invoke Perl Archive::Tar on untrusted input."
+  - id: CVE-2025-68121
+    expired_at: 2026-10-15
+    statement: "Prebuilt tls-client crypto/tls finding; no upstream rebuild is available. The binary is limited to browser-TLS provider executors; re-evaluate on the next tls-client/native-base refresh."

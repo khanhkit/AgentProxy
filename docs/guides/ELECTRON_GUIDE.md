@@ -163,6 +163,28 @@ Persisted to `<DATA_DIR>/server.env`. `DATA_DIR` resolves to:
 - Linux: `$XDG_CONFIG_HOME/agentproxy` or `~/.agentproxy`
 - macOS: `~/.agentproxy`
 
+## Environment file lookup
+
+Before spawning the server, the main process (`getPreferredEnvFilePath()` in
+`electron/main.js`) picks **one** `.env` file: the first of these that exists.
+
+1. `$DATA_DIR/.env`, when `DATA_DIR` is set in the environment the app was launched with.
+2. `<resolved DATA_DIR>/.env`, using the same defaults as above: `%APPDATA%\agentproxy\.env` on
+   Windows, `$XDG_CONFIG_HOME/agentproxy/.env` or `~/.agentproxy/.env` on Linux and macOS.
+3. `.env` in the process working directory.
+
+The main process reads only that file; later candidates are not merged in. The server
+environment is then built with this precedence (highest first):
+
+1. The Electron process environment.
+2. The selected `.env` file.
+3. `<DATA_DIR>/server.env`.
+
+The process environment is captured when the app starts, so variables changed while the app
+remains in the tray do not reach the server until the app is fully quit and relaunched. For
+runtime knobs such as `CONTEXT_LENGTH_<PROVIDER>`, prefer the selected `.env` file, then fully
+quit and relaunch the app.
+
 ## Window & Tray
 
 - `BrowserWindow`: 1400×900 (min 1024×700), `backgroundColor: "#0a0a0a"`.

@@ -1,5 +1,5 @@
 /**
- * Shared policy for AgentProxy npm publish artifact hygiene.
+ * Shared policy for OmniRoute npm publish artifact hygiene.
  *
  * The package publishes the standalone runtime under dist/ (Layer 1: renamed from app/).
  * This policy keeps local backups, QA scratch files, and development-only
@@ -53,6 +53,8 @@ export const APP_STAGING_ALLOWED_EXACT_PATHS: string[] = [
   // server-ws.mjs import (sd_notify helper) — enforced by the closure test
   // tests/unit/pack-artifact-server-ws-closure.test.ts.
   "systemd-notify.mjs",
+  // server-ws.mjs import (process crash guard) — same closure test.
+  "httpClientAbortGuard.mjs",
   "responses-ws-proxy.mjs",
   "bin/chatgpt-web-codex-mcp.mjs",
   "scripts/dev/sync-env.mjs",
@@ -122,7 +124,7 @@ export const PACK_ARTIFACT_ROOT_ALLOWED_EXACT_PATHS: string[] = [
   "bin/restore-policies.sh",
   "bin/rollback.sh",
   "bin/snapshot-data.sh",
-  // Locale source of truth read at runtime by bin/cli/i18n.mjs (AGENTPROXY_LANG alias
+  // Locale source of truth read at runtime by bin/cli/i18n.mjs (OMNIROUTE_LANG alias
   // resolution: uk → uk-UA, fil/tl → phi, zh-hk/zh-mo/zh-hant → zh-TW) and by
   // bin/cli/commands/config.mjs (`config lang list`). Shipped via package.json "files";
   // without it the published CLI cannot resolve aliases and `config lang list` is empty.
@@ -169,6 +171,9 @@ export const PACK_ARTIFACT_ROOT_ALLOWED_EXACT_PATHS: string[] = [
 
 export const PACK_ARTIFACT_ROOT_ALLOWED_PATH_PREFIXES: string[] = [
   "@agentproxy/opencode-plugin/",
+  // #12870 shipped the v2 plugin beside its v1 sibling but never widened this
+  // allowlist, so every packed file under it read as an unexpected artifact.
+  "@agentproxy/opencode-plugin-v2/",
   "@agentproxy/opencode-provider/",
   "bin/cli/",
   // Broad open-sse + src source dirs added to package.json "files" in v3.8.21
@@ -196,6 +201,7 @@ export const PACK_ARTIFACT_REQUIRED_PATHS: string[] = [
   "dist/main-server-timeouts.mjs",
   // server-ws.mjs import (sd_notify helper) — enforced by the closure test.
   "dist/systemd-notify.mjs",
+  "dist/httpClientAbortGuard.mjs",
   "dist/http-method-guard.cjs",
   // #5452: regression guard — make check:pack-artifact fail loudly if the TLS
   // opt-in sidecar (imported by dist/server-ws.mjs) ever vanishes from the tarball.
@@ -209,6 +215,8 @@ export const PACK_ARTIFACT_REQUIRED_PATHS: string[] = [
   // required entries make its absence loud (#7065 class; derived + enforced by
   // tests/unit/pack-artifact-entrypoint-closures.test.ts).
   "bin/cli/data-dir.mjs",
+  // GHSA-2pg2-xm9r-8544: private-by-default DATA_DIR / .env modes, called on every boot.
+  "bin/cli/privateDataDir.mjs",
   "bin/cli/utils/ensureAndroidCacheDir.mjs",
   "bin/cli/utils/parseEnvValue.mjs",
   "bin/cli/utils/storageKeyProvision.mjs",

@@ -1,0 +1,1 @@
+- **fix(combos):** keep allowed-provider restrictions and invariant overrides synchronized when updating combos from the dashboard.

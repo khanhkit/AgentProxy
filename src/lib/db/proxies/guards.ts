@@ -24,7 +24,11 @@ export function isGlobalProxyEnabled(db: ReturnType<typeof getDbInstance>): bool
  * #6246 fail-closed guard for a connection with an assigned dead proxy pool.
  * Explicitly disabling proxying globally or for the connection allows direct egress.
  */
-export function hasBlockingProxyAssignment(connectionId: string, providerId?: string): boolean {
+export function hasBlockingProxyAssignment(
+  connectionId: string,
+  providerId?: string,
+  comboName?: string | null
+): boolean {
   try {
     const db = getDbInstance();
     if (!isGlobalProxyEnabled(db)) return false;
@@ -39,13 +43,18 @@ export function hasBlockingProxyAssignment(connectionId: string, providerId?: st
         `SELECT 1 FROM proxy_assignments a JOIN proxy_registry p ON p.id = a.proxy_id
            WHERE ((a.scope = 'account' AND a.scope_id = ?)
                OR (a.scope = 'provider' AND a.scope_id = ?)
-               OR (a.scope = 'global'))
+               OR (a.scope = 'global')
+               OR (a.scope = 'combo' AND a.scope_id = ?))
              AND NOT ${PROXY_ALIVE_PREDICATE}
            LIMIT 1`
       )
-      .get(connectionId, provider);
+      .get(connectionId, provider, comboName ?? null);
     if (dead) return true;
 
+    // AgentProxy's connection resolver also considers combo-scoped proxy pools for
+    // every combo whose model list references this provider. Mirror that lookup here
+    // so a dead combo assignment cannot be skipped by resolution and then fall through
+    // to DIRECT egress. This is intentionally provider-scoped, matching settings.ts.
     if (provider) {
       const comboRows = db.prepare("SELECT id, data FROM combos").all() as Array<{
         id?: string;

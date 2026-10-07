@@ -458,3 +458,16 @@ test("classify429: Moonshot engine overloaded stays rate_limit", () => {
     "rate_limit",
   );
 });
+
+test("AP-ISS-0124 monthly call allowances classify as quota_exhausted", () => {
+  const messages = [
+    "Monthly API call limit reached",
+    "Limited to 1000 API calls per month",
+    "You are using a Trial key, which is limited to 1000 API calls / month.",
+    "Your plan allows 5,000 requests/month and that allowance is exhausted.",
+  ];
+
+  for (const body of messages) {
+    assert.equal(classify429({ status: 429, body }), "quota_exhausted", body);
+  }
+});

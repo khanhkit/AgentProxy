@@ -1,0 +1,1 @@
+- **fix(proxies):** rank proxy-pool members that share a recently refused egress address below healthy members when `PROXY_POOL_SHARED_EGRESS_ORDER=true` (upstream #14657).

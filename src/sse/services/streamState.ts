@@ -36,7 +36,11 @@ interface StreamMetadata {
 
 // Valid state transitions
 const VALID_TRANSITIONS: Record<string, string[]> = {
-  [STREAM_STATES.INITIALIZED]: [STREAM_STATES.CONNECTING, STREAM_STATES.CANCELLED],
+  [STREAM_STATES.INITIALIZED]: [
+    STREAM_STATES.CONNECTING,
+    STREAM_STATES.FAILED,
+    STREAM_STATES.CANCELLED,
+  ],
   [STREAM_STATES.CONNECTING]: [
     STREAM_STATES.STREAMING,
     STREAM_STATES.FAILED,
@@ -177,7 +181,13 @@ export class StreamTracker {
 // ─── Active Stream Registry ─────────────────
 
 const activeStreams = new Map<string, StreamTracker>();
-const MAX_COMPLETED_HISTORY = parseInt(process.env.STREAM_HISTORY_MAX || "50", 10);
+
+export function resolveMaxCompletedHistory(raw: string | undefined): number {
+  const parsed = parseInt(raw ?? "50", 10);
+  return Number.isFinite(parsed) && parsed >= 0 ? parsed : 50;
+}
+
+const MAX_COMPLETED_HISTORY = resolveMaxCompletedHistory(process.env.STREAM_HISTORY_MAX);
 const completedStreams: ReturnType<StreamTracker["getSummary"]>[] = [];
 
 /**

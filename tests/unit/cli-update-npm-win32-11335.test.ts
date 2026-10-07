@@ -78,3 +78,14 @@ test("#11335 the shell is only enabled where argv is literal (Hard Rule #13)", (
     assert.equal(/\$\{|\+\s*\w|\.\.\./.test(argv), false, `argv must stay literal: ${argv}`);
   }
 });
+
+test("CLI updater preserves AgentProxy immutable-version install semantics", () => {
+  const src = fs.readFileSync(
+    new URL("../../bin/cli/commands/update.mjs", import.meta.url),
+    "utf8"
+  );
+
+  assert.match(src, /npm install -g agentproxy@\$\{latest\} --include=optional/);
+  assert.match(src, /Missing or invalid npm integrity metadata for agentproxy@\$\{latest\}/);
+  assert.doesNotMatch(src, /omniroute@latest/);
+});

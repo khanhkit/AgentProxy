@@ -32,6 +32,7 @@ process.on("exit", () => {
 const { IMAGE_PROVIDERS, parseImageModel, getAllImageModels } =
   await import("../../open-sse/config/imageRegistry.ts");
 const { handleImageGeneration } = await import("../../open-sse/handlers/imageGeneration.ts");
+const { setPinnedFetchTestOverride } = await import("../../src/shared/network/remoteImageFetch.ts");
 
 function immediateTimeout(callback, _ms, ...args) {
   if (typeof callback === "function") callback(...args);
@@ -392,6 +393,7 @@ test("handleImageGeneration calls Fal AI with Key auth and normalizes URL result
 
     throw new Error(`Unexpected URL: ${stringUrl}`);
   };
+  setPinnedFetchTestOverride(globalThis.fetch);
 
   try {
     const result = await handleImageGeneration({
@@ -416,6 +418,7 @@ test("handleImageGeneration calls Fal AI with Key auth and normalizes URL result
     assert.equal(requestCapture.body.sync_mode, true);
     assert.equal(result.data.data[0].b64_json, "BQYH");
   } finally {
+    setPinnedFetchTestOverride(undefined);
     globalThis.fetch = originalFetch;
   }
 });
@@ -584,6 +587,7 @@ test("handleImageGeneration polls Black Forest Labs results and sends base64 inp
 
     throw new Error(`Unexpected URL: ${stringUrl}`);
   };
+  setPinnedFetchTestOverride(globalThis.fetch);
 
   try {
     const result = await handleImageGeneration({
@@ -607,6 +611,7 @@ test("handleImageGeneration polls Black Forest Labs results and sends base64 inp
     assert.equal(pollCapture.headers["x-key"], "bfl-key");
     assert.equal(result.data.data[0].b64_json, "CQgH");
   } finally {
+    setPinnedFetchTestOverride(undefined);
     globalThis.fetch = originalFetch;
     globalThis.setTimeout = originalSetTimeout;
   }
@@ -1082,6 +1087,7 @@ test("handleImageGeneration polls NanoBanana task results and converts URLs to b
 
     throw new Error(`Unexpected URL: ${stringUrl}`);
   };
+  setPinnedFetchTestOverride(globalThis.fetch);
 
   try {
     const result = await handleImageGeneration({
@@ -1102,6 +1108,7 @@ test("handleImageGeneration polls NanoBanana task results and converts URLs to b
     ]);
     assert.deepEqual(result.data.data, [{ b64_json: "AQIDBA==", revised_prompt: "banana async" }]);
   } finally {
+    setPinnedFetchTestOverride(undefined);
     globalThis.fetch = originalFetch;
   }
 });

@@ -1,0 +1,1 @@
+- **fix(sse):** Persisted connection cooldown takes precedence over transient rate-limit signals ([#14708](https://github.com/diegosouzapw/AgentProxy/pull/14708)) — thanks @maxmad64bis

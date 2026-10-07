@@ -22,7 +22,7 @@ Authenticates with the AgentProxy cloud worker for remote access.
 
 ```bash
 curl -X POST https://localhost:20128/api/cloud/auth \
-  -H "Authorization: Bearer $AGENTPROXY_TOKEN" \
+  -H "Authorization: Bearer $OMNIROUTE_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{}'
 ```
@@ -33,7 +33,7 @@ Update cloud worker credentials
 
 ```bash
 curl -X PUT https://localhost:20128/api/cloud/credentials/update \
-  -H "Authorization: Bearer $AGENTPROXY_TOKEN" \
+  -H "Authorization: Bearer $OMNIROUTE_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{}'
 ```
@@ -46,7 +46,7 @@ Resolves a model request through the cloud worker.
 
 ```bash
 curl -X POST https://localhost:20128/api/cloud/model/resolve \
-  -H "Authorization: Bearer $AGENTPROXY_TOKEN" \
+  -H "Authorization: Bearer $OMNIROUTE_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{}'
 ```
@@ -57,7 +57,7 @@ Get cloud model aliases
 
 ```bash
 curl https://localhost:20128/api/cloud/models/alias \
-  -H "Authorization: Bearer $AGENTPROXY_TOKEN"
+  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
 ```
 
 ### PUT /api/cloud/models/alias
@@ -66,7 +66,7 @@ Update cloud model alias
 
 ```bash
 curl -X PUT https://localhost:20128/api/cloud/models/alias \
-  -H "Authorization: Bearer $AGENTPROXY_TOKEN" \
+  -H "Authorization: Bearer $OMNIROUTE_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{}'
 ```
@@ -77,7 +77,7 @@ Sync with cloud
 
 ```bash
 curl -X POST https://localhost:20128/api/sync/cloud \
-  -H "Authorization: Bearer $AGENTPROXY_TOKEN" \
+  -H "Authorization: Bearer $OMNIROUTE_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{}'
 ```
@@ -88,7 +88,7 @@ Initialize cloud sync
 
 ```bash
 curl -X POST https://localhost:20128/api/sync/initialize \
-  -H "Authorization: Bearer $AGENTPROXY_TOKEN" \
+  -H "Authorization: Bearer $OMNIROUTE_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{}'
 ```
@@ -99,7 +99,7 @@ GET sync › bundle
 
 ```bash
 curl https://localhost:20128/api/sync/bundle \
-  -H "Authorization: Bearer $AGENTPROXY_TOKEN"
+  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
 ```
 
 ### GET /api/sync/tokens
@@ -108,7 +108,7 @@ GET sync › tokens
 
 ```bash
 curl https://localhost:20128/api/sync/tokens \
-  -H "Authorization: Bearer $AGENTPROXY_TOKEN"
+  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
 ```
 
 ### POST /api/sync/tokens
@@ -117,7 +117,7 @@ POST sync › tokens
 
 ```bash
 curl -X POST https://localhost:20128/api/sync/tokens \
-  -H "Authorization: Bearer $AGENTPROXY_TOKEN" \
+  -H "Authorization: Bearer $OMNIROUTE_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{}'
 ```
@@ -128,7 +128,7 @@ DELETE sync › tokens › <id>
 
 ```bash
 curl -X DELETE https://localhost:20128/api/sync/tokens/{id} \
-  -H "Authorization: Bearer $AGENTPROXY_TOKEN"
+  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
 ```
 
 ## Payloads

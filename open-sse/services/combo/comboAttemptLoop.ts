@@ -38,7 +38,10 @@ import { isRetryAfterEligibleStatus } from "./unavailableRetryGate.ts";
 import { withQuotaExhaustionClassification } from "./quotaExhaustion.ts";
 import {
   COMBO_LOOP_SAFETY_TIMEOUT_MS,
+  requestScopedReplayKey,
   COMBO_SAFETY_DRAIN_MS,
+  IDENTICAL_MODEL_ERROR_STREAK,
+  hasIdenticalModelErrorStreak,
   resolveDelayMs,
 } from "./comboPredicates.ts";
 import { evaluateExecuteTargetGates } from "./executeTargetGates.ts";
@@ -175,6 +178,9 @@ export async function dispatchWithCooldownRetry(opts: {
       });
       const runningTasks = new Set<Promise<void>>();
       let anySuccess = false;
+      // Once the same request-shape model error repeats across the threshold,
+      // stop the remaining target loop and suppress whole-set replay.
+      let comboRequestMalformed = false;
       // #10681: steps already recorded as dispatched (so per-target retries do not
       // duplicate the decision).
       state.dispatchedTargets = new Set<string>();
@@ -189,6 +195,7 @@ export async function dispatchWithCooldownRetry(opts: {
         }
       };
       state.abortControllers = new Map<number, AbortController>();
+      const rejectedModelKeys = (state.requestScopedRejectedModelKeys ??= new Set<string>());
       const zeroLatencyOptimizationsEnabled = deps.config.zeroLatencyOptimizationsEnabled === true;
       const hasProtectedPriorityTarget =
         deps.strategy === "priority" &&
@@ -208,7 +215,14 @@ export async function dispatchWithCooldownRetry(opts: {
       };
 
       for (let i = 0; i < state.orderedTargets.length; i++) {
-        if (anySuccess || state.comboExpired) break;
+        if (anySuccess || state.comboExpired || comboRequestMalformed) break;
+        if (rejectedModelKeys.has(requestScopedReplayKey(state.orderedTargets[i].modelStr))) {
+          deps.log.info(
+            "COMBO",
+            `Skipping ${state.orderedTargets[i].modelStr} — same request already refused as request-scoped`
+          );
+          continue;
+        }
 
         const abortController = new AbortController();
         state.abortControllers.set(i, abortController);
@@ -279,6 +293,18 @@ export async function dispatchWithCooldownRetry(opts: {
             "COMBO",
             `Combo global timeout (${extra.comboTimeoutMs}ms) reached after ` +
               `${i + 1}/${state.orderedTargets.length} targets (${state.recordedAttempts} attempted) — stopping`
+          );
+        }
+
+        if (!anySuccess && !state.comboExpired && hasIdenticalModelErrorStreak(state.comboErrors)) {
+          comboRequestMalformed = true;
+          const last = state.comboErrors[state.comboErrors.length - 1];
+          deps.log.warn(
+            "COMBO",
+            `The last ${IDENTICAL_MODEL_ERROR_STREAK} targets all failed with the identical ` +
+              `request-shape error (status ${last.status}) after ${i + 1}/${state.orderedTargets.length} ` +
+              `targets (${state.recordedAttempts} attempted) — stopping instead of retrying the same ` +
+              `malformed request against remaining fallbacks or set-retries`
           );
         }
       }
@@ -371,8 +397,9 @@ export async function dispatchWithCooldownRetry(opts: {
         });
       }
 
-      // Retry the entire set if more attempts remain
-      if (setTry < extra.maxSetRetries) continue;
+      // Retry the entire set if more attempts remain, unless the identical
+      // model-error streak already proved the request itself is malformed.
+      if (setTry < extra.maxSetRetries && !comboRequestMalformed) continue;
 
       if (!state.lastStatus && state.recordedAttempts === 0 && extra.comboCooldownWaitEnabled) {
         const circuitOpenWait = resolveCircuitOpenWaitDecision({

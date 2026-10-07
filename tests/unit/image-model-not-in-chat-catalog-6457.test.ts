@@ -121,16 +121,12 @@ test("registered image model with explicit chat endpoints keeps both catalog ent
   const body = (await response.json()) as {
     data: Array<{ id: string; type?: string; supported_endpoints?: string[] }>;
   };
-  const entries = body.data.filter((model) => model.id.endsWith("/gpt-5.6-sol"));
+  const chatEntry = body.data.find((model) => model.id.endsWith("/gpt-5.6-sol"));
+  const imageEntry = body.data.find((model) => model.id.endsWith("/gpt-5.6-sol-image"));
 
   assert.ok(
-    entries.some(
-      (model) => model.type !== "image" && model.supported_endpoints?.includes("responses")
-    ),
+    chatEntry?.type !== "image" && chatEntry?.supported_endpoints?.includes("responses"),
     "explicit responses support must keep the synced chat entry"
   );
-  assert.ok(
-    entries.some((model) => model.type === "image"),
-    "the registered image entry must remain available under the same model id"
-  );
+  assert.equal(imageEntry?.type, "image", "the registered image entry must keep its catalog id");
 });

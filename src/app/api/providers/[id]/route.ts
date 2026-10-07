@@ -6,6 +6,7 @@ import {
 } from "@/lib/compliance/providerAudit";
 import { getCachedProviderConnectionById } from "@/lib/db/readCache";
 import { updateProviderConnection } from "@/lib/db/providers";
+import { clearRequestRejectedStreak } from "@agentproxy/open-sse/services/requestRejectedStreak.ts";
 import { deleteProviderConnection } from "@/lib/db/providers/deletion";
 import { isCloudEnabled } from "@/lib/db/settings";
 import { getConsistentMachineId } from "@/shared/utils/machineId";
@@ -29,12 +30,8 @@ import {
   enableRateLimitProtection,
   disableRateLimitProtection,
 } from "@/../open-sse/services/rateLimitManager";
-import {
-  finalizeValidatedChatGptWebCodexSecrets,
-  decodeChatGptWebCodexSecrets,
-  encodeChatGptWebCodexSecrets,
-} from "@agentproxy/open-sse/services/chatgptWebCodexAdmin.ts";
 import { rejectRetiredCommonChatGptWebProvider } from "@/lib/providers/chatgptWebRetirementResponse";
+import { applyOperatorActivationIntent } from "@/lib/providers/operatorDisable";
 
 function normalizeCodexLimitPolicy(
   incoming: unknown,
@@ -178,6 +175,11 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
             ? incomingPsd.validationId
             : "";
         try {
+          const {
+            finalizeValidatedChatGptWebCodexSecrets,
+            decodeChatGptWebCodexSecrets,
+            encodeChatGptWebCodexSecrets,
+          } = await import("@agentproxy/open-sse/services/chatgptWebCodexAdmin.ts");
           const incomingSecrets = decodeChatGptWebCodexSecrets(apiKey);
           const existingSecrets = decodeChatGptWebCodexSecrets(existing.apiKey || "");
           const encoded = encodeChatGptWebCodexSecrets({
@@ -210,6 +212,7 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
     if (lastErrorSource !== undefined) updateData.lastErrorSource = lastErrorSource;
     if (errorCode !== undefined) updateData.errorCode = errorCode;
     if (rateLimitedUntil !== undefined) updateData.rateLimitedUntil = rateLimitedUntil;
+    if (rateLimitedUntil === null || testStatus === "active") clearRequestRejectedStreak(id);
     if (lastTested !== undefined) updateData.lastTested = lastTested;
     // healthCheckInterval PATCH semantics: undefined = leave as-is; null = clear
     // the override (connection follows the global default); 0-1440 = explicit
@@ -341,6 +344,15 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
       }
     }
 
+    const changedFields = Object.keys(updateData);
+
+    if (typeof isActive === "boolean") {
+      updateData.providerSpecificData = applyOperatorActivationIntent(
+        updateData.providerSpecificData ?? existing.providerSpecificData,
+        isActive
+      );
+    }
+
     const updated = await updateProviderConnection(id, updateData);
 
     // If rateLimitOverrides was included in the request, refresh the in-memory
@@ -384,7 +396,7 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
       requestId: auditContext.requestId,
       metadata: {
         provider: existing.provider,
-        changedFields: Object.keys(updateData),
+        changedFields,
         before: summarizeProviderConnectionForAudit(existing),
         after: summarizeProviderConnectionForAudit(updated),
       },

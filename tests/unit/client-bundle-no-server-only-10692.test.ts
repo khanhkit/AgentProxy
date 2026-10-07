@@ -15,17 +15,14 @@ import { fileURLToPath } from "node:url";
  * `mediaServiceKinds` only pulls in the pure-data media registries (no server-only deps)"* —
  * and a comment cannot fail a build, so #10542 broke it unnoticed.
  *
- * This walks the real static-import graph, the same edges the bundler follows, from EVERY
+ * This walks the real client import graph, the same edges the bundler follows, from EVERY
  * `"use client"` file in the repo rather than a hand-picked pair.
  *
- * Two deliberate exclusions, both load-bearing:
+ * First-party dynamic `import()` with a static string specifier IS followed. The bundler
+ * resolves those edges into a client chunk just like static imports. Non-literal specifiers
+ * and npm packages are ignored because the first-party resolver cannot resolve them.
  *
- *  - **`import type` is not an edge.** TypeScript erases it before the bundler sees it. A scan
- *    that counts type imports reports 26 phantom leaks against 2 real ones here — a guard that
- *    cries wolf gets switched off.
- *  - **Dynamic `import()` is not followed.** It does not actually break a bundle edge (that was
- *    tried for #10692 and failed), but it does move the module into a chunk the browser only
- *    fetches on demand, which is a legitimate boundary for a lazily-used server path.
+ * `import type` is not an edge. TypeScript erases it before the bundler sees it.
  */
 const REPO_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
 
@@ -99,7 +96,7 @@ function isTypeOnlyClause(clause: string): boolean {
 
 /** Value-carrying static specifiers only. */
 function staticSpecifiers(source: string): string[] {
-  const withoutDynamic = source.replace(/\bimport\s*\(/g, "__dynamic_import__(");
+  const withoutDynamic = source.replace(/\bimport\s*\(/g, "__dynamic_import__");
   const out: string[] = [];
   for (const pattern of [
     /(?:^|\n)\s*import\s+([^;'"]*)from\s*["']([^"']+)["']/g,
@@ -117,6 +114,18 @@ function staticSpecifiers(source: string): string[] {
   return out;
 }
 
+/** Static-literal first-party dynamic-import specifiers. */
+function dynamicSpecifiers(source: string): string[] {
+  const out: string[] = [];
+  for (const match of source.matchAll(/\bimport\s*\(\s*["']([^"']+)["']\s*\)/g)) {
+    out.push(match[1]);
+  }
+  for (const match of source.matchAll(/\bimport\s*\(\s*`([^`$]+)`\s*\)/g)) {
+    out.push(match[1]);
+  }
+  return out;
+}
+
 const specifierCache = new Map<string, string[]>();
 function edgesOf(file: string): string[] {
   const cached = specifierCache.get(file);
@@ -124,7 +133,8 @@ function edgesOf(file: string): string[] {
   const absolute = path.join(REPO_ROOT, file);
   let edges: string[] = [];
   if (fs.existsSync(absolute)) {
-    edges = staticSpecifiers(fs.readFileSync(absolute, "utf8"))
+    const source = fs.readFileSync(absolute, "utf8");
+    edges = [...staticSpecifiers(source), ...dynamicSpecifiers(source)]
       .map((specifier) => resolveSpecifier(file, specifier))
       .filter((resolved): resolved is string => resolved !== null);
   }
@@ -132,7 +142,7 @@ function edgesOf(file: string): string[] {
   return edges;
 }
 
-/** BFS over static imports; returns the first path reaching a server-only module. */
+/** BFS over client-bundle imports; returns the first path reaching a server-only module. */
 function findServerOnlyPath(entry: string): string[] | null {
   const seen = new Set<string>([entry]);
   const queue: Array<string[]> = [[entry]];
@@ -182,5 +192,22 @@ test("no client entry point statically reaches server-only code", () => {
       offenders.map((o) => `  ${o.trail.join("\n    → ")}`).join("\n\n") +
       "\nBreak the chain — or, when the binding is only a type, mark it `import type` so it " +
       "carries no runtime edge."
+  );
+});
+
+
+test("dynamic import specifiers: literals are followed, variables and npm packages are not", () => {
+  assert.deepEqual(
+    dynamicSpecifiers(
+      `const a = await import("@/lib/db/readCache");\nconst b = await import("./local");`
+    ),
+    ["@/lib/db/readCache", "./local"]
+  );
+  assert.deepEqual(dynamicSpecifiers("const m = await import(specifier);"), []);
+  assert.deepEqual(dynamicSpecifiers("const m = await import(`./${name}`);"), []);
+  assert.equal(resolveSpecifier("open-sse/services/model.ts", "zod"), null);
+  assert.equal(
+    resolveSpecifier("open-sse/services/model.ts", "@/lib/db/readCache"),
+    "src/lib/db/readCache.ts"
   );
 });

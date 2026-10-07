@@ -45,6 +45,7 @@ const {
   XAI_OAUTH_CONFIG,
   OPENFERENCE_CONFIG,
   ZED_HOSTED_CONFIG,
+  MUSE_CODE_CONFIG,
 } = oauthModule;
 const { getAntigravityLoadCodeAssistMetadata } = antigravityHeadersModule;
 
@@ -75,6 +76,7 @@ const EXPECTED_PROVIDER_KEYS = [
   "codebuddy-cn",
   "zed",
   "zed-hosted",
+  "muse-code",
 ];
 
 const browserUrl = "http://localhost:20128/callback";
@@ -109,6 +111,7 @@ const EXPECTED_CONFIG_BY_PROVIDER = {
   "codebuddy-cn": CODEBUDDY_CN_CONFIG,
   zed: ZED_CONFIG,
   "zed-hosted": ZED_HOSTED_CONFIG,
+  "muse-code": MUSE_CODE_CONFIG,
 };
 
 const KIRO_REQUIRED_FIELDS = [
@@ -158,6 +161,7 @@ const REQUIRED_FIELDS_BY_PROVIDER = {
   "grok-cli": ["authorizeUrl", "tokenUrl", "scope", "codeChallengeMethod", "clientId", "loopbackPort", "callbackPath", "callbackHost"],
   // prettier-ignore
   "zed-hosted": ["webBaseUrl", "cloudBaseUrl", "llmBaseUrl", "userInfoUrl", "llmTokenUrl", "modelsUrl"],
+  "muse-code": ["deviceCodeUrl", "tokenUrl", "clientId"],
 };
 
 function getByPath(object, path) {

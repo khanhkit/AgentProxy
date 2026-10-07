@@ -46,6 +46,13 @@ test("gemini registry exposes the flash-lite variants present in sibling subsyst
   }
 });
 
+test("gemini registry exposes Gemini 3.8 Flash", () => {
+  const model = geminiProvider.models.find((item) => item.id === "gemini-3.8-flash");
+  assert.ok(model, "gemini registry must include gemini-3.8-flash");
+  assert.equal(model.toolCalling, true);
+  assert.equal(model.supportsVision, true);
+});
+
 test("port did not regress previously curated openai/gemini ids", () => {
   // Sanity guard: anchor models that must keep existing.
   const openaiIds = new Set(openaiProvider.models.map((m) => m.id));

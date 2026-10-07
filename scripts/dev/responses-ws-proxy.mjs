@@ -1,8 +1,7 @@
 import { createHash, randomUUID } from "node:crypto";
 import { createRequire } from "node:module";
 import { STATUS_CODES } from "node:http";
-import { PEER_IP_HEADER, stampPeerIp } from "./peer-stamp.mjs";
-
+import { PEER_IP_HEADER, relayForwardingHeaders, stampPeerIp } from "./peer-stamp.mjs";
 const _wreqRequire = createRequire(import.meta.url);
 
 let _websocketFn = null;
@@ -298,7 +297,7 @@ export function writeHttpError(socket, status, body, headers = {}) {
   socket.end(bodyBuffer);
 }
 
-function getAuthHeaders(requestUrl, requestHeaders) {
+function getAuthHeaders(requestUrl, requestHeaders, forwarding = {}) {
   const headers = {};
   if (isText(requestHeaders.authorization)) {
     headers.authorization = requestHeaders.authorization;
@@ -316,11 +315,13 @@ function getAuthHeaders(requestUrl, requestHeaders) {
   if (isText(requestHeaders.cookie)) headers.cookie = requestHeaders.cookie;
   if (isText(requestHeaders.origin)) headers.origin = requestHeaders.origin;
   if (isText(requestHeaders.host)) headers.host = requestHeaders.host;
+  // Only the relay's sanitized client-address envelope crosses the loopback hop.
   if (isText(requestHeaders[PEER_IP_HEADER]))
     headers[PEER_IP_HEADER] = requestHeaders[PEER_IP_HEADER];
-  for (const key of ["forwarded", "x-forwarded-for", "x-forwarded-host", "x-forwarded-proto"]) {
+  for (const key of ["forwarded", "x-forwarded-host", "x-forwarded-proto"]) {
     if (isText(requestHeaders[key])) headers[key] = requestHeaders[key];
   }
+  Object.assign(headers, forwarding);
   for (const key of [
     "session-id",
     "session_id",
@@ -377,12 +378,13 @@ function withPreparedResponseCreate(message, preparedBody) {
   return next;
 }
 
-async function callInternal(fetchImpl, baseUrl, bridgeSecret, action, payload) {
+async function callInternal(fetchImpl, baseUrl, bridgeSecret, action, payload, forwarding = {}) {
   const response = await fetchImpl(new URL(INTERNAL_ROUTE, baseUrl), {
     method: "POST",
     headers: {
       "content-type": "application/json",
       "x-agentproxy-ws-bridge-secret": bridgeSecret,
+      ...forwarding,
     },
     body: JSON.stringify({ action, ...payload }),
   });
@@ -403,6 +405,7 @@ class ResponsesWsSession {
     fetchImpl,
     socket,
     requestHeaders,
+    forwarding,
     requestUrl,
     wsFactory,
     pingIntervalMs,
@@ -415,6 +418,7 @@ class ResponsesWsSession {
     this.fetchImpl = fetchImpl;
     this.socket = socket;
     this.requestHeaders = requestHeaders;
+    this.forwarding = forwarding ?? { "x-forwarded-for": "unknown" };
     this.requestUrl = requestUrl;
     this.wsFactory = wsFactory;
     this.pingIntervalMs = pingIntervalMs;
@@ -434,6 +438,9 @@ class ResponsesWsSession {
     this.firstResponseBody = null;
     this.currentRequestBody = null;
     this.preparedContext = null;
+    this.leaseId = null;
+    this.leaseReleased = false;
+    this.leaseReleaseInFlight = false;
     // #7388: logging must be scoped per logical turn (one `response.create`
     // through its terminal event), not once for the lifetime of the WS
     // connection — a single boolean here silently dropped every turn after
@@ -607,10 +614,11 @@ class ResponsesWsSession {
       "prepare",
       {
         requestUrl: this.requestUrl,
-        headers: getAuthHeaders(this.requestUrl, this.requestHeaders),
+        headers: getAuthHeaders(this.requestUrl, this.requestHeaders, this.forwarding),
         message,
         response: responseBody,
-      }
+      },
+      this.forwarding
     );
 
     if (!prepared.ok) {
@@ -643,6 +651,23 @@ class ResponsesWsSession {
       serviceTier:
         toStringOrNull(responseBody.service_tier) || toStringOrNull(responseBody.serviceTier),
     };
+
+    // A reused WS connection re-runs prepare per logical turn, and each prepare
+    // acquires a fresh per-account lease. Release the previous turn before
+    // adopting the new lease so one session cannot hoard account slots.
+    const previousLeaseId = this.leaseId;
+    const newLeaseId = toStringOrNull(prepared.json?.leaseId);
+    if (this.closed) {
+      this.leaseId = null;
+      this.releaseLeaseId(newLeaseId);
+      return prepared;
+    }
+    this.leaseId = newLeaseId;
+    if (previousLeaseId && previousLeaseId !== newLeaseId) {
+      this.releaseLeaseId(previousLeaseId);
+    }
+    this.leaseReleased = false;
+    this.leaseReleaseInFlight = false;
 
     return prepared;
   }
@@ -762,7 +787,7 @@ class ResponsesWsSession {
       }
       const code = error?.code || "upstream_websocket_connect_failed";
       const messageText = error instanceof Error ? error.message : String(error);
-      const failurePayload = this.sendFailure(code, messageText);
+      const failurePayload = this.sendFailure(code, "Upstream WebSocket connection failed");
       void this.persistHistory({
         status: Number.isInteger(error?.status) ? error.status : 502,
         success: false,
@@ -772,6 +797,49 @@ class ResponsesWsSession {
       });
       this.close(1011, "upstream_connect_failed");
     }
+  }
+
+  releaseLease() {
+    if (this.leaseReleased || this.leaseReleaseInFlight || !this.leaseId) return;
+    this.leaseReleaseInFlight = true;
+    const leaseId = this.leaseId;
+    void callInternal(
+      this.fetchImpl,
+      this.baseUrl,
+      this.bridgeSecret,
+      "release",
+      { leaseId },
+      this.forwarding
+    )
+      .then((response) => {
+        if (!response.ok) throw new Error("lease release rejected");
+        this.leaseReleased = true;
+        this.leaseId = null;
+      })
+      .catch(() => {
+        this.leaseReleaseInFlight = false;
+        const retry = setTimeout(() => this.releaseLease(), 1000);
+        retry.unref?.();
+      });
+  }
+
+  releaseLeaseId(leaseId) {
+    if (!leaseId) return;
+    void callInternal(
+      this.fetchImpl,
+      this.baseUrl,
+      this.bridgeSecret,
+      "release",
+      { leaseId },
+      this.forwarding
+    )
+      .then((response) => {
+        if (!response.ok) throw new Error("lease release rejected");
+      })
+      .catch(() => {
+        const retry = setTimeout(() => this.releaseLeaseId(leaseId), 1000);
+        retry.unref?.();
+      });
   }
 
   async persistHistory({
@@ -800,7 +868,7 @@ class ResponsesWsSession {
         sessionId: this.sessionId,
         transport: "responses_websocket",
         requestUrl: this.requestUrl,
-        headers: getAuthHeaders(this.requestUrl, this.requestHeaders),
+        headers: getAuthHeaders(this.requestUrl, this.requestHeaders, this.forwarding),
         path: new URL(this.requestUrl || "/v1/responses", "http://agentproxy.local").pathname,
         startedAt: new Date(this.startedAt).toISOString(),
         completedAt: new Date(finishedAt).toISOString(),
@@ -815,7 +883,7 @@ class ResponsesWsSession {
         sourceFormat: "openai-responses",
         targetFormat: "openai-responses",
         ...this.preparedContext,
-      });
+      }, this.forwarding);
     } catch {
       // History logging must never break an already-established WebSocket session.
     }
@@ -824,6 +892,7 @@ class ResponsesWsSession {
   close(code = 1000, reason = "normal_closure") {
     if (this.closed) return;
     this.closed = true;
+    this.releaseLease();
 
     clearInterval(this.pingTimer);
     this.cleanupBuffers();
@@ -851,6 +920,7 @@ class ResponsesWsSession {
   dispose() {
     if (this.closed) return;
     this.closed = true;
+    this.releaseLease();
     clearInterval(this.pingTimer);
     this.cleanupBuffers();
     try {
@@ -922,18 +992,32 @@ export function createResponsesWsProxy({
       // browser Origin/Host context. stampPeerIp() deletes any client-supplied
       // peer stamp before writing the trusted process stamp.
       stampPeerIp(req);
+      const forwarding = relayForwardingHeaders(
+        req.socket && req.socket.remoteAddress,
+        req.headers
+      );
 
       try {
-        const auth = await callInternal(fetchImpl, baseUrl, bridgeSecret, "authenticate", {
-          requestUrl: req.url || pathname,
-          headers: getAuthHeaders(req.url || pathname, req.headers),
-        });
+        const auth = await callInternal(
+          fetchImpl,
+          baseUrl,
+          bridgeSecret,
+          "authenticate",
+          {
+            requestUrl: req.url || pathname,
+            headers: getAuthHeaders(req.url || pathname, req.headers, forwarding),
+          },
+          forwarding
+        );
         if (!auth.ok) {
-          // Do NOT forward the internal fetch's response headers onto the raw
-          // upgrade socket — they carry chunked transfer-encoding + Next security
-          // headers that collide with writeHttpError's Content-Length framing.
-          // The sanitized JSON body alone is enough for the client.
-          writeHttpError(socket, auth.status, auth.text || "{}");
+          // Do NOT forward the internal fetch's response headers or raw body onto the
+          // public upgrade socket. The internal auth route has a fixed JSON error
+          // contract; parse and re-serialize only its public code/message fields.
+          const parsedAuthError = parseJsonRecord(auth.text);
+          const rawError = isRecord(parsedAuthError?.error) ? parsedAuthError.error : null;
+          const code = isText(rawError?.code) ? rawError.code : "ws_auth_failed";
+          const message = isText(rawError?.message) ? rawError.message : "WebSocket authentication failed";
+          writeHttpError(socket, auth.status, JSON.stringify({ error: { code, message } }));
           return true;
         }
 
@@ -974,6 +1058,7 @@ export function createResponsesWsProxy({
           socket,
           requestUrl: req.url || pathname,
           requestHeaders: req.headers,
+          forwarding,
           wsFactory,
           pingIntervalMs,
           idleTimeoutMs,

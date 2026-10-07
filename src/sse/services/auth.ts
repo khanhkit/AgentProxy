@@ -1,5 +1,6 @@
 import { randomUUID } from "crypto";
 import { nodeTypeFromId } from "@/lib/db/providerNodeSelect";
+import { hydrateCompatibleNodeBaseUrl } from "./compatibleNodeBaseUrl.ts";
 import { extractGoogApiKeyHeader } from "./googApiKeyAuth.ts";
 import { describeUpstreamFailure } from "@/shared/utils/upstreamError";
 import { buildAllExpiredCredentials } from "./authExpiredCredentials.ts";
@@ -33,6 +34,7 @@ import { buildJinaEnvCredentials } from "@/lib/providers/jina";
 import { buildGeminiEnvCredentials } from "@/lib/providers/gemini";
 import { isCommonChatGptWebRetiredProviderId } from "@/shared/constants/chatgptWebRetirement";
 import { toNumber } from "@/shared/utils/numeric";
+import { timingSafeCompare } from "@/shared/utils/timingSafeCompare";
 import { isMicrosoftDesignerWebRetiredProviderId } from "@/shared/constants/designerWebRetirement";
 import { isRuntimeRetiredProviderId } from "@/shared/constants/providerRetirement";
 import {
@@ -57,6 +59,7 @@ import {
   persistAntigravityFamilyCooldownIfQuota,
 } from "@agentproxy/open-sse/services/antigravityFamilyCooldown.ts";
 import { markQuotaPreflightAccountUnavailable } from "./quotaPreflightUnavailable.ts";
+import { buildNoAuthModelCooldown } from "./noAuthModelCooldown.ts";
 import { getCreditsMode } from "@agentproxy/open-sse/services/antigravityCredits.ts";
 import { preferAntigravityConnectionsWithStoredProject } from "@agentproxy/open-sse/services/antigravityProjectPersistence.ts";
 import {
@@ -70,11 +73,13 @@ import {
   getModelLockoutInfo,
   lockModel,
   hasPerModelQuota,
+  hasPerModelFailureScope,
   getRuntimeProviderProfile,
   recordModelLockoutFailure,
   retryHintBypassesMaxCooldownMs,
   isProviderModelUnsupported400,
 } from "@agentproxy/open-sse/services/accountFallback.ts";
+import { isOpencodeFreeTierRefusalForProvider } from "@agentproxy/open-sse/executors/opencodeGeoBlock.ts";
 import { isLocalProvider } from "@agentproxy/open-sse/config/providerRegistry.ts";
 import { COOLDOWN_MS, RateLimitReason } from "@agentproxy/open-sse/config/constants.ts";
 import { sanitizeErrorMessage } from "@agentproxy/open-sse/utils/errorSanitization.ts";
@@ -98,6 +103,7 @@ import {
   classifyProviderError,
   PROVIDER_ERROR_TYPES,
 } from "@agentproxy/open-sse/services/errorClassifier.ts";
+import { isOpencodeFreeTierSkipped } from "@agentproxy/open-sse/services/opencodeFreeTierSkip.ts";
 import { resolveTerminalConnectionStatus } from "./authTerminalStatus.ts";
 import {
   ALIBABA_FREE_DRAINED_LOCK_MS,
@@ -159,6 +165,12 @@ import { loadOptionalNoAuthApiKeyCredentials } from "./noAuthOptionalApiKey";
 import { getResource404Bypass } from "./requestResourceHealth";
 import { isVertexConnectionWidePermissionDenied } from "./vertexErrorClassifier";
 import { maybeAutoDisableBannedAccount } from "./autoDisableBannedAccount";
+import {
+  buildAntigravityRoutingFields,
+  releaseRoutingLeaseFromCredentials,
+  reserveAntigravityLeaseForSelection,
+  type AntigravityLease,
+} from "./antigravityLeaseSelection";
 import * as log from "../utils/logger";
 import {
   fisherYatesShuffle,
@@ -204,6 +216,8 @@ export interface CredentialSelectionOptions {
   _leaseRetryWithLockHeld?: boolean;
   /** Internal: freeze the original policy-valid candidate set across lease race/preflight retry. */
   _leaseCandidateIds?: string[];
+  reserveAntigravityLease?: boolean;
+  routingRequestId?: string | null;
 }
 export type ExclusiveLeaseSelectionResult = {
   exclusiveLease: ExclusiveConnectionLease;
@@ -762,6 +776,7 @@ async function maybeSyntheticNoAuthFallback(
   // key reach free providers (OpenCode Free, etc.) that it should not access.
   if (Array.isArray(allowedConnections) && allowedConnections.length > 0) return null;
   if (excludedConnectionIds.has(SYNTHETIC_NOAUTH_CONNECTION_ID)) return null;
+  if (isOpencodeFreeTierSkipped(providerId)) return null;
   if (
     isAnonymousFallbackOnlyProvider(providerId) &&
     (await isAnonymousFallbackDisabledBySettings(providerId))
@@ -1061,9 +1076,17 @@ async function hydrateAccountProxyReferences(
 async function materializeConnection(
   connection: ProviderConnectionView,
   options: CredentialSelectionOptions,
-  extra: DeferredLeaseSelection & { exclusiveLease?: ExclusiveConnectionLease } = {}
+  extra: DeferredLeaseSelection & {
+    exclusiveLease?: ExclusiveConnectionLease;
+    routingLease?: AntigravityLease;
+    requestedModel?: string | null;
+  } = {}
 ) {
-  const providerSpecificData = await hydrateAccountProxyReferences(connection.providerSpecificData);
+  const proxyHydrated = await hydrateAccountProxyReferences(connection.providerSpecificData);
+  const providerSpecificData = await hydrateCompatibleNodeBaseUrl(
+    connection.provider,
+    proxyHydrated
+  );
   const apiKeyHealth = providerSpecificData.apiKeyHealth as Record<string, KeyHealth> | undefined;
   if (apiKeyHealth) syncHealthFromDB(connection.id, apiKeyHealth);
   const releaseOAuthSession =
@@ -1096,6 +1119,7 @@ async function materializeConnection(
     maxConcurrent: connection.maxConcurrent,
     quotaWindowThresholds: connection.quotaWindowThresholds ?? null,
     ...(releaseOAuthSession ? { releaseOAuthSession } : {}),
+    ...buildAntigravityRoutingFields(extra.routingLease, connection.id, extra.requestedModel),
     ...extra,
   };
 }
@@ -1166,20 +1190,16 @@ export async function getProviderCredentials(
     log.warn("AUTH", "Retired provider credential selection denied");
     return null;
   }
-
   if (isRuntimeRetiredProviderId(provider)) {
     invalidateManagedLease(options, "CONNECTION_INELIGIBLE");
     log.warn("AUTH", "Retired provider rejected before credential selection");
     return null;
   }
-
   const selectionLock = options._leaseRetryWithLockHeld
     ? null
     : createSelectionLock(getSelectionMutexKey(provider, options));
-
   try {
     await selectionLock?.wait;
-
     // No-auth providers (e.g. opencode) need no DB connection — return synthetic credentials
     // so the executor receives a valid credentials object without auth headers being added.
     const resolvedId = resolveProviderId(provider);
@@ -1214,10 +1234,23 @@ export async function getProviderCredentials(
       // respected (the no-auth provider will be rejected if it has no real connections
       // matching the allowlist, or a real connection row will be selected if present).
       if (!allowedConnections || allowedConnections.length === 0) {
+        const modelLockout = requestedModel
+          ? getModelLockoutInfo(resolvedId, SYNTHETIC_NOAUTH_CONNECTION_ID, requestedModel)
+          : null;
+        if (modelLockout && modelLockout.remainingMs > 0) {
+          // Non-not-found locks are temporary cooldowns that the chat handler can surface as 429.
+          return isRetryableModelLockoutReason(modelLockout.reason)
+            ? buildNoAuthModelCooldown(
+                resolvedId,
+                requestedModel!,
+                modelLockout,
+                SYNTHETIC_NOAUTH_CONNECTION_ID
+              )
+            : null;
+        }
         return await maybeSyntheticNoAuthFallback(resolvedId, excludedForNoAuth);
       }
     }
-
     const allowSuppressedConnections = options.allowSuppressedConnections === true;
     const allowRateLimitedConnections =
       allowSuppressedConnections || options.allowRateLimitedConnections === true;
@@ -1230,19 +1263,16 @@ export async function getProviderCredentials(
       excludeConnectionId,
       options.excludeConnectionIds
     );
-
     // Fetched early so the session-affinity-pin override (#5903) can consult
     // the TTL before forcedConnectionId narrows the connection pool.
     const settings = await getSettings();
     const sessionAffinityTtlMs = resolveSessionAffinityTtlMs(provider, options, settings);
-
     // Fix #922: Check for aliases (nvidia/nvidia_nim) to ensure credentials are found
     const providersToSearch = await getProviderSearchPool(provider);
     const connectionResults = await Promise.all(
       providersToSearch.map((p) => getCachedRawProviderConnections({ provider: p, isActive: true }))
     );
     const connectionsRaw = connectionResults.filter(Array.isArray).flat();
-
     let connections = (Array.isArray(connectionsRaw) ? connectionsRaw : [])
       .map(createLazyConnectionView)
       .filter((conn) => conn.id.length > 0);
@@ -1268,12 +1298,10 @@ export async function getProviderCredentials(
         return { leaseConnectionMismatch: true };
       }
     }
-
     const isCodexScopeUnavailable = (
       connection: ProviderConnectionView,
       model: string | null
     ): boolean => provider === "codex" && isCodexChildUnavailable(connection, model);
-
     // #5903: an active session-affinity pin outranks a per-request reset-aware
     // forcedConnectionId (see sessionAffinityPin leaf for the full rationale).
     if (!options.lease) {
@@ -1292,7 +1320,6 @@ export async function getProviderCredentials(
             evaluateQuotaLimitPolicy(provider, c as ProviderConnectionView, requestedModel).blocked,
         }) ?? forcedConnectionId;
     }
-
     // A forced connection (combo step `connectionId` / `x-agentproxy-connection`) is an
     // operator instruction, not a suggestion. resolveForcedConnectionForCredentialPool()
     // legitimately returns null for several *intentional* pin-release cases (forced ID
@@ -1367,9 +1394,15 @@ export async function getProviderCredentials(
       let allConnections = (allConnectionsResults.filter(Array.isArray).flat() as unknown[])
         .map(toProviderConnection)
         .filter((conn) => conn.id.length > 0);
+      const connectionsBeforeKeyPolicy = allConnections.length;
       if (allowedConnections && allowedConnections.length > 0) {
         allConnections = allConnections.filter((conn) => allowedConnections.includes(conn.id));
       }
+      const blockedByKeyPolicyCount = connectionsBeforeKeyPolicy - allConnections.length;
+      const keyPolicyEmptiedPool =
+        connectionsBeforeKeyPolicy > 0 &&
+        blockedByKeyPolicyCount > 0 &&
+        allConnections.length === 0;
       if (forcedConnectionId) {
         allConnections = allConnections.filter((conn) => conn.id === forcedConnectionId);
       }
@@ -1439,6 +1472,13 @@ export async function getProviderCredentials(
         return geminiEnvCredentials;
       }
       invalidateManagedLease(options, "CONNECTION_INELIGIBLE");
+      if (keyPolicyEmptiedPool) {
+        log.warn(
+          "AUTH",
+          `${provider} | ${blockedByKeyPolicyCount} connection(s) hidden by the API key's allowed_connections/quota scope`
+        );
+        return { blockedByKeyPolicy: true, blockedCount: blockedByKeyPolicyCount };
+      }
       log.debug("AUTH", `No credentials for ${provider}`);
       return null;
     }
@@ -2116,10 +2156,11 @@ export async function getProviderCredentials(
           _leaseCandidateIds: candidateIds,
         });
       if (options.deferLeaseClaim) {
-        return materializeConnection(connection, options, {
+        const materialized = await materializeConnection(connection, options, {
           commitSelectionSideEffects,
           selectNextLeaseCandidate,
         });
+        return materialized;
       }
       let claim = mutateExclusiveConnectionLease(
         connection,
@@ -2142,6 +2183,14 @@ export async function getProviderCredentials(
       }
     }
 
+    const reserved = reserveAntigravityLeaseForSelection(
+      provider,
+      connection,
+      requestedModel,
+      options
+    );
+    if (reserved.busy) return reserved.busy;
+
     if (provider === "antigravity" && connection) {
       log.info(
         "AUTH",
@@ -2149,7 +2198,12 @@ export async function getProviderCredentials(
       );
     }
 
-    return materializeConnection(connection, options, { exclusiveLease });
+    const materialized = await materializeConnection(connection, options, {
+      exclusiveLease,
+      routingLease: reserved.lease,
+      requestedModel,
+    });
+    return materialized;
   } finally {
     selectionLock?.release();
   }
@@ -2258,15 +2312,20 @@ export async function getProviderCredentialsWithQuotaPreflight(
       );
       if (claim.kind === "LOST") {
         selectedCredentials.releaseOAuthSession?.();
+        releaseRoutingLeaseFromCredentials(credentials);
         excludedConnectionIds.add(connectionId);
         pendingCredentialSelection =
           await selectedCredentials.selectNextLeaseCandidate?.(connectionId);
         return null;
       }
-      if (claim.kind === "STALE") return { leaseFenceStale: true };
+      if (claim.kind === "STALE") {
+        releaseRoutingLeaseFromCredentials(credentials);
+        return { leaseFenceStale: true };
+      }
       await selectedCredentials.commitSelectionSideEffects?.();
       if (options.materializeCredentials === false) {
         selectedCredentials.releaseOAuthSession?.();
+        releaseRoutingLeaseFromCredentials(credentials);
         return { exclusiveLease: claim.lease, connectionId, provider };
       }
       return { ...credentials, exclusiveLease: claim.lease };
@@ -2365,6 +2424,7 @@ export async function getProviderCredentialsWithQuotaPreflight(
       );
     } catch (error) {
       selectedCredentials.releaseOAuthSession?.();
+      releaseRoutingLeaseFromCredentials(credentials);
       throw error;
     }
     if (preflight.proceed) {
@@ -2374,6 +2434,7 @@ export async function getProviderCredentialsWithQuotaPreflight(
     }
 
     selectedCredentials.releaseOAuthSession?.();
+    releaseRoutingLeaseFromCredentials(credentials);
 
     const unavailableUntil = await markQuotaPreflightAccountUnavailable(
       provider,
@@ -2598,6 +2659,23 @@ export async function markAccountUnavailable(
   try {
     await currentMutex;
 
+    if (isOpencodeFreeTierRefusalForProvider(provider, status, errorText)) {
+      return { shouldFallback: true, cooldownMs: 0 };
+    }
+    if (
+      classifyProviderError(status, errorText, provider) === PROVIDER_ERROR_TYPES.REQUEST_REJECTED
+    )
+      return {
+        shouldFallback: true,
+        cooldownMs:
+          Math.max(
+            0,
+            cooldownUntilMs(
+              (await getProviderConnectionById(connectionId).catch(() => null))
+                ?.rateLimitedUntil as string | number | Date | null | undefined
+            ) - Date.now()
+          ) || 0,
+      };
     // STRICT_ZERO_COST: this connection just failed (whatever the reason) —
     // drop any cached "SAFE" free-allowance reading for it immediately rather
     // than waiting out the TTL, so the very next candidate-pool build reads a
@@ -2748,7 +2826,6 @@ export async function markAccountUnavailable(
     // per-model lockout branches (per-model quota 403/404, codex scope) are left
     // as-is — extending disableCooling to model lockout is a follow-up.
     const disableCooling = connProviderSpecificData.disableCooling === true;
-
     const isPerModelQuotaProvider = hasPerModelQuota(provider, model, connectionPassthroughModels);
 
     // #10334 — connection-scope branch: the matched provider rule declared scope
@@ -2923,7 +3000,7 @@ export async function markAccountUnavailable(
       return { shouldFallback: true, cooldownMs: lockout.cooldownMs };
     }
     if (
-      isPerModelQuotaProvider &&
+      hasPerModelFailureScope(provider, model, connectionPassthroughModels, status) &&
       provider &&
       provider !== "codex" &&
       model &&
@@ -3095,11 +3172,12 @@ export async function markAccountUnavailable(
 
     let terminalStatus = resolveTerminalConnectionStatus(
       status,
-      result as { permanent?: boolean; creditsExhausted?: boolean },
+      result as { permanent?: boolean; creditsExhausted?: boolean; ambiguousAuth?: boolean },
       providerErrorType,
       provider,
       isPerModelQuotaProvider,
-      errorText
+      errorText,
+      connectionId
     );
     // A still-valid access token after a successful refresh is not "expired".
     // A follow-up 401 (timeout, hop, race) must cooldown, not park the account.
@@ -3481,7 +3559,6 @@ export async function isValidApiKey(apiKey: string) {
 
   // Persistent env-var key — always valid regardless of DB state (#1350)
   const envKey = process.env.AGENTPROXY_API_KEY || process.env.ROUTER_API_KEY;
-  if (envKey && apiKey === envKey) return true;
-
+  if (envKey && timingSafeCompare(apiKey, envKey)) return true;
   return await validateApiKey(apiKey);
 }

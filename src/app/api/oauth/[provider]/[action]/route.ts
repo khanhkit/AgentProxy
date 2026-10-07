@@ -40,7 +40,7 @@ import {
   oauthPollSchema,
 } from "@/shared/validation/schemas";
 import { isValidationFailure, validateBody } from "@/shared/validation/helpers";
-import { isAuthRequired, isAuthenticated, verifyAuth } from "@/shared/utils/apiAuth";
+import { requireManagementAuth } from "@/lib/api/requireManagementAuth";
 import { sanitizeErrorMessage } from "@agentproxy/open-sse/utils/error";
 import { GITLAB_DUO_OAUTH_SETUP_MESSAGE } from "@/shared/constants/gitlabDuoSetupMessage";
 import { keychainImportOnlyGuard } from "./keychainImportOnly";
@@ -69,6 +69,7 @@ const NO_PKCE_DEVICE_CODE_PROVIDERS = new Set([
   "codebuddy-cn",
   "grok-cli",
   "ghe-copilot",
+  "muse-code",
 ]);
 
 /**
@@ -108,15 +109,11 @@ function resolvePublicBaseUrl(request: Request): string {
   return new URL(request.url).origin;
 }
 
-async function requireOAuthRouteAuth(request: Request, forceManagementAuth = false) {
-  if (forceManagementAuth) {
-    const authError = await verifyAuth(request);
-    if (!authError) return null;
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
-  if (!(await isAuthRequired(request))) return null;
-  if (await isAuthenticated(request)) return null;
-  return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+// /api/oauth/ is pipeline-public, but these actions start logins and create or
+// overwrite provider connections. Require the same management authority as the
+// neighboring connection-management routes.
+async function requireOAuthRouteAuth(request: Request, alwaysRequireAuth = false) {
+  return requireManagementAuth(request, { invalidApiKeyStatus: 401, alwaysRequireAuth });
 }
 
 /**

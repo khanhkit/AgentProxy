@@ -175,13 +175,12 @@ test("shared set size includes live REGISTRY and all retired web-provider tombst
   // ids/aliases removed from REGISTRY by #11691's migration 166.
   // #11513: the two UC providers add four REGISTRY prefixes — the persona id "uc" +
   // alias "ucn", and the Developer API id "uc-direct" + alias "ucd" (402 → 406).
-  // #12389: the gemini-business registry entry adds its id "gemini-business" and
-  // alias "gembiz" to the REGISTRY walk (406 → 408).
-  // 2026-09-02: a keyless provider was removed at its operator's request, taking its id and
-  // alias out of the REGISTRY walk (408 → 406).
-  // #11786: SeekAi adds id "seekai" + alias "ska" (406 → 408).
-  // Clean-room ChatGPT Web restoration adds live id "chatgpt-web" while the retired
-  // legacy alias "cgpt-web" remains reserved as a tombstone (408 → 410).
+  // #14217 retires gemini-business and its distinct alias gembiz. The current
+  // AgentProxy live set measured 408 immediately before this retirement and 406
+  // after removing those two REGISTRY prefixes, with no tombstones added.
+  // AP-ISS-0130 then adds Agnes CN (id + alias), Lyceum (id=alias), and xKiro
+  // (id only), taking the deduplicated AgentProxy set from 406 to 410.
+  // Measured from RESERVED_PROVIDER_PREFIXES on this head; do not copy upstream literals.
   assert.equal(RESERVED_PREFIX_COUNT, 410);
 });
 

@@ -7,7 +7,7 @@ import {
 import { getDefaultCompressionConfig } from "@agentproxy/open-sse/services/compression/stats.ts";
 import type { CompressionConfig } from "@agentproxy/open-sse/services/compression/types.ts";
 
-function legacyCfg() {
+function legacyCfg(): CompressionConfig {
   return {
     ...getDefaultCompressionConfig(),
     enabled: true,
@@ -18,20 +18,28 @@ function legacyCfg() {
   };
 }
 
-test("no contextBudget → auto-trigger path is byte-identical to legacy", () => {
+test("no contextBudget keeps auto-trigger precedence while lossy modes stay opt-in", () => {
   const cfg = legacyCfg(); // no contextBudget field
-  // under threshold → derived default ("lite")
   const small = selectCompressionPlan(cfg, null, 1000);
   assert.equal(small.mode, "lite");
-  // over threshold → auto-trigger fires → "aggressive"
   const big = selectCompressionPlan(cfg, null, 200000);
-  assert.equal(big.mode, "aggressive");
+  assert.equal(big.source, "auto-trigger");
+  assert.equal(big.mode, "stacked");
+  assert.deepEqual(
+    big.stackedPipeline.map((step) => step.engine),
+    ["session-dedup", "lite"]
+  );
   assert.equal(shouldAutoTrigger(cfg, 200000), true);
 });
 
-test("contextBudget.mode='off' → identical to no contextBudget", () => {
+test("contextBudget.mode='off' keeps the same safe auto-trigger plan", () => {
   const cfg = { ...legacyCfg(), contextBudget: { mode: "off" as const } };
-  assert.equal(selectCompressionPlan(cfg as any, null, 200000).mode, "aggressive");
+  const plan = selectCompressionPlan(cfg, null, 200000);
+  assert.equal(plan.mode, "stacked");
+  assert.deepEqual(
+    plan.stackedPipeline.map((step) => step.engine),
+    ["session-dedup", "lite"]
+  );
 });
 
 test("master off stays off when an adaptive context budget is exceeded", () => {
@@ -75,13 +83,18 @@ test("adaptive floor: bypasses auto-trigger, escalates a base plan to fit", () =
     },
   };
   const tel: {
-    value: import("@agentproxy/open-sse/services/compression/adaptiveCompression/types.ts").AdaptiveTelemetry | null;
+    value:
+      | import("@agentproxy/open-sse/services/compression/adaptiveCompression/types.ts").AdaptiveTelemetry
+      | null;
   } = { value: null };
   // estimatedTokens far over the 200000-window target → adaptive must escalate.
-  const plan = selectCompressionPlan(
-    cfg as any, null, 5_000_000, undefined, undefined, {}, null,
-    { modelContextLimit: 200000, requestMaxTokens: 8000, onAdaptive: (t) => { tel.value = t; } }
-  );
+  const plan = selectCompressionPlan(cfg, null, 5_000_000, undefined, undefined, {}, null, {
+    modelContextLimit: 200000,
+    requestMaxTokens: 8000,
+    onAdaptive: (t) => {
+      tel.value = t;
+    },
+  });
   assert.equal(plan.mode, "stacked");
   assert.ok(plan.stackedPipeline.length > 0);
   assert.ok(tel.value, "adaptive telemetry must be surfaced");
@@ -93,14 +106,27 @@ test("adaptive floor: bypasses auto-trigger, escalates a base plan to fit", () =
 test("adaptive escalation still respects caching downgrade (D-C / §6 cache-safety)", () => {
   const cfg = {
     ...legacyCfg(),
-    contextBudget: { mode: "floor" as const, policy: "reserve-output" as const, outputReserve: 4096, safetyMargin: 1024, pct: 0.85, absoluteBudget: 0 },
+    contextBudget: {
+      mode: "floor" as const,
+      policy: "reserve-output" as const,
+      outputReserve: 4096,
+      safetyMargin: 1024,
+      pct: 0.85,
+      absoluteBudget: 0,
+    },
   };
   // A caching provider context downgrades aggressive/ultra → standard; the adaptive plan's
   // mode is "stacked", which getCacheAwareStrategy passes through unchanged, but the
   // pipeline engines remain those that the existing apply path already cache-guards.
   const body = { model: "openai/gpt-5", messages: [{ role: "user", content: "x" }] };
   const plan = selectCompressionPlan(
-    cfg as any, null, 5_000_000, body, { provider: "openai", model: "openai/gpt-5" }, {}, null,
+    cfg,
+    null,
+    5_000_000,
+    body,
+    { provider: "openai", model: "openai/gpt-5" },
+    {},
+    null,
     { modelContextLimit: 200000, requestMaxTokens: 8000 }
   );
   // mode is still a valid CompressionMode string after the cache-aware pass

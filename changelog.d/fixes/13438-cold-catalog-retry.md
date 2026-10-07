@@ -1,0 +1,1 @@
+- **fix(models):** a cold catalog build that exceeds its time bound now returns a retryable `503` with `Retry-After` instead of a generic `500`.

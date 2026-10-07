@@ -179,16 +179,12 @@ test("base.fetchRouter — gateway router credential wins over client secrets", 
   }) as typeof fetch;
 
   try {
-    await h.publicFetchRouter(
-      { model: "test" },
-      "/v1/chat/completions",
-      {
-        Authorization: "Bearer client-owned-secret",
-        cookie: "session=client-cookie-secret",
-        "x-api-key": "client-api-secret",
-        "x-request-id": "req-42",
-      },
-    );
+    await h.publicFetchRouter({ model: "test" }, "/v1/chat/completions", {
+      Authorization: "Bearer client-owned-secret",
+      cookie: "session=client-cookie-secret",
+      "x-api-key": "client-api-secret",
+      "x-request-id": "req-42",
+    });
   } finally {
     globalThis.fetch = originalFetch;
     if (originalApiKey === undefined) delete process.env.ROUTER_API_KEY;
@@ -203,4 +199,27 @@ test("base.fetchRouter — gateway router credential wins over client secrets", 
   assert.equal(Array.from(sentHeaders.values()).join("\n").includes("client-owned-secret"), false);
   assert.equal(Array.from(sentHeaders.values()).join("\n").includes("client-cookie-secret"), false);
   assert.equal(Array.from(sentHeaders.values()).join("\n").includes("client-api-secret"), false);
+});
+
+test("base.fetchRouter — uses the AgentProxy router default when no base URL is configured", async () => {
+  const h = new TestHandler();
+  const originalFetch = globalThis.fetch;
+  const originalBaseUrl = process.env.AGENTPROXY_BASE_URL;
+  let capturedUrl = "";
+
+  delete process.env.AGENTPROXY_BASE_URL;
+  globalThis.fetch = (async (input: RequestInfo | URL) => {
+    capturedUrl = String(input);
+    return new Response("{}", { status: 200 });
+  }) as typeof fetch;
+
+  try {
+    await h.publicFetchRouter({}, "/v1/chat/completions", {});
+  } finally {
+    globalThis.fetch = originalFetch;
+    if (originalBaseUrl === undefined) delete process.env.AGENTPROXY_BASE_URL;
+    else process.env.AGENTPROXY_BASE_URL = originalBaseUrl;
+  }
+
+  assert.equal(capturedUrl, "http://127.0.0.1:20128/v1/chat/completions");
 });

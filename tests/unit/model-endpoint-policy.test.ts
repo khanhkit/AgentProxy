@@ -28,6 +28,60 @@ test("OpenAI video models are not chat-selectable without upstream endpoint meta
   });
 });
 
+test("OpenRouter :batch variants are not chat-selectable", () => {
+  for (const modelId of [
+    "google/gemini-3.6-flash:batch",
+    "anthropic/claude-sonnet-4.5:batch",
+    "minimax/minimax-m3:batch",
+    "inkling:batch",
+  ]) {
+    assert.deepEqual(getModelEndpointDecision("openrouter", modelId), {
+      kind: "non-chat",
+      chatSelectable: false,
+      reason: "provider-policy",
+    });
+  }
+});
+
+test("OpenRouter non-batch variant suffixes stay chat-selectable", () => {
+  for (const modelId of [
+    "google/gemini-3.6-flash:free",
+    "anthropic/claude-sonnet-4.5:thinking",
+    "meta-llama/llama-4-70b:nitro",
+    "perplexity/sonar:online",
+    "google/gemini-3.6-flash",
+  ]) {
+    assert.equal(isChatSelectableModel("openrouter", { id: modelId }), true, modelId);
+  }
+});
+
+test("synthetic chat default does not re-admit an OpenRouter batch variant", () => {
+  assert.equal(
+    isChatSelectableModel("openrouter", {
+      id: "google/gemini-3.6-flash:batch",
+      supportedEndpoints: ["chat"],
+    }),
+    false
+  );
+});
+
+test("OpenRouter batch policy is scoped to OpenRouter", () => {
+  assert.equal(isChatSelectableModel("custom-provider", { id: "some-model:batch" }), true);
+  assert.equal(isChatSelectableModel(null, { id: "some-model:batch" }), true);
+});
+
+test("chat filtering drops OpenRouter batch variants but keeps base and free variants", () => {
+  const models = [
+    { id: "google/gemini-3.6-flash" },
+    { id: "google/gemini-3.6-flash:batch" },
+    { id: "google/gemini-3.6-flash:free" },
+  ];
+  assert.deepEqual(
+    filterChatSelectableModels("openrouter", models).map((model) => model.id),
+    ["google/gemini-3.6-flash", "google/gemini-3.6-flash:free"]
+  );
+});
+
 test("provider policy is scoped and does not classify another provider by model name", () => {
   assert.equal(
     isChatSelectableModel("custom-provider", { id: "gpt-image-shaped-chat-model" }),
@@ -74,4 +128,21 @@ test("chat import filtering keeps ordinary OpenAI models only", () => {
     ]).map((model) => model.id),
     ["gpt-5.6"]
   );
+});
+
+test("filterChatSelectableModels drops image endpoints during sync for cheaperinference", () => {
+  // Use OmniRoute's native 'supportedEndpoints' array instead of the pseudocode 'type'
+  const mockSyncFixture = [
+    { id: "standard-chat-model", supportedEndpoints: ["chat"] },
+    { id: "grok-imagine", supportedEndpoints: ["images/generations"] },
+    { id: "nano-banana-1", supportedEndpoints: ["images/generations"] },
+  ];
+
+  const result = filterChatSelectableModels("cheaperinference", mockSyncFixture);
+  const resultIds = result.map((m: { id: string }) => m.id);
+
+  assert.equal(result.length, 1);
+  assert.ok(resultIds.includes("standard-chat-model"));
+  assert.equal(resultIds.includes("grok-imagine"), false);
+  assert.equal(resultIds.includes("nano-banana-1"), false);
 });

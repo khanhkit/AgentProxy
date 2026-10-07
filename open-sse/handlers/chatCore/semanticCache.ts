@@ -4,7 +4,7 @@ import {
   isCacheableForRead,
 } from "@/lib/semanticCache";
 import { calculateCost } from "@/lib/usage/costCalculator";
-import { trackPendingRequest } from "@/lib/usageDb";
+import { finalizePendingScope, type PendingRequestScope } from "@/lib/usage/pendingRequestScope";
 import { synthesizeOpenAiSseFromJson } from "../../utils/jsonToSse.ts";
 import { attachAgentProxyMetaHeaders } from "@/domain/agentproxyResponseMeta";
 import { extractUsageFromResponse } from "../usageExtractor.ts";
@@ -19,12 +19,13 @@ export async function checkSemanticCache({
   stream,
   reqLogger,
   effectiveServiceTier,
-  connectionId,
+  pendingScope,
   startTime,
   log,
   persistAttemptLogs,
   apiKeyId,
   cacheDefaultMode,
+  videoTranscriptSensitive,
 }: {
   semanticCacheEnabled: boolean;
   // Only the fields this read path actually touches are named; everything else
@@ -36,13 +37,15 @@ export async function checkSemanticCache({
   stream: boolean;
   reqLogger: { logConvertedResponse: (response: Record<string, unknown>) => void };
   effectiveServiceTier: string | null | undefined;
-  connectionId: string | null;
+  pendingScope: PendingRequestScope;
   startTime: number;
   log: { debug?: (...args: unknown[]) => void } | null;
   persistAttemptLogs: (args: unknown) => void;
   apiKeyId?: string | null;
   cacheDefaultMode?: "legacy" | "bypass" | null;
+  videoTranscriptSensitive?: boolean;
 }) {
+  if (videoTranscriptSensitive) return null;
   // Per-key bypass: skip cache lookup entirely when the API key opts out.
   if (cacheDefaultMode === "bypass") return null;
   if (semanticCacheEnabled && isCacheableForRead(body, clientRawRequest?.headers)) {
@@ -74,7 +77,11 @@ export async function checkSemanticCache({
         clientResponse: cached,
         cacheSource: "semantic",
       });
-      trackPendingRequest(model, provider, connectionId, false);
+      finalizePendingScope(pendingScope, {
+        status: 200,
+        providerResponse: cached,
+        clientResponse: cached,
+      });
       const cachedSse = stream ? synthesizeOpenAiSseFromJson(JSON.stringify(cached)) : "";
       const headers: Record<string, string> = {
         "Content-Type": cachedSse ? "text/event-stream" : "application/json",

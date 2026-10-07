@@ -28,13 +28,12 @@ Environment=DASHBOARD_PORT=20128
 Environment=API_PORT=20129
 Environment=API_HOST=0.0.0.0
 Environment=REDIS_URL=redis://redis:6379
-Environment=JWT_SECRET=change-me-to-a-random-base64-string
-Environment=API_KEY_SECRET=change-me-to-a-random-base64-string
-Environment=INITIAL_PASSWORD=change-me-to-a-random-hex-string
 Environment=NODE_ENV=production
 Environment=REQUIRE_API_KEY=true
 
-# Load additional secrets (API keys, OAuth creds) from the project .env:
+# JWT_SECRET, API_KEY_SECRET, INITIAL_PASSWORD and provider credentials must not
+# be checked into this unit. Generate them before first start and load them from
+# an operator-owned environment file (see contrib/podman/README.md).
 # EnvironmentFile=%h/code/docker/AgentProxy/.env
 
 HealthCmd=node /app/healthcheck.mjs

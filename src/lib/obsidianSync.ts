@@ -1,5 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
+import { resolveDataDir } from "./dataPaths";
 import {
   getObsidianVaultPath,
   setObsidianVaultPath,
@@ -35,6 +36,30 @@ export async function getObsidianSyncStatus(): Promise<ObsidianSyncStatus> {
   return { vaultPath, webdavEnabled, webdavUsername, webdavPassword };
 }
 
+function canonicalPath(target: string): string {
+  try {
+    return fs.realpathSync.native(target);
+  } catch {
+    return path.resolve(target);
+  }
+}
+
+function isSameOrInside(parent: string, child: string): boolean {
+  const rel = path.relative(parent, child);
+  if (rel === "") return true;
+  if (path.isAbsolute(rel)) return false;
+  return rel !== ".." && !rel.startsWith(`..${path.sep}`);
+}
+
+export function vaultPathOverlapsDataDir(resolvedVaultPath: string): boolean {
+  const vault = canonicalPath(resolvedVaultPath);
+  const dataDir = canonicalPath(resolveDataDir());
+  return isSameOrInside(dataDir, vault) || isSameOrInside(vault, dataDir);
+}
+
+export const VAULT_OVERLAPS_DATA_DIR_ERROR =
+  "Vault path must not be the AgentProxy data directory, a directory inside it, or a directory that contains it";
+
 export async function enableObsidianVaultSync(
   vaultPath: string
 ): Promise<ObsidianSyncEnableResult> {
@@ -47,6 +72,10 @@ export async function enableObsidianVaultSync(
   const stat = fs.statSync(resolvedPath);
   if (!stat.isDirectory()) {
     return { success: false, error: `Path is not a directory: ${resolvedPath}` };
+  }
+
+  if (vaultPathOverlapsDataDir(resolvedPath)) {
+    return { success: false, error: VAULT_OVERLAPS_DATA_DIR_ERROR };
   }
 
   try {

@@ -163,14 +163,26 @@ const RULE_KEYWORDS: Record<string, string[]> = {
 
 const ARTICLE_HINT_RE = /\b(?:a|an|the)\b/;
 
-function shouldAttemptRule(ruleName: string, lowerText: string): boolean {
-  if (ruleName === "articles") {
+function shouldAttemptRule(rule: CavemanRule, lowerText: string): boolean {
+  if (rule.name === "articles") {
     ARTICLE_HINT_RE.lastIndex = 0;
     return ARTICLE_HINT_RE.test(lowerText);
   }
 
-  const keywords = RULE_KEYWORDS[ruleName];
-  return !keywords || keywords.some((keyword) => lowerText.includes(keyword));
+  const keywords = RULE_KEYWORDS[rule.name];
+
+  if (!keywords) return true;
+
+  // File-based language packs have their own localized regexes.
+  // Do not block them using the English-only keyword prefilter.
+  if (!CAVEMAN_RULES.includes(rule)) {
+    rule.pattern.lastIndex = 0;
+    const matches = rule.pattern.test(lowerText);
+    rule.pattern.lastIndex = 0;
+    return matches;
+  }
+
+  return keywords.some((keyword) => lowerText.includes(keyword));
 }
 
 export function applyRulesToText(
@@ -178,11 +190,10 @@ export function applyRulesToText(
   rules: CavemanRule[]
 ): { text: string; appliedRules: string[] } {
   let result = text;
-  const lowerResult = text.toLowerCase();
   const appliedRules: string[] = [];
 
   for (const rule of rules) {
-    if (!shouldAttemptRule(rule.name, lowerResult)) continue;
+    if (!shouldAttemptRule(rule, result.toLowerCase())) continue;
 
     const before = result;
     const { pattern, replacement } = rule;

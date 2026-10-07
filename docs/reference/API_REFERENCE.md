@@ -508,6 +508,12 @@ POST /v1/videos/generations { "model": "runway/gen-3", "prompt": "..." }
 POST /v1/music/generations  { "model": "suno/v3.5",   "prompt": "..." }
 ```
 
+> **Provider-node discovery:** models on an OpenAI-compatible provider node appear in `GET /v1/models`
+> under the node prefix. Rows that carry no endpoint metadata (typical for local `/v1/models` listings)
+> inherit the node's `apiType`, so an `embeddings` node's models are `type: "embedding"` and a
+> `rerank` node's models are `type: "rerank"` instead of defaulting to chat; an explicit
+> `supportedEndpoints` on a synced or manually added row still takes precedence.
+
 ### Dedicated Provider Routes
 
 ```bash
@@ -1453,7 +1459,7 @@ Returns the public A2A agent card (name, description, capabilities, skill catalo
 | POST | `/api/evals/suites` | Create a custom eval suite — body validated by `evalSuiteSaveSchema` |
 | GET | `/api/evals/suites/[id]` | Retrieve a custom eval suite |
 
-**Auth:** `/api/cloud/auth` validates a Bearer key directly; the other `/api/cloud/*`, `/api/evals/*`, and `/api/assess` routes require management session/API key. `/api/assess` POST uses `validateBody` with a discriminated-union scope schema.
+**Auth:** `/api/cloud/auth` validates a Bearer key directly and returns the masked key and `projectId` of each connection only for a key with the `manage` / `admin` scope; the other `/api/cloud/*`, `/api/evals/*`, and `/api/assess` routes require management session/API key. `/api/assess` POST uses `validateBody` with a discriminated-union scope schema.
 
 ---
 

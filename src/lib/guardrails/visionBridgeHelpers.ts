@@ -69,43 +69,6 @@ export function resolveProviderApiKey(model: string, explicitKey?: string): stri
   return process.env[envVar] || "";
 }
 
-let selfLoopKeyPromise: Promise<string> | null = null;
-
-/**
- * Resolve a real API key for the AgentProxy SELF-LOOP describe call.
- *
- * The `sk_agentproxy` sentinel works only when REQUIRE_API_KEY is disabled; on
- * REQUIRE_API_KEY instances it is rejected with 401 "Missing API key", which
- * silently breaks every vision-bridge describe. Priority:
- *   1. VISION_BRIDGE_API_KEY env (already handled by resolveProviderApiKey —
- *      kept here for the injected-resolver test path).
- *   2. Injected resolver (tests) or the DB-backed `getOrCreateApiKey()` —
- *      memoized so at most one key is created per process.
- *   3. `sk_agentproxy` as a final fallback (local mode without auth).
- */
-export async function resolveSelfLoopApiKey(resolver?: () => Promise<string>): Promise<string> {
-  const envKey = (process.env.VISION_BRIDGE_API_KEY || "").trim();
-  if (envKey) return envKey;
-  if (resolver) {
-    const key = (await resolver()).trim();
-    if (key) return key;
-    return "sk_agentproxy";
-  }
-  if (!selfLoopKeyPromise) {
-    selfLoopKeyPromise = (async () => {
-      try {
-        const { getOrCreateApiKey } = await import("@/shared/services/apiKeyResolver");
-        const key = await getOrCreateApiKey();
-        if (typeof key === "string" && key.trim().length > 0) return key.trim();
-      } catch {
-        /* fall through */
-      }
-      return "sk_agentproxy";
-    })();
-  }
-  return selfLoopKeyPromise;
-}
-
 /**
  * Resolve the OpenAI-compatible base URL for non-Anthropic vision bridge calls
  * (issue #2232).
@@ -147,11 +110,26 @@ export function resolveVisionBridgeBaseUrl(model?: string): string {
   return "https://api.openai.com/v1";
 }
 
+function isOwnAgentProxyBaseUrl(baseUrl: string): boolean {
+  let url: URL;
+  try {
+    url = new URL(baseUrl);
+  } catch {
+    return false;
+  }
+  if (!["localhost", "127.0.0.1", "[::1]"].includes(url.hostname)) return false;
+  const urlPort = url.port || (url.protocol === "https:" ? "443" : "80");
+  const { port, apiPort, dashboardPort } = getRuntimePorts();
+  return [port, apiPort, dashboardPort].some((listenPort) => String(listenPort) === urlPort);
+}
+
 export interface ImagePart {
   messageIndex: number;
   partIndex: number;
   imageUrl: string;
   imageType: "image_url" | "image" | "url";
+  /** Path from the top-level content part to a nested image object. */
+  path?: (string | number)[];
 }
 
 export interface RequestMessage {
@@ -204,13 +182,14 @@ export function extractImageParts(messages: RequestMessage[]): ImagePart[] {
   // extracted part MUST be replaceable, in the same order, or the positional
   // descriptions shift onto the wrong images.
   return detectMediaParts(messages)
-    .filter((p) => p.kind === "image" && !p.nested && REPLACEABLE_IMAGE_SHAPES.has(p.shape))
+    .filter((p) => p.kind === "image" && REPLACEABLE_IMAGE_SHAPES.has(p.shape))
     .map((p) => ({
       messageIndex: p.messageIndex,
       partIndex: p.partIndex,
       imageUrl: p.ref,
       imageType:
         p.shape === "image_base64" ? "image" : p.shape === "image_source_url" ? "url" : "image_url",
+      ...(p.nested ? { path: p.path } : {}),
     }));
 }
 
@@ -229,7 +208,7 @@ export async function ensureBase64ImagesForClaudeWire(
   fetchImpl?: typeof fetch
 ): Promise<RequestBody> {
   if (!isClaudeWireFormatModel(model)) return body;
-  const parts = extractImageParts(body.messages as RequestMessage[]);
+  const parts = extractImageParts(body.messages as RequestMessage[]).filter((part) => !part.path);
   if (parts.length === 0) return body;
 
   const resolved = await Promise.all(
@@ -246,7 +225,7 @@ export async function ensureBase64ImagesForClaudeWire(
 
   // Map sequential image index → resolved data URI (null = keep original).
   const byIndex = new Map<number, string>();
-  parts.forEach((part, i) => {
+  parts.forEach((_part, i) => {
     if (resolved[i]) byIndex.set(i, resolved[i] as string);
   });
   if (byIndex.size === 0) return body;
@@ -745,42 +724,25 @@ async function callVisionModelSingle(
           !config.model.startsWith("openai/"));
       const requestModel = useFullModelId ? config.model : modelName;
 
-      // Build headers with optional recursion guard for self-loop calls.
-      // When routing through AgentProxy's own API, omit the vision-bridge
-      // guardrail on the sub-request to prevent infinite recursion.
-      // Use a real DB-backed key for self-loop (sk_agentproxy is rejected by
-      // REQUIRE_API_KEY instances with 401 "Missing API key").
-      const selfLoopApiKey = resolvedApiKey || (await resolveSelfLoopApiKey());
+      // Only AgentProxy's own listener receives the internal self-loop bearer.
+      const selfLoopBearer =
+        isOwnAgentProxyBaseUrl(baseUrl) && (useFullModelId || !resolvedApiKey)
+          ? resolveSelfLoopBearer()
+          : null;
+      const bearer = selfLoopBearer ?? resolvedApiKey;
       const headers: Record<string, string> = {
         "Content-Type": "application/json",
-        // Explicit JSON opt-in: without `Accept: application/json` AgentProxy's
-        // self-loop defaults to SSE (resolveStreamFlag's legacy default) and the
-        // describe call would receive a `data:` stream that response.json() can't
-        // parse (`Unexpected token 'd'`), failing the whole vision-bridge
-        // describe path. Pair with `stream: false` below.
         Accept: "application/json",
-        Authorization: `Bearer ${selfLoopApiKey}`,
       };
-      if (useFullModelId) {
+      if (bearer) headers.Authorization = `Bearer ${bearer}`;
+      if (useFullModelId || selfLoopBearer) {
         headers["x-agentproxy-disabled-guardrails"] = routeThroughAgentProxy
           ? "vision-bridge,video-bridge"
           : "vision-bridge";
-        // Internal self-loop sub-request: the parent request already holds the
-        // single heavyweight admission lease (`CHAT_MAX_HEAVY_IN_FLIGHT=1`), so a
-        // large base64-image describe body would be rejected with 503
-        // `chat_admission_busy` before it is described. The route only honors
-        // this header for trusted self-loop credentials (the local
-        // `sk_agentproxy` sentinel OR the operator-configured env key), so
-        // external clients cannot use it to bypass admission.
-        headers["x-agentproxy-admission-bypass"] = "internal";
-        // The compression pipeline must not touch the image payload of the
-        // self-loop describe call (stacked RTK/Caveman can mangle data URIs).
         headers["x-agentproxy-compression"] = "off";
-        // The admission bypass honors the env key when set (REQUIRE_API_KEY=true
-        // deployments) and the `sk_agentproxy` sentinel otherwise. Force the same
-        // resolved credential so the bypass holds even when a real vision key is
-        // configured for the vision model's provider.
-        headers["Authorization"] = `Bearer ${resolveSelfLoopBearer()}`;
+      }
+      if (selfLoopBearer) {
+        headers["x-agentproxy-admission-bypass"] = "internal";
       }
 
       response = await fetchImpl(`${baseUrl}/chat/completions`, {
@@ -910,45 +872,42 @@ export function replaceImageParts(
   }
 
   const replacementTextType: "text" | "input_text" = usesResponsesInput ? "input_text" : "text";
+  const mediaParts = detectMediaParts(requestMessages).filter(
+    (part) => part.kind === "image" && REPLACEABLE_IMAGE_SHAPES.has(part.shape)
+  );
 
   let descriptionIndex = 0;
+  for (const part of mediaParts) {
+    const description =
+      descriptionIndex < descriptions.length ? descriptions[descriptionIndex++] : null;
+    if (description == null) continue;
 
-  for (let msgIdx = 0; msgIdx < requestMessages.length; msgIdx++) {
-    const message = requestMessages[msgIdx];
-    if (!message || !Array.isArray(message.content)) {
+    const message = requestMessages[part.messageIndex];
+    if (!message || !Array.isArray(message.content)) continue;
+    const replacement = { type: replacementTextType, text: description };
+
+    if (!part.path || part.path.length === 0) {
+      (message.content as unknown[])[part.partIndex] = replacement;
       continue;
     }
 
-    const newContent: RequestContentPart[] = [];
-
-    for (const part of message.content) {
-      // `input_image` (Responses API) is read through a widened type: it is
-      // not part of the historical RequestContentPart union but MUST be
-      // replaceable — extractImageParts allowlists it, and every extracted
-      // part needs a matching splice here (extract↔replace contract).
-      const partType = (part as { type?: string } | null | undefined)?.type;
-      if (partType === "image_url" || partType === "image" || partType === "input_image") {
-        if (descriptionIndex < descriptions.length) {
-          const description = descriptions[descriptionIndex];
-          descriptionIndex++;
-          if (description == null) {
-            // #4012: describe failed for this image — preserve the original
-            // image so a vision-capable upstream can still process it.
-            newContent.push(part as RequestContentPart);
-          } else {
-            newContent.push({
-              type: replacementTextType,
-              text: description,
-            } as RequestContentPart);
-          }
-        }
-      } else {
-        newContent.push(part as RequestContentPart);
-      }
-    }
-
-    message.content = newContent;
+    const container = message.content[part.partIndex] as Record<string, unknown>;
+    replaceObjectAtPath(container, part.path, replacement);
   }
 
   return result;
+}
+
+function replaceObjectAtPath(
+  container: Record<string, unknown>,
+  path: (string | number)[],
+  replacement: Record<string, unknown>
+): void {
+  let node: unknown = container;
+  for (let i = 0; i < path.length - 1; i++) {
+    const next = (node as Record<string, unknown> | null | undefined)?.[path[i] as string];
+    if (next == null || typeof next !== "object") return;
+    node = next;
+  }
+  (node as Record<string, unknown>)[path[path.length - 1] as string] = replacement;
 }

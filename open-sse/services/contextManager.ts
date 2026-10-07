@@ -651,8 +651,11 @@ function purifyHistory(messages: Record<string, unknown>[], targetTokens: number
   // index 0 is accepted by every provider (same slot the old splice used when
   // system[] was empty).
   if (keep < nonSystem.length) {
-    const dropped = nonSystem.length - keep;
-    const droppedNotice = `[Context compressed: ${dropped} earlier messages removed to fit context window]`;
+    // Byte-stable: no interpolated drop count. A per-request count here
+    // changes messages[0] on nearly every request over a growing
+    // conversation, busting the upstream provider's prefix cache anchored
+    // at index 0 (issue #14600).
+    const droppedNotice = "[Context compressed: earlier messages removed to fit context window]";
     const first = result[0];
     if (first && (first.role === "system" || first.role === "developer")) {
       if (typeof first.content === "string") {
@@ -937,12 +940,11 @@ export function stripTrailingAssistantOrphanToolUse(
 }
 
 /**
- * Providers that strictly require the last message to be `user` or `tool`.
- * A trailing `assistant` message with plain text content (no tool_use) is
- * valid for Anthropic/OpenAI (signals "continue from here") but rejected by
- * Mistral with: "Expected last role User or Tool … but got assistant" (#3396).
+ * Providers that reject a trailing text-only assistant turn.
+ * Mistral requires the last role to be user/tool (#3396), while official
+ * Claude OAuth rejects assistant-message prefill (#13572).
  */
-const PROVIDERS_REQUIRING_USER_LAST_MESSAGE = new Set(["mistral"]);
+const PROVIDERS_REQUIRING_USER_LAST_MESSAGE = new Set(["mistral", "claude"]);
 
 /**
  * Strip a trailing `assistant` message that contains ONLY plain text (no

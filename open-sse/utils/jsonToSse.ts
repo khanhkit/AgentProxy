@@ -55,7 +55,8 @@ function buildReasoningDelta(message: JsonRecord): JsonRecord | null {
     delta.reasoning_details = message.reasoning_details;
   }
 
-  if (!addReadableReasoning(message, delta)) {
+  addReadableReasoning(message, delta);
+  if (!nonEmptyString(message.reasoning_content)) {
     addUnsupportedReasoning(message, delta);
   }
 

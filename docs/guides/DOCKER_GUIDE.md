@@ -29,6 +29,12 @@ lastUpdated: 2026-06-28
 
 ## Quick Run
 
+> **Self-host in one command?** See the
+> [Self-Host Guide](../getting-started/SELF_HOST_GUIDE.md) —
+> `docker compose -f docker-compose.selfhost.yml up -d` (published image +
+> Redis, loopback-only, no profile choice). The Quick Run below is the
+> single-container path for users who already run Redis elsewhere.
+
 ```bash
 docker run -d \
   --name agentproxy \
@@ -251,7 +257,7 @@ Three build args control what the `builder` stage costs. They are build-time onl
 
 | Build arg                   | Default | Effect                                                                              |
 | --------------------------- | ------- | ----------------------------------------------------------------------------------- |
-| `AGENTPROXY_USE_TURBOPACK`   | `1`     | `0` builds with webpack instead. Lower peak memory, slower.                         |
+| `AGENTPROXY_USE_TURBOPACK`   | `0`     | `0` builds with webpack: lower peak memory, slower. `1` opts into Turbopack.        |
 | `AGENTPROXY_BUILD_MEMORY_MB` | `6144`  | V8 heap ceiling (`--max-old-space-size`) for the spawned `next build`.              |
 | `AGENTPROXY_BUILD_WORKERS`   | `2`     | Feeds `CIRCLE_NODE_TOTAL`; Next derives `workers = N - 1` for page-data collection. |
 
@@ -273,11 +279,15 @@ Turbopack compiles in native Rust memory that lives **outside** the V8 heap, so
 `AGENTPROXY_BUILD_MEMORY_MB` does not bound it. On a host with a memory ceiling the
 build is then SIGKILLed by the OOM killer with no error text at all — it simply
 stops mid-`Creating an optimized production build`, which reads like a hang rather
-than an out-of-memory. If the build host is constrained, switch bundlers:
+than an out-of-memory. That is why the `Dockerfile` defaults to webpack
+(`AGENTPROXY_USE_TURBOPACK=0`), unlike `npm run dev` / `npm run build`, where
+Turbopack remains the code default. Bare `docker build .` flows used by Railway,
+other one-click hosts, and ad-hoc self-hosters therefore avoid the high-memory
+Turbopack default. On a builder with plenty of RAM, opt into Turbopack:
 
 ```bash
 docker build --target runner-base \
-  --build-arg AGENTPROXY_USE_TURBOPACK=0 \
+  --build-arg AGENTPROXY_USE_TURBOPACK=1 \
   -t agentproxy:base .
 ```
 

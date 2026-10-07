@@ -12,6 +12,11 @@ providers:
         messages:
           - role: user
             content: "{{prompt}}"
+      # The injection guard intentionally returns HTTP 400. Promptfoo rejects
+      # non-2xx responses before transformResponse unless the expected status is
+      # explicitly admitted, which otherwise turns a correct SECURITY_001 body
+      # into output:null. Keep the application fail-closed; adapt only this test.
+      validateStatus: "status === 400"
       transformResponse: "json"
 defaultTest:
   options:

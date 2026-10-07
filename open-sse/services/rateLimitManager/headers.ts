@@ -32,31 +32,36 @@ export const ANTHROPIC_HEADERS = {
  * Formats: "1s", "1m", "1h", "1ms", "60", ISO date, Unix timestamp
  */
 export function parseResetTime(value) {
-  if (!value) return null;
+  const text = value?.trim();
+  if (!text) return null;
 
-  // Duration strings: "1s", "500ms", "1m30s"
-  const durationMatch = value.match(/^(?:(\d+)h)?(?:(\d+)m(?!s))?(?:(\d+)s)?(?:(\d+)ms)?$/);
+  // Duration strings: "1s", "500ms", "1m30s", "2m59.56s"
+  const durationMatch = text.match(
+    /^(?:(\d+)h)?(?:(\d+)m(?!s))?(?:(\d+(?:\.\d+)?)s)?(?:(\d+(?:\.\d+)?)ms)?$/
+  );
   if (durationMatch) {
     const [, h, m, s, ms] = durationMatch;
-    return (
-      (parseInt(h || 0) * 3600 + parseInt(m || 0) * 60 + parseInt(s || 0)) * 1000 +
-      parseInt(ms || 0)
+    return Math.round(
+      (parseInt(h || 0) * 3600 + parseInt(m || 0) * 60 + parseFloat(s || 0)) * 1000 +
+        parseFloat(ms || 0)
     );
   }
 
-  // Pure number: assume seconds
-  const num = parseFloat(value);
-  if (!isNaN(num) && num > 0) {
-    // If it looks like a Unix timestamp (> year 2025)
-    if (num > 1700000000) {
-      return Math.max(0, num * 1000 - Date.now());
+  // Pure number: assume seconds. Require the whole string to be numeric so
+  // RFC3339 values like "2026-..." do not get misread as 2026 seconds.
+  if (/^\d+(?:\.\d+)?$/.test(text)) {
+    const num = parseFloat(text);
+    if (num > 0) {
+      if (num > 1700000000) {
+        return Math.max(0, num * 1000 - Date.now());
+      }
+      return num * 1000;
     }
-    return num * 1000;
   }
 
-  // ISO date string
+  // ISO / RFC3339 date string
   try {
-    const date = new Date(value);
+    const date = new Date(text);
     if (!isNaN(date.getTime())) {
       return Math.max(0, date.getTime() - Date.now());
     }

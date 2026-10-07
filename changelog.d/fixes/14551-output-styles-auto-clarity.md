@@ -1,0 +1,1 @@
+- **fix(compression):** the output-styles path honors the dashboard's Auto-Clarity Bypass toggle, so turning it off keeps the selected styles on security, irreversible-action, clarification, and order-sensitive turns (upstream #14551) — thanks @woodsonl

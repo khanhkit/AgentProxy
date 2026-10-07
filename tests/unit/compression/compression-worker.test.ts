@@ -6,6 +6,7 @@ import {
 } from "../../../open-sse/services/compression/compressionWorkerProtocol.ts";
 import {
   closeCompressionWorkerPoolForTests,
+  CompressionWorkerError,
   CompressionWorkerPool,
 } from "../../../open-sse/services/compression/compressionWorkerPool.ts";
 import {
@@ -78,22 +79,34 @@ describe("compression worker eligibility", () => {
     }
   });
 
-  it("rejects functions, symbols, classes, special objects, cycles, and non-finite numbers", () => {
-    for (const value of [
-      () => undefined,
-      Symbol("x"),
-      new Date(),
-      new Map(),
-      new Set(),
-      /x/,
-      NaN,
-      Infinity,
-    ]) {
+  it("rejects functions, symbols, cycles, and non-finite numbers", () => {
+    for (const value of [() => undefined, Symbol("x"), NaN, Infinity]) {
       assert.equal(isStrictlySerializable(value), false);
     }
     const cyclic: Record<string, unknown> = {};
     cyclic.self = cyclic;
     assert.equal(isStrictlySerializable(cyclic), false);
+  });
+
+  it("#13154: accepts structured-clone-native values and undefined", () => {
+    for (const value of [undefined, new Date(), new Map([["k", 1]]), new Set([1]), /x/]) {
+      assert.equal(isStrictlySerializable(value), true);
+    }
+  });
+
+  it("#13154: accepts realistic worker options with optional fields unset", () => {
+    const workerOptions = {
+      model: "gpt-test",
+      supportsVision: undefined,
+      providerTransport: undefined,
+      provider: undefined,
+      imageTransportFidelity: undefined,
+      sourceFormat: undefined,
+      targetFormat: undefined,
+      compressionStage: undefined,
+      config,
+    };
+    assert.equal(isCompressionWorkerEligible(body, "stacked", workerOptions), true);
   });
 });
 
@@ -126,11 +139,14 @@ describe("compression worker execution", () => {
     assert.deepEqual(steps, ["rtk", "caveman"]);
   });
 
-  it("fails open without inline compression when a job times out", async () => {
+  it("marks a worker timeout non-retryable so the public async path can fail open", async () => {
     const pool = new CompressionWorkerPool({ size: 1, timeoutMs: 1, idleMs: 100 });
     try {
-      const result = await pool.run(body, "stacked", { config });
-      assert.deepEqual(result, { body, compressed: false, stats: null });
+      await assert.rejects(
+        pool.run(body, "stacked", { config }),
+        (error: unknown) =>
+          error instanceof CompressionWorkerError && error.retryInProcess === false
+      );
     } finally {
       await pool.close();
     }

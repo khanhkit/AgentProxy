@@ -78,7 +78,7 @@ async function withSandboxModule(fakeSpawn, fn) {
   }
 }
 
-test("builtin skill handlers validate required fields and perform real sandboxed work", async () => {
+test("builtin skill handlers validate required fields and perform real sandboxed work", async (t) => {
   const dataDir = makeTempDir("agentproxy-skills-builtins-");
   const context = { apiKeyId: "key-123", sessionId: "session-123" };
 
@@ -139,6 +139,24 @@ test("builtin skill handlers validate required fields and perform real sandboxed
         /restricted segment/
       );
 
+      const dns = await import("node:dns");
+      const originalPromisesLookup = dns.promises.lookup;
+      dns.promises.lookup = async (hostname, options) =>
+        hostname === "example.com"
+          ? [{ address: "93.184.216.34", family: 4 }]
+          : originalPromisesLookup(hostname, options);
+      const { setSafeOutboundPinnedFetchTestOverride } =
+        await import("../../src/shared/network/safeOutboundFetch.ts");
+      const pinnedTo: string[] = [];
+      setSafeOutboundPinnedFetchTestOverride((address) => {
+        pinnedTo.push(address);
+        return (url, init) => globalThis.fetch(url, init);
+      });
+      t.after(() => {
+        dns.promises.lookup = originalPromisesLookup;
+        setSafeOutboundPinnedFetchTestOverride(undefined);
+      });
+
       globalThis.fetch = async (url, init) => {
         assert.equal(String(url), "https://example.com/api");
         assert.equal(init.method, "POST");
@@ -166,6 +184,7 @@ test("builtin skill handlers validate required fields and perform real sandboxed
       assert.equal(httpResult.status, 201);
       assert.equal(httpResult.body, "created");
       assert.equal(httpResult.headers["content-type"], "text/plain");
+      assert.deepEqual(pinnedTo, ["93.184.216.34"]);
 
       await assert.rejects(
         () => builtinSkills.http_request({ url: "http://127.0.0.1:9000" }, context),

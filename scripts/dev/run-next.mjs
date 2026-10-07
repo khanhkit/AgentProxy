@@ -22,10 +22,7 @@ import {
   stopRustCore,
 } from "./rust-core-supervisor.mjs";
 import { createSystemdNotifier } from "./systemd-notify.mjs";
-import {
-  attachRequestStreamGuards,
-  installProcessCrashGuard,
-} from "./httpClientAbortGuard.mjs";
+import { attachRequestStreamGuards, installProcessCrashGuard } from "./httpClientAbortGuard.mjs";
 
 const { maybeHandleDisallowedMethod } = methodGuard;
 const { wrapRequestListenerWithHeadResponseGuard } = headResponseGuard;
@@ -115,6 +112,12 @@ process.env.AGENTPROXY_INTERNAL_SCHEME = "http";
 
 const { apiPort, dashboardPort } = runtimePorts;
 const hostname = process.env.HOST || "0.0.0.0";
+// Publish the interface this server actually binds so in-process TypeScript
+// (src/lib/startup/nonLoopbackApiKeyGuard.ts) can warn about an exposed
+// anonymous /v1 without re-deriving it. The standalone/Docker entrypoint
+// (scripts/dev/run-standalone.mjs -> Next's own server.js) uses HOSTNAME
+// instead, which the guard falls back to. #13695
+process.env.AGENTPROXY_BOUND_HOST = hostname;
 // Turbopack by default in dev (matches the Next 16 CLI default and the production
 // build default in build-next-isolated.mjs); AGENTPROXY_USE_TURBOPACK=0 is the
 // webpack escape hatch. Under Bun, Turbopack native V8 bindings are unavailable,
@@ -246,13 +249,25 @@ async function start() {
   });
 
   const shutdown = async (signal, exitCode = 0) => {
-    if (shuttingDown) return;
+    if (shuttingDown) {
+      // A second Ctrl+C / signal forces immediate exit.
+      process.exit(1);
+    }
     shuttingDown = true;
+
+    // Safety net: force exit if keep-alive sockets or application cleanup hangs.
+    const forceExitTimer = setTimeout(() => {
+      process.exit(exitCode);
+    }, 2000);
+    forceExitTimer.unref?.();
+
     systemdNotifier.stopping();
     try {
       if (rustCoreHandle?.child) {
         await stopRustCore(rustCoreHandle.child);
       }
+      server.closeIdleConnections?.();
+      server.closeAllConnections?.();
       await new Promise((resolve) => server.close(resolve));
       await globalThis.__agentproxyRequestShutdown?.(signal);
       await nextApp.close();
@@ -260,6 +275,7 @@ async function start() {
       console.error("[SHUTDOWN] Failed during signal:", signal, error);
       exitCode = exitCode || 1;
     } finally {
+      clearTimeout(forceExitTimer);
       process.exit(exitCode);
     }
   };

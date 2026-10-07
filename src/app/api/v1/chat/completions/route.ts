@@ -1,10 +1,10 @@
 import { z } from "zod";
 import { CORS_HEADERS, handleCorsOptions } from "@/shared/utils/cors";
-import { callCloudWithMachineId } from "@/shared/utils/cloud";
 import { handleChat } from "@/sse/handlers/chat";
 import { generateRequestId } from "@/shared/utils/requestId";
 import { resolveIncomingCorrelationId } from "@/shared/utils/correlationPreserve.ts";
 import { errorResponse } from "@agentproxy/open-sse/utils/error.ts";
+import { handleSelfHostedCompletions } from "@agentproxy/open-sse/services/selfHostedEntry.ts";
 import { initTranslators } from "@agentproxy/open-sse/translator/index.ts";
 import { createInjectionGuard } from "@/middleware/promptInjectionGuard";
 import { acceptHeaderForcesStream } from "@agentproxy/open-sse/utils/aiSdkCompat.ts";
@@ -12,6 +12,7 @@ import {
   OPENAI_CHAT_ERROR_FRAME,
   OPENAI_KEEPALIVE_FRAME,
   OPENAI_STARTUP_FRAME,
+  withDeadlineSignal,
   withEarlyStreamKeepalive,
 } from "@agentproxy/open-sse/utils/earlyStreamKeepalive";
 import { resolveKeepaliveThreshold } from "@agentproxy/open-sse/utils/keepaliveThreshold";
@@ -36,6 +37,7 @@ import {
   assertCommonChatGptWebModelAvailable,
   isCommonChatGptWebRetirementError,
 } from "@/shared/constants/chatgptWebRetirement";
+import { ensureSemanticCacheDbBridge } from "@/lib/cache/semanticCacheDbBridge";
 
 let initPromise = null;
 
@@ -48,6 +50,7 @@ const injectionGuard = createInjectionGuard({ logger: null });
  */
 function ensureInitialized() {
   if (!initPromise) {
+    ensureSemanticCacheDbBridge();
     initPromise = Promise.resolve(initTranslators()).then(() => {
       console.log("[SSE] Translators initialized");
     });
@@ -112,6 +115,13 @@ export async function POST(request) {
   // Reserve heavyweight capacity atomically and ingest the body with a hard byte bound
   // BEFORE JSON parsing. Missing or dishonest Content-Length values cannot bypass
   // the actual-byte limit. Capacity exhaustion is retryable rather than process-fatal.
+  // The deadline wrap comes first so every downstream consumer (admission, body
+  // parse, handleChat, lease release) observes the combined signal: a deadline
+  // abort then tears the handler down exactly like a client disconnect.
+  const { wrappedReq: deadlineReq, deadlineController: routeDeadlineController } =
+    withDeadlineSignal(request);
+  request = deadlineReq;
+  const routeDeadlineSignal = request.signal;
   const sessionId = resolveSessionId(request);
   const admissionResult = await admitChatRequest(request, {
     sessionId,
@@ -156,6 +166,33 @@ export async function POST(request) {
             return finishAdmission(
               errorResponse(400, `${field}: ${issue?.message ?? "Invalid request"}`)
             );
+          }
+
+        const { blocked, result } = injectionGuard(parsedBody);
+        if (blocked) {
+          return finishAdmission(
+            new Response(
+              JSON.stringify({
+                error: {
+                  message: "Request blocked: potential prompt injection detected",
+                  type: "injection_detected",
+                  code: "SECURITY_001",
+                  detections: result.detections.length,
+                },
+              }),
+              { status: 400, headers: { ...CORS_HEADERS, "Content-Type": "application/json" } }
+            )
+          );
+        }
+
+          // Self-hosted unified entry (D4 — RIC-738): when a provider config is
+          // present, divert BEFORE the cloud-only model retirement/alias checks so
+          // self-hosted model ids (`local/llama3`, `ollama/qwen2`, ...) never trip
+          // cloud-peer 410s or alias rewrites. Config-absent requests proceed to the
+          // normal cloud pipeline unchanged.
+          const selfHostedResponse = await handleSelfHostedCompletions(request, parsedBody);
+          if (selfHostedResponse) {
+            return finishAdmission(selfHostedResponse);
           }
 
           try {
@@ -208,22 +245,6 @@ export async function POST(request) {
           });
         }
 
-        const { blocked, result } = injectionGuard(parsedBody);
-        if (blocked) {
-          return finishAdmission(
-            new Response(
-              JSON.stringify({
-                error: {
-                  message: "Request blocked: potential prompt injection detected",
-                  type: "injection_detected",
-                  code: "SECURITY_001",
-                  detections: result.detections.length,
-                },
-              }),
-              { status: 400, headers: { ...CORS_HEADERS, "Content-Type": "application/json" } }
-            )
-          );
-        }
       }
     } catch (error) {
       console.error("[SECURITY] Prompt injection guard failed:", error);
@@ -258,15 +279,17 @@ export async function POST(request) {
       const handlerResponse = releaseChatAdmissionAfterHandler(
         handleChat(request, null, parsedBody, reqId),
         admission.lease,
-        { signal: request.signal }
+        { signal: routeDeadlineSignal }
       );
       const streamedResponse = await withEarlyStreamKeepalive(handlerResponse, {
-        signal: request.signal,
+        signal: routeDeadlineSignal,
         thresholdMs: resolveKeepaliveThreshold(parsedBody?.model),
         keepaliveFrame: OPENAI_KEEPALIVE_FRAME,
         startupFrame: OPENAI_STARTUP_FRAME,
         errorFrame: OPENAI_CHAT_ERROR_FRAME,
+        correlationId: reqId,
         extraHeaders: { "X-Correlation-Id": reqId },
+        deadlineController: routeDeadlineController,
       });
       return withCompressionHeaderEcho(streamedResponse, compressionRequestHeader);
     }

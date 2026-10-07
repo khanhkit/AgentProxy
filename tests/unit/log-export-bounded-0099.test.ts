@@ -139,15 +139,17 @@ test("AP-ISS-0099 small call-log export preserves the legacy JSON envelope and f
   const text = await response.text();
 
   assert.equal(response.status, 200);
-  assert.equal(response.headers.get("content-type"), "application/json");
+  assert.equal(response.headers.get("content-type"), "application/json; charset=utf-8");
   assert.match(
     response.headers.get("content-disposition") ?? "",
     /^attachment; filename="agentproxy-call_logs-168h-\d{4}-\d{2}-\d{2}\.json"$/
   );
-  assert.equal(
-    text,
-    JSON.stringify({ logs: expectedLogs, count: 2, hours: 168, type: "call-logs" }, null, 2)
-  );
+  assert.deepEqual(JSON.parse(text), {
+    count: 2,
+    hours: 168,
+    type: "call-logs",
+    logs: expectedLogs,
+  });
 });
 
 test("AP-ISS-0099 request-log alias keeps call_logs filename and request-logs type", async () => {
@@ -183,10 +185,12 @@ test("AP-ISS-0099 proxy export preserves descending rows and historical public_i
   };
 
   assert.equal(response.status, 200);
-  assert.equal(
-    text,
-    JSON.stringify({ logs: expectedLogs, count: 3, hours: 168, type: "proxy-logs" }, null, 2)
-  );
+  assert.deepEqual(body, {
+    count: 3,
+    hours: 168,
+    type: "proxy-logs",
+    logs: expectedLogs,
+  });
   assert.equal(body.count, 3);
   assert.equal(body.logs[0].id, "proxy-2");
   assert.equal(body.logs[0].public_ip, "203.0.113.10");
@@ -229,10 +233,12 @@ test("AP-ISS-0099 empty call-log export preserves the legacy JSON envelope", asy
   const text = await response.text();
 
   assert.equal(response.status, 200);
-  assert.equal(
-    text,
-    JSON.stringify({ logs: [], count: 0, hours: 168, type: "call-logs" }, null, 2)
-  );
+  assert.deepEqual(JSON.parse(text), {
+    count: 0,
+    hours: 168,
+    type: "call-logs",
+    logs: [],
+  });
 });
 
 test("AP-ISS-0099 management auth still rejects an unauthenticated request before export", async () => {

@@ -9,6 +9,7 @@ import {
   isSpawnCapableSource,
   findSpawnCapableRoutes,
   KNOWN_UNCLASSIFIED_SOURCE_SPAWN,
+  SPAWN_CAPABLE_ROUTE_ROOTS,
 } from "../../scripts/check/check-route-guard-membership.ts";
 import { isLocalOnlyPath } from "../../src/server/authz/routeGuard.ts";
 
@@ -151,6 +152,19 @@ test("#7948: /api/acp/agents (transitive execFileSync via registry) is classifie
   // subcheck above only greps the route file itself, so it cannot catch this
   // class of gap. This assertion is the direct regression guard for #7948.
   assert.equal(isLocalOnlyPath("/api/acp/agents"), true);
+});
+
+test("/api/version-manager lifecycle routes are local-only while read-only status stays remote-safe", async () => {
+  const { isLocalOnlyPath } = await import("../../src/server/authz/routeGuard.ts");
+  assert.ok(
+    SPAWN_CAPABLE_ROUTE_ROOTS.includes("src/app/api/version-manager"),
+    "version-manager must stay in the transitive spawn root set"
+  );
+  for (const action of ["install", "start", "restart", "stop"]) {
+    assert.equal(isLocalOnlyPath("/api/version-manager/" + action, "POST"), true, action);
+  }
+  assert.equal(isLocalOnlyPath("/api/version-manager/status", "GET"), false);
+  assert.equal(isLocalOnlyPath("/api/version-manager/check-update", "GET"), false);
 });
 
 test("6A.8: spawn-capable routes in SPAWN_CAPABLE_ROUTE_ROOTS are still all classified local-only", async () => {

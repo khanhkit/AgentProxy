@@ -688,10 +688,12 @@ test("chatCore integration: assigned compression combo applies language packs an
 
     assert.ok(result.success, "Request should succeed");
     assert.ok(capturedBody, "Fetch should receive the request body");
-    const firstMessage = capturedBody.messages?.[0];
-    assert.equal(firstMessage?.role, "system");
-    assert.match(firstMessage?.content ?? "", /AgentProxy Output Styles/);
-    assert.match(firstMessage?.content ?? "", /Responda conciso/);
+    const styleMessage = capturedBody.messages?.find(
+      (message) => message?.role === "system" && typeof message.content === "string"
+    );
+    assert.ok(styleMessage, "Output Styles should reach the upstream request as a system instruction");
+    assert.match(styleMessage.content ?? "", /AgentProxy Output Styles/);
+    assert.match(styleMessage.content ?? "", /Responda conciso/);
 
     for (
       let attempt = 0;
@@ -783,10 +785,12 @@ test("chatCore integration: default stacked compression combo applies for unassi
 
     assert.ok(result.success, "Request should succeed");
     assert.ok(capturedBody, "Fetch should receive the request body");
-    const firstMessage = capturedBody.messages?.[0];
-    assert.equal(firstMessage?.role, "system");
-    assert.match(firstMessage?.content ?? "", /AgentProxy Output Styles/);
-    assert.match(firstMessage?.content ?? "", /Responda conciso/);
+    const styleMessage = capturedBody.messages?.find(
+      (message) => message?.role === "system" && typeof message.content === "string"
+    );
+    assert.ok(styleMessage, "Output Styles should reach the upstream request as a system instruction");
+    assert.match(styleMessage.content ?? "", /AgentProxy Output Styles/);
+    assert.match(styleMessage.content ?? "", /Responda conciso/);
 
     let summary = compressionAnalyticsDb.getCompressionAnalyticsSummary();
     for (
@@ -1105,9 +1109,91 @@ test("chatCore integration: caveman output mode injected when both compression a
     });
 
     assert.ok(result.success, "Request should succeed");
-    assert.equal(capturedBody.messages[0].role, "system");
-    assert.match(capturedBody.messages[0].content ?? "", /Output Styles/);
+    const styleMessage = capturedBody.messages.find(
+      (message) => message?.role === "system" && typeof message.content === "string"
+    );
+    assert.ok(styleMessage, "Caveman output mode should append a system instruction");
+    assert.match(styleMessage.content ?? "", /Output Styles/);
   } finally {
     globalThis.fetch = originalFetch;
   }
+});
+async function styleInstructionReachesUpstream(
+  autoClarity: boolean,
+  outputStyles?: Array<{ id: string; level: "lite" | "full" | "ultra" }>
+) {
+  const provider = "openai",
+    model = "gpt-4";
+  await compressionDb.updateCompressionSettings({
+    enabled: true,
+    defaultMode: "off",
+    autoTriggerTokens: 0,
+    ...(outputStyles ? { outputStyles } : {}),
+    cavemanOutputMode: {
+      enabled: !outputStyles,
+      intensity: "full",
+      autoClarity,
+    },
+  });
+  const connection = await providersDb.createProviderConnection({
+    provider,
+    apiKey: "test-key",
+    isActive: true,
+  });
+  let capturedBody = null as { messages?: Array<{ role?: string; content?: string }> } | null;
+  globalThis.fetch = async (_url: string | URL | Request, init?: RequestInit) => {
+    if (init?.body) capturedBody = JSON.parse(init.body as string);
+    return new Response(
+      JSON.stringify({
+        choices: [{ message: { role: "assistant", content: "ok" } }],
+        usage: { prompt_tokens: 20, completion_tokens: 4, total_tokens: 24 },
+      }),
+      {
+        status: 200,
+        headers: { "content-type": "application/json" },
+      }
+    );
+  };
+
+  try {
+    const result = await handleChatCore({
+      body: {
+        model,
+        stream: false,
+        messages: [{ role: "user", content: "Explain this security vulnerability in detail." }],
+      },
+      modelInfo: { provider, model },
+      credentials: { apiKey: "test-key" },
+      log: { debug: () => {}, info: () => {}, warn: () => {}, error: () => {} },
+      clientRawRequest: { endpoint: "/v1/chat/completions", headers: new Map() },
+      connectionId: connection.id,
+      onCredentialsRefreshed: () => {},
+      onRequestSuccess: () => {},
+      onStreamFailure: () => {},
+      onDisconnect: () => {},
+      userAgent: "test-agent",
+      comboName: null,
+    });
+
+    assert.ok(result.success, "Request should succeed");
+    assert.ok(capturedBody, "the upstream request was captured");
+    return (
+      capturedBody.messages?.some(
+        (message) => message.role === "system" && /Output Styles/.test(message.content ?? "")
+      ) ?? false
+    );
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+}
+test("chatCore integration: output styles stay on a security-topic turn when Auto-Clarity is off", async () => {
+  assert.equal(await styleInstructionReachesUpstream(false), true);
+});
+test("chatCore integration: Auto-Clarity on keeps output styles off a security-topic turn", async () => {
+  assert.equal(await styleInstructionReachesUpstream(true), false);
+});
+test("chatCore integration: styles picked in the Output Styles panel stay on a security-topic turn when Auto-Clarity is off", async () => {
+  assert.equal(await styleInstructionReachesUpstream(false, [
+    { id: "terse-prose", level: "full" }, { id: "less-code", level: "full" },
+  ]), true);
 });

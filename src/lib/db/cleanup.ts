@@ -467,7 +467,7 @@ const BATCH_RETENTION_DAYS_DEFAULT = 30;
 
 function getBatchRetentionDays(): number {
   const raw =
-    process.env.AGENTPROXY_BATCH_RETENTION_DAYS ?? process.env.OMNIROUTE_BATCH_RETENTION_DAYS;
+    process.env.AGENTPROXY_BATCH_RETENTION_DAYS;
   if (!raw) return BATCH_RETENTION_DAYS_DEFAULT;
   const parsed = Number.parseInt(raw, 10);
   return Number.isInteger(parsed) && parsed >= 0 ? parsed : BATCH_RETENTION_DAYS_DEFAULT;

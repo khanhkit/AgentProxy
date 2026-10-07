@@ -115,6 +115,18 @@ test("bypass predicate: true for Gemini target", () => {
   );
 });
 
+test("bypass predicate: true for Antigravity target", () => {
+  assert.equal(
+    supportsNativeWebSearchFallbackBypass({
+      provider: "antigravity",
+      sourceFormat: "openai-responses",
+      targetFormat: "antigravity",
+      nativeCodexPassthrough: false,
+    }),
+    true
+  );
+});
+
 test("bypass predicate: true for Claude -> Claude passthrough", () => {
   assert.equal(
     supportsNativeWebSearchFallbackBypass({

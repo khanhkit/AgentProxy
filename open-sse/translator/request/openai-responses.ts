@@ -74,9 +74,45 @@ function toolOutputContentToString(output: unknown): string {
   return parts.join("\n");
 }
 
+function toolOutputImagesToChatParts(output: unknown): JsonRecord[] {
+  if (!Array.isArray(output)) return [];
+  return output.flatMap((item) => {
+    const rec = toRecord(item);
+    if (rec.type !== "input_image") return [];
+    const url = toString(rec.image_url);
+    if (!url) return [];
+    const image_url: JsonRecord = { url };
+    if (rec.detail !== undefined) image_url.detail = rec.detail;
+    return [{ type: "image_url", image_url }];
+  });
+}
+
 function appendReasoningContent(current: unknown, next: string): string {
   const existing = typeof current === "string" ? current : "";
   return existing ? `${existing}\n\n${next}` : next;
+}
+
+function normalizeRoleBasedToolCalls(toolCalls: unknown): JsonRecord[] {
+  if (!Array.isArray(toolCalls)) return [];
+
+  return toolCalls
+    .map((toolCallValue) => {
+      const toolCall = toRecord(toolCallValue);
+      const fn = toRecord(toolCall.function);
+      const name = toString(fn.name).trim();
+      const id = toString(toolCall.id).trim();
+      if (!name || !id) return null;
+      return {
+        id,
+        type: "function",
+        function: {
+          name,
+          arguments:
+            typeof fn.arguments === "string" ? fn.arguments : JSON.stringify(fn.arguments ?? {}),
+        },
+      };
+    })
+    .filter((toolCall): toolCall is NonNullable<typeof toolCall> => toolCall !== null);
 }
 
 /**
@@ -252,6 +288,17 @@ export function openaiResponsesToOpenAIRequest(
         pendingToolResults = [];
       }
 
+      if (toString(item.role) === "tool") {
+        messages.push({
+          role: "tool",
+          tool_call_id: toString(item.tool_call_id),
+          content: toolOutputContentToString(item.content),
+        });
+        const images = toolOutputImagesToChatParts(item.content);
+        if (images.length) messages.push({ role: "user", content: images });
+        continue;
+      }
+
       // Convert content: input_text -> text, output_text -> text
       const content = Array.isArray(item.content)
         ? item.content.map((contentValue) => {
@@ -288,7 +335,17 @@ export function openaiResponsesToOpenAIRequest(
         : item.content;
 
       if (role === "assistant") {
-        if (!currentAssistantMsg) {
+        const roleBasedToolCalls = normalizeRoleBasedToolCalls(item.tool_calls);
+        if (roleBasedToolCalls.length > 0) {
+          if (currentAssistantMsg) {
+            messages.push(currentAssistantMsg);
+          }
+          currentAssistantMsg = {
+            role,
+            content,
+            tool_calls: roleBasedToolCalls,
+          };
+        } else if (!currentAssistantMsg) {
           currentAssistantMsg = { role, content };
         } else if (currentAssistantMsg.content == null && content != null) {
           currentAssistantMsg.content = content;
@@ -379,6 +436,8 @@ export function openaiResponsesToOpenAIRequest(
         tool_call_id: toString(item.call_id),
         content: toolOutputContentToString(item.output),
       });
+      const images = toolOutputImagesToChatParts(item.output);
+      if (images.length) messages.push({ role: "user", content: images });
       continue;
     }
 
@@ -445,6 +504,8 @@ export function openaiResponsesToOpenAIRequest(
         tool_call_id: toString(item.call_id),
         content: toolContent,
       });
+      const images = toolOutputImagesToChatParts(item.output);
+      if (images.length) messages.push({ role: "user", content: images });
       continue;
     }
 
@@ -475,7 +536,11 @@ export function openaiResponsesToOpenAIRequest(
     // conversation where Codex previously used tool_search (the whole session
     // would carry tool_search_call items forward in `input`). Skipping matches
     // the reasoning-item policy: display-only metadata, no chat side-effect.
-    if (itemType === "tool_search_call" || itemType === "tool_search_result") {
+    if (
+      itemType === "tool_search_call" ||
+      itemType === "tool_search_result" ||
+      itemType === "web_search_call"
+    ) {
       continue;
     }
 
@@ -716,6 +781,8 @@ export function openaiResponsesToOpenAIRequest(
       result.tool_choice = { type: "function", function: { name: tc.name } };
     } else if (tcType === "local_shell") {
       result.tool_choice = { type: "function", function: { name: "shell" } };
+    } else if (tcType === "custom" && tc.name !== undefined) {
+      result.tool_choice = { type: "function", function: { name: tc.name } };
     } else if (tcType === "allowed_tools") {
       const mode = toString(tc.mode);
       if (mode !== "auto" && mode !== "required") {

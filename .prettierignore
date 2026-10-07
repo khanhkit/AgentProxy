@@ -22,3 +22,5 @@ skills/*/SKILL.md
 # reconciled by scripts/release/*, which are its formatter of record.
 CHANGELOG.md
 docs/i18n/*/CHANGELOG.md
+
+skills/*/references/*.md
