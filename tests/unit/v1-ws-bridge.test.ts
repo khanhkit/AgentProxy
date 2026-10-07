@@ -157,3 +157,49 @@ test("v1 ws bridge streams correlated request chunks and survives protocol error
   ws.close();
   await close(server);
 });
+
+test("v1 ws bridge upgrade failures never expose exception text", async () => {
+  const leak = "ENOENT /home/operator/private.txt\n at secret (/srv/app.js:1:1)";
+  const bridge = createAgentProxyWsBridge({
+    baseUrl: "http://127.0.0.1:1",
+    fetchImpl: async () => {
+      throw new Error(leak);
+    },
+  });
+  const socket = {
+    writable: true,
+    destroyed: false,
+    written: "",
+    write(chunk) {
+      this.written += String(chunk);
+      return true;
+    },
+    end(chunk) {
+      if (chunk) this.written += String(chunk);
+      this.writable = false;
+    },
+    destroy() {
+      this.destroyed = true;
+    },
+    on() {},
+  };
+  const originalError = console.error;
+  console.error = () => {};
+  try {
+    const handled = await bridge.handleUpgrade(
+      {
+        url: "/v1/ws",
+        headers: { upgrade: "websocket", "sec-websocket-key": "dGhlIHNhbXBsZSBub25jZQ==" },
+        socket: { remoteAddress: "127.0.0.1" },
+      },
+      socket,
+      Buffer.alloc(0)
+    );
+    assert.equal(handled, true);
+    assert.match(socket.written, /websocket_bridge_failed/);
+    assert.match(socket.written, /WebSocket bridge failed/);
+    assert.doesNotMatch(socket.written, /home\/operator|\/srv\/app\.js|ENOENT/);
+  } finally {
+    console.error = originalError;
+  }
+});
