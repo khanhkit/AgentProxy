@@ -608,11 +608,19 @@ function redactUnquotedAbsolutePathSpans(value: string): string {
     // arbitrary extensionless POSIX text falls back to token-level handling so
     // ordinary `/x/y` route text is not redacted indiscriminately.
     const isKnownPosixPath = isKnownPosixFilesystemPathAt(value, index);
+    if (isPosixPath && !isKnownPosixPath) {
+      const tokenEnd = findTokenEnd(value, index);
+      const trimmedTokenEnd = trimPathSpanEnd(value, index, tokenEnd);
+      if (trimmedTokenEnd < tokenEnd) {
+        index = tokenEnd;
+        continue;
+      }
+    }
     const pathEnd = findUnquotedPathEnd(
       value,
       index,
-      isWindowsPath || isFileUriPath || isKnownPosixPath,
-      isWindowsPath || isFileUriPath || isKnownPosixPath,
+      isWindowsPath || isFileUriPath || isKnownPosixPath || isPosixPath,
+      isWindowsPath || isFileUriPath || isKnownPosixPath || isPosixPath,
       isWindowsPath || isFileUriPath || isKnownPosixPath
     );
     if (pathEnd < 0) {
