@@ -17,7 +17,7 @@ let baseUrl = "";
 test.before(async () => {
   server = http.createServer((req, res) => {
     const params = new URL(req.url ?? "/", "http://local").searchParams;
-    const delay = Math.min(Math.max(Number(params.get("delay") ?? 0) || 0, 0), 5_000);
+    const delay = params.get("delay") === "50" ? 50 : 0;
     setTimeout(() => {
       res.writeHead(Number(params.get("code") ?? 200), { "content-type": "application/json" });
       res.end("{}");

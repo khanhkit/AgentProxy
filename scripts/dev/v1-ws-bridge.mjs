@@ -656,12 +656,13 @@ export function createAgentProxyWsBridge({
         });
         return true;
       } catch (error) {
+        console.error("[v1-ws-bridge] WebSocket upgrade failed", error);
         writeHttpError(
           socket,
           500,
           JSON.stringify({
             error: {
-              message: error instanceof Error ? error.message : String(error),
+              message: "WebSocket bridge failed",
               code: "websocket_bridge_failed",
             },
           })

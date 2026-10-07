@@ -1,4 +1,4 @@
-import { createHmac, randomBytes, randomUUID } from "crypto";
+import { randomBytes, randomUUID } from "crypto";
 import { setUserAgentHeader } from "../executors/base.ts";
 import { generateSessionId } from "../services/sessionManager.ts";
 import {
@@ -89,12 +89,23 @@ function base62From(bytes: Buffer, length: number): string {
  * With a seed the result is deterministic, which is what keeps a conversation on one
  * upstream session — and therefore keeps prompt caching warm — across requests.
  */
+function stableIdBytes(value: string): Buffer {
+  const out = Buffer.allocUnsafe(32);
+  let state = 0x811c9dc5;
+  for (let i = 0; i < out.length; i++) {
+    for (let j = i; j < value.length; j += out.length) {
+      state ^= value.charCodeAt(j);
+      state = Math.imul(state, 0x01000193) >>> 0;
+    }
+    state ^= i + 1;
+    state = Math.imul(state, 0x01000193) >>> 0;
+    out[i] = state & 0xff;
+  }
+  return out;
+}
+
 function canonicalId(prefix: "ses_" | "msg_", seed?: string): string {
-  const bytes = seed
-    ? createHmac("sha256", "agentproxy-opencode-id-v1")
-        .update(`${prefix}\u0000${seed}`)
-        .digest()
-    : randomBytes(32);
+  const bytes = seed ? stableIdBytes(`${prefix}\u0000${seed}`) : randomBytes(32);
   return `${prefix}${bytes.subarray(0, 6).toString("hex")}${base62From(bytes.subarray(6), 14)}`;
 }
 

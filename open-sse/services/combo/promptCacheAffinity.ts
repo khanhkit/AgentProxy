@@ -1,4 +1,3 @@
-import { createHmac } from "node:crypto";
 import {
   analyzePrefix,
   generatePromptCacheKey,
@@ -113,10 +112,7 @@ export function resolvePromptCacheAffinityKey(
   if (!key) return null;
 
   const source: PromptCacheAffinitySource = explicit ? "explicit" : "prefix";
-  const fingerprint = createHmac("sha256", "agentproxy-prompt-cache-affinity-v1")
-    .update(key)
-    .digest("hex")
-    .slice(0, 12);
+  const fingerprint = stableHash64(`fingerprint\0${key}`).toString(16).padStart(16, "0").slice(0, 12);
   return { key, source, fingerprint };
 }
 
@@ -126,19 +122,23 @@ export function promptCacheTargetIdentity(target: PromptCacheAffinityTarget): st
   return `execution:${target.executionKey}`;
 }
 
-function rendezvousScore(key: string, identity: string): bigint {
-  const digest = createHmac("sha256", "agentproxy-prompt-cache-rendezvous-v1")
-    .update(key)
-    .update("\0")
-    .update(identity)
-    .digest("hex");
-  return BigInt(`0x${digest.slice(0, 32)}`);
+function stableHash64(value: string): bigint {
+  let hash = 0xcbf29ce484222325n;
+  for (let i = 0; i < value.length; i++) {
+    hash ^= BigInt(value.charCodeAt(i));
+    hash = BigInt.asUintN(64, hash * 0x100000001b3n);
+  }
+  return hash;
 }
 
-const MAX_RENDEZVOUS_HIGH_BITS = (1n << 64n) - 1n;
+const MAX_RENDEZVOUS_SCORE = (1n << 64n) - 1n;
+
+function rendezvousScore(key: string, identity: string): bigint {
+  return stableHash64(`${key}\0${identity}`);
+}
 
 function normalizedRendezvousScore(key: string, identity: string): number {
-  return Number(rendezvousScore(key, identity) >> 64n) / Number(MAX_RENDEZVOUS_HIGH_BITS);
+  return Number(rendezvousScore(key, identity)) / Number(MAX_RENDEZVOUS_SCORE);
 }
 
 function combinedAffinityScore(
