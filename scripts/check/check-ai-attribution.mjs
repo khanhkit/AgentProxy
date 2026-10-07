@@ -56,7 +56,7 @@ export function findAiAttribution(text) {
       const who = trailer[2];
       // name part = everything before the first "<" (not HTML sanitization — CodeQL js/incomplete-multi-character-sanitization does not apply)
       const name = who.split("<")[0];
-      if (AI_NAME_RE.test(name) || AI_EMAIL_RE.test(who)) {
+      if (/^co-authored-by$/i.test(trailer[1]) && (AI_NAME_RE.test(name) || AI_EMAIL_RE.test(who))) {
         hits.push(line);
         continue;
       }
