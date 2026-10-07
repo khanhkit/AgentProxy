@@ -17,13 +17,11 @@ let baseUrl = "";
 test.before(async () => {
   server = http.createServer((req, res) => {
     const params = new URL(req.url ?? "/", "http://local").searchParams;
-    setTimeout(
-      () => {
-        res.writeHead(Number(params.get("code") ?? 200), { "content-type": "application/json" });
-        res.end("{}");
-      },
-      Number(params.get("delay") ?? 0)
-    );
+    const delay = Math.min(Math.max(Number(params.get("delay") ?? 0) || 0, 0), 5_000);
+    setTimeout(() => {
+      res.writeHead(Number(params.get("code") ?? 200), { "content-type": "application/json" });
+      res.end("{}");
+    }, delay);
   });
   await new Promise<void>((resolve) => server.listen(0, "127.0.0.1", () => resolve()));
   baseUrl = `http://127.0.0.1:${(server.address() as AddressInfo).port}`;

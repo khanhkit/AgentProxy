@@ -147,7 +147,7 @@ function decodeHtmlEntities(value: string): string {
 function htmlFragmentToText(fragment: string): string {
   return decodeHtmlEntities(
     fragment
-      .replace(/<(?:script|style)\b[^>]*>[\s\S]*?<\/(?:script|style)\s*>/gi, " ")
+      .replace(/<(?:script|style)\b[^>]*>[\s\S]*?<\/(?:script|style)\b[^>]*>/gi, " ")
       .replace(/<(?:br|hr)\b[^>]*\/?\s*>/gi, " ")
       .replace(/<[^>]+>/g, " ")
   )

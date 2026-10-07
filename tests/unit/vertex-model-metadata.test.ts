@@ -163,3 +163,12 @@ test("Vertex normalization persists context separately while legacy providers re
   ]);
   assert.equal(normalizeDiscoveredModels([metadata], "openrouter")[0]?.inputTokenLimit, 1048576);
 });
+
+
+test("#1007: a spec-legal `</script foo>` end tag does not leak script text into a parsed cell", () => {
+  const html = modelDocsHtml(`
+    <tr><th>Model ID</th><td>gemini-3.7-flash</td></tr>
+    <tr><th>Token limits</th><td>Context window</td><td><script>999,999,999</script\t\n bar></td></tr>
+  `);
+  assert.equal(parseVertexModelDocsHtml(html, "gemini-3.7-flash"), null);
+});

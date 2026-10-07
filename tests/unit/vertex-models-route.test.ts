@@ -148,7 +148,7 @@ test("Vertex authorization API key detects and persists its project for curated 
   assert.ok(!byId.has("GLM-5.1-FP8"));
   assert.ok(!byId.has("Qwen3.6-35B-A3B"));
   assert.equal(calledUrls.length, 1);
-  assert.ok(calledUrls[0].includes("generativelanguage.googleapis.com"));
+  assert.ok(new URL(calledUrls[0]).hostname === "generativelanguage.googleapis.com");
   assert.ok(!calledUrls[0].includes("vertex-authorization-key"));
 
   const saved = await providersDb.getProviderConnectionById(connection.id);
@@ -163,7 +163,7 @@ test("Vertex Service Account discovery merges Gemini and all partner transport c
   globalThis.fetch = async (url) => {
     const calledUrl = String(url);
     calledUrls.push(calledUrl);
-    if (calledUrl.includes("generativelanguage.googleapis.com")) {
+    if (new URL(calledUrl).hostname === "generativelanguage.googleapis.com") {
       return Response.json({
         models: [
           {
@@ -256,7 +256,7 @@ test("Vertex Service Account keeps usable xAI results when Gemini listing is blo
   const connection = await seedVertexConnection({ accessToken: "ya29.vertex-xai-only" });
   globalThis.fetch = async (url) => {
     const calledUrl = String(url);
-    if (calledUrl.includes("generativelanguage.googleapis.com")) {
+    if (new URL(calledUrl).hostname === "generativelanguage.googleapis.com") {
       return Response.json({ error: { status: "PERMISSION_DENIED" } }, { status: 403 });
     }
     if (calledUrl.includes("/publishers/xai/models")) {

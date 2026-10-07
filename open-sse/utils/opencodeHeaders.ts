@@ -1,4 +1,4 @@
-import { createHash, randomBytes, randomUUID } from "crypto";
+import { createHmac, randomBytes, randomUUID } from "crypto";
 import { setUserAgentHeader } from "../executors/base.ts";
 import { generateSessionId } from "../services/sessionManager.ts";
 import {
@@ -91,7 +91,9 @@ function base62From(bytes: Buffer, length: number): string {
  */
 function canonicalId(prefix: "ses_" | "msg_", seed?: string): string {
   const bytes = seed
-    ? createHash("sha256").update(`opencode\u0000${prefix}\u0000${seed}`).digest()
+    ? createHmac("sha256", "agentproxy-opencode-id-v1")
+        .update(`${prefix}\u0000${seed}`)
+        .digest()
     : randomBytes(32);
   return `${prefix}${bytes.subarray(0, 6).toString("hex")}${base62From(bytes.subarray(6), 14)}`;
 }
