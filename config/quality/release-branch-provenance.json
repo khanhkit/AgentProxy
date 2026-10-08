@@ -14,6 +14,13 @@
       "disposition": "integrated",
       "pullRequest": 83,
       "acceptedMainSha": "45c07c036593fbcc189f35ef0548248ba80dbf2c"
+    },
+    {
+      "sourceBranch": "kit/ap-iss-0136-provenance-hard-rule",
+      "sourceHeadSha": "748d56aa1596bd5d8ee801b4435f37785620c268",
+      "disposition": "integrated",
+      "pullRequest": 84,
+      "acceptedMainSha": "a1ad5e7c676294c149b1f5c6afcd2f00fc2d1048"
     }
   ]
 }
