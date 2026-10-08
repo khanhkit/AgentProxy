@@ -4,6 +4,7 @@ import test from "node:test";
 
 import {
   evaluateMainOnlyBranches,
+  evaluateProvenanceManifest,
   parseGhBranchNames,
   parseGitRemoteHeads,
 } from "../../scripts/check/check-release-branch-hygiene.mjs";
@@ -31,6 +32,30 @@ test("release branch hygiene fails closed when main is absent", () => {
   const result = evaluateMainOnlyBranches([]);
   assert.equal(result.ok, false);
   assert.equal(result.hasMain, false);
+});
+
+test("release provenance requires immutable source-to-main mapping", () => {
+  assert.deepEqual(
+    evaluateProvenanceManifest({ entries: [{
+      sourceBranch: "kit/worker/task",
+      sourceHeadSha: "1".repeat(40),
+      disposition: "integrated",
+      pullRequest: 123,
+      acceptedMainSha: "2".repeat(40),
+    }] }),
+    { ok: true, failures: [] }
+  );
+
+  const missing = evaluateProvenanceManifest({ entries: [{
+    sourceBranch: "kit/worker/task",
+    sourceHeadSha: "1".repeat(40),
+    disposition: "integrated",
+  }] });
+  assert.equal(missing.ok, false);
+  assert.deepEqual(missing.failures, [
+    "entries[0].pullRequest",
+    "entries[0].acceptedMainSha",
+  ]);
 });
 
 test("git remote parser handles slash branch names and deduplicates", () => {

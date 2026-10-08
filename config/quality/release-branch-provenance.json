@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "entries": [
+    {
+      "sourceBranch": "kit/ap-iss-0126-final-linearized",
+      "sourceHeadSha": "6f3496d99063edd35f39587907da5b84e7a02a6b",
+      "disposition": "integrated",
+      "pullRequest": 73,
+      "acceptedMainSha": "dc41a13e40019763523a0358fbc1e4b458b9e513"
+    },
+    {
+      "sourceBranch": "kit/ap-iss-0136-dependabot-attribution-main",
+      "sourceHeadSha": "03d5971e6ec1e52c37c679b72ca1f887f9512ff5",
+      "disposition": "integrated",
+      "pullRequest": 83,
+      "acceptedMainSha": "45c07c036593fbcc189f35ef0548248ba80dbf2c"
+    }
+  ]
+}
