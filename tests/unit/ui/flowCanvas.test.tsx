@@ -15,6 +15,7 @@ beforeAll(() => {
   } as unknown as typeof ResizeObserver;
 });
 
+const roots: ReturnType<typeof createRoot>[] = [];
 const containers: HTMLElement[] = [];
 
 function mount(ui: React.ReactElement): HTMLElement {
@@ -22,6 +23,7 @@ function mount(ui: React.ReactElement): HTMLElement {
   document.body.appendChild(container);
   containers.push(container);
   const root = createRoot(container);
+  roots.push(root);
   act(() => {
     root.render(ui);
   });
@@ -35,9 +37,10 @@ beforeEach(() => {
 });
 
 afterEach(() => {
-  while (containers.length > 0) {
-    containers.pop()?.remove();
-  }
+  act(() => {
+    while (roots.length > 0) roots.pop()?.unmount();
+  });
+  while (containers.length > 0) containers.pop()?.remove();
   document.body.innerHTML = "";
 });
 
