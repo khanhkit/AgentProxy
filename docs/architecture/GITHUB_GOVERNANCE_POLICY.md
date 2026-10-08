@@ -69,13 +69,18 @@ The permitted exception is intentionally narrow:
 
 This procedure is a documented owner-authorized exception for an otherwise-unsatisfiable sole-maintainer review topology. It is not a routine merge path and must not be used to hide an issue-local failing check. The default branch-protection policy remains fail-closed outside the bounded break-glass window.
 
-## Release Branch Hygiene
+## Release Branch Hygiene and Provenance
 
-A release has one additional hard repository invariant: **the remote branch set must be exactly `{main}` before any release artifact is published**. Development branches may exist while work is active, but every merged, closed, superseded, or abandoned branch must be deleted before release.
+A release has two coupled hard repository invariants:
 
-Enforcement is fail-closed through `scripts/check/check-release-branch-hygiene.mjs`. The same checker is wired into release-green validation, npm `prepublishOnly`, container publication, and native release-asset publication. GitHub `delete_branch_on_merge` is enabled to remove merged head branches automatically; the release gate still catches closed-unmerged or otherwise stale branches.
+1. **Every source branch must have immutable integration provenance before its remote ref is deleted.** The record must bind the source branch name and exact source-head SHA to a GitHub PR/integration record and the accepted `main` SHA (or explicitly record that the branch was closed without integration). A disappearing ref is never accepted as proof that its work reached `main`.
+2. **The remote branch set must be exactly `{main}` before any release artifact is published.** Development branches may exist while work is active, but cleanup is legal only after the provenance record above exists.
 
-If the checker cannot enumerate GitHub branches, release is blocked. There is no allowlist beyond `main` and no release-time bypass for worker, Dependabot, maintenance, or archived feature branches.
+For squash, rebase, linearized, or otherwise topology-rewriting integration, direct Git ancestry is insufficient. The durable provenance record is mandatory and must identify the exact source head and accepted main result so the integration remains auditable after branch deletion.
+
+Enforcement is fail-closed through `scripts/check/check-release-branch-hygiene.mjs` plus `config/quality/release-branch-provenance.json`. The same checker is wired into release-green validation, npm `prepublishOnly`, container publication, and native release-asset publication. Automatic `delete_branch_on_merge` does not waive the provenance requirement; automation must persist the mapping before cleanup.
+
+If the checker cannot enumerate GitHub branches, cannot load the provenance manifest, or finds an invalid provenance entry, release is blocked. There is no release-time bypass for worker, Dependabot, maintenance, or archived feature branches.
 
 ## Verification
 
