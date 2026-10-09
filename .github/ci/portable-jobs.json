@@ -1,0 +1,718 @@
+{
+  "schema": 1,
+  "defaultQueueTimeoutSeconds": 45,
+  "jobs": {
+    "changes": {
+      "class": "fixed-compute",
+      "mutationClass": "readonly",
+      "fallbackEnabled": false,
+      "compatibleRunners": [
+        "ubuntu-latest"
+      ],
+      "compatibility": {
+        "os": [
+          "linux"
+        ],
+        "arch": [
+          "x64"
+        ],
+        "runtimeRequirements": [
+          "shell",
+          "git",
+          "node"
+        ]
+      },
+      "evidence": "produces workflow outputs consumed by same run; keep in parent workflow"
+    },
+    "dependency-review": {
+      "class": "portable-compute",
+      "mutationClass": "readonly",
+      "fallbackEnabled": false,
+      "compatibleRunners": [
+        "ubuntu-24.04-arm",
+        "ubuntu-latest",
+        "windows-latest",
+        "windows-11-arm",
+        "macos-15-intel"
+      ],
+      "compatibility": {
+        "os": [
+          "linux",
+          "windows",
+          "macos"
+        ],
+        "arch": [
+          "x64",
+          "arm64"
+        ],
+        "runtimeRequirements": [
+          "github-action"
+        ]
+      },
+      "evidence": "GitHub-owned JavaScript action; no platform-specific shell"
+    },
+    "rust-quality": {
+      "class": "fixed-compute",
+      "mutationClass": "readonly",
+      "fallbackEnabled": false,
+      "compatibleRunners": [
+        "ubuntu-latest"
+      ],
+      "compatibility": {
+        "os": [
+          "linux"
+        ],
+        "arch": [
+          "x64"
+        ],
+        "runtimeRequirements": [
+          "shell",
+          "rust",
+          "native-binaries"
+        ]
+      },
+      "evidence": "cargo-deny action/toolchain currently proven on Linux only"
+    },
+    "lint": {
+      "class": "fixed-compute",
+      "mutationClass": "readonly",
+      "fallbackEnabled": false,
+      "compatibleRunners": [
+        "ubuntu-latest"
+      ],
+      "compatibility": {
+        "os": [
+          "linux"
+        ],
+        "arch": [
+          "x64"
+        ],
+        "runtimeRequirements": [
+          "shell",
+          "node",
+          "native-binaries",
+          "posix"
+        ]
+      },
+      "evidence": "downloads/executes Linux scanner binaries and hadolint"
+    },
+    "quality-gate": {
+      "class": "fixed-compute",
+      "mutationClass": "readonly",
+      "fallbackEnabled": false,
+      "compatibleRunners": [
+        "ubuntu-latest"
+      ],
+      "compatibility": {
+        "os": [
+          "linux"
+        ],
+        "arch": [
+          "x64"
+        ],
+        "runtimeRequirements": [
+          "shell",
+          "node",
+          "posix"
+        ]
+      },
+      "evidence": "existing scripts/tool assumptions not yet cross-platform benchmarked"
+    },
+    "quality-extended": {
+      "class": "fixed-compute",
+      "mutationClass": "readonly",
+      "fallbackEnabled": false,
+      "compatibleRunners": [
+        "ubuntu-latest"
+      ],
+      "compatibility": {
+        "os": [
+          "linux"
+        ],
+        "arch": [
+          "x64"
+        ],
+        "runtimeRequirements": [
+          "shell",
+          "node",
+          "native-binaries",
+          "posix"
+        ]
+      },
+      "evidence": "installs Linux gitleaks/osv/oasdiff binaries"
+    },
+    "docs-sync-strict": {
+      "class": "portable-compute",
+      "mutationClass": "readonly",
+      "fallbackEnabled": false,
+      "compatibleRunners": [
+        "ubuntu-24.04-arm",
+        "ubuntu-latest",
+        "windows-latest",
+        "macos-15-intel"
+      ],
+      "compatibility": {
+        "os": [
+          "linux",
+          "windows",
+          "macos"
+        ],
+        "arch": [
+          "x64",
+          "arm64"
+        ],
+        "runtimeRequirements": [
+          "shell",
+          "node"
+        ]
+      },
+      "evidence": "Node/document validation; candidate pending benchmark"
+    },
+    "docs-lint": {
+      "class": "portable-compute",
+      "mutationClass": "readonly",
+      "fallbackEnabled": false,
+      "compatibleRunners": [
+        "ubuntu-24.04-arm",
+        "ubuntu-latest",
+        "windows-latest",
+        "macos-15-intel"
+      ],
+      "compatibility": {
+        "os": [
+          "linux",
+          "windows",
+          "macos"
+        ],
+        "arch": [
+          "x64",
+          "arm64"
+        ],
+        "runtimeRequirements": [
+          "shell",
+          "node"
+        ]
+      },
+      "evidence": "prose/node checks; candidate pending benchmark"
+    },
+    "i18n-ui-coverage": {
+      "class": "portable-compute",
+      "mutationClass": "readonly",
+      "fallbackEnabled": false,
+      "compatibleRunners": [
+        "ubuntu-24.04-arm",
+        "ubuntu-latest",
+        "windows-latest",
+        "macos-15-intel"
+      ],
+      "compatibility": {
+        "os": [
+          "linux",
+          "windows",
+          "macos"
+        ],
+        "arch": [
+          "x64",
+          "arm64"
+        ],
+        "runtimeRequirements": [
+          "shell",
+          "node"
+        ]
+      },
+      "evidence": "Node-only i18n validation"
+    },
+    "i18n-glossary-zhcn": {
+      "class": "portable-compute",
+      "mutationClass": "readonly",
+      "fallbackEnabled": false,
+      "compatibleRunners": [
+        "ubuntu-24.04-arm",
+        "ubuntu-latest",
+        "windows-latest",
+        "macos-15-intel"
+      ],
+      "compatibility": {
+        "os": [
+          "linux",
+          "windows",
+          "macos"
+        ],
+        "arch": [
+          "x64",
+          "arm64"
+        ],
+        "runtimeRequirements": [
+          "shell",
+          "node"
+        ]
+      },
+      "evidence": "Node-only i18n validation"
+    },
+    "i18n": {
+      "class": "portable-compute",
+      "mutationClass": "readonly",
+      "fallbackEnabled": false,
+      "compatibleRunners": [
+        "ubuntu-24.04-arm",
+        "ubuntu-latest",
+        "windows-latest",
+        "macos-15-intel"
+      ],
+      "compatibility": {
+        "os": [
+          "linux",
+          "windows",
+          "macos"
+        ],
+        "arch": [
+          "x64",
+          "arm64"
+        ],
+        "runtimeRequirements": [
+          "shell",
+          "node"
+        ]
+      },
+      "evidence": "Node-only i18n validation"
+    },
+    "pr-test-policy": {
+      "class": "portable-compute",
+      "mutationClass": "readonly",
+      "fallbackEnabled": false,
+      "compatibleRunners": [
+        "ubuntu-24.04-arm",
+        "ubuntu-latest",
+        "windows-latest",
+        "macos-15-intel"
+      ],
+      "compatibility": {
+        "os": [
+          "linux",
+          "windows",
+          "macos"
+        ],
+        "arch": [
+          "x64",
+          "arm64"
+        ],
+        "runtimeRequirements": [
+          "shell",
+          "git",
+          "node"
+        ]
+      },
+      "evidence": "checkout/setup-node plus repository Node policy scripts"
+    },
+    "build": {
+      "class": "canonical-release",
+      "mutationClass": "artifact",
+      "fallbackEnabled": false,
+      "compatibleRunners": [
+        "ubuntu-latest"
+      ],
+      "compatibility": {
+        "os": [
+          "linux"
+        ],
+        "arch": [
+          "x64"
+        ],
+        "runtimeRequirements": [
+          "shell",
+          "node",
+          "native-binaries"
+        ]
+      },
+      "evidence": "canonical Next build artifact; platform invariance not proven"
+    },
+    "package-canonical": {
+      "class": "canonical-release",
+      "mutationClass": "artifact",
+      "fallbackEnabled": false,
+      "compatibleRunners": [
+        "ubuntu-latest"
+      ],
+      "compatibility": {
+        "os": [
+          "linux"
+        ],
+        "arch": [
+          "x64"
+        ],
+        "runtimeRequirements": [
+          "shell",
+          "node",
+          "artifact"
+        ]
+      },
+      "evidence": "canonical npm artifact producer"
+    },
+    "package-policy": {
+      "class": "canonical-release",
+      "mutationClass": "readonly",
+      "fallbackEnabled": false,
+      "compatibleRunners": [
+        "ubuntu-latest"
+      ],
+      "compatibility": {
+        "os": [
+          "linux"
+        ],
+        "arch": [
+          "x64"
+        ],
+        "runtimeRequirements": [
+          "shell",
+          "artifact"
+        ]
+      },
+      "evidence": "validates canonical package artifact"
+    },
+    "package-boot": {
+      "class": "canonical-release",
+      "mutationClass": "readonly",
+      "fallbackEnabled": false,
+      "compatibleRunners": [
+        "ubuntu-latest"
+      ],
+      "compatibility": {
+        "os": [
+          "linux"
+        ],
+        "arch": [
+          "x64"
+        ],
+        "runtimeRequirements": [
+          "shell",
+          "node",
+          "artifact"
+        ]
+      },
+      "evidence": "boots exact canonical tarball"
+    },
+    "package-artifact": {
+      "class": "canonical-release",
+      "mutationClass": "artifact",
+      "fallbackEnabled": false,
+      "compatibleRunners": [
+        "ubuntu-latest"
+      ],
+      "compatibility": {
+        "os": [
+          "linux"
+        ],
+        "arch": [
+          "x64"
+        ],
+        "runtimeRequirements": [
+          "shell",
+          "artifact"
+        ]
+      },
+      "evidence": "uploads canonical release evidence"
+    },
+    "electron-package-smoke": {
+      "class": "platform-validation",
+      "mutationClass": "readonly",
+      "fallbackEnabled": false,
+      "compatibleRunners": [
+        "ubuntu-latest",
+        "windows-latest"
+      ],
+      "compatibility": {
+        "os": [
+          "linux",
+          "windows"
+        ],
+        "arch": [
+          "x64"
+        ],
+        "runtimeRequirements": [
+          "shell",
+          "node",
+          "native-binaries"
+        ]
+      },
+      "evidence": "existing OS matrix explicitly validates Linux and Windows"
+    },
+    "test-unit": {
+      "class": "fixed-compute",
+      "mutationClass": "readonly",
+      "fallbackEnabled": false,
+      "compatibleRunners": [
+        "ubuntu-latest"
+      ],
+      "compatibility": {
+        "os": [
+          "linux"
+        ],
+        "arch": [
+          "x64"
+        ],
+        "runtimeRequirements": [
+          "shell",
+          "node",
+          "native-binaries",
+          "filesystem-semantics"
+        ]
+      },
+      "evidence": "8GiB V8 coverage shard; cross-OS/arch equivalence not yet proven"
+    },
+    "test-bun-sqlite": {
+      "class": "platform-validation",
+      "mutationClass": "readonly",
+      "fallbackEnabled": false,
+      "compatibleRunners": [
+        "ubuntu-latest",
+        "windows-latest"
+      ],
+      "compatibility": {
+        "os": [
+          "linux",
+          "windows"
+        ],
+        "arch": [
+          "x64"
+        ],
+        "runtimeRequirements": [
+          "shell",
+          "node",
+          "native-binaries"
+        ]
+      },
+      "evidence": "existing matrix explicitly validates Bun SQLite on Linux and Windows"
+    },
+    "test-vitest": {
+      "class": "portable-compute",
+      "mutationClass": "readonly",
+      "fallbackEnabled": false,
+      "compatibleRunners": [
+        "ubuntu-24.04-arm",
+        "ubuntu-latest",
+        "windows-latest",
+        "windows-11-arm",
+        "macos-15-intel"
+      ],
+      "compatibility": {
+        "os": [
+          "linux",
+          "windows",
+          "macos"
+        ],
+        "arch": [
+          "x64",
+          "arm64"
+        ],
+        "runtimeRequirements": [
+          "shell",
+          "node"
+        ]
+      },
+      "evidence": "pure Node/Vitest lane; rollout candidate, requires benchmark before replacing required lane"
+    },
+    "test-coverage": {
+      "class": "fixed-compute",
+      "mutationClass": "readonly",
+      "fallbackEnabled": false,
+      "compatibleRunners": [
+        "ubuntu-latest"
+      ],
+      "compatibility": {
+        "os": [
+          "linux"
+        ],
+        "arch": [
+          "x64"
+        ],
+        "runtimeRequirements": [
+          "shell",
+          "node",
+          "artifact",
+          "posix"
+        ]
+      },
+      "evidence": "uses find/mkdir and merges canonical shard coverage artifacts"
+    },
+    "sonarqube": {
+      "class": "fixed-compute",
+      "mutationClass": "readonly",
+      "fallbackEnabled": false,
+      "compatibleRunners": [
+        "ubuntu-latest"
+      ],
+      "compatibility": {
+        "os": [
+          "linux"
+        ],
+        "arch": [
+          "x64"
+        ],
+        "runtimeRequirements": [
+          "shell",
+          "node",
+          "native-binaries"
+        ]
+      },
+      "evidence": "scanner action/runtime not benchmarked cross-platform"
+    },
+    "coverage-pr-comment": {
+      "class": "fixed-compute",
+      "mutationClass": "mutation",
+      "fallbackEnabled": false,
+      "compatibleRunners": [
+        "ubuntu-latest"
+      ],
+      "compatibility": {
+        "os": [
+          "linux"
+        ],
+        "arch": [
+          "x64"
+        ],
+        "runtimeRequirements": [
+          "shell",
+          "github-api",
+          "artifact"
+        ]
+      },
+      "evidence": "mutates PR comments; never queue-fallback without idempotency lease"
+    },
+    "test-e2e": {
+      "class": "fixed-compute",
+      "mutationClass": "readonly",
+      "fallbackEnabled": false,
+      "compatibleRunners": [
+        "ubuntu-latest"
+      ],
+      "compatibility": {
+        "os": [
+          "linux"
+        ],
+        "arch": [
+          "x64"
+        ],
+        "runtimeRequirements": [
+          "shell",
+          "node",
+          "native-binaries",
+          "browser",
+          "posix"
+        ]
+      },
+      "evidence": "Playwright/browser environment currently Linux-specific"
+    },
+    "test-integration": {
+      "class": "fixed-compute",
+      "mutationClass": "readonly",
+      "fallbackEnabled": false,
+      "compatibleRunners": [
+        "ubuntu-latest"
+      ],
+      "compatibility": {
+        "os": [
+          "linux"
+        ],
+        "arch": [
+          "x64"
+        ],
+        "runtimeRequirements": [
+          "shell",
+          "node",
+          "filesystem-semantics",
+          "posix"
+        ]
+      },
+      "evidence": "DATA_DIR=/tmp and native DB assumptions"
+    },
+    "test-security": {
+      "class": "fixed-compute",
+      "mutationClass": "readonly",
+      "fallbackEnabled": false,
+      "compatibleRunners": [
+        "ubuntu-latest"
+      ],
+      "compatibility": {
+        "os": [
+          "linux"
+        ],
+        "arch": [
+          "x64"
+        ],
+        "runtimeRequirements": [
+          "shell",
+          "node",
+          "native-binaries"
+        ]
+      },
+      "evidence": "depends on Linux-proven prerequisite security gates"
+    },
+    "test-ecosystem": {
+      "class": "fixed-compute",
+      "mutationClass": "readonly",
+      "fallbackEnabled": false,
+      "compatibleRunners": [
+        "ubuntu-latest"
+      ],
+      "compatibility": {
+        "os": [
+          "linux"
+        ],
+        "arch": [
+          "x64"
+        ],
+        "runtimeRequirements": [
+          "shell",
+          "node",
+          "network",
+          "posix"
+        ]
+      },
+      "evidence": "live-server runner currently Linux-proven only"
+    },
+    "test-protocols-e2e": {
+      "class": "fixed-compute",
+      "mutationClass": "readonly",
+      "fallbackEnabled": false,
+      "compatibleRunners": [
+        "ubuntu-latest"
+      ],
+      "compatibility": {
+        "os": [
+          "linux"
+        ],
+        "arch": [
+          "x64"
+        ],
+        "runtimeRequirements": [
+          "shell",
+          "node",
+          "network",
+          "posix"
+        ]
+      },
+      "evidence": "live-server runner currently Linux-proven only"
+    },
+    "ci-summary": {
+      "class": "fixed-compute",
+      "mutationClass": "readonly",
+      "fallbackEnabled": false,
+      "compatibleRunners": [
+        "ubuntu-latest"
+      ],
+      "compatibility": {
+        "os": [
+          "linux"
+        ],
+        "arch": [
+          "x64"
+        ],
+        "runtimeRequirements": [
+          "shell",
+          "github-api"
+        ]
+      },
+      "evidence": "aggregates same-workflow needs/results; keep in parent workflow"
+    }
+  }
+}
