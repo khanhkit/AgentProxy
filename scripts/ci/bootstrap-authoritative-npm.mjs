@@ -1,8 +1,7 @@
 #!/usr/bin/env node
 import { spawnSync } from 'node:child_process';
 import { createHash, timingSafeEqual } from 'node:crypto';
-import { cp, mkdir, mkdtemp, readFile, rm, symlink, writeFile } from 'node:fs/promises';
-import { tmpdir } from 'node:os';
+import { cp, mkdir, readFile, rm, symlink, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 
 const PATCH_PACKAGES = [
@@ -33,29 +32,28 @@ async function main() {
   const bytes = Buffer.from(await response.arrayBuffer());
   if (!verifyIntegrity(bytes, source.integrity)) throw new Error('authoritative npm sha512 mismatch');
 
-  const temp = await mkdtemp(path.join(tmpdir(), 'agentproxy-npm-source-'));
+  await rm(targetDir, { recursive: true, force: true });
+  await mkdir(targetDir, { recursive: true });
+  const archive = path.join(targetDir, 'npm.tgz');
+  await writeFile(archive, bytes, { mode: 0o600 });
   try {
-    const archive = path.join(temp, 'npm.tgz');
-    await writeFile(archive, bytes, { mode: 0o600 });
-    await rm(targetDir, { recursive: true, force: true });
-    await mkdir(targetDir, { recursive: true });
-    const extract = spawnSync('tar', ['-xzf', path.basename(archive), '-C', targetDir], { cwd: temp, stdio: 'inherit' });
+    const extract = spawnSync('tar', ['-xzf', path.basename(archive)], { cwd: targetDir, stdio: 'inherit' });
     if (extract.status !== 0) throw new Error('failed to extract verified npm archive');
-    for (const pkg of PATCH_PACKAGES) {
-      const from = path.join(overlayNodeModules, pkg);
-      const to = path.join(targetDir, 'package', 'node_modules', pkg);
-      await rm(to, { recursive: true, force: true });
-      await cp(from, to, { recursive: true });
-    }
-    const binDir = path.join(targetDir, 'bin');
-    await mkdir(binDir, { recursive: true });
-    await symlink(path.join('..', 'package', 'bin', 'npm-cli.js'), path.join(binDir, 'npm'));
-    await symlink(path.join('..', 'package', 'bin', 'npx-cli.js'), path.join(binDir, 'npx'));
-    const check = spawnSync('node', [path.join(targetDir, 'package', 'bin', 'npm-cli.js'), '--version'], { encoding: 'utf8' });
-    if (check.status !== 0 || check.stdout.trim() !== source.version) throw new Error(`authoritative npm version mismatch: ${check.stdout.trim()}`);
   } finally {
-    await rm(temp, { recursive: true, force: true });
+    await rm(archive, { force: true });
   }
+  for (const pkg of PATCH_PACKAGES) {
+    const from = path.join(overlayNodeModules, pkg);
+    const to = path.join(targetDir, 'package', 'node_modules', pkg);
+    await rm(to, { recursive: true, force: true });
+    await cp(from, to, { recursive: true });
+  }
+  const binDir = path.join(targetDir, 'bin');
+  await mkdir(binDir, { recursive: true });
+  await symlink(path.join('..', 'package', 'bin', 'npm-cli.js'), path.join(binDir, 'npm'));
+  await symlink(path.join('..', 'package', 'bin', 'npx-cli.js'), path.join(binDir, 'npx'));
+  const check = spawnSync('node', [path.join(targetDir, 'package', 'bin', 'npm-cli.js'), '--version'], { encoding: 'utf8' });
+  if (check.status !== 0 || check.stdout.trim() !== source.version) throw new Error(`authoritative npm version mismatch: ${check.stdout.trim()}`);
 }
 
 main().catch((error) => { console.error(`[npm-bootstrap] ${error.message}`); process.exitCode = 1; });

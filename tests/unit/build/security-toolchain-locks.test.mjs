@@ -26,7 +26,8 @@ test('npm CVE overlay itself uses patched releases', () => {
 
 test('authoritative npm extraction is safe for Windows drive-letter archive paths', () => {
   const src = readFileSync('scripts/ci/bootstrap-authoritative-npm.mjs', 'utf8');
-  assert.match(src, /spawnSync\('tar', \['-xzf', path\.basename\(archive\), '-C', targetDir\], \{ cwd: temp,/);
+  assert.match(src, /const archive = path\.join\(targetDir, 'npm\.tgz'\)/);
+  assert.match(src, /spawnSync\('tar', \['-xzf', path\.basename\(archive\)\], \{ cwd: targetDir,/);
 });
 
 test('runtime CLI lock overrides vulnerable transitive MCP and undici releases', () => {

@@ -84,16 +84,18 @@ test('Schemathesis DAST install is hash-locked through a committed requirements 
   }
 });
 
-test('authoritative npm CI bootstrap uses a committed lockfile and npm ci, never npm install -g', () => {
+test('authoritative npm CI bootstrap verifies an exact source tarball plus locked CVE overlay, never npm install -g', () => {
   const helper = readFileSync(join(process.cwd(), 'scripts', 'ci', 'bootstrap-authoritative-npm.sh'), 'utf8');
-  assert.match(helper, /toolchain_dir=.*\.github\/toolchains\/npm/);
-  assert.match(helper, /npm ci --prefix \"\$toolchain_dir\"/);
+  const source = JSON.parse(readFileSync(join(process.cwd(), '.github', 'toolchains', 'npm-source.json'), 'utf8'));
+  const overlayLock = JSON.parse(readFileSync(join(process.cwd(), 'docker', 'npm-cve-patch', 'package-lock.json'), 'utf8'));
+  assert.equal(source.version, '12.0.2');
+  assert.equal(source.tarball, 'https://registry.npmjs.org/npm/-/npm-12.0.2.tgz');
+  assert.match(source.integrity, /^sha512-/);
+  assert.match(helper, /npm ci --prefix "\$overlay_dir"/);
+  assert.match(helper, /bootstrap-authoritative-npm\.mjs/);
+  assert.equal(overlayLock.lockfileVersion, 3);
+  assert.equal(existsSync(join(process.cwd(), '.github', 'toolchains', 'npm', 'package-lock.json')), false);
   assert.doesNotMatch(helper, /npm install\s+-g\s+npm@/);
-  const pkg = JSON.parse(readFileSync(join(process.cwd(), '.github', 'toolchains', 'npm', 'package.json'), 'utf8'));
-  const lock = JSON.parse(readFileSync(join(process.cwd(), '.github', 'toolchains', 'npm', 'package-lock.json'), 'utf8'));
-  assert.equal(pkg.dependencies.npm, '12.0.2');
-  assert.equal(lock.packages['node_modules/npm'].version, '12.0.2');
-  assert.match(lock.packages['node_modules/npm'].integrity, /^sha512-/);
   for (const workflowPath of [
     '.github/workflows/build.yml',
     '.github/workflows/ci.yml',
