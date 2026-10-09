@@ -28,7 +28,6 @@
     "scripts/build/postinstall.mjs",
     "scripts/build/fixPlaywrightAndroid.mjs",
     "bin/cli/runtime/",
-    "scripts/ops/install-verified-npm-package.mjs",
     "scripts/postinstall.mjs",
     "scripts/build/postinstallSupport.mjs",
     "scripts/build/runtime-env.mjs",

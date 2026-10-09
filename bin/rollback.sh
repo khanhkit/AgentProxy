@@ -2,15 +2,16 @@
 # bin/rollback.sh — roll AgentProxy back to a previous release to mitigate a bad
 # deploy. Part of the deploy-rollback incident-recovery flow.
 #
-# Methods (auto-detected; override with --method):
-#   • npm    — `npm install -g agentproxy@<version>` and, if PM2 manages it,
-#              `pm2 restart agentproxy`. This is how the VPS deploy runs.
+# Supported method:
 #   • docker — re-tag the local image agentproxy:<version> to agentproxy:prod and
 #              recreate the prod service from docker-compose.prod.yml. (That
 #              compose builds the `prod` tag locally rather than pulling a
 #              registry tag, so the versioned image must already exist locally.)
-# With no <version>, targets the highest published release strictly below the
-# current package.json version.
+#
+# npm rollback is intentionally fail-closed until AgentProxy has an immutable,
+# provenance-bound published package channel. The current repository has no such
+# authority, so resolving/installing dependencies from a mutable registry would not
+# be a trustworthy rollback.
 set -euo pipefail
 SCRIPT_NAME="rollback"
 source "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/_ops-common.sh"
@@ -18,11 +19,10 @@ REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 
 usage() {
   cat <<'EOF'
-Usage: bin/rollback.sh [<version>] [--method npm|docker] [--yes|-y] [-h|--help]
+Usage: bin/rollback.sh <version> [--method docker] [--yes|-y] [-h|--help]
 
-Rolls AgentProxy back to <version> (e.g. 3.8.35 or v3.8.35). With no version,
-picks the highest published release below the current package.json version.
-Auto-detects npm vs docker deployment; override with --method.
+Rolls AgentProxy back to an explicitly selected local Docker image version.
+npm rollback is unavailable until an immutable published package authority is configured.
 EOF
 }
 
@@ -38,56 +38,26 @@ while [ $# -gt 0 ]; do
   esac
 done
 
+if [ "$METHOD" = "npm" ]; then
+  ops_die "npm rollback is unavailable: no immutable published package authority is configured"
+fi
+
 if [ -z "$METHOD" ]; then
   if command -v docker >/dev/null 2>&1 && [ -f "$REPO_ROOT/docker-compose.prod.yml" ] \
     && docker compose -f "$REPO_ROOT/docker-compose.prod.yml" ps -q 2>/dev/null | grep -q .; then
     METHOD="docker"
-  elif command -v npm >/dev/null 2>&1; then
-    METHOD="npm"
   else
-    ops_die "no deploy method detected (no running prod compose, no npm) — pass --method npm|docker"
+    ops_die "no safe rollback method detected — npm rollback is unavailable and no running prod Docker compose was found"
   fi
 fi
 
-# Resolve the previous published version when none was given.
-if [ -z "$VERSION" ]; then
-  ops_require_cmd npm
-  ops_require_cmd node
-  current="$(node -p "require('$REPO_ROOT/package.json').version" 2>/dev/null || true)"
-  [ -n "$current" ] || ops_die "cannot read current version from package.json — pass <version>"
-  VERSION="$(npm view agentproxy versions --json 2>/dev/null | node -e '
-    let s = "";
-    process.stdin.on("data", (d) => (s += d)).on("end", () => {
-      let vs;
-      try { vs = JSON.parse(s); } catch { vs = []; }
-      if (!Array.isArray(vs)) vs = [vs];
-      const ok = (v) => /^[0-9]+\.[0-9]+\.[0-9]+$/.test(v);
-      const cmp = (a, b) => {
-        const x = a.split(".").map(Number), y = b.split(".").map(Number);
-        return x[0] - y[0] || x[1] - y[1] || x[2] - y[2];
-      };
-      const cur = process.argv[1];
-      const prev = vs.filter(ok).filter((v) => cmp(v, cur) < 0).sort(cmp).pop() || "";
-      process.stdout.write(prev);
-    });
-  ' "$current")"
-  [ -n "$VERSION" ] || ops_die "could not resolve the previous published version — pass <version> explicitly"
-fi
+[ "$METHOD" = "docker" ] || ops_die "unknown or unavailable method: $METHOD (supported: docker)"
+[ -n "$VERSION" ] || ops_die "explicit version required for rollback; mutable registry version discovery is disabled"
 
 ops_log "target: agentproxy@$VERSION via $METHOD"
 ops_confirm "Roll AgentProxy back to $VERSION via $METHOD?" || ops_die "aborted"
 
 case "$METHOD" in
-  npm)
-    ops_require_cmd npm
-    node "$REPO_ROOT/scripts/ops/install-verified-npm-package.mjs" "agentproxy@$VERSION"
-    if command -v pm2 >/dev/null 2>&1 && pm2 jlist 2>/dev/null | grep -q '"name":"agentproxy"'; then
-      pm2 restart agentproxy --update-env
-      ops_log "pm2 restarted agentproxy"
-    else
-      ops_log "installed agentproxy@$VERSION — restart the service to apply (no PM2 'agentproxy' process found)"
-    fi
-    ;;
   docker)
     ops_require_cmd docker
     if ! docker image inspect "agentproxy:$VERSION" >/dev/null 2>&1; then
@@ -97,6 +67,6 @@ case "$METHOD" in
     docker compose -f "$REPO_ROOT/docker-compose.prod.yml" up -d --no-build
     ops_log "recreated prod service from agentproxy:$VERSION"
     ;;
-  *) ops_die "unknown method: $METHOD (use npm or docker)" ;;
+  *) ops_die "unknown method: $METHOD (supported: docker)" ;;
 esac
 ops_log "rollback to $VERSION complete"
