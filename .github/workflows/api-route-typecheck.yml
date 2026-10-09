@@ -29,7 +29,7 @@ jobs:
         with:
           node-version: "24.15.0"
           cache: npm
-      - uses: $/.github/actions/npm-ci-retry
+      - uses: ./.github/actions/npm-ci-retry
       - name: Reject new API-route TypeScript diagnostics
         run: node scripts/check/check-api-typecheck.mjs
       - name: API typecheck gate unit tests

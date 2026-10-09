@@ -47,7 +47,7 @@ jobs:
         with:
           node-version: "24.15.0"
           cache: npm
-      - uses: $/.github/actions/npm-ci-retry
+      - uses: ./.github/actions/npm-ci-retry
       - name: Build CLI bundle
         env:
           AGENTPROXY_BUILD_BACKEND_ONLY: "1"
