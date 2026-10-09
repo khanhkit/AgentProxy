@@ -1,0 +1,43 @@
+name: Portable CI Dispatcher
+run-name: portable-dispatch/${{ inputs.logical_task }}/${{ inputs.source_sha }}
+
+on:
+  workflow_dispatch:
+    inputs:
+      logical_task:
+        required: true
+        type: choice
+        options: [test-vitest]
+      source_sha:
+        required: true
+        type: string
+      benchmark_mode:
+        required: true
+        default: false
+        type: boolean
+
+permissions:
+  contents: read
+  actions: write
+  statuses: write
+
+jobs:
+  dispatch:
+    runs-on: ubuntu-24.04-arm
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version-file: .nvmrc
+      - name: Select first available compatible runner
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: >-
+          node scripts/ci/github-runner-fallback.mjs
+          --logical-task "${{ inputs.logical_task }}"
+          --source-sha "${{ inputs.source_sha }}"
+          --workflow-ref "${{ github.ref_name }}"
+          ${{ inputs.benchmark_mode && '--benchmark' || '' }}

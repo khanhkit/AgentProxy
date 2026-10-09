@@ -1,0 +1,56 @@
+name: Portable CI Worker
+run-name: portable/${{ inputs.logical_task }}/${{ inputs.attempt_id }}/${{ inputs.runner }}
+
+on:
+  workflow_dispatch:
+    inputs:
+      logical_task:
+        required: true
+        type: choice
+        options: [test-vitest]
+      runner:
+        required: true
+        type: choice
+        options: [ubuntu-24.04-arm, ubuntu-latest, windows-latest, windows-11-arm, macos-15-intel]
+      source_sha:
+        required: true
+        type: string
+      attempt_id:
+        required: true
+        type: string
+      claim_context:
+        required: true
+        type: string
+
+permissions:
+  contents: read
+  statuses: read
+
+jobs:
+  execute:
+    name: Portable ${{ inputs.logical_task }} (${{ inputs.runner }})
+    runs-on: ${{ inputs.runner }}
+    concurrency:
+      group: portable-${{ inputs.source_sha }}-${{ inputs.logical_task }}
+      cancel-in-progress: false
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ inputs.source_sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - name: Wait for scheduler claim before logical workload
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: node scripts/ci/wait-runner-claim.mjs --repo "${{ github.repository }}" --sha "${{ inputs.source_sha }}" --context "${{ inputs.claim_context }}"
+      - uses: ./.github/actions/npm-ci-retry
+      - name: Vitest portable workload
+        env:
+          JWT_SECRET: ci-test-secret-with-sufficient-length-for-validation
+          API_KEY_SECRET: ci-test-api-key-secret-long
+          DISABLE_SQLITE_AUTO_BACKUP: "true"
+        run: npm run test:vitest -- --reporter=default && npm run test:vitest:ui -- --reporter=default
