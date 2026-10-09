@@ -47,3 +47,11 @@ test("raw GitHub workflow downloads use immutable 40-character commit refs", () 
     }
   }
 });
+
+
+test("workflows do not execute downloaded shell scripts directly", () => {
+  for (const file of readdirSync(workflows).filter((name) => /\.ya?ml$/.test(name))) {
+    const content = readFileSync(join(workflows, file), "utf8");
+    assert.doesNotMatch(content, /bash\s+<\(curl\b/, `${file}: downloaded shell script is executed directly`);
+  }
+});
