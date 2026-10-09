@@ -34,19 +34,24 @@ export function interpretReadyStatus(statuses, context) {
   );
 }
 
+export function isRetryableGhRead(args) {
+  return !args.includes("-X") && !args.includes("--method");
+}
+
 function gh(args) {
-  return retrySync(
-    () =>
-      execFileSync("gh", ["api", "-H", "X-GitHub-Api-Version: 2026-03-10", ...args], {
-        encoding: "utf8",
-        env: { ...process.env, GH_TOKEN: process.env.GITHUB_TOKEN || process.env.GH_TOKEN },
-      }),
-    3
-  );
+  return execFileSync("gh", ["api", "-H", "X-GitHub-Api-Version: 2026-03-10", ...args], {
+    encoding: "utf8",
+    env: { ...process.env, GH_TOKEN: process.env.GITHUB_TOKEN || process.env.GH_TOKEN },
+  });
 }
 function ghJson(args) {
-  const out = gh(args);
-  return out.trim() ? JSON.parse(out) : null;
+  if (!isRetryableGhRead(args)) {
+    throw new Error("ghJson only supports read-only GitHub API calls");
+  }
+  return retrySync(() => {
+    const out = gh(args);
+    return out.trim() ? JSON.parse(out) : null;
+  }, 3);
 }
 
 export function buildSchedulerRunId(env = process.env, now = Date.now()) {

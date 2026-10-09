@@ -7,6 +7,7 @@ import {
   parseWorkerInputs,
   interpretReadyStatus,
   retrySync,
+  isRetryableGhRead,
 } from "../../../scripts/ci/github-runner-fallback.mjs";
 
 test("worker dispatch can target a dedicated workflow and carries only explicit scheduler inputs", () => {
@@ -90,4 +91,14 @@ test("scheduler run identity is unique across GitHub reruns", () => {
     buildSchedulerRunId({ GITHUB_RUN_ID: "37937387985", GITHUB_RUN_ATTEMPT: "2" })
   );
 });
+
+test("only read-only GitHub API calls are eligible for automatic retry", () => {
+  assert.equal(isRetryableGhRead(["repos/o/r/actions/runs/1"]), true);
+  assert.equal(isRetryableGhRead(["repos/o/r/commits/abc/statuses?per_page=100"]), true);
+  assert.equal(
+    isRetryableGhRead(["-X", "POST", "repos/o/r/actions/workflows/w.yml/dispatches"]),
+    false
+  );
+  assert.equal(isRetryableGhRead(["-X", "POST", "repos/o/r/statuses/abc"]), false);
+  assert.equal(isRetryableGhRead(["-X", "POST", "repos/o/r/actions/runs/1/cancel"]), false);
 });
