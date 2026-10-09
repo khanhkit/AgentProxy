@@ -55,3 +55,9 @@ test("workflows do not execute downloaded shell scripts directly", () => {
     assert.doesNotMatch(content, /bash\s+<\(curl\b/, `${file}: downloaded shell script is executed directly`);
   }
 });
+
+
+test("quickstart does not stream downloaded response bytes into an interpreter", () => {
+  const quickstart = readFileSync(join(process.cwd(), "examples", "quickstart", "curl_terminal.sh"), "utf8");
+  assert.doesNotMatch(quickstart, /curl[\s\S]*?\|\s*python3\b/, "quickstart must separate HTTP response retrieval from local parsing");
+});

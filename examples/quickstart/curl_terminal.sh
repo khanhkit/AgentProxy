@@ -7,7 +7,7 @@
 # Your local AgentProxy server — started with: npx agentproxy
 API_URL="http://localhost:20128/v1/chat/completions"
 
-curl "$API_URL" \
+response="$(curl "$API_URL" \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer dummy-key" \
   -d '{
@@ -16,4 +16,6 @@ curl "$API_URL" \
     "messages": [
       { "role": "user", "content": "Hello! What can you do?" }
     ]
-  }' | python3 -c "import sys,json; print(json.load(sys.stdin)['choices'][0]['message']['content'])"
+  }')"
+
+python3 -c "import json,sys; print(json.loads(sys.argv[1])['choices'][0]['message']['content'])" "$response"
