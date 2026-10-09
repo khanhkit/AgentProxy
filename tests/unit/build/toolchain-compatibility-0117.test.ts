@@ -55,6 +55,7 @@ test("AP-0117 default/recommended active pins no longer contain 24.14.1", () => 
     ".github/workflows/dast-smoke.yml",
     ".github/workflows/build.yml",
     ".github/workflows/nightly-compat.yml",
+    ".github/workflows/release-acceptance.yml",
     "scripts/check/check-toolchain-contract.mjs",
     "docs/architecture/TOOLCHAIN_CONTRACT.md",
     "bin/nodeRuntimeSupport.mjs",
@@ -78,7 +79,9 @@ test("AP-0128 Node 22.22.2 uses the verified authoritative npm bootstrap instead
   assert.match(action, /if:\s*inputs\.pin_authoritative_npm\s*==\s*'true'/);
   assert.match(action, /bootstrap-authoritative-npm\.sh/);
   assert.match(helper, /bootstrap-authoritative-npm\.mjs/);
-  assert.match(helper, /test "\$\(npm --version\)" = "12\.0\.2"/);
+  assert.match(helper, /npm-source\.json/);
+  assert.match(helper, /source_version/);
+  assert.match(helper, /test "\$\(npm --version\)" = "\$source_version"/);
   assert.equal(source.version, "12.0.2");
   assert.match(source.integrity, /^sha512-/);
   assert.doesNotMatch(action, /npm 10\.9\.7|npm install\s+-g/);

