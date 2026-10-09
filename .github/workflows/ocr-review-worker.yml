@@ -105,7 +105,29 @@ jobs:
             }
             core.setFailed(`Timed out waiting for scheduler claim: ${claimContext}`);
 
+      - name: Detect OCR configuration
+        id: ocr-config
+        shell: bash
+        env:
+          OCR_LLM_URL: ${{ secrets.OCR_LLM_URL }}
+          OCR_LLM_AUTH_TOKEN: ${{ secrets.OCR_LLM_AUTH_TOKEN }}
+          OCR_LLM_MODEL: ${{ vars.OCR_LLM_MODEL }}
+          OCR_LLM_USE_ANTHROPIC: ${{ vars.OCR_LLM_USE_ANTHROPIC }}
+        run: |
+          missing=()
+          [[ -n "${OCR_LLM_URL}" ]] || missing+=("OCR_LLM_URL")
+          [[ -n "${OCR_LLM_AUTH_TOKEN}" ]] || missing+=("OCR_LLM_AUTH_TOKEN")
+          [[ -n "${OCR_LLM_MODEL}" ]] || missing+=("OCR_LLM_MODEL")
+          [[ -n "${OCR_LLM_USE_ANTHROPIC}" ]] || missing+=("OCR_LLM_USE_ANTHROPIC")
+          if (( ${#missing[@]} > 0 )); then
+            echo "ready=false" >> "${GITHUB_OUTPUT}"
+            printf '::notice::OpenCodeReview configuration unavailable; missing required names: %s\n' "$(IFS=', '; echo "${missing[*]}")"
+            exit 0
+          fi
+          echo "ready=true" >> "${GITHUB_OUTPUT}"
+
       - name: Run OpenCodeReview
+        if: steps.ocr-config.outputs.ready == 'true'
         uses: alibaba/open-code-review@fabbdb296b0d97e2140ada8d54ca7d6d6d1d7ad4 # v1.12.13
         with:
           ocr_version: "1.12.13"

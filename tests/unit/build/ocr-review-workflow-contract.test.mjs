@@ -58,6 +58,14 @@ test("OCR worker is manual-only, claim-gated, never executes PR-head repository 
   assert.match(y, /pullRequest\.base\.ref\s*!==\s*process\.env\.BASE_REF/);
   assert.match(y, /pullRequest\.draft/);
   assert.match(y, /claim_context/);
+  assert.match(y, /id:\s*ocr-config/);
+  assert.match(y, /OCR_LLM_URL:\s*\$\{\{\s*secrets\.OCR_LLM_URL\s*\}\}/);
+  assert.match(y, /OCR_LLM_AUTH_TOKEN:\s*\$\{\{\s*secrets\.OCR_LLM_AUTH_TOKEN\s*\}\}/);
+  assert.match(y, /OCR_LLM_MODEL:\s*\$\{\{\s*vars\.OCR_LLM_MODEL\s*\}\}/);
+  assert.match(y, /OCR_LLM_USE_ANTHROPIC:\s*\$\{\{\s*vars\.OCR_LLM_USE_ANTHROPIC\s*\}\}/);
+  assert.match(y, /ready=false/);
+  assert.match(y, /OpenCodeReview configuration unavailable/);
+  assert.match(y, /if:\s*steps\.ocr-config\.outputs\.ready\s*==\s*['\"]true['\"]/);
   assert.match(y, /alibaba\/open-code-review@fabbdb296b0d97e2140ada8d54ca7d6d6d1d7ad4/);
   assert.match(y, /ocr_version:\s*["']1\.12\.13["']/);
   assert.match(y, /pr_number:\s*\$\{\{\s*inputs\.pr_number\s*\}\}/);
