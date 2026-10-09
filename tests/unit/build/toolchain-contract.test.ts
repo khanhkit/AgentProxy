@@ -41,7 +41,7 @@ function fixture(overrides: Record<string, string> = {}): string {
     "package.json": JSON.stringify({ packageManager: "npm@12.0.2" }),
     "package-lock.json": JSON.stringify({ lockfileVersion: 3 }),
     ".nvmrc": "24.15.0\n",
-    Dockerfile: "FROM node:26.0.0-trixie-slim AS base\nRUN npm install -g npm@12.0.2\n",
+    Dockerfile: "FROM node:26.0.0-trixie-slim AS base\nRUN npm ci --prefix /opt/npm-toolchain\nRUN ln -sf /opt/npm-toolchain/node_modules/npm/bin/npm-cli.js /usr/local/bin/npm\n",
     ".github/actions/npm-ci-retry/action.yml": [
       "inputs:",
       "  pin_authoritative_npm:",

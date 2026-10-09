@@ -125,10 +125,11 @@ export function validateToolchainContract(root = process.cwd()) {
     errors.push(`Dockerfile Node base must pin node:${TOOLCHAIN.dockerNode}`);
   }
   if (
-    !dockerfile.includes(`npm install -g npm@${TOOLCHAIN.npmVersion}`) ||
+    !dockerfile.includes(`npm ci --prefix /opt/npm-toolchain`) ||
+    !dockerfile.includes(`/opt/npm-toolchain/node_modules/npm/bin/npm-cli.js`) ||
     /npm\s+install\s+-g\s+npm@latest(?:[;\s]|$)/m.test(dockerfile)
   ) {
-    errors.push(`Dockerfile npm must pin npm@${TOOLCHAIN.npmVersion}`);
+    errors.push(`Dockerfile npm must bootstrap lockfile-verified npm@${TOOLCHAIN.npmVersion}`);
   }
 
   if (!npmAction.includes(`scripts/ci/bootstrap-authoritative-npm.sh`)) {
