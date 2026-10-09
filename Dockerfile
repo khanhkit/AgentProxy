@@ -50,19 +50,20 @@ RUN --mount=type=cache,id=s/92ca8a61-c1ba-421f-a389-d48ac7258c2d-apt-cache,targe
 # tar ^7.5.4 and undici ^6.25.0 — hence undici stays on the 6.x line, NOT 8.x).
 # --install-strategy=nested makes each replacement self-contained, so it cannot
 # perturb the versions the rest of npm's flat tree resolves.
+COPY .github/toolchains/npm/package.json .github/toolchains/npm/package-lock.json /opt/npm-toolchain/
+COPY docker/npm-cve-patch/package.json docker/npm-cve-patch/package-lock.json /opt/npm-cve-patch/
 RUN set -eux; \
-  npm install -g npm@12.0.2; \
-  npm install --prefix /tmp/npm-cve-patch --no-audit --no-fund --ignore-scripts \
-    --install-strategy=nested \
-    brace-expansion@5.0.9 ip-address@10.7.2 tar@7.5.22 undici@6.28.0; \
+  npm ci --prefix /opt/npm-toolchain --no-audit --no-fund --ignore-scripts; \
+  npm ci --prefix /opt/npm-cve-patch --no-audit --no-fund --ignore-scripts --install-strategy=nested; \
   for pkg in brace-expansion ip-address tar undici; do \
-    test -d "/usr/local/lib/node_modules/npm/node_modules/$pkg"; \
-    rm -rf "/usr/local/lib/node_modules/npm/node_modules/$pkg"; \
-    cp -R "/tmp/npm-cve-patch/node_modules/$pkg" \
-      "/usr/local/lib/node_modules/npm/node_modules/$pkg"; \
+    test -d "/opt/npm-toolchain/node_modules/npm/node_modules/$pkg"; \
+    rm -rf "/opt/npm-toolchain/node_modules/npm/node_modules/$pkg"; \
+    cp -R "/opt/npm-cve-patch/node_modules/$pkg" \
+      "/opt/npm-toolchain/node_modules/npm/node_modules/$pkg"; \
   done; \
-  rm -rf /tmp/npm-cve-patch; \
-  node -e "for (const p of ['brace-expansion','ip-address','tar','undici']) console.log(p, require('/usr/local/lib/node_modules/npm/node_modules/'+p+'/package.json').version);"; \
+  ln -sf /opt/npm-toolchain/node_modules/npm/bin/npm-cli.js /usr/local/bin/npm; \
+  ln -sf /opt/npm-toolchain/node_modules/npm/bin/npx-cli.js /usr/local/bin/npx; \
+  node -e "for (const p of ['brace-expansion','ip-address','tar','undici']) console.log(p, require('/opt/npm-toolchain/node_modules/npm/node_modules/'+p+'/package.json').version);"; \
   npm --version; \
   npm cache clean --force
 
