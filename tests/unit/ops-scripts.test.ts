@@ -200,6 +200,13 @@ describe("verified npm rollback installer", () => {
     assert.doesNotMatch(body, /npm\s+install\s+-g\s+"agentproxy@\$VERSION"/);
   });
 
+  it("ships the verified installer alongside packaged rollback.sh", () => {
+    const pkg = JSON.parse(fs.readFileSync(path.join(ROOT, "package.json"), "utf8"));
+    assert.ok(pkg.files.includes("scripts/ops/install-verified-npm-package.mjs"));
+    const policy = fs.readFileSync(path.join(ROOT, "scripts/build/pack-artifact-policy.ts"), "utf8");
+    assert.match(policy, /scripts\/ops\/install-verified-npm-package\.mjs/);
+  });
+
   it("verified installer requires sha512 integrity and verifies the archive before local npm install", () => {
     const helper = fs.readFileSync(path.join(ROOT, "scripts/ops/install-verified-npm-package.mjs"), "utf8");
     assert.match(helper, /sha512-/);
