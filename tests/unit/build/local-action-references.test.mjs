@@ -83,3 +83,25 @@ test('Schemathesis DAST install is hash-locked through a committed requirements 
     assert.match(block, /--hash=sha256:/, `dependency block must be hash locked: ${block.split('\n')[0]}`);
   }
 });
+
+test('authoritative npm CI bootstrap uses a committed lockfile and npm ci, never npm install -g', () => {
+  const helper = readFileSync(join(process.cwd(), 'scripts', 'ci', 'bootstrap-authoritative-npm.sh'), 'utf8');
+  assert.match(helper, /toolchain_dir=.*\.github\/toolchains\/npm/);
+  assert.match(helper, /npm ci --prefix \"\$toolchain_dir\"/);
+  assert.doesNotMatch(helper, /npm install\s+-g\s+npm@/);
+  const pkg = JSON.parse(readFileSync(join(process.cwd(), '.github', 'toolchains', 'npm', 'package.json'), 'utf8'));
+  const lock = JSON.parse(readFileSync(join(process.cwd(), '.github', 'toolchains', 'npm', 'package-lock.json'), 'utf8'));
+  assert.equal(pkg.dependencies.npm, '12.0.2');
+  assert.equal(lock.packages['node_modules/npm'].version, '12.0.2');
+  assert.match(lock.packages['node_modules/npm'].integrity, /^sha512-/);
+  for (const workflowPath of [
+    '.github/workflows/build.yml',
+    '.github/workflows/ci.yml',
+    '.github/workflows/release-platforms.yml',
+    '.github/workflows/self-hosted-arm64.yml',
+    '.github/actions/npm-ci-retry/action.yml',
+  ]) {
+    const content = readFileSync(join(process.cwd(), workflowPath), 'utf8');
+    assert.doesNotMatch(content, /npm install\s+-g\s+npm@12\.0\.2/);
+  }
+});

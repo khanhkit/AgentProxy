@@ -131,8 +131,8 @@ export function validateToolchainContract(root = process.cwd()) {
     errors.push(`Dockerfile npm must pin npm@${TOOLCHAIN.npmVersion}`);
   }
 
-  if (!npmAction.includes(`npm install -g npm@${TOOLCHAIN.npmVersion}`)) {
-    errors.push(`npm-ci-retry action must pin npm@${TOOLCHAIN.npmVersion}`);
+  if (!npmAction.includes(`scripts/ci/bootstrap-authoritative-npm.sh`)) {
+    errors.push(`npm-ci-retry action must bootstrap lockfile-verified npm ${TOOLCHAIN.npmVersion}`);
   }
   if (!npmAction.includes("pin_authoritative_npm:")) {
     errors.push(
