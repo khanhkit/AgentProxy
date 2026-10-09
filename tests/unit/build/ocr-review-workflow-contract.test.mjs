@@ -45,7 +45,7 @@ test("OCR worker is manual-only, claim-gated, never executes PR-head repository 
   const y = await readOptional(".github/workflows/ocr-review-worker.yml");
   assert.match(y, /workflow_dispatch:/);
   assert.doesNotMatch(y, /pull_request(?:_target)?:|\n\s+push:/);
-  assert.match(y, /statuses:\s*read/);
+  assert.match(y, /statuses:\s*write/);
   assert.match(y, /contents:\s*read/);
   assert.match(y, /pull-requests:\s*write/);
   assert.match(y, /group:\s*ocr-review-\$\{\{\s*inputs\.pr_number\s*\}\}/);
@@ -59,6 +59,10 @@ test("OCR worker is manual-only, claim-gated, never executes PR-head repository 
   assert.match(y, /pullRequest\.base\.ref\s*!==\s*process\.env\.BASE_REF/);
   assert.match(y, /pullRequest\.draft/);
   assert.match(y, /claim_context/);
+  assert.match(y, /ready_context/);
+  assert.match(y, /statuses:\s*write/);
+  assert.match(y, /createCommitStatus/);
+  assert.match(y, /RUNNER_READY_CONTEXT/);
   assert.match(y, /id:\s*ocr-config/);
   assert.match(y, /OCR_LLM_URL:\s*\$\{\{\s*secrets\.OCR_LLM_URL\s*\}\}/);
   assert.match(y, /OCR_LLM_AUTH_TOKEN:\s*\$\{\{\s*secrets\.OCR_LLM_AUTH_TOKEN\s*\}\}/);

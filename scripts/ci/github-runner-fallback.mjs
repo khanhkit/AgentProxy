@@ -13,11 +13,36 @@ const argsAll = (name) =>
   );
 const has = (name) => process.argv.includes(`--${name}`);
 
+export function retrySync(operation, attempts = 3) {
+  if (!Number.isInteger(attempts) || attempts < 1)
+    throw new Error("attempts must be a positive integer");
+  let lastError;
+  for (let attempt = 1; attempt <= attempts; attempt += 1) {
+    try {
+      return operation();
+    } catch (error) {
+      lastError = error;
+    }
+  }
+  throw lastError;
+}
+
+export function interpretReadyStatus(statuses, context) {
+  return (
+    Array.isArray(statuses) &&
+    statuses.some((status) => status.context === context && status.state === "success")
+  );
+}
+
 function gh(args) {
-  return execFileSync("gh", ["api", "-H", "X-GitHub-Api-Version: 2026-03-10", ...args], {
-    encoding: "utf8",
-    env: { ...process.env, GH_TOKEN: process.env.GITHUB_TOKEN || process.env.GH_TOKEN },
-  });
+  return retrySync(
+    () =>
+      execFileSync("gh", ["api", "-H", "X-GitHub-Api-Version: 2026-03-10", ...args], {
+        encoding: "utf8",
+        env: { ...process.env, GH_TOKEN: process.env.GITHUB_TOKEN || process.env.GH_TOKEN },
+      }),
+    3
+  );
 }
 function ghJson(args) {
   const out = gh(args);
@@ -85,6 +110,10 @@ export function createGitHubAdapter({
     async dispatchAttempt({ runner, claimContext, workload, attemptIndex }) {
       const attemptId = `${schedulerRunId}-${attemptIndex}`;
       const runName = `portable/${workload.id}/${attemptId}/${runner}`;
+      const readyContext = claimContext.replace(
+        "agentproxy/runner-claim/",
+        "agentproxy/runner-ready/"
+      );
       const inputs = {
         ...workerInputs,
         logical_task: workload.id,
@@ -92,13 +121,16 @@ export function createGitHubAdapter({
         source_sha: sourceSha,
         attempt_id: attemptId,
         claim_context: claimContext,
+        ready_context: readyContext,
       };
       gh(buildWorkerDispatchArgs({ repo, workerWorkflow, workflowRef, inputs }));
-      return { runner, claimContext, attemptId, runName, runId: null };
+      return { runner, claimContext, readyContext, attemptId, runName, runId: null };
     },
     async observeAttempt(attempt) {
+      const statuses = ghJson([`repos/${repo}/commits/${sourceSha}/statuses?per_page=100`]) ?? [];
+      const ready = interpretReadyStatus(statuses, attempt.readyContext);
       const runId = await locate(attempt);
-      if (!runId) return { status: "queued" };
+      if (!runId) return { status: ready ? "in_progress" : "queued" };
       const run = ghJson([`repos/${repo}/actions/runs/${runId}`]);
       const jobs = ghJson([`repos/${repo}/actions/runs/${runId}/jobs?per_page=20`]).jobs;
       if (!jobs.length) {
