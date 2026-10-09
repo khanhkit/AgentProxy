@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 
 import {
+  buildSchedulerRunId,
   buildWorkerDispatchArgs,
   parseWorkerInputs,
 } from "../../../scripts/ci/github-runner-fallback.mjs";
@@ -43,4 +44,14 @@ test("worker input parser accepts repeated NAME=VALUE pairs and rejects malforme
   });
   assert.throws(() => parseWorkerInputs(["bad key=value"]), /worker input/i);
   assert.throws(() => parseWorkerInputs(["missing-separator"]), /worker input/i);
+});
+
+
+test("scheduler run identity is unique across GitHub reruns", () => {
+  assert.equal(buildSchedulerRunId({ GITHUB_RUN_ID: "37937387985", GITHUB_RUN_ATTEMPT: "1" }), "37937387985-1");
+  assert.equal(buildSchedulerRunId({ GITHUB_RUN_ID: "37937387985", GITHUB_RUN_ATTEMPT: "2" }), "37937387985-2");
+  assert.notEqual(
+    buildSchedulerRunId({ GITHUB_RUN_ID: "37937387985", GITHUB_RUN_ATTEMPT: "1" }),
+    buildSchedulerRunId({ GITHUB_RUN_ID: "37937387985", GITHUB_RUN_ATTEMPT: "2" })
+  );
 });

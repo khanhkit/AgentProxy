@@ -24,6 +24,12 @@ function ghJson(args) {
   return out.trim() ? JSON.parse(out) : null;
 }
 
+export function buildSchedulerRunId(env = process.env, now = Date.now()) {
+  const runId = env.GITHUB_RUN_ID;
+  if (!runId) return String(now);
+  return `${runId}-${env.GITHUB_RUN_ATTEMPT || "1"}`;
+}
+
 export function parseWorkerInputs(values) {
   const parsed = {};
   for (const value of values) {
@@ -159,7 +165,7 @@ if (process.argv[1] && import.meta.url === new URL(`file://${process.argv[1]}`).
     queueTimeoutSeconds: workload.queueTimeoutSeconds ?? manifest.defaultQueueTimeoutSeconds,
   };
   const pollIntervalMs = Number(arg("poll-ms", "1000"));
-  const schedulerRunId = process.env.GITHUB_RUN_ID || String(Date.now());
+  const schedulerRunId = buildSchedulerRunId();
   const adapter = createGitHubAdapter({
     repo,
     sourceSha,
