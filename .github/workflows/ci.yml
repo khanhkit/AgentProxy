@@ -441,7 +441,12 @@ jobs:
           # rebaseline in the same commit: check-workflows.mjs now prints `zizmorVersion=` next
           # to the count so the new number is traceable to the tool that produced it.
           ZIZMOR_VERSION=1.25.2
-          pipx install "zizmor==$ZIZMOR_VERSION" || pip install --user "zizmor==$ZIZMOR_VERSION"
+          ZIZMOR_SHA256=aa1facd105f0d83fe5c55b1adcd9d7417de5d83aa27471f91dc0b66cf3803577
+          rm -rf /tmp/zizmor && mkdir -p /tmp/zizmor
+          gh release download "v$ZIZMOR_VERSION" --repo zizmorcore/zizmor --pattern 'zizmor-x86_64-unknown-linux-gnu.tar.gz' --dir /tmp/zizmor
+          zizmor_asset=/tmp/zizmor/zizmor-x86_64-unknown-linux-gnu.tar.gz
+          printf '%s  %s\n' "$ZIZMOR_SHA256" "$zizmor_asset" | sha256sum -c -
+          tar -xzf "$zizmor_asset" -C "$HOME/.local/bin" zizmor
           # oasdiff — download latest linux amd64 tarball via gh (authed), extract binary
           rm -rf /tmp/oasd && mkdir -p /tmp/oasd
           gh release download --repo oasdiff/oasdiff --pattern '*linux_amd64.tar.gz' --dir /tmp/oasd
