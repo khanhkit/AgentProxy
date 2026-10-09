@@ -41,6 +41,14 @@ export function evaluateCodeOwners(root, policy) {
   return { ok: failures.length === 0, failures };
 }
 
+export function evaluateRepositorySettings(repository, policy) {
+  const failures = [];
+  if (Boolean(repository?.delete_branch_on_merge) !== policy.deleteBranchOnMerge) {
+    failures.push("delete_branch_on_merge");
+  }
+  return { ok: failures.length === 0, failures };
+}
+
 export function evaluateGithubGovernance(protection, policy) {
   const failures = [];
 
@@ -121,6 +129,15 @@ function detectRepo() {
   }).trim();
 }
 
+function readRepository(repo) {
+  const stdout = execFileSync("gh", ["api", `repos/${repo}`], {
+    encoding: "utf8",
+    timeout: 30_000,
+    maxBuffer: 4 * 1024 * 1024,
+  });
+  return JSON.parse(stdout);
+}
+
 function readProtection(repo, branch) {
   const stdout = execFileSync("gh", ["api", `repos/${repo}/branches/${branch}/protection`], {
     encoding: "utf8",
@@ -139,10 +156,16 @@ function main() {
 
   const policy = readPolicy(policyPath);
   const repo = detectRepo();
+  const repository = readRepository(repo);
   const protection = readProtection(repo, policy.branch);
+  const repositoryVerdict = evaluateRepositorySettings(repository, policy);
   const protectionVerdict = evaluateGithubGovernance(protection, policy);
   const codeOwnersVerdict = evaluateCodeOwners(ROOT, policy);
-  const failures = [...protectionVerdict.failures, ...codeOwnersVerdict.failures];
+  const failures = [
+    ...repositoryVerdict.failures,
+    ...protectionVerdict.failures,
+    ...codeOwnersVerdict.failures,
+  ];
   const verdict = { ok: failures.length === 0, failures };
 
   if (process.argv.includes("--json")) {
