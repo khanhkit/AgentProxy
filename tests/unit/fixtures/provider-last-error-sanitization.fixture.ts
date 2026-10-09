@@ -26,6 +26,8 @@ const loggerResource = await import("../../../src/shared/utils/loggerResource.ts
 const { runAsProbe } = await import("../../../src/shared/utils/probeOrigin.ts");
 const { writeTerminalStatus } = await import("../../../src/shared/utils/terminalStatus.ts");
 const { markAccountUnavailable } = await import("../../../src/sse/services/auth.ts");
+const { handleRequestRejectedFailure } =
+  await import("../../../open-sse/handlers/chatCore/requestRejectedFailure.ts");
 
 function restoreEnv(name: keyof typeof originalEnv): void {
   const original = originalEnv[name];
@@ -105,5 +107,47 @@ test("normal and probe failures sanitize provider_connections.lastError at the w
   assert.doesNotMatch(
     JSON.stringify(persisted),
     /provider-last-error-secret|srv\/private|provider\.ts|\bat dispatch\b/i
+  );
+});
+
+test("request-rejected probe and cooldown persistence sanitize provider-controlled messages", async () => {
+  const hostile =
+    "request rejected access_token=request-rejected-secret at /srv/private/request.ts\n" +
+    "    at dispatch (/srv/private/request.ts:4:2)";
+  const probe = await providersDb.createProviderConnection({
+    provider: "openai",
+    authType: "apikey",
+    name: "request rejected probe",
+    apiKey: "request-rejected-probe-key", // pragma: allowlist secret
+    isActive: true,
+    testStatus: "active",
+  });
+  const normal = await providersDb.createProviderConnection({
+    provider: "openai",
+    authType: "apikey",
+    name: "request rejected normal",
+    apiKey: "request-rejected-normal-key", // pragma: allowlist secret
+    isActive: true,
+    testStatus: "active",
+  });
+
+  await runAsProbe(() =>
+    handleRequestRejectedFailure({ connectionId: probe.id, statusCode: 403, message: hostile })
+  );
+  await handleRequestRejectedFailure({
+    connectionId: normal.id,
+    statusCode: 403,
+    message: hostile,
+  });
+
+  const persisted = {
+    probe: readLastError(probe.id),
+    normal: readLastError(normal.id),
+  };
+  assert.match(String(persisted.probe), /request rejected/i);
+  assert.match(String(persisted.normal), /request rejected/i);
+  assert.doesNotMatch(
+    JSON.stringify(persisted),
+    /request-rejected-secret|srv\/private|request\.ts|\bat dispatch\b/i
   );
 });
