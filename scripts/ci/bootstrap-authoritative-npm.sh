@@ -8,6 +8,10 @@ npm ci --prefix "$overlay_dir" --ignore-scripts --no-audit --no-fund
 node "$repo_root/scripts/ci/bootstrap-authoritative-npm.mjs" \
   "$repo_root/.github/toolchains/npm-source.json" "$target_root" "$overlay_dir/node_modules"
 if [[ -n "${GITHUB_PATH:-}" ]]; then printf '%s\n' "$target_root/bin" >> "$GITHUB_PATH"; fi
-export PATH="$target_root/bin:$PATH"
+bash_bin="$target_root/bin"
+if command -v cygpath >/dev/null 2>&1; then
+  bash_bin="$(cygpath -u "$target_root/bin")"
+fi
+export PATH="$bash_bin:$PATH"
 test "$(npm --version)" = "12.0.2"
 echo "authoritative patched npm 12.0.2 ready at $target_root/bin"

@@ -27,6 +27,8 @@ test('npm CVE overlay itself uses patched releases', () => {
 test('authoritative npm extraction is safe for Windows drive-letter archive paths', () => {
   const src = readFileSync('scripts/ci/bootstrap-authoritative-npm.mjs', 'utf8');
   assert.match(src, /const archive = path\.join\(targetDir, 'npm\.tgz'\)/);
+  const sh = readFileSync('scripts/ci/bootstrap-authoritative-npm.sh', 'utf8');
+  assert.match(sh, /cygpath -u \"\$target_root\/bin\"/);
   assert.match(src, /spawnSync\('tar', \['-xzf', path\.basename\(archive\)\], \{ cwd: targetDir,/);
 });
 
