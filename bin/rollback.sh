@@ -80,7 +80,7 @@ ops_confirm "Roll AgentProxy back to $VERSION via $METHOD?" || ops_die "aborted"
 case "$METHOD" in
   npm)
     ops_require_cmd npm
-    npm install -g "agentproxy@$VERSION"
+    node "$REPO_ROOT/scripts/ops/install-verified-npm-package.mjs" "agentproxy@$VERSION"
     if command -v pm2 >/dev/null 2>&1 && pm2 jlist 2>/dev/null | grep -q '"name":"agentproxy"'; then
       pm2 restart agentproxy --update-env
       ops_log "pm2 restarted agentproxy"

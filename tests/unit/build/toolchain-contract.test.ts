@@ -138,3 +138,11 @@ test("npm 12.0.2 engine boundary rejects 24.14/25 and accepts repaired lanes", (
   assert.equal(authoritativeNpmSupportsNode("25.0.0"), false);
   assert.equal(authoritativeNpmSupportsNode("26.0.0"), true);
 });
+
+test("toolchain contract accepts a sha256-pinned authoritative Node base image", () => {
+  const digest = "a".repeat(64);
+  const root = fixture({
+    Dockerfile: `FROM node:26.0.0-trixie-slim@sha256:${digest} AS base\nCOPY .github/toolchains/npm/package.json .github/toolchains/npm/package-lock.json /opt/npm-toolchain/\nRUN npm ci --prefix /opt/npm-toolchain\nRUN node /opt/npm-toolchain/node_modules/npm/bin/npm-cli.js --version\n`,
+  });
+  assert.deepEqual(validateToolchainContract(root), []);
+});
