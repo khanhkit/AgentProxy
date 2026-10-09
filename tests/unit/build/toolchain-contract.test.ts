@@ -51,7 +51,7 @@ function fixture(overrides: Record<string, string> = {}): string {
       "  steps:",
       "    - name: Pin authoritative npm",
       "      if: inputs.pin_authoritative_npm == 'true'",
-      "      run: npm install -g npm@12.0.2",
+      "      run: bash scripts/ci/bootstrap-authoritative-npm.sh",
       "",
     ].join("\n"),
     ".github/workflows/ci.yml":
