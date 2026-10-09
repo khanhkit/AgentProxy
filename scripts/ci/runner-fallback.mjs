@@ -34,10 +34,16 @@ export async function waitForAttemptCompletion(adapter, attempt, options = {}) {
 
 export async function runFallbackScheduler(adapter, workload, context) {
   const pollIntervalMs = context.pollIntervalMs ?? 1000;
+  const claimNonce = String(context.claimNonce ?? "");
+  if (!/^[A-Za-z0-9._-]{1,32}$/.test(claimNonce)) {
+    throw new Error(
+      "claimNonce is required and must be a safe 1-32 character scheduler-run identifier"
+    );
+  }
   const attempts = [];
   for (let index = 0; index < workload.compatibleRunners.length; index += 1) {
     const runner = workload.compatibleRunners[index];
-    const claimContext = `agentproxy/runner-claim/${workload.id}/${context.sourceSha}/${index + 1}`;
+    const claimContext = `agentproxy/runner-claim/${workload.id}/${claimNonce}/${index + 1}`;
     const attempt = await adapter.dispatchAttempt({
       runner,
       claimContext,

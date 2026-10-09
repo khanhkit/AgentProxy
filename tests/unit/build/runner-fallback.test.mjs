@@ -97,6 +97,43 @@ function fakeAdapter(scenarios) {
   };
 }
 
+test("scheduler rejects missing claim nonce so stale claims cannot be replayed", async () => {
+  await assert.rejects(
+    () =>
+      runFallbackScheduler(
+        fakeAdapter({ "ubuntu-latest": [{ status: "in_progress" }] }),
+        {
+          id: "ocr-review",
+          compatibleRunners: ["ubuntu-latest"],
+          queueTimeoutSeconds: 45,
+        },
+        { sourceSha: "abc" }
+      ),
+    /claimNonce is required/
+  );
+});
+
+test("claim context is unique per scheduler run even when source SHA is unchanged", async () => {
+  const workload = {
+    id: "ocr-review",
+    compatibleRunners: ["ubuntu-latest"],
+    queueTimeoutSeconds: 45,
+  };
+  const first = await runFallbackScheduler(
+    fakeAdapter({ "ubuntu-latest": [{ status: "in_progress" }] }),
+    workload,
+    { sourceSha: "abc", claimNonce: "run-101" }
+  );
+  const second = await runFallbackScheduler(
+    fakeAdapter({ "ubuntu-latest": [{ status: "in_progress" }] }),
+    workload,
+    { sourceSha: "abc", claimNonce: "run-102" }
+  );
+  assert.notEqual(first.attempt.claimContext, second.attempt.claimContext);
+  assert.match(first.attempt.claimContext, /\/run-101\/1$/);
+  assert.match(second.attempt.claimContext, /\/run-102\/1$/);
+});
+
 test("scheduler selects first runner that starts and never dispatches another", async () => {
   const a = fakeAdapter({
     "ubuntu-24.04-arm": [{ status: "queued" }, { status: "in_progress" }],
@@ -109,7 +146,7 @@ test("scheduler selects first runner that starts and never dispatches another", 
       compatibleRunners: ["ubuntu-24.04-arm", "ubuntu-latest"],
       queueTimeoutSeconds: 45,
     },
-    { sourceSha: "abc", pollIntervalMs: 1000 }
+    { sourceSha: "abc", pollIntervalMs: 1000, claimNonce: "test-run" }
   );
   assert.equal(result.status, "started");
   assert.equal(result.runner, "ubuntu-24.04-arm");
@@ -134,7 +171,7 @@ test("scheduler denies, cancels and confirms terminal cancellation before next r
       compatibleRunners: ["ubuntu-24.04-arm", "ubuntu-latest"],
       queueTimeoutSeconds: 45,
     },
-    { sourceSha: "abc", pollIntervalMs: 1000 }
+    { sourceSha: "abc", pollIntervalMs: 1000, claimNonce: "test-run" }
   );
   assert.equal(result.runner, "ubuntu-latest");
   const deny = a.calls.findIndex(
@@ -159,7 +196,7 @@ test("assignment race after timeout stays denied until cancelled, then falls bac
       compatibleRunners: ["ubuntu-24.04-arm", "ubuntu-latest"],
       queueTimeoutSeconds: 45,
     },
-    { sourceSha: "abc", pollIntervalMs: 1000 }
+    { sourceSha: "abc", pollIntervalMs: 1000, claimNonce: "test-run" }
   );
   assert.equal(result.runner, "ubuntu-latest");
   assert.equal(
@@ -186,7 +223,7 @@ test("API observation failure fails closed without dispatching another runner", 
           compatibleRunners: ["ubuntu-24.04-arm", "ubuntu-latest"],
           queueTimeoutSeconds: 45,
         },
-        { sourceSha: "abc" }
+        { sourceSha: "abc", claimNonce: "test-run" }
       ),
     /rate limit/
   );
@@ -209,7 +246,7 @@ test("exhausted compatible runners returns explicit exhausted result", async () 
       compatibleRunners: ["ubuntu-24.04-arm", "ubuntu-latest"],
       queueTimeoutSeconds: 45,
     },
-    { sourceSha: "abc", pollIntervalMs: 1000 }
+    { sourceSha: "abc", pollIntervalMs: 1000, claimNonce: "test-run" }
   );
   assert.equal(result.status, "exhausted");
   assert.equal(result.attempts.length, 2);
@@ -227,7 +264,7 @@ test("completed task failure is terminal and does not dispatch fallback runner",
       compatibleRunners: ["ubuntu-24.04-arm", "ubuntu-latest"],
       queueTimeoutSeconds: 45,
     },
-    { sourceSha: "abc" }
+    { sourceSha: "abc", claimNonce: "test-run" }
   );
   assert.equal(result.status, "terminal");
   assert.equal(result.conclusion, "failure");

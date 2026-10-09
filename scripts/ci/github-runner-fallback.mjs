@@ -159,15 +159,20 @@ if (process.argv[1] && import.meta.url === new URL(`file://${process.argv[1]}`).
     queueTimeoutSeconds: workload.queueTimeoutSeconds ?? manifest.defaultQueueTimeoutSeconds,
   };
   const pollIntervalMs = Number(arg("poll-ms", "1000"));
+  const schedulerRunId = process.env.GITHUB_RUN_ID || String(Date.now());
   const adapter = createGitHubAdapter({
     repo,
     sourceSha,
     workflowRef,
-    schedulerRunId: process.env.GITHUB_RUN_ID || String(Date.now()),
+    schedulerRunId,
     workerWorkflow,
     workerInputs,
   });
-  const result = await runFallbackScheduler(adapter, runnable, { sourceSha, pollIntervalMs });
+  const result = await runFallbackScheduler(adapter, runnable, {
+    sourceSha,
+    pollIntervalMs,
+    claimNonce: schedulerRunId,
+  });
 
   if (result.status === "started" && has("wait-completion")) {
     result.completion = await waitForAttemptCompletion(adapter, result.attempt, { pollIntervalMs });
