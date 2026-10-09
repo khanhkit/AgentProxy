@@ -1,9 +1,11 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import {
+  LOCAL_ONLY_API_PREFIXES,
   isLocalOnlyPath,
   isLocalOnlyBypassableByManageScope,
 } from "../../../src/server/authz/routeGuard.ts";
+import { SPAWN_CAPABLE_PREFIXES } from "../../../src/shared/constants/spawnCapablePrefixes.ts";
 import { SPAWN_CAPABLE_ROUTE_ROOTS } from "../../../scripts/check/check-route-guard-membership.ts";
 
 // ─── PR #6294 review: /api/skills/collect/ is local-only ─────────────────
@@ -20,12 +22,17 @@ test("isLocalOnlyPath: /api/skills/collect/ prefix is local-only (Hard Rules #15
   assert.equal(isLocalOnlyPath("/api/skills/collect/"), true);
 });
 
-test("isLocalOnlyPath: the rest of /api/skills/ stays remote-reachable (no over-broadening)", () => {
-  // Only the spawn-capable collect/* subtree is loopback-locked. The rest of the
-  // skills surface (registry install, marketplace, skillssh) already gates on
-  // requireManagementAuth() and must remain reachable remotely.
+test("spawn-capable Skills install/executions routes remain explicit strict-local entries", () => {
+  for (const prefix of ["/api/skills/install", "/api/skills/executions"]) {
+    assert.ok(LOCAL_ONLY_API_PREFIXES.includes(prefix), `${prefix} must be explicitly local-only`);
+    assert.ok(SPAWN_CAPABLE_PREFIXES.includes(prefix), `${prefix} must remain spawn-capable`);
+    assert.equal(isLocalOnlyPath(prefix), true);
+    assert.equal(isLocalOnlyBypassableByManageScope(prefix), false);
+  }
+});
+
+test("non-spawn Skills siblings remain remote-reachable (no over-broadening)", () => {
   assert.equal(isLocalOnlyPath("/api/skills"), false);
-  assert.equal(isLocalOnlyPath("/api/skills/install"), false);
   assert.equal(isLocalOnlyPath("/api/skills/marketplace/install"), false);
 });
 
