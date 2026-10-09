@@ -125,11 +125,13 @@ export function validateToolchainContract(root = process.cwd()) {
     errors.push(`Dockerfile Node base must pin node:${TOOLCHAIN.dockerNode}`);
   }
   if (
-    !dockerfile.includes(`npm ci --prefix /opt/npm-toolchain`) ||
-    !dockerfile.includes(`/opt/npm-toolchain/node_modules/npm/bin/npm-cli.js`) ||
+    !dockerfile.includes(`.github/toolchains/npm-source.json`) ||
+    !dockerfile.includes(`bootstrap-authoritative-npm.mjs`) ||
+    !dockerfile.includes(`npm ci --prefix /opt/npm-cve-patch`) ||
+    !dockerfile.includes(`/opt/npm-toolchain/bin/npm --version`) ||
     /npm\s+install\s+-g\s+npm@latest(?:[;\s]|$)/m.test(dockerfile)
   ) {
-    errors.push(`Dockerfile npm must bootstrap lockfile-verified npm@${TOOLCHAIN.npmVersion}`);
+    errors.push(`Dockerfile npm must bootstrap sha512-verified patched npm@${TOOLCHAIN.npmVersion}`);
   }
 
   if (!npmAction.includes(`scripts/ci/bootstrap-authoritative-npm.sh`)) {
