@@ -63,7 +63,7 @@ test("mutable-tool replacements are exact direct devDependencies and lockfile en
   };
 
   const expected = {
-    "markdownlint-cli2": "0.23.2",
+    "markdownlint-cli2": "0.23.3",
     "node-gyp": "13.0.2",
   } as const;
 
