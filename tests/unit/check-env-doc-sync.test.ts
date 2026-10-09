@@ -208,6 +208,15 @@ test("runEnvDocSync: shipped allowlist ignores ad-hoc BOT_TOKEN and BOT_URL", ()
   assert.deepEqual(shipped.problems.codeMissingEnv, []);
 });
 
+test("runEnvDocSync: shipped allowlist ignores GitHub scheduler control-plane vars", () => {
+  const envExampleText = `JWT_SECRET=secret\n`;
+  const envDocText = "| `JWT_SECRET` | _(none)_ | required |";
+  const codeVars = new Set(["JWT_SECRET", "GITHUB_REF_NAME", "GITHUB_RUN_ID"]);
+  const result = runEnvDocSync({ envExampleText, envDocText, codeVars });
+  assert.equal(result.ok, true);
+  assert.deepEqual(result.problems.codeMissingEnv, []);
+});
+
 test("repository contract is in sync (live data)", () => {
   // Uses the real .env.example, docs/ENVIRONMENT.md, and the bundled
   // allowlists. This is the same check that runs in pre-commit / CI.
