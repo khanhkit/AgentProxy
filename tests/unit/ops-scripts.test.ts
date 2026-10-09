@@ -192,3 +192,20 @@ describe("ops runbook scripts (bin/*.sh)", () => {
     }
   );
 });
+
+describe("verified npm rollback installer", () => {
+  it("rollback npm path delegates to the integrity-verifying installer", () => {
+    const body = fs.readFileSync(path.join(BIN, "rollback.sh"), "utf8");
+    assert.match(body, /install-verified-npm-package\.mjs.*agentproxy@\$VERSION/);
+    assert.doesNotMatch(body, /npm\s+install\s+-g\s+"agentproxy@\$VERSION"/);
+  });
+
+  it("verified installer requires sha512 integrity and verifies the archive before local npm install", () => {
+    const helper = fs.readFileSync(path.join(ROOT, "scripts/ops/install-verified-npm-package.mjs"), "utf8");
+    assert.match(helper, /sha512-/);
+    assert.match(helper, /createHash\(["']sha512["']\)/);
+    assert.match(helper, /timingSafeEqual/);
+    assert.match(helper, /registry\.npmjs\.org/);
+    assert.match(helper, /['"]npm['"],\s*\[['"]install['"],\s*['"]-g['"],\s*archivePath/s);
+  });
+});

@@ -1,4 +1,4 @@
-FROM node:26.0.0-bookworm-slim
+FROM node:26.0.0-bookworm-slim@sha256:3529ef69feecddd94e9c5ecd3d25a96f2f23ea40661f494f932ae2b12ab1977c
 
 ARG CLAUDE_CODE_VERSION=2.1.258
 ARG DEVIN_CLI_VERSION=3000.2.17

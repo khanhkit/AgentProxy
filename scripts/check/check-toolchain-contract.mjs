@@ -121,7 +121,7 @@ export function validateToolchainContract(root = process.cwd()) {
   if (nvmrc !== TOOLCHAIN.defaultNode) {
     errors.push(`.nvmrc must pin ${TOOLCHAIN.defaultNode}`);
   }
-  if (!dockerfile.includes(`FROM node:${TOOLCHAIN.dockerNode} AS base`)) {
+  if (!new RegExp(`^FROM node:${TOOLCHAIN.dockerNode.replaceAll(".", "\\.")}(?:@sha256:[0-9a-f]{64})? AS base$`, "m").test(dockerfile)) {
     errors.push(`Dockerfile Node base must pin node:${TOOLCHAIN.dockerNode}`);
   }
   if (
