@@ -39,7 +39,7 @@ async function main() {
     await writeFile(archive, bytes, { mode: 0o600 });
     await rm(targetDir, { recursive: true, force: true });
     await mkdir(targetDir, { recursive: true });
-    const extract = spawnSync('tar', ['-xzf', archive, '-C', targetDir], { stdio: 'inherit' });
+    const extract = spawnSync('tar', ['-xzf', path.basename(archive), '-C', targetDir], { cwd: temp, stdio: 'inherit' });
     if (extract.status !== 0) throw new Error('failed to extract verified npm archive');
     for (const pkg of PATCH_PACKAGES) {
       const from = path.join(overlayNodeModules, pkg);

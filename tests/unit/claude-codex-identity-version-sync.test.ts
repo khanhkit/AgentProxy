@@ -85,11 +85,19 @@ async function withEnv<T>(
   }
 }
 
-test("Codex client version locksteps Dockerfile @openai/codex", () => {
-  const dockerfile = fs.readFileSync(path.join(process.cwd(), "Dockerfile"), "utf8");
-  const match = dockerfile.match(/@openai\/codex@([0-9]+\.[0-9]+\.[0-9]+)/);
-  assert.ok(match, "Dockerfile must pin @openai/codex@x.y.z");
-  const pinned = match[1];
+test("Codex client version locksteps the runtime CLI manifest and lockfile", () => {
+  const runtimeManifest = JSON.parse(
+    fs.readFileSync(path.join(process.cwd(), "docker/runtime-cli-tools/package.json"), "utf8")
+  ) as { dependencies?: Record<string, string> };
+  const runtimeLock = JSON.parse(
+    fs.readFileSync(path.join(process.cwd(), "docker/runtime-cli-tools/package-lock.json"), "utf8")
+  ) as {
+    packages?: Record<string, { version?: string; dependencies?: Record<string, string> }>;
+  };
+  const pinned = runtimeManifest.dependencies?.["@openai/codex"];
+  assert.match(pinned ?? "", /^\d+\.\d+\.\d+$/, "runtime manifest must pin exact @openai/codex x.y.z");
+  assert.equal(runtimeLock.packages?.[""]?.dependencies?.["@openai/codex"], pinned);
+  assert.equal(runtimeLock.packages?.["node_modules/@openai/codex"]?.version, pinned);
   assert.notEqual(pinned, "0.149.0");
   assert.equal(codexCfg.DEFAULT_CODEX_CLIENT_VERSION, pinned);
   assert.equal(codexCfg.getCodexClientVersion(), pinned);
