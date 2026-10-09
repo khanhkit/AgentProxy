@@ -34,6 +34,14 @@ export function interpretReadyStatus(statuses, context) {
   );
 }
 
+export function findReadyStatus(fetchPage, context, perPage = 100) {
+  for (let page = 1; ; page += 1) {
+    const statuses = fetchPage(page);
+    if (interpretReadyStatus(statuses, context)) return true;
+    if (!Array.isArray(statuses) || statuses.length < perPage) return false;
+  }
+}
+
 export function isRetryableGhRead(args) {
   return !args.includes("-X") && !args.includes("--method");
 }
@@ -138,8 +146,13 @@ export function createGitHubAdapter({
       return { runner, claimContext, readyContext, attemptId, runName, runId: null };
     },
     async observeAttempt(attempt) {
-      const statuses = ghJson([`repos/${repo}/commits/${sourceSha}/statuses?per_page=100`]) ?? [];
-      const ready = interpretReadyStatus(statuses, attempt.readyContext);
+      const ready = findReadyStatus(
+        (page) =>
+          ghJson([
+            `repos/${repo}/commits/${sourceSha}/statuses?per_page=100&page=${page}`,
+          ]) ?? [],
+        attempt.readyContext
+      );
       const runId = await locate(attempt);
       if (!runId) return { status: ready ? "in_progress" : "queued" };
       const run = ghJson([`repos/${repo}/actions/runs/${runId}`]);

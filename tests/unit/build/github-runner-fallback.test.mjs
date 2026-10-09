@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
+import * as runnerFallback from "../../../scripts/ci/github-runner-fallback.mjs";
 import {
   buildSchedulerRunId,
   buildWorkerDispatchArgs,
@@ -59,6 +60,25 @@ test("runner readiness is keyed by the exact ready status context", () => {
   assert.equal(interpretReadyStatus(statuses, "agentproxy/runner-ready/ocr-review/run-1/1"), true);
   assert.equal(interpretReadyStatus(statuses, "agentproxy/runner-ready/ocr-review/run-1/2"), false);
   assert.equal(interpretReadyStatus(statuses, "agentproxy/runner-ready/ocr-review/run-1/3"), false);
+});
+
+test("runner readiness scans commit-status pages until the exact context is found", () => {
+  assert.equal(typeof runnerFallback.findReadyStatus, "function");
+  const target = "agentproxy/runner-ready/ocr-review/run-1/1";
+  const firstPage = Array.from({ length: 100 }, (_, index) => ({
+    context: `unrelated/${index}`,
+    state: "success",
+  }));
+  const pages = [];
+  const ready = runnerFallback.findReadyStatus((page) => {
+    pages.push(page);
+    if (page === 1) return firstPage;
+    if (page === 2) return [{ context: target, state: "success" }];
+    return [];
+  }, target);
+
+  assert.equal(ready, true);
+  assert.deepEqual(pages, [1, 2]);
 });
 
 test("GitHub API wrapper retries bounded transient failures without hiding terminal failure", () => {
