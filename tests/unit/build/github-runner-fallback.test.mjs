@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 
 import {
+  buildSchedulerRunId,
   buildWorkerDispatchArgs,
   parseWorkerInputs,
   interpretReadyStatus,
@@ -79,4 +80,14 @@ test("GitHub API wrapper retries bounded transient failures without hiding termi
     /still broken/
   );
   assert.equal(failedCalls, 3);
+});
+
+test("scheduler run identity is unique across GitHub reruns", () => {
+  assert.equal(buildSchedulerRunId({ GITHUB_RUN_ID: "37937387985", GITHUB_RUN_ATTEMPT: "1" }), "37937387985-1");
+  assert.equal(buildSchedulerRunId({ GITHUB_RUN_ID: "37937387985", GITHUB_RUN_ATTEMPT: "2" }), "37937387985-2");
+  assert.notEqual(
+    buildSchedulerRunId({ GITHUB_RUN_ID: "37937387985", GITHUB_RUN_ATTEMPT: "1" }),
+    buildSchedulerRunId({ GITHUB_RUN_ID: "37937387985", GITHUB_RUN_ATTEMPT: "2" })
+  );
+});
 });
