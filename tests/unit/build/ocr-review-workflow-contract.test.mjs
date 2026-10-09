@@ -27,7 +27,11 @@ test("OCR dispatcher is same-repo pull_request only and runs trusted control-pla
   assert.match(y, /head\.repo\.full_name\s*==\s*github\.repository/);
   assert.match(y, /cancel-in-progress:\s*true/);
   assert.match(y, /ref:\s*\$\{\{\s*github\.event\.pull_request\.base\.sha\s*\}\}/);
+  assert.match(y, /id:\s*base-contract/);
+  assert.match(y, /ocr-review-worker\.yml/);
+  assert.match(y, /ocr-review-job\.json/);
   assert.match(y, /github-runner-fallback\.mjs/);
+  assert.match(y, /if:\s*steps\.base-contract\.outputs\.ready\s*==\s*['\"]true['\"]/);
   assert.match(y, /--manifest\s+\.github\/ci\/ocr-review-job\.json/);
   assert.match(y, /--worker-workflow\s+ocr-review-worker\.yml/);
   assert.match(y, /--wait-completion/);

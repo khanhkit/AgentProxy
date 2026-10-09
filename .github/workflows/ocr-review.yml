@@ -30,12 +30,32 @@ jobs:
           persist-credentials: false
           fetch-depth: 1
 
+      - name: Verify OCR control plane exists on trusted base
+        id: base-contract
+        shell: bash
+        run: |
+          required=(
+            scripts/ci/github-runner-fallback.mjs
+            .github/ci/ocr-review-job.json
+            .github/workflows/ocr-review-worker.yml
+          )
+          for path in "${required[@]}"; do
+            if [[ ! -f "${path}" ]]; then
+              echo "ready=false" >> "${GITHUB_OUTPUT}"
+              echo "::notice::OpenCodeReview bootstrap skipped: trusted base does not yet contain ${path}."
+              exit 0
+            fi
+          done
+          echo "ready=true" >> "${GITHUB_OUTPUT}"
+
       - name: Setup Node.js
+        if: steps.base-contract.outputs.ready == 'true'
         uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           node-version-file: .nvmrc
 
       - name: Select one compatible OCR runner and wait for review completion
+        if: steps.base-contract.outputs.ready == 'true'
         env:
           GITHUB_TOKEN: ${{ github.token }}
           HEAD_SHA: ${{ github.event.pull_request.head.sha }}
