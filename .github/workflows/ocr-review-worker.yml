@@ -21,6 +21,9 @@ on:
       claim_context:
         required: true
         type: string
+      ready_context:
+        required: true
+        type: string
       pr_number:
         required: true
         type: string
@@ -40,7 +43,7 @@ jobs:
     runs-on: ${{ inputs.runner }}
     permissions:
       contents: read
-      statuses: read
+      statuses: write
       pull-requests: write
     steps:
       - name: Validate requested PR context before secret-bearing review
@@ -73,6 +76,24 @@ jobs:
             if (pullRequest.base.ref !== process.env.BASE_REF) {
               throw new Error('OCR review base ref does not match current PR base');
             }
+
+      - name: Signal allocated runner readiness
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v8.0.0
+        env:
+          SOURCE_SHA: ${{ inputs.source_sha }}
+          RUNNER_READY_CONTEXT: ${{ inputs.ready_context }}
+        with:
+          script: |
+            const { owner, repo } = context.repo;
+            await github.rest.repos.createCommitStatus({
+              owner,
+              repo,
+              sha: process.env.SOURCE_SHA,
+              state: 'success',
+              context: process.env.RUNNER_READY_CONTEXT,
+              description: 'runner allocated; waiting for scheduler claim',
+              target_url: `${context.serverUrl}/${owner}/${repo}/actions/runs/${context.runId}`,
+            });
 
       - name: Wait for scheduler claim before secret-bearing review
         uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v8.0.0
