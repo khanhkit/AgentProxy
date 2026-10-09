@@ -27,7 +27,10 @@ function baseProtection() {
   };
 }
 
-function runCli(protection: Record<string, unknown>) {
+function runCli(
+  protection: Record<string, unknown>,
+  repository: Record<string, unknown> = { delete_branch_on_merge: false }
+) {
   const fakeDir = mkdtempSync(join(tmpdir(), "ap0109-gh-"));
   const ghPath = join(fakeDir, "gh");
   const fakeGh = `#!/usr/bin/env node
@@ -38,6 +41,10 @@ if (args[0] === "repo" && args[1] === "view") {
 }
 if (args[0] === "api" && args[1] === "repos/khanhkit/AgentProxy/branches/main/protection") {
   process.stdout.write(process.env.FAKE_PROTECTION_JSON || "{}");
+  process.exit(0);
+}
+if (args[0] === "api" && args[1] === "repos/khanhkit/AgentProxy") {
+  process.stdout.write(process.env.FAKE_REPOSITORY_JSON || "{}");
   process.exit(0);
 }
 process.stderr.write("unexpected fake gh invocation: " + args.join(" ") + "\\n");
@@ -53,6 +60,7 @@ process.exit(2);
         ...process.env,
         PATH: `${fakeDir}:${process.env.PATH ?? ""}`,
         FAKE_PROTECTION_JSON: JSON.stringify(protection),
+        FAKE_REPOSITORY_JSON: JSON.stringify(repository),
       },
       encoding: "utf8",
       timeout: 10_000,
@@ -90,4 +98,13 @@ test("AP-0109 CLI: absent required checks exits non-zero", () => {
   const parsed = JSON.parse(result.stdout);
   assert.equal(parsed.ok, false);
   assert.ok(parsed.failures.includes("required_status_checks"));
+});
+
+
+test("AP-ISS-0136 CLI: automatic delete_branch_on_merge exits non-zero", () => {
+  const result = runCli(baseProtection(), { delete_branch_on_merge: true });
+  assert.equal(result.status, 1, result.stderr);
+  const parsed = JSON.parse(result.stdout);
+  assert.equal(parsed.ok, false);
+  assert.ok(parsed.failures.includes("delete_branch_on_merge"));
 });
