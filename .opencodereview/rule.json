@@ -1,0 +1,9 @@
+{
+  "rules": [
+    {
+      "path": "**/*",
+      "merge_system_rule": true,
+      "rule": "AGENTS.md remains the authoritative AgentProxy project rule source; this OCR overlay supplements it and must not redefine or weaken those contracts. Focus semantic review on cross-file behavior that deterministic gates may miss: authorization/authentication and tenant/principal isolation; SSRF/outbound destination policy and credential provenance; client Authorization versus router/provider credentials; retry/replay safety and request-wide amplification; streaming commit/cancellation/backpressure/error lifecycle; correct scope separation between provider circuit breaker, connection cooldown, and model lockout; continuation/session affinity; sanitized public errors and internal identifier/secret leakage; migration/data-loss semantics; asynchronous post-processing accidentally returning to the latency-critical request path; concurrency races, duplicate charging or state mutation; and missing behavioral regression evidence. Prefer concrete behavior/security defects over style or lint findings already covered by repository gates."
+    }
+  ]
+}

@@ -1,0 +1,53 @@
+name: OpenCodeReview
+
+on:
+  pull_request:
+    branches: [main, "release/**"]
+    types: [opened, synchronize, reopened, ready_for_review]
+
+permissions: {}
+
+concurrency:
+  group: ocr-review-dispatch-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  review:
+    name: OpenCodeReview dispatcher
+    if: >-
+      github.event.pull_request.draft == false &&
+      github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      actions: write
+      statuses: write
+    steps:
+      - name: Checkout trusted PR base control plane
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event.pull_request.base.sha }}
+          persist-credentials: false
+          fetch-depth: 1
+
+      - name: Setup Node.js
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version-file: .nvmrc
+
+      - name: Select one compatible OCR runner and wait for review completion
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          BASE_REF: ${{ github.event.pull_request.base.ref }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          node scripts/ci/github-runner-fallback.mjs \
+            --logical-task ocr-review \
+            --source-sha "${HEAD_SHA}" \
+            --workflow-ref "${BASE_REF}" \
+            --manifest .github/ci/ocr-review-job.json \
+            --worker-workflow ocr-review-worker.yml \
+            --worker-input "pr_number=${PR_NUMBER}" \
+            --worker-input "base_ref=${BASE_REF}" \
+            --wait-completion
