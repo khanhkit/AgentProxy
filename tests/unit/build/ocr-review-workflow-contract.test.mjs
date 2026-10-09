@@ -26,6 +26,7 @@ test("OCR dispatcher is same-repo pull_request only and runs trusted control-pla
   assert.match(y, /draft\s*==\s*false/);
   assert.match(y, /head\.repo\.full_name\s*==\s*github\.repository/);
   assert.match(y, /cancel-in-progress:\s*true/);
+  assert.match(y, /runs-on:\s*ubuntu-24\.04-arm/);
   assert.match(y, /ref:\s*\$\{\{\s*github\.event\.pull_request\.base\.sha\s*\}\}/);
   assert.match(y, /id:\s*base-contract/);
   assert.match(y, /ocr-review-worker\.yml/);
@@ -95,6 +96,7 @@ test("OCR runner manifest enables one sequential claim-guarded review across pro
   assert.equal(job.claimBeforeMutation, true);
   assert.equal(job.fallbackEnabled, true);
   assert.equal(job.queueTimeoutSeconds, 45);
+  assert.equal(job.waitOnExhaustion, true);
   assert.deepEqual(job.compatibleRunners, ["ubuntu-24.04-arm", "ubuntu-latest", "macos-15-intel"]);
   assert.equal(
     job.compatibleRunners.some((runner) => runner.startsWith("windows-")),
