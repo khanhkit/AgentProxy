@@ -189,11 +189,24 @@ export function withTinyCmsDomMocks<T>(fn: () => T): T {
   }
 }
 
+let asyncDomMockTail: Promise<void> = Promise.resolve();
+
 export async function withTinyCmsDomMocksAsync<T>(fn: () => Promise<T>): Promise<T> {
-  const restore = setupDomMocks();
+  const previous = asyncDomMockTail;
+  let release!: () => void;
+  asyncDomMockTail = new Promise<void>((resolve) => {
+    release = resolve;
+  });
+
+  await previous;
   try {
-    return await fn();
+    const restore = setupDomMocks();
+    try {
+      return await fn();
+    } finally {
+      restore();
+    }
   } finally {
-    restore();
+    release();
   }
 }
