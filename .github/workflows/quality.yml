@@ -133,6 +133,7 @@ jobs:
           OSV_SCANNER_VERSION=v2.3.8
           ACTIONLINT_VERSION=v1.7.12
           ZIZMOR_VERSION=1.25.2
+          ZIZMOR_SHA256=aa1facd105f0d83fe5c55b1adcd9d7417de5d83aa27471f91dc0b66cf3803577
           OASDIFF_VERSION=v1.19.1
           # gitleaks — pinned linux x64 tarball via gh (authed), extract binary
           rm -rf /tmp/gl && mkdir -p /tmp/gl
@@ -144,8 +145,12 @@ jobs:
           install -m 0755 /tmp/osv/*linux_amd64 "$HOME/.local/bin/osv-scanner"
           # actionlint — Go modules are checksum-verified; pin the exact release.
           GOBIN="$HOME/.local/bin" go install github.com/rhysd/actionlint/cmd/actionlint@${ACTIONLINT_VERSION}
-          # zizmor — pinned PyPI package (same version as ci.yml quality-extended)
-          pipx install "zizmor==$ZIZMOR_VERSION" || pip install --user "zizmor==$ZIZMOR_VERSION"
+          # zizmor — exact GitHub release asset with GitHub-published SHA-256 verified before extraction
+          rm -rf /tmp/zizmor && mkdir -p /tmp/zizmor
+          gh release download "v$ZIZMOR_VERSION" --repo zizmorcore/zizmor --pattern 'zizmor-x86_64-unknown-linux-gnu.tar.gz' --dir /tmp/zizmor
+          zizmor_asset=/tmp/zizmor/zizmor-x86_64-unknown-linux-gnu.tar.gz
+          printf '%s  %s\n' "$ZIZMOR_SHA256" "$zizmor_asset" | sha256sum -c -
+          tar -xzf "$zizmor_asset" -C "$HOME/.local/bin" zizmor
           # oasdiff — pinned linux amd64 tarball via gh (authed), extract binary
           rm -rf /tmp/oasd && mkdir -p /tmp/oasd
           gh release download "$OASDIFF_VERSION" --repo Tufin/oasdiff --pattern '*linux_amd64.tar.gz' --dir /tmp/oasd

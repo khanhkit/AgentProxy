@@ -61,3 +61,13 @@ test("quickstart does not stream downloaded response bytes into an interpreter",
   const quickstart = readFileSync(join(process.cwd(), "examples", "quickstart", "curl_terminal.sh"), "utf8");
   assert.doesNotMatch(quickstart, /curl[\s\S]*?\|\s*python3\b/, "quickstart must separate HTTP response retrieval from local parsing");
 });
+
+test('zizmor is installed from a checksum-verified exact release asset, not pip', () => {
+  for (const workflowPath of ['.github/workflows/ci.yml', '.github/workflows/quality.yml']) {
+    const workflow = readFileSync(join(process.cwd(), workflowPath), 'utf8');
+    assert.doesNotMatch(workflow, /pipx install [^\n]*zizmor|pip install [^\n]*zizmor/);
+    assert.match(workflow, /zizmor-x86_64-unknown-linux-gnu\.tar\.gz/);
+    assert.match(workflow, /aa1facd105f0d83fe5c55b1adcd9d7417de5d83aa27471f91dc0b66cf3803577/);
+    assert.match(workflow, /sha256sum -c/);
+  }
+});
