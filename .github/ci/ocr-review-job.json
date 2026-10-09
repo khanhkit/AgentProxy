@@ -8,6 +8,7 @@
       "claimBeforeMutation": true,
       "fallbackEnabled": true,
       "queueTimeoutSeconds": 45,
+      "waitOnExhaustion": true,
       "compatibleRunners": ["ubuntu-24.04-arm", "ubuntu-latest", "macos-15-intel"],
       "compatibility": {
         "os": ["linux", "macos"],

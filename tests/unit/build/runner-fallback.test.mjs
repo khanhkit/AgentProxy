@@ -252,6 +252,36 @@ test("exhausted compatible runners returns explicit exhausted result", async () 
   assert.equal(result.attempts.length, 2);
 });
 
+test("waitOnExhaustion retries the preferred runner without another queue timeout", async () => {
+  const q1 = Array.from({ length: 46 }, () => ({ status: "queued" }));
+  q1.push(
+    { status: "completed", conclusion: "cancelled" },
+    { status: "queued" },
+    { status: "in_progress" }
+  );
+  const q2 = Array.from({ length: 46 }, () => ({ status: "queued" }));
+  q2.push({ status: "completed", conclusion: "cancelled" });
+  const a = fakeAdapter({ "ubuntu-24.04-arm": q1, "ubuntu-latest": q2 });
+  const result = await runFallbackScheduler(
+    a,
+    {
+      id: "ocr-review",
+      compatibleRunners: ["ubuntu-24.04-arm", "ubuntu-latest"],
+      queueTimeoutSeconds: 45,
+      waitOnExhaustion: true,
+    },
+    { sourceSha: "abc", pollIntervalMs: 1000, claimNonce: "test-run" }
+  );
+  assert.equal(result.status, "started");
+  assert.equal(result.runner, "ubuntu-24.04-arm");
+  assert.equal(result.attempts.length, 3);
+  assert.equal(result.attempts[2].outcome, "final-wait-started");
+  assert.deepEqual(
+    a.calls.filter((c) => c[0] === "dispatch").map((c) => c[1]),
+    ["ubuntu-24.04-arm", "ubuntu-latest", "ubuntu-24.04-arm"]
+  );
+});
+
 test("completed task failure is terminal and does not dispatch fallback runner", async () => {
   const a = fakeAdapter({
     "ubuntu-24.04-arm": [{ status: "completed", conclusion: "failure" }],

@@ -69,6 +69,19 @@ test("validator rejects unknown and duplicate runner labels", async () => {
   assert.throws(() => validatePortableJobs(duplicate), /duplicate runner/i);
 });
 
+test("validator rejects invalid waitOnExhaustion policy", async () => {
+  const invalidType = await invalidManifest((m) => {
+    m.jobs["test-vitest"].waitOnExhaustion = "true";
+  });
+  assert.throws(() => validatePortableJobs(invalidType), /waitOnExhaustion/i);
+
+  const noFallback = await invalidManifest((m) => {
+    m.jobs["test-vitest"].waitOnExhaustion = true;
+    m.jobs["test-vitest"].fallbackEnabled = false;
+  });
+  assert.throws(() => validatePortableJobs(noFallback), /waitOnExhaustion.*fallback/i);
+});
+
 test("validator rejects out-of-range queue timeout", async () => {
   const invalid = await invalidManifest((m) => {
     m.jobs["test-vitest"].fallbackEnabled = true;

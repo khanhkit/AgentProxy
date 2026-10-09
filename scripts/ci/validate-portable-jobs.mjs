@@ -26,6 +26,10 @@ export function validatePortableJobs(manifest) {
       throw new Error(`${id}: unknown mutationClass ${job.mutationClass}`);
     if (!Array.isArray(job.compatibleRunners) || job.compatibleRunners.length === 0)
       throw new Error(`${id}: compatibleRunners required`);
+    if ("waitOnExhaustion" in job && typeof job.waitOnExhaustion !== "boolean")
+      throw new Error(`${id}: waitOnExhaustion must be boolean`);
+    if (job.waitOnExhaustion === true && !job.fallbackEnabled)
+      throw new Error(`${id}: waitOnExhaustion requires fallbackEnabled=true`);
     const seen = new Set();
     for (const runner of job.compatibleRunners) {
       if (!ALLOWED_RUNNERS.has(runner)) throw new Error(`${id}: unknown runner ${runner}`);
