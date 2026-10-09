@@ -18,4 +18,4 @@ response="$(curl "$API_URL" \
     ]
   }')"
 
-python3 -c "import json,sys; print(json.loads(sys.argv[1])['choices'][0]['message']['content'])" "$response"
+python3 -c "import json,sys; print(json.load(sys.stdin)['choices'][0]['message']['content'])" <<< "$response"

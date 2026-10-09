@@ -8,6 +8,8 @@ import { pathToFileURL } from 'node:url';
 
 const EXACT_SPEC = /^agentproxy@(\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?)$/;
 const REGISTRY_HOST = 'registry.npmjs.org';
+export const MAX_ARCHIVE_BYTES = 256 * 1024 * 1024;
+const DOWNLOAD_TIMEOUT_MS = 60_000;
 
 export function validateExactSpec(spec) {
   if (!EXACT_SPEC.test(spec)) throw new Error(`refusing non-exact AgentProxy package spec: ${spec}`);
@@ -21,7 +23,7 @@ export function validateRegistryMetadata(metadata) {
     throw new Error('npm registry metadata missing dist.tarball or dist.integrity');
   }
   const url = new URL(tarball);
-  if (url.protocol !== 'https:' || url.hostname !== REGISTRY_HOST || url.username || url.password) {
+  if (url.protocol !== 'https:' || url.hostname !== REGISTRY_HOST || url.port || url.username || url.password) {
     throw new Error(`refusing untrusted npm tarball URL: ${tarball}`);
   }
   const match = /^sha512-([A-Za-z0-9+/]+={0,2})$/.exec(integrity);
@@ -34,6 +36,32 @@ export function validateRegistryMetadata(metadata) {
 export function verifySha512(bytes, expected) {
   const actual = createHash('sha512').update(bytes).digest();
   return actual.length === expected.length && timingSafeEqual(actual, expected);
+}
+
+export async function readBoundedArchiveResponse(response, maxBytes = MAX_ARCHIVE_BYTES) {
+  const declared = response.headers.get('content-length');
+  if (declared !== null) {
+    const length = Number(declared);
+    if (!Number.isSafeInteger(length) || length < 0) throw new Error('invalid npm tarball content-length');
+    if (length > maxBytes) throw new Error(`npm tarball too large: ${length} bytes`);
+  }
+  if (!response.body) throw new Error('npm tarball response body missing');
+  const reader = response.body.getReader();
+  const chunks = [];
+  let total = 0;
+  try {
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      total += value.byteLength;
+      if (total > maxBytes) throw new Error(`npm tarball too large: exceeds ${maxBytes} bytes`);
+      chunks.push(Buffer.from(value));
+    }
+  } catch (error) {
+    await reader.cancel().catch(() => {});
+    throw error;
+  }
+  return Buffer.concat(chunks, total);
 }
 
 function npmViewMetadata(spec) {
@@ -54,9 +82,9 @@ function npmViewMetadata(spec) {
 
 async function downloadVerifiedArchive(spec, fetchImpl = fetch) {
   const metadata = validateRegistryMetadata(npmViewMetadata(spec));
-  const response = await fetchImpl(metadata.tarball, { redirect: 'error' });
+  const response = await fetchImpl(metadata.tarball, { redirect: 'error', signal: AbortSignal.timeout(DOWNLOAD_TIMEOUT_MS) });
   if (!response.ok) throw new Error(`npm tarball download failed: HTTP ${response.status}`);
-  const bytes = Buffer.from(await response.arrayBuffer());
+  const bytes = await readBoundedArchiveResponse(response);
   if (!verifySha512(bytes, metadata.expected)) {
     throw new Error(`sha512 integrity mismatch for ${spec}`);
   }
@@ -71,7 +99,7 @@ export async function installVerifiedPackage(spec) {
     const bytes = await downloadVerifiedArchive(spec);
     await writeFile(archivePath, bytes, { mode: 0o600 });
     const installed = spawnSync(
-      'npm', ['install', '-g', archivePath, '--no-audit', '--no-fund'], { stdio: 'inherit' }
+      'npm', ['install', '-g', archivePath, '--ignore-scripts', '--no-audit', '--no-fund'], { stdio: 'inherit' }
     );
     if (installed.status !== 0) throw new Error(`npm local archive install failed for ${spec}`);
   } finally {

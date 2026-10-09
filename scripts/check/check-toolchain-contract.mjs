@@ -124,11 +124,9 @@ export function validateToolchainContract(root = process.cwd()) {
   if (!new RegExp(`^FROM node:${TOOLCHAIN.dockerNode.replaceAll(".", "\\.")}(?:@sha256:[0-9a-f]{64})? AS base$`, "m").test(dockerfile)) {
     errors.push(`Dockerfile Node base must pin node:${TOOLCHAIN.dockerNode}`);
   }
+  const authoritativeNpmChain = /COPY \.github\/toolchains\/npm-source\.json \/opt\/npm-source\.json[\s\S]*COPY scripts\/ci\/bootstrap-authoritative-npm\.mjs \/opt\/bootstrap-authoritative-npm\.mjs[\s\S]*npm ci --prefix \/opt\/npm-cve-patch[\s\S]*node \/opt\/bootstrap-authoritative-npm\.mjs \/opt\/npm-source\.json \/opt\/npm-toolchain \/opt\/npm-cve-patch\/node_modules[\s\S]*\/opt\/npm-toolchain\/bin\/npm --version/;
   if (
-    !dockerfile.includes(`.github/toolchains/npm-source.json`) ||
-    !dockerfile.includes(`bootstrap-authoritative-npm.mjs`) ||
-    !dockerfile.includes(`npm ci --prefix /opt/npm-cve-patch`) ||
-    !dockerfile.includes(`/opt/npm-toolchain/bin/npm --version`) ||
+    !authoritativeNpmChain.test(dockerfile) ||
     /npm\s+install\s+-g\s+npm@latest(?:[;\s]|$)/m.test(dockerfile)
   ) {
     errors.push(`Dockerfile npm must bootstrap sha512-verified patched npm@${TOOLCHAIN.npmVersion}`);

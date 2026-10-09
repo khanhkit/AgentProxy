@@ -96,6 +96,22 @@ test("toolchain contract rejects package-manager and pin drift", () => {
   assert.match(errors, /Dockerfile.*npm/);
 });
 
+
+test("toolchain contract rejects disconnected or reordered npm bootstrap fragments", () => {
+  const root = fixture({
+    Dockerfile: [
+      "FROM node:26.0.0-trixie-slim AS base",
+      "RUN /opt/npm-toolchain/bin/npm --version",
+      "COPY scripts/ci/bootstrap-authoritative-npm.mjs /opt/bootstrap-authoritative-npm.mjs",
+      "RUN node /opt/bootstrap-authoritative-npm.mjs /opt/npm-source.json /opt/npm-toolchain /opt/npm-cve-patch/node_modules",
+      "COPY .github/toolchains/npm-source.json /opt/npm-source.json",
+      "RUN npm ci --prefix /opt/npm-cve-patch",
+      "",
+    ].join("\n"),
+  });
+  assert.match(validateToolchainContract(root).join("\n"), /Dockerfile npm/);
+});
+
 test("toolchain contract rejects a missing supported-major compatibility lane", () => {
   const root = fixture({
     ".github/workflows/nightly-compat.yml": [

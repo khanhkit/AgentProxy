@@ -85,6 +85,9 @@ test("workflow source-guard", () => {
   assert.match(text, /cancel-in-progress: false/);
   assert.equal(text.includes("gh issue close"), false);
   assert.match(text, /if: github.event_name != 'pull_request'/);
+  assert.match(text, /node-version: \"24\.15\.0\"/);
+  assert.match(text, /uses: \.\/\.github\/actions\/npm-ci-retry/);
+  assert.doesNotMatch(text, /^\s*- run: npm ci\s*$/m);
 });
 
 test("schema_invalid does not throw when required_gates is missing", async () => {

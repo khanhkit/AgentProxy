@@ -13,5 +13,6 @@ if command -v cygpath >/dev/null 2>&1; then
   bash_bin="$(cygpath -u "$target_root/bin")"
 fi
 export PATH="$bash_bin:$PATH"
-test "$(npm --version)" = "12.0.2"
-echo "authoritative patched npm 12.0.2 ready at $target_root/bin"
+source_version="$(node -e 'const fs=require("fs"); process.stdout.write(JSON.parse(fs.readFileSync(process.argv[1],"utf8")).version)' "$repo_root/.github/toolchains/npm-source.json")"
+test "$(npm --version)" = "$source_version"
+echo "authoritative patched npm $source_version ready at $target_root/bin"
