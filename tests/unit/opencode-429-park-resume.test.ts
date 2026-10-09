@@ -164,6 +164,44 @@ describe("opencode 429 park-and-resume", () => {
     );
   });
 
+  it("a failed replay after heartbeat emits a sanitized SSE error frame", async () => {
+    const hostile = JSON.stringify({
+      error: {
+        message: "rate limited access_token=park-secret at /srv/private/provider.ts",
+        code: "rate_limit_exceeded",
+        status: 429,
+        internal: "must-not-cross",
+      },
+    });
+    installFetch(
+      Array.from({ length: BURST_PARK_THRESHOLD + 3 }, () => ({ status: 429, body: hostile }))
+    );
+
+    const result = await run(BURST_PARK_THRESHOLD + 1, true);
+    const response = (result as { response: Response }).response;
+    assert.strictEqual(response.status, 200, "heartbeat already committed the streaming status");
+    assert.ok(response.headers.get("content-type")?.includes("text/event-stream"));
+
+    const text = await response.text();
+    assert.ok(text.startsWith(":ping\n\n"), "park heartbeat remains the first SSE frame");
+    const dataLines = text
+      .split("\n")
+      .filter((line) => line.startsWith("data: "))
+      .map((line) => line.slice(6));
+    assert.ok(
+      dataLines.length >= 2,
+      "failed replay must emit an error data frame and terminal marker"
+    );
+    assert.equal(dataLines.at(-1), "[DONE]");
+
+    const errorFrame = JSON.parse(dataLines[0]) as {
+      error?: { message?: string; code?: string; status?: number };
+    };
+    assert.ok(errorFrame.error, "failed replay must expose a protocol error envelope");
+    assert.equal(errorFrame.error?.code, "rate_limit_exceeded");
+    assert.doesNotMatch(text, /park-secret|srv\/private|provider\.ts|must-not-cross/u);
+  });
+
   it("a fresh pool-strain marker parks directly without recounting", async () => {
     writeMarker({ since: Date.now() - 10_000, reason: "i2-zero", ttl_s: 300 });
     installFetch([{ status: 429, body: BURST_BODY }, { status: 200 }]);
