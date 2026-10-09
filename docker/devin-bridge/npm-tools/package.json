@@ -1,0 +1,11 @@
+{
+  "name": "agentproxy-devin-bridge-npm-tools",
+  "version": "1.0.0",
+  "private": true,
+  "dependencies": {
+    "@anthropic-ai/claude-code": "2.1.258"
+  },
+  "allowScripts": {
+    "@anthropic-ai/claude-code@2.1.258": true
+  }
+}

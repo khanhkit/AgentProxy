@@ -6,8 +6,12 @@ ARG TARGETARCH
 
 RUN apt-get update \
   && apt-get install -y --no-install-recommends ca-certificates curl git bash python3 make g++ tini \
-  && rm -rf /var/lib/apt/lists/* \
-  && npm install --global "@anthropic-ai/claude-code@${CLAUDE_CODE_VERSION}"
+  && rm -rf /var/lib/apt/lists/*
+
+COPY docker/devin-bridge/npm-tools/package.json docker/devin-bridge/npm-tools/package-lock.json /opt/claude-tool/
+RUN test "${CLAUDE_CODE_VERSION}" = "$(node -p "require('/opt/claude-tool/package.json').dependencies['@anthropic-ai/claude-code']")" \
+  && npm ci --prefix /opt/claude-tool --no-audit --no-fund
+ENV PATH="/opt/claude-tool/node_modules/.bin:${PATH}"
 
 RUN set -eu; \
   case "${TARGETARCH}" in \
