@@ -12,7 +12,7 @@ type DockerContract = {
 };
 
 const contracts: DockerContract[] = [
-  { file: "Dockerfile", installPattern: /\bnpm ci\b/ },
+  { file: "Dockerfile", installPattern: /\bnpm ci --include=optional\b/ },
   { file: "Dockerfile.bun", installPattern: /\bbun install\b/ },
 ];
 

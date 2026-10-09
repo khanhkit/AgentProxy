@@ -342,7 +342,7 @@ test("DAST Schemathesis hook keeps API-key semantic filtering narrow and statefu
   const hookPath = "scripts/dast/schemathesis_hooks.py";
 
   assert.match(workflow, /SCHEMATHESIS_HOOKS:\s+scripts\/dast\/schemathesis_hooks\.py/);
-  assert.match(workflow, /pip install schemathesis==4\.27\.1/);
+  assert.match(workflow, /pip install --require-hashes -r \.github\/requirements\/schemathesis\.lock/);
   assert.match(workflow, /API-key cross-field validation smoke \(blocking\)/);
   assert.match(workflow, /node scripts\/dast\/check-api-key-cross-field\.mjs/);
   assert.match(workflow, /--checks all/);
