@@ -1,6 +1,7 @@
 import { execFileSync } from 'node:child_process';
 import { loadPortableJobs } from './validate-portable-jobs.mjs';
 import { runFallbackScheduler } from './runner-fallback.mjs';
+import { buildFallbackSummary } from './summarize-runner-fallback.mjs';
 
 const arg = (name, fallback=null) => { const i=process.argv.indexOf(`--${name}`); return i>=0?process.argv[i+1]:fallback; };
 const has = (name) => process.argv.includes(`--${name}`);
@@ -61,6 +62,6 @@ if (process.argv[1] && import.meta.url === new URL(`file://${process.argv[1]}`).
   const adapter=createGitHubAdapter({repo,sourceSha,workflowRef,schedulerRunId:process.env.GITHUB_RUN_ID||String(Date.now())});
   const result=await runFallbackScheduler(adapter,runnable,{sourceSha,pollIntervalMs:Number(arg('poll-ms','1000'))});
   const text=JSON.stringify(result,null,2); console.log(text);
-  if(process.env.GITHUB_STEP_SUMMARY) await (await import('node:fs/promises')).appendFile(process.env.GITHUB_STEP_SUMMARY,`\n## Multi-runner fallback\n\n\`\`\`json\n${text}\n\`\`\`\n`);
+  if(process.env.GITHUB_STEP_SUMMARY) await (await import('node:fs/promises')).appendFile(process.env.GITHUB_STEP_SUMMARY,`\n${buildFallbackSummary(result)}\n`);
   if(result.status!=='started') process.exitCode=1;
 }
