@@ -430,8 +430,10 @@ jobs:
           rm -rf /tmp/osv && mkdir -p /tmp/osv
           gh release download --repo google/osv-scanner --pattern '*linux_amd64' --dir /tmp/osv
           install -m 0755 /tmp/osv/*linux_amd64 "$HOME/.local/bin/osv-scanner"
-          # actionlint — official download script
-          bash <(curl -fsSL https://raw.githubusercontent.com/rhysd/actionlint/main/scripts/download-actionlint.bash) latest "$HOME/.local/bin"
+          # actionlint — installer content pinned to the exact v1.7.12 commit
+          ACTIONLINT_VERSION=v1.7.12
+          ACTIONLINT_COMMIT=914e7df21a07ef503a81201c76d2b11c789d3fca
+          bash <(curl -fsSL "https://raw.githubusercontent.com/rhysd/actionlint/914e7df21a07ef503a81201c76d2b11c789d3fca/scripts/download-actionlint.bash") "$ACTIONLINT_VERSION" "$HOME/.local/bin"
           # zizmor — PyPI (pipx preferred, pip --user fallback); lands in ~/.local/bin.
           # PINNED on purpose. Unpinned, the runner installed whatever PyPI served that day and
           # measured 1 finding MORE than the devbox on the identical commit (190 vs 189) during

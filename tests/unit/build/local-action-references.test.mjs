@@ -36,3 +36,14 @@ test("third-party workflow actions are pinned to full 40-character commit SHAs",
     }
   }
 });
+
+
+test("raw GitHub workflow downloads use immutable 40-character commit refs", () => {
+  const rawGithub = /https:\/\/raw\.githubusercontent\.com\/[^/\s]+\/[^/\s]+\/([^/\s"']+)\//g;
+  for (const file of readdirSync(workflows).filter((name) => /\.ya?ml$/.test(name))) {
+    const content = readFileSync(join(workflows, file), "utf8");
+    for (const match of content.matchAll(rawGithub)) {
+      assert.match(match[1], /^[0-9a-f]{40}$/, `${file}: raw GitHub download is not commit-pinned: ${match[0]}`);
+    }
+  }
+});
