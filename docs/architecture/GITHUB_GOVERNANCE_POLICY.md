@@ -78,7 +78,7 @@ A release has two coupled hard repository invariants:
 
 For squash, rebase, linearized, or otherwise topology-rewriting integration, direct Git ancestry is insufficient. The durable provenance record is mandatory and must identify the exact source head and accepted main result so the integration remains auditable after branch deletion.
 
-Enforcement is fail-closed through `scripts/check/check-release-branch-hygiene.mjs` plus `config/quality/release-branch-provenance.json`. The same checker is wired into release-green validation, npm `prepublishOnly`, container publication, and native release-asset publication. Automatic `delete_branch_on_merge` does not waive the provenance requirement; automation must persist the mapping before cleanup.
+Enforcement is fail-closed through `scripts/check/check-release-branch-hygiene.mjs` plus `config/quality/release-branch-provenance.json`. The same checker is wired into release-green validation, npm `prepublishOnly`, container publication, and native release-asset publication. Automatic `delete_branch_on_merge` does not waive the provenance requirement; automation must persist the mapping before cleanup. The repository setting itself is therefore required to remain disabled while release work is active: merge first with the source ref preserved, record the accepted `main` SHA in the immutable provenance ledger, then delete the source branch explicitly.
 
 If the checker cannot enumerate GitHub branches, cannot load the provenance manifest, or finds an invalid provenance entry, release is blocked. There is no release-time bypass for worker, Dependabot, maintenance, or archived feature branches.
 

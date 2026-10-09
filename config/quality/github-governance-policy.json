@@ -26,7 +26,9 @@
   "breakGlass": {
     "enabled": true,
     "authorization": "repository-owner-explicit",
-    "temporaryMutation": ["enforce_admins"],
+    "temporaryMutation": [
+      "enforce_admins"
+    ],
     "requireProtectionSnapshot": true,
     "requireImmediateRestore": true,
     "requirePostRestoreGovernanceCheck": true,
@@ -40,5 +42,6 @@
     "codeql": "AP-ISS-0107 automatic PR CodeQL is not yet deployed on remote main, so requiring its context now would deadlock merges. Add it only after the workflow is present on the default branch and observed on PRs.",
     "dashboard": "CI Dashboard is intentionally not required because it can conclude success while underlying fail-closed jobs are red.",
     "reviews": "Single-maintainer repository policy: no approving review or last-push approval is required. Required status checks, admin enforcement, conversation resolution, linear history, force-push and deletion protections remain fail-closed."
-  }
+  },
+  "deleteBranchOnMerge": false
 }

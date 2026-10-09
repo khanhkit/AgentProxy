@@ -2,6 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import {
   evaluateGithubGovernance,
+  evaluateRepositorySettings,
   normalizeRequiredChecks,
 } from "../../../scripts/check/check-github-governance.mjs";
 
@@ -20,6 +21,7 @@ const policy = {
   requiredLinearHistory: true,
   allowForcePushes: false,
   allowDeletions: false,
+  deleteBranchOnMerge: false,
 };
 
 function protectedState(overrides: Record<string, unknown> = {}) {
@@ -107,4 +109,14 @@ test("AP-0109 governance: reintroducing mandatory reviews fails solo-dev policy"
   );
   assert.equal(verdict.ok, false);
   assert.ok(verdict.failures.includes("required_pull_request_reviews"));
+});
+
+
+test("AP-ISS-0136 governance: automatic source-branch deletion is forbidden until provenance is recorded", () => {
+  const desired = evaluateRepositorySettings({ delete_branch_on_merge: false }, policy);
+  assert.deepEqual(desired, { ok: true, failures: [] });
+
+  const unsafe = evaluateRepositorySettings({ delete_branch_on_merge: true }, policy);
+  assert.equal(unsafe.ok, false);
+  assert.ok(unsafe.failures.includes("delete_branch_on_merge"));
 });

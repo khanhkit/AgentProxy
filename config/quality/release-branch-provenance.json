@@ -16,11 +16,67 @@
       "acceptedMainSha": "45c07c036593fbcc189f35ef0548248ba80dbf2c"
     },
     {
+      "sourceBranch": "dependabot/npm_and_yarn/size-limit/file-14.0.0",
+      "sourceHeadSha": "091957eff31e97c7874f682fc5e0f4234cdf2c74",
+      "disposition": "integrated",
+      "pullRequest": 60,
+      "acceptedMainSha": "afa3cc3f1f1c080a4d33d1b74295eb6722a4db8a"
+    },
+    {
+      "sourceBranch": "dependabot/npm_and_yarn/agentproxy/opencode-plugin-v2/npm_and_yarn-44419e479e",
+      "sourceHeadSha": "b417a233524b02dafab0570d6316dc539515f5c3",
+      "disposition": "integrated",
+      "pullRequest": 75,
+      "acceptedMainSha": "7231682307c8c7af1521576a3b90e2199e475fbd"
+    },
+    {
       "sourceBranch": "kit/ap-iss-0136-provenance-hard-rule",
       "sourceHeadSha": "748d56aa1596bd5d8ee801b4435f37785620c268",
       "disposition": "integrated",
       "pullRequest": 84,
       "acceptedMainSha": "a1ad5e7c676294c149b1f5c6afcd2f00fc2d1048"
+    },
+    {
+      "sourceBranch": "kit/ap-iss-0136-provenance-record-pr84",
+      "sourceHeadSha": "e277b1cc2233dfcf3ce0b7397f35fcc1510a44c1",
+      "disposition": "integrated",
+      "pullRequest": 85,
+      "acceptedMainSha": "a9cd62e3b223521a309ae8ab7a6f6ca21821dcf9"
+    },
+    {
+      "sourceBranch": "dependabot/github_actions/github/codeql-action/upload-sarif-4.38.1",
+      "sourceHeadSha": "a32a2df1111f6e7152d3ed1e531d905ca926e9db",
+      "disposition": "integrated",
+      "pullRequest": 49,
+      "acceptedMainSha": "0427103826f6b8fb3635e076d0ade4676e4e6857"
+    },
+    {
+      "sourceBranch": "dependabot/github_actions/github/codeql-action/init-4.38.1",
+      "sourceHeadSha": "148da69aa3758be5fd8213b0705738b9ce18c586",
+      "disposition": "integrated",
+      "pullRequest": 50,
+      "acceptedMainSha": "0f488839a3f6dc8d1da7dc682ba3d63828258f20"
+    },
+    {
+      "sourceBranch": "dependabot/npm_and_yarn/production-d597d176ed",
+      "sourceHeadSha": "4c66d01d2f7e5d74f4df3556e7576c2306e33f89",
+      "disposition": "integrated",
+      "pullRequest": 80,
+      "acceptedMainSha": "61cfb3d11957c4f683e331fb8da35c1dac12c95c"
+    },
+    {
+      "sourceBranch": "kit/ap-iss-0136-jsyaml-rebase",
+      "sourceHeadSha": "ef9fb9fb2b5ddf8d47416597436cd0cabc79b63f",
+      "disposition": "integrated",
+      "pullRequest": 91,
+      "acceptedMainSha": "d546bb654462cab49cdba36a8845136888481511"
+    },
+    {
+      "sourceBranch": "kit/ap-iss-0136-electron-brace-security",
+      "sourceHeadSha": "2a8ff2e7fca382b2f1ae6e1bcf91d2bb3d873836",
+      "disposition": "integrated",
+      "pullRequest": 93,
+      "acceptedMainSha": "a17c5f7754e16f991176e05dd89dc4b23afd126f"
     }
   ]
 }
