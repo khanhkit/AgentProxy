@@ -26,18 +26,16 @@ function declaredDependents(lock: Lockfile, depName: string): string[] {
   return dependents;
 }
 
-test("AP-ISS-0128: extract-zip advisories remain confined to promptfoo dev tooling", () => {
+test("AP-ISS-0128: patched codex-security removes extract-zip from the lock", () => {
   const lock = readLockfile();
-  const root = lock.packages?.[""] ?? {};
+  const codexSecurity = lock.packages?.["node_modules/@openai/codex-security"] as
+    | (LockPackage & { version?: string })
+    | undefined;
 
-  assert.ok(!Object.prototype.hasOwnProperty.call(root.dependencies ?? {}, "extract-zip"));
-  assert.ok(!Object.prototype.hasOwnProperty.call(root.devDependencies ?? {}, "extract-zip"));
-  assert.deepEqual(declaredDependents(lock, "extract-zip"), [
-    "node_modules/@openai/codex-security",
-  ]);
+  assert.equal(codexSecurity?.version, "0.2.0");
+  assert.deepEqual(declaredDependents(lock, "extract-zip"), []);
+  assert.equal(lock.packages?.["node_modules/extract-zip"], undefined);
   assert.deepEqual(declaredDependents(lock, "@openai/codex-security"), ["node_modules/promptfoo"]);
-  assert.ok(Object.prototype.hasOwnProperty.call(root.devDependencies ?? {}, "promptfoo"));
-  assert.ok(!Object.prototype.hasOwnProperty.call(root.dependencies ?? {}, "promptfoo"));
 });
 
 test("AP-ISS-0128: production/runtime code never imports extract-zip", () => {
