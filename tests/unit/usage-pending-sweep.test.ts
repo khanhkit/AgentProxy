@@ -15,6 +15,21 @@ const {
 const MINUTE_MS = 60 * 1000;
 const HOUR_MS = 60 * MINUTE_MS;
 
+test("pending request ids retain full UUID entropy", () => {
+  clearPendingRequests();
+  try {
+    const id = trackPendingRequest("m", "p", "entropy", true);
+    assert.ok(id);
+    assert.match(
+      id,
+      /^\d+-[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i,
+      "pending ids must keep the full randomUUID instead of truncating it to collision-prone entropy"
+    );
+  } finally {
+    clearPendingRequests();
+  }
+});
+
 test("sweepStalePendingRequests marks over-age pending details and keeps counts", () => {
   clearPendingRequests();
 
