@@ -1,4 +1,5 @@
 import { randomUUID } from "node:crypto";
+import { sanitizeErrorMessage } from "../utils/error.ts";
 
 import {
   BaseExecutor,
@@ -604,7 +605,7 @@ export class GitlabExecutor extends BaseExecutor {
           "GITLAB-DUO",
           isGitLabDirectAccessDisabled(response.status, bodyText)
             ? "direct_access exchange rejected (403, direct connections disabled); falling back to public completions endpoint"
-            : `direct_access exchange rejected (403); falling back to public completions endpoint. Body: ${bodyText.slice(0, 500)}`
+            : `direct_access exchange rejected (403); falling back to public completions endpoint. Body: ${sanitizeErrorMessage(bodyText.slice(0, 500))}`
         );
       }
 
@@ -617,7 +618,7 @@ export class GitlabExecutor extends BaseExecutor {
         credentials,
         errorResponse: null,
       };
-    } catch (error) {
+    } catch {
       return {
         target: {
           mode: "monolith",

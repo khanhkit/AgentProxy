@@ -109,11 +109,6 @@
       "count": 14
     }
   },
-  "open-sse/executors/gitlab.ts": {
-    "@typescript-eslint/no-unused-vars": {
-      "count": 1
-    }
-  },
   "open-sse/executors/glm.ts": {
     "@typescript-eslint/no-unused-vars": {
       "count": 1

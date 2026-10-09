@@ -5,7 +5,7 @@ import { runIsolatedBoundaryFixture } from "./helpers/runIsolatedBoundaryFixture
 test("provider last-error persistence passes in an isolated child process", () => {
   runIsolatedBoundaryFixture({
     fixtureUrl: new URL("./fixtures/provider-last-error-sanitization.fixture.ts", import.meta.url),
-    expectedTests: 1,
+    expectedTests: 2,
     label: "provider last-error persistence",
   });
 });
