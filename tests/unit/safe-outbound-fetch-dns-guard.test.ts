@@ -135,19 +135,24 @@ test("a name that resolves only to public addresses is not blocked by the guard"
   assert.notEqual(code, "URL_GUARD_BLOCKED");
 });
 
-test("a name that does not resolve is left to the request itself to fail", async () => {
+test("public-only fails closed before transport when DNS validation fails", async () => {
+  let fetchCalls = 0;
   const code = await blockedBy(
-    safeOutboundFetch("http://nxdomain.alias.test:9/", {
+    safeOutboundFetch("https://nxdomain.alias.test/quota", {
       guard: "public-only",
       retry: false,
       timeoutMs: 500,
       dnsLookup: async () => {
-        throw new Error("ENOTFOUND");
+        throw new Error("SERVFAIL");
+      },
+      fetchImpl: async () => {
+        fetchCalls += 1;
+        return new Response("unexpected", { status: 200 });
       },
     })
   );
-  assert.notEqual(code, "URL_GUARD_BLOCKED");
-  assert.notEqual(code, null);
+  assert.equal(code, "NETWORK_ERROR");
+  assert.equal(fetchCalls, 0, "transport must not run after public-only DNS validation fails");
 });
 
 test("only guard public-only resolves the host; literals and other modes do not", async () => {

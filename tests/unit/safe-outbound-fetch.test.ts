@@ -5,6 +5,7 @@ const { SafeOutboundFetchError, safeOutboundFetch } =
   await import("../../src/shared/network/safeOutboundFetch.ts");
 
 const originalFetch = globalThis.fetch;
+const publicDnsLookup = async () => [{ address: "93.184.216.34", family: 4 }];
 
 test.afterEach(() => {
   globalThis.fetch = originalFetch;
@@ -125,6 +126,7 @@ test("AP-ISS-0026 guarded allowed redirect blocks a private destination before t
     safeOutboundFetch("https://public.example.test/start", {
       method: "GET",
       guard: "public-only",
+      dnsLookup: publicDnsLookup,
       allowRedirect: true,
       retry: false,
     }),
@@ -180,6 +182,7 @@ test("AP-ISS-0026 guarded allowed redirect follows validated public and relative
   const response = await safeOutboundFetch("https://public.example.test/start", {
     method: "GET",
     guard: "public-only",
+    dnsLookup: publicDnsLookup,
     allowRedirect: true,
     retry: false,
   });
@@ -206,6 +209,7 @@ test("AP-ISS-0026 guarded redirect count is capped deterministically", async () 
     safeOutboundFetch("https://public.example.test/loop?hop=0", {
       method: "GET",
       guard: "public-only",
+      dnsLookup: publicDnsLookup,
       allowRedirect: true,
       maxRedirects: 2,
       retry: false,
@@ -262,6 +266,7 @@ test("AP-ISS-0026 guarded 302 preserves native POST-to-GET redirect semantics", 
     headers: { "content-type": "application/json", "x-test": "kept" },
     body: JSON.stringify({ hello: "world" }),
     guard: "public-only",
+    dnsLookup: publicDnsLookup,
     allowRedirect: true,
     retry: false,
   });
@@ -296,6 +301,7 @@ test("AP-ISS-0026 guarded cross-origin redirect strips sensitive credentials", a
       "x-safe": "keep-me",
     },
     guard: "public-only",
+    dnsLookup: publicDnsLookup,
     allowRedirect: true,
     retry: false,
   });
@@ -316,6 +322,7 @@ test("AP-ISS-0026 malformed redirect location is normalized as INVALID_URL", asy
   await assert.rejects(
     safeOutboundFetch("https://public.example.test/start", {
       guard: "public-only",
+      dnsLookup: publicDnsLookup,
       allowRedirect: true,
       retry: false,
     }),
