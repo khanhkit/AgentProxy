@@ -34,7 +34,7 @@ jobs:
           node-version: ${{ matrix.node }}
           cache: npm
       - run: npm run check:toolchain-contract
-      - uses: $/.github/actions/npm-ci-retry
+      - uses: ./.github/actions/npm-ci-retry
         with:
           pin_authoritative_npm: ${{ matrix.pin_authoritative_npm }}
       - run: npm run check:node-runtime
