@@ -80,6 +80,8 @@ For squash, rebase, linearized, or otherwise topology-rewriting integration, dir
 
 Enforcement is fail-closed through `scripts/check/check-release-branch-hygiene.mjs` plus `config/quality/release-branch-provenance.json`. The same checker is wired into release-green validation, npm `prepublishOnly`, container publication, and native release-asset publication. Automatic `delete_branch_on_merge` does not waive the provenance requirement; automation must persist the mapping before cleanup. The repository setting itself is therefore required to remain disabled while release work is active: merge first with the source ref preserved, record the accepted `main` SHA in the immutable provenance ledger, then delete the source branch explicitly.
 
+For PR-integrated branches, the pre-delete terminal proof is the immutable merged-PR record itself: `headRefName`, exact `headRefOid`, and `mergeCommit.oid`, with the merge SHA verified as an ancestor of current `main`. Run `node scripts/release/verify-pr-branch-provenance.mjs --pr <n> --branch <name>` while the source ref still exists. This avoids an impossible recursive chain where a provenance-only PR would require another provenance-only PR to record its own final SHA. The committed manifest remains the release-window snapshot/backfill; branches without a merged PR still require an explicit manifest disposition before deletion.
+
 If the checker cannot enumerate GitHub branches, cannot load the provenance manifest, or finds an invalid provenance entry, release is blocked. There is no release-time bypass for worker, Dependabot, maintenance, or archived feature branches.
 
 ## Verification
