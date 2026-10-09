@@ -472,7 +472,7 @@ export async function safeOutboundFetch(url: string | URL, options: SafeOutbound
           ? await resolveValidatedDns(activeUrl, guard, dnsLookup, activeMethod, {
               timeoutMs,
               signal,
-              failClosed: pinDns || guard !== "public-only",
+              failClosed: true,
             })
           : [];
 
