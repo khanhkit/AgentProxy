@@ -124,8 +124,6 @@ export const PACK_ARTIFACT_ROOT_ALLOWED_EXACT_PATHS: string[] = [
   "bin/restore-policies.sh",
   "bin/rollback.sh",
   "bin/snapshot-data.sh",
-  // Integrity-verifying helper invoked by packaged bin/rollback.sh for npm rollback.
-  "scripts/ops/install-verified-npm-package.mjs",
   // Locale source of truth read at runtime by bin/cli/i18n.mjs (OMNIROUTE_LANG alias
   // resolution: uk → uk-UA, fil/tl → phi, zh-hk/zh-mo/zh-hant → zh-TW) and by
   // bin/cli/commands/config.mjs (`config lang list`). Shipped via package.json "files";

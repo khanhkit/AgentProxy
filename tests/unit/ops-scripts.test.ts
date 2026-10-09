@@ -193,26 +193,39 @@ describe("ops runbook scripts (bin/*.sh)", () => {
   );
 });
 
-describe("verified npm rollback installer", () => {
-  it("rollback npm path delegates to the integrity-verifying installer", () => {
+describe("rollback package authority", () => {
+  it("npm rollback fails closed before invoking npm while no immutable package channel exists", () => {
+    const fakeBin = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-fake-npm-"));
+    const marker = path.join(fakeBin, "npm-called");
+    const fakeNpm = path.join(fakeBin, "npm");
+    fs.writeFileSync(fakeNpm, `#!/usr/bin/env bash\ntouch "${marker}"\nexit 97\n`, { mode: 0o755 });
+    try {
+      const result = runScript(
+        "rollback.sh",
+        ["0.1.0", "--method", "npm", "--yes"],
+        { PATH: `${fakeBin}:${process.env.PATH}` }
+      );
+      assert.notEqual(result.status, 0);
+      assert.match(result.stderr, /npm rollback is unavailable/i);
+      assert.match(result.stderr, /immutable.*package.*authority|package.*authority.*immutable/i);
+      assert.equal(fs.existsSync(marker), false, "fail-closed npm rollback must not invoke npm");
+    } finally {
+      fs.rmSync(fakeBin, { recursive: true, force: true });
+    }
+  });
+
+  it("rollback never infers a version from the mutable npm registry", () => {
     const body = fs.readFileSync(path.join(BIN, "rollback.sh"), "utf8");
-    assert.match(body, /install-verified-npm-package\.mjs.*agentproxy@\$VERSION/);
-    assert.doesNotMatch(body, /npm\s+install\s+-g\s+"agentproxy@\$VERSION"/);
+    assert.doesNotMatch(body, /npm\s+view\s+agentproxy\s+versions/);
+    assert.match(body, /version.*required|explicit.*version/i);
   });
 
-  it("ships the verified installer alongside packaged rollback.sh", () => {
+  it("does not ship the incomplete verified npm installer", () => {
+    const helper = path.join(ROOT, "scripts/ops/install-verified-npm-package.mjs");
+    assert.equal(fs.existsSync(helper), false);
     const pkg = JSON.parse(fs.readFileSync(path.join(ROOT, "package.json"), "utf8"));
-    assert.ok(pkg.files.includes("scripts/ops/install-verified-npm-package.mjs"));
+    assert.equal(pkg.files.includes("scripts/ops/install-verified-npm-package.mjs"), false);
     const policy = fs.readFileSync(path.join(ROOT, "scripts/build/pack-artifact-policy.ts"), "utf8");
-    assert.match(policy, /scripts\/ops\/install-verified-npm-package\.mjs/);
-  });
-
-  it("verified installer requires sha512 integrity and verifies the archive before local npm install", () => {
-    const helper = fs.readFileSync(path.join(ROOT, "scripts/ops/install-verified-npm-package.mjs"), "utf8");
-    assert.match(helper, /sha512-/);
-    assert.match(helper, /createHash\(["']sha512["']\)/);
-    assert.match(helper, /timingSafeEqual/);
-    assert.match(helper, /registry\.npmjs\.org/);
-    assert.match(helper, /['"]npm['"],\s*\[['"]install['"],\s*['"]-g['"],\s*archivePath/s);
+    assert.doesNotMatch(policy, /scripts\/ops\/install-verified-npm-package\.mjs/);
   });
 });
