@@ -71,3 +71,15 @@ test('zizmor is installed from a checksum-verified exact release asset, not pip'
     assert.match(workflow, /sha256sum -c/);
   }
 });
+
+test('Schemathesis DAST install is hash-locked through a committed requirements lock', () => {
+  const workflow = readFileSync(join(process.cwd(), '.github', 'workflows', 'dast-smoke.yml'), 'utf8');
+  assert.match(workflow, /pip install --require-hashes -r \.github\/requirements\/schemathesis\.lock/);
+  assert.doesNotMatch(workflow, /pip install schemathesis==/);
+  const lock = readFileSync(join(process.cwd(), '.github', 'requirements', 'schemathesis.lock'), 'utf8');
+  assert.match(lock, /schemathesis==4\.27\.1/);
+  for (const block of lock.split(/\n(?=[a-zA-Z0-9_.-]+==)/)) {
+    if (!/^[a-zA-Z0-9_.-]+==/m.test(block)) continue;
+    assert.match(block, /--hash=sha256:/, `dependency block must be hash locked: ${block.split('\n')[0]}`);
+  }
+});
