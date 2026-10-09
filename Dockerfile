@@ -50,22 +50,15 @@ RUN --mount=type=cache,id=s/92ca8a61-c1ba-421f-a389-d48ac7258c2d-apt-cache,targe
 # tar ^7.5.4 and undici ^6.25.0 — hence undici stays on the 6.x line, NOT 8.x).
 # --install-strategy=nested makes each replacement self-contained, so it cannot
 # perturb the versions the rest of npm's flat tree resolves.
-COPY .github/toolchains/npm/package.json .github/toolchains/npm/package-lock.json /opt/npm-toolchain/
+COPY .github/toolchains/npm-source.json /opt/npm-source.json
+COPY scripts/ci/bootstrap-authoritative-npm.mjs /opt/bootstrap-authoritative-npm.mjs
 COPY docker/npm-cve-patch/package.json docker/npm-cve-patch/package-lock.json /opt/npm-cve-patch/
 RUN set -eux; \
-  npm ci --prefix /opt/npm-toolchain --no-audit --no-fund --ignore-scripts; \
-  npm ci --prefix /opt/npm-cve-patch --no-audit --no-fund --ignore-scripts --install-strategy=nested; \
-  for pkg in brace-expansion ip-address tar undici; do \
-    test -d "/opt/npm-toolchain/node_modules/npm/node_modules/$pkg"; \
-    rm -rf "/opt/npm-toolchain/node_modules/npm/node_modules/$pkg"; \
-    cp -R "/opt/npm-cve-patch/node_modules/$pkg" \
-      "/opt/npm-toolchain/node_modules/npm/node_modules/$pkg"; \
-  done; \
-  ln -sf /opt/npm-toolchain/node_modules/npm/bin/npm-cli.js /usr/local/bin/npm; \
-  ln -sf /opt/npm-toolchain/node_modules/npm/bin/npx-cli.js /usr/local/bin/npx; \
-  node -e "for (const p of ['brace-expansion','ip-address','tar','undici']) console.log(p, require('/opt/npm-toolchain/node_modules/npm/node_modules/'+p+'/package.json').version);"; \
-  npm --version; \
+  npm ci --prefix /opt/npm-cve-patch --no-audit --no-fund --ignore-scripts; \
+  node /opt/bootstrap-authoritative-npm.mjs /opt/npm-source.json /opt/npm-toolchain /opt/npm-cve-patch/node_modules; \
+  /opt/npm-toolchain/bin/npm --version; \
   npm cache clean --force
+ENV PATH="/opt/npm-toolchain/bin:${PATH}"
 
 # ── Builder ────────────────────────────────────────────────────────────────
 FROM base AS builder

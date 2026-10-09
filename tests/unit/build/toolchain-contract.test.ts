@@ -41,7 +41,7 @@ function fixture(overrides: Record<string, string> = {}): string {
     "package.json": JSON.stringify({ packageManager: "npm@12.0.2" }),
     "package-lock.json": JSON.stringify({ lockfileVersion: 3 }),
     ".nvmrc": "24.15.0\n",
-    Dockerfile: "FROM node:26.0.0-trixie-slim AS base\nRUN npm ci --prefix /opt/npm-toolchain\nRUN ln -sf /opt/npm-toolchain/node_modules/npm/bin/npm-cli.js /usr/local/bin/npm\n",
+    Dockerfile: "FROM node:26.0.0-trixie-slim AS base\nCOPY .github/toolchains/npm-source.json /opt/npm-source.json\nCOPY scripts/ci/bootstrap-authoritative-npm.mjs /opt/bootstrap-authoritative-npm.mjs\nRUN npm ci --prefix /opt/npm-cve-patch\nRUN node /opt/bootstrap-authoritative-npm.mjs /opt/npm-source.json /opt/npm-toolchain /opt/npm-cve-patch/node_modules\nRUN /opt/npm-toolchain/bin/npm --version\n",
     ".github/actions/npm-ci-retry/action.yml": [
       "inputs:",
       "  pin_authoritative_npm:",
@@ -142,7 +142,7 @@ test("npm 12.0.2 engine boundary rejects 24.14/25 and accepts repaired lanes", (
 test("toolchain contract accepts a sha256-pinned authoritative Node base image", () => {
   const digest = "a".repeat(64);
   const root = fixture({
-    Dockerfile: `FROM node:26.0.0-trixie-slim@sha256:${digest} AS base\nCOPY .github/toolchains/npm/package.json .github/toolchains/npm/package-lock.json /opt/npm-toolchain/\nRUN npm ci --prefix /opt/npm-toolchain\nRUN node /opt/npm-toolchain/node_modules/npm/bin/npm-cli.js --version\n`,
+    Dockerfile: `FROM node:26.0.0-trixie-slim@sha256:${digest} AS base\nCOPY .github/toolchains/npm-source.json /opt/npm-source.json\nCOPY scripts/ci/bootstrap-authoritative-npm.mjs /opt/bootstrap-authoritative-npm.mjs\nRUN npm ci --prefix /opt/npm-cve-patch\nRUN node /opt/bootstrap-authoritative-npm.mjs /opt/npm-source.json /opt/npm-toolchain /opt/npm-cve-patch/node_modules\nRUN /opt/npm-toolchain/bin/npm --version\n`,
   });
   assert.deepEqual(validateToolchainContract(root), []);
 });
