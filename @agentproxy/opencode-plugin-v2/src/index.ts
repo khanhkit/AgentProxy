@@ -28,7 +28,13 @@ import {
   type CatalogSnapshot,
 } from "./cache.js";
 import { assertContext } from "./compat.js";
-import { type ApiKeyOrigin, resolveApiKey, warnIfMissing } from "./credentials.js";
+import {
+  API_KEY_ENV_VAR,
+  LEGACY_API_KEY_ENV_VAR,
+  type ApiKeyOrigin,
+  resolveApiKey,
+  warnIfMissing,
+} from "./credentials.js";
 import { createSourceErrorReporter } from "./enrichment-report.js";
 import { sanitizeToolSchemasFor } from "./gemini-language.js";
 import {
@@ -67,7 +73,11 @@ function toResolvedOptions(parsed: PluginOptions): ResolvedOptions {
   return {
     providerId: parsed.providerId,
     baseURL: parsed.baseURL,
-    apiKey: parsed.apiKey ?? process.env.OMNIROUTE_API_KEY ?? "",
+    apiKey:
+      parsed.apiKey ??
+      process.env[API_KEY_ENV_VAR] ??
+      process.env[LEGACY_API_KEY_ENV_VAR] ??
+      "",
     managementReadToken: resolveManagementReadToken(parsed.managementReadToken),
     timeoutMs: parsed.timeoutMs,
     timeouts: parsed.timeouts,
@@ -99,13 +109,13 @@ export default Plugin.define({
     resolved.logger = log;
     resolved.logLevel = parsed.logLevel;
     resolved.startupDebug = parsed.startupDebug;
-    log.info(`[omniroute-v2] init providerId=${X}`);
+    log.info(`[agentproxy-v2] init providerId=${X}`);
     // The inference key stands in below when no management token is set, and
     // gateways usually reject that stand-in with 401/403. Say so once here,
     // before any fetch, instead of letting the refusal surface per endpoint.
     if (resolved.managementReadToken === undefined) {
       log.warn(
-        `[omniroute-v2] no management token configured: management endpoints (/api/*) will reuse the inference key, ` +
+        `[agentproxy-v2] no management token configured: management endpoints (/api/*) will reuse the inference key, ` +
           `which gateways usually reject with 401/403. Set "managementReadToken" in the plugin options ` +
           `or export ${MANAGEMENT_TOKEN_ENV_VAR}.`
       );
@@ -157,7 +167,7 @@ export default Plugin.define({
       apiKeyOrigin = next.origin;
       if (moved) ({ cacheKey, identityFingerprint } = credentialsOf());
       if (!credentialChecked) warnIfMissing(next, X, log);
-      else if (moved) log.info(`[omniroute-v2] API key picked up from the ${next.origin} source`);
+      else if (moved) log.info(`[agentproxy-v2] API key picked up from the ${next.origin} source`);
       credentialChecked = true;
     };
 
@@ -170,7 +180,7 @@ export default Plugin.define({
         );
       } catch (err) {
         log.warn(
-          `[omniroute-v2] models fetch failed, publishing empty catalog: ${err instanceof Error ? err.message : String(err)}`
+          `[agentproxy-v2] models fetch failed, publishing empty catalog: ${err instanceof Error ? err.message : String(err)}`
         );
         return [];
       }
@@ -195,7 +205,7 @@ export default Plugin.define({
       } catch (err) {
         const reason = err instanceof Error ? err.message : String(err);
         reportSourceError("/api/combos", reason);
-        log.warn(`[omniroute-v2] combos fetch failed, keeping the last known combos: ${reason}`);
+        log.warn(`[agentproxy-v2] combos fetch failed, keeping the last known combos: ${reason}`);
         return { ok: false };
       }
     };
@@ -216,7 +226,7 @@ export default Plugin.define({
         };
       } catch (err) {
         log.warn(
-          `[omniroute-v2] providers fetch failed, keeping the last known provider list: ${err instanceof Error ? err.message : String(err)}`
+          `[agentproxy-v2] providers fetch failed, keeping the last known provider list: ${err instanceof Error ? err.message : String(err)}`
         );
         return { ok: false };
       }
@@ -238,7 +248,7 @@ export default Plugin.define({
         };
       } catch (err) {
         log.warn(
-          `[omniroute-v2] enrichment fetch failed, keeping the last known names/pricing: ${err instanceof Error ? err.message : String(err)}`
+          `[agentproxy-v2] enrichment fetch failed, keeping the last known names/pricing: ${err instanceof Error ? err.message : String(err)}`
         );
         return { ok: false };
       }
@@ -260,7 +270,7 @@ export default Plugin.define({
         // management-token hint); this warn is the fallback for injected
         // stubs that throw without reporting.
         const reason = err instanceof Error ? err.message : String(err);
-        log.warn(`[omniroute-v2] auto combos fetch failed, keeping the last known ones: ${reason}`);
+        log.warn(`[agentproxy-v2] auto combos fetch failed, keeping the last known ones: ${reason}`);
         return { ok: false };
       }
     };
@@ -322,7 +332,7 @@ export default Plugin.define({
           // The wrappers never reject; a throw here would be a bug in them, and
           // an unhandled rejection is a worse way to learn about it.
           log.warn(
-            `[omniroute-v2] optional catalog sources failed unexpectedly: ${err instanceof Error ? err.message : String(err)}`
+            `[agentproxy-v2] optional catalog sources failed unexpectedly: ${err instanceof Error ? err.message : String(err)}`
           );
         }
       );
@@ -379,7 +389,7 @@ export default Plugin.define({
           await ctx.provider.reload();
         } catch (err) {
           log.warn(
-            `[omniroute-v2] provider reload after late sources failed, keeping current catalog: ${err instanceof Error ? err.message : String(err)}`
+            `[agentproxy-v2] provider reload after late sources failed, keeping current catalog: ${err instanceof Error ? err.message : String(err)}`
           );
         }
       }
@@ -448,7 +458,7 @@ export default Plugin.define({
         const stale = state.entries.get(cacheKey);
         if (stale !== undefined && stale.models.length > 0) {
           log.warn(
-            `[omniroute-v2] models fetch returned empty, keeping last-known catalog (${stale.models.length} models, ${stale.combos.length} combos)`
+            `[agentproxy-v2] models fetch returned empty, keeping last-known catalog (${stale.models.length} models, ${stale.combos.length} combos)`
           );
           effective = stale;
         }
@@ -473,7 +483,7 @@ export default Plugin.define({
           return collected.counts;
         } catch (err) {
           log.warn(
-            `[omniroute-v2] catalog publish failed, keeping current catalog: ${err instanceof Error ? err.message : String(err)}`
+            `[agentproxy-v2] catalog publish failed, keeping current catalog: ${err instanceof Error ? err.message : String(err)}`
           );
           return { models: 0, combos: 0, autoCombos: 0 };
         }
@@ -492,7 +502,7 @@ export default Plugin.define({
           await ctx.provider.reload();
         } catch (err) {
           log.warn(
-            `[omniroute-v2] provider reload failed, keeping current catalog: ${err instanceof Error ? err.message : String(err)}`
+            `[agentproxy-v2] provider reload failed, keeping current catalog: ${err instanceof Error ? err.message : String(err)}`
           );
         }
       }
@@ -508,7 +518,7 @@ export default Plugin.define({
           editor.add(latest as never);
         } catch (err) {
           log.warn(
-            `[omniroute-v2] catalog publish failed, keeping current catalog: ${err instanceof Error ? err.message : String(err)}`
+            `[agentproxy-v2] catalog publish failed, keeping current catalog: ${err instanceof Error ? err.message : String(err)}`
           );
         }
       }
@@ -531,17 +541,17 @@ export default Plugin.define({
           ) => unknown
         )((draft) => {
           draft.update(X, (integration) => {
-            integration.name = parsed.displayName ?? "OmniRoute";
+            integration.name = parsed.displayName ?? "AgentProxy";
           });
           draft.method.update({ integrationID: X, method: { type: "key", label: "API key" } });
           draft.method.update({
             integrationID: X,
-            method: { type: "env", names: ["OMNIROUTE_API_KEY"] },
+            method: { type: "env", names: [API_KEY_ENV_VAR, LEGACY_API_KEY_ENV_VAR] },
           });
         });
       } catch (err) {
         log.warn(
-          `[omniroute-v2] host refused the integration hook, the connect action will be missing: ${err instanceof Error ? err.message : String(err)}`
+          `[agentproxy-v2] host refused the integration hook, the connect action will be missing: ${err instanceof Error ? err.message : String(err)}`
         );
         integrationRegistration = undefined;
       }
@@ -572,7 +582,7 @@ export default Plugin.define({
         });
       } catch (err) {
         log.warn(
-          `[omniroute-v2] host refused the language-model hook, Gemini tool schemas will not be cleaned: ${err instanceof Error ? err.message : String(err)}`
+          `[agentproxy-v2] host refused the language-model hook, Gemini tool schemas will not be cleaned: ${err instanceof Error ? err.message : String(err)}`
         );
       }
     }
@@ -606,7 +616,7 @@ export default Plugin.define({
         });
       } catch (err) {
         log.warn(
-          `[omniroute-v2] host refused the sdk hook, inference telemetry will not be marked: ${err instanceof Error ? err.message : String(err)}`
+          `[agentproxy-v2] host refused the sdk hook, inference telemetry will not be marked: ${err instanceof Error ? err.message : String(err)}`
         );
       }
     }
@@ -617,7 +627,7 @@ export default Plugin.define({
         await integrationRegistration;
       } catch (err) {
         log.warn(
-          `[omniroute-v2] host refused the integration hook, the connect action will be missing: ${err instanceof Error ? err.message : String(err)}`
+          `[agentproxy-v2] host refused the integration hook, the connect action will be missing: ${err instanceof Error ? err.message : String(err)}`
         );
       }
     }
@@ -626,7 +636,7 @@ export default Plugin.define({
         await languageRegistration;
       } catch (err) {
         log.warn(
-          `[omniroute-v2] language-model hook registration failed, Gemini tool schemas will not be cleaned: ${err instanceof Error ? err.message : String(err)}`
+          `[agentproxy-v2] language-model hook registration failed, Gemini tool schemas will not be cleaned: ${err instanceof Error ? err.message : String(err)}`
         );
       }
     }
@@ -635,7 +645,7 @@ export default Plugin.define({
         await sdkRegistration;
       } catch (err) {
         log.warn(
-          `[omniroute-v2] sdk hook registration failed, inference telemetry will not be marked: ${err instanceof Error ? err.message : String(err)}`
+          `[agentproxy-v2] sdk hook registration failed, inference telemetry will not be marked: ${err instanceof Error ? err.message : String(err)}`
         );
       }
     }
