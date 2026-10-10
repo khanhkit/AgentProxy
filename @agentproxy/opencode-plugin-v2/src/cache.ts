@@ -218,7 +218,7 @@ export async function writeDiskSnapshot(
     }
     if (Buffer.byteLength(payload, "utf8") > MAX_SNAPSHOT_BYTES) {
       logger?.warn(
-        `[omniroute-v2] snapshot for ${providerId} exceeds the size cap, skipping disk write`
+        `[agentproxy-v2] snapshot for ${providerId} exceeds the size cap, skipping disk write`
       );
       return;
     }
@@ -228,7 +228,7 @@ export async function writeDiskSnapshot(
   } catch (err) {
     // Best-effort: callers already hold the in-memory entry.
     logger?.warn(
-      `[omniroute-v2] snapshot write failed for ${providerId}: ` +
+      `[agentproxy-v2] snapshot write failed for ${providerId}: ` +
         `${err instanceof Error ? err.message : String(err)}, keeping the in-memory entry`
     );
     try {

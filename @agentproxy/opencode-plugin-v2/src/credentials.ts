@@ -20,8 +20,8 @@ export interface ResolvedApiKey {
   origin: ApiKeyOrigin;
 }
 
-const ENV_VAR = "AGENTPROXY_API_KEY";
-const LEGACY_ENV_VAR = "OMNIROUTE_API_KEY";
+export const API_KEY_ENV_VAR = "AGENTPROXY_API_KEY";
+export const LEGACY_API_KEY_ENV_VAR = "OMNIROUTE_API_KEY";
 
 /**
  * `ctx.integration.connection` carries the stored credential. Probing the
@@ -75,7 +75,7 @@ async function keyFromConnection(
     if (credential === undefined) return undefined;
     if (credential.type !== "key") {
       log.warn(
-        `[omniroute-v2] ignoring the stored ${String(credential.type)} credential: this plugin authenticates with an API key`
+        `[agentproxy-v2] ignoring the stored ${String(credential.type)} credential: this plugin authenticates with an API key`
       );
       return undefined;
     }
@@ -84,7 +84,7 @@ async function keyFromConnection(
       : undefined;
   } catch (err) {
     log.warn(
-      `[omniroute-v2] could not read the stored credential: ${err instanceof Error ? err.message : String(err)}`
+      `[agentproxy-v2] could not read the stored credential: ${err instanceof Error ? err.message : String(err)}`
     );
     return undefined;
   }
@@ -104,9 +104,9 @@ export async function resolveApiKey(
   const stored = await keyFromConnection(ctx, integrationID, log);
   if (stored !== undefined) return { key: stored, origin: "connection" };
   if (optionKey !== undefined && optionKey.length > 0) return { key: optionKey, origin: "option" };
-  const fromEnv = process.env[ENV_VAR];
+  const fromEnv = process.env[API_KEY_ENV_VAR];
   if (fromEnv !== undefined && fromEnv.length > 0) return { key: fromEnv, origin: "env" };
-  const fromLegacyEnv = process.env[LEGACY_ENV_VAR];
+  const fromLegacyEnv = process.env[LEGACY_API_KEY_ENV_VAR];
   if (fromLegacyEnv !== undefined && fromLegacyEnv.length > 0) {
     return { key: fromLegacyEnv, origin: "env" };
   }
@@ -120,8 +120,8 @@ export async function resolveApiKey(
 export function warnIfMissing(resolved: ResolvedApiKey, integrationID: string, log: Logger): void {
   if (resolved.origin !== "missing") return;
   log.warn(
-    `[omniroute-v2] no API key for "${integrationID}": the catalog will be empty. ` +
+    `[agentproxy-v2] no API key for "${integrationID}": the catalog will be empty. ` +
       `Connect the integration from opencode, set "apiKey" in the plugin options, ` +
-      `or export ${ENV_VAR} (legacy ${LEGACY_ENV_VAR} remains accepted).`
+      `or export ${API_KEY_ENV_VAR} (legacy ${LEGACY_API_KEY_ENV_VAR} remains accepted).`
   );
 }

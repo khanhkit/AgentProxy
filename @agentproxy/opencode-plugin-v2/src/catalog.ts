@@ -127,12 +127,12 @@ export function legacyToStable(
 ): StableModelInfo {
   if (!m.api || typeof m.api.npm !== "string" || m.api.npm.length === 0) {
     throw new Error(
-      "[omniroute-v2] refusing to publish a model without an api block (missing api.npm)"
+      "[agentproxy-v2] refusing to publish a model without an api block (missing api.npm)"
     );
   }
   if (!isHttpUrl(m.api.url)) {
     throw new Error(
-      "[omniroute-v2] refusing to publish a model whose api block carries no http(s) url"
+      "[agentproxy-v2] refusing to publish a model whose api block carries no http(s) url"
     );
   }
   const stablePackage =
@@ -194,7 +194,7 @@ export function legacyApiToInfoApi(api: LegacyModel["api"]): {
 } {
   if (!api || typeof api.npm !== "string" || api.npm.length === 0) {
     throw new Error(
-      "[omniroute-v2] refusing to publish a model without an api block (missing api.npm)"
+      "[agentproxy-v2] refusing to publish a model without an api block (missing api.npm)"
     );
   }
   // The host reads `api.url` in `prepareOptions` and never falls back to the
@@ -203,7 +203,7 @@ export function legacyApiToInfoApi(api: LegacyModel["api"]): {
   // wire, nothing in the gateway logs, no model named.
   if (!isHttpUrl(api.url)) {
     throw new Error(
-      "[omniroute-v2] refusing to publish a model whose api block carries no http(s) url"
+      "[agentproxy-v2] refusing to publish a model whose api block carries no http(s) url"
     );
   }
   return { id: api.id, type: "aisdk", package: api.npm, url: api.url };
@@ -397,7 +397,7 @@ async function resolveEnrichmentOverlay(
     );
   } catch (err) {
     log.warn(
-      `[omniroute-v2] enrichment fetch failed, continuing without names/pricing: ${err instanceof Error ? err.message : String(err)}`
+      `[agentproxy-v2] enrichment fetch failed, continuing without names/pricing: ${err instanceof Error ? err.message : String(err)}`
     );
     return new Map();
   }
@@ -430,7 +430,7 @@ async function resolveUsableAliases(
     );
   } catch (err) {
     log.warn(
-      `[omniroute-v2] providers fetch failed, usableOnly filter disabled for this refresh: ${err instanceof Error ? err.message : String(err)}`
+      `[agentproxy-v2] providers fetch failed, usableOnly filter disabled for this refresh: ${err instanceof Error ? err.message : String(err)}`
     );
     rawConnections = [];
   }
@@ -494,7 +494,7 @@ async function publishCombos(ctx: PublishContext): Promise<number | undefined> {
       : [];
   } catch (err) {
     log.warn(
-      `[omniroute-v2] combos fetch failed, falling back to models-only catalog: ${err instanceof Error ? err.message : String(err)}`
+      `[agentproxy-v2] combos fetch failed, falling back to models-only catalog: ${err instanceof Error ? err.message : String(err)}`
     );
     return undefined;
   }
@@ -571,7 +571,7 @@ async function publishCombos(ctx: PublishContext): Promise<number | undefined> {
           const dedupeKey = `${cacheKey}::${key}`;
           if (!warnedCombos.has(dedupeKey)) {
             warnedCombos.add(dedupeKey);
-            log.warn(`[omniroute-v2] combo key "${key}" collides with a model id; combo wins.`);
+            log.warn(`[agentproxy-v2] combo key "${key}" collides with a model id; combo wins.`);
           }
         }
       }
@@ -596,7 +596,7 @@ async function publishCombos(ctx: PublishContext): Promise<number | undefined> {
 
   if (unresolved.length > 0) {
     log.warn(
-      `[omniroute-v2] ${unresolved.length} combo(s) could not resolve all nested combo-refs after ${MAX_COMBO_PASSES} passes; dropped to avoid over-claiming.`
+      `[agentproxy-v2] ${unresolved.length} combo(s) could not resolve all nested combo-refs after ${MAX_COMBO_PASSES} passes; dropped to avoid over-claiming.`
     );
   }
   return comboCount;
@@ -682,7 +682,7 @@ export async function collectCatalog(
     rawModels = modelsFetcher ? await modelsFetcher(opts.baseURL, opts.apiKey, modelsTimeout) : [];
   } catch (err) {
     log.warn(
-      `[omniroute-v2] models fetch failed, publishing empty catalog: ${err instanceof Error ? err.message : String(err)}`
+      `[agentproxy-v2] models fetch failed, publishing empty catalog: ${err instanceof Error ? err.message : String(err)}`
     );
     return empty;
   }
@@ -779,7 +779,7 @@ export async function collectCatalog(
       : [];
   } catch (err) {
     log.warn(
-      `[omniroute-v2] auto combos fetch failed, falling back to models+combos catalog: ${err instanceof Error ? err.message : String(err)}`
+      `[agentproxy-v2] auto combos fetch failed, falling back to models+combos catalog: ${err instanceof Error ? err.message : String(err)}`
     );
     return {
       entries: collected,
@@ -807,7 +807,7 @@ export async function collectCatalog(
       if (!warnedCombos.has(dedupeKey)) {
         warnedCombos.add(dedupeKey);
         log.warn(
-          `[omniroute-v2] auto combo key "${key}" collides with a model id; auto combo wins.`
+          `[agentproxy-v2] auto combo key "${key}" collides with a model id; auto combo wins.`
         );
       }
     }

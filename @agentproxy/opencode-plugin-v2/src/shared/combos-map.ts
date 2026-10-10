@@ -23,7 +23,7 @@ export interface AgentProxyRawCombo {
   models?: AgentProxyRawComboMemberRef[];
   /** Hidden combos are excluded from the OC model picker. */
   isHidden?: boolean;
-  /** When OmniRoute attaches a lifecycle hint we forward it; today it doesn't. */
+  /** When AgentProxy attaches a lifecycle hint we forward it; today it doesn't. */
   release_date?: string;
   /**
    * Server-computed context window for this combo (aggregated from member
@@ -56,7 +56,7 @@ function trimTrailingSlashes(value: string): string {
  * Default fetcher: `GET <baseURL>/api/combos` with bearer auth +
  * AbortController timeout. Accepts both the `{combos: [...]}` envelope the
  * gateway emits today and a bare-array envelope (defensive — keeps the
- * plugin working if a future OmniRoute build trims the wrapper).
+ * plugin working if a future AgentProxy build trims the wrapper).
  *
  * Differences from `defaultAgentProxyModelsFetcher`:
  *   - URL is `/api/combos`, NOT `/v1/combos`. The `/v1/...` namespace is the
@@ -75,8 +75,8 @@ export const defaultAgentProxyCombosFetcher: AgentProxyCombosFetcher = async (
   apiKey,
   timeoutMs = 10_000
 ) => {
-  if (!apiKey) throw new Error("[omniroute-v2] apiKey required to fetch /api/combos");
-  if (!baseURL) throw new Error("[omniroute-v2] baseURL required to fetch /api/combos");
+  if (!apiKey) throw new Error("[agentproxy-v2] apiKey required to fetch /api/combos");
+  if (!baseURL) throw new Error("[agentproxy-v2] baseURL required to fetch /api/combos");
 
   // Strip trailing slashes, then strip a trailing `/v1` so we land on the
   // management plane. Models live under `/v1/models`; combos live under
@@ -97,7 +97,7 @@ export const defaultAgentProxyCombosFetcher: AgentProxyCombosFetcher = async (
       signal: controller.signal,
     });
     if (!res.ok) {
-      throw new Error(`[omniroute-v2] GET ${url} failed: ${res.status} ${res.statusText}`);
+      throw new Error(`[agentproxy-v2] GET ${url} failed: ${res.status} ${res.statusText}`);
     }
     const body = (await res.json()) as unknown;
     const rawList: unknown[] = Array.isArray(body)
