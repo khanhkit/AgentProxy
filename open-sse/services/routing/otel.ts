@@ -70,7 +70,7 @@ export class OtlpHttpsEventSink {
   private consecutiveFailures = 0;
   private flushedBatches = 0;
   private timer: ReturnType<typeof setInterval> | null = null;
-  private flushing = false;
+  private flushPromise: Promise<void> | null = null;
 
   constructor(private readonly config: OtlpHttpsExporterConfig) {
     this.endpoint = config.endpoint.replace(/\/+$/, "") + "/v1/traces";
@@ -102,12 +102,24 @@ export class OtlpHttpsEventSink {
     };
   }
 
-  stop(): void {
+  async stop(): Promise<void> {
     if (this.timer) {
       clearInterval(this.timer);
       this.timer = null;
     }
-    void this.flush();
+
+    if (this.flushPromise) await this.flushPromise;
+    while (this.buffer.length > 0) {
+      const bufferedBefore = this.buffer.length;
+      await this.flush();
+      if (this.buffer.length >= bufferedBefore && this.consecutiveFailures > 0) {
+        // Process shutdown is the final delivery opportunity. A failed final
+        // flush cannot be retried after exit, so account the remainder as lost.
+        this.dropped += this.buffer.length;
+        this.buffer = [];
+        break;
+      }
+    }
   }
 
   private start(): void {
@@ -117,10 +129,24 @@ export class OtlpHttpsEventSink {
     this.timer.unref?.();
   }
 
-  private async flush(): Promise<void> {
-    if (this.flushing) return;
-    if (this.buffer.length === 0) return;
-    this.flushing = true;
+  private flush(): Promise<void> {
+    if (this.flushPromise) return this.flushPromise;
+    if (this.buffer.length === 0) return Promise.resolve();
+
+    const run = this.flushOnce();
+    this.flushPromise = run;
+    void run.then(
+      () => {
+        if (this.flushPromise === run) this.flushPromise = null;
+      },
+      () => {
+        if (this.flushPromise === run) this.flushPromise = null;
+      }
+    );
+    return run;
+  }
+
+  private async flushOnce(): Promise<void> {
     const batch = this.buffer.splice(0, this.maxBatchSize);
     try {
       const res = await fetch(this.endpoint, {
@@ -142,8 +168,6 @@ export class OtlpHttpsEventSink {
       } else {
         this.buffer.unshift(...batch);
       }
-    } finally {
-      this.flushing = false;
     }
   }
 }

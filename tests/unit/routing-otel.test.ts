@@ -127,3 +127,54 @@ test("OtlpHttpsEventSink drops oldest when the buffer is saturated", async () =>
     global.fetch = originalFetch;
   }
 });
+
+
+test("OtlpHttpsEventSink stop awaits an in-flight final flush", async () => {
+  const originalFetch = global.fetch;
+  let release!: () => void;
+  const gate = new Promise<void>((resolve) => {
+    release = resolve;
+  });
+  global.fetch = (async () => {
+    await gate;
+    return { ok: true } as Response;
+  }) as typeof fetch;
+
+  const sink = new OtlpHttpsEventSink({
+    endpoint: "http://collector:4318",
+    flushIntervalMs: 1_000_000,
+  });
+  try {
+    sink.record(event({ requestId: "req-stop-drain" }));
+    let stopped = false;
+    const stop = sink.stop().then(() => {
+      stopped = true;
+    });
+    await new Promise((resolve) => setTimeout(resolve, 20));
+    assert.equal(stopped, false, "stop must not resolve before the final fetch settles");
+
+    release();
+    await stop;
+    assert.equal(sink.getStats().buffered, 0);
+    assert.equal(sink.getStats().flushedBatches, 1);
+  } finally {
+    global.fetch = originalFetch;
+  }
+});
+
+test("OtlpHttpsEventSink stop accounts a failed final flush as dropped", async () => {
+  const originalFetch = global.fetch;
+  global.fetch = (async () => ({ ok: false, status: 503 }) as Response) as typeof fetch;
+  const sink = new OtlpHttpsEventSink({
+    endpoint: "http://collector:4318",
+    flushIntervalMs: 1_000_000,
+  });
+  try {
+    sink.record(event({ requestId: "req-stop-drop" }));
+    await sink.stop();
+    assert.equal(sink.getStats().buffered, 0, "shutdown cannot leave retry-only telemetry buffered");
+    assert.equal(sink.getStats().dropped, 1, "failed final flush must be observable as dropped");
+  } finally {
+    global.fetch = originalFetch;
+  }
+});

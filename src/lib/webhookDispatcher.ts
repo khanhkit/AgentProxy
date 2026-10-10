@@ -17,6 +17,54 @@ export interface WebhookPayload {
   data: Record<string, any>;
 }
 
+interface WebhookLifecycleState {
+  pending: Set<Promise<void>>;
+  started: number;
+  completed: number;
+  failed: number;
+}
+
+declare global {
+  var __agentproxyWebhookLifecycle: WebhookLifecycleState | undefined;
+}
+
+function getWebhookLifecycleState(): WebhookLifecycleState {
+  globalThis.__agentproxyWebhookLifecycle ??= {
+    pending: new Set(),
+    started: 0,
+    completed: 0,
+    failed: 0,
+  };
+  return globalThis.__agentproxyWebhookLifecycle;
+}
+
+export function getWebhookDeliveryStats(): {
+  started: number;
+  completed: number;
+  failed: number;
+  pending: number;
+} {
+  const state = getWebhookLifecycleState();
+  return {
+    started: state.started,
+    completed: state.completed,
+    failed: state.failed,
+    pending: state.pending.size,
+  };
+}
+
+export async function drainPendingWebhookDeliveries(): Promise<ReturnType<typeof getWebhookDeliveryStats>> {
+  const state = getWebhookLifecycleState();
+  while (state.pending.size > 0) {
+    await Promise.allSettled(Array.from(state.pending));
+  }
+  return getWebhookDeliveryStats();
+}
+
+export function __resetWebhookLifecycleForTests(): void {
+  delete globalThis.__agentproxyWebhookLifecycle;
+}
+
 function signPayload(payload: string, secret: string): string {
   return `sha256=${crypto.createHmac("sha256", secret).update(payload).digest("hex")}`;
 }
@@ -189,12 +237,23 @@ export async function deliverWebhook(
  * to await delivery (CLI/admin tooling, tests).
  */
 export function notifyWebhookEvent(event: WebhookEvent, data: Record<string, any>): void {
-  // Intentionally not awaited. Promise.allSettled inside dispatchEvent already
-  // absorbs per-delivery errors; this outer catch handles the import/loader
-  // path so a misconfigured webhook table cannot break a request.
-  dispatchEvent(event, data).catch(() => {
-    /* webhook delivery is best-effort */
-  });
+  // Intentionally not awaited by callers. Track the Promise process-wide so the
+  // lifecycle coordinator can drain delivery + DB-record work before DB close.
+  const state = getWebhookLifecycleState();
+  const delivery = dispatchEvent(event, data);
+  state.started += 1;
+  state.pending.add(delivery);
+  void delivery.then(
+    () => {
+      state.completed += 1;
+      state.pending.delete(delivery);
+    },
+    () => {
+      state.completed += 1;
+      state.failed += 1;
+      state.pending.delete(delivery);
+    }
+  );
 }
 
 /**
