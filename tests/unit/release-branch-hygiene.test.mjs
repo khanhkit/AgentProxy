@@ -57,16 +57,22 @@ function assertTrustedCheckoutBeforeGuard(jobText, expectedCondition = null) {
     "release branch-hygiene guard must run the expected checker"
   );
 
-  const checkoutSteps = steps.slice(0, guardIndex).filter((step) => {
-    if (!isRecord(step) || typeof step.uses !== "string") return false;
-    return step.uses.startsWith("actions/checkout@");
+  const checkoutIndexes = steps.flatMap((step, index) => {
+    if (index >= guardIndex || !isRecord(step) || typeof step.uses !== "string") return [];
+    return step.uses.startsWith("actions/checkout@") ? [index] : [];
   });
   assert.equal(
-    checkoutSteps.length,
+    checkoutIndexes.length,
     1,
     "release prepare job must contain exactly one actions/checkout before the guard"
   );
-  const checkoutStep = checkoutSteps[0];
+  const checkoutIndex = checkoutIndexes[0];
+  assert.equal(
+    checkoutIndex + 1,
+    guardIndex,
+    "trusted release checkout must immediately precede the branch-hygiene guard"
+  );
+  const checkoutStep = steps[checkoutIndex];
   assert.ok(isRecord(checkoutStep), "release checkout must be a step mapping");
   assert.match(
     String(checkoutStep.uses),
