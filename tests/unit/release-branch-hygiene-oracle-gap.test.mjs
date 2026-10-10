@@ -11,7 +11,10 @@ function loadCheckoutOracle() {
   );
   const start = source.indexOf("function isRecord(value)");
   const end = source.indexOf('test("release branch hygiene accepts exactly main"');
-  assert.ok(start >= 0 && end > start, "release checkout oracle helper source must be discoverable");
+  assert.ok(
+    start >= 0 && end > start,
+    "release checkout oracle helper source must be discoverable"
+  );
   const context = { assert, loadYaml, result: null };
   runInNewContext(
     `${source.slice(start, end)}\nresult = assertTrustedCheckoutBeforeGuard;`,
