@@ -8,7 +8,7 @@
 
 import { hashInput, summarizeOutput } from "./schemas/audit.ts";
 import { runtimeRequire } from "../../src/lib/db/adapters/runtimeRequire.ts";
-import { getMcpHttpAuditApiKeyId } from "./httpAuthContext.ts";
+import { getMcpHttpAuditApiKeyId, hasMcpHttpAuthContext } from "./httpAuthContext.ts";
 import { isNativeSqliteLoadError } from "../../src/lib/db/core.ts";
 import { resolveMcpCallerApiKeyId } from "./mcpCallerIdentity.ts";
 
@@ -234,6 +234,8 @@ async function resolveAuditCallerId(): Promise<string | null> {
   const resolved = await resolveMcpCallerApiKeyId();
   if (resolved) return resolved;
 
+  if (hasMcpHttpAuthContext()) return null;
+
   const staticId = process.env.AGENTPROXY_API_KEY_ID?.trim();
   return staticId || null;
 }
@@ -264,7 +266,10 @@ async function openNodeSqliteAuditDb(dbPath: string): Promise<AuditDatabase> {
   return createNodeSqliteAuditAdapter(new DatabaseSync(dbPath));
 }
 
-async function openFallbackAuditDb(dbPath: string, nativeMessage: string): Promise<AuditDatabase | null> {
+async function openFallbackAuditDb(
+  dbPath: string,
+  nativeMessage: string
+): Promise<AuditDatabase | null> {
   if (!nodeSqliteFallbackAvailable()) {
     console.error(
       `[MCP Audit] better-sqlite3 native binding unavailable and Node ${process.version} ` +

@@ -43,6 +43,11 @@ export function getMcpHttpAuthHeadersForInternalFetch(): Record<string, string> 
   return headers;
 }
 
+/** True while execution is bound to an HTTP/SSE MCP request, even if auth did not resolve. */
+export function hasMcpHttpAuthContext(): boolean {
+  return mcpHttpAuthContext.getStore() !== undefined;
+}
+
 /** Resolved non-secret caller id for the current HTTP MCP request, if any. */
 export function getMcpHttpAuditApiKeyId(): string | undefined {
   return mcpHttpAuthContext.getStore()?.apiKeyId;
