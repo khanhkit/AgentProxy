@@ -143,11 +143,11 @@
 - Consumes: `globalThis.__agentproxyRequestShutdown` from Task 5.
 - Produces: single custom-server signal/final-exit path with correct admission/drain/child ordering and the shared shutdown timeout.
 
-- [ ] Add RED source/behavior tests for first-signal order: stop TCP admission → await app lifecycle → transport cleanup/Next close → Rust child stop → final exit.
-- [ ] Add RED test that force-exit timeout derives from `SHUTDOWN_TIMEOUT_MS`, not hard-coded 2 seconds, and second signal still exits immediately.
-- [ ] Implement minimal runner reordering and non-clean lifecycle exit-code propagation.
-- [ ] Verify fallback SIGTERM/SIGINT/SIGHUP tests and Windows deferred exit behavior remain GREEN.
-- [ ] Commit entrypoint ownership changes.
+- [x] Add RED source/behavior tests for first-signal order: stop TCP admission → await app lifecycle → transport cleanup/Next close → Rust child stop → final exit.
+- [x] Add RED test that force-exit timeout derives from `SHUTDOWN_TIMEOUT_MS`, not hard-coded 2 seconds, and second signal still exits immediately.
+- [x] Implement minimal runner reordering and non-clean lifecycle exit-code propagation.
+- [x] Verify fallback SIGTERM/SIGINT/SIGHUP tests and Windows deferred exit behavior remain GREEN.
+- [x] Commit entrypoint ownership changes.
 
 ### Task 7: Regression, standalone ownership, docs/evidence
 

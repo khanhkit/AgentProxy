@@ -159,6 +159,10 @@ globalThis.__agentproxyCustomServerOwnsShutdown = true;
 let nextApp = createNextApp();
 let rustCoreHandle = null;
 let shuttingDown = false;
+const SHUTDOWN_TIMEOUT_MS = Math.max(
+  1,
+  Number.parseInt(process.env.SHUTDOWN_TIMEOUT_MS || "30000", 10) || 30000
+);
 
 // Best-effort self-heal for a corrupted Turbopack persistent dev cache (#6289):
 // on Windows an mmap of an SST cache file can fail ("os error 1455" / paging
@@ -250,34 +254,70 @@ async function start() {
 
   const shutdown = async (signal, exitCode = 0) => {
     if (shuttingDown) {
-      // A second Ctrl+C / signal forces immediate exit.
+      // A second Ctrl+C / signal is the explicit operator force-exit path.
       process.exit(1);
     }
     shuttingDown = true;
 
-    // Safety net: force exit if keep-alive sockets or application cleanup hangs.
+    // One hard safety budget, shared with the application lifecycle coordinator.
+    // A deadline hit is never reported as a clean exit.
     const forceExitTimer = setTimeout(() => {
-      process.exit(exitCode);
-    }, 2000);
+      process.exit(exitCode || 1);
+    }, SHUTDOWN_TIMEOUT_MS);
     forceExitTimer.unref?.();
 
     systemdNotifier.stopping();
+
+    // Stop new TCP admissions immediately, but do NOT await server.close() yet:
+    // its callback waits for active connections, including SSE/keep-alive work
+    // that the application lifecycle must be allowed to drain first.
+    let serverClosePromise;
+    try {
+      serverClosePromise = new Promise((resolve) => server.close(resolve));
+    } catch (error) {
+      console.error("[SHUTDOWN] Failed to stop HTTP admission:", error);
+      exitCode = exitCode || 1;
+    }
+
+    try {
+      const lifecycleReport = await globalThis.__agentproxyRequestShutdown?.(signal);
+      if (lifecycleReport?.clean === false) exitCode = exitCode || 1;
+    } catch (error) {
+      console.error("[SHUTDOWN] Application lifecycle failed:", error);
+      exitCode = exitCode || 1;
+    }
+
+    // Application drain/flush is complete (or failed/timed out). Transport
+    // cleanup may now terminate any sockets that survived the drain.
+    try {
+      server.closeIdleConnections?.();
+      server.closeAllConnections?.();
+      if (serverClosePromise) await serverClosePromise;
+    } catch (error) {
+      console.error("[SHUTDOWN] HTTP transport cleanup failed:", error);
+      exitCode = exitCode || 1;
+    }
+
+    try {
+      await nextApp.close();
+    } catch (error) {
+      console.error("[SHUTDOWN] Next teardown failed:", error);
+      exitCode = exitCode || 1;
+    }
+
+    // Rust is a child of the custom runner. Stop it only after application/Next
+    // teardown so it remains available while parent cleanup is still running.
     try {
       if (rustCoreHandle?.child) {
         await stopRustCore(rustCoreHandle.child);
       }
-      server.closeIdleConnections?.();
-      server.closeAllConnections?.();
-      await new Promise((resolve) => server.close(resolve));
-      await globalThis.__agentproxyRequestShutdown?.(signal);
-      await nextApp.close();
     } catch (error) {
-      console.error("[SHUTDOWN] Failed during signal:", signal, error);
+      console.error("[SHUTDOWN] Rust core teardown failed:", error);
       exitCode = exitCode || 1;
-    } finally {
-      clearTimeout(forceExitTimer);
-      process.exit(exitCode);
     }
+
+    clearTimeout(forceExitTimer);
+    process.exit(exitCode);
   };
 
   process.on("SIGINT", () => void shutdown("SIGINT"));
