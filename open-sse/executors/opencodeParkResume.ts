@@ -341,6 +341,7 @@ export async function runParkAndReplay<TAccount extends RotatableAccount>(
         let recopied = true;
         try {
           if (!finalResponse.ok) {
+            recopied = false;
             // The replay response is an untrusted provider boundary. Once the
             // outer SSE status is committed, publish only a synthetic status
             // error: provider HTML, partial idle reads, diagnostics, tokens,
@@ -372,6 +373,10 @@ export async function runParkAndReplay<TAccount extends RotatableAccount>(
                 recopied = false;
                 await reader.cancel(input.signal.reason).catch(() => undefined);
               }
+            } catch (error) {
+              recopied = false;
+              await reader.cancel(error).catch(() => undefined);
+              if (!input.signal?.aborted) controller.error(error);
             } finally {
               input.signal?.removeEventListener("abort", onAbort);
               reader.releaseLock();
