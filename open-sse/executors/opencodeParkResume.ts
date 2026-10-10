@@ -17,7 +17,6 @@ import { maskAccountId, type RotatableAccount } from "./accountRotation.ts";
 import { proxyKeyOf } from "./opencodeGeoBlock.ts";
 import { runWithProxyContext } from "../utils/proxyFetch.ts";
 import { noteResilienceAction } from "@/lib/usage/resilienceActionsContext.ts";
-import { readBoundedResponseText } from "../utils/emptyTurnRetry.ts";
 import { formatTranslatedStreamError } from "../utils/streamErrorFormat.ts";
 import { noteParkWait, noteReplayed, noteStoredFallback } from "./opencodeResilienceNotes.ts";
 import type { ExecuteInput, ExecutorExecuteResult } from "./base.ts";
@@ -54,10 +53,6 @@ export const PARK_PROBE_MAX = 3;
 export const STRAIN_MARKER_TTL_MS = 300_000;
 /** Upper bound of a marker read. */
 export const STRAIN_MARKER_MAX_BYTES = 1024;
-/** Upper bound for a failed replay body before it is projected into a public SSE error. */
-const PARK_FAILURE_BODY_MAX_BYTES = 64 * 1024;
-/** Failed replay bodies must not hold an already-committed SSE stream open indefinitely. */
-const PARK_FAILURE_BODY_IDLE_MS = 2_000;
 
 export interface PoolStrainMarker {
   fresh: boolean;
@@ -346,56 +341,39 @@ export async function runParkAndReplay<TAccount extends RotatableAccount>(
         let recopied = true;
         try {
           if (!finalResponse.ok) {
-            const text = await readBoundedResponseText(
-              finalResponse,
-              PARK_FAILURE_BODY_MAX_BYTES,
-              PARK_FAILURE_BODY_IDLE_MS
-            );
-            let payload: Record<string, unknown> = {
+            // The replay response is an untrusted provider boundary. Once the
+            // outer SSE status is committed, publish only a synthetic status
+            // error: provider HTML, partial idle reads, diagnostics, tokens,
+            // paths, and arbitrary fields must never become client-visible.
+            const payload = {
               error: {
                 message: `Upstream replay failed (${finalResponse.status})`,
                 status: finalResponse.status,
+                code: "upstream_replay_failed",
               },
               status: finalResponse.status,
             };
-            if (text) {
-              try {
-                const parsed = JSON.parse(text) as unknown;
-                if (parsed && typeof parsed === "object" && !Array.isArray(parsed)) {
-                  const record = parsed as Record<string, unknown>;
-                  const error =
-                    record.error && typeof record.error === "object" && !Array.isArray(record.error)
-                      ? (record.error as Record<string, unknown>)
-                      : null;
-                  payload = {
-                    ...record,
-                    status: finalResponse.status,
-                    ...(error ? { error: { ...error, status: finalResponse.status } } : {}),
-                  };
-                } else {
-                  payload = {
-                    error: { message: text, status: finalResponse.status },
-                    status: finalResponse.status,
-                  };
-                }
-              } catch {
-                payload = {
-                  error: { message: text, status: finalResponse.status },
-                  status: finalResponse.status,
-                };
-              }
-            }
             await finalResponse.body?.cancel().catch(() => undefined);
             controller.enqueue(encoder.encode(formatTranslatedStreamError(payload)));
           } else if (finalResponse.body) {
             const reader = finalResponse.body.getReader();
+            const onAbort = (): void => {
+              void reader.cancel(input.signal?.reason).catch(() => undefined);
+            };
+            if (input.signal?.aborted) onAbort();
+            else input.signal?.addEventListener("abort", onAbort, { once: true });
             try {
-              while (true) {
+              while (!input.signal?.aborted) {
                 const { done, value } = await reader.read();
-                if (done) break;
+                if (done || input.signal?.aborted) break;
                 controller.enqueue(value);
               }
+              if (input.signal?.aborted) {
+                recopied = false;
+                await reader.cancel(input.signal.reason).catch(() => undefined);
+              }
             } finally {
+              input.signal?.removeEventListener("abort", onAbort);
               reader.releaseLock();
             }
           } else {
