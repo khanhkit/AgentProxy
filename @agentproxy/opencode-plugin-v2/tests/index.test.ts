@@ -203,7 +203,7 @@ describe("plugin-v2 entrypoint", () => {
     assert.ok(keyMethod);
     assert.equal(keyMethod?.integrationID, "omniroute");
     assert.ok(envMethod);
-    assert.deepEqual(envMethod?.method.names, ["AGENTPROXY_API_KEY", "OMNIROUTE_API_KEY"]);
+    assert.deepEqual(envMethod?.method.names, ["AGENTPROXY_API_KEY"]);
     assert.ok(!draft.methods.some((m) => m.method.type === "oauth"));
   });
 
