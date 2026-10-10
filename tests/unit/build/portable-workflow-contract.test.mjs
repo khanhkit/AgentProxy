@@ -16,6 +16,7 @@ test("worker is manual-only, exact-SHA, claim-guarded and non-racing", async () 
   assert.match(y, /--sha\s+["']?\$SOURCE_SHA["']?/);
   assert.match(y, /--context\s+["']?\$CLAIM_CONTEXT["']?/);
   assert.doesNotMatch(y, /\\n\s+--repo/);
+  assert.doesNotMatch(y, /\n\s+--repo/);
   assert.doesNotMatch(y, /run:[^\n]*\$\{\{\s*inputs\.(?:source_sha|claim_context)\s*\}\}/);
   assert.match(y, /cancel-in-progress:\s*false/);
   assert.doesNotMatch(y, /matrix:/);
