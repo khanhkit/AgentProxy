@@ -74,7 +74,7 @@ export const GEMINI_WEB_MODEL_MODES: Readonly<Record<string, GeminiWebModeDescri
     isDefault: false,
     toggleSelector:
       '[data-test-id="bard-mode-menu-button"], button[aria-haspopup="menu"][aria-label*="model" i]',
-    optionNamePattern: /gemini\s*3\.7\s*flash/i,
+    optionNamePattern: /gemini\s*3\.7\s*flash(?!.*\blite\b)/i,
     activeIndicatorSelector:
       '[data-test-id="bard-mode-menu-button"] .mode-title, [data-test-id="bard-mode-menu-button"]',
     expectedIndicatorPattern: /\bflash\b(?!.*\blite\b)/i,
@@ -116,10 +116,7 @@ export interface GeminiAutomationPage {
     selector: string,
     opts?: { timeout?: number }
   ): Promise<GeminiAutomationElement | null>;
-  getByRole?(
-    role: "menuitem",
-    opts: { name: string | RegExp }
-  ): GeminiAutomationElement;
+  getByRole?(role: "menuitem", opts: { name: string | RegExp }): GeminiAutomationElement;
 }
 
 export interface GeminiModeSelectionResult {
