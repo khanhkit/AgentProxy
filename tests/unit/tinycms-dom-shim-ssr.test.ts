@@ -178,3 +178,67 @@ test("generateSecurePayload does not leave a window that would crash getLocation
 
   assert.equal(typeof g.window, "undefined");
 });
+
+test("withTinyCmsDomMocksAsync serializes overlapping process-global shim lifetimes", async () => {
+  const g = global as Record<string, unknown>;
+  let releaseFirst!: () => void;
+  let firstEntered!: () => void;
+  const firstEnteredPromise = new Promise<void>((resolve) => {
+    firstEntered = resolve;
+  });
+  const firstGate = new Promise<void>((resolve) => {
+    releaseFirst = resolve;
+  });
+  let secondEntered = false;
+
+  const first = withTinyCmsDomMocksAsync(async () => {
+    assert.notEqual(typeof g.window, "undefined");
+    firstEntered();
+    await firstGate;
+    assert.notEqual(typeof g.window, "undefined", "first caller must keep its shim until exit");
+  });
+
+  await firstEnteredPromise;
+  const second = withTinyCmsDomMocksAsync(async () => {
+    secondEntered = true;
+    assert.notEqual(typeof g.window, "undefined");
+  });
+
+  await new Promise((resolve) => setImmediate(resolve));
+  assert.equal(
+    secondEntered,
+    false,
+    "overlapping async callers must not share process-global DOM shim lifetime"
+  );
+
+  releaseFirst();
+  await Promise.all([first, second]);
+  assert.equal(typeof g.window, "undefined", "final caller must restore the global shim");
+});
+
+test("withTinyCmsDomMocksAsync allows awaited nested calls without self-deadlock", async () => {
+  const g = global as Record<string, unknown>;
+  const nested = withTinyCmsDomMocksAsync(async () => {
+    assert.notEqual(typeof g.window, "undefined");
+    return withTinyCmsDomMocksAsync(async () => {
+      await Promise.resolve();
+      assert.notEqual(typeof g.window, "undefined", "nested caller must reuse the outer shim");
+      return "nested-ok";
+    });
+  });
+
+  const outcome = await Promise.race([
+    nested,
+    new Promise<string>((resolve) => setTimeout(() => resolve("nested-timeout"), 75)),
+  ]);
+  assert.equal(
+    outcome,
+    "nested-ok",
+    "nested TinyCMS shim call must not wait on its own outer lock"
+  );
+  assert.equal(
+    typeof g.window,
+    "undefined",
+    "outermost caller must restore the shim after nesting"
+  );
+});
