@@ -1,6 +1,12 @@
 import { describe, it } from "node:test";
 import assert from "node:assert/strict";
-type PluginContext = { options?: unknown; provider?: unknown; model?: unknown; integration?: unknown; aisdk?: unknown };
+type PluginContext = {
+  options?: unknown;
+  provider?: unknown;
+  model?: unknown;
+  integration?: unknown;
+  aisdk?: unknown;
+};
 import type { Logger } from "../src/shared/index.js";
 import { resolveApiKey, warnIfMissing } from "../src/credentials.js";
 
@@ -65,6 +71,36 @@ describe("gateway credential resolution", () => {
     assert.deepEqual(env, { key: "from-env", origin: "env" });
   });
 
+  it("prefers AGENTPROXY_API_KEY over the legacy OMNIROUTE_API_KEY fallback", async () => {
+    const previousLegacy = process.env.OMNIROUTE_API_KEY;
+    process.env.OMNIROUTE_API_KEY = "legacy-env";
+    try {
+      const { log } = collectingLogger();
+      const got = await withEnv("agentproxy-env", () =>
+        resolveApiKey(ctxWith(undefined), "agentproxy", undefined, log)
+      );
+      assert.deepEqual(got, { key: "agentproxy-env", origin: "env" });
+    } finally {
+      if (previousLegacy === undefined) delete process.env.OMNIROUTE_API_KEY;
+      else process.env.OMNIROUTE_API_KEY = previousLegacy;
+    }
+  });
+
+  it("keeps OMNIROUTE_API_KEY as a legacy fallback when the canonical env is absent", async () => {
+    const previousLegacy = process.env.OMNIROUTE_API_KEY;
+    process.env.OMNIROUTE_API_KEY = "legacy-env";
+    try {
+      const { log } = collectingLogger();
+      const got = await withEnv(undefined, () =>
+        resolveApiKey(ctxWith(undefined), "agentproxy", undefined, log)
+      );
+      assert.deepEqual(got, { key: "legacy-env", origin: "env" });
+    } finally {
+      if (previousLegacy === undefined) delete process.env.OMNIROUTE_API_KEY;
+      else process.env.OMNIROUTE_API_KEY = previousLegacy;
+    }
+  });
+
   it("reports no key rather than pretending an empty one works", async () => {
     const { log, warnings } = collectingLogger();
     const got = await withEnv(undefined, () =>
@@ -120,7 +156,9 @@ describe("gateway credential resolution", () => {
         },
       },
     } as unknown as PluginContext;
-    const got = await withEnv(undefined, () => resolveApiKey(ctx, "agentproxy", "from-option", log));
+    const got = await withEnv(undefined, () =>
+      resolveApiKey(ctx, "agentproxy", "from-option", log)
+    );
     assert.deepEqual(got, { key: "from-option", origin: "option" });
     assert.equal(warnings.length, 1);
     assert.match(warnings[0] ?? "", /store unavailable/);

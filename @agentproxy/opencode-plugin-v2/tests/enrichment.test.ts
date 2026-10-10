@@ -1,6 +1,6 @@
 import { describe, it } from "node:test";
 import assert from "node:assert/strict";
-import type { OmniRouteEnrichmentMap } from "../src/shared/index.js";
+import type { AgentProxyEnrichmentMap } from "../src/shared/index.js";
 import { publishCatalog } from "../src/catalog.js";
 type BetaDraft = {
   provider: {
@@ -60,7 +60,7 @@ const stubModels = async () => [{ id: "cc/m1", context_length: 1000 }];
 describe("catalog enrichment source", () => {
   it("applies names and pricing from an injected enrichmentFetcher", async () => {
     const { models, draft } = fakeDraft();
-    const enrichment: OmniRouteEnrichmentMap = new Map([
+    const enrichment: AgentProxyEnrichmentMap = new Map([
       ["cc/m1", { name: "Model One", pricing: { input: 3, output: 15 } }],
       ["m1", { name: "Model One", pricing: { input: 3, output: 15 } }],
     ]);

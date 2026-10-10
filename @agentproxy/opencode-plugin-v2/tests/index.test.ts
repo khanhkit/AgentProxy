@@ -197,13 +197,13 @@ describe("plugin-v2 entrypoint", () => {
       },
     };
     (integrationCallbacks[0] as (draft: FakeIntegrationDraft) => unknown)(draft);
-    assert.deepEqual(draft.updates, [{ id: "omniroute", name: "OmniRoute" }]);
+    assert.deepEqual(draft.updates, [{ id: "omniroute", name: "AgentProxy" }]);
     const keyMethod = draft.methods.find((m) => m.method.type === "key");
     const envMethod = draft.methods.find((m) => m.method.type === "env");
     assert.ok(keyMethod);
     assert.equal(keyMethod?.integrationID, "omniroute");
     assert.ok(envMethod);
-    assert.deepEqual(envMethod?.method.names, ["OMNIROUTE_API_KEY"]);
+    assert.deepEqual(envMethod?.method.names, ["AGENTPROXY_API_KEY"]);
     assert.ok(!draft.methods.some((m) => m.method.type === "oauth"));
   });
 

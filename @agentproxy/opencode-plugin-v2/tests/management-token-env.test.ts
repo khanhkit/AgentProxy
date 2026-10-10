@@ -25,7 +25,7 @@ const COMBOS_URL = "https://gw.example.com/api/combos";
 const PRICING_MODELS_URL = "https://gw.example.com/api/pricing/models";
 
 const MGMT_ENV_VAR = "OMNIROUTE_MANAGEMENT_API_KEY";
-const INFERENCE_ENV_VAR = "OMNIROUTE_API_KEY";
+const INFERENCE_ENV_VAR = "AGENTPROXY_API_KEY";
 
 function okJson(body: unknown) {
   return { ok: true, status: 200, statusText: "OK", json: async () => body };

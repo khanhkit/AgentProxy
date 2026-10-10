@@ -5,22 +5,22 @@ import {
   type ApiFormatV2,
   type LogLevel,
   type Logger,
-  type OmniRouteAutoCombosFetcher,
-  type OmniRouteCombosFetcher,
-  type OmniRouteEnrichmentFetcher,
-  type OmniRouteEnrichmentMap,
-  type OmniRouteModelsFetcher,
-  type OmniRouteProviderConnection,
-  type OmniRouteProvidersFetcher,
-  type OmniRouteRawAutoCombo,
-  type OmniRouteRawCombo,
-  type OmniRouteRawModelEntry,
+  type AgentProxyAutoCombosFetcher,
+  type AgentProxyCombosFetcher,
+  type AgentProxyEnrichmentFetcher,
+  type AgentProxyEnrichmentMap,
+  type AgentProxyModelsFetcher,
+  type AgentProxyProviderConnection,
+  type AgentProxyProvidersFetcher,
+  type AgentProxyRawAutoCombo,
+  type AgentProxyRawCombo,
+  type AgentProxyRawModelEntry,
   applyEnrichment,
   buildCanonicalToAliasMap,
   canonicalDedupSet,
   createLogger,
-  defaultOmniRouteEnrichmentFetcher,
-  defaultOmniRouteProvidersFetcher,
+  defaultAgentProxyEnrichmentFetcher,
+  defaultAgentProxyProvidersFetcher,
   ensureV1Suffix,
   isUsableCombo,
   isUsableRawModelId,
@@ -31,11 +31,11 @@ import {
   usableProviderAliasSet,
 } from "./shared/index.js";
 
-export type ModelsFetcher = OmniRouteModelsFetcher;
-export type CombosFetcher = OmniRouteCombosFetcher;
-export type AutoCombosFetcher = OmniRouteAutoCombosFetcher;
-export type ProvidersFetcher = OmniRouteProvidersFetcher;
-export type EnrichmentFetcher = OmniRouteEnrichmentFetcher;
+export type ModelsFetcher = AgentProxyModelsFetcher;
+export type CombosFetcher = AgentProxyCombosFetcher;
+export type AutoCombosFetcher = AgentProxyAutoCombosFetcher;
+export type ProvidersFetcher = AgentProxyProvidersFetcher;
+export type EnrichmentFetcher = AgentProxyEnrichmentFetcher;
 
 export interface EndpointTimeouts {
   models?: number;
@@ -62,7 +62,7 @@ export interface ResolvedOptions {
   visibleModels?: string[];
   hiddenModels?: string[];
   usableOnly: boolean;
-  enrichment?: OmniRouteEnrichmentMap | boolean;
+  enrichment?: AgentProxyEnrichmentMap | boolean;
   /**
    * Shared collision-warning dedupe set keyed `cacheKey::comboKey`. When
    * omitted a fresh per-publish set is used. index.ts passes one setup-wide
@@ -127,12 +127,12 @@ export function legacyToStable(
 ): StableModelInfo {
   if (!m.api || typeof m.api.npm !== "string" || m.api.npm.length === 0) {
     throw new Error(
-      "[omniroute-v2] refusing to publish a model without an api block (missing api.npm)"
+      "[agentproxy-v2] refusing to publish a model without an api block (missing api.npm)"
     );
   }
   if (!isHttpUrl(m.api.url)) {
     throw new Error(
-      "[omniroute-v2] refusing to publish a model whose api block carries no http(s) url"
+      "[agentproxy-v2] refusing to publish a model whose api block carries no http(s) url"
     );
   }
   const stablePackage =
@@ -169,9 +169,7 @@ export function legacyToStable(
     capabilities: { tools: m.capabilities.toolcall, input, output },
     variants,
     time: { released: Number.isNaN(parsed) ? 0 : parsed },
-    cost: [
-      { input: m.cost.input, output: m.cost.output, cache: { ...m.cost.cache } },
-    ],
+    cost: [{ input: m.cost.input, output: m.cost.output, cache: { ...m.cost.cache } }],
     status: m.status,
     enabled: true,
     limit: { ...m.limit },
@@ -196,7 +194,7 @@ export function legacyApiToInfoApi(api: LegacyModel["api"]): {
 } {
   if (!api || typeof api.npm !== "string" || api.npm.length === 0) {
     throw new Error(
-      "[omniroute-v2] refusing to publish a model without an api block (missing api.npm)"
+      "[agentproxy-v2] refusing to publish a model without an api block (missing api.npm)"
     );
   }
   // The host reads `api.url` in `prepareOptions` and never falls back to the
@@ -205,7 +203,7 @@ export function legacyApiToInfoApi(api: LegacyModel["api"]): {
   // wire, nothing in the gateway logs, no model named.
   if (!isHttpUrl(api.url)) {
     throw new Error(
-      "[omniroute-v2] refusing to publish a model whose api block carries no http(s) url"
+      "[agentproxy-v2] refusing to publish a model whose api block carries no http(s) url"
     );
   }
   return { id: api.id, type: "aisdk", package: api.npm, url: api.url };
@@ -306,7 +304,10 @@ export function passesModelAllowlist(
   return true;
 }
 
-export function passesComboAllowlist(combo: OmniRouteRawCombo, visible?: ModelListFilter): boolean {
+export function passesComboAllowlist(
+  combo: AgentProxyRawCombo,
+  visible?: ModelListFilter
+): boolean {
   if (!visible) return true;
   const steps = Array.isArray(combo.models) ? combo.models : [];
   if (steps.length === 0) return true;
@@ -382,11 +383,11 @@ async function resolveEnrichmentOverlay(
   opts: ResolvedOptions,
   fetchers: CatalogFetchers | undefined,
   log: Logger
-): Promise<OmniRouteEnrichmentMap> {
+): Promise<AgentProxyEnrichmentMap> {
   if (opts.enrichment instanceof Map) return opts.enrichment;
   if (opts.enrichment === false) return new Map();
   const fetchEnrichment =
-    fetchers?.enrichmentFetcher ?? fetchers?.enrichment ?? defaultOmniRouteEnrichmentFetcher;
+    fetchers?.enrichmentFetcher ?? fetchers?.enrichment ?? defaultAgentProxyEnrichmentFetcher;
   try {
     return await fetchEnrichment(
       opts.baseURL,
@@ -396,7 +397,7 @@ async function resolveEnrichmentOverlay(
     );
   } catch (err) {
     log.warn(
-      `[omniroute-v2] enrichment fetch failed, continuing without names/pricing: ${err instanceof Error ? err.message : String(err)}`
+      `[agentproxy-v2] enrichment fetch failed, continuing without names/pricing: ${err instanceof Error ? err.message : String(err)}`
     );
     return new Map();
   }
@@ -411,16 +412,16 @@ async function resolveEnrichmentOverlay(
  */
 async function resolveUsableAliases(
   opts: ResolvedOptions,
-  providersFetcher: OmniRouteProvidersFetcher | undefined,
+  providersFetcher: AgentProxyProvidersFetcher | undefined,
   onSourceError: ((endpoint: string, reason: string) => void) | undefined,
-  enrichment: OmniRouteEnrichmentMap,
+  enrichment: AgentProxyEnrichmentMap,
   timeoutMs: number,
   log: Logger
 ): Promise<ReturnType<typeof usableProviderAliasSet> | undefined> {
   if (!opts.usableOnly) return undefined;
-  let rawConnections: OmniRouteProviderConnection[];
+  let rawConnections: AgentProxyProviderConnection[];
   try {
-    const fetchProviders = providersFetcher ?? defaultOmniRouteProvidersFetcher;
+    const fetchProviders = providersFetcher ?? defaultAgentProxyProvidersFetcher;
     rawConnections = await fetchProviders(
       opts.baseURL,
       opts.managementReadToken ?? opts.apiKey,
@@ -429,7 +430,7 @@ async function resolveUsableAliases(
     );
   } catch (err) {
     log.warn(
-      `[omniroute-v2] providers fetch failed, usableOnly filter disabled for this refresh: ${err instanceof Error ? err.message : String(err)}`
+      `[agentproxy-v2] providers fetch failed, usableOnly filter disabled for this refresh: ${err instanceof Error ? err.message : String(err)}`
     );
     rawConnections = [];
   }
@@ -441,8 +442,8 @@ interface PublishContext {
   opts: ResolvedOptions;
   log: Logger;
   providerId: string;
-  enrichment: OmniRouteEnrichmentMap;
-  rawModelById: Map<string, OmniRouteRawModelEntry>;
+  enrichment: AgentProxyEnrichmentMap;
+  rawModelById: Map<string, AgentProxyRawModelEntry>;
   collected: Map<string, LegacyModel>;
   publishedKeys: Set<string>;
   publishedModelIds: Map<string, string>;
@@ -486,14 +487,14 @@ async function publishCombos(ctx: PublishContext): Promise<number | undefined> {
     warnedCombos,
     cacheKey,
   } = ctx;
-  let rawCombos: OmniRouteRawCombo[];
+  let rawCombos: AgentProxyRawCombo[];
   try {
     rawCombos = combosFetcher
       ? await combosFetcher(opts.baseURL, opts.managementReadToken ?? opts.apiKey, combosTimeout)
       : [];
   } catch (err) {
     log.warn(
-      `[omniroute-v2] combos fetch failed, falling back to models-only catalog: ${err instanceof Error ? err.message : String(err)}`
+      `[agentproxy-v2] combos fetch failed, falling back to models-only catalog: ${err instanceof Error ? err.message : String(err)}`
     );
     return undefined;
   }
@@ -521,7 +522,7 @@ async function publishCombos(ctx: PublishContext): Promise<number | undefined> {
     const stillPending: typeof pending = [];
     for (const combo of pending) {
       const memberSteps = Array.isArray(combo.models) ? combo.models : [];
-      const memberEntries: OmniRouteRawModelEntry[] = [];
+      const memberEntries: AgentProxyRawModelEntry[] = [];
       let deferred = false;
       for (const step of memberSteps) {
         const kind = readStepField(step, "kind");
@@ -570,7 +571,7 @@ async function publishCombos(ctx: PublishContext): Promise<number | undefined> {
           const dedupeKey = `${cacheKey}::${key}`;
           if (!warnedCombos.has(dedupeKey)) {
             warnedCombos.add(dedupeKey);
-            log.warn(`[omniroute-v2] combo key "${key}" collides with a model id; combo wins.`);
+            log.warn(`[agentproxy-v2] combo key "${key}" collides with a model id; combo wins.`);
           }
         }
       }
@@ -595,7 +596,7 @@ async function publishCombos(ctx: PublishContext): Promise<number | undefined> {
 
   if (unresolved.length > 0) {
     log.warn(
-      `[omniroute-v2] ${unresolved.length} combo(s) could not resolve all nested combo-refs after ${MAX_COMBO_PASSES} passes; dropped to avoid over-claiming.`
+      `[agentproxy-v2] ${unresolved.length} combo(s) could not resolve all nested combo-refs after ${MAX_COMBO_PASSES} passes; dropped to avoid over-claiming.`
     );
   }
   return comboCount;
@@ -607,7 +608,7 @@ async function publishCombos(ctx: PublishContext): Promise<number | undefined> {
  * output, modalities, capabilities) instead of only direct raw members.
  * v1 parity (combo member synthesis at nested resolution time).
  */
-function synthesizeNestedMember(name: string, nested: LegacyModel): OmniRouteRawModelEntry {
+function synthesizeNestedMember(name: string, nested: LegacyModel): AgentProxyRawModelEntry {
   const inputModalities: string[] = [];
   if (nested.capabilities.input.text) inputModalities.push("text");
   if (nested.capabilities.input.audio) inputModalities.push("audio");
@@ -676,12 +677,12 @@ export async function collectCatalog(
     entries: new Map(),
     counts: { models: 0, combos: 0, autoCombos: 0 },
   };
-  let rawModels: OmniRouteRawModelEntry[];
+  let rawModels: AgentProxyRawModelEntry[];
   try {
     rawModels = modelsFetcher ? await modelsFetcher(opts.baseURL, opts.apiKey, modelsTimeout) : [];
   } catch (err) {
     log.warn(
-      `[omniroute-v2] models fetch failed, publishing empty catalog: ${err instanceof Error ? err.message : String(err)}`
+      `[agentproxy-v2] models fetch failed, publishing empty catalog: ${err instanceof Error ? err.message : String(err)}`
     );
     return empty;
   }
@@ -702,7 +703,7 @@ export async function collectCatalog(
     log
   );
 
-  const rawModelById = new Map<string, OmniRouteRawModelEntry>();
+  const rawModelById = new Map<string, AgentProxyRawModelEntry>();
   for (const entry of rawModels) {
     if (entry.id) rawModelById.set(entry.id, entry);
   }
@@ -767,7 +768,7 @@ export async function collectCatalog(
   // "auto" / "auto/<variant>" (v1 parity). Fail-open: a fetcher throw keeps
   // models + combos and only warns - old gateways may not serve the
   // endpoint at all (the default fetcher maps 404 to [] itself).
-  let rawAutoCombos: OmniRouteRawAutoCombo[];
+  let rawAutoCombos: AgentProxyRawAutoCombo[];
   try {
     rawAutoCombos = autoCombosFetcher
       ? await autoCombosFetcher(
@@ -778,9 +779,12 @@ export async function collectCatalog(
       : [];
   } catch (err) {
     log.warn(
-      `[omniroute-v2] auto combos fetch failed, falling back to models+combos catalog: ${err instanceof Error ? err.message : String(err)}`
+      `[agentproxy-v2] auto combos fetch failed, falling back to models+combos catalog: ${err instanceof Error ? err.message : String(err)}`
     );
-    return { entries: collected, counts: { models: modelCount, combos: comboCount, autoCombos: 0 } };
+    return {
+      entries: collected,
+      counts: { models: modelCount, combos: comboCount, autoCombos: 0 },
+    };
   }
 
   let autoComboCount = 0;
@@ -803,7 +807,7 @@ export async function collectCatalog(
       if (!warnedCombos.has(dedupeKey)) {
         warnedCombos.add(dedupeKey);
         log.warn(
-          `[omniroute-v2] auto combo key "${key}" collides with a model id; auto combo wins.`
+          `[agentproxy-v2] auto combo key "${key}" collides with a model id; auto combo wins.`
         );
       }
     }
@@ -813,7 +817,10 @@ export async function collectCatalog(
     autoComboCount += 1;
   }
 
-  return { entries: collected, counts: { models: modelCount, combos: comboCount, autoCombos: autoComboCount } };
+  return {
+    entries: collected,
+    counts: { models: modelCount, combos: comboCount, autoCombos: autoComboCount },
+  };
 }
 
 /**
@@ -830,7 +837,7 @@ export function buildProviderPayload(
   const X = opts.providerId;
   const info = {
     id: X,
-    name: opts.displayName ?? "OmniRoute",
+    name: opts.displayName ?? "AgentProxy",
     activation: "enabled",
     package: NPM_OPENAI_COMPAT,
     settings: { baseURL: ensureV1Suffix(opts.baseURL), apiKey: opts.apiKey },
@@ -876,7 +883,10 @@ export async function publishCatalog(
     const settings = (info.settings ?? {}) as Record<string, unknown>;
     const npm = String(info.package ?? "").replace("@opencode/ai/providers/", "@ai-sdk/");
     p["api"] = { type: "aisdk", package: npm, url: settings["baseURL"] };
-    p["request"] = { headers: (info.headers ?? {}) as Record<string, string>, body: (info.body ?? {}) as Record<string, unknown> };
+    p["request"] = {
+      headers: (info.headers ?? {}) as Record<string, string>,
+      body: (info.body ?? {}) as Record<string, unknown>,
+    };
   });
   for (const m of collected.entries.keys()) {
     const slash = m.indexOf("/");
