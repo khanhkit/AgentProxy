@@ -90,7 +90,11 @@ function makeFakePlaywright(calls: Call[], script: PageScript = {}) {
             calls.push({ fn: "getByRole", args: [role, opts2] });
             const name = opts2?.name;
             const matching = (script.roleOptions ?? []).find((label) =>
-              typeof name === "string" ? label === name : name instanceof RegExp ? name.test(label) : true
+              typeof name === "string"
+                ? label === name
+                : name instanceof RegExp
+                  ? name.test(label)
+                  : true
             );
             return {
               click: async () => {
@@ -344,4 +348,21 @@ test("#13381: reasoning_effort none/minimal never triggers the Extended Thinking
       `effort="${effort}" must not attempt any UI control switch`
     );
   }
+});
+
+test("#13381: Flash selection never clicks a Flash Lite option when both are present", async () => {
+  const descriptor = GEMINI_WEB_MODEL_MODES["gemini-3.7-flash"];
+  assert.ok(descriptor.toggleSelector && descriptor.activeIndicatorSelector);
+
+  const { calls } = await runWithFakePage("gemini-3.7-flash", {
+    selectors: {
+      [descriptor.toggleSelector!]: { found: true },
+      [descriptor.activeIndicatorSelector!]: { found: true, text: "Gemini 3.7 Flash" },
+    },
+    roleOptions: ["Gemini 3.7 Flash Lite", "Gemini 3.7 Flash"],
+  });
+
+  const roleClick = calls.find((call) => call.fn === "role.click");
+  assert.ok(roleClick, "the requested Flash option must be clicked");
+  assert.equal(roleClick.args[1], "Gemini 3.7 Flash");
 });
