@@ -13,6 +13,10 @@ import {
 } from "../../open-sse/executors/opencodeParkResume.ts";
 import * as throttle from "../../open-sse/executors/opencodeEgressThrottle.ts";
 import { __resetProxyRefusalMemoryForTesting } from "../../open-sse/utils/proxyRefusalMemory.ts";
+import {
+  readResilienceActions,
+  runWithResilienceActionsContext,
+} from "../../src/lib/usage/resilienceActionsContext.ts";
 
 const FLAG = "OPENCODE_PARK_AND_RESUME";
 const MARKER_ENV = "OPENCODE_POOL_STRAIN_MARKER_PATH";
@@ -264,6 +268,89 @@ describe("opencode 429 park-and-resume", () => {
       upstreamCancelled,
       true,
       "failed upstream body should be cancelled without being published"
+    );
+  });
+
+  it("failed replay records replayed:false instead of successful-copy accounting", async () => {
+    const account = {
+      fingerprint: "z".repeat(32),
+      cooldownUntil: 0,
+      consecutiveFails: 0,
+      proxy: null,
+    };
+    const driver = {
+      accounts: [account],
+      execute: async () => ({ response: new Response("denied", { status: 503 }) }),
+      markCooldown() {},
+      markSuccess() {},
+      sleep: async () => true,
+    };
+    const input = {
+      model: "muse-spark-1.3-contributor-free",
+      body: { messages: [{ role: "user", content: "hi" }] },
+      stream: true,
+      signal: null,
+      credentials: credentialsFor(1),
+      log,
+    };
+    const fallback = { response: new Response(BURST_BODY, { status: 429 }) };
+
+    const snapshot = await runWithResilienceActionsContext(async () => {
+      const result = await runParkAndReplay(driver, input, 0, fallback, log, "[test] ");
+      assert.ok(result);
+      await (result as { response: Response }).response.text();
+      return readResilienceActions();
+    });
+
+    assert.equal(snapshot?.replayed, false, "failed replay must not be counted as copied success");
+  });
+
+  it("successful replay body read failure errors the outer SSE instead of closing truncated", async () => {
+    let pulls = 0;
+    const brokenBody = new ReadableStream<Uint8Array>({
+      pull(controller) {
+        pulls += 1;
+        if (pulls === 1) {
+          controller.enqueue(new TextEncoder().encode("data: prefix\\n\\n"));
+          return;
+        }
+        throw new Error("upstream replay cut");
+      },
+    });
+    const account = {
+      fingerprint: "k".repeat(32),
+      cooldownUntil: 0,
+      consecutiveFails: 0,
+      proxy: null,
+    };
+    const driver = {
+      accounts: [account],
+      execute: async () => ({
+        response: new Response(brokenBody, {
+          status: 200,
+          headers: { "Content-Type": "text/event-stream" },
+        }),
+      }),
+      markCooldown() {},
+      markSuccess() {},
+      sleep: async () => true,
+    };
+    const input = {
+      model: "muse-spark-1.3-contributor-free",
+      body: { messages: [{ role: "user", content: "hi" }] },
+      stream: true,
+      signal: null,
+      credentials: credentialsFor(1),
+      log,
+    };
+    const fallback = { response: new Response(BURST_BODY, { status: 429 }) };
+    const result = await runParkAndReplay(driver, input, 0, fallback, log, "[test] ");
+    assert.ok(result);
+
+    await assert.rejects(
+      (result as { response: Response }).response.text(),
+      /upstream replay cut/u,
+      "a failed replay copy must error the committed SSE instead of looking complete"
     );
   });
 
