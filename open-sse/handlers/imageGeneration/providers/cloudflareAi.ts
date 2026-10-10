@@ -18,6 +18,7 @@
 // dash.cloudflare.com.
 
 import { saveCallLog } from "@/lib/usageDb";
+import { FETCH_TIMEOUT_MS } from "../../../config/constants.ts";
 import { sanitizeErrorMessage } from "../../../utils/error.ts";
 
 interface CloudflareAiImageGenArgs {
@@ -43,6 +44,9 @@ interface CloudflareAiImageGenArgs {
     info?: (tag: string, msg: string) => void;
     error?: (tag: string, msg: string) => void;
   } | null;
+  signal?: AbortSignal | null;
+  /** Internal timeout seam; production inherits the canonical upstream timeout. */
+  timeoutMs?: number;
 }
 
 interface CloudflareAiCallLogParams {
@@ -86,6 +90,8 @@ export async function handleCloudflareAiImageGeneration({
   body,
   credentials,
   log,
+  signal = null,
+  timeoutMs = FETCH_TIMEOUT_MS,
 }: CloudflareAiImageGenArgs) {
   const startTime = Date.now();
   const accountId = resolveCloudflareAccountId(credentials);
@@ -100,7 +106,15 @@ export async function handleCloudflareAiImageGeneration({
     };
   }
 
-  const token = credentials?.apiKey || credentials?.accessToken || "";
+  const token = (credentials?.apiKey || credentials?.accessToken || "").trim();
+  if (!token) {
+    return {
+      success: false as const,
+      status: 401,
+      error: "Cloudflare Workers AI API token is required",
+    };
+  }
+
   const prompt = typeof body.prompt === "string" ? body.prompt : String(body.prompt ?? "");
   const { width, height } = parseCloudflareDimensions(body.size);
   const upstreamBody: Record<string, unknown> = { prompt };
@@ -117,6 +131,8 @@ export async function handleCloudflareAiImageGeneration({
   );
 
   try {
+    const timeoutSignal = AbortSignal.timeout(timeoutMs);
+    const fetchSignal = signal ? AbortSignal.any([signal, timeoutSignal]) : timeoutSignal;
     const response = await fetch(url, {
       method: "POST",
       headers: {
@@ -124,6 +140,7 @@ export async function handleCloudflareAiImageGeneration({
         Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify(upstreamBody),
+      signal: fetchSignal,
     });
 
     const text = await response.text();

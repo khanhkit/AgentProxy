@@ -753,7 +753,6 @@ export async function handleImageGeneration({
       log,
     });
   }
-
   if (providerConfig.format === "cloudflare-ai-image") {
     return handleCloudflareAiImageGeneration({
       model,
@@ -762,6 +761,7 @@ export async function handleImageGeneration({
       body,
       credentials,
       log,
+      signal,
     });
   }
 
