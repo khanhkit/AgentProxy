@@ -1,3 +1,5 @@
+import { AsyncLocalStorage } from "node:async_hooks";
+
 // Runtime DOM shims for the TinyCMS wasm-bindgen glue (browser-targeted Rust).
 // These are NOT test-only mocks — the WASM module reaches canvas APIs through
 // generated JS that expects `window`, `document`, `HTMLCanvasElement`, and
@@ -189,9 +191,14 @@ export function withTinyCmsDomMocks<T>(fn: () => T): T {
   }
 }
 
+const asyncDomMockOwner = new AsyncLocalStorage<boolean>();
 let asyncDomMockTail: Promise<void> = Promise.resolve();
 
 export async function withTinyCmsDomMocksAsync<T>(fn: () => Promise<T>): Promise<T> {
+  if (asyncDomMockOwner.getStore() === true) {
+    return await fn();
+  }
+
   const previous = asyncDomMockTail;
   let release!: () => void;
   asyncDomMockTail = new Promise<void>((resolve) => {
@@ -200,12 +207,14 @@ export async function withTinyCmsDomMocksAsync<T>(fn: () => Promise<T>): Promise
 
   await previous;
   try {
-    const restore = setupDomMocks();
-    try {
-      return await fn();
-    } finally {
-      restore();
-    }
+    return await asyncDomMockOwner.run(true, async () => {
+      const restore = setupDomMocks();
+      try {
+        return await fn();
+      } finally {
+        restore();
+      }
+    });
   } finally {
     release();
   }
