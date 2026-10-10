@@ -15,6 +15,7 @@ import {
   writeFileSync,
 } from "node:fs";
 import { randomBytes } from "node:crypto";
+import { spawnSync } from "node:child_process";
 import { basename, dirname, join, parse, resolve, sep } from "node:path";
 
 function failUnsafeParent(path, detail) {
@@ -83,31 +84,127 @@ function openBoundDirectory(directory, expectedIdentity) {
     directory,
     constants.O_RDONLY | constants.O_DIRECTORY | constants.O_NOFOLLOW
   );
-  const stat = fstatSync(descriptor);
-  if (!stat.isDirectory() || !identitiesMatch({ dev: stat.dev, ino: stat.ino }, expectedIdentity)) {
-    closeSync(descriptor);
-    failUnsafeParent(directory, "directory identity changed before binding atomic write");
+  try {
+    const stat = fstatSync(descriptor);
+    if (
+      !stat.isDirectory() ||
+      !identitiesMatch({ dev: stat.dev, ino: stat.ino }, expectedIdentity)
+    ) {
+      failUnsafeParent(directory, "directory identity changed before binding atomic write");
+    }
+
+    return {
+      descriptor,
+      operationDirectory: `/proc/self/fd/${descriptor}`,
+      bound: true,
+    };
+  } catch (error) {
+    try {
+      closeSync(descriptor);
+    } catch {}
+    throw error;
+  }
+}
+
+const BOUND_CWD_WRITER = String.raw`
+const fs = require("node:fs");
+const [targetName, temporaryName, modeText, expectedDev, expectedIno] = process.argv.slice(1);
+const fail = (message, code = 70) => {
+  process.stderr.write(message);
+  process.exit(code);
+};
+try {
+  const directory = fs.statSync(".");
+  if (!directory.isDirectory() || String(directory.dev) !== expectedDev || String(directory.ino) !== expectedIno) {
+    fail("BOUND_DIRECTORY_IDENTITY_MISMATCH", 73);
+  }
+  const mode = Number(modeText);
+  let fd;
+  try {
+    fd = fs.openSync(
+      temporaryName,
+      fs.constants.O_CREAT | fs.constants.O_EXCL | fs.constants.O_WRONLY | (fs.constants.O_NOFOLLOW || 0),
+      mode
+    );
+    fs.writeFileSync(fd, fs.readFileSync(0, "utf8"), "utf8");
+    fs.fchmodSync(fd, mode);
+    fs.fsyncSync(fd);
+    fs.closeSync(fd);
+    fd = undefined;
+    fs.renameSync(temporaryName, targetName);
+  } catch (error) {
+    if (fd !== undefined) {
+      try { fs.closeSync(fd); } catch {}
+    }
+    try { fs.unlinkSync(temporaryName); } catch {}
+    throw error;
+  }
+} catch (error) {
+  fail(error instanceof Error ? error.message : String(error));
+}
+`;
+
+function writePrivateFileViaBoundCwd(directory, expectedIdentity, targetName, content, mode) {
+  const suffix = randomBytes(8).toString("hex");
+  const temporaryName = `.${targetName}.${process.pid}.${suffix}.tmp`;
+  const env = {};
+  for (const key of ["SystemRoot", "WINDIR"]) {
+    if (process.env[key]) env[key] = process.env[key];
   }
 
-  return {
-    descriptor,
-    operationDirectory: `/proc/self/fd/${descriptor}`,
-    bound: true,
-  };
+  const result = spawnSync(
+    process.execPath,
+    [
+      "-e",
+      BOUND_CWD_WRITER,
+      targetName,
+      temporaryName,
+      String(mode),
+      String(expectedIdentity.dev),
+      String(expectedIdentity.ino),
+    ],
+    {
+      cwd: directory,
+      input: String(content),
+      encoding: "utf8",
+      env,
+      windowsHide: true,
+    }
+  );
+
+  if (result.status === 0 && !result.error) {
+    assertDirectoryIdentity(directory, expectedIdentity);
+    return;
+  }
+
+  const detail = String(
+    result.stderr || result.error?.message || "bound directory helper failed"
+  ).trim();
+  if (detail.includes("BOUND_DIRECTORY_IDENTITY_MISMATCH")) {
+    failUnsafeParent(directory, "bound directory identity changed before atomic write");
+  }
+  throw result.error ?? new Error(`Private-file bound directory helper failed: ${detail}`);
 }
 
 /**
  * Atomically replace a credential-bearing file without following the final
  * destination symlink or any parent-directory symlink. The temporary file is
- * private from its first filesystem operation. Parent ancestry and directory
- * identity are revalidated immediately before rename so a path swap does not
- * silently redirect the final replace operation.
+ * private from its first filesystem operation. Linux binds operations to an
+ * opened directory descriptor; other platforms use a helper process whose cwd
+ * is identity-checked before relative temp creation + rename. A final ancestry
+ * check reports a visible-parent swap without unlinking an unrelated replacement.
  */
 export function writePrivateFileAtomic(path, content, { mode = 0o600 } = {}) {
   const absolutePath = resolve(path);
   const { directory, identity } = ensureSafeDirectoryAncestry(dirname(absolutePath));
   const binding = openBoundDirectory(directory, identity);
   const targetName = basename(absolutePath);
+
+  if (!binding.bound) {
+    writePrivateFileViaBoundCwd(directory, identity, targetName, content, mode);
+    return;
+  }
+
   const target = join(binding.operationDirectory, targetName);
   const suffix = randomBytes(8).toString("hex");
   const temporary = join(binding.operationDirectory, `.${targetName}.${process.pid}.${suffix}.tmp`);
@@ -126,20 +223,9 @@ export function writePrivateFileAtomic(path, content, { mode = 0o600 } = {}) {
     closeSync(descriptor);
     descriptor = undefined;
 
-    if (!binding.bound) assertDirectoryIdentity(directory, identity);
     renameSync(temporary, target);
     renamed = true;
-
-    if (binding.bound) {
-      try {
-        assertDirectoryIdentity(directory, identity);
-      } catch (error) {
-        try {
-          unlinkSync(target);
-        } catch {}
-        throw error;
-      }
-    }
+    assertDirectoryIdentity(directory, identity);
   } catch (error) {
     if (descriptor !== undefined) {
       try {
