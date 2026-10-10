@@ -126,6 +126,37 @@ jobs:
             }
             core.setFailed(`Timed out waiting for scheduler claim: ${claimContext}`);
 
+      - name: Revalidate requested PR context after scheduler claim
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v8.0.0
+        env:
+          PR_NUMBER: ${{ inputs.pr_number }}
+          SOURCE_SHA: ${{ inputs.source_sha }}
+          BASE_REF: ${{ inputs.base_ref }}
+        with:
+          script: |
+            const { owner, repo } = context.repo;
+            const pullNumber = Number(process.env.PR_NUMBER);
+            if (!Number.isSafeInteger(pullNumber) || pullNumber < 1) {
+              throw new Error('Invalid PR number');
+            }
+            const { data: pullRequest } = await github.rest.pulls.get({
+              owner,
+              repo,
+              pull_number: pullNumber,
+            });
+            if (pullRequest.state !== 'open' || pullRequest.draft) {
+              throw new Error('OCR review requires an open, non-draft PR after scheduler claim');
+            }
+            if (pullRequest.head.repo?.full_name !== process.env.GITHUB_REPOSITORY) {
+              throw new Error('OCR review refuses fork PRs after scheduler claim');
+            }
+            if (pullRequest.head.sha !== process.env.SOURCE_SHA) {
+              throw new Error('OCR review source SHA changed while waiting for scheduler claim');
+            }
+            if (pullRequest.base.ref !== process.env.BASE_REF) {
+              throw new Error('OCR review base ref changed while waiting for scheduler claim');
+            }
+
       - name: Detect OCR configuration
         id: ocr-config
         shell: bash

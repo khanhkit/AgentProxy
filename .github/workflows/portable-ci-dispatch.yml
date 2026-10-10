@@ -34,9 +34,24 @@ jobs:
       - name: Select first available compatible runner
         env:
           GITHUB_TOKEN: ${{ github.token }}
-        run: >-
-          node scripts/ci/github-runner-fallback.mjs
-          --logical-task "${{ inputs.logical_task }}"
-          --source-sha "${{ inputs.source_sha }}"
-          --workflow-ref "${{ github.ref_name }}"
-          ${{ inputs.benchmark_mode && '--benchmark' || '' }}
+          LOGICAL_TASK: ${{ inputs.logical_task }}
+          SOURCE_SHA: ${{ inputs.source_sha }}
+          WORKFLOW_REF: ${{ github.ref_name }}
+          BENCHMARK_MODE: ${{ inputs.benchmark_mode }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ ! "$SOURCE_SHA" =~ ^[0-9a-f]{40}$ ]]; then
+            echo "::error::source_sha must be an exact 40-character lowercase commit SHA"
+            exit 2
+          fi
+          args=(
+            node scripts/ci/github-runner-fallback.mjs
+            --logical-task "$LOGICAL_TASK"
+            --source-sha "$SOURCE_SHA"
+            --workflow-ref "$WORKFLOW_REF"
+          )
+          if [[ "$BENCHMARK_MODE" == "true" ]]; then
+            args+=(--benchmark)
+          fi
+          "${args[@]}"
