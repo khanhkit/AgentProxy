@@ -45,7 +45,21 @@ jobs:
       - name: Wait for scheduler claim before logical workload
         env:
           GITHUB_TOKEN: ${{ github.token }}
-        run: node scripts/ci/wait-runner-claim.mjs --repo "${{ github.repository }}" --sha "${{ inputs.source_sha }}" --context "${{ inputs.claim_context }}"
+          REPOSITORY: ${{ github.repository }}
+          SOURCE_SHA: ${{ inputs.source_sha }}
+          CLAIM_CONTEXT: ${{ inputs.claim_context }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ ! "$SOURCE_SHA" =~ ^[0-9a-f]{40}$ ]]; then
+            echo "::error::source_sha must be an exact 40-character lowercase commit SHA"
+            exit 2
+          fi
+          if [[ ! "$CLAIM_CONTEXT" =~ ^agentproxy/runner-claim/[A-Za-z0-9._-]+/[A-Za-z0-9._-]+/[0-9]+$ ]]; then
+            echo "::error::invalid scheduler claim context"
+            exit 2
+          fi
+          node scripts/ci/wait-runner-claim.mjs --repo "$REPOSITORY" --sha "$SOURCE_SHA" --context "$CLAIM_CONTEXT"
       - uses: ./.github/actions/npm-ci-retry
       - name: Vitest portable workload
         env:

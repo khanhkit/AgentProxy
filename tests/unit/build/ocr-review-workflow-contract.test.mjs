@@ -63,6 +63,19 @@ test("OCR worker is manual-only, claim-gated, never executes PR-head repository 
   assert.match(y, /statuses:\s*write/);
   assert.match(y, /createCommitStatus/);
   assert.match(y, /RUNNER_READY_CONTEXT/);
+  const waitIndex = y.indexOf("Wait for scheduler claim before secret-bearing review");
+  const revalidateIndex = y.indexOf("Revalidate requested PR context after scheduler claim");
+  const configIndex = y.indexOf("Detect OCR configuration");
+  assert.ok(waitIndex >= 0 && revalidateIndex > waitIndex && configIndex > revalidateIndex);
+  const revalidate = y.slice(revalidateIndex, configIndex);
+  assert.match(revalidate, /github\.rest\.pulls\.get/);
+  assert.match(revalidate, /pullRequest\.state\s*!==\s*['"]open['"]/);
+  assert.match(
+    revalidate,
+    /pullRequest\.head\.repo\?\.full_name\s*!==\s*process\.env\.GITHUB_REPOSITORY/
+  );
+  assert.match(revalidate, /pullRequest\.head\.sha\s*!==\s*process\.env\.SOURCE_SHA/);
+  assert.match(revalidate, /pullRequest\.base\.ref\s*!==\s*process\.env\.BASE_REF/);
   assert.match(y, /id:\s*ocr-config/);
   assert.match(y, /OCR_LLM_URL:\s*\$\{\{\s*secrets\.OCR_LLM_URL\s*\}\}/);
   assert.match(y, /OCR_LLM_AUTH_TOKEN:\s*\$\{\{\s*secrets\.OCR_LLM_AUTH_TOKEN\s*\}\}/);

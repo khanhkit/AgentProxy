@@ -11,6 +11,12 @@ test("worker is manual-only, exact-SHA, claim-guarded and non-racing", async () 
   assert.match(y, /runs-on:\s*\$\{\{\s*inputs\.runner\s*\}\}/);
   assert.match(y, /ref:\s*\$\{\{\s*inputs\.source_sha\s*\}\}/);
   assert.match(y, /wait-runner-claim\.mjs/);
+  assert.match(y, /SOURCE_SHA:\s*\$\{\{\s*inputs\.source_sha\s*\}\}/);
+  assert.match(y, /CLAIM_CONTEXT:\s*\$\{\{\s*inputs\.claim_context\s*\}\}/);
+  assert.match(y, /--sha\s+["']?\$SOURCE_SHA["']?/);
+  assert.match(y, /--context\s+["']?\$CLAIM_CONTEXT["']?/);
+  assert.doesNotMatch(y, /\\n\s+--repo/);
+  assert.doesNotMatch(y, /run:[^\n]*\$\{\{\s*inputs\.(?:source_sha|claim_context)\s*\}\}/);
   assert.match(y, /cancel-in-progress:\s*false/);
   assert.doesNotMatch(y, /matrix:/);
   assert.doesNotMatch(y, /timeout-minutes:/);
@@ -23,6 +29,11 @@ test("dispatcher has only control-plane permissions and invokes repository sched
   assert.match(y, /contents:\s*read/);
   assert.match(y, /ubuntu-24\.04-arm/);
   assert.match(y, /github-runner-fallback\.mjs/);
+  assert.match(y, /SOURCE_SHA:\s*\$\{\{\s*inputs\.source_sha\s*\}\}/);
+  assert.match(y, /LOGICAL_TASK:\s*\$\{\{\s*inputs\.logical_task\s*\}\}/);
+  assert.match(y, /--source-sha\s+["']?\$SOURCE_SHA["']?/);
+  assert.match(y, /--logical-task\s+["']?\$LOGICAL_TASK["']?/);
+  assert.doesNotMatch(y, /--source-sha\s+["']?\$\{\{\s*inputs\.source_sha/);
   assert.doesNotMatch(y, /timeout-minutes:/);
 });
 

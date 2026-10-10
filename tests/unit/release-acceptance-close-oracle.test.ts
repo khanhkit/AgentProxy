@@ -9,6 +9,11 @@ import {
 test("shadow acceptance never closes trackers; the legacy fixture remains detectable", () => {
   const shadow = readFileSync(".github/workflows/release-acceptance.yml", "utf8");
   assert.equal(findTrackerCloses(shadow).length, 0);
+  assert.match(
+    shadow,
+    /uses:\s*actions\/upload-artifact@[0-9a-f]{40}\s+#\s*v7\.0\.1/u,
+    "shadow acceptance artifact upload must use the exact v7.0.1 commit SHA"
+  );
   const legacy = readFileSync(
     new URL("../fixtures/release-acceptance/legacy-close-steps.yml", import.meta.url),
     "utf8"
