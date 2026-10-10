@@ -3,6 +3,7 @@ import { shouldIsolateProbeFailures } from "@/shared/utils/probeOrigin";
 import { writeTerminalStatus } from "@/shared/utils/terminalStatus";
 
 import { PROVIDER_ERROR_TYPES } from "../../services/errorClassifier.ts";
+import { sanitizeErrorMessage } from "../../utils/errorSanitization.ts";
 import {
   hasRequestRejectedStreak,
   recordRequestRejected,
@@ -29,11 +30,12 @@ export async function handleRequestRejectedFailure(params: {
 }): Promise<void> {
   const { connectionId, statusCode, message } = params;
   const nowIso = new Date().toISOString();
+  const persistentMessage = sanitizeErrorMessage(message) || "Provider request rejected";
 
   if (await shouldIsolateProbeFailures()) {
     await updateProviderConnection(connectionId, {
       lastErrorType: PROVIDER_ERROR_TYPES.REQUEST_REJECTED,
-      lastError: message,
+      lastError: persistentMessage,
       lastErrorAt: nowIso,
       errorCode: statusCode,
     });
@@ -72,7 +74,7 @@ export async function handleRequestRejectedFailure(params: {
       {
         testStatus: "banned",
         isActive: false,
-        lastError: `${message} (${verdict.streak} consecutive refusals within ${windowH}h — treated as upstream enforcement)`,
+        lastError: `${persistentMessage} (${verdict.streak} consecutive refusals within ${windowH}h — treated as upstream enforcement)`,
         lastErrorType: PROVIDER_ERROR_TYPES.FORBIDDEN,
         errorCode: String(statusCode),
       },
@@ -92,7 +94,7 @@ export async function handleRequestRejectedFailure(params: {
     testStatus: "unavailable",
     rateLimitedUntil: until,
     lastErrorType: PROVIDER_ERROR_TYPES.REQUEST_REJECTED,
-    lastError: message,
+    lastError: persistentMessage,
     lastErrorAt: nowIso,
     errorCode: statusCode,
   });

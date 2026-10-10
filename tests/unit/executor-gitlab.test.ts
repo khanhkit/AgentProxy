@@ -273,6 +273,51 @@ test("GitlabExecutor falls back to the public Code Suggestions endpoint when dir
 // #10365: a 401 from the direct_access exchange must ALSO fall back to the public
 // Code Suggestions completions endpoint (same resilience as the 403-disabled case
 // above), instead of surfacing an opaque 401 token error with no fallback.
+test("GitlabExecutor sanitizes generic direct_access 403 diagnostics before logging", async () => {
+  const executor = (await getExecutor("gitlab-duo")) as GitlabExecutor;
+  const originalFetch = globalThis.fetch;
+  const warnings: string[] = [];
+  const hostile =
+    "access_token=GITLAB-LEAK at /srv/private/gitlab.ts\n    at exchange (/srv/private/gitlab.ts:9:2)";
+
+  globalThis.fetch = async (url) => {
+    if (String(url) === "https://gitlab.example.com/api/v4/code_suggestions/direct_access") {
+      return new Response(hostile, { status: 403, headers: { "content-type": "text/plain" } });
+    }
+    return jsonResponse({
+      model: { name: "code-gecko" },
+      choices: [{ text: "fallback path works" }],
+    });
+  };
+
+  try {
+    const result = await executor.execute({
+      model: "gitlab-duo-code-suggestions",
+      body: { messages: [{ role: "user", content: "Say hello" }] },
+      stream: false,
+      credentials: {
+        accessToken: "oauth-access",
+        providerSpecificData: { baseUrl: "https://gitlab.example.com" },
+      },
+      signal: AbortSignal.timeout(10_000),
+      log: {
+        debug() {},
+        info() {},
+        warn: (...args: unknown[]) => void warnings.push(args.map(String).join(" ")),
+        error() {},
+      },
+    });
+    assert.equal(result.response.status, 200);
+    assert.ok(warnings.some((line) => line.includes("direct_access exchange rejected (403)")));
+    assert.doesNotMatch(
+      warnings.join("\n"),
+      /GITLAB-LEAK|srv\/private|gitlab\.ts|\bat exchange\b/i
+    );
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+});
+
 test("GitlabExecutor falls back to the public Code Suggestions endpoint when direct_access returns 401", async () => {
   const executor = (await getExecutor("gitlab-duo")) as GitlabExecutor;
   const originalFetch = globalThis.fetch;
