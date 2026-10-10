@@ -37,6 +37,8 @@ interface SelectorScriptEntry {
 interface PageScript {
   /** Keyed by the EXACT selector string the production descriptor uses. */
   selectors?: Record<string, SelectorScriptEntry>;
+  /** Generic accessibility-role option labels exposed after a model menu is opened. */
+  roleOptions?: string[];
 }
 
 /**
@@ -82,6 +84,23 @@ function makeFakePlaywright(calls: Call[], script: PageScript = {}) {
                 calls.push({ fn: "mode.click", args: [selector] });
               },
               textContent: async () => entry.text ?? null,
+            };
+          },
+          getByRole: (role: string, opts2?: { name?: string | RegExp }) => {
+            calls.push({ fn: "getByRole", args: [role, opts2] });
+            const name = opts2?.name;
+            const matching = (script.roleOptions ?? []).find((label) =>
+              typeof name === "string"
+                ? label === name
+                : name instanceof RegExp
+                  ? name.test(label)
+                  : true
+            );
+            return {
+              click: async () => {
+                if (!matching) throw new Error(`role option not found: ${role}`);
+                calls.push({ fn: "role.click", args: [role, matching] });
+              },
             };
           },
           keyboard: {
@@ -180,6 +199,31 @@ test(
   }
 );
 
+test("#13381: opening the model menu without selecting an option never confirms a non-default model", async () => {
+  const descriptor = GEMINI_WEB_MODEL_MODES["gemini-3.7-flash"];
+  assert.ok(descriptor.toggleSelector && descriptor.activeIndicatorSelector);
+
+  const { status, calls } = await runWithFakePage("gemini-3.7-flash", {
+    selectors: {
+      [descriptor.toggleSelector!]: { found: true },
+      [descriptor.activeIndicatorSelector!]: { found: true, text: "Gemini 3.7 Flash" },
+    },
+    roleOptions: [],
+  });
+
+  assert.equal(status, 400, "a menu-open action alone must fail closed");
+  assert.equal(
+    calls.some((c) => c.fn === "role.click"),
+    false,
+    "no requested model option was available to click"
+  );
+  assert.equal(
+    calls.some((c) => c.fn === "editor.click"),
+    false,
+    "unselected model must never reach prompt execution"
+  );
+});
+
 // ─── (a) Read-back confirms -> proceeds ─────────────────────────────────────
 
 test("#13381: a confirmed model-mode read-back lets the request proceed to the prompt", async () => {
@@ -191,6 +235,7 @@ test("#13381: a confirmed model-mode read-back lets the request proceed to the p
       [descriptor.toggleSelector!]: { found: true },
       [descriptor.activeIndicatorSelector!]: { found: true, text: "Gemini 3.7 Flash" },
     },
+    roleOptions: ["Gemini 3.7 Flash"],
   });
 
   assert.equal(
@@ -231,6 +276,7 @@ test("#13381: a mismatched read-back fails closed with 400, not a silent success
       // Toggle clicked, but the UI actually shows a different mode than requested.
       [descriptor.activeIndicatorSelector!]: { found: true, text: "Gemini 3.1 Pro" },
     },
+    roleOptions: ["Gemini 3.1 Flash Lite"],
   });
 
   assert.notEqual(status, 200);
@@ -302,4 +348,21 @@ test("#13381: reasoning_effort none/minimal never triggers the Extended Thinking
       `effort="${effort}" must not attempt any UI control switch`
     );
   }
+});
+
+test("#13381: Flash selection never clicks a Flash Lite option when both are present", async () => {
+  const descriptor = GEMINI_WEB_MODEL_MODES["gemini-3.7-flash"];
+  assert.ok(descriptor.toggleSelector && descriptor.activeIndicatorSelector);
+
+  const { calls } = await runWithFakePage("gemini-3.7-flash", {
+    selectors: {
+      [descriptor.toggleSelector!]: { found: true },
+      [descriptor.activeIndicatorSelector!]: { found: true, text: "Gemini 3.7 Flash" },
+    },
+    roleOptions: ["Gemini 3.7 Flash Lite", "Gemini 3.7 Flash"],
+  });
+
+  const roleClick = calls.find((call) => call.fn === "role.click");
+  assert.ok(roleClick, "the requested Flash option must be clicked");
+  assert.equal(roleClick.args[1], "Gemini 3.7 Flash");
 });
