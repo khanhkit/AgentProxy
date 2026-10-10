@@ -20,7 +20,8 @@ export interface ResolvedApiKey {
   origin: ApiKeyOrigin;
 }
 
-const ENV_VAR = "OMNIROUTE_API_KEY";
+const ENV_VAR = "AGENTPROXY_API_KEY";
+const LEGACY_ENV_VAR = "OMNIROUTE_API_KEY";
 
 /**
  * `ctx.integration.connection` carries the stored credential. Probing the
@@ -29,10 +30,11 @@ const ENV_VAR = "OMNIROUTE_API_KEY";
  */
 function connectionApi(
   ctx: StableContext
-): { active: (id: string) => Promise<unknown>; resolve: (c: unknown) => Promise<unknown> } | undefined {
+):
+  | { active: (id: string) => Promise<unknown>; resolve: (c: unknown) => Promise<unknown> }
+  | undefined {
   const connection = (ctx.integration as unknown as Record<string, unknown>).connection as
-    | { active?: unknown; resolve?: unknown }
-    | undefined;
+    { active?: unknown; resolve?: unknown } | undefined;
   if (
     connection === undefined ||
     typeof connection.active !== "function" ||
@@ -69,8 +71,7 @@ async function keyFromConnection(
     const active = await connection.active(integrationID);
     if (active === undefined) return undefined;
     const credential = (await connection.resolve(active)) as
-      | { type?: unknown; key?: unknown }
-      | undefined;
+      { type?: unknown; key?: unknown } | undefined;
     if (credential === undefined) return undefined;
     if (credential.type !== "key") {
       log.warn(
@@ -105,6 +106,10 @@ export async function resolveApiKey(
   if (optionKey !== undefined && optionKey.length > 0) return { key: optionKey, origin: "option" };
   const fromEnv = process.env[ENV_VAR];
   if (fromEnv !== undefined && fromEnv.length > 0) return { key: fromEnv, origin: "env" };
+  const fromLegacyEnv = process.env[LEGACY_ENV_VAR];
+  if (fromLegacyEnv !== undefined && fromLegacyEnv.length > 0) {
+    return { key: fromLegacyEnv, origin: "env" };
+  }
   return { key: "", origin: "missing" };
 }
 
@@ -117,6 +122,6 @@ export function warnIfMissing(resolved: ResolvedApiKey, integrationID: string, l
   log.warn(
     `[omniroute-v2] no API key for "${integrationID}": the catalog will be empty. ` +
       `Connect the integration from opencode, set "apiKey" in the plugin options, ` +
-      `or export ${ENV_VAR}.`
+      `or export ${ENV_VAR} (legacy ${LEGACY_ENV_VAR} remains accepted).`
   );
 }

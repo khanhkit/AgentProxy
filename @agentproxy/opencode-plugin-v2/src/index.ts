@@ -3,18 +3,18 @@ import {
   optionalTierFingerprint,
   catalogContentFingerprint,
   createLogger,
-  defaultOmniRouteAutoCombosFetcher,
-  defaultOmniRouteCombosFetcher,
-  defaultOmniRouteEnrichmentFetcher,
-  defaultOmniRouteModelsFetcher,
-  defaultOmniRouteProvidersFetcher,
-  type OmniRouteEnrichmentMap,
-  type OmniRouteProviderConnection,
+  defaultAgentProxyAutoCombosFetcher,
+  defaultAgentProxyCombosFetcher,
+  defaultAgentProxyEnrichmentFetcher,
+  defaultAgentProxyModelsFetcher,
+  defaultAgentProxyProvidersFetcher,
+  type AgentProxyEnrichmentMap,
+  type AgentProxyProviderConnection,
 } from "./shared/index.js";
 import type {
-  OmniRouteRawAutoCombo,
-  OmniRouteRawCombo,
-  OmniRouteRawModelEntry,
+  AgentProxyRawAutoCombo,
+  AgentProxyRawCombo,
+  AgentProxyRawModelEntry,
 } from "./shared/index.js";
 import type { ResolvedOptions } from "./catalog.js";
 import { buildProviderPayload, collectCatalog } from "./catalog.js";
@@ -161,9 +161,9 @@ export default Plugin.define({
       credentialChecked = true;
     };
 
-    const fetchModelsSafe = async (): Promise<OmniRouteRawModelEntry[]> => {
+    const fetchModelsSafe = async (): Promise<AgentProxyRawModelEntry[]> => {
       try {
-        return await defaultOmniRouteModelsFetcher(
+        return await defaultAgentProxyModelsFetcher(
           resolved.baseURL,
           resolved.apiKey,
           timeouts.models
@@ -182,11 +182,11 @@ export default Plugin.define({
       log,
       resolved.managementReadToken === undefined
     );
-    const fetchCombosSafe = async (): Promise<SourceResult<OmniRouteRawCombo[]>> => {
+    const fetchCombosSafe = async (): Promise<SourceResult<AgentProxyRawCombo[]>> => {
       try {
         return {
           ok: true,
-          value: await defaultOmniRouteCombosFetcher(
+          value: await defaultAgentProxyCombosFetcher(
             resolved.baseURL,
             resolved.managementReadToken ?? resolved.apiKey,
             timeouts.combos
@@ -202,12 +202,12 @@ export default Plugin.define({
     // Providers connections follow the same rule: gated on usableOnly (no
     // request when false, v1 parity), soft-fail to [] so the filter degrades
     // to keep-all instead of hiding the catalog.
-    const fetchProvidersSafe = async (): Promise<SourceResult<OmniRouteProviderConnection[]>> => {
+    const fetchProvidersSafe = async (): Promise<SourceResult<AgentProxyProviderConnection[]>> => {
       if (!resolved.usableOnly) return { ok: true, value: [] };
       try {
         return {
           ok: true,
-          value: await defaultOmniRouteProvidersFetcher(
+          value: await defaultAgentProxyProvidersFetcher(
             resolved.baseURL,
             resolved.managementReadToken ?? resolved.apiKey,
             timeouts.models,
@@ -224,12 +224,12 @@ export default Plugin.define({
     // Enrichment follows the same rule: gated on the option (default on,
     // v1 parity), soft-fail to an empty map so names/pricing degrade to
     // mapper defaults instead of hiding the catalog.
-    const fetchEnrichmentSafe = async (): Promise<SourceResult<OmniRouteEnrichmentMap>> => {
+    const fetchEnrichmentSafe = async (): Promise<SourceResult<AgentProxyEnrichmentMap>> => {
       if (resolved.enrichment === false) return { ok: true, value: new Map() };
       try {
         return {
           ok: true,
-          value: await defaultOmniRouteEnrichmentFetcher(
+          value: await defaultAgentProxyEnrichmentFetcher(
             resolved.baseURL,
             resolved.managementReadToken ?? resolved.apiKey,
             timeouts.enrichment,
@@ -243,11 +243,11 @@ export default Plugin.define({
         return { ok: false };
       }
     };
-    const fetchAutoCombosSafe = async (): Promise<SourceResult<OmniRouteRawAutoCombo[]>> => {
+    const fetchAutoCombosSafe = async (): Promise<SourceResult<AgentProxyRawAutoCombo[]>> => {
       try {
         return {
           ok: true,
-          value: await defaultOmniRouteAutoCombosFetcher(
+          value: await defaultAgentProxyAutoCombosFetcher(
             resolved.baseURL,
             resolved.managementReadToken ?? resolved.apiKey,
             timeouts.autoCombos,
@@ -337,10 +337,10 @@ export default Plugin.define({
     async function upgradeWithOptional(
       base: CatalogSnapshot,
       [combos, autoCombos, providers, enrichment]: [
-        SourceResult<OmniRouteRawCombo[]>,
-        SourceResult<OmniRouteRawAutoCombo[]>,
-        SourceResult<OmniRouteProviderConnection[]>,
-        SourceResult<OmniRouteEnrichmentMap>,
+        SourceResult<AgentProxyRawCombo[]>,
+        SourceResult<AgentProxyRawAutoCombo[]>,
+        SourceResult<AgentProxyProviderConnection[]>,
+        SourceResult<AgentProxyEnrichmentMap>,
       ]
     ): Promise<void> {
       if (state.entries.get(cacheKey) !== base) return;
