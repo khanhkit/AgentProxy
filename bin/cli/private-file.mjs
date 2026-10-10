@@ -2,7 +2,9 @@ import {
   fchmodSync,
   closeSync,
   constants,
+  existsSync,
   fsyncSync,
+  fstatSync,
   lstatSync,
   mkdirSync,
   openSync,
@@ -72,6 +74,28 @@ function assertDirectoryIdentity(directory, expectedIdentity) {
   }
 }
 
+function openBoundDirectory(directory, expectedIdentity) {
+  if (process.platform !== "linux" || !existsSync("/proc/self/fd")) {
+    return { descriptor: undefined, operationDirectory: directory, bound: false };
+  }
+
+  const descriptor = openSync(
+    directory,
+    constants.O_RDONLY | constants.O_DIRECTORY | constants.O_NOFOLLOW
+  );
+  const stat = fstatSync(descriptor);
+  if (!stat.isDirectory() || !identitiesMatch({ dev: stat.dev, ino: stat.ino }, expectedIdentity)) {
+    closeSync(descriptor);
+    failUnsafeParent(directory, "directory identity changed before binding atomic write");
+  }
+
+  return {
+    descriptor,
+    operationDirectory: `/proc/self/fd/${descriptor}`,
+    bound: true,
+  };
+}
+
 /**
  * Atomically replace a credential-bearing file without following the final
  * destination symlink or any parent-directory symlink. The temporary file is
@@ -82,10 +106,13 @@ function assertDirectoryIdentity(directory, expectedIdentity) {
 export function writePrivateFileAtomic(path, content, { mode = 0o600 } = {}) {
   const absolutePath = resolve(path);
   const { directory, identity } = ensureSafeDirectoryAncestry(dirname(absolutePath));
-  const target = join(directory, basename(absolutePath));
+  const binding = openBoundDirectory(directory, identity);
+  const targetName = basename(absolutePath);
+  const target = join(binding.operationDirectory, targetName);
   const suffix = randomBytes(8).toString("hex");
-  const temporary = join(directory, `.${basename(absolutePath)}.${process.pid}.${suffix}.tmp`);
+  const temporary = join(binding.operationDirectory, `.${targetName}.${process.pid}.${suffix}.tmp`);
   let descriptor;
+  let renamed = false;
 
   try {
     descriptor = openSync(
@@ -99,17 +126,37 @@ export function writePrivateFileAtomic(path, content, { mode = 0o600 } = {}) {
     closeSync(descriptor);
     descriptor = undefined;
 
-    assertDirectoryIdentity(directory, identity);
+    if (!binding.bound) assertDirectoryIdentity(directory, identity);
     renameSync(temporary, target);
+    renamed = true;
+
+    if (binding.bound) {
+      try {
+        assertDirectoryIdentity(directory, identity);
+      } catch (error) {
+        try {
+          unlinkSync(target);
+        } catch {}
+        throw error;
+      }
+    }
   } catch (error) {
     if (descriptor !== undefined) {
       try {
         closeSync(descriptor);
       } catch {}
     }
-    try {
-      unlinkSync(temporary);
-    } catch {}
+    if (!renamed) {
+      try {
+        unlinkSync(temporary);
+      } catch {}
+    }
     throw error;
+  } finally {
+    if (binding.descriptor !== undefined) {
+      try {
+        closeSync(binding.descriptor);
+      } catch {}
+    }
   }
 }

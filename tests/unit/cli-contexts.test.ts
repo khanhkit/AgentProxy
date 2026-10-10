@@ -76,9 +76,8 @@ test("saveContexts replaces a hostile symlink atomically with a private regular 
   assert.equal(statSync(path).mode & 0o777, 0o600);
 });
 
-test("saveContexts rejects a symlinked DATA_DIR parent instead of redirecting credentials", async (t) => {
-  if (process.platform === "win32")
-    return t.skip("directory symlink creation requires OS privileges");
+test("saveContexts rejects a symlinked DATA_DIR parent instead of redirecting credentials", async () => {
+  if (process.platform === "win32") return;
   const { saveContexts } = await import("../../bin/cli/contexts.mjs");
   const outside = join(tmpDir, "outside-context-parent");
   const redirectedDataDir = join(tmpDir, "redirected-data-dir");
@@ -390,9 +389,8 @@ test("context export defaults to a redacted atomic private output file", async (
   assert.match(stdout.join(""), /Exported to/);
 });
 
-test("context export rejects a symlinked output parent instead of writing outside", async (t) => {
-  if (process.platform === "win32")
-    return t.skip("directory symlink creation requires OS privileges");
+test("context export rejects a symlinked output parent instead of writing outside", async () => {
+  if (process.platform === "win32") return;
   const { saveContexts } = await import("../../bin/cli/contexts.mjs");
   const { createProgram } = await import("../../bin/cli/program.mjs");
   saveContexts({
