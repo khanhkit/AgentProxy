@@ -76,6 +76,38 @@ test("saveContexts replaces a hostile symlink atomically with a private regular 
   assert.equal(statSync(path).mode & 0o777, 0o600);
 });
 
+test("saveContexts rejects a symlinked DATA_DIR parent instead of redirecting credentials", async (t) => {
+  if (process.platform === "win32")
+    return t.skip("directory symlink creation requires OS privileges");
+  const { saveContexts } = await import("../../bin/cli/contexts.mjs");
+  const outside = join(tmpDir, "outside-context-parent");
+  const redirectedDataDir = join(tmpDir, "redirected-data-dir");
+  rmSync(redirectedDataDir, { recursive: true, force: true });
+  rmSync(outside, { recursive: true, force: true });
+  const { mkdirSync } = await import("node:fs");
+  mkdirSync(outside, { recursive: true });
+  symlinkSync(outside, redirectedDataDir, "dir");
+  const previous = process.env.DATA_DIR;
+  process.env.DATA_DIR = redirectedDataDir;
+  try {
+    assert.throws(
+      () =>
+        saveContexts({
+          version: 1,
+          currentContext: "secret",
+          contexts: {
+            secret: { baseUrl: "https://example.test", apiKey: "sk-parent-escape" },
+          },
+        }),
+      /symlink|symbolic|unsafe parent/i
+    );
+    assert.throws(() => readFileSync(join(outside, "config.json"), "utf8"), /ENOENT/);
+  } finally {
+    process.env.DATA_DIR = previous ?? tmpDir;
+    rmSync(redirectedDataDir, { force: true });
+  }
+});
+
 test("resolveActiveContext retorna contexto ativo", async () => {
   const { resolveActiveContext, loadContexts, saveContexts } =
     await import("../../bin/cli/contexts.mjs");
@@ -356,4 +388,37 @@ test("context export defaults to a redacted atomic private output file", async (
   assert.ok(!exported.includes("oma-file-secret"));
   assert.ok(!exported.includes("sk-file-secret"));
   assert.match(stdout.join(""), /Exported to/);
+});
+
+test("context export rejects a symlinked output parent instead of writing outside", async (t) => {
+  if (process.platform === "win32")
+    return t.skip("directory symlink creation requires OS privileges");
+  const { saveContexts } = await import("../../bin/cli/contexts.mjs");
+  const { createProgram } = await import("../../bin/cli/program.mjs");
+  saveContexts({
+    version: 1,
+    currentContext: "remote",
+    contexts: {
+      remote: {
+        baseUrl: "https://remote.example.com",
+        accessToken: "oma-parent-secret",
+        apiKey: "sk-parent-secret",
+      },
+    },
+  });
+
+  const { mkdirSync } = await import("node:fs");
+  const outside = join(tmpDir, "outside-export-parent");
+  const redirectedParent = join(tmpDir, "redirected-export-parent");
+  rmSync(outside, { recursive: true, force: true });
+  rmSync(redirectedParent, { recursive: true, force: true });
+  mkdirSync(outside, { recursive: true });
+  symlinkSync(outside, redirectedParent, "dir");
+  const output = join(redirectedParent, "contexts.json");
+
+  await assert.rejects(
+    createProgram().parseAsync(["node", "omniroute", "context", "export", "--out", output]),
+    /symlink|symbolic|unsafe parent/i
+  );
+  assert.throws(() => readFileSync(join(outside, "contexts.json"), "utf8"), /ENOENT/);
 });
