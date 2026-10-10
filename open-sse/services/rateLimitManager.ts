@@ -329,7 +329,6 @@ function reconcileEnabledConnections(
   };
 }
 
-let shutdownHandlersRegistered = false;
 
 export function startRateLimitWatchdog(): void {
   if (watchdogInterval) return;
@@ -340,14 +339,6 @@ export function startRateLimitWatchdog(): void {
     });
   }, WATCHDOG_INTERVAL_MS);
   watchdogInterval.unref?.();
-  // Register SIGTERM/SIGINT shutdown handlers once, lazily, on first watchdog start.
-  // Registering here (rather than at module load) avoids interfering with test runner
-  // subprocess IPC teardown — the test suite does not call startRateLimitWatchdog().
-  if (!shutdownHandlersRegistered) {
-    shutdownHandlersRegistered = true;
-    process.once("SIGTERM", shutdownLimiters);
-    process.once("SIGINT", shutdownLimiters);
-  }
 }
 
 export function stopRateLimitWatchdog(): void {
@@ -357,23 +348,28 @@ export function stopRateLimitWatchdog(): void {
 }
 
 /**
- * Gracefully stop all limiters for process shutdown.
- * Runtime wedge recovery also uses stop(), but only after synchronously
- * removing that limiter from the cache so it can never accept new work.
+ * Stop accepting watchdog work and await limiter/background teardown. Process
+ * signals are owned by the main lifecycle coordinator/entrypoint.
  */
-function shutdownLimiters(): void {
-  for (const limiter of limiters.values()) {
-    limiter.stop({ dropWaitingJobs: false });
+export async function shutdownRateLimitManager(): Promise<void> {
+  stopRateLimitWatchdog();
+  if (persistTimer) {
+    clearTimeout(persistTimer);
+    persistTimer = null;
+    await trackAsyncOperation(persistLearnedLimitsNow());
+  }
+
+  const stops = Array.from(limiters.values(), (limiter) =>
+    trackAsyncOperation(Promise.resolve(limiter.stop({ dropWaitingJobs: false })))
+  );
+  if (stops.length > 0) await Promise.allSettled(stops);
+  if (pendingAsyncOperations.size > 0) {
+    await Promise.allSettled(Array.from(pendingAsyncOperations));
   }
   limiters.clear();
   limiterLastUsed.clear();
   preservedReplacementSettings.clear();
 }
-
-// Only register shutdown handlers when there are active limiters to shut down.
-// Guard with once() so repeated registrations (e.g. test resets) don't stack.
-// Note: these are registered lazily in startRateLimitWatchdog() to avoid
-// interfering with test runner subprocess IPC teardown.
 
 function trackAsyncOperation<T>(promise: Promise<T>): Promise<T> {
   pendingAsyncOperations.add(promise);
@@ -1098,7 +1094,6 @@ export async function __resetRateLimitManagerForTests() {
   preservedReplacementSettings.clear();
   limiterFactory = defaultLimiterFactory;
   limiterWatchdog.reset();
-  shutdownHandlersRegistered = false;
 
   for (const key of [...learnedLimits.keys()]) {
     learnedLimits.delete(key);

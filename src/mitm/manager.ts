@@ -117,10 +117,6 @@ export function releaseMitmStartLock(): void {
 // by repairMitm(). (Gap 7.)
 let _orphanedStateDetected = false;
 
-// Guards installCleanupHandlers() so the parent-process signal handlers are
-// registered at most once. (Gap 7.)
-let _cleanupHandlersInstalled = false;
-
 // Module-scoped password cache (not exposed on globalThis).
 // Cleared automatically when the MITM proxy is stopped.
 let _cachedPassword: string | null = null;
@@ -288,13 +284,12 @@ export async function repairMitm(sudoPassword: string): Promise<{ repaired: stri
  * Idempotent; never blocks process exit. (Gap 7.)
  */
 export function installCleanupHandlers(): void {
-  if (_cleanupHandlersInstalled) return;
-  _cleanupHandlersInstalled = true;
-  const onSignal = (signal: string) => {
-    void handleExitCleanup(signal);
-  };
-  process.once("SIGINT", () => onSignal("SIGINT"));
-  process.once("SIGTERM", () => onSignal("SIGTERM"));
+  // Backward-compatible no-op. Main-runtime process signals are owned by the
+  // lifecycle coordinator/entrypoint; standalone MITM server.cjs owns its own.
+}
+
+export async function shutdownMitm(): Promise<void> {
+  await handleExitCleanup("lifecycle");
 }
 
 /**
@@ -474,9 +469,6 @@ async function startMitmInternal(
   sudoPassword: string,
   options: { port?: number }
 ): Promise<{ running: true; pid: number | null; certTrusted: boolean }> {
-  // Register best-effort teardown on parent SIGINT/SIGTERM (Gap 7).
-  installCleanupHandlers();
-
   // 0. Persist the canonical targets.json so server.cjs can pick up the full
   //    AgentBridge target registry alongside its hard-coded antigravity baseline.
   try {

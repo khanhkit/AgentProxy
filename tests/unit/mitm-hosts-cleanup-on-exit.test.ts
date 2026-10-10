@@ -136,3 +136,14 @@ test("handleExitCleanup: with NO cached password, falls back to orphaned-state f
     "must fall back to the orphaned-state flag for a manual Repair when no password is cached"
   );
 });
+
+test("MITM library cleanup registration does not claim process signal ownership", () => {
+  const beforeInt = process.listenerCount("SIGINT");
+  const beforeTerm = process.listenerCount("SIGTERM");
+
+  manager.installCleanupHandlers();
+
+  assert.equal(process.listenerCount("SIGINT"), beforeInt);
+  assert.equal(process.listenerCount("SIGTERM"), beforeTerm);
+  assert.equal(typeof manager.shutdownMitm, "function");
+});
