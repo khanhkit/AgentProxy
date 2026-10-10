@@ -455,7 +455,7 @@ test("initAuggieModels discovers models from `auggie model list` output", async 
   __resetAuggieModels(); // wipe stale cache from previous tests
   const bin = writeFakeBin(
     "fake-auggie-list.sh",
-    `printf '[new-model-alpha]\\nignored\\n[new-model-beta]'`
+    `printf '[new-model-alpha]\\nignored\\n[new-model-beta]\\n[new-model-alpha&calc.exe]'`
   );
   const prevBin = process.env.AUGGIE_BIN;
   process.env.AUGGIE_BIN = bin;
@@ -463,6 +463,11 @@ test("initAuggieModels discovers models from `auggie model list` output", async 
     await initAuggieModels();
     const r = resolveAuggieModel("new-model-alpha");
     assert.deepEqual(r, { ok: true, model: "new-model-alpha" });
+    assert.equal(
+      resolveAuggieModel("new-model-alpha&calc.exe").ok,
+      false,
+      "live discovery must not promote a model id containing shell syntax into the allowlist"
+    );
   } finally {
     if (prevBin === undefined) delete process.env.AUGGIE_BIN;
     else process.env.AUGGIE_BIN = prevBin;

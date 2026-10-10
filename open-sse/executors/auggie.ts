@@ -71,6 +71,13 @@ const AUGGIE_MODEL_ALIASES: ReadonlyMap<string, string> = new Map([
  */
 let liveModelSet: Set<string> | null = null;
 
+function isSafeAuggieModelId(modelId: string): boolean {
+  // Model ids can cross cmd.exe when the trusted Windows npm shim is used.
+  // Keep live discovery to a shell-inert identifier grammar; shipped registry
+  // ids and existing aliases all fit this contract.
+  return /^[A-Za-z0-9][A-Za-z0-9._:/-]*$/u.test(modelId);
+}
+
 /**
  * Spawn `auggie model list`, parse `[model-id]` entries, and merge them into
  * the live allowlist so the executor accepts models auggie recognises even
@@ -92,7 +99,11 @@ export async function initAuggieModels(
     liveModelSet = new Set();
     return;
   }
-  const child = spawn(bin, ["model", "list"], buildAuggieSpawnOptions(["ignore", "pipe", "pipe"]));
+  const child = spawn(
+    bin,
+    ["model", "list"],
+    buildAuggieSpawnOptions(["ignore", "pipe", "pipe"], bin)
+  );
   const fragments: string[] = [];
   child.stdout.on("data", (d: Buffer) => fragments.push(d.toString("utf8")));
   let settled = false;
@@ -132,7 +143,7 @@ export async function initAuggieModels(
     const ids = new Set<string>();
     for (const line of fragments.join("").split("\n")) {
       const m = line.match(/\[([^\]]+)\]/);
-      if (m) ids.add(m[1]);
+      if (m && isSafeAuggieModelId(m[1])) ids.add(m[1]);
     }
     settle(ids.size > 0 ? ids : new Set());
   } catch {
@@ -209,11 +220,27 @@ function buildAuggieArgs(model: string): string[] {
  * `spawn EINVAL`. The argv array (built by buildAuggieArgs()) is always a
  * fixed literal list plus an allowlist-validated `model` — never
  * interpolated into a shell string — so enabling `shell` here does not
- * reopen argument-injection: Node still passes argv as discrete array
- * elements to the shell, it does not concatenate them into a single
- * command line.
+ * reopen executable injection: shell mode is restricted to the literal PATH
+ * shim or a strict absolute `.cmd` token that cannot contain cmd.exe syntax.
+ * Model argv remains allowlist-validated separately.
  */
-export function buildAuggieSpawnOptions(stdio: StdioOptions): {
+function isTrustedWindowsCmdShim(bin: string): boolean {
+  if (bin.toLowerCase() === "auggie.cmd") return true;
+  if (!path.win32.isAbsolute(bin) || !bin.toLowerCase().endsWith(".cmd")) return false;
+
+  // `shell: true` makes the executable token part of cmd.exe syntax. Keep the
+  // accepted override grammar deliberately narrower than Windows filenames:
+  // no whitespace, expansion markers, quoting, grouping, or command operators.
+  // Normal npm shim paths such as C:\Users\alice\AppData\Roaming\npm\auggie.cmd
+  // remain supported; unusual paths fail closed and can use the native .exe or
+  // the literal PATH fallback instead.
+  return /^[A-Za-z]:[\\/][A-Za-z0-9_.@+\\/-]+\.cmd$/u.test(bin);
+}
+
+export function buildAuggieSpawnOptions(
+  stdio: StdioOptions,
+  auggieBin = resolveAuggieBin()
+): {
   env: NodeJS.ProcessEnv;
   stdio: StdioOptions;
   shell: boolean;
@@ -222,7 +249,7 @@ export function buildAuggieSpawnOptions(stdio: StdioOptions): {
   return {
     env: process.env,
     stdio,
-    shell: process.platform === "win32",
+    shell: process.platform === "win32" && isTrustedWindowsCmdShim(auggieBin),
     windowsHide: true,
   };
 }
@@ -338,7 +365,7 @@ export function checkAuggieCliVersion(timeoutMs = 5000): Promise<AuggieCliVersio
 
     let child: ReturnType<typeof spawn>;
     try {
-      child = spawn(bin, ["--version"], buildAuggieSpawnOptions(["ignore", "pipe", "pipe"]));
+      child = spawn(bin, ["--version"], buildAuggieSpawnOptions(["ignore", "pipe", "pipe"], bin));
     } catch (err) {
       const message = err instanceof Error ? err.message : String(err);
       settle({ ok: false, error: isEnoentLike(message) ? cliNotFoundMessage(bin) : message });
@@ -451,7 +478,7 @@ export class AuggieExecutor extends BaseExecutor {
     const child = spawn(
       auggieBin,
       buildAuggieArgs(model),
-      buildAuggieSpawnOptions(["pipe", "pipe", "pipe"])
+      buildAuggieSpawnOptions(["pipe", "pipe", "pipe"], auggieBin)
     );
     // EPIPE from a fast-exiting CLI arrives ASYNCHRONOUSLY as an 'error' event on
     // stdin (not a sync throw), so the try/catch below cannot swallow it — without
@@ -553,7 +580,7 @@ export class AuggieExecutor extends BaseExecutor {
           child = spawn(
             auggieBin,
             buildAuggieArgs(model),
-            buildAuggieSpawnOptions(["pipe", "pipe", "pipe"])
+            buildAuggieSpawnOptions(["pipe", "pipe", "pipe"], auggieBin)
           );
         } catch (err) {
           const message = err instanceof Error ? err.message : String(err);
