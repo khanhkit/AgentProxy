@@ -78,6 +78,8 @@ test("SPAWN_CAPABLE_PREFIXES is defined in the server-free constants leaf with t
     "/api/plugins/",
     "/api/local/",
     "/api/skills/collect/",
+    "/api/skills/install",
+    "/api/skills/executions",
     "/api/headroom/start",
     "/api/headroom/stop",
     "/api/vnc-session",
@@ -97,5 +99,5 @@ test("SPAWN_CAPABLE_PREFIXES is defined in the server-free constants leaf with t
       `SPAWN_CAPABLE_PREFIXES lost the spawn-capable prefix "${prefix}" during extraction`
     );
   }
-  assert.equal(SPAWN_CAPABLE_PREFIXES.length, 35);
+  assert.equal(SPAWN_CAPABLE_PREFIXES.length, 37);
 });
