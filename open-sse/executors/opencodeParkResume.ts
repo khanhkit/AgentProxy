@@ -7,15 +7,20 @@
  * fail-closed) and exposes the park decision helpers for the opencode loop.
  */
 
-import { isProxyAvoided, noteProxyRefusal, proxyEgressKey, proxySetAsideSeq } from "../utils/proxyRefusalMemory.ts";
+import {
+  isProxyAvoided,
+  noteProxyRefusal,
+  proxyEgressKey,
+  proxySetAsideSeq,
+} from "../utils/proxyRefusalMemory.ts";
 import { maskAccountId, type RotatableAccount } from "./accountRotation.ts";
 import { proxyKeyOf } from "./opencodeGeoBlock.ts";
 import { runWithProxyContext } from "../utils/proxyFetch.ts";
 import { noteResilienceAction } from "@/lib/usage/resilienceActionsContext.ts";
+import { formatTranslatedStreamError } from "../utils/streamErrorFormat.ts";
 import { noteParkWait, noteReplayed, noteStoredFallback } from "./opencodeResilienceNotes.ts";
 import type { ExecuteInput, ExecutorExecuteResult } from "./base.ts";
 import * as egressPacing from "./opencodeEgressThrottle.ts";
-
 
 /** Abort-aware sleep local to the park helper; current canonical main has no transient-backoff sleep export. */
 export async function parkSleepAbortable(
@@ -203,7 +208,13 @@ export async function handlePacedParkable429<TAccount extends RotatableAccount>(
     args.result.response,
     () => false
   );
-  egressPacing.log429Outcome(args.log, args.cid, arm, maskAccountId(account.fingerprint), setAsideMs);
+  egressPacing.log429Outcome(
+    args.log,
+    args.cid,
+    arm,
+    maskAccountId(account.fingerprint),
+    setAsideMs
+  );
   if (arm === "park") {
     if (!parkEnabled) return { kind: "break" };
     state.burstStreak = Math.max(state.burstStreak + 1, BURST_PARK_THRESHOLD);
@@ -214,7 +225,10 @@ export async function handlePacedParkable429<TAccount extends RotatableAccount>(
   const marker = await readPoolStrainMarker();
   if (state.burstStreak < BURST_PARK_THRESHOLD && !marker.fresh) return { kind: "continue" };
   state.parked = true;
-  args.log?.warn?.("OPENCODE", `${args.cid}burstStreak=${state.burstStreak} freshD2=${marker.fresh} park`);
+  args.log?.warn?.(
+    "OPENCODE",
+    `${args.cid}burstStreak=${state.burstStreak} freshD2=${marker.fresh} park`
+  );
   const parkStartMs = Date.now();
   const replay = await runParkAndReplay(
     args.driver,
@@ -323,10 +337,53 @@ export async function runParkAndReplay<TAccount extends RotatableAccount>(
           return;
         }
         const probe = await replayOneLeg(driver, input, driver.accounts, log, cid);
-        const finalBody = probe?.result.response ?? fallback.response;
+        const finalResponse = probe?.result.response ?? fallback.response;
         let recopied = true;
         try {
-          controller.enqueue(encoder.encode(await finalBody.text()));
+          if (!finalResponse.ok) {
+            recopied = false;
+            // The replay response is an untrusted provider boundary. Once the
+            // outer SSE status is committed, publish only a synthetic status
+            // error: provider HTML, partial idle reads, diagnostics, tokens,
+            // paths, and arbitrary fields must never become client-visible.
+            const payload = {
+              error: {
+                message: `Upstream replay failed (${finalResponse.status})`,
+                status: finalResponse.status,
+                code: "upstream_replay_failed",
+              },
+              status: finalResponse.status,
+            };
+            await finalResponse.body?.cancel().catch(() => undefined);
+            controller.enqueue(encoder.encode(formatTranslatedStreamError(payload)));
+          } else if (finalResponse.body) {
+            const reader = finalResponse.body.getReader();
+            const onAbort = (): void => {
+              void reader.cancel(input.signal?.reason).catch(() => undefined);
+            };
+            if (input.signal?.aborted) onAbort();
+            else input.signal?.addEventListener("abort", onAbort, { once: true });
+            try {
+              while (!input.signal?.aborted) {
+                const { done, value } = await reader.read();
+                if (done || input.signal?.aborted) break;
+                controller.enqueue(value);
+              }
+              if (input.signal?.aborted) {
+                recopied = false;
+                await reader.cancel(input.signal.reason).catch(() => undefined);
+              }
+            } catch (error) {
+              recopied = false;
+              await reader.cancel(error).catch(() => undefined);
+              if (!input.signal?.aborted) controller.error(error);
+            } finally {
+              input.signal?.removeEventListener("abort", onAbort);
+              reader.releaseLock();
+            }
+          } else {
+            recopied = false;
+          }
         } catch {
           recopied = false;
         }
