@@ -14,6 +14,8 @@ import assert from "node:assert/strict";
 // clobber the test's mock and hit the real network.
 const { getImageProvider } = await import("../../open-sse/config/imageRegistry.ts");
 const { handleImageGeneration } = await import("../../open-sse/handlers/imageGeneration.ts");
+const { handleCloudflareAiImageGeneration } =
+  await import("../../open-sse/handlers/imageGeneration/providers/cloudflareAi.ts");
 
 test("Cloudflare Workers AI is registered as an image provider with a dedicated cloudflare-ai-image format", () => {
   const cfg = getImageProvider("cloudflare-ai");
@@ -52,6 +54,109 @@ test("handleImageGeneration rejects a Cloudflare Workers AI request with no Acco
   assert.equal(result.success, false);
   assert.equal(result.status, 400);
   assert.match(String(result.error), /Account ID/);
+});
+
+test("handleImageGeneration rejects Cloudflare Workers AI with no API token before fetch", async () => {
+  const originalFetch = globalThis.fetch;
+  let fetchCalls = 0;
+  try {
+    globalThis.fetch = (async () => {
+      fetchCalls += 1;
+      throw new Error("network must not be reached without a token");
+    }) as typeof fetch;
+
+    const result = await handleImageGeneration({
+      body: {
+        model: "cloudflare-ai/@cf/black-forest-labs/flux-1-schnell",
+        prompt: "a red panda",
+        n: 1,
+      },
+      credentials: { providerSpecificData: { accountId: "acct-123" } },
+      log: null,
+    });
+
+    assert.equal(result.success, false);
+    assert.equal(result.status, 401);
+    assert.match(String(result.error), /API token/i);
+    assert.equal(fetchCalls, 0, "missing credentials must fail before any network call");
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+});
+
+test("Cloudflare Workers AI bounds a hung fetch with its timeout signal", async () => {
+  const originalFetch = globalThis.fetch;
+  try {
+    let observedSignal: AbortSignal | undefined;
+    globalThis.fetch = ((_url: string | URL | Request, init?: RequestInit) => {
+      observedSignal = init?.signal ?? undefined;
+      return new Promise<Response>((_resolve, reject) => {
+        observedSignal?.addEventListener(
+          "abort",
+          () => reject(observedSignal?.reason ?? new DOMException("aborted", "AbortError")),
+          { once: true }
+        );
+      });
+    }) as typeof fetch;
+
+    const started = Date.now();
+    const result = await handleCloudflareAiImageGeneration({
+      model: "@cf/black-forest-labs/flux-1-schnell",
+      provider: "cloudflare-ai",
+      providerConfig: { baseUrl: "https://api.cloudflare.com/client/v4/accounts" },
+      body: { prompt: "a red panda" },
+      credentials: { apiKey: "test-token", providerSpecificData: { accountId: "acct-123" } },
+      log: null,
+      timeoutMs: 25,
+    });
+
+    assert.ok(observedSignal, "Cloudflare fetch must receive an abort signal");
+    assert.equal(observedSignal?.aborted, true, "timeout must abort the hung fetch");
+    assert.ok(
+      Date.now() - started < 1000,
+      "timeout-bound fetch must settle promptly in the focused test"
+    );
+    assert.equal(result.success, false);
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+});
+
+test("handleImageGeneration relays caller cancellation into Cloudflare fetch", async () => {
+  const originalFetch = globalThis.fetch;
+  try {
+    const caller = new AbortController();
+    let observedSignal: AbortSignal | undefined;
+    globalThis.fetch = ((_url: string | URL | Request, init?: RequestInit) => {
+      observedSignal = init?.signal ?? undefined;
+      return new Promise<Response>((_resolve, reject) => {
+        observedSignal?.addEventListener(
+          "abort",
+          () => reject(observedSignal?.reason ?? new DOMException("aborted", "AbortError")),
+          { once: true }
+        );
+      });
+    }) as typeof fetch;
+
+    const pending = handleImageGeneration({
+      body: {
+        model: "cloudflare-ai/@cf/black-forest-labs/flux-1-schnell",
+        prompt: "a red panda",
+      },
+      credentials: { apiKey: "test-token", providerSpecificData: { accountId: "acct-123" } },
+      log: null,
+      signal: caller.signal,
+    });
+    await Promise.resolve();
+    caller.abort(new Error("caller cancelled"));
+    const result = await pending;
+
+    assert.ok(observedSignal, "Cloudflare fetch must receive the relayed caller signal");
+    assert.equal(observedSignal?.aborted, true);
+    assert.equal(result.success, false);
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
 });
 
 test("handleImageGeneration dispatches cloudflare-ai-image format to the Workers AI handler and normalizes the response", async () => {
