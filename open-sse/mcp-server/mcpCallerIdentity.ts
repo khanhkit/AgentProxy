@@ -18,7 +18,7 @@
  * isolation intact: a different key → a different id → a miss; no key → undefined
  * → the anonymous (`__anon__`) bucket, which only matches unauthenticated stores.
  */
-import { getMcpHttpAuthHeadersForInternalFetch } from "./httpAuthContext.ts";
+import { getMcpHttpAuthHeadersForInternalFetch, hasMcpHttpAuthContext } from "./httpAuthContext.ts";
 import { extractApiKey } from "../../src/sse/services/auth.ts";
 import { getApiKeyMetadata } from "../../src/lib/db/apiKeys.ts";
 
@@ -58,11 +58,15 @@ export async function resolvePrincipalFromHeaders(
  * matches the configured key — consistent and correct.
  */
 export async function resolveMcpCallerApiKeyId(): Promise<string | undefined> {
-  // 1. Try per-request HTTP auth headers (SSE / Streamable HTTP transport)
+  // 1. Try per-request HTTP auth headers (SSE / Streamable HTTP transport).
   const fromHeaders = await resolvePrincipalFromHeaders(getMcpHttpAuthHeadersForInternalFetch());
   if (fromHeaders !== undefined) return fromHeaders;
 
-  // 2. Fallback: env var (stdio transport, no HTTP context)
+  // An HTTP request whose key is absent/invalid/unresolvable is still an HTTP
+  // caller. Never let process-global stdio credentials impersonate that request.
+  if (hasMcpHttpAuthContext()) return undefined;
+
+  // 2. Fallback: env var only for stdio/local transport, where no HTTP context exists.
   return resolvePrincipalFromEnv();
 }
 
