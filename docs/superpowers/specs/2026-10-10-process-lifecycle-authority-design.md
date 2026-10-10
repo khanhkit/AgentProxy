@@ -161,3 +161,14 @@ Focused tests must cover:
 - No redesign of scheduler algorithms.
 - No changes to unrelated Phase-24 hardening issues.
 - No request hot-path waiting or added network round trips.
+
+## Implementation rulings (AUTOPILOT)
+
+These rulings were made during TDD implementation and are part of the design record:
+
+- Adapter `beforeExit` hooks remain permitted only as removable, idempotent local persistence safety nets. Node/sql.js adapters do not own SIGINT/SIGTERM and never replace `process.emit`.
+- Provider-limits and runtime-config hot reload expose separate **stop scheduling** and **drain active work** APIs because both can touch durable DB state.
+- Model sync had a hidden startup timer that the previous stop API could not cancel. Shutdown now owns that startup timer and tracks the active cycle so STOP_SCHEDULERS cannot be followed by resurrected model-sync work.
+- Webhook notification remains fire-and-forget on the request path; the process-global pending set exists only for lifecycle drain/accounting. Its leaf drain does not invent a second timeout: the coordinator's one absolute deadline is the only shutdown budget.
+- OTLP final shutdown flush is awaitable. If the collector rejects the final delivery opportunity, remaining buffered events are counted as dropped rather than silently left buffered at process exit.
+- Hook timeout consumes the remaining global shutdown budget. Later phases are marked `skipped_deadline`; hook rejection (without deadline exhaustion) is recorded and later phases still run.

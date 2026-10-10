@@ -204,3 +204,10 @@ export function startSessionAccountAffinityCleanup(): void {
   }, CLEANUP_INTERVAL_MS);
   if (typeof cleanupTimer === "object" && "unref" in cleanupTimer) cleanupTimer.unref?.();
 }
+
+
+export function stopSessionAccountAffinityCleanup(): void {
+  if (!cleanupTimer) return;
+  clearInterval(cleanupTimer);
+  cleanupTimer = null;
+}

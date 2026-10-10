@@ -529,3 +529,21 @@ test("first model-sync cycle waits until after startup cleanup", async () => {
   const scheduler = await loadScheduler("startup-delay-constant");
   assert.equal(scheduler.MODEL_SYNC_STARTUP_DELAY_MS, 90_000);
 });
+
+test("model sync stop cancels both startup timers and exposes active-cycle drain", async () => {
+  const timers = installTimerStubs();
+  try {
+    const scheduler = await loadScheduler("shutdown-lifecycle");
+    scheduler.startModelSyncScheduler("http://127.0.0.1:7777", 1000);
+    assert.equal(timers.timeouts.length, 2);
+
+    scheduler.stopModelSyncScheduler();
+
+    assert.equal(timers.timeouts[0].cleared, true, "startup cycle timer must be cancellable");
+    assert.equal(timers.timeouts[1].cleared, true, "phase-offset timer must be cancellable");
+    assert.equal(typeof scheduler.drainModelSyncScheduler, "function");
+    await scheduler.drainModelSyncScheduler();
+  } finally {
+    timers.restore();
+  }
+});

@@ -103,13 +103,25 @@ export function startRuntimeConfigHotReload(options: { pollIntervalMs?: number }
   queueHotReloadCheck("hot-reload:start");
 }
 
-export function stopRuntimeConfigHotReloadForTests() {
+export function stopRuntimeConfigHotReload(): void {
   if (pollTimer) {
     clearInterval(pollTimer);
     pollTimer = null;
   }
   sqliteWatcher?.close();
   sqliteWatcher = null;
+  // Do not admit a queued follow-up after shutdown starts. An already-active
+  // DB read/apply is awaited separately by drainRuntimeConfigHotReload().
   queuedSource = null;
+}
+
+export async function drainRuntimeConfigHotReload(): Promise<void> {
+  while (activeCheck) await activeCheck;
+}
+
+export function stopRuntimeConfigHotReloadForTests() {
+  stopRuntimeConfigHotReload();
+  // Tests reset backing storage synchronously after this helper. Production
+  // shutdown uses stopRuntimeConfigHotReload()+drainRuntimeConfigHotReload().
   activeCheck = null;
 }

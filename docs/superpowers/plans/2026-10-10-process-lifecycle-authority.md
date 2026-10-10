@@ -41,11 +41,11 @@
 - Produces: `LifecyclePhase`, `LifecycleHook`, `registerLifecycleHook(hook): () => void`, `runLifecycleShutdown(options): Promise<LifecycleShutdownReport>`, test reset/introspection helpers.
 - Consumes: none.
 
-- [ ] Write failing tests for strict phase order, same-phase concurrency, rejection continuation, shared global deadline, and duplicate-name/HMR-safe registration.
-- [ ] Run the focused coordinator test and verify RED because the module/API does not exist.
-- [ ] Implement the minimal coordinator with one `globalThis` registry and one deadline.
-- [ ] Re-run focused tests and verify GREEN.
-- [ ] Commit coordinator + tests.
+- [x] Write failing tests for strict phase order, same-phase concurrency, rejection continuation, shared global deadline, and duplicate-name/HMR-safe registration.
+- [x] Run the focused coordinator test and verify RED because the module/API does not exist.
+- [x] Implement the minimal coordinator with one `globalThis` registry and one deadline.
+- [x] Re-run focused tests and verify GREEN.
+- [x] Commit coordinator + tests.
 
 ### Task 2: Explicit leaf stop/drain contracts
 
@@ -65,13 +65,13 @@
 - Produces: `JobRegistry.drain(): Promise<void>`; explicit service-registry `stopAllSupervisors(): Promise<void>`; rate-limit shutdown API that awaits tracked async operations; MITM cleanup callable without signal installation.
 - Consumes: none.
 
-- [ ] Add RED tests proving JobRegistry stop scheduling does not imply drain, drain waits through terminal `recordRun`/`pruneRuns`, and queued manual work is not admitted after shutdown begins.
-- [ ] Implement tracked `safeRun()` promises and explicit drain semantics; keep `stopAll()` as scheduling stop.
-- [ ] Add RED structural/behavior tests proving service registry, rate-limit manager, and MITM library do not install main-runtime SIGINT/SIGTERM handlers.
-- [ ] Remove leaf signal ownership and expose idempotent stop/drain functions.
-- [ ] Add/verify batch stop-vs-drain tests using existing `stopBatchProcessor()` + `waitForAllBatches()` primitives.
-- [ ] Run focused leaf suites and verify GREEN.
-- [ ] Commit leaf contracts.
+- [x] Add RED tests proving JobRegistry stop scheduling does not imply drain, drain waits through terminal `recordRun`/`pruneRuns`, and queued manual work is not admitted after shutdown begins.
+- [x] Implement tracked `safeRun()` promises and explicit drain semantics; keep `stopAll()` as scheduling stop.
+- [x] Add RED structural/behavior tests proving service registry, rate-limit manager, and MITM library do not install main-runtime SIGINT/SIGTERM handlers.
+- [x] Remove leaf signal ownership and expose idempotent stop/drain functions.
+- [x] Add/verify batch stop-vs-drain tests using existing `stopBatchProcessor()` + `waitForAllBatches()` primitives.
+- [x] Run focused leaf suites and verify GREEN.
+- [x] Commit leaf contracts.
 
 ### Task 3: Outbound best-effort drain policy
 
@@ -85,12 +85,12 @@
 - Produces: webhook pending-delivery drain API with observable counts; `OtlpHttpsEventSink.stop(): Promise<void>`.
 - Consumes: none.
 
-- [ ] Add RED webhook tests showing `notifyWebhookEvent()` remains synchronous/non-blocking while pending work is tracked and shutdown drain reports unfinished work.
-- [ ] Implement pending-promise tracking and bounded drain/report API without request-path awaiting.
-- [ ] Add RED OTLP test requiring `await sink.stop()` to resolve only after final fetch/flush completes.
-- [ ] Make OTLP stop awaitable and idempotent.
-- [ ] Run focused outbound tests and verify GREEN.
-- [ ] Commit outbound drain policy.
+- [x] Add RED webhook tests showing `notifyWebhookEvent()` remains synchronous/non-blocking while pending work is tracked and shutdown drain reports unfinished work.
+- [x] Implement pending-promise tracking and bounded drain/report API without request-path awaiting.
+- [x] Add RED OTLP test requiring `await sink.stop()` to resolve only after final fetch/flush completes.
+- [x] Make OTLP stop awaitable and idempotent.
+- [x] Run focused outbound tests and verify GREEN.
+- [x] Commit outbound drain policy.
 
 ### Task 4: Remove DB adapter process-global ownership
 
@@ -104,12 +104,12 @@
 - Produces: adapters whose lifecycle is controlled by `close()`/resource owner and whose repeated create/close does not mutate process signals or `process.emit`.
 - Consumes: none.
 
-- [ ] Replace existing expectation with RED tests asserting open adapters add no SIGINT/SIGTERM listeners and `process.emit` identity never changes.
-- [ ] Add equivalent sql.js signal-listener invariant test.
-- [ ] Remove node adapter signal handlers/process.exit and permanent `process.emit` wrapper; retain only local idempotent close/checkpoint behavior.
-- [ ] Remove sql.js SIGINT/SIGTERM ownership while preserving close-time persistence.
-- [ ] Run focused DB adapter suites and verify GREEN.
-- [ ] Commit adapter cleanup.
+- [x] Replace existing expectation with RED tests asserting open adapters add no SIGINT/SIGTERM listeners and `process.emit` identity never changes.
+- [x] Add equivalent sql.js signal-listener invariant test.
+- [x] Remove node adapter signal handlers/process.exit and permanent `process.emit` wrapper; retain only local idempotent close/checkpoint behavior.
+- [x] Remove sql.js SIGINT/SIGTERM ownership while preserving close-time persistence.
+- [x] Run focused DB adapter suites and verify GREEN.
+- [x] Commit adapter cleanup.
 
 ### Task 5: Main-runtime hook composition and scheduler stop wiring
 
@@ -123,13 +123,13 @@
 - Consumes: coordinator from Task 1 and leaf APIs from Tasks 2-4.
 - Produces: process-singleton lifecycle hook registration and `requestGracefulShutdown(signal)` returning a report/cleanliness result usable by the entrypoint.
 
-- [ ] Add RED tests asserting registered hook phase membership and DB close occurs after all DB-writing drain/flush hooks.
-- [ ] Add RED test that cleanup rejection is recorded while later close hooks still run.
-- [ ] Register the minimum complete main-runtime stop/drain/flush/close hooks using lazy imports; pair directly-started timer owners with idempotent stop APIs without refactoring their internals.
-- [ ] Replace monolithic cleanup ordering with coordinator execution and structured logging/reporting.
-- [ ] Preserve HMR singleton behavior and fallback signal ownership when no custom server owner exists.
-- [ ] Run focused lifecycle tests and verify GREEN.
-- [ ] Commit composition/wiring.
+- [x] Add RED tests asserting registered hook phase membership and DB close occurs after all DB-writing drain/flush hooks.
+- [x] Add RED test that cleanup rejection is recorded while later close hooks still run.
+- [x] Register the minimum complete main-runtime stop/drain/flush/close hooks using lazy imports; pair directly-started timer owners with idempotent stop APIs without refactoring their internals.
+- [x] Replace monolithic cleanup ordering with coordinator execution and structured logging/reporting.
+- [x] Preserve HMR singleton behavior and fallback signal ownership when no custom server owner exists.
+- [x] Run focused lifecycle tests and verify GREEN.
+- [x] Commit composition/wiring.
 
 ### Task 6: Custom server signal owner and global deadline
 

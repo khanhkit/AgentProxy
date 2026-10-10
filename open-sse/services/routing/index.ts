@@ -113,6 +113,13 @@ export function routingOtelStats(): { buffered: number; dropped: number } | null
   return otelSink ? otelSink.getStats() : null;
 }
 
+export async function shutdownRoutingObservability(): Promise<void> {
+  if (!otelSink) return;
+  const sink = otelSink;
+  otelSink = null;
+  await sink.stop();
+}
+
 function listRoutingSinkNames(): string[] {
   return listRoutingEventSinks();
 }
@@ -123,7 +130,7 @@ export function resetRoutingObservability(): void {
   memoryStore.clear();
   resetQualityTracker();
   if (otelSink) {
-    otelSink.stop();
+    void otelSink.stop();
     otelSink = null;
   }
   initialized = false;
