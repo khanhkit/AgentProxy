@@ -33,6 +33,20 @@ describe("sqljsAdapter", () => {
     adapter.close();
   });
 
+  test("open adapter does not claim SIGINT/SIGTERM ownership", async () => {
+    const beforeInt = process.listenerCount("SIGINT");
+    const beforeTerm = process.listenerCount("SIGTERM");
+    const adapter = await createSqlJsAdapter(":memory:");
+    try {
+      assert.equal(process.listenerCount("SIGINT"), beforeInt);
+      assert.equal(process.listenerCount("SIGTERM"), beforeTerm);
+    } finally {
+      adapter.close();
+    }
+    assert.equal(process.listenerCount("SIGINT"), beforeInt);
+    assert.equal(process.listenerCount("SIGTERM"), beforeTerm);
+  });
+
   test("driver é 'sql.js'", async () => {
     const adapter = await createSqlJsAdapter(":memory:");
     assert.equal(adapter.driver, "sql.js");

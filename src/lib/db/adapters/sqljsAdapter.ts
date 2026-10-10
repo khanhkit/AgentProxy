@@ -294,9 +294,9 @@ export async function createSqlJsAdapter(filePath: string): Promise<SqliteAdapte
         persist();
       } catch {}
   };
+  // Local beforeExit persistence is a safety net only. Signal/final-exit
+  // ownership belongs to the application lifecycle coordinator/entrypoint.
   process.on("beforeExit", flush);
-  process.on("SIGINT", flush);
-  process.on("SIGTERM", flush);
 
   function gracefulClose(): void {
     clearInterval(checkpointTimer as unknown as NodeJS.Timeout);
@@ -310,11 +310,8 @@ export async function createSqlJsAdapter(filePath: string): Promise<SqliteAdapte
     } catch {}
     _isOpen = false;
     // Without this, a closed adapter's whole closure (raw sql.js Database +
-    // buffers) stays pinned in memory forever by these 3 process-level
-    // listeners, compounding the OOM every failed boot leaves behind (#7494).
+    // buffers) stays pinned in memory forever by the beforeExit listener.
     process.removeListener("beforeExit", flush);
-    process.removeListener("SIGINT", flush);
-    process.removeListener("SIGTERM", flush);
   }
 
   return {
