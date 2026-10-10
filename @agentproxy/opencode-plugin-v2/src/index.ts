@@ -30,7 +30,6 @@ import {
 import { assertContext } from "./compat.js";
 import {
   API_KEY_ENV_VAR,
-  LEGACY_API_KEY_ENV_VAR,
   type ApiKeyOrigin,
   resolveApiKey,
   warnIfMissing,
@@ -73,11 +72,7 @@ function toResolvedOptions(parsed: PluginOptions): ResolvedOptions {
   return {
     providerId: parsed.providerId,
     baseURL: parsed.baseURL,
-    apiKey:
-      parsed.apiKey ??
-      process.env[API_KEY_ENV_VAR] ??
-      process.env[LEGACY_API_KEY_ENV_VAR] ??
-      "",
+    apiKey: parsed.apiKey ?? "",
     managementReadToken: resolveManagementReadToken(parsed.managementReadToken),
     timeoutMs: parsed.timeoutMs,
     timeouts: parsed.timeouts,
@@ -546,7 +541,7 @@ export default Plugin.define({
           draft.method.update({ integrationID: X, method: { type: "key", label: "API key" } });
           draft.method.update({
             integrationID: X,
-            method: { type: "env", names: [API_KEY_ENV_VAR, LEGACY_API_KEY_ENV_VAR] },
+            method: { type: "env", names: [API_KEY_ENV_VAR] },
           });
         });
       } catch (err) {
