@@ -7,6 +7,8 @@
  */
 
 import { markServerStopping } from "@/lib/serverLifecycle";
+import { getShutdownState } from "@/lib/shutdownState";
+export { getActiveRequestCount, isDraining, trackRequest } from "@/lib/shutdownState";
 import {
   registerLifecycleHook,
   runLifecycleShutdown,
@@ -18,14 +20,6 @@ const SHUTDOWN_TIMEOUT_MS = parseInt(process.env.SHUTDOWN_TIMEOUT_MS || "30000",
 const DRAIN_POLL_INTERVAL_MS = 250;
 
 declare global {
-  var __agentproxyShutdown:
-    | {
-        init: boolean;
-        shuttingDown: boolean;
-        activeRequests: number;
-        shutdownPromise?: Promise<LifecycleShutdownReport>;
-      }
-    | undefined;
   var __agentproxyRequestShutdown:
     | ((signal: string) => Promise<LifecycleShutdownReport | void>)
     | undefined;
@@ -34,13 +28,6 @@ declare global {
   var __agentproxyStopLiveWs: (() => void) | undefined;
   var __agentproxyShutdownRateLimit: (() => Promise<void>) | undefined;
   var __agentproxyShutdownMitm: (() => Promise<void>) | undefined;
-}
-
-function getShutdownState() {
-  if (!globalThis.__agentproxyShutdown) {
-    globalThis.__agentproxyShutdown = { init: false, shuttingDown: false, activeRequests: 0 };
-  }
-  return globalThis.__agentproxyShutdown;
 }
 
 function register(name: string, phase: LifecyclePhase, run: () => void | Promise<void>): void {
@@ -221,26 +208,6 @@ export function registerMainLifecycleHooks(): void {
   });
 }
 
-export function isDraining(): boolean {
-  return getShutdownState().shuttingDown;
-}
-
-export function trackRequest(): () => void {
-  const state = getShutdownState();
-  state.activeRequests++;
-  let called = false;
-  return () => {
-    if (!called) {
-      called = true;
-      state.activeRequests--;
-    }
-  };
-}
-
-export function getActiveRequestCount(): number {
-  return getShutdownState().activeRequests;
-}
-
 async function waitForRequestDrain(): Promise<void> {
   const state = getShutdownState();
   while (state.activeRequests > 0) {
@@ -252,7 +219,7 @@ async function waitForRequestDrain(): Promise<void> {
 
 export function requestGracefulShutdown(signal: string): Promise<LifecycleShutdownReport> {
   const state = getShutdownState();
-  if (state.shutdownPromise) return state.shutdownPromise;
+  if (state.shutdownPromise) return state.shutdownPromise as Promise<LifecycleShutdownReport>;
 
   state.shuttingDown = true;
   registerMainLifecycleHooks();

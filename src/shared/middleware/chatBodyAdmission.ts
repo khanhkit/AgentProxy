@@ -17,7 +17,7 @@
 
 import { createLogger } from "../utils/logger";
 import v8 from "node:v8";
-import { trackRequest } from "../../lib/gracefulShutdown";
+import { trackRequest } from "../../lib/shutdownState";
 import { resolveIngestByteBudget, type IngestBudgetSource } from "./admissionBudget";
 import {
   ADMISSION_BYPASS_HEADER,
