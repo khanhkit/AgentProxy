@@ -446,3 +446,52 @@ test("Gemini signature-only metadata is never surfaced as content or a tool call
   assert.equal(parsed.choices[0].message.content, "public answer");
   assert.equal(parsed.choices[0].message.tool_calls, undefined);
 });
+
+test("Gemini repeated functionCall snapshots produce one deterministic tool call", () => {
+  const line = `data: ${JSON.stringify({
+    response: {
+      candidates: [{ content: { parts: [{ functionCall: { name: "search_files", args: { path: "/tmp" } } }] } }],
+    },
+  })}`;
+  const parsed = parseSSEToGeminiResponse([line, line].join("\n"), "gemini-test");
+  const repeated = parseSSEToGeminiResponse([line, line].join("\n"), "gemini-test");
+  assert.ok(parsed);
+  assert.ok(repeated);
+  const calls = parsed.choices[0].message.tool_calls;
+  assert.equal(calls.length, 1);
+  assert.equal(calls[0].function.name, "search_files");
+  assert.equal(calls[0].function.arguments, JSON.stringify({ path: "/tmp" }));
+  assert.equal(calls[0].id, repeated.choices[0].message.tool_calls[0].id);
+});
+
+test("Gemini same-name calls at distinct part positions remain separate", () => {
+  const line = `data: ${JSON.stringify({
+    response: {
+      candidates: [{ content: { parts: [
+        { functionCall: { name: "search_files", args: { path: "/tmp/a" } } },
+        { functionCall: { name: "search_files", args: { path: "/tmp/b" } } },
+      ] } }],
+    },
+  })}`;
+  const parsed = parseSSEToGeminiResponse(line, "gemini-test");
+  assert.ok(parsed);
+  assert.equal(parsed.choices[0].message.tool_calls.length, 2);
+});
+
+test("Gemini incremental functionCall fragments merge by provider call ID", () => {
+  const payload = (args: Record<string, unknown>) =>
+    `data: ${JSON.stringify({
+      response: { candidates: [{ content: { parts: [
+        { functionCall: { id: "stable-call-1", name: "search_files", args } },
+      ] } }] },
+    })}`;
+  const parsed = parseSSEToGeminiResponse(
+    [payload({ path: "/tmp" }), payload({ recursive: true })].join("\n"),
+    "gemini-test"
+  );
+  assert.ok(parsed);
+  const calls = parsed.choices[0].message.tool_calls;
+  assert.equal(calls.length, 1);
+  assert.equal(calls[0].id, "stable-call-1");
+  assert.deepEqual(JSON.parse(calls[0].function.arguments), { path: "/tmp", recursive: true });
+});
