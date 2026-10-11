@@ -431,3 +431,18 @@ test("parseSSEToGeminiResponse ignores thought/thoughtSignature parts", () => {
   assert.ok(parsed);
   assert.equal(parsed.choices[0].message.content, "visible answer");
 });
+
+test("Gemini signature-only metadata is never surfaced as content or a tool call", () => {
+  const rawSSE = `data: ${JSON.stringify({
+    response: {
+      candidates: [{
+        content: { parts: [{ thoughtSignature: "sig-only" }, { text: "public answer" }] },
+        finishReason: "STOP",
+      }],
+    },
+  })}`;
+  const parsed = parseSSEToGeminiResponse(rawSSE, "gemini-test");
+  assert.ok(parsed);
+  assert.equal(parsed.choices[0].message.content, "public answer");
+  assert.equal(parsed.choices[0].message.tool_calls, undefined);
+});

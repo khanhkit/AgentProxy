@@ -500,11 +500,53 @@ function readDocumentedResult(found: unknown): string | null {
   return null;
 }
 
-function readResultUrl(data: unknown, resultPath: string): string | null {
+const VIDEO_EXTENSION = /\.(mp4|m4v|mov|webm|avi|mkv)(?:[?#]|$)/i;
+
+/** The non-documented fallback accepts only video-specific fields or video-like URLs. */
+function extractVideoFallbackUrl(value: unknown, depth = 0): string | null {
+  if (depth > 6) return null;
+  if (typeof value === "string") {
+    const text = value.trim();
+    if (/^[{[]/.test(text)) {
+      try {
+        return extractVideoFallbackUrl(JSON.parse(text), depth + 1);
+      } catch {
+        return null;
+      }
+    }
+    return /^data:video\//i.test(text) || VIDEO_EXTENSION.test(text.split(/[?#]/)[0] ?? "")
+      ? extractUrl(text)
+      : null;
+  }
+  if (Array.isArray(value)) {
+    for (const item of value) {
+      const found = extractVideoFallbackUrl(item, depth + 1);
+      if (found) return found;
+    }
+    return null;
+  }
+  if (!value || typeof value !== "object") return null;
+  const rec = value as Record<string, unknown>;
+  for (const key of ["video_url", "videoUrl"]) {
+    const found = extractUrl(rec[key]);
+    if (found) return found;
+  }
+  for (const key of ["url", "download_url", "downloadUrl", "output_url", "outputUrl", "file_url", "fileUrl"]) {
+    const found = extractVideoFallbackUrl(rec[key], depth + 1);
+    if (found) return found;
+  }
+  for (const key of ["result", "data", "outputs", "output", "video", "metadata"]) {
+    const found = extractVideoFallbackUrl(rec[key], depth + 1);
+    if (found) return found;
+  }
+  return null;
+}
+
+/** @testonly */ export function readResultUrl(data: unknown, resultPath: string): string | null {
   const documented = readPath(data, resultPath);
   const direct = extractUrl(documented);
   if (direct) return direct;
 
   // The preset path missed, so scan the rest of the payload for a video url.
-  return extractUrl(data) ?? readDocumentedResult(documented);
+  return extractVideoFallbackUrl(data) ?? readDocumentedResult(documented);
 }
