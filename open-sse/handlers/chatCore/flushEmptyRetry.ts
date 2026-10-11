@@ -68,7 +68,6 @@ export async function maybeRetryFlushEmptyTurn(args: FlushEmptyRetryArgs): Promi
     const next = await args.getCredentials().catch(() => null);
     if (!next?.connectionId) return response;
     args.applyCredentials(next);
-    await response.body?.cancel().catch(() => undefined);
 
     let retryResult: unknown;
     try {
@@ -81,20 +80,36 @@ export async function maybeRetryFlushEmptyTurn(args: FlushEmptyRetryArgs): Promi
       await retryResponse?.body?.cancel().catch(() => undefined);
       return response;
     }
-    const prepared = await maybeConvertJsonBodyToSse(retryResponse, {
-      log: args.log,
-      provider: args.provider,
-      model: args.model,
-    });
-    if (!prepared.ok) return response;
-    const ready = await ensureStreamReadiness(prepared, {
-      timeoutMs: args.timeoutMs,
-      maxTimeoutMs: args.maxTimeoutMs,
-      provider: args.provider,
-      model: args.model,
-      log: args.log,
-    });
+    let prepared: Response;
+    try {
+      prepared = await maybeConvertJsonBodyToSse(retryResponse, {
+        log: args.log,
+        provider: args.provider,
+        model: args.model,
+      });
+    } catch {
+      await retryResponse.body?.cancel().catch(() => undefined);
+      return response;
+    }
+    if (!prepared.ok) {
+      await prepared.body?.cancel().catch(() => undefined);
+      return response;
+    }
+    let ready: Awaited<ReturnType<typeof ensureStreamReadiness>>;
+    try {
+      ready = await ensureStreamReadiness(prepared, {
+        timeoutMs: args.timeoutMs,
+        maxTimeoutMs: args.maxTimeoutMs,
+        provider: args.provider,
+        model: args.model,
+        log: args.log,
+      });
+    } catch {
+      await prepared.body?.cancel().catch(() => undefined);
+      return response;
+    }
     if (!ready.ok) return response;
+    await response.body?.cancel().catch(() => undefined);
     response = ready.response;
     args.onRetryPrepared?.(retryResult);
   }
