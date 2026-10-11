@@ -535,3 +535,31 @@ test("Gemini incremental functionCall fragments merge by provider call ID", () =
   assert.equal(calls[0].id, "stable-call-1");
   assert.deepEqual(JSON.parse(calls[0].function.arguments), { path: "/tmp", recursive: true });
 });
+
+test("Gemini nested incremental functionCall fragments merge recursively by provider call ID", () => {
+  const payload = (args: Record<string, unknown>) =>
+    `data: ${JSON.stringify({
+      response: {
+        candidates: [
+          {
+            content: {
+              parts: [{ functionCall: { id: "stable-call-nested", name: "search_files", args } }],
+            },
+          },
+        ],
+      },
+    })}`;
+  const parsed = parseSSEToGeminiResponse(
+    [
+      payload({ options: { path: "/tmp", recursive: false } }),
+      payload({ options: { recursive: true } }),
+    ].join("\n"),
+    "gemini-test"
+  );
+  assert.ok(parsed);
+  const calls = parsed.choices[0].message.tool_calls;
+  assert.equal(calls.length, 1);
+  assert.deepEqual(JSON.parse(calls[0].function.arguments), {
+    options: { path: "/tmp", recursive: true },
+  });
+});
