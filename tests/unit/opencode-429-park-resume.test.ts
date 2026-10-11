@@ -488,6 +488,55 @@ describe("opencode 429 park-and-resume", () => {
     assert.equal(actions?.replayed, true);
   });
 
+  it("preserves multiline SSE data events until the event boundary", async () => {
+    const bodyText = [
+      'data: {"choices":[{"delta":{"content":',
+      'data: "multiline"},"finish_reason":null}]}',
+      "",
+      "data: [DONE]",
+      "",
+    ].join("\n");
+    const account = {
+      fingerprint: "l".repeat(32),
+      cooldownUntil: 0,
+      consecutiveFails: 0,
+      proxy: null,
+    };
+    const driver = {
+      accounts: [account],
+      execute: async () => ({
+        response: new Response(bodyText, {
+          status: 200,
+          headers: { "Content-Type": "text/event-stream" },
+        }),
+      }),
+      markCooldown() {},
+      markSuccess() {},
+      sleep: async () => true,
+    };
+    const input = {
+      model: "muse-spark-1.3-contributor-free",
+      body: { messages: [{ role: "user", content: "hi" }] },
+      stream: true,
+      signal: null,
+      credentials: credentialsFor(1),
+      log,
+    };
+    const fallback = { response: new Response(BURST_BODY, { status: 429 }) };
+    const { text, actions } = await runWithResilienceActionsContext(async () => {
+      const result = await runParkAndReplay(driver, input, 0, fallback, log, "[test] ");
+      assert.ok(result);
+      return {
+        text: await (result as { response: Response }).response.text(),
+        actions: readResilienceActions(),
+      };
+    });
+
+    assert.match(text, /"content":"multiline"/u);
+    assert.match(text, /data: \[DONE\]\n\n/u);
+    assert.equal(actions?.replayed, true);
+  });
+
   it("drops malformed and orphan replay frames before they reach the client", async () => {
     const bodyText = [
       "event: provider.debug",
@@ -574,6 +623,7 @@ describe("opencode 429 park-and-resume", () => {
     });
 
     assert.match(text, /"content":"partial"/u);
+    assert.match(text, /Upstream replay failed/u, "truncated clean EOF must be explicit");
     assert.doesNotMatch(text, /data: \[DONE\]/u);
     assert.equal(actions?.replayed, false, "clean EOF without terminal marker is truncated");
   });

@@ -18,7 +18,7 @@ import { proxyKeyOf } from "./opencodeGeoBlock.ts";
 import { runWithProxyContext } from "../utils/proxyFetch.ts";
 import { noteResilienceAction } from "@/lib/usage/resilienceActionsContext.ts";
 import { formatTranslatedStreamError } from "../utils/streamErrorFormat.ts";
-import { hasOpenAIFinishReason, parseSSEDataPayload } from "../utils/streamHelpers.ts";
+import { hasOpenAIFinishReason, parseSSEDataLines } from "../utils/streamHelpers.ts";
 import { noteParkWait, noteReplayed, noteStoredFallback } from "./opencodeResilienceNotes.ts";
 import type { ExecuteInput, ExecutorExecuteResult } from "./base.ts";
 import * as egressPacing from "./opencodeEgressThrottle.ts";
@@ -373,65 +373,75 @@ export async function runParkAndReplay<TAccount extends RotatableAccount>(
             const decoder = new TextDecoder();
             let pendingReplayText = "";
             let pendingEventType = "";
+            let pendingDataLines: string[] = [];
+            let pendingEventInvalid = false;
             let terminalSeen = false;
             let withheldTerminalTail = "";
+            const flushReplayEvent = (): void => {
+              const eventType = pendingEventType;
+              const dataLines = pendingDataLines;
+              const invalid = pendingEventInvalid;
+              pendingEventType = "";
+              pendingDataLines = [];
+              pendingEventInvalid = false;
+              if (invalid || dataLines.length === 0) return;
+
+              const parsed = parseSSEDataLines(dataLines, {
+                eventType,
+                logWarning: false,
+              });
+              if (parsed === null) return;
+              const record =
+                typeof parsed === "object" && parsed !== null && !Array.isArray(parsed)
+                  ? (parsed as Record<string, unknown>)
+                  : null;
+              const type = record && typeof record.type === "string" ? record.type : "";
+              const isTerminal =
+                record?.done === true ||
+                type === "response.completed" ||
+                type === "message_stop" ||
+                (record !== null && hasOpenAIFinishReason(record));
+              const preserveEventPrefix =
+                eventType.startsWith("response.") ||
+                /^(?:message_|content_block_|error$|ping$)/u.test(eventType);
+              const data = record?.done === true ? "[DONE]" : JSON.stringify(parsed);
+              if (data === undefined) return;
+              const frame = `${preserveEventPrefix ? `event: ${eventType}\n` : ""}data: ${data}\n\n`;
+
+              if (terminalSeen || isTerminal) {
+                terminalSeen ||= isTerminal;
+                withheldTerminalTail += frame;
+                return;
+              }
+              controller.enqueue(encoder.encode(frame));
+              copiedAny = true;
+            };
             const emitReplayText = (text: string, atEof = false): void => {
               pendingReplayText += text;
               while (pendingReplayText !== "") {
                 const lineEnd = nextCompleteLineEnd(pendingReplayText, atEof);
-                if (lineEnd === 0) return;
+                if (lineEnd === 0) break;
                 const rawLine = pendingReplayText.slice(0, lineEnd);
                 pendingReplayText = pendingReplayText.slice(lineEnd);
                 const line = rawLine.replace(/(?:\r\n|\r|\n)$/u, "");
                 const trimmed = line.trim();
                 if (trimmed === "") {
-                  pendingEventType = "";
+                  flushReplayEvent();
                   continue;
                 }
+                if (trimmed.startsWith(":")) continue;
                 if (trimmed.startsWith("event:")) {
                   pendingEventType = trimmed.slice("event:".length).trim();
                   continue;
                 }
-                if (!trimmed.startsWith("data:")) {
-                  pendingEventType = "";
+                const dataLine = line.trimStart();
+                if (dataLine.startsWith("data:")) {
+                  pendingDataLines.push(dataLine.slice("data:".length).trimStart());
                   continue;
                 }
-
-                const data = trimmed.slice("data:".length).trim();
-                const parsed = parseSSEDataPayload(data, {
-                  eventType: pendingEventType,
-                  logWarning: false,
-                });
-                if (parsed === null) {
-                  pendingEventType = "";
-                  continue;
-                }
-                const record =
-                  typeof parsed === "object" && parsed !== null && !Array.isArray(parsed)
-                    ? (parsed as Record<string, unknown>)
-                    : null;
-                const type = record && typeof record.type === "string" ? record.type : "";
-                const isTerminal =
-                  record?.done === true ||
-                  type === "response.completed" ||
-                  type === "message_stop" ||
-                  (record !== null && hasOpenAIFinishReason(record));
-                const preserveEventPrefix =
-                  pendingEventType.startsWith("response.") ||
-                  /^(?:message_|content_block_|error$|ping$)/u.test(pendingEventType);
-                const frame = `${
-                  preserveEventPrefix ? `event: ${pendingEventType}\n` : ""
-                }data: ${record?.done === true ? "[DONE]" : data}\n\n`;
-                pendingEventType = "";
-
-                if (terminalSeen || isTerminal) {
-                  terminalSeen ||= isTerminal;
-                  withheldTerminalTail += frame;
-                  continue;
-                }
-                controller.enqueue(encoder.encode(frame));
-                copiedAny = true;
+                pendingEventInvalid = true;
               }
+              if (atEof) flushReplayEvent();
             };
             const onAbort = (): void => {
               void reader.cancel(input.signal?.reason).catch(() => undefined);
@@ -455,6 +465,17 @@ export async function runParkAndReplay<TAccount extends RotatableAccount>(
                 copiedAny = true;
               } else {
                 recopied = false;
+                const frame = formatTranslatedStreamError({
+                  error: {
+                    message: "Upstream replay failed",
+                    status: 502,
+                    code: "upstream_replay_failed",
+                  },
+                  status: 502,
+                });
+                controller.enqueue(
+                  encoder.encode(copiedAny ? frame.replace(/data: \[DONE\]\n\n$/u, "") : frame)
+                );
               }
             } catch (error) {
               // A read failure means the replay did not complete, even if some
