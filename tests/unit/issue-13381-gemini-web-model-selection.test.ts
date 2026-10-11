@@ -24,7 +24,7 @@ import assert from "node:assert/strict";
 const { GeminiWebExecutor } = await import("../../open-sse/executors/gemini-web.ts");
 const { GEMINI_WEB_UNSUPPORTED_CONTROL_CODE } =
   await import("../../open-sse/executors/gemini-web/capabilities.ts");
-const { GEMINI_WEB_MODEL_MODES, GEMINI_WEB_EXTENDED_THINKING_MODE } =
+const { GEMINI_WEB_MODEL_MODES, GEMINI_WEB_EXTENDED_THINKING_MODE, selectGeminiUiMode } =
   await import("../../open-sse/executors/gemini-web/modeSelection.ts");
 
 type Call = { fn: string; args: unknown[] };
@@ -274,6 +274,76 @@ test("#13381: model selection waits for the active indicator to reflect the requ
     calls.some((c) => c.fn === "editor.click"),
     "confirmed selection must reach prompt execution"
   );
+});
+
+test("#13381: model option matching selects only the exact accessible model label", async () => {
+  const descriptor = GEMINI_WEB_MODEL_MODES["gemini-3.7-flash"];
+  assert.ok(descriptor.toggleSelector && descriptor.activeIndicatorSelector);
+
+  const { status, calls } = await runWithFakePage("gemini-3.7-flash", {
+    selectors: {
+      [descriptor.toggleSelector!]: { found: true },
+      [descriptor.activeIndicatorSelector!]: { found: true, text: "Gemini 3.7 Flash" },
+    },
+    roleOptions: ["Gemini 3.7 Flash Experimental", "Gemini 3.7 Flash"],
+  });
+
+  assert.equal(status, 502);
+  assert.deepEqual(
+    calls.find((c) => c.fn === "role.click")?.args,
+    ["menuitem", "Gemini 3.7 Flash"],
+    "a qualified model label must not shadow the exact requested model"
+  );
+});
+
+test("#13381: model selection shares one timeout budget across every automation phase", async () => {
+  const descriptor = GEMINI_WEB_MODEL_MODES["gemini-3.7-flash"];
+  assert.ok(descriptor.toggleSelector && descriptor.activeIndicatorSelector);
+
+  const originalNow = Date.now;
+  let now = 1_000;
+  const observedTimeouts: Array<number | undefined> = [];
+  Date.now = () => now;
+
+  try {
+    const page = {
+      waitForSelector: async (selector: string, opts?: { timeout?: number }) => {
+        observedTimeouts.push(opts?.timeout);
+        now += 20;
+        if (selector === descriptor.toggleSelector) {
+          return {
+            click: async (clickOpts?: { timeout?: number }) => {
+              observedTimeouts.push(clickOpts?.timeout);
+              now += 20;
+            },
+          };
+        }
+        return {
+          click: async () => {},
+          textContent: async () => "Gemini 3.7 Flash",
+        };
+      },
+      getByRole: () => ({
+        click: async (clickOpts?: { timeout?: number }) => {
+          observedTimeouts.push(clickOpts?.timeout);
+          now += 20;
+        },
+      }),
+      waitForTimeout: async (ms: number) => {
+        now += ms;
+      },
+    };
+
+    const result = await selectGeminiUiMode(page, descriptor, 100);
+    assert.equal(result.confirmed, true);
+    assert.deepEqual(
+      observedTimeouts,
+      [100, 80, 60, 40],
+      "toggle lookup, toggle click, option click, and read-back must consume one deadline"
+    );
+  } finally {
+    Date.now = originalNow;
+  }
 });
 
 // ─── (b) Control missing -> 400, never a silent 200 ─────────────────────────

@@ -74,7 +74,7 @@ export const GEMINI_WEB_MODEL_MODES: Readonly<Record<string, GeminiWebModeDescri
     isDefault: false,
     toggleSelector:
       '[data-test-id="bard-mode-menu-button"], button[aria-haspopup="menu"][aria-label*="model" i]',
-    optionNamePattern: /gemini\s*3\.7\s*flash(?!.*\blite\b)/i,
+    optionNamePattern: /^gemini\s*3\.7\s*flash$/i,
     activeIndicatorSelector:
       '[data-test-id="bard-mode-menu-button"] .mode-title, [data-test-id="bard-mode-menu-button"]',
     expectedIndicatorPattern: /\bflash\b(?!.*\blite\b)/i,
@@ -84,7 +84,7 @@ export const GEMINI_WEB_MODEL_MODES: Readonly<Record<string, GeminiWebModeDescri
     isDefault: false,
     toggleSelector:
       '[data-test-id="bard-mode-menu-button"], button[aria-haspopup="menu"][aria-label*="model" i]',
-    optionNamePattern: /gemini\s*3\.1\s*flash.*\blite\b/i,
+    optionNamePattern: /^gemini\s*3\.1\s*flash\s*lite$/i,
     activeIndicatorSelector:
       '[data-test-id="bard-mode-menu-button"] .mode-title, [data-test-id="bard-mode-menu-button"]',
     expectedIndicatorPattern: /flash.*\blite\b/i,
@@ -160,45 +160,72 @@ export async function selectGeminiUiMode(
     return { confirmed: false, reason: "control_not_found", descriptor };
   }
 
+  const deadline = Date.now() + Math.max(0, timeoutMs);
+  const remainingMs = () => Math.max(0, deadline - Date.now());
+
+  const toggleLookupTimeout = remainingMs();
+  if (toggleLookupTimeout <= 0) {
+    return { confirmed: false, reason: "control_not_found", descriptor };
+  }
   const toggle = await page
-    .waitForSelector(toggleSelector, { timeout: timeoutMs })
+    .waitForSelector(toggleSelector, { timeout: toggleLookupTimeout })
     .catch(() => null);
   if (!toggle) return { confirmed: false, reason: "control_not_found", descriptor };
 
-  await toggle.click();
+  const toggleClickTimeout = remainingMs();
+  if (toggleClickTimeout <= 0) {
+    return { confirmed: false, reason: "control_not_found", descriptor };
+  }
+  try {
+    await toggle.click({ timeout: toggleClickTimeout });
+  } catch {
+    return { confirmed: false, reason: "control_not_found", descriptor };
+  }
 
   if (optionNamePattern) {
     if (typeof page.getByRole !== "function") {
       return { confirmed: false, reason: "option_not_found", descriptor };
     }
+    const optionClickTimeout = remainingMs();
+    if (optionClickTimeout <= 0) {
+      return { confirmed: false, reason: "option_not_found", descriptor };
+    }
     try {
-      await page.getByRole("menuitem", { name: optionNamePattern }).click({ timeout: timeoutMs });
+      await page.getByRole("menuitem", { name: optionNamePattern }).click({
+        timeout: optionClickTimeout,
+      });
     } catch {
       return { confirmed: false, reason: "option_not_found", descriptor };
     }
   }
 
-  const pollIntervalMs = Math.min(50, Math.max(1, timeoutMs));
-  const attempts = Math.max(1, Math.ceil(timeoutMs / pollIntervalMs));
+  const maxAttempts = Math.max(1, Math.ceil(Math.max(1, timeoutMs) / 50));
   let sawIndicator = false;
 
-  for (let attempt = 0; attempt < attempts; attempt += 1) {
+  for (let attempt = 0; attempt < maxAttempts; attempt += 1) {
+    const indicatorBudget = remainingMs();
+    if (indicatorBudget <= 0) break;
+    const pollIntervalMs = Math.min(50, indicatorBudget);
     const indicator = await page
       .waitForSelector(activeIndicatorSelector, { timeout: pollIntervalMs })
       .catch(() => null);
-    if (!indicator) continue;
 
-    sawIndicator = true;
-    const text = await readIndicatorText(indicator);
-    if (text && expectedIndicatorPattern.test(text)) {
-      return { confirmed: true, descriptor };
+    if (indicator) {
+      sawIndicator = true;
+      const text = await readIndicatorText(indicator);
+      if (text && expectedIndicatorPattern.test(text)) {
+        return { confirmed: true, descriptor };
+      }
     }
 
-    if (attempt + 1 < attempts) {
+    if (attempt + 1 < maxAttempts) {
+      const waitBudget = remainingMs();
+      if (waitBudget <= 0) break;
+      const waitMs = Math.min(50, waitBudget);
       if (typeof page.waitForTimeout === "function") {
-        await page.waitForTimeout(pollIntervalMs);
+        await page.waitForTimeout(waitMs);
       } else {
-        await new Promise<void>((resolve) => setTimeout(resolve, pollIntervalMs));
+        await new Promise<void>((resolve) => setTimeout(resolve, waitMs));
       }
     }
   }
