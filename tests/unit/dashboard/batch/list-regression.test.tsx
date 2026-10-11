@@ -213,6 +213,30 @@ describe("BatchListTab — rendering", () => {
     expect(onRefresh).toHaveBeenCalled();
   });
 
+  it("does not start concurrent delete-completed sweeps on rapid clicks", async () => {
+    let finishRequest!: (value: unknown) => void;
+    const pending = new Promise((resolve) => {
+      finishRequest = resolve;
+    });
+    const fetchMock = vi.fn(() => pending);
+    vi.stubGlobal("fetch", fetchMock);
+    const el = render(
+      <BatchListTab batches={[makeBatch({ status: "completed" })]} files={[]} loading={false} />
+    );
+    const button = Array.from(el.querySelectorAll("button")).find((b) =>
+      b.textContent?.includes("batchListRemoveCompleted")
+    );
+    expect(button).toBeDefined();
+    act(() => {
+      button!.click();
+      button!.click();
+    });
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    await act(async () => {
+      finishRequest({ ok: true, json: async () => ({ hasMore: false }) });
+    });
+  });
+
   it("4. status filter hides batches not matching selected status", async () => {
     const batches = [
       makeBatch({ id: "batch-completed", status: "completed" }),

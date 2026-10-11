@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { matchesSearch } from "@/shared/utils/turkishText";
 import BatchDetailModal from "./BatchDetailModal";
@@ -316,12 +316,15 @@ export default function BatchListTab({
   const [statusFilter, setStatusFilter] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
   const [removingCompleted, setRemovingCompleted] = useState(false);
+  const removingCompletedRef = useRef(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
 
   const MAX_DELETE_ITERATIONS = 5;
 
   const handleRemoveCompleted = async () => {
-    setRemovingCompleted(true); // Uses your existing state variable
+    if (removingCompletedRef.current) return;
+    removingCompletedRef.current = true;
+    setRemovingCompleted(true);
     let hasMore = true;
     let iterations = 0;
 
@@ -347,6 +350,7 @@ export default function BatchListTab({
       console.error("An error occurred while removing batches:", error);
       window.alert("An error occurred while removing batches.");
     } finally {
+      removingCompletedRef.current = false;
       setRemovingCompleted(false);
       onRefresh?.(); // Uses your component's actual refresh prop
     }

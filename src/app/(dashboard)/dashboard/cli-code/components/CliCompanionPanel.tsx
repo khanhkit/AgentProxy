@@ -51,6 +51,14 @@ export default function CliCompanionPanel({ targets, statuses, loading, error }:
   const t = useTranslations("cliCommon.companion");
   const id = useId();
   const [selectedId, setSelectedId] = useState(targets[0]?.id || "");
+  const targetIds = targets.map((target) => target.id).join("\0");
+  const [previousTargetIds, setPreviousTargetIds] = useState(targetIds);
+  if (targetIds !== previousTargetIds) {
+    setPreviousTargetIds(targetIds);
+    if (!targets.some((target) => target.id === selectedId)) {
+      setSelectedId(targets[0]?.id || "");
+    }
+  }
   const [context, setContext] = useState("");
   const [model, setModel] = useState("");
   const selected = targets.find((target) => target.id === selectedId) || targets[0];
