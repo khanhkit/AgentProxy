@@ -551,7 +551,7 @@ export const FEATURE_FLAG_DEFINITIONS: FeatureFlagDefinition[] = [
     key: "FLUSH_EMPTY_RETRY_ENABLED",
     label: "Flush Empty Turn Retry",
     description:
-      "On translated streaming turns, retry a bounded empty upstream turn through the normal credential path before anything reaches the client. Off by default.",
+      "Allow flush-empty recovery only when a request-scoped authority supplies a provider-safe replay permit; otherwise no replay occurs. Off by default.",
     descriptionI18nKey: "featureFlagFlushEmptyRetryEnabledDescription",
     category: "runtime",
     defaultValue: "false",
