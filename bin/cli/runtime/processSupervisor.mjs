@@ -12,7 +12,10 @@ import {
   waitUntilPortFree,
 } from "./supervisorPolicy.mjs";
 import { buildNodeRuntimeArgs } from "../../../scripts/build/runtime-env.mjs";
-import { stopProcessGracefully } from "../../../src/shared/platform/windowsProcess.ts";
+import {
+  resolveShutdownEscalationTimeoutMs,
+  stopProcessGracefully,
+} from "../../../src/shared/platform/windowsProcess.ts";
 import {
   isFatalInstrumentationHookFailure,
   formatAndroidInstrumentationFailureHint,
@@ -254,7 +257,11 @@ export class ServerSupervisor {
       // console) and runs its own async graceful shutdown (WAL checkpoint). Sending
       // SIGTERM immediately on win32 races and beats that cleanup. Fire-and-forget:
       // stop() itself stays sync so callers keep their existing control flow.
-      void stopProcessGracefully({ pid: this.child.pid, timeoutMs: 5000, isPidRunning });
+      void stopProcessGracefully({
+        pid: this.child.pid,
+        timeoutMs: resolveShutdownEscalationTimeoutMs(this.env),
+        isPidRunning,
+      });
     }
     killAllSubprocesses();
   }

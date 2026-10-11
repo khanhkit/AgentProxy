@@ -32,6 +32,7 @@ import {
 } from "../../../scripts/build/runtime-env.mjs";
 import { resolveTlsOptions } from "../../../scripts/dev/tls-options.mjs";
 import { startDetachedTray, validateTrayOptions } from "../tray/detachedTray.mjs";
+import { resolveShutdownEscalationTimeoutMs } from "../../../src/shared/platform/windowsProcess.ts";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const _pkg = JSON.parse(readFileSync(join(__dirname, "..", "..", "..", "package.json"), "utf8"));
@@ -447,7 +448,7 @@ function runWithoutRecovery(serverJs, env, memoryLimit, dashboardPort, apiPort, 
     setTimeout(() => {
       server.kill("SIGKILL");
       process.exit(0);
-    }, 5000);
+    }, resolveShutdownEscalationTimeoutMs(env));
   };
 
   process.on("SIGINT", shutdown);
