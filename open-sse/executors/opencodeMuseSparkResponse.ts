@@ -5,6 +5,13 @@ import {
   normalizeMuseSparkFinishReason,
 } from "./opencodeMuseSpark.ts";
 
+function transformedResponseHeaders(response: Response): Headers {
+  const headers = new Headers(response.headers);
+  headers.delete("content-length");
+  headers.delete("content-encoding");
+  return headers;
+}
+
 export function normalizeMuseSparkResponse(
   input: ExecuteInput,
   result: ExecutorExecuteResult
@@ -42,15 +49,12 @@ export function normalizeMuseSparkResponse(
         controller.close();
       },
     });
-    const headers = new Headers(response.headers);
-    headers.delete("content-length");
-    headers.delete("content-encoding");
     return {
       ...result,
       response: new Response(stream, {
         status: response.status,
         statusText: response.statusText,
-        headers,
+        headers: transformedResponseHeaders(response),
       }),
     };
   }
@@ -106,7 +110,7 @@ export function normalizeMuseSparkResponse(
     response: new Response(stream, {
       status: response.status,
       statusText: response.statusText,
-      headers: response.headers,
+      headers: transformedResponseHeaders(response),
     }),
   };
 }
