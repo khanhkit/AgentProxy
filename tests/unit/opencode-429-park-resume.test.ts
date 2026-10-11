@@ -305,7 +305,7 @@ describe("opencode 429 park-and-resume", () => {
     assert.equal(snapshot?.replayed, false, "failed replay must not be counted as copied success");
   });
 
-  it("successful replay body read failure errors the outer SSE instead of closing truncated", async () => {
+  it("successful replay body read failure emits a sanitized terminal SSE error", async () => {
     let pulls = 0;
     const brokenBody = new ReadableStream<Uint8Array>({
       pull(controller) {
@@ -314,7 +314,7 @@ describe("opencode 429 park-and-resume", () => {
           controller.enqueue(new TextEncoder().encode("data: prefix\\n\\n"));
           return;
         }
-        throw new Error("upstream replay cut");
+        throw new Error("upstream replay cut access_token=secret at /srv/private/provider.ts");
       },
     });
     const account = {
@@ -347,11 +347,10 @@ describe("opencode 429 park-and-resume", () => {
     const result = await runParkAndReplay(driver, input, 0, fallback, log, "[test] ");
     assert.ok(result);
 
-    await assert.rejects(
-      (result as { response: Response }).response.text(),
-      /upstream replay cut/u,
-      "a failed replay copy must error the committed SSE instead of looking complete"
-    );
+    const text = await (result as { response: Response }).response.text();
+    assert.match(text, /Upstream replay failed/u);
+    assert.match(text, /data: \[DONE\]/u);
+    assert.doesNotMatch(text, /access_token|secret|srv\/private|provider\.ts|upstream replay cut/u);
   });
 
   it("client abort cancels a stalled successful replay body copy", async () => {

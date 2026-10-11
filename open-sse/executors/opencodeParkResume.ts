@@ -376,7 +376,20 @@ export async function runParkAndReplay<TAccount extends RotatableAccount>(
             } catch (error) {
               recopied = false;
               await reader.cancel(error).catch(() => undefined);
-              if (!input.signal?.aborted) controller.error(error);
+              if (!input.signal?.aborted) {
+                controller.enqueue(
+                  encoder.encode(
+                    formatTranslatedStreamError({
+                      error: {
+                        message: "Upstream replay failed",
+                        status: 502,
+                        code: "upstream_replay_failed",
+                      },
+                      status: 502,
+                    })
+                  )
+                );
+              }
             } finally {
               input.signal?.removeEventListener("abort", onAbort);
               reader.releaseLock();
