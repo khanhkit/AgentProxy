@@ -1072,7 +1072,6 @@ async function handleGeminiImageGeneration({ model, providerConfig, body, creden
     image_size_applied: imageSize ?? "default",
     n: candidateCount,
   };
-
   if (!projectId || typeof projectId !== "string") {
     return saveImageErrorResult({
       provider,
