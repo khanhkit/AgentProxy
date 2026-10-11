@@ -296,6 +296,26 @@ test("#13381: model option matching selects only the exact accessible model labe
   );
 });
 
+test("#13381: exact model matching tolerates surrounding whitespace but rejects suffix labels", async () => {
+  const descriptor = GEMINI_WEB_MODEL_MODES["gemini-3.7-flash"];
+  assert.ok(descriptor.toggleSelector && descriptor.activeIndicatorSelector);
+
+  const { status, calls } = await runWithFakePage("gemini-3.7-flash", {
+    selectors: {
+      [descriptor.toggleSelector!]: { found: true },
+      [descriptor.activeIndicatorSelector!]: { found: true, text: "Gemini 3.7 Flash" },
+    },
+    roleOptions: [" Gemini 3.7 Flash Experimental ", " Gemini 3.7 Flash "],
+  });
+
+  assert.equal(status, 502);
+  assert.deepEqual(
+    calls.find((c) => c.fn === "role.click")?.args,
+    ["menuitem", " Gemini 3.7 Flash "],
+    "benign surrounding whitespace is allowed without accepting a qualified model label"
+  );
+});
+
 test("#13381: model selection shares one timeout budget across every automation phase", async () => {
   const descriptor = GEMINI_WEB_MODEL_MODES["gemini-3.7-flash"];
   assert.ok(descriptor.toggleSelector && descriptor.activeIndicatorSelector);
@@ -341,6 +361,41 @@ test("#13381: model selection shares one timeout budget across every automation 
       [100, 80, 60, 40],
       "toggle lookup, toggle click, option click, and read-back must consume one deadline"
     );
+  } finally {
+    Date.now = originalNow;
+  }
+});
+
+test("#13381: indicator text read cannot confirm after the shared deadline expires", async () => {
+  const descriptor = GEMINI_WEB_MODEL_MODES["gemini-3.7-flash"];
+  assert.ok(descriptor.toggleSelector && descriptor.activeIndicatorSelector);
+
+  const originalNow = Date.now;
+  let now = 1_000;
+  Date.now = () => now;
+
+  try {
+    const page = {
+      waitForSelector: async (selector: string) => {
+        if (selector === descriptor.toggleSelector) {
+          return { click: async () => {} };
+        }
+        return {
+          click: async () => {},
+          textContent: async () => {
+            now += 101;
+            return "Gemini 3.7 Flash";
+          },
+        };
+      },
+      getByRole: () => ({ click: async () => {} }),
+      waitForTimeout: async (ms: number) => {
+        now += ms;
+      },
+    };
+
+    const result = await selectGeminiUiMode(page, descriptor, 100);
+    assert.equal(result.confirmed, false, "a read completing after deadline must never confirm");
   } finally {
     Date.now = originalNow;
   }

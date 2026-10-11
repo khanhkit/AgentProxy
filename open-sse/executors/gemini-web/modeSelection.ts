@@ -74,7 +74,7 @@ export const GEMINI_WEB_MODEL_MODES: Readonly<Record<string, GeminiWebModeDescri
     isDefault: false,
     toggleSelector:
       '[data-test-id="bard-mode-menu-button"], button[aria-haspopup="menu"][aria-label*="model" i]',
-    optionNamePattern: /^gemini\s*3\.7\s*flash$/i,
+    optionNamePattern: /^\s*gemini\s*3\.7\s*flash\s*$/i,
     activeIndicatorSelector:
       '[data-test-id="bard-mode-menu-button"] .mode-title, [data-test-id="bard-mode-menu-button"]',
     expectedIndicatorPattern: /\bflash\b(?!.*\blite\b)/i,
@@ -84,7 +84,7 @@ export const GEMINI_WEB_MODEL_MODES: Readonly<Record<string, GeminiWebModeDescri
     isDefault: false,
     toggleSelector:
       '[data-test-id="bard-mode-menu-button"], button[aria-haspopup="menu"][aria-label*="model" i]',
-    optionNamePattern: /^gemini\s*3\.1\s*flash\s*lite$/i,
+    optionNamePattern: /^\s*gemini\s*3\.1\s*flash\s*lite\s*$/i,
     activeIndicatorSelector:
       '[data-test-id="bard-mode-menu-button"] .mode-title, [data-test-id="bard-mode-menu-button"]',
     expectedIndicatorPattern: /flash.*\blite\b/i,
@@ -139,6 +139,25 @@ async function readIndicatorText(el: GeminiAutomationElement): Promise<string | 
     // Unreadable is treated the same as "did not confirm" below — never a pass.
   }
   return null;
+}
+
+async function readIndicatorTextWithinBudget(
+  el: GeminiAutomationElement,
+  budgetMs: number
+): Promise<string | null> {
+  if (budgetMs <= 0) return null;
+
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  try {
+    return await Promise.race([
+      readIndicatorText(el),
+      new Promise<null>((resolve) => {
+        timer = setTimeout(() => resolve(null), budgetMs);
+      }),
+    ]);
+  } finally {
+    if (timer !== undefined) clearTimeout(timer);
+  }
 }
 
 /**
@@ -212,8 +231,10 @@ export async function selectGeminiUiMode(
 
     if (indicator) {
       sawIndicator = true;
-      const text = await readIndicatorText(indicator);
-      if (text && expectedIndicatorPattern.test(text)) {
+      const readBudget = remainingMs();
+      if (readBudget <= 0) break;
+      const text = await readIndicatorTextWithinBudget(indicator, readBudget);
+      if (remainingMs() > 0 && text && expectedIndicatorPattern.test(text)) {
         return { confirmed: true, descriptor };
       }
     }
