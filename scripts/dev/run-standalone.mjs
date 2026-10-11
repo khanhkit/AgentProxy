@@ -34,11 +34,27 @@ const nextChild = spawn(process.execPath, [entry], { stdio: "inherit", env: chil
 let rustCoreHandle = null;
 let shuttingDown = false;
 
+const DEFAULT_APP_SHUTDOWN_TIMEOUT_MS = 30_000;
+const SHUTDOWN_EXIT_MARGIN_MS = 1_000;
+
+function resolveShutdownEscalationTimeoutMs(runtimeEnv = process.env) {
+  const parsed = Number.parseInt(
+    runtimeEnv.SHUTDOWN_TIMEOUT_MS ?? String(DEFAULT_APP_SHUTDOWN_TIMEOUT_MS),
+    10
+  );
+  const lifecycleTimeoutMs =
+    Number.isFinite(parsed) && parsed >= 0 ? parsed : DEFAULT_APP_SHUTDOWN_TIMEOUT_MS;
+  return lifecycleTimeoutMs + SHUTDOWN_EXIT_MARGIN_MS;
+}
+
 function childExited(child) {
   return child.exitCode !== null || child.signalCode !== null;
 }
 
-async function stopNext(signal = "SIGTERM", graceMs = 5_000) {
+async function stopNext(
+  signal = "SIGTERM",
+  graceMs = resolveShutdownEscalationTimeoutMs(childEnv)
+) {
   if (childExited(nextChild)) return;
   nextChild.kill(signal === "SIGINT" ? "SIGINT" : "SIGTERM");
   const exited = await Promise.race([

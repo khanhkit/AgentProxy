@@ -21,18 +21,82 @@ import { installProcessCrashGuard } from "./httpClientAbortGuard.mjs";
 // are swallowed and logged; genuine bugs still crash loudly.
 installProcessCrashGuard();
 
+// This wrapper is the process owner for the packaged standalone server. Next's
+// default standalone signal handlers call process.exit(130/143) after their own
+// cleanup and can race AgentProxy's durable flush/DB close. Disable that competing
+// owner before server.js loads, and tell instrumentation to publish lifecycle
+// cleanup without installing a second signal/final-exit owner.
+process.env.NEXT_MANUAL_SIG_HANDLE = "1";
+globalThis.__agentproxyCustomServerOwnsShutdown = true;
+
 // systemd sd_notify (Type=notify / WatchdogSec=): this process is the one
 // whose event loop can freeze (cold /v1/models rebuild), so it must own the
 // watchdog pings — a blocked loop stops the pings and systemd kills the
 // service. No-op outside systemd (no NOTIFY_SOCKET).
 const systemdNotifier = createSystemdNotifier();
 let systemdReadySent = false;
-// NOTE: if an operator sets NEXT_MANUAL_SIG_HANDLE=1, Next never registers its
-// own signal cleanup and these once() handlers would suppress Node's default
-// signal exit (process lingers until systemd's stop-timeout SIGKILL). Nothing
-// in this repo sets that var; acceptable, documented behavior.
-process.once("SIGINT", () => systemdNotifier.stopping());
-process.once("SIGTERM", () => systemdNotifier.stopping());
+let standaloneShuttingDown = false;
+const standaloneServers = new Set();
+
+async function shutdownStandalone(signal) {
+  // `agentproxy serve` is normally inside a process group. A terminal SIGTERM
+  // reaches both supervisor and server, then the supervisor forwards SIGTERM to
+  // the server again. Never interpret that duplicate as permission to skip the
+  // in-progress durable flush.
+  if (standaloneShuttingDown) return;
+  standaloneShuttingDown = true;
+  systemdNotifier.stopping();
+
+  let clean = true;
+  const closePromises = [];
+  for (const server of standaloneServers) {
+    closePromises.push(
+      new Promise((resolve) => {
+        if (!server.listening) {
+          resolve();
+          return;
+        }
+        try {
+          server.close((error) => {
+            if (error) {
+              clean = false;
+              console.error("[Shutdown] Standalone HTTP close failed:", error);
+            }
+            resolve();
+          });
+          // Stop idle keep-alive sockets immediately so STOP_ADMISSION really
+          // prevents fresh requests while active work drains.
+          server.closeIdleConnections?.();
+        } catch (error) {
+          clean = false;
+          console.error("[Shutdown] Standalone HTTP close failed:", error);
+          resolve();
+        }
+      })
+    );
+  }
+
+  try {
+    const report = await globalThis.__agentproxyRequestShutdown?.(signal);
+    if (report?.clean === false) clean = false;
+  } catch (error) {
+    clean = false;
+    console.error("[Shutdown] Standalone lifecycle failed:", error);
+  }
+
+  // Active sockets were allowed to remain alive through DRAIN_ACTIVE. Once the
+  // application lifecycle is terminal, terminate any transport that survived.
+  for (const server of standaloneServers) {
+    server.closeAllConnections?.();
+  }
+  await Promise.allSettled(closePromises);
+  systemdNotifier.dispose();
+  process.exit(clean ? 0 : 1);
+}
+
+for (const signal of ["SIGINT", "SIGTERM", "SIGHUP"]) {
+  process.on(signal, () => void shutdownStandalone(signal));
+}
 
 const originalCreateServer = http.createServer.bind(http);
 const proxiesByPort = new Map();
@@ -183,6 +247,8 @@ http.createServer = function createServerWithResponsesWs(...args) {
   // listener); otherwise the original http.Server. The downstream .on/.addListener
   // patches below apply identically to both (https.Server extends http.Server).
   const server = createServerListener(args, tlsOptions, { createHttp: originalCreateServer });
+  standaloneServers.add(server);
+  server.once("close", () => standaloneServers.delete(server));
   // Node's http.Server default keepAliveTimeout (5_000ms) races pooled
   // keep-alive HTTP clients that idle longer than that between requests (e.g.
   // the JVM java.net.http.HttpClient used by JetBrains AI Assistant), which
