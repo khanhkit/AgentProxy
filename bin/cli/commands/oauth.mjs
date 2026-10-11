@@ -197,9 +197,7 @@ async function safeErrorBody(res) {
 // the check runs before any terminal-error exit.
 function isPendingPollBody(body) {
   return (
-    body?.pending === true ||
-    body?.error === "slow_down" ||
-    body?.error === "authorization_pending"
+    body?.pending === true || body?.error === "slow_down" || body?.error === "authorization_pending"
   );
 }
 
@@ -458,7 +456,15 @@ async function runDeviceFlow(def, opts) {
       method: "POST",
       body: { deviceCode, ...(codeVerifier ? { codeVerifier } : {}) },
     });
-    if (!pollRes.ok) continue;
+    if (!pollRes.ok) {
+      const errBody = await pollRes.json().catch(() => null);
+      if (!isPendingPollBody(errBody)) {
+        process.stderr.write(`Device auth failed: ${describePollError(pollRes.status, errBody)}\n`);
+        process.exit(1);
+      }
+      if (errBody?.error === "slow_down") intervalMs += 5000;
+      continue;
+    }
     let poll;
     try {
       poll = await pollRes.json();

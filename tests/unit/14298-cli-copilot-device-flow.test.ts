@@ -211,3 +211,55 @@ test("#14298: a fatal poll error ends the flow instead of looping until timeout"
   );
   assert.equal(pollReqs.length, 1, "the flow must stop after a fatal (non-pending) poll error");
 });
+
+test("AP-ISS-0190: non-2xx terminal device poll error fails fast with status and reason", async () => {
+  const { server, requests, baseUrl } = await startFakeServer((req, res) => {
+    if (req.method === "GET" && req.url === "/api/oauth/github/device-code") {
+      return respondJson(res, 200, {
+        device_code: "device-code-terminal-http",
+        user_code: "USER-CODE",
+        verification_uri: "https://example.test/device",
+        expires_in: 60,
+        interval: 0.01,
+      });
+    }
+    if (req.method === "POST" && req.url === "/api/oauth/github/poll") {
+      return respondJson(res, 403, {
+        error: "access_denied",
+        errorDescription: "The user refused authorization",
+        pending: false,
+      });
+    }
+    respondJson(res, 404, { error: "Unknown provider" });
+  });
+
+  const stderrChunks = [];
+  const realWrite = process.stderr.write;
+  process.stderr.write = (chunk) => {
+    stderrChunks.push(String(chunk));
+    return true;
+  };
+  let exitCode;
+  try {
+    exitCode = await runStartCatchingExit({
+      provider: "copilot",
+      browser: false,
+      baseUrl,
+      timeout: 80,
+    });
+  } finally {
+    process.stderr.write = realWrite;
+    server.close();
+  }
+
+  assert.equal(exitCode, 1, "terminal non-2xx device poll error must exit(1), not timeout");
+  assert.match(
+    stderrChunks.join(""),
+    /403.*access_denied/i,
+    "terminal non-2xx device poll must report both HTTP status and provider reason"
+  );
+  const pollReqs = requests.filter(
+    (r) => r.method === "POST" && r.url === "/api/oauth/github/poll"
+  );
+  assert.equal(pollReqs.length, 1, "terminal non-2xx device poll must stop after one response");
+});
