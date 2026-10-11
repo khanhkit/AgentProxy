@@ -147,10 +147,12 @@ export function ensureRadarSyncScheduler(deps: RadarSchedulerDeps = {}): boolean
   if (timer) return false;
 
   const tick = () => {
-    void trackLifecycleBackgroundTask("radar-sync", radarSchedulerTick(deps)).catch((err: unknown) => {
-      const msg = err instanceof Error ? err.message : String(err);
-      console.warn("[RADAR_SYNC] Scheduled sync tick failed (non-fatal):", msg);
-    });
+    void trackLifecycleBackgroundTask("radar-sync", radarSchedulerTick(deps)).catch(
+      (err: unknown) => {
+        const msg = err instanceof Error ? err.message : String(err);
+        console.warn("[RADAR_SYNC] Scheduled sync tick failed (non-fatal):", msg);
+      }
+    );
   };
 
   timer = (deps.setIntervalFn ?? setInterval)(tick, RADAR_SCHEDULER_TICK_MS);

@@ -77,7 +77,10 @@ test("native startup and shutdown hooks drive the health lifecycle", () => {
   );
 
   assert.ok(admissionHook >= 0, "health must enter stopping during STOP_ADMISSION");
-  assert.ok(requestDrainHook > admissionHook, "request drain must remain a later DRAIN_ACTIVE phase");
+  assert.ok(
+    requestDrainHook > admissionHook,
+    "request drain must remain a later DRAIN_ACTIVE phase"
+  );
 });
 
 test("/healthz bypasses the centralized auth proxy matcher", () => {

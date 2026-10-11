@@ -762,7 +762,8 @@ export async function startLiveDashboardServer(
     unsubscribe();
     clients.clear();
     if (globalThis.__agentproxyLiveWsWss === wss) globalThis.__agentproxyLiveWsWss = undefined;
-    if (globalThis.__agentproxyLiveWsServer === server) globalThis.__agentproxyLiveWsServer = undefined;
+    if (globalThis.__agentproxyLiveWsServer === server)
+      globalThis.__agentproxyLiveWsServer = undefined;
   });
 
   return new Promise((resolve, reject) => {
@@ -847,10 +848,12 @@ export function isLiveWsEnabled(): boolean {
 if (!isBuildOrTest() && isLiveWsEnabled()) {
   const port = parseInt(process.env.LIVE_WS_PORT || String(DEFAULT_PORT), 10);
   const host = process.env.LIVE_WS_HOST || DEFAULT_HOST;
-  void trackLifecycleBackgroundTask(
-    "live-ws-startup",
-    startLiveDashboardServer(port, host)
-  ).catch((err) => {
-    console.error("[LiveWS] Failed to start: %s", err instanceof Error ? err.message : String(err));
-  });
+  void trackLifecycleBackgroundTask("live-ws-startup", startLiveDashboardServer(port, host)).catch(
+    (err) => {
+      console.error(
+        "[LiveWS] Failed to start: %s",
+        err instanceof Error ? err.message : String(err)
+      );
+    }
+  );
 }

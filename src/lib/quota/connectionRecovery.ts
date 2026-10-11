@@ -344,7 +344,11 @@ declare global {
 
 function getRecoveryState() {
   if (!globalThis.__agentproxyConnRecovery) {
-    globalThis.__agentproxyConnRecovery = { initialized: false, interval: null, startupTimer: null };
+    globalThis.__agentproxyConnRecovery = {
+      initialized: false,
+      interval: null,
+      startupTimer: null,
+    };
   }
   return globalThis.__agentproxyConnRecovery;
 }

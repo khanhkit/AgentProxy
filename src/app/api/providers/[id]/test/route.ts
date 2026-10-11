@@ -1012,7 +1012,8 @@ export async function testSingleConnection(
   // Re-read the row after the probe: an operator may have switched it off while
   // network validation was in flight, and the stale pre-probe snapshot must not
   // turn it back on.
-  const latest = ((await getProviderConnectionById(connectionId)) ?? connection) as typeof connection;
+  const latest = ((await getProviderConnectionById(connectionId)) ??
+    connection) as typeof connection;
   const operatorDisabled = isOperatorDisabled(latest);
 
   // Unsupported validation capability is neutral: activate only when the latest

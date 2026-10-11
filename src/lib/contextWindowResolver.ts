@@ -141,11 +141,12 @@ export function startContextWindowReconcile(intervalMs?: number): void {
   if (!interval || interval <= 0) return;
 
   const tick = () => {
-    void trackLifecycleBackgroundTask("context-window-reconcile", runContextWindowReconcile()).catch(
-      () => {
-        // Swallow — reconcile is advisory; the catalog still resolves windows.
-      }
-    );
+    void trackLifecycleBackgroundTask(
+      "context-window-reconcile",
+      runContextWindowReconcile()
+    ).catch(() => {
+      // Swallow — reconcile is advisory; the catalog still resolves windows.
+    });
   };
 
   // Initial non-blocking pass, then on the interval.

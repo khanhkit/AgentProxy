@@ -58,7 +58,11 @@ test("an open node:sqlite adapter keeps only local beforeExit ownership (#13108)
     adapter = await createNodeSqliteAdapter(join(dir, "open.sqlite"));
 
     const armed = delta(before, counts());
-    assert.equal(armed.beforeExit, 1, "open adapter may retain one local beforeExit checkpoint hook");
+    assert.equal(
+      armed.beforeExit,
+      1,
+      "open adapter may retain one local beforeExit checkpoint hook"
+    );
     assert.equal(armed.SIGINT, 0, "adapter leaf must not own SIGINT");
     assert.equal(armed.SIGTERM, 0, "adapter leaf must not own SIGTERM");
     assert.equal(process.emit, emitBefore, "adapter leaf must not replace process.emit");

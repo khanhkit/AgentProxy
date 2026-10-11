@@ -292,8 +292,9 @@ export async function shutdownMitm(): Promise<void> {
   await handleExitCleanup("lifecycle");
 }
 
-(globalThis as typeof globalThis & { __agentproxyShutdownMitm?: () => Promise<void> })
-  .__agentproxyShutdownMitm = shutdownMitm;
+(
+  globalThis as typeof globalThis & { __agentproxyShutdownMitm?: () => Promise<void> }
+).__agentproxyShutdownMitm = shutdownMitm;
 
 /**
  * Exit-cleanup body extracted from installCleanupHandlers() so it is directly

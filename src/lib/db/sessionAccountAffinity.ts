@@ -205,7 +205,6 @@ export function startSessionAccountAffinityCleanup(): void {
   if (typeof cleanupTimer === "object" && "unref" in cleanupTimer) cleanupTimer.unref?.();
 }
 
-
 export function stopSessionAccountAffinityCleanup(): void {
   if (!cleanupTimer) return;
   clearInterval(cleanupTimer);

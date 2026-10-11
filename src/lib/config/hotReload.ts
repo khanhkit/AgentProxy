@@ -81,7 +81,8 @@ export function startRuntimeConfigHotReload(options: { pollIntervalMs?: number }
   if (SQLITE_FILE) {
     try {
       sqliteWatcher = fs.watch(path.dirname(SQLITE_FILE), (_eventType, filename) => {
-        const normalizedFilename = filename === null || filename === undefined ? null : filename.toString();
+        const normalizedFilename =
+          filename === null || filename === undefined ? null : filename.toString();
         if (isRelevantSqliteChange(normalizedFilename || null)) {
           queueHotReloadCheck("hot-reload:fs-watch");
         }

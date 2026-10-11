@@ -335,7 +335,6 @@ function startPeriodicSync(intervalMs?: number): void {
   syncTimer.unref();
 }
 
-
 export function stopOpenRouterProviderStatsSync(): void {
   if (syncTimer) {
     clearInterval(syncTimer);

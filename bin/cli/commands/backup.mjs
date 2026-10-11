@@ -297,7 +297,9 @@ async function _uploadBackupToCloud(backupPath, info) {
       method: "POST",
       headers,
       body: /** @type {BodyInit} */ (
-        /** @type {unknown} */ (Readable.from(createBackupMultipartStream(backupPath, info, boundary)))
+        /** @type {unknown} */ (
+          Readable.from(createBackupMultipartStream(backupPath, info, boundary))
+        )
       ),
       duplex: "half",
       signal: controller.signal,

@@ -346,13 +346,10 @@ export function startModelSyncScheduler(
   );
 
   // Serve traffic first; cleanup's first pass is +30s, so stay past that window.
-  startupTimer = setTimeout(
-    () => {
-      startupTimer = null;
-      return launchSyncCycle(trustedApiBaseUrl);
-    },
-    MODEL_SYNC_STARTUP_DELAY_MS
-  );
+  startupTimer = setTimeout(() => {
+    startupTimer = null;
+    return launchSyncCycle(trustedApiBaseUrl);
+  }, MODEL_SYNC_STARTUP_DELAY_MS);
   startupTimer.unref?.();
 
   // Codex-only: revalidate catalog only on first-start or app upgrade (not every boot).
