@@ -116,6 +116,24 @@ export class SettingsRevisionConflictError extends Error {
   }
 }
 
+export class RuntimeSettingsActivationError extends Error {
+  readonly code = "RUNTIME_SETTINGS_ACTIVATION_FAILED" as const;
+
+  constructor(
+    public readonly desiredRevision: number,
+    public readonly activeRevision: number | null,
+    cause: unknown
+  ) {
+    const message = cause instanceof Error ? cause.message : String(cause);
+    super(
+      `Settings revision ${desiredRevision} persisted but runtime activation failed ` +
+        `(active=${activeRevision ?? "none"}): ${message.slice(0, 300)}`,
+      { cause }
+    );
+    this.name = "RuntimeSettingsActivationError";
+  }
+}
+
 /**
  * #7274: read-fallback for the codexSessionAffinityTtlMs -> sessionAffinityTtlMs
  * rename. Migration 124 already backfills the new key from any pre-existing
@@ -382,16 +400,16 @@ export async function updateSettings(
     bumpProxyConfigGeneration();
   }
 
-  const nextSettings = await getSettings();
+  const candidate = await getSettingsCandidate();
+  const nextSettings = candidate.settings;
 
   try {
-    const { applyRuntimeSettings } = await import("@/lib/config/runtimeSettings");
-    await applyRuntimeSettings(nextSettings, { source: "settings:update" });
+    const { applyRuntimeSettingsCandidate } = await import("@/lib/config/runtimeSettings");
+    await applyRuntimeSettingsCandidate(candidate, { source: "settings:update" });
   } catch (error) {
-    console.warn(
-      "[HOT_RELOAD] Failed to apply runtime settings after update:",
-      error instanceof Error ? error.message : error
-    );
+    const { getRuntimeConfigStatus } = await import("@/lib/config/runtimeConfigAuthority");
+    const status = getRuntimeConfigStatus();
+    throw new RuntimeSettingsActivationError(candidate.revision, status.activeRevision, error);
   }
 
   // Onboarding / setup finished → one-shot Codex catalog revalidation (init case).

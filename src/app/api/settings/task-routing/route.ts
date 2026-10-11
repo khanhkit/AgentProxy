@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import {
   getTaskRoutingConfig,
-  setTaskRoutingConfig,
   resetTaskRoutingStats,
   getDefaultTaskModelMap,
   getDefaultTaskPatterns,
@@ -62,10 +61,10 @@ export async function PUT(request: Request) {
     const config =
       validation.data as import("@agentproxy/open-sse/services/taskAwareRouter.ts").TaskRoutingConfig;
 
-    setTaskRoutingConfig(config);
-
-    // Persist to database (excluding stats)
-    const { stats, ...persistable } = getTaskRoutingConfig();
+    // Compute the same top-level merge setTaskRoutingConfig historically applied,
+    // but do not mutate memory before the durable revision commits.
+    const { stats: _stats, ...current } = getTaskRoutingConfig();
+    const persistable = { ...current, ...config };
     await updateSettings({ taskRouting: JSON.stringify(persistable) });
 
     return NextResponse.json({ success: true, ...getTaskRoutingConfig() });

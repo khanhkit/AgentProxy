@@ -43,6 +43,7 @@ const MIN_FILE_CHECK_INTERVAL_MS = 1_000;
 const DEFAULT_FILE_CHECK_INTERVAL_MS = 5_000;
 
 let runtimeOverride: PayloadRulesConfig | null = null;
+let runtimeOverrideMode: "unset" | "config" | "file" = "unset";
 let cachedFileConfig = clonePayloadRulesConfig(DEFAULT_PAYLOAD_RULES_CONFIG);
 let cachedFilePath = "";
 let cachedFileMtimeMs = -1;
@@ -209,10 +210,17 @@ async function refreshPayloadRulesFileCache(force = false) {
 
 export function setPayloadRulesConfig(config: unknown) {
   runtimeOverride = normalizePayloadRulesConfig(config);
+  runtimeOverrideMode = "config";
+}
+
+export function setPayloadRulesFileFallback() {
+  runtimeOverride = null;
+  runtimeOverrideMode = "file";
 }
 
 export function clearPayloadRulesConfigOverride() {
   runtimeOverride = null;
+  runtimeOverrideMode = "unset";
 }
 
 // #2986: Read the DB-persisted payload rules (the source of truth, written by
@@ -234,8 +242,13 @@ async function loadPayloadRulesFromSettings(): Promise<PayloadRulesConfig | null
 }
 
 export async function getPayloadRulesConfig(options: { forceRefresh?: boolean } = {}) {
-  if (runtimeOverride) {
+  if (runtimeOverrideMode === "config" && runtimeOverride) {
     return clonePayloadRulesConfig(runtimeOverride);
+  }
+
+  if (runtimeOverrideMode === "file") {
+    await refreshPayloadRulesFileCache(options.forceRefresh === true);
+    return clonePayloadRulesConfig(cachedFileConfig);
   }
 
   // #2986: prefer the DB-persisted rules over the file config so a saved
@@ -465,6 +478,7 @@ export async function applyConfiguredPayloadRules(
 
 export function resetPayloadRulesConfigForTests() {
   runtimeOverride = null;
+  runtimeOverrideMode = "unset";
   cachedFilePath = "";
   cachedFileMtimeMs = -1;
   lastFileCheckAt = 0;

@@ -9,6 +9,15 @@ import {
   type RuntimeConfigCandidate,
 } from "../../src/lib/config/runtimeConfigAuthority.ts";
 import { classifyRuntimeSettingKey } from "../../src/lib/config/runtimeSettingClassification.ts";
+import {
+  applyRuntimeSettingsCandidate,
+  getAuthzBypassSnapshot,
+  resetRuntimeSettingsStateForTests,
+  setRuntimeSettingsFaultInjectorForTests,
+} from "../../src/lib/config/runtimeSettings.ts";
+import { getCustomAliases } from "../../open-sse/services/modelDeprecation.ts";
+import { getPayloadRulesConfig } from "../../open-sse/services/payloadRules.ts";
+import { getTaskRoutingConfig } from "../../open-sse/services/taskAwareRouter.ts";
 
 function candidate(
   revision: number,
@@ -192,4 +201,62 @@ test("classification uses explicit reconcile, restart and build/deploy exception
   assert.equal(classifyRuntimeSettingKey("modelsDevSyncInterval"), "HOT_RECONCILE");
   assert.equal(classifyRuntimeSettingKey("ENABLE_TLS_FINGERPRINT"), "RESTART_REQUIRED");
   assert.equal(classifyRuntimeSettingKey("DATA_DIR"), "BUILD_DEPLOY_ONLY");
+});
+
+test("runtimeSettings rollback restores prior aliases, payload rules and authz after a later section fails", async () => {
+  resetRuntimeSettingsStateForTests();
+  resetRuntimeConfigAuthorityForTests();
+
+  await applyRuntimeSettingsCandidate(
+    candidate(20, {
+      modelAliases: { stable: "openai/gpt-4o-mini" },
+      payloadRules: {
+        override: [{ models: [{ name: "gpt-*" }], params: { temperature: 0.2 } }],
+      },
+      localOnlyManageScopeBypassEnabled: false,
+      localOnlyManageScopeBypassPrefixes: ["/api/mcp/"],
+      alwaysPreserveClientCache: "always",
+      taskRouting: { enabled: true },
+    }),
+    { force: true, source: "test:baseline" }
+  );
+
+  setRuntimeSettingsFaultInjectorForTests((section) => {
+    if (section === "authzBypass") throw new Error("injected atomic section failure");
+  });
+
+  try {
+    await assert.rejects(
+      applyRuntimeSettingsCandidate(
+        candidate(21, {
+          modelAliases: { unstable: "anthropic/claude-fable-5" },
+          payloadRules: {
+            override: [{ models: [{ name: "claude-*" }], params: { temperature: 0.9 } }],
+          },
+          localOnlyManageScopeBypassEnabled: true,
+          localOnlyManageScopeBypassPrefixes: ["/api/mcp/", "/api/extra/"],
+          alwaysPreserveClientCache: "never",
+          taskRouting: {
+            enabled: false,
+            patternOverrides: { coding: { patterns: ["candidate-only"] } },
+          },
+        }),
+        { source: "test:rollback" }
+      ),
+      /injected atomic section failure/
+    );
+  } finally {
+    setRuntimeSettingsFaultInjectorForTests(null);
+  }
+
+  assert.deepEqual(getCustomAliases(), { stable: "openai/gpt-4o-mini" });
+  assert.equal((await getPayloadRulesConfig()).override[0]?.params.temperature, 0.2);
+  assert.deepEqual(getAuthzBypassSnapshot(), { enabled: false, prefixes: ["/api/mcp/"] });
+  const { getCacheControlSettings } = await import("../../src/lib/cacheControlSettings.ts");
+  assert.equal(await getCacheControlSettings(), "always");
+  assert.equal(getTaskRoutingConfig().enabled, true);
+  assert.equal(getTaskRoutingConfig().patternOverrides, undefined);
+  assert.equal(getActiveRuntimeConfigSnapshot()?.revision, 20);
+  assert.equal(getRuntimeConfigStatus().desiredRevision, 21);
+  assert.equal(getRuntimeConfigStatus().state, "activation_failed");
 });

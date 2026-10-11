@@ -405,8 +405,8 @@ export async function registerNodejs(): Promise<void> {
     { startBackgroundRefresh },
     { ensureCloudSyncInitialized },
     { startProviderLimitsSyncScheduler },
-    { getSettings },
-    { applyRuntimeSettings },
+    { getSettings, getSettingsCandidate },
+    { applyRuntimeSettingsCandidate },
     { startRuntimeConfigHotReload },
     { startSpendBatchWriter },
     { startCleanupScheduler },
@@ -479,43 +479,18 @@ export async function registerNodejs(): Promise<void> {
       source: "startup",
     });
     settings = passwordState.settings;
-    const runtimeChanges = await applyRuntimeSettings(settings, { force: true, source: "startup" });
+    const candidate = await getSettingsCandidate();
+    settings = candidate.settings;
+    const runtimeChanges = await applyRuntimeSettingsCandidate(candidate, {
+      force: true,
+      source: "startup",
+    });
     if (runtimeChanges.length > 0) {
       console.log(
         `[STARTUP] Runtime settings hydrated: ${runtimeChanges
           .map((entry) => entry.section)
           .join(", ")}`
       );
-    }
-
-    // Restore Global System Prompt into in-memory config (#2468/#2470)
-    if (settings.systemPrompt) {
-      const { setSystemPromptConfig } =
-        await import("@agentproxy/open-sse/services/systemPrompt.ts");
-      setSystemPromptConfig(settings.systemPrompt);
-      console.log("[STARTUP] Global System Prompt restored from settings");
-    }
-
-    // Restore the proxy-level Thinking-Budget config (#5312 RC-A). It lives in
-    // `settings.thinkingBudget` and is NOT covered by applyRuntimeSettings, so
-    // without this the dashboard mode (auto/custom/adaptive) silently reverts to
-    // the passthrough default on every restart. Previously this was only wired into
-    // the unused `server-init.ts`, so it never ran in production.
-    const { hydrateThinkingBudgetConfig } =
-      await import("@agentproxy/open-sse/services/thinkingBudget.ts");
-    if (hydrateThinkingBudgetConfig(settings)) {
-      console.log("[STARTUP] Thinking-Budget config restored from settings");
-    }
-
-    // Restore the Task-Aware Smart Routing config (#8601). It lives in
-    // `settings.taskRouting` (written as a JSON string by PUT /api/settings/task-routing)
-    // and is NOT covered by applyRuntimeSettings, so without this the feature silently
-    // reverts to disabled + the default model map on every restart. Same shape as the
-    // Thinking-Budget restore above; must live here, not in the unused server-init.ts.
-    const { hydrateTaskRoutingConfig } =
-      await import("@agentproxy/open-sse/services/taskAwareRouter.ts");
-    if (hydrateTaskRoutingConfig(settings)) {
-      console.log("[STARTUP] Task-Aware Routing config restored from settings");
     }
 
     const seededModelAliases = await seedDefaultModelAliases();

@@ -439,6 +439,11 @@ function logError(message: string, ...args: any[]) {
 /**
  * Clear the cached hideLogs setting (call when settings are updated).
  */
+export function setHealthCheckLogCache(value: boolean) {
+  cachedHideLogs = value;
+  cacheTimestamp = Date.now();
+}
+
 export function clearHealthCheckLogCache() {
   cachedHideLogs = null;
   cacheTimestamp = 0;

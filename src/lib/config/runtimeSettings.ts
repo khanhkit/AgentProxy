@@ -1,10 +1,16 @@
-import { clearHealthCheckLogCache } from "@/lib/tokenHealthCheck";
+import { setHealthCheckLogCache } from "@/lib/tokenHealthCheck";
 import { setCustomBannedSignals } from "@agentproxy/open-sse/services/accountFallback.ts";
 import {
   setOperatorProviderErrorRules,
   type OperatorProviderErrorRule,
 } from "@agentproxy/open-sse/config/providerErrorRules.ts";
 import { isAutomatedTestProcess } from "@/shared/utils/testProcess";
+import {
+  activateRuntimeConfigCandidate,
+  resetRuntimeConfigAuthorityForTests,
+  type RuntimeConfigCandidate,
+  type RuntimeConfigSnapshot,
+} from "./runtimeConfigAuthority";
 
 type JsonRecord = Record<string, unknown>;
 
@@ -23,7 +29,10 @@ export type RuntimeReloadSection =
   | "systemTransforms"
   | "systemPrompt"
   | "authzBypass"
-  | "bannedSignals";
+  | "bannedSignals"
+  | "providerErrorRules"
+  | "thinkingBudget"
+  | "taskRouting";
 
 export interface RuntimeReloadChange {
   section: RuntimeReloadSection;
@@ -53,6 +62,8 @@ interface RuntimeSettingsSnapshot {
   authzBypass: AuthzBypassSnapshot;
   customBannedSignals: string[];
   providerErrorRules: Record<string, OperatorProviderErrorRule[]> | null;
+  thinkingBudget: JsonRecord | null;
+  taskRouting: JsonRecord | null;
 }
 
 // Default bypass policy: kill-switch on, `/api/mcp/` bypassable. Mirrors the
@@ -81,6 +92,8 @@ const DEFAULT_RUNTIME_SETTINGS_SNAPSHOT: RuntimeSettingsSnapshot = {
   authzBypass: DEFAULT_AUTHZ_BYPASS_SNAPSHOT,
   customBannedSignals: [],
   providerErrorRules: null,
+  thinkingBudget: null,
+  taskRouting: null,
 };
 
 let lastAppliedSnapshot: RuntimeSettingsSnapshot | null = null;
@@ -88,10 +101,7 @@ let lastAppliedSnapshot: RuntimeSettingsSnapshot | null = null;
 // Shared bypass-policy store. A globalThis-backed value is visible to every
 // independently evaluated server bundle/chunk that imports this module.
 const AUTHZ_BYPASS_GLOBAL_KEY = "__omniroute_authzBypass_config__";
-const authzBypassStore = globalThis as unknown as Record<
-  string,
-  AuthzBypassSnapshot | undefined
->;
+const authzBypassStore = globalThis as unknown as Record<string, AuthzBypassSnapshot | undefined>;
 
 function getCurrentAuthzBypass(): AuthzBypassSnapshot {
   if (!authzBypassStore[AUTHZ_BYPASS_GLOBAL_KEY]) {
@@ -220,6 +230,18 @@ function normalizeBackgroundDegradation(value: unknown): JsonRecord | null {
   };
 }
 
+function normalizeOptionalRecord(value: unknown, field: string): JsonRecord | null {
+  const record = toRecord(parseStoredJson(value, field));
+  return Object.keys(record).length > 0 ? record : null;
+}
+
+function normalizeTaskRouting(value: unknown): JsonRecord | null {
+  const record = normalizeOptionalRecord(value, "taskRouting");
+  if (!record) return null;
+  const { stats: _ignoredStats, ...persisted } = record;
+  return persisted;
+}
+
 function normalizeNumber(value: unknown): number | null {
   if (typeof value === "number" && Number.isFinite(value)) return value;
   if (typeof value === "string" && value.trim().length > 0) {
@@ -269,7 +291,7 @@ export function getAuthzBypassSnapshot(): AuthzBypassSnapshot {
 }
 
 export function buildRuntimeSettingsSnapshot(
-  settings: Record<string, unknown>
+  settings: Readonly<Record<string, unknown>>
 ): RuntimeSettingsSnapshot {
   return {
     payloadRules: normalizePayloadRules(settings.payloadRules),
@@ -297,6 +319,8 @@ export function buildRuntimeSettingsSnapshot(
     authzBypass: normalizeAuthzBypass(settings),
     customBannedSignals: normalizeStringArray(settings.customBannedSignals),
     providerErrorRules: normalizeOperatorProviderErrorRules(settings.providerErrorRules),
+    thinkingBudget: normalizeOptionalRecord(settings.thinkingBudget, "thinkingBudget"),
+    taskRouting: normalizeTaskRouting(settings.taskRouting),
   };
 }
 
@@ -305,11 +329,11 @@ function getPreviousSnapshot(): RuntimeSettingsSnapshot {
 }
 
 async function applyPayloadRulesSection(payloadRules: unknown) {
-  const { clearPayloadRulesConfigOverride, setPayloadRulesConfig } =
+  const { setPayloadRulesConfig, setPayloadRulesFileFallback } =
     await import("@agentproxy/open-sse/services/payloadRules.ts");
 
   if (payloadRules === null || payloadRules === undefined) {
-    clearPayloadRulesConfigOverride();
+    setPayloadRulesFileFallback();
     return;
   }
 
@@ -352,21 +376,15 @@ async function applyCliCompatProvidersSection(cliCompatProviders: string[]) {
   setCliCompatProviders(cliCompatProviders);
 }
 
-async function applyCacheControlSection() {
-  const { invalidateCacheControlSettingsCache } = await import("@/lib/cacheControlSettings");
-  invalidateCacheControlSettingsCache();
+async function applyCacheControlSection(mode: string) {
+  const { setCacheControlSettingsCache } = await import("@/lib/cacheControlSettings");
+  setCacheControlSettingsCache(mode as "auto" | "always" | "never");
 }
 
 async function applyUsageTrackingSection(newBuffer: number | null) {
-  const { invalidateBufferTokensCache, setBufferTokensCache } =
+  const { setRuntimeBufferTokensCache } =
     await import("@agentproxy/open-sse/utils/usageTracking.ts");
-  if (typeof newBuffer === "number" && newBuffer >= 0) {
-    // Set the value directly so the first request after a settings save gets the
-    // correct count synchronously — no race window back to DEFAULT (2000).
-    setBufferTokensCache(newBuffer);
-  } else {
-    invalidateBufferTokensCache();
-  }
+  setRuntimeBufferTokensCache(newBuffer);
 }
 
 async function applyThoughtSignatureSection(mode: string) {
@@ -437,6 +455,26 @@ async function applySystemPromptSection(systemPrompt: unknown) {
   }
 }
 
+async function applyThinkingBudgetSection(thinkingBudget: JsonRecord | null) {
+  const { DEFAULT_THINKING_CONFIG, setThinkingBudgetConfig } =
+    await import("@agentproxy/open-sse/services/thinkingBudget.ts");
+  setThinkingBudgetConfig(thinkingBudget ?? DEFAULT_THINKING_CONFIG);
+}
+
+async function applyTaskRoutingSection(taskRouting: JsonRecord | null) {
+  const { getDefaultTaskModelMap, setTaskRoutingConfig } =
+    await import("@agentproxy/open-sse/services/taskAwareRouter.ts");
+  setTaskRoutingConfig({
+    enabled: false,
+    detectionEnabled: true,
+    taskModelMap: getDefaultTaskModelMap(),
+    patternOverrides: undefined,
+  });
+  if (taskRouting) {
+    setTaskRoutingConfig(taskRouting as Parameters<typeof setTaskRoutingConfig>[0]);
+  }
+}
+
 async function applyModelsDevSyncSection(
   previousSnapshot: RuntimeSettingsSnapshot,
   currentSnapshot: RuntimeSettingsSnapshot,
@@ -458,8 +496,7 @@ async function applyModelsDevSyncSection(
   }
 
   const wasEnabled = previousSnapshot.modelsDevSyncEnabled === true;
-  const isEnabled =
-    isModelsDevSyncEnvForcedOn() || currentSnapshot.modelsDevSyncEnabled === true;
+  const isEnabled = isModelsDevSyncEnvForcedOn() || currentSnapshot.modelsDevSyncEnabled === true;
   const intervalChanged =
     previousSnapshot.modelsDevSyncInterval !== currentSnapshot.modelsDevSyncInterval;
 
@@ -487,23 +524,34 @@ async function applyModelsDevSyncSection(
   }
 }
 
-export async function applyRuntimeSettings(
-  settings: Record<string, unknown>,
-  options: { force?: boolean; source?: string } = {}
-): Promise<RuntimeReloadChange[]> {
-  const source = options.source || "runtime";
-  const force = options.force === true;
-  const hasBootstrappedSnapshot = lastAppliedSnapshot !== null;
-  const currentSnapshot = buildRuntimeSettingsSnapshot(settings);
-  const previousSnapshot = getPreviousSnapshot();
-  const changes: RuntimeReloadChange[] = [];
+type RuntimeSettingsFaultInjector = (section: RuntimeReloadSection) => void;
+let runtimeSettingsFaultInjectorForTests: RuntimeSettingsFaultInjector | null = null;
 
+export function setRuntimeSettingsFaultInjectorForTests(
+  injector: RuntimeSettingsFaultInjector | null
+): void {
+  runtimeSettingsFaultInjectorForTests = injector;
+}
+
+function hasChanged<T>(currentValue: T, previousValue: T): boolean {
+  return stableSerialize(currentValue) !== stableSerialize(previousValue);
+}
+
+async function applyAtomicRuntimeSections(
+  previousSnapshot: RuntimeSettingsSnapshot,
+  currentSnapshot: RuntimeSettingsSnapshot,
+  options: {
+    force: boolean;
+    source: string;
+    allowFaultInjection: boolean;
+  }
+): Promise<RuntimeReloadChange[]> {
+  const { force, source, allowFaultInjection } = options;
+  const changes: RuntimeReloadChange[] = [];
   const markChanged = (section: RuntimeReloadSection) => {
     changes.push({ section, source });
+    if (allowFaultInjection) runtimeSettingsFaultInjectorForTests?.(section);
   };
-
-  const hasChanged = <T>(currentValue: T, previousValue: T) =>
-    stableSerialize(currentValue) !== stableSerialize(previousValue);
 
   if (force || hasChanged(currentSnapshot.payloadRules, previousSnapshot.payloadRules)) {
     await applyPayloadRulesSection(currentSnapshot.payloadRules);
@@ -538,21 +586,19 @@ export async function applyRuntimeSettings(
       previousSnapshot.alwaysPreserveClientCache
     )
   ) {
-    await applyCacheControlSection();
+    await applyCacheControlSection(currentSnapshot.alwaysPreserveClientCache);
     markChanged("cacheControl");
   }
 
   if (force || hasChanged(currentSnapshot.usageTokenBuffer, previousSnapshot.usageTokenBuffer)) {
-    const newBuffer =
-      typeof currentSnapshot.usageTokenBuffer === "number"
-        ? currentSnapshot.usageTokenBuffer
-        : null;
-    await applyUsageTrackingSection(newBuffer);
+    await applyUsageTrackingSection(
+      typeof currentSnapshot.usageTokenBuffer === "number" ? currentSnapshot.usageTokenBuffer : null
+    );
     markChanged("usageTracking");
   }
 
   if (force || currentSnapshot.hideHealthCheckLogs !== previousSnapshot.hideHealthCheckLogs) {
-    clearHealthCheckLogCache();
+    setHealthCheckLogCache(currentSnapshot.hideHealthCheckLogs);
     markChanged("healthCheckLogs");
   }
 
@@ -565,16 +611,6 @@ export async function applyRuntimeSettings(
   ) {
     await applyThoughtSignatureSection(currentSnapshot.antigravitySignatureCacheMode);
     markChanged("thoughtSignature");
-  }
-
-  if (
-    force ||
-    (hasBootstrappedSnapshot &&
-      (currentSnapshot.modelsDevSyncEnabled !== previousSnapshot.modelsDevSyncEnabled ||
-        currentSnapshot.modelsDevSyncInterval !== previousSnapshot.modelsDevSyncInterval))
-  ) {
-    await applyModelsDevSyncSection(previousSnapshot, currentSnapshot, force);
-    markChanged("modelsDevSync");
   }
 
   if (force || hasChanged(currentSnapshot.corsOrigins, previousSnapshot.corsOrigins)) {
@@ -618,6 +654,122 @@ export async function applyRuntimeSettings(
     hasChanged(currentSnapshot.providerErrorRules, previousSnapshot.providerErrorRules)
   ) {
     setOperatorProviderErrorRules(currentSnapshot.providerErrorRules ?? undefined);
+    markChanged("providerErrorRules");
+  }
+
+  if (force || hasChanged(currentSnapshot.thinkingBudget, previousSnapshot.thinkingBudget)) {
+    await applyThinkingBudgetSection(currentSnapshot.thinkingBudget);
+    markChanged("thinkingBudget");
+  }
+
+  if (force || hasChanged(currentSnapshot.taskRouting, previousSnapshot.taskRouting)) {
+    await applyTaskRoutingSection(currentSnapshot.taskRouting);
+    markChanged("taskRouting");
+  }
+
+  return changes;
+}
+
+async function reconcileRuntimeSections(
+  previousSnapshot: RuntimeSettingsSnapshot,
+  currentSnapshot: RuntimeSettingsSnapshot,
+  options: { force: boolean; source: string }
+): Promise<RuntimeReloadChange[]> {
+  const { force, source } = options;
+  if (
+    !force &&
+    currentSnapshot.modelsDevSyncEnabled === previousSnapshot.modelsDevSyncEnabled &&
+    currentSnapshot.modelsDevSyncInterval === previousSnapshot.modelsDevSyncInterval
+  ) {
+    return [];
+  }
+
+  await applyModelsDevSyncSection(previousSnapshot, currentSnapshot, force);
+  return [{ section: "modelsDevSync", source }];
+}
+
+export async function applyRuntimeSettingsCandidate(
+  candidate: RuntimeConfigCandidate,
+  options: { force?: boolean; source?: string } = {}
+): Promise<RuntimeReloadChange[]> {
+  const source = options.source || "runtime";
+  const force = options.force === true;
+  let prepared: { previous: RuntimeSettingsSnapshot; current: RuntimeSettingsSnapshot } | undefined;
+  let changes: RuntimeReloadChange[] = [];
+
+  const activatedSnapshot = await activateRuntimeConfigCandidate(candidate, {
+    prepare: (snapshot: RuntimeConfigSnapshot, previousActive: RuntimeConfigSnapshot | null) => {
+      prepared = {
+        previous: previousActive
+          ? buildRuntimeSettingsSnapshot(previousActive.settings)
+          : DEFAULT_RUNTIME_SETTINGS_SNAPSHOT,
+        current: buildRuntimeSettingsSnapshot(snapshot.settings),
+      };
+      return prepared;
+    },
+    applyAtomic: async (preparedCandidate) => {
+      if (!preparedCandidate) throw new Error("Runtime settings candidate was not prepared");
+      changes = await applyAtomicRuntimeSections(
+        preparedCandidate.previous,
+        preparedCandidate.current,
+        { force, source, allowFaultInjection: true }
+      );
+    },
+    rollbackAtomic: async (preparedCandidate) => {
+      if (!preparedCandidate) return;
+      await applyAtomicRuntimeSections(preparedCandidate.current, preparedCandidate.previous, {
+        force: true,
+        source: `${source}:rollback`,
+        allowFaultInjection: false,
+      });
+    },
+    reconcile: async (activeCandidate) => {
+      const current = buildRuntimeSettingsSnapshot(activeCandidate.settings);
+      const previous = prepared?.previous ?? current;
+      changes.push(
+        ...(await reconcileRuntimeSections(previous, current, {
+          force: force || !prepared,
+          source,
+        }))
+      );
+    },
+  });
+
+  if (activatedSnapshot?.revision === candidate.revision) {
+    lastAppliedSnapshot = buildRuntimeSettingsSnapshot(activatedSnapshot.settings);
+  }
+
+  return changes;
+}
+
+/**
+ * Compatibility adapter for callers that do not yet have a durable revision.
+ * Production settings writes and startup use applyRuntimeSettingsCandidate().
+ */
+export async function applyRuntimeSettings(
+  settings: Record<string, unknown>,
+  options: { force?: boolean; source?: string } = {}
+): Promise<RuntimeReloadChange[]> {
+  const source = options.source || "runtime";
+  const force = options.force === true;
+  const hasBootstrappedSnapshot = lastAppliedSnapshot !== null;
+  const currentSnapshot = buildRuntimeSettingsSnapshot(settings);
+  const previousSnapshot = getPreviousSnapshot();
+  const changes = await applyAtomicRuntimeSections(previousSnapshot, currentSnapshot, {
+    force,
+    source,
+    allowFaultInjection: true,
+  });
+
+  if (
+    force ||
+    (hasBootstrappedSnapshot &&
+      (currentSnapshot.modelsDevSyncEnabled !== previousSnapshot.modelsDevSyncEnabled ||
+        currentSnapshot.modelsDevSyncInterval !== previousSnapshot.modelsDevSyncInterval))
+  ) {
+    changes.push(
+      ...(await reconcileRuntimeSections(previousSnapshot, currentSnapshot, { force, source }))
+    );
   }
 
   lastAppliedSnapshot = currentSnapshot;
@@ -626,5 +778,7 @@ export async function applyRuntimeSettings(
 
 export function resetRuntimeSettingsStateForTests() {
   lastAppliedSnapshot = null;
+  runtimeSettingsFaultInjectorForTests = null;
   setCurrentAuthzBypass(DEFAULT_AUTHZ_BYPASS_SNAPSHOT);
+  resetRuntimeConfigAuthorityForTests();
 }
