@@ -50,3 +50,20 @@ test("transformResponseFromProvider passes through string id unchanged", () => {
   assert.equal(typeof result.id, "string");
   assert.equal(result.id, "nvidia-abc");
 });
+
+test("Alibaba Qwen3 rerank honors top_n after sorting by relevance", () => {
+  const result = transformResponseFromProvider(
+    { format: "alibaba-qwen3" },
+    {
+      id: "qwen-test",
+      results: [
+        { index: 0, relevance_score: 0.2 },
+        { index: 1, relevance_score: 0.9 },
+        { index: 2, relevance_score: 0.5 },
+      ],
+    },
+    { documents: ["a", "b", "c"], top_n: 1, return_documents: false }
+  );
+  assert.deepEqual(result.results, [{ index: 1, relevance_score: 0.9 }]);
+  assert.equal(result.id, "qwen-test");
+});

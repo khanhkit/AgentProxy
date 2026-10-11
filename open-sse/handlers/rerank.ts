@@ -108,15 +108,20 @@ function transformAlibabaQwen3Response(data, options: RerankResponseOptions) {
   if (!Array.isArray(data.results)) return data;
   const documents = Array.isArray(options.documents) ? options.documents : [];
   const returnDocuments = options.return_documents !== false;
-  return {
-    ...data,
-    results: data.results.map((entry) => {
-      if (!returnDocuments || entry.document) return entry;
-      const doc = documents[entry.index];
-      const text = typeof doc === "string" ? doc : doc?.text || "";
-      return { ...entry, document: { text } };
-    }),
-  };
+  const results = data.results.map((entry) => {
+    if (!returnDocuments || entry.document) return entry;
+    const doc = documents[entry.index];
+    const text = typeof doc === "string" ? doc : doc?.text || "";
+    return { ...entry, document: { text } };
+  });
+  const topN =
+    typeof options.top_n === "number" && Number.isSafeInteger(options.top_n) && options.top_n > 0
+      ? options.top_n
+      : null;
+  if (topN !== null) {
+    results.sort((a, b) => (b.relevance_score || 0) - (a.relevance_score || 0));
+  }
+  return { ...data, results: topN !== null ? results.slice(0, topN) : results };
 }
 
 /**

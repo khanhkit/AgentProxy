@@ -171,3 +171,25 @@ test("getMcpModelsCatalog returns empty result when requested provider has no ac
     warning: "No active connections found for provider 'github'.",
   });
 });
+
+test("getMcpModelsCatalog excludes invalid context lengths from MCP advertisements", async () => {
+  const lengths = [0, -8, Number.NaN, Number.POSITIVE_INFINITY, 3.5, 2048];
+  const result = await getMcpModelsCatalog(
+    {},
+    {
+      listProviderConnections: async () => [{ id: "conn", provider: "openai", isActive: true }],
+      fetchJson: async () => ({
+        source: "api",
+        models: lengths.map((context_length, index) => ({
+          id: `model-${index}`,
+          owned_by: "openai",
+          context_length,
+        })),
+      }),
+    }
+  );
+  assert.deepEqual(
+    result.models.map((model) => model.context_length),
+    [undefined, undefined, undefined, undefined, undefined, 2048]
+  );
+});
