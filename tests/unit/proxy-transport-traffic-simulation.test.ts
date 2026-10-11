@@ -134,7 +134,7 @@ test("simulated traffic: global outage never condemns anyone", async () => {
 });
 
 test("AP-ISS-0194: proxy/gateway error responses do not count as cross-egress success", async () => {
-  for (const status of [407, 502, 503]) {
+  for (const status of [301, 302, 400, 403, 407, 408, 429, 502, 503]) {
     memory.__resetTransportEvidenceForTesting();
     await withEnv({ PROXY_SKIP_RECENTLY_FAILED: "true" }, () =>
       runWithProxyContext(EGRESS_B, () =>
