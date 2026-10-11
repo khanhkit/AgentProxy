@@ -33,7 +33,11 @@
 
 /** Reasons `selectGeminiUiMode`/`selectGeminiModel` can fail closed. */
 export type GeminiModeSelectionFailureReason =
-  "control_not_found" | "indicator_not_found" | "indicator_mismatch" | "unknown_model";
+  | "control_not_found"
+  | "option_not_found"
+  | "indicator_not_found"
+  | "indicator_mismatch"
+  | "unknown_model";
 
 export interface GeminiWebModeDescriptor {
   /** The advertised `gweb/<model>` id, or a synthetic label for non-model controls. */
@@ -45,6 +49,11 @@ export interface GeminiWebModeDescriptor {
   readonly isDefault: boolean;
   /** UNVALIDATED — opens/activates the control for this mode. Ignored when `isDefault`. */
   readonly toggleSelector?: string;
+  /**
+   * Generic accessible name for the model option to click after opening the menu.
+   * Deliberately uses the accessibility tree instead of an invented DOM selector.
+   */
+  readonly optionNamePattern?: RegExp;
   /** UNVALIDATED — element whose text proves which mode is now active. */
   readonly activeIndicatorSelector?: string;
   /** Text the active-mode indicator must contain once the switch is confirmed. */
@@ -65,6 +74,7 @@ export const GEMINI_WEB_MODEL_MODES: Readonly<Record<string, GeminiWebModeDescri
     isDefault: false,
     toggleSelector:
       '[data-test-id="bard-mode-menu-button"], button[aria-haspopup="menu"][aria-label*="model" i]',
+    optionNamePattern: /^\s*gemini\s*3\.7\s*flash\s*$/i,
     activeIndicatorSelector:
       '[data-test-id="bard-mode-menu-button"] .mode-title, [data-test-id="bard-mode-menu-button"]',
     expectedIndicatorPattern: /\bflash\b(?!.*\blite\b)/i,
@@ -74,6 +84,7 @@ export const GEMINI_WEB_MODEL_MODES: Readonly<Record<string, GeminiWebModeDescri
     isDefault: false,
     toggleSelector:
       '[data-test-id="bard-mode-menu-button"], button[aria-haspopup="menu"][aria-label*="model" i]',
+    optionNamePattern: /^\s*gemini\s*3\.1\s*flash\s*lite\s*$/i,
     activeIndicatorSelector:
       '[data-test-id="bard-mode-menu-button"] .mode-title, [data-test-id="bard-mode-menu-button"]',
     expectedIndicatorPattern: /flash.*\blite\b/i,
@@ -94,9 +105,11 @@ export const GEMINI_WEB_EXTENDED_THINKING_MODE: GeminiWebModeDescriptor = {
 
 /** Minimal Playwright-shaped element the read-back needs — real `ElementHandle`s satisfy this. */
 export interface GeminiAutomationElement {
-  click(): Promise<void>;
+  click(options?: { timeout?: number }): Promise<void>;
   textContent?(): Promise<string | null>;
   innerText?(): Promise<string>;
+  /** Playwright Locator union; ElementHandle-shaped callers may omit it. */
+  or?(locator: GeminiAutomationElement): GeminiAutomationElement;
 }
 
 /** Minimal Playwright-shaped page the selection step needs — the real `Page` satisfies this. */
@@ -105,6 +118,11 @@ export interface GeminiAutomationPage {
     selector: string,
     opts?: { timeout?: number }
   ): Promise<GeminiAutomationElement | null>;
+  waitForTimeout?(timeout: number): Promise<void>;
+  getByRole?(
+    role: "menuitem" | "menuitemradio",
+    opts: { name: string | RegExp }
+  ): GeminiAutomationElement;
 }
 
 export interface GeminiModeSelectionResult {
@@ -128,6 +146,25 @@ async function readIndicatorText(el: GeminiAutomationElement): Promise<string | 
   return null;
 }
 
+async function readIndicatorTextWithinBudget(
+  el: GeminiAutomationElement,
+  budgetMs: number
+): Promise<string | null> {
+  if (budgetMs <= 0) return null;
+
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  try {
+    return await Promise.race([
+      readIndicatorText(el),
+      new Promise<null>((resolve) => {
+        timer = setTimeout(() => resolve(null), budgetMs);
+      }),
+    ]);
+  } finally {
+    if (timer !== undefined) clearTimeout(timer);
+  }
+}
+
 /**
  * Try to switch the live Gemini Web page to `descriptor`'s mode, then READ
  * BACK the active-mode indicator before reporting success. A click landing
@@ -141,29 +178,90 @@ export async function selectGeminiUiMode(
 ): Promise<GeminiModeSelectionResult> {
   if (descriptor.isDefault) return { confirmed: true, descriptor };
 
-  const { toggleSelector, activeIndicatorSelector, expectedIndicatorPattern } = descriptor;
+  const { toggleSelector, optionNamePattern, activeIndicatorSelector, expectedIndicatorPattern } =
+    descriptor;
   if (!toggleSelector || !activeIndicatorSelector || !expectedIndicatorPattern) {
     return { confirmed: false, reason: "control_not_found", descriptor };
   }
 
+  const deadline = Date.now() + Math.max(0, timeoutMs);
+  const remainingMs = () => Math.max(0, deadline - Date.now());
+
+  const toggleLookupTimeout = remainingMs();
+  if (toggleLookupTimeout <= 0) {
+    return { confirmed: false, reason: "control_not_found", descriptor };
+  }
   const toggle = await page
-    .waitForSelector(toggleSelector, { timeout: timeoutMs })
+    .waitForSelector(toggleSelector, { timeout: toggleLookupTimeout })
     .catch(() => null);
   if (!toggle) return { confirmed: false, reason: "control_not_found", descriptor };
 
-  await toggle.click();
-
-  const indicator = await page
-    .waitForSelector(activeIndicatorSelector, { timeout: timeoutMs })
-    .catch(() => null);
-  if (!indicator) return { confirmed: false, reason: "indicator_not_found", descriptor };
-
-  const text = await readIndicatorText(indicator);
-  if (!text || !expectedIndicatorPattern.test(text)) {
-    return { confirmed: false, reason: "indicator_mismatch", descriptor };
+  const toggleClickTimeout = remainingMs();
+  if (toggleClickTimeout <= 0) {
+    return { confirmed: false, reason: "control_not_found", descriptor };
+  }
+  try {
+    await toggle.click({ timeout: toggleClickTimeout });
+  } catch {
+    return { confirmed: false, reason: "control_not_found", descriptor };
   }
 
-  return { confirmed: true, descriptor };
+  if (optionNamePattern) {
+    if (typeof page.getByRole !== "function") {
+      return { confirmed: false, reason: "option_not_found", descriptor };
+    }
+    const optionClickTimeout = remainingMs();
+    if (optionClickTimeout <= 0) {
+      return { confirmed: false, reason: "option_not_found", descriptor };
+    }
+    try {
+      const menuItem = page.getByRole("menuitem", { name: optionNamePattern });
+      const menuItemRadio = page.getByRole("menuitemradio", { name: optionNamePattern });
+      const option = typeof menuItemRadio.or === "function" ? menuItemRadio.or(menuItem) : menuItem;
+      await option.click({ timeout: optionClickTimeout });
+    } catch {
+      return { confirmed: false, reason: "option_not_found", descriptor };
+    }
+  }
+
+  const maxAttempts = Math.max(1, Math.ceil(Math.max(1, remainingMs()) / 50));
+  let sawIndicator = false;
+
+  for (let attempt = 0; attempt < maxAttempts; attempt += 1) {
+    const indicatorBudget = remainingMs();
+    if (indicatorBudget <= 0) break;
+    const pollIntervalMs = Math.min(50, indicatorBudget);
+    const indicator = await page
+      .waitForSelector(activeIndicatorSelector, { timeout: pollIntervalMs })
+      .catch(() => null);
+
+    if (indicator) {
+      sawIndicator = true;
+      const readBudget = remainingMs();
+      if (readBudget <= 0) break;
+      const text = await readIndicatorTextWithinBudget(indicator, readBudget);
+      if (remainingMs() > 0 && text && expectedIndicatorPattern.test(text)) {
+        return { confirmed: true, descriptor };
+      }
+    }
+
+    if (attempt + 1 < maxAttempts) {
+      const waitBudget = remainingMs();
+      if (waitBudget <= 0) break;
+      const waitMs = Math.min(50, waitBudget);
+      if (typeof page.waitForTimeout === "function") {
+        await page.waitForTimeout(waitMs);
+      } else {
+        await new Promise<void>((resolve) => setTimeout(resolve, waitMs));
+      }
+    }
+  }
+
+  return {
+    confirmed: false,
+    reason: sawIndicator ? "indicator_mismatch" : "indicator_not_found",
+    descriptor,
+  };
 }
 
 export function resolveGeminiModelMode(modelId: string): GeminiWebModeDescriptor | null {
@@ -192,6 +290,7 @@ export async function selectGeminiExtendedThinking(
 const REASON_DETAIL: Record<GeminiModeSelectionFailureReason, string> = {
   unknown_model: "it is not one of the advertised, selectable gweb models",
   control_not_found: "the Gemini UI control used to switch modes was not found",
+  option_not_found: "the requested Gemini model option could not be selected from the open menu",
   indicator_not_found: "the active-mode indicator used to confirm the switch was not found",
   indicator_mismatch: "the active-mode indicator did not confirm the switch after attempting it",
 };

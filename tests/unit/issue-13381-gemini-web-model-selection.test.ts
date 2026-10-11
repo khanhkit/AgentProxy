@@ -24,7 +24,7 @@ import assert from "node:assert/strict";
 const { GeminiWebExecutor } = await import("../../open-sse/executors/gemini-web.ts");
 const { GEMINI_WEB_UNSUPPORTED_CONTROL_CODE } =
   await import("../../open-sse/executors/gemini-web/capabilities.ts");
-const { GEMINI_WEB_MODEL_MODES, GEMINI_WEB_EXTENDED_THINKING_MODE } =
+const { GEMINI_WEB_MODEL_MODES, GEMINI_WEB_EXTENDED_THINKING_MODE, selectGeminiUiMode } =
   await import("../../open-sse/executors/gemini-web/modeSelection.ts");
 
 type Call = { fn: string; args: unknown[] };
@@ -32,11 +32,14 @@ type Call = { fn: string; args: unknown[] };
 interface SelectorScriptEntry {
   found: boolean;
   text?: string | null;
+  texts?: Array<string | null>;
 }
 
 interface PageScript {
   /** Keyed by the EXACT selector string the production descriptor uses. */
   selectors?: Record<string, SelectorScriptEntry>;
+  /** Generic accessibility-role option labels exposed after a model menu is opened. */
+  roleOptions?: string[];
 }
 
 /**
@@ -81,7 +84,24 @@ function makeFakePlaywright(calls: Call[], script: PageScript = {}) {
               click: async () => {
                 calls.push({ fn: "mode.click", args: [selector] });
               },
-              textContent: async () => entry.text ?? null,
+              textContent: async () => entry.texts?.shift() ?? entry.text ?? null,
+            };
+          },
+          getByRole: (role: string, opts2?: { name?: string | RegExp }) => {
+            calls.push({ fn: "getByRole", args: [role, opts2] });
+            const name = opts2?.name;
+            const matching = (script.roleOptions ?? []).find((label) =>
+              typeof name === "string"
+                ? label === name
+                : name instanceof RegExp
+                  ? name.test(label)
+                  : true
+            );
+            return {
+              click: async () => {
+                if (!matching) throw new Error(`role option not found: ${role}`);
+                calls.push({ fn: "role.click", args: [role, matching] });
+              },
             };
           },
           keyboard: {
@@ -180,6 +200,31 @@ test(
   }
 );
 
+test("#13381: opening the model menu without selecting an option never confirms a non-default model", async () => {
+  const descriptor = GEMINI_WEB_MODEL_MODES["gemini-3.7-flash"];
+  assert.ok(descriptor.toggleSelector && descriptor.activeIndicatorSelector);
+
+  const { status, calls } = await runWithFakePage("gemini-3.7-flash", {
+    selectors: {
+      [descriptor.toggleSelector!]: { found: true },
+      [descriptor.activeIndicatorSelector!]: { found: true, text: "Gemini 3.7 Flash" },
+    },
+    roleOptions: [],
+  });
+
+  assert.equal(status, 400, "a menu-open action alone must fail closed");
+  assert.equal(
+    calls.some((c) => c.fn === "role.click"),
+    false,
+    "no requested model option was available to click"
+  );
+  assert.equal(
+    calls.some((c) => c.fn === "editor.click"),
+    false,
+    "unselected model must never reach prompt execution"
+  );
+});
+
 // ─── (a) Read-back confirms -> proceeds ─────────────────────────────────────
 
 test("#13381: a confirmed model-mode read-back lets the request proceed to the prompt", async () => {
@@ -191,6 +236,7 @@ test("#13381: a confirmed model-mode read-back lets the request proceed to the p
       [descriptor.toggleSelector!]: { found: true },
       [descriptor.activeIndicatorSelector!]: { found: true, text: "Gemini 3.7 Flash" },
     },
+    roleOptions: ["Gemini 3.7 Flash"],
   });
 
   assert.equal(
@@ -206,6 +252,202 @@ test("#13381: a confirmed model-mode read-back lets the request proceed to the p
     calls.some((c) => c.fn === "editor.click"),
     "must reach the prompt editor once confirmed"
   );
+});
+
+test("#13381: model selection waits for the active indicator to reflect the requested option", async () => {
+  const descriptor = GEMINI_WEB_MODEL_MODES["gemini-3.7-flash"];
+  assert.ok(descriptor.toggleSelector && descriptor.activeIndicatorSelector);
+
+  const { status, calls } = await runWithFakePage("gemini-3.7-flash", {
+    selectors: {
+      [descriptor.toggleSelector!]: { found: true },
+      [descriptor.activeIndicatorSelector!]: {
+        found: true,
+        texts: ["Gemini 3.1 Pro", "Gemini 3.7 Flash"],
+      },
+    },
+    roleOptions: ["Gemini 3.7 Flash"],
+  });
+
+  assert.equal(status, 502, "selection must tolerate the indicator's asynchronous text update");
+  assert.ok(
+    calls.some((c) => c.fn === "editor.click"),
+    "confirmed selection must reach prompt execution"
+  );
+});
+
+test("#13381: model option matching selects only the exact accessible model label", async () => {
+  const descriptor = GEMINI_WEB_MODEL_MODES["gemini-3.7-flash"];
+  assert.ok(descriptor.toggleSelector && descriptor.activeIndicatorSelector);
+
+  const { status, calls } = await runWithFakePage("gemini-3.7-flash", {
+    selectors: {
+      [descriptor.toggleSelector!]: { found: true },
+      [descriptor.activeIndicatorSelector!]: { found: true, text: "Gemini 3.7 Flash" },
+    },
+    roleOptions: ["Gemini 3.7 Flash Experimental", "Gemini 3.7 Flash"],
+  });
+
+  assert.equal(status, 502);
+  assert.deepEqual(
+    calls.find((c) => c.fn === "role.click")?.args,
+    ["menuitem", "Gemini 3.7 Flash"],
+    "a qualified model label must not shadow the exact requested model"
+  );
+});
+
+test("#13381: exact model matching tolerates surrounding whitespace but rejects suffix labels", async () => {
+  const descriptor = GEMINI_WEB_MODEL_MODES["gemini-3.7-flash"];
+  assert.ok(descriptor.toggleSelector && descriptor.activeIndicatorSelector);
+
+  const { status, calls } = await runWithFakePage("gemini-3.7-flash", {
+    selectors: {
+      [descriptor.toggleSelector!]: { found: true },
+      [descriptor.activeIndicatorSelector!]: { found: true, text: "Gemini 3.7 Flash" },
+    },
+    roleOptions: [" Gemini 3.7 Flash Experimental ", " Gemini 3.7 Flash "],
+  });
+
+  assert.equal(status, 502);
+  assert.deepEqual(
+    calls.find((c) => c.fn === "role.click")?.args,
+    ["menuitem", " Gemini 3.7 Flash "],
+    "benign surrounding whitespace is allowed without accepting a qualified model label"
+  );
+});
+
+test("#13381: model selection accepts either menuitemradio or menuitem role without a second timeout", async () => {
+  const descriptor = GEMINI_WEB_MODEL_MODES["gemini-3.7-flash"];
+  assert.ok(descriptor.toggleSelector && descriptor.activeIndicatorSelector);
+
+  type FakeRoleLocator = {
+    role: "menuitem" | "menuitemradio";
+    click(options?: { timeout?: number }): Promise<void>;
+    or(other: FakeRoleLocator): FakeRoleLocator;
+  };
+
+  const clickedRoles: string[] = [];
+  const locatorFor = (role: "menuitem" | "menuitemradio"): FakeRoleLocator => ({
+    role,
+    click: async () => {
+      if (role !== "menuitemradio") throw new Error("menuitem role absent");
+      clickedRoles.push(role);
+    },
+    or(other) {
+      return {
+        role,
+        click: async (options) => {
+          try {
+            await this.click(options);
+          } catch {
+            await other.click(options);
+          }
+        },
+        or: this.or,
+      };
+    },
+  });
+
+  const page = {
+    waitForSelector: async (selector: string) => {
+      if (selector === descriptor.toggleSelector) return { click: async () => {} };
+      return {
+        click: async () => {},
+        textContent: async () => "Gemini 3.7 Flash",
+      };
+    },
+    getByRole: (role: "menuitem" | "menuitemradio") => locatorFor(role),
+    waitForTimeout: async () => {},
+  };
+
+  const result = await selectGeminiUiMode(page, descriptor, 100);
+  assert.equal(result.confirmed, true);
+  assert.deepEqual(clickedRoles, ["menuitemradio"]);
+});
+
+test("#13381: model selection shares one timeout budget across every automation phase", async () => {
+  const descriptor = GEMINI_WEB_MODEL_MODES["gemini-3.7-flash"];
+  assert.ok(descriptor.toggleSelector && descriptor.activeIndicatorSelector);
+
+  const originalNow = Date.now;
+  let now = 1_000;
+  const observedTimeouts: Array<number | undefined> = [];
+  Date.now = () => now;
+
+  try {
+    const page = {
+      waitForSelector: async (selector: string, opts?: { timeout?: number }) => {
+        observedTimeouts.push(opts?.timeout);
+        now += 20;
+        if (selector === descriptor.toggleSelector) {
+          return {
+            click: async (clickOpts?: { timeout?: number }) => {
+              observedTimeouts.push(clickOpts?.timeout);
+              now += 20;
+            },
+          };
+        }
+        return {
+          click: async () => {},
+          textContent: async () => "Gemini 3.7 Flash",
+        };
+      },
+      getByRole: () => ({
+        click: async (clickOpts?: { timeout?: number }) => {
+          observedTimeouts.push(clickOpts?.timeout);
+          now += 20;
+        },
+      }),
+      waitForTimeout: async (ms: number) => {
+        now += ms;
+      },
+    };
+
+    const result = await selectGeminiUiMode(page, descriptor, 100);
+    assert.equal(result.confirmed, true);
+    assert.deepEqual(
+      observedTimeouts,
+      [100, 80, 60, 40],
+      "toggle lookup, toggle click, option click, and read-back must consume one deadline"
+    );
+  } finally {
+    Date.now = originalNow;
+  }
+});
+
+test("#13381: indicator text read cannot confirm after the shared deadline expires", async () => {
+  const descriptor = GEMINI_WEB_MODEL_MODES["gemini-3.7-flash"];
+  assert.ok(descriptor.toggleSelector && descriptor.activeIndicatorSelector);
+
+  const originalNow = Date.now;
+  let now = 1_000;
+  Date.now = () => now;
+
+  try {
+    const page = {
+      waitForSelector: async (selector: string) => {
+        if (selector === descriptor.toggleSelector) {
+          return { click: async () => {} };
+        }
+        return {
+          click: async () => {},
+          textContent: async () => {
+            now += 101;
+            return "Gemini 3.7 Flash";
+          },
+        };
+      },
+      getByRole: () => ({ click: async () => {} }),
+      waitForTimeout: async (ms: number) => {
+        now += ms;
+      },
+    };
+
+    const result = await selectGeminiUiMode(page, descriptor, 100);
+    assert.equal(result.confirmed, false, "a read completing after deadline must never confirm");
+  } finally {
+    Date.now = originalNow;
+  }
 });
 
 // ─── (b) Control missing -> 400, never a silent 200 ─────────────────────────
@@ -231,6 +473,7 @@ test("#13381: a mismatched read-back fails closed with 400, not a silent success
       // Toggle clicked, but the UI actually shows a different mode than requested.
       [descriptor.activeIndicatorSelector!]: { found: true, text: "Gemini 3.1 Pro" },
     },
+    roleOptions: ["Gemini 3.1 Flash Lite"],
   });
 
   assert.notEqual(status, 200);
@@ -302,4 +545,21 @@ test("#13381: reasoning_effort none/minimal never triggers the Extended Thinking
       `effort="${effort}" must not attempt any UI control switch`
     );
   }
+});
+
+test("#13381: Flash selection never clicks a Flash Lite option when both are present", async () => {
+  const descriptor = GEMINI_WEB_MODEL_MODES["gemini-3.7-flash"];
+  assert.ok(descriptor.toggleSelector && descriptor.activeIndicatorSelector);
+
+  const { calls } = await runWithFakePage("gemini-3.7-flash", {
+    selectors: {
+      [descriptor.toggleSelector!]: { found: true },
+      [descriptor.activeIndicatorSelector!]: { found: true, text: "Gemini 3.7 Flash" },
+    },
+    roleOptions: ["Gemini 3.7 Flash Lite", "Gemini 3.7 Flash"],
+  });
+
+  const roleClick = calls.find((call) => call.fn === "role.click");
+  assert.ok(roleClick, "the requested Flash option must be clicked");
+  assert.equal(roleClick.args[1], "Gemini 3.7 Flash");
 });
