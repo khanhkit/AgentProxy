@@ -19,7 +19,7 @@ interface Props {
 }
 
 function isGlmResetProvider(provider: string): boolean {
-  return provider !== "codex";
+  return provider !== "codex" && provider !== "grok-cli";
 }
 
 export function getResetCreditWindowTitle(
