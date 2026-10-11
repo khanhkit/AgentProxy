@@ -61,6 +61,14 @@ test("parseDsmlToolCalls: content with no DSML markers passes through unchanged"
   assert.equal(result.content, content);
 });
 
+test("parseDsmlToolCalls: ordinary XML closers survive when no DSML marker exists", () => {
+  const content = "Example: <invoke><parameter>value</parameter></invoke>";
+  const result = parseDsmlToolCalls(content);
+
+  assert.equal(result.toolCalls.length, 0);
+  assert.equal(result.content, content);
+});
+
 test("parseDsmlToolCalls: partial opening marker at the tail is held back (streaming-safe)", () => {
   // A truncated stream might end mid-marker; the partial opener must not leak.
   const content = `normal text <${FW}DSML${FW}:Wri`;

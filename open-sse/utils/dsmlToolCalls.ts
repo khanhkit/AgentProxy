@@ -103,6 +103,9 @@ export function parseDsmlToolCalls(text: string): ParseDsmlResult {
   if (!text || typeof text !== "string") {
     return { content: text || "", toolCalls: [], holdback: "" };
   }
+  if (!/DSML/i.test(text)) {
+    return { content: text, toolCalls: [], holdback: "" };
+  }
 
   let remaining = text;
   const toolCalls: DsmlToolCall[] = [];
