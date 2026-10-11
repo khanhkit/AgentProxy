@@ -478,6 +478,27 @@ test("Gemini same-name calls at distinct part positions remain separate", () => 
   assert.equal(parsed.choices[0].message.tool_calls.length, 2);
 });
 
+test("Gemini anonymous calls with changed payloads across SSE chunks remain separate", () => {
+  const payload = (path: string) => `data: ${JSON.stringify({
+    response: {
+      candidates: [{ content: { parts: [
+        { functionCall: { name: "search_files", args: { path } } },
+      ] } }],
+    },
+  })}`;
+  const parsed = parseSSEToGeminiResponse(
+    [payload("/tmp/a"), payload("/tmp/b")].join("\n"),
+    "gemini-test"
+  );
+  assert.ok(parsed);
+  const calls = parsed.choices[0].message.tool_calls;
+  assert.equal(calls.length, 2);
+  assert.deepEqual(calls.map((call: { function: { arguments: string } }) => JSON.parse(call.function.arguments)), [
+    { path: "/tmp/a" },
+    { path: "/tmp/b" },
+  ]);
+});
+
 test("Gemini incremental functionCall fragments merge by provider call ID", () => {
   const payload = (args: Record<string, unknown>) =>
     `data: ${JSON.stringify({

@@ -66,11 +66,18 @@ function applyCandidatePart(
 ): void {
   const fc = part.functionCall as Record<string, unknown> | undefined;
   if (fc && typeof fc.name === "string") {
-    const id = typeof fc.id === "string" && fc.id.length > 0
-      ? fc.id
-      : `gemini-${partIndex}-${fc.name}`;
     const nextArgs = stripZeroWidth(fc.args ?? {});
-    const existing = acc.toolCalls.find((call) => call.id === id);
+    const nextArguments = JSON.stringify(nextArgs);
+    const providerId = typeof fc.id === "string" && fc.id.length > 0 ? fc.id : null;
+    const anonymousPrefix = `gemini-auto-${partIndex}-`;
+    const existing = providerId
+      ? acc.toolCalls.find((call) => call.id === providerId)
+      : acc.toolCalls.find((call) =>
+          call.id.startsWith(anonymousPrefix) &&
+          call.function.name === fc.name &&
+          call.function.arguments === nextArguments
+        );
+    const id = providerId ?? existing?.id ?? `${anonymousPrefix}${acc.toolCalls.length}`;
     if (existing) {
       let mergedArgs = nextArgs;
       try {
