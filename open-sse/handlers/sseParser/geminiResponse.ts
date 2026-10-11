@@ -20,6 +20,24 @@ type GeminiSSEAccumulator = {
   toolCalls: AccumulatedToolCall[];
 };
 
+function mergeArgumentFragments(previous: unknown, next: unknown): unknown {
+  if (
+    previous &&
+    typeof previous === "object" &&
+    !Array.isArray(previous) &&
+    next &&
+    typeof next === "object" &&
+    !Array.isArray(next)
+  ) {
+    const merged: Record<string, unknown> = { ...(previous as Record<string, unknown>) };
+    for (const [key, value] of Object.entries(next as Record<string, unknown>)) {
+      merged[key] = mergeArgumentFragments(merged[key], value);
+    }
+    return merged;
+  }
+  return next;
+}
+
 function stripZeroWidth(value: unknown): unknown {
   if (typeof value === "string") return stripObfuscationZeroWidth(value);
   if (value && typeof value === "object") {
@@ -86,16 +104,7 @@ function applyCandidatePart(
       let mergedArgs = nextArgs;
       try {
         const previous = JSON.parse(existing.function.arguments) as unknown;
-        if (
-          previous &&
-          typeof previous === "object" &&
-          !Array.isArray(previous) &&
-          nextArgs &&
-          typeof nextArgs === "object" &&
-          !Array.isArray(nextArgs)
-        ) {
-          mergedArgs = { ...previous, ...nextArgs };
-        }
+        mergedArgs = mergeArgumentFragments(previous, nextArgs);
       } catch {
         // A malformed earlier fragment must not block the latest valid snapshot.
       }
