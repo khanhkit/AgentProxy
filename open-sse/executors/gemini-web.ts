@@ -165,14 +165,24 @@ export function buildGeminiToolPrompt(
   const priorTurns = effectiveMessages.filter(
     (m, index) =>
       index < lastUserIdx &&
-      (m.role === "user" || m.role === "assistant") &&
+      (m.role === "user" || m.role === "assistant" || m.role === "tool" || m.role === "function") &&
       typeof m.content === "string" &&
       m.content.length > 0
   );
   if (priorTurns.length === 0) return toolPrompt ? `${toolPrompt}\n\n${userText}` : userText;
 
   const history = priorTurns
-    .map((m) => `${m.role === "assistant" ? "Assistant" : "User"}: ${m.content as string}`)
+    .map((m) => {
+      const roleLabel =
+        m.role === "assistant"
+          ? "Assistant"
+          : m.role === "tool"
+            ? "Tool"
+            : m.role === "function"
+              ? "Function"
+              : "User";
+      return `${roleLabel}: ${m.content as string}`;
+    })
     .join("\n\n");
   const parts: string[] = [];
   if (toolPrompt) parts.push(toolPrompt);

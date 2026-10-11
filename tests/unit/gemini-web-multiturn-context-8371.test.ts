@@ -73,6 +73,22 @@ test("#8371: non-string / empty message contents are ignored without throwing", 
   assert.match(prompt, /Second question/);
 });
 
+test("AP-ISS-0192 OCR tool mode preserves prior tool/function results", () => {
+  const prompt = buildGeminiToolPrompt([
+    { role: "system", content: "Tool contract: use results from tools." },
+    { role: "user", content: "Check weather and calendar." },
+    { role: "assistant", content: "I will query both." },
+    { role: "tool", content: "weather=rain" },
+    { role: "function", content: "calendar=free" },
+    { role: "user", content: "What should I do next?" },
+  ]);
+
+  assert.match(prompt, /Assistant: I will query both\./);
+  assert.match(prompt, /Tool: weather=rain/);
+  assert.match(prompt, /Function: calendar=free/);
+  assert.match(prompt, /Current user message:\nWhat should I do next\?/);
+});
+
 test("AP-ISS-0192 4233291677 tool mode preserves prior user/assistant turns", () => {
   const prompt = buildGeminiToolPrompt([
     { role: "system", content: "Tool contract: call search when needed." },
