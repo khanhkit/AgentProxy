@@ -216,6 +216,63 @@ test("withTinyCmsDomMocksAsync serializes overlapping process-global shim lifeti
   assert.equal(typeof g.window, "undefined", "final caller must restore the global shim");
 });
 
+test("withTinyCmsDomMocks rejects an unrelated sync caller while an async shim owns the globals", async () => {
+  const g = global as Record<string, unknown>;
+  let releaseAsync!: () => void;
+  let asyncEntered!: () => void;
+  const asyncEnteredPromise = new Promise<void>((resolve) => {
+    asyncEntered = resolve;
+  });
+  const asyncGate = new Promise<void>((resolve) => {
+    releaseAsync = resolve;
+  });
+
+  const activeAsync = withTinyCmsDomMocksAsync(async () => {
+    assert.notEqual(typeof g.window, "undefined");
+    asyncEntered();
+    await asyncGate;
+    assert.notEqual(
+      typeof g.window,
+      "undefined",
+      "rejected sync overlap must not restore the async caller's shim"
+    );
+  });
+
+  await asyncEnteredPromise;
+  try {
+    assert.throws(
+      () => withTinyCmsDomMocks(() => "sync-overlap"),
+      /TinyCMS DOM mocks are already owned by an async caller/,
+      "an unrelated sync caller must fail closed instead of mutating shared globals"
+    );
+    assert.notEqual(
+      typeof g.window,
+      "undefined",
+      "async owner must retain the shim after rejection"
+    );
+  } finally {
+    releaseAsync();
+    await activeAsync;
+  }
+  assert.equal(typeof g.window, "undefined");
+});
+
+test("withTinyCmsDomMocks nested inside its async owner reuses the existing shim", async () => {
+  const g = global as Record<string, unknown>;
+
+  await withTinyCmsDomMocksAsync(async () => {
+    const before = g.window;
+    const value = withTinyCmsDomMocks(() => {
+      assert.equal(g.window, before, "nested sync call must reuse the async owner's window");
+      return "nested-sync-ok";
+    });
+    assert.equal(value, "nested-sync-ok");
+    assert.equal(g.window, before, "nested sync restore must not tear down the async owner's shim");
+  });
+
+  assert.equal(typeof g.window, "undefined");
+});
+
 test("withTinyCmsDomMocksAsync allows awaited nested calls without self-deadlock", async () => {
   const g = global as Record<string, unknown>;
   const nested = withTinyCmsDomMocksAsync(async () => {
