@@ -5,6 +5,8 @@ import os from "node:os";
 import path from "node:path";
 
 import { backupSqliteFile, normalizeBunSqliteParams } from "../../../bin/cli/sqlite.mjs";
+import { getSettings, updateSettings } from "../../../bin/cli/settings-store.mjs";
+import BetterSqlite3 from "better-sqlite3";
 
 test("CLI Bun SQLite parameter normalization preserves binary values", () => {
   const typedArray = new Uint8Array([1, 2, 3]);
@@ -44,4 +46,20 @@ test("CLI Bun SQLite backs up physical files without serializing them", async (t
   const destination = new Database(destinationPath, { readonly: true });
   assert.equal(destination.query("SELECT value FROM items").get().value, "copied");
   destination.close();
+});
+
+test("CLI settings store advances the shared settings revision once per mutation", () => {
+  const db = new BetterSqlite3(":memory:");
+  try {
+    updateSettings(db, { debugMode: true });
+    assert.equal(getSettings(db)._settingsRevision, 1);
+
+    updateSettings(db, { debugMode: true });
+    assert.equal(getSettings(db)._settingsRevision, 1, "idempotent update must not double-bump");
+
+    updateSettings(db, { debugMode: false, requireLogin: true });
+    assert.equal(getSettings(db)._settingsRevision, 2, "multi-key mutation gets one revision bump");
+  } finally {
+    db.close();
+  }
 });

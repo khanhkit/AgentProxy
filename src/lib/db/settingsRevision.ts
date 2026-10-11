@@ -24,3 +24,41 @@ export function advanceSettingsRevision(db: SettingsDb, currentRevision?: number
   ).run(SETTINGS_REVISION_KEY, JSON.stringify(nextRevision));
   return nextRevision;
 }
+
+export interface SettingsValueWriteResult {
+  changed: boolean;
+  revision: number;
+}
+
+/**
+ * Persist one operator setting together with the shared revision. When the caller
+ * already owns a SQLite transaction, reuse it; otherwise create a transaction so
+ * the value and revision cannot diverge. Identical serialized values are a no-op.
+ */
+export function writeSettingsValueWithRevision(
+  db: SettingsDb,
+  key: string,
+  value: unknown
+): SettingsValueWriteResult {
+  const serialized = JSON.stringify(value);
+  if (serialized === undefined) {
+    throw new TypeError(`Setting ${key} cannot serialize to undefined`);
+  }
+
+  const mutate = (): SettingsValueWriteResult => {
+    const currentRevision = readSettingsRevisionFromDb(db);
+    const row = db
+      .prepare("SELECT value FROM key_value WHERE namespace = 'settings' AND key = ?")
+      .get(key) as { value?: string } | undefined;
+    if (row?.value === serialized) {
+      return { changed: false, revision: currentRevision };
+    }
+
+    db.prepare(
+      "INSERT OR REPLACE INTO key_value (namespace, key, value) VALUES ('settings', ?, ?)"
+    ).run(key, serialized);
+    return { changed: true, revision: advanceSettingsRevision(db, currentRevision) };
+  };
+
+  return db.inTransaction ? mutate() : db.transaction(mutate)();
+}
