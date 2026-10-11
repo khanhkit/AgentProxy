@@ -190,12 +190,13 @@ test("flag on alone does not authorize replay of a reasoning-only successful tur
     callIndex === 0 ? reasoningOnlyStreamResponse() : contentStreamResponse("unsafe-replay")
   );
   const response = await handleChat(streamRequest());
-  await drainText(response);
+  const bodyText = await drainText(response);
   assert.equal(
     dispatches.length,
     1,
     `flag alone must not authorize replay, got ${dispatches.length}`
   );
+  assert.doesNotMatch(bodyText, /unsafe-replay/, "denied replay content must not reach the client");
 });
 
 test("persistent empty turns do not create a helper-local replay budget", async () => {
@@ -219,11 +220,16 @@ test("single credential availability is not replay-safety authority", async () =
     callIndex === 0 ? reasoningOnlyStreamResponse() : contentStreamResponse("unsafe-replay")
   );
   const response = await handleChat(streamRequest());
-  await drainText(response);
+  const bodyText = await drainText(response);
   assert.equal(
     dispatches.length,
     1,
     `credential availability must not authorize replay, got ${dispatches.length}`
+  );
+  assert.doesNotMatch(
+    bodyText,
+    /unsafe-replay/,
+    "credential availability must not leak replay output"
   );
 });
 
