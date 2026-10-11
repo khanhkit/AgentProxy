@@ -54,7 +54,7 @@ export function createDirectivePreambleStripper(directive: string): PreambleStri
         // Divergence at position: everything matched so far is real content,
         // and the rest of this chunk (from the diverging char on) is real too.
         done = true;
-        return directive.slice(0, position) + text;
+        return directive.slice(0, position) + text.slice(i);
       }
     }
 
