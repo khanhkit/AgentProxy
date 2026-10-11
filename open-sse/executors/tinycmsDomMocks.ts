@@ -184,13 +184,13 @@ export function setupDomMocks(): DomMockRestore {
 
 const asyncDomMockOwner = new AsyncLocalStorage<boolean>();
 let asyncDomMockTail: Promise<void> = Promise.resolve();
-let asyncDomMockActive = false;
+let asyncDomMockReservations = 0;
 
 export function withTinyCmsDomMocks<T>(fn: () => T): T {
   if (asyncDomMockOwner.getStore() === true) {
     return fn();
   }
-  if (asyncDomMockActive) {
+  if (asyncDomMockReservations > 0) {
     throw new Error("TinyCMS DOM mocks are already owned by an async caller");
   }
 
@@ -213,9 +213,9 @@ export async function withTinyCmsDomMocksAsync<T>(fn: () => Promise<T>): Promise
     release = resolve;
   });
 
-  await previous;
-  asyncDomMockActive = true;
+  asyncDomMockReservations += 1;
   try {
+    await previous;
     return await asyncDomMockOwner.run(true, async () => {
       const restore = setupDomMocks();
       try {
@@ -225,7 +225,7 @@ export async function withTinyCmsDomMocksAsync<T>(fn: () => Promise<T>): Promise
       }
     });
   } finally {
-    asyncDomMockActive = false;
+    asyncDomMockReservations -= 1;
     release();
   }
 }
