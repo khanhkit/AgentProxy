@@ -168,7 +168,7 @@ export default function APIPageClient({ machineId }: Readonly<APIPageClientProps
   const [ngrokToken, setNgrokToken] = useState("");
   const [showNgrokTunnel, setShowNgrokTunnel] = useState(true);
   const [expandedTunnel, setExpandedTunnel] = useState<string | null>(null);
-  const [localApiUrl, setLocalApiUrl] = useState(typeof window !== "undefined" ? `${window.location.origin}/v1` : "http://localhost:20128/v1");
+  const [localApiUrlOverride, setLocalApiUrlOverride] = useState<string | null>(null);
   const [lanUrls, setLanUrls] = useState<string[]>([]);
   const [tailscaleIpUrl, setTailscaleIpUrl] = useState<string | null>(null);
   const [activeEndpointTab, setActiveEndpointTab] = useState<EndpointTab>("apis");
@@ -482,7 +482,7 @@ export default function APIPageClient({ machineId }: Readonly<APIPageClientProps
           if (res.ok) {
             const data = await res.json();
             if (mounted) {
-              if (data.localUrl) setLocalApiUrl(data.localUrl);
+              if (data.localUrl) setLocalApiUrlOverride(data.localUrl);
               setLanUrls(data.lanUrls ?? []);
               if (data.tailscaleIpUrl) setTailscaleIpUrl(data.tailscaleIpUrl);
             }
@@ -1067,9 +1067,9 @@ export default function APIPageClient({ machineId }: Readonly<APIPageClientProps
       setTailscaleInstallBusy(false);
     }
   }, [fetchTailscaleStatus, handleTailscaleEnable, tailscalePassword, translateOrFallback]);
-
   const displayBaseUrl = useDisplayBaseUrl();
   const displayApiUrl = `${displayBaseUrl}/v1`;
+  const localApiUrl = localApiUrlOverride ?? displayApiUrl;
   const publicDisplayApiUrl = isPublicDisplayBaseUrl(displayBaseUrl) ? displayApiUrl : null;
   const normalizedCloudBaseUrl = cloudBaseUrl
     ? resolvedMachineId && !cloudBaseUrl.endsWith(`/${resolvedMachineId}`)

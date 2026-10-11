@@ -105,3 +105,89 @@ it("renders the public API URL instead of rebuilding an internal apiPort URL", a
   expect(container.textContent).not.toContain(":20131/api/v1");
   expect(replaceMock).not.toHaveBeenCalled();
 });
+
+it("does not mark onboarding complete when require-login persistence fails", async () => {
+  const fetchMock = vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
+    if (String(input) === "/api/settings" && init?.method === "PATCH") {
+      return jsonResponse({ setupComplete: true });
+    }
+    if (String(input) === "/api/settings") return jsonResponse({ setupComplete: false });
+    if (String(input) === "/api/settings/require-login" && init?.method === "POST") {
+      return { ok: false, status: 500 } as Response;
+    }
+    if (String(input) === "/api/settings/require-login")
+      return jsonResponse({ hasPassword: false });
+    throw new Error(`Unexpected request: ${String(input)}`);
+  });
+  vi.stubGlobal("fetch", fetchMock);
+  await act(async () => root.render(<OnboardingWizard />));
+  await waitForText("getStarted");
+  await clickButton("getStarted");
+  await clickButton("skip");
+  await clickButton("skip");
+  await clickButton("skip");
+  await clickButton("skip");
+  await clickButton("goToDashboard");
+  expect(pushMock).not.toHaveBeenCalled();
+  expect(fetchMock).not.toHaveBeenCalledWith(
+    "/api/settings",
+    expect.objectContaining({ method: "PATCH" })
+  );
+  expect(container.textContent).toContain("connectionError");
+});
+
+it("bootstrap retry cannot replay a security write after moving to provider step", async () => {
+  const fetchMock = vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
+    if (String(input) === "/api/settings") return jsonResponse({ setupComplete: false });
+    if (String(input) === "/api/settings/require-login" && init?.method === "POST") {
+      return { ok: false, status: 401 } as Response;
+    }
+    throw new Error(`Unexpected request: ${String(input)}`);
+  });
+  vi.stubGlobal("fetch", fetchMock);
+  await act(async () => root.render(<OnboardingWizard />));
+  await waitForText("getStarted");
+  await clickButton("getStarted");
+  await clickButton("skip");
+  const checkbox = container.querySelector('input[type="checkbox"]') as HTMLInputElement;
+  await act(async () => checkbox.click());
+  await clickButton("skipAndContinue");
+  expect(container.textContent).toContain("This connection is not recognized as local.");
+  await clickButton("skip");
+  expect(container.textContent).toContain("providerDesc");
+  expect(
+    Array.from(container.querySelectorAll("button")).some((b) => b.textContent?.trim() === "retry")
+  ).toBe(false);
+});
+
+it("retry after Skip Wizard replays Finish even when the current step is welcome", async () => {
+  const posts: Array<Record<string, unknown>> = [];
+  const fetchMock = vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
+    if (String(input) === "/api/settings" && init?.method === "PATCH") return jsonResponse({});
+    if (String(input) === "/api/settings") return jsonResponse({ setupComplete: false });
+    if (String(input) === "/api/settings/require-login" && init?.method === "POST") {
+      posts.push(JSON.parse(String(init.body)));
+      return posts.length === 1 ? ({ ok: false, status: 401 } as Response) : jsonResponse({});
+    }
+    if (String(input) === "/api/settings/require-login")
+      return jsonResponse({ hasPassword: false });
+    throw new Error(`Unexpected request: ${String(input)}`);
+  });
+  vi.stubGlobal("fetch", fetchMock);
+  await act(async () => root.render(<OnboardingWizard />));
+  await waitForText("getStarted");
+  await clickButton("skipWizard");
+  expect(container.textContent).toContain("This connection is not recognized as local.");
+  const tokenInput = Array.from(container.querySelectorAll("input")).find(
+    (input) => input.placeholder === "Bootstrap token"
+  );
+  expect(tokenInput).toBeDefined();
+  await act(async () => {
+    const setter = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, "value")?.set;
+    setter?.call(tokenInput, "valid-test-token");
+    tokenInput?.dispatchEvent(new Event("input", { bubbles: true }));
+  });
+  await clickButton("retry");
+  expect(posts).toEqual([{ requireLogin: false }, { requireLogin: false }]);
+  expect(pushMock).toHaveBeenCalledWith("/dashboard");
+});

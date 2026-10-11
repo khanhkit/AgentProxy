@@ -12,7 +12,7 @@
 "use client";
 
 import { useEffect, useRef, useState, useCallback, useMemo } from "react";
-import type { DashboardChannel, DashboardEventName } from "@/lib/events/types";
+import type { DashboardChannel } from "@/lib/events/types";
 import { deriveLiveWsPath, resolveLiveWsUrl, sanitizeLiveWsPort } from "@/shared/utils/wsPath";
 
 // ── Config ────────────────────────────────────────────────────────────────
@@ -206,8 +206,8 @@ export function useLiveDashboard({
         // session yet: the backoff resets on "welcome", not here.
         setConnection((prev) => ({
           ...prev,
-          isConnected: true,
-          isConnecting: false,
+          isConnected: false,
+          isConnecting: true,
           error: null,
         }));
 
@@ -247,7 +247,13 @@ export function useLiveDashboard({
           } else if (msg.type === "welcome") {
             // First frame of an accepted session: the backoff starts over.
             failedAttemptsRef.current = 0;
-            setConnection((prev) => ({ ...prev, reconnectAttempt: 0 }));
+            setConnection((prev) => ({
+              ...prev,
+              isConnected: true,
+              isConnecting: false,
+              error: null,
+              reconnectAttempt: 0,
+            }));
             // Send backlog
             if (Array.isArray(msg.data)) {
               setEvents((prev) => {

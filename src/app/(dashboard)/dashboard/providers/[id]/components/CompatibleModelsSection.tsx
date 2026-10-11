@@ -8,7 +8,7 @@ import { filterUnavailableModelRows } from "@/lib/providers/mergeProviderModelLi
  *
  * Never imports from ProviderDetailPageClient.
  */
-import React, { useState, useEffect, useCallback, useMemo } from "react";
+import React, { useState, useEffect, useCallback, useMemo, useRef } from "react";
 import { Button } from "@/shared/components";
 import {
   matchesModelCatalogQuery,
@@ -26,7 +26,7 @@ import {
 import { ModelVisibilityToolbar } from "./ModelRow";
 import { sortModelsFreeFirst, isModelFreeBadge } from "@/shared/utils/freeModels";
 import { useStrictFreeBadge } from "./useStrictFreeBadge";
-import PassthroughModelRow, { type PassthroughModelRowProps } from "./PassthroughModelRow";
+import PassthroughModelRow from "./PassthroughModelRow";
 
 // ---------------------------------------------------------------------------
 // Props
@@ -164,19 +164,21 @@ export default function CompatibleModelsSection({
   // show or seed the editor with.
   const [contextOverrides, setContextOverrides] = useState<Record<string, number>>({});
   const [savingContextModelId, setSavingContextModelId] = useState<string | null>(null);
+  const contextRequestId = useRef(0);
 
   const loadContextOverrides = useCallback(async () => {
+    const requestId = ++contextRequestId.current;
     const next = await fetchProviderContextOverrides(providerStorageAlias);
-    if (next) setContextOverrides(next);
+    if (requestId === contextRequestId.current && next) setContextOverrides(next);
   }, [providerStorageAlias]);
 
   useEffect(() => {
-    const run = async () => {
-      const next = await fetchProviderContextOverrides(providerStorageAlias);
-      if (next) setContextOverrides(next);
+    const requestGeneration = contextRequestId;
+    void loadContextOverrides();
+    return () => {
+      requestGeneration.current++;
     };
-    void run();
-  }, [providerStorageAlias]);
+  }, [loadContextOverrides]);
 
   const saveContextWindowOverride = useCallback(
     async (modelId: string, value: number | null) => {

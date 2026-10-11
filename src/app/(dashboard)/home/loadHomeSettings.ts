@@ -14,9 +14,8 @@ export async function loadHomeSettings(
 ): Promise<HomeSettings> {
   try {
     return await load();
-  } catch (error: unknown) {
-    const message = error instanceof Error ? error.message : String(error);
-    console.warn(`[Home] Failed to load settings; rendering with defaults: ${message}`);
+  } catch {
+    console.warn("[Home] Failed to load settings; rendering with defaults");
     return { setupComplete: false };
   }
 }

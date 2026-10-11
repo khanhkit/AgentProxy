@@ -1030,6 +1030,9 @@ export function parseContextWindowOverrideInput(raw: string): {
 } {
   const trimmed = raw.trim();
   if (!trimmed) return { value: null, invalid: false };
-  if (!/^\d+$/.test(trimmed) || Number(trimmed) <= 0) return { value: null, invalid: true };
-  return { value: Number(trimmed), invalid: false };
+  const value = Number(trimmed);
+  if (!/^\d+$/.test(trimmed) || !Number.isSafeInteger(value) || value <= 0) {
+    return { value: null, invalid: true };
+  }
+  return { value, invalid: false };
 }

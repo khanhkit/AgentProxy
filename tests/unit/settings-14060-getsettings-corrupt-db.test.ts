@@ -83,3 +83,23 @@ test("loadHomeSettings passes healthy settings through untouched", async () => {
   const result = await loadHomeSettings(async () => ({ setupComplete: true }));
   assert.deepEqual(result, { setupComplete: true });
 });
+
+test("Home fallback does not log raw database exceptions", async () => {
+  const secret = "db path /home/operator/private.sqlite password=private-token";
+  const originalWarn = console.warn;
+  const warnings: string[] = [];
+  console.warn = (...args: unknown[]) => warnings.push(args.map(String).join(" "));
+  try {
+    assert.deepEqual(
+      await loadHomeSettings(async () => {
+        throw new Error(secret);
+      }),
+      { setupComplete: false }
+    );
+  } finally {
+    console.warn = originalWarn;
+  }
+  assert.ok(warnings.length > 0);
+  assert.ok(!warnings.join(" ").includes(secret));
+  assert.ok(!warnings.join(" ").includes("/home/operator"));
+});

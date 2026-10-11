@@ -236,6 +236,14 @@ test("reset-credit modal uses provider-specific titles and confirmations", () =>
     resetCreditModal.getResetCreditConfirmation("codex", undefined, tr),
     /Codex usage windows/
   );
+  assert.equal(
+    resetCreditModal.getResetCreditWindowTitle("grok-cli", upstreamTitle, tr),
+    "Bonus card"
+  );
+  assert.match(
+    resetCreditModal.getResetCreditConfirmation("grok-cli", undefined, tr),
+    /Codex usage windows/
+  );
   assert.match(resetCreditModal.getResetCreditConfirmation("glm", "FIVE_HOUR", tr), /5-hour/);
   assert.match(resetCreditModal.getResetCreditConfirmation("glm-cn", "WEEK", tr), /weekly/);
 });

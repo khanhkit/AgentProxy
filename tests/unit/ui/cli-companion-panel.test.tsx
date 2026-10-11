@@ -31,19 +31,20 @@ describe("CLI companion copy-only flow", () => {
     "shows server scope, unknown state and copies a safe context runbook without network calls",
     { timeout: 15000 },
     async () => {
-    render(<CliCompanionPanel targets={targets} statuses={null} loading={false} error={false} />);
-    expect(screen.getByText(/Detection describes the AgentProxy server host/)).toBeTruthy();
-    expect(screen.getAllByText("Unknown")).toHaveLength(3);
-    fireEvent.change(screen.getByLabelText("Existing context name (optional)"), {
-      target: { value: "office" },
-    });
-    fireEvent.click(screen.getByRole("button", { name: "Copy: Preview the launch" }));
-    await waitFor(() =>
-      expect(writeText).toHaveBeenCalledWith("omniroute run claude --context office --dry-run")
-    );
-    expect((await screen.findByText("Copied!")).getAttribute("role")).toBe("status");
-    expect(fetch).not.toHaveBeenCalled();
-  });
+      render(<CliCompanionPanel targets={targets} statuses={null} loading={false} error={false} />);
+      expect(screen.getByText(/Detection describes the AgentProxy server host/)).toBeTruthy();
+      expect(screen.getAllByText("Unknown")).toHaveLength(3);
+      fireEvent.change(screen.getByLabelText("Existing context name (optional)"), {
+        target: { value: "office" },
+      });
+      fireEvent.click(screen.getByRole("button", { name: "Copy: Preview the launch" }));
+      await waitFor(() =>
+        expect(writeText).toHaveBeenCalledWith("omniroute run claude --context office --dry-run")
+      );
+      expect((await screen.findByText("Copied!")).getAttribute("role")).toBe("status");
+      expect(fetch).not.toHaveBeenCalled();
+    }
+  );
 
   it("updates target capabilities and refuses unsafe context/model input", () => {
     render(<CliCompanionPanel targets={targets} statuses={null} loading={false} error={false} />);
@@ -82,6 +83,27 @@ describe("CLI companion copy-only flow", () => {
     expect(screen.getByRole("button", { name: "Copy: Check terminal contexts" })).toBeTruthy();
     view.rerender(<CliCompanionPanel targets={[]} statuses={null} loading={false} error={false} />);
     expect(screen.getByText(/No executable CLI targets/)).toBeTruthy();
+  });
+
+  it("does not restore a stale target selection after the target disappears", () => {
+    const view = render(
+      <CliCompanionPanel targets={targets} statuses={null} loading={false} error={false} />
+    );
+    fireEvent.change(screen.getByLabelText("CLI tool"), { target: { value: "qwen" } });
+    expect((screen.getByLabelText("CLI tool") as HTMLSelectElement).value).toBe("qwen");
+    view.rerender(
+      <CliCompanionPanel
+        targets={[targets[0], targets[2]]}
+        statuses={null}
+        loading={false}
+        error={false}
+      />
+    );
+    expect((screen.getByLabelText("CLI tool") as HTMLSelectElement).value).toBe("claude");
+    view.rerender(
+      <CliCompanionPanel targets={targets} statuses={null} loading={false} error={false} />
+    );
+    expect((screen.getByLabelText("CLI tool") as HTMLSelectElement).value).toBe("claude");
   });
 
   it("announces clipboard failure without claiming success", async () => {

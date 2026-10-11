@@ -39,6 +39,9 @@ export default function OnboardingWizard() {
   // one-shot token the server printed to its log.
   const [bootstrapToken, setBootstrapToken] = useState("");
   const [needsBootstrapToken, setNeedsBootstrapToken] = useState(false);
+  const [bootstrapRetryAction, setBootstrapRetryAction] = useState<"security" | "finish" | null>(
+    null
+  );
 
   // Provider step state
   const [selectedProvider, setSelectedProvider] = useState(null);
@@ -79,11 +82,19 @@ export default function OnboardingWizard() {
   const currentStep = STEPS[step];
   const isLastStep = step === STEPS.length - 1;
 
+  const clearBootstrapRetry = () => {
+    setNeedsBootstrapToken(false);
+    setBootstrapRetryAction(null);
+    setErrorMessage("");
+  };
+
   const handleNext = () => {
+    clearBootstrapRetry();
     if (step < STEPS.length - 1) setStep(step + 1);
   };
 
   const handleBack = () => {
+    clearBootstrapRetry();
     if (step > 0) setStep(step - 1);
   };
 
@@ -110,8 +121,12 @@ export default function OnboardingWizard() {
 
   // Returns true when the caller should stop (a bootstrap-token prompt was
   // shown), false when the response was a "real" failure to report normally.
-  const handleBootstrapAuthFailure = (res: Response): boolean => {
+  const handleBootstrapAuthFailure = (
+    res: Response,
+    retryAction: "security" | "finish"
+  ): boolean => {
     if ((res.status === 401 || res.status === 403) && !bootstrapToken) {
+      setBootstrapRetryAction(retryAction);
       setNeedsBootstrapToken(true);
       setErrorMessage(bootstrapTokenHelpText);
       return true;
@@ -130,7 +145,7 @@ export default function OnboardingWizard() {
           body: JSON.stringify({ requireLogin: false }),
         });
         if (!res.ok) {
-          if (!handleBootstrapAuthFailure(res)) setErrorMessage(t("failedSetPassword"));
+          if (!handleBootstrapAuthFailure(res, "security")) setErrorMessage(t("failedSetPassword"));
           return;
         }
       } catch {
@@ -148,7 +163,7 @@ export default function OnboardingWizard() {
         body: JSON.stringify({ requireLogin: true, password }),
       });
       if (!res.ok) {
-        if (handleBootstrapAuthFailure(res)) return;
+        if (handleBootstrapAuthFailure(res, "security")) return;
         const data = await res.json().catch(() => ({}));
         setErrorMessage(data.error || t("failedSetPassword"));
         return;
@@ -250,7 +265,12 @@ export default function OnboardingWizard() {
         // Docker/NAT-forwarded install silently left requireLogin untouched
         // and the wizard sailed on to setupComplete/dashboard anyway,
         // reproducing the reported redirect loop. Surface it instead.
-        if (!requireLoginRes.ok && handleBootstrapAuthFailure(requireLoginRes)) return;
+        if (!requireLoginRes.ok) {
+          if (!handleBootstrapAuthFailure(requireLoginRes, "finish")) {
+            setErrorMessage(t("connectionError"));
+          }
+          return;
+        }
       }
 
       const patchRes = await fetch("/api/settings", {
@@ -259,7 +279,7 @@ export default function OnboardingWizard() {
         body: JSON.stringify({ setupComplete: true }),
       });
       if (!patchRes.ok) {
-        if (handleBootstrapAuthFailure(patchRes)) return;
+        if (handleBootstrapAuthFailure(patchRes, "finish")) return;
         setErrorMessage(t("connectionError"));
         return;
       }
@@ -337,7 +357,7 @@ export default function OnboardingWizard() {
           {errorMessage && (
             <div className="mb-4 p-3 bg-amber-500/10 border border-amber-500/30 rounded-lg text-center animate-in fade-in duration-200">
               <p className="text-sm text-amber-400">{errorMessage}</p>
-              {needsBootstrapToken && (
+              {needsBootstrapToken && bootstrapRetryAction && (
                 <div className="mt-3 space-y-2">
                   <input
                     type="text"
@@ -347,7 +367,7 @@ export default function OnboardingWizard() {
                     className="w-full px-4 py-2.5 bg-white/[0.04] border border-white/10 rounded-lg text-text-main text-sm placeholder:text-text-muted/50 focus:outline-none focus:ring-2 focus:ring-primary/40"
                   />
                   <button
-                    onClick={isLastStep ? handleFinish : handleSetPassword}
+                    onClick={bootstrapRetryAction === "finish" ? handleFinish : handleSetPassword}
                     disabled={!bootstrapToken}
                     className="px-6 py-2 bg-primary rounded-lg text-white font-medium text-sm hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
                   >
