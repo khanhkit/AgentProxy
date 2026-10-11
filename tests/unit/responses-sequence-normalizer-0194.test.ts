@@ -134,3 +134,30 @@ test("AP-ISS-0194: only the top-level sequence field is replaced when nested dat
   assert.equal(payload.sequence_number, 1);
   assert.equal(payload.response.sequence_number, 777);
 });
+
+test("AP-ISS-0194 OCR: malformed multiline Responses data is preserved byte-identical", async () => {
+  const input =
+    'data: {"type":"response.completed","sequence_number":99,\ndata: "response":{"status":"completed"}}\n\n';
+  const stream = new ReadableStream<Uint8Array>({
+    start(controller) {
+      controller.enqueue(encoder.encode(input));
+      controller.close();
+    },
+  });
+
+  const output = await readText(stream.pipeThrough(createResponsesSequenceNormalizerTransform()));
+  assert.equal(output, input);
+});
+
+test("AP-ISS-0194 OCR: generic JSON data frames are not assigned Responses sequence numbers", async () => {
+  const input = 'data: {"error":{"message":"upstream"}}\n\n';
+  const stream = new ReadableStream<Uint8Array>({
+    start(controller) {
+      controller.enqueue(encoder.encode(input));
+      controller.close();
+    },
+  });
+
+  const output = await readText(stream.pipeThrough(createResponsesSequenceNormalizerTransform()));
+  assert.equal(output, input);
+});

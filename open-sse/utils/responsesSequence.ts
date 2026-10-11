@@ -42,7 +42,7 @@ type SequenceSkipMode = "before" | "primitive" | "string" | "nested" | "done" | 
  * rewritten. Large `response.completed` payloads therefore continue flowing before their SSE
  * line is complete instead of being buffered/JSON.parse/JSON.stringify'd as one object.
  */
-export function createResponsesSequenceNormalizerTransform(): TransformStream<
+function createUncheckedResponsesSequenceNormalizerTransform(): TransformStream<
   Uint8Array,
   Uint8Array
 > {
@@ -401,6 +401,101 @@ export function createResponsesSequenceNormalizerTransform(): TransformStream<
     },
     flush(controller) {
       processText(decoder.decode(), controller);
+    },
+  });
+}
+
+const RESPONSES_VALIDATION_PREFIX_CHARS = OUTPUT_FLUSH_CHARS;
+
+function isCompleteResponsesDataLine(line: string): boolean {
+  const match = /^\s*data:[ \t]*(\{.*\})\r?\n?$/s.exec(line);
+  if (!match) return false;
+  try {
+    const payload = JSON.parse(match[1]) as { type?: unknown };
+    return typeof payload?.type === "string" && payload.type.startsWith("response.");
+  } catch {
+    return false;
+  }
+}
+
+function hasLeadingResponsesType(linePrefix: string): boolean {
+  return /^\s*data:[ \t]*\{[ \t]*"type"[ \t]*:[ \t]*"response\.[^"]+"/.test(linePrefix);
+}
+
+/**
+ * Validate complete, bounded SSE lines before rewriting them. A line is passed through unless
+ * it is valid JSON with a Responses event `type`. For a very large event, the canonical
+ * serializer's leading `type` field lets normalization begin after a bounded prefix so payload
+ * bytes can keep flowing without materializing the complete line.
+ */
+export function createResponsesSequenceNormalizerTransform(): TransformStream<
+  Uint8Array,
+  Uint8Array
+> {
+  const inner = createUncheckedResponsesSequenceNormalizerTransform();
+  const writer = inner.writable.getWriter();
+  const reader = inner.readable.getReader();
+  const decoder = new TextDecoder();
+  const encoder = new TextEncoder();
+  let gateBuffer = "";
+  let streamingMode: "normalize" | "passthrough" | null = null;
+  let pump: Promise<void> | null = null;
+
+  return new TransformStream<Uint8Array, Uint8Array>({
+    start(controller) {
+      pump = (async () => {
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) return;
+          controller.enqueue(value);
+        }
+      })();
+    },
+    async transform(chunk, controller) {
+      let text = decoder.decode(chunk, { stream: true });
+      while (text) {
+        if (streamingMode) {
+          const newline = text.indexOf("\n");
+          const part = newline === -1 ? text : text.slice(0, newline + 1);
+          if (streamingMode === "normalize") await writer.write(encoder.encode(part));
+          else controller.enqueue(encoder.encode(part));
+          text = newline === -1 ? "" : text.slice(newline + 1);
+          if (newline !== -1) streamingMode = null;
+          continue;
+        }
+
+        gateBuffer += text;
+        text = "";
+        while (streamingMode === null) {
+          const newline = gateBuffer.indexOf("\n");
+          if (newline !== -1) {
+            const line = gateBuffer.slice(0, newline + 1);
+            gateBuffer = gateBuffer.slice(newline + 1);
+            if (isCompleteResponsesDataLine(line)) await writer.write(encoder.encode(line));
+            else controller.enqueue(encoder.encode(line));
+            if (!gateBuffer) break;
+            continue;
+          }
+          if (gateBuffer.length < RESPONSES_VALIDATION_PREFIX_CHARS) break;
+          streamingMode = hasLeadingResponsesType(gateBuffer) ? "normalize" : "passthrough";
+          const prefix = gateBuffer;
+          gateBuffer = "";
+          if (streamingMode === "normalize") await writer.write(encoder.encode(prefix));
+          else controller.enqueue(encoder.encode(prefix));
+        }
+      }
+    },
+    async flush(controller) {
+      gateBuffer += decoder.decode();
+      if (gateBuffer) {
+        if (streamingMode === "normalize" || isCompleteResponsesDataLine(gateBuffer)) {
+          await writer.write(encoder.encode(gateBuffer));
+        } else {
+          controller.enqueue(encoder.encode(gateBuffer));
+        }
+      }
+      await writer.close();
+      await pump;
     },
   });
 }
