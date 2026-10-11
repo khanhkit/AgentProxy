@@ -221,6 +221,13 @@ export function resolveSemanticCacheConfig(
     resolved.embeddingTimeoutMs,
     DEFAULT_SEMANTIC_CACHE_CONFIG.embeddingTimeoutMs
   );
+  if (resolved.embeddingDimension !== undefined) {
+    resolved.embeddingDimension = positive(
+      resolved.embeddingDimension,
+      DEFAULT_SEMANTIC_CACHE_CONFIG.embeddingDimension ?? 1536,
+      true
+    );
+  }
   resolved.conversationHistoryDepth = positive(
     resolved.conversationHistoryDepth,
     DEFAULT_SEMANTIC_CACHE_CONFIG.conversationHistoryDepth,

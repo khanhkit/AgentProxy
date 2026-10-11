@@ -923,6 +923,20 @@ describe("AP-ISS-0192 semantic cache config bounds", () => {
     );
   });
 
+  it("normalizes invalid embedding dimensions without overriding auto-detected undefined", () => {
+    for (const embeddingDimension of [0, -1, 0.5, Number.NaN]) {
+      const conf = resolveSemanticCacheConfig({ embeddingDimension });
+      assert.equal(
+        conf.embeddingDimension,
+        DEFAULT_SEMANTIC_CACHE_CONFIG.embeddingDimension,
+        `invalid embedding dimension ${embeddingDimension} should fall back`
+      );
+    }
+
+    const autoDetected = resolveSemanticCacheConfig({ embeddingDimension: undefined });
+    assert.equal(autoDetected.embeddingDimension, undefined);
+  });
+
   it("falls back from nonpositive runtime limits instead of creating invalid zero semantics", () => {
     const conf = resolveSemanticCacheConfig({
       ttlMs: -10,
