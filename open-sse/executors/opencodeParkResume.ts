@@ -18,7 +18,7 @@ import { proxyKeyOf } from "./opencodeGeoBlock.ts";
 import { runWithProxyContext } from "../utils/proxyFetch.ts";
 import { noteResilienceAction } from "@/lib/usage/resilienceActionsContext.ts";
 import { formatTranslatedStreamError } from "../utils/streamErrorFormat.ts";
-import { parseSSELine } from "../utils/streamHelpers.ts";
+import { hasOpenAIFinishReason, parseSSEDataPayload } from "../utils/streamHelpers.ts";
 import { noteParkWait, noteReplayed, noteStoredFallback } from "./opencodeResilienceNotes.ts";
 import type { ExecuteInput, ExecutorExecuteResult } from "./base.ts";
 import * as egressPacing from "./opencodeEgressThrottle.ts";
@@ -372,24 +372,64 @@ export async function runParkAndReplay<TAccount extends RotatableAccount>(
             const reader = finalResponse.body.getReader();
             const decoder = new TextDecoder();
             let pendingReplayText = "";
-            let withheldDone: string | null = null;
+            let pendingEventType = "";
+            let terminalSeen = false;
+            let withheldTerminalTail = "";
             const emitReplayText = (text: string, atEof = false): void => {
-              if (withheldDone !== null) {
-                withheldDone += text;
-                return;
-              }
               pendingReplayText += text;
               while (pendingReplayText !== "") {
                 const lineEnd = nextCompleteLineEnd(pendingReplayText, atEof);
                 if (lineEnd === 0) return;
-                const line = pendingReplayText.slice(0, lineEnd);
+                const rawLine = pendingReplayText.slice(0, lineEnd);
                 pendingReplayText = pendingReplayText.slice(lineEnd);
-                if (parseSSELine(line)?.done === true) {
-                  withheldDone = line + pendingReplayText;
-                  pendingReplayText = "";
-                  return;
+                const line = rawLine.replace(/(?:\r\n|\r|\n)$/u, "");
+                const trimmed = line.trim();
+                if (trimmed === "") {
+                  pendingEventType = "";
+                  continue;
                 }
-                controller.enqueue(encoder.encode(line));
+                if (trimmed.startsWith("event:")) {
+                  pendingEventType = trimmed.slice("event:".length).trim();
+                  continue;
+                }
+                if (!trimmed.startsWith("data:")) {
+                  pendingEventType = "";
+                  continue;
+                }
+
+                const data = trimmed.slice("data:".length).trim();
+                const parsed = parseSSEDataPayload(data, {
+                  eventType: pendingEventType,
+                  logWarning: false,
+                });
+                if (parsed === null) {
+                  pendingEventType = "";
+                  continue;
+                }
+                const record =
+                  typeof parsed === "object" && parsed !== null && !Array.isArray(parsed)
+                    ? (parsed as Record<string, unknown>)
+                    : null;
+                const type = record && typeof record.type === "string" ? record.type : "";
+                const isTerminal =
+                  record?.done === true ||
+                  type === "response.completed" ||
+                  type === "message_stop" ||
+                  (record !== null && hasOpenAIFinishReason(record));
+                const preserveEventPrefix =
+                  pendingEventType.startsWith("response.") ||
+                  /^(?:message_|content_block_|error$|ping$)/u.test(pendingEventType);
+                const frame = `${
+                  preserveEventPrefix ? `event: ${pendingEventType}\n` : ""
+                }data: ${record?.done === true ? "[DONE]" : data}\n\n`;
+                pendingEventType = "";
+
+                if (terminalSeen || isTerminal) {
+                  terminalSeen ||= isTerminal;
+                  withheldTerminalTail += frame;
+                  continue;
+                }
+                controller.enqueue(encoder.encode(frame));
                 copiedAny = true;
               }
             };
@@ -410,9 +450,11 @@ export async function runParkAndReplay<TAccount extends RotatableAccount>(
               if (input.signal?.aborted) {
                 recopied = false;
                 await reader.cancel(input.signal.reason).catch(() => undefined);
-              } else if (withheldDone !== null) {
-                controller.enqueue(encoder.encode(withheldDone));
+              } else if (terminalSeen) {
+                controller.enqueue(encoder.encode(withheldTerminalTail));
                 copiedAny = true;
+              } else {
+                recopied = false;
               }
             } catch (error) {
               // A read failure means the replay did not complete, even if some
