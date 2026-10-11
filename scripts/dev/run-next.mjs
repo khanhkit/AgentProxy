@@ -159,9 +159,10 @@ globalThis.__agentproxyCustomServerOwnsShutdown = true;
 let nextApp = createNextApp();
 let rustCoreHandle = null;
 let shuttingDown = false;
+const parsedShutdownTimeoutMs = Number.parseInt(process.env.SHUTDOWN_TIMEOUT_MS ?? "30000", 10);
 const SHUTDOWN_TIMEOUT_MS = Math.max(
   1,
-  Number.parseInt(process.env.SHUTDOWN_TIMEOUT_MS || "30000", 10) || 30000
+  Number.isFinite(parsedShutdownTimeoutMs) ? parsedShutdownTimeoutMs : 30000
 );
 
 // Best-effort self-heal for a corrupted Turbopack persistent dev cache (#6289):
@@ -273,7 +274,13 @@ async function start() {
     // that the application lifecycle must be allowed to drain first.
     let serverClosePromise;
     try {
-      serverClosePromise = new Promise((resolve) => server.close(resolve));
+      serverClosePromise = new Promise((resolve, reject) =>
+        server.close((error) => (error ? reject(error) : resolve()))
+      );
+      // Idle keep-alive sockets are not active work and must not admit a fresh
+      // request after shutdown has started. Active/SSE sockets remain until the
+      // application lifecycle drains or the shared hard deadline expires.
+      server.closeIdleConnections?.();
     } catch (error) {
       console.error("[SHUTDOWN] Failed to stop HTTP admission:", error);
       exitCode = exitCode || 1;
@@ -290,7 +297,6 @@ async function start() {
     // Application drain/flush is complete (or failed/timed out). Transport
     // cleanup may now terminate any sockets that survived the drain.
     try {
-      server.closeIdleConnections?.();
       server.closeAllConnections?.();
       if (serverClosePromise) await serverClosePromise;
     } catch (error) {

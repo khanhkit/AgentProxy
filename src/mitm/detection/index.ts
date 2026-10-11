@@ -19,7 +19,7 @@ import { detectZed } from "./zed";
 import { detectClaudeCode } from "./claudeCode";
 import { detectOpenCode } from "./openCode";
 
-export const DETECTORS: Partial<Record<AgentId, () => DetectionResult>> = {
+export const DETECTORS: Record<AgentId, () => DetectionResult> = {
   antigravity: detectAntigravity,
   kiro: detectKiro,
   copilot: detectCopilot,
@@ -29,6 +29,7 @@ export const DETECTORS: Partial<Record<AgentId, () => DetectionResult>> = {
   "claude-code": detectClaudeCode,
   "open-code": detectOpenCode,
   trae: () => ({ installed: false }),
+  "ghe-copilot": () => ({ installed: false }),
 };
 
 export function detectAgent(id: AgentId): DetectionResult {

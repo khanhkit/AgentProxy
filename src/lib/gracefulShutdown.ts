@@ -16,7 +16,11 @@ import {
   type LifecycleShutdownReport,
 } from "@/lib/lifecycle/coordinator";
 
-const SHUTDOWN_TIMEOUT_MS = parseInt(process.env.SHUTDOWN_TIMEOUT_MS || "30000", 10);
+const parsedShutdownTimeoutMs = Number.parseInt(process.env.SHUTDOWN_TIMEOUT_MS ?? "30000", 10);
+const SHUTDOWN_TIMEOUT_MS =
+  Number.isFinite(parsedShutdownTimeoutMs) && parsedShutdownTimeoutMs >= 0
+    ? parsedShutdownTimeoutMs
+    : 30000;
 const DRAIN_POLL_INTERVAL_MS = 250;
 
 declare global {

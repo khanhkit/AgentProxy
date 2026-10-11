@@ -350,6 +350,7 @@ export function stopApiBridgeServer(): void {
   globalThis.__agentproxyApiBridgeStarted = false;
   if (!server) return;
   try {
+    server.closeIdleConnections?.();
     server.close();
   } catch {
     // Already closed/not listening.

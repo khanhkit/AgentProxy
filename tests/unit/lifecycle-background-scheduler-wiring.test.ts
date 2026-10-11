@@ -76,3 +76,41 @@ test("main lifecycle does not trace heavyweight MITM/rate-limit leaves solely fo
   assert.match(graceful, /__agentproxyShutdownMitm/);
   assert.match(graceful, /__agentproxyShutdownRateLimit/);
 });
+
+test("lifecycle startup races cannot resurrect stopped listeners", () => {
+  const liveWs = source("src/server/ws/liveServer.ts");
+  assert.match(
+    liveWs,
+    /__agentproxyLiveWsServer !== server[\s\S]*?wss\.close\(\)[\s\S]*?server\.close\(\)[\s\S]*?reject\(/,
+    "preempted LiveWS startup must close both WS and HTTP handles and reject startup"
+  );
+});
+
+test("provider limits scheduler recovers from setup failure", () => {
+  const providerLimits = source("src/shared/services/providerLimitsSyncScheduler.ts");
+  assert.match(
+    providerLimits,
+    /\(error\) => \{[\s\S]*?startupSetup === setup[\s\S]*?schedulerEnabled = false/,
+    "setup failure must release the scheduler running guard so a later start can retry"
+  );
+  assert.doesNotMatch(
+    providerLimits,
+    /void cycle\.finally\(/,
+    "cycle cleanup must not create a discarded rejecting finally promise"
+  );
+});
+
+test("main lifecycle validates invalid shutdown timeout values", () => {
+  const graceful = source("src/lib/gracefulShutdown.ts");
+  assert.match(
+    graceful,
+    /Number\.isFinite\([\s\S]*?parsedShutdownTimeoutMs[\s\S]*?30000/,
+    "invalid shutdown timeout must fall back to the default budget"
+  );
+});
+
+test("MITM detector dispatch stays exhaustive when AgentId grows", () => {
+  const detection = source("src/mitm/detection/index.ts");
+  assert.match(detection, /Record<AgentId, \(\) => DetectionResult>/);
+  assert.match(detection, /["']ghe-copilot["']\s*:/);
+});

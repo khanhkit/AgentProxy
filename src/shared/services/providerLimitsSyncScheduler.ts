@@ -32,9 +32,10 @@ function runProviderLimitsSyncCycle(): Promise<void> {
     }
   })();
   activeCycle = cycle;
-  void cycle.finally(() => {
+  const clearActiveCycle = () => {
     if (activeCycle === cycle) activeCycle = null;
-  });
+  };
+  void cycle.then(clearActiveCycle, clearActiveCycle);
   return cycle;
 }
 
@@ -44,9 +45,9 @@ export function startProviderLimitsSyncScheduler(): void {
     return;
   }
 
-  schedulerEnabled = true;
   const intervalMs = getProviderLimitsSyncIntervalMs();
   const intervalMinutes = getProviderLimitsSyncIntervalMinutes();
+  schedulerEnabled = true;
 
   console.log(`[ProviderLimitsSync] Scheduler started — interval: ${intervalMinutes}m`);
 
@@ -77,15 +78,21 @@ export function startProviderLimitsSyncScheduler(): void {
     }, initialDelayMs);
 
     startupTimer.unref?.();
-  })().catch((error) => {
-    console.warn("[ProviderLimitsSync] Scheduler setup failed:", (error as Error).message);
-  });
+  })();
   startupSetup = setup;
-  void setup.then(() => {
-    if (startupSetup === setup) startupSetup = null;
-  });
+  void setup.then(
+    () => {
+      if (startupSetup === setup) startupSetup = null;
+    },
+    (error) => {
+      console.warn("[ProviderLimitsSync] Scheduler setup failed:", (error as Error).message);
+      if (startupSetup === setup) {
+        startupSetup = null;
+        schedulerEnabled = false;
+      }
+    }
+  );
 }
-
 
 export function stopProviderLimitsSyncScheduler(): void {
   schedulerEnabled = false;

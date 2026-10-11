@@ -780,8 +780,17 @@ export async function startLiveDashboardServer(
     });
     if (globalThis.__agentproxyLiveWsServer !== server) {
       unsubscribe();
-      void wss.close();
-      resolve(server);
+      try {
+        wss.close();
+      } catch {
+        // Never reached LISTENING state.
+      }
+      try {
+        server.close();
+      } catch {
+        // Never reached LISTENING state.
+      }
+      reject(new Error("[LiveWS] Server startup preempted by lifecycle stop"));
       return;
     }
     server.listen(port, host, () => {
