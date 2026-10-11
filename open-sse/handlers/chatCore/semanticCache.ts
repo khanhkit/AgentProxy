@@ -1,5 +1,6 @@
 import {
   generateSignature,
+  outputContractOf,
   getCachedResponse,
   isCacheableForRead,
 } from "@/lib/semanticCache";
@@ -54,7 +55,8 @@ export async function checkSemanticCache({
       body.messages ?? body.input,
       body.temperature,
       body.top_p,
-      apiKeyId ?? undefined
+      apiKeyId ?? undefined,
+      outputContractOf(body)
     );
     const cached = getCachedResponse(signature);
     if (cached) {
