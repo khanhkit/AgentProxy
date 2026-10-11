@@ -2,6 +2,7 @@
 
 import React, { useState, useCallback, useMemo } from "react";
 import { useTranslations } from "next-intl";
+import { useDisplayBaseUrl } from "@/shared/hooks";
 import {
   OPENAPI_ENDPOINTS,
   OPENAPI_TAGS,
@@ -92,9 +93,9 @@ export function ApiExplorerClient() {
   const t = useTranslations("docs");
   const te = useTranslations("endpoint");
   const [selected, setSelected] = useState<OpenApiEndpoint | null>(null);
-  const [baseUrl, setBaseUrl] = useState(
-    typeof window !== "undefined" ? window.location.origin : "http://localhost:20128"
-  );
+  const displayBaseUrl = useDisplayBaseUrl();
+  const [baseUrlOverride, setBaseUrlOverride] = useState<string | null>(null);
+  const baseUrl = baseUrlOverride ?? displayBaseUrl;
   const [apiKey, setApiKey] = useState("");
   const [requestBody, setRequestBody] = useState("");
   const [response, setResponse] = useState<string | null>(null);
@@ -235,7 +236,7 @@ export function ApiExplorerClient() {
                 <input
                   type="text"
                   value={baseUrl}
-                  onChange={(e) => setBaseUrl(e.target.value)}
+                  onChange={(e) => setBaseUrlOverride(e.target.value)}
                   className="w-full px-3 py-2 text-sm bg-bg-subtle border border-border rounded-lg focus:outline-none focus:ring-1 focus:ring-primary"
                 />
               </div>

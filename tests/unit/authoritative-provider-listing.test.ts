@@ -21,6 +21,18 @@ test("OpenRouter and compatible/passthrough aliases cannot resurrect unavailable
   assert.deepEqual(filterUnavailableModelRows(rows, live, custom, false), rows);
 });
 
+test("confirmed empty authoritative listing retains operator-owned rows and excludes retired imports", () => {
+  const rows = ["retired-static", "manual", "old-import"].map((modelId) => ({ modelId }));
+  const custom = [
+    { id: "manual", source: "custom" },
+    { id: "old-import", source: "imported" },
+  ];
+  assert.deepEqual(
+    filterUnavailableModelRows(rows, [], custom, true).map((row) => row.modelId),
+    ["manual"]
+  );
+});
+
 const input = {
   providerId: "nvidia",
   registryModels: [
