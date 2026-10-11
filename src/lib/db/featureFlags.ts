@@ -8,6 +8,7 @@
 
 import { FEATURE_FLAG_DEFINITIONS } from "@/shared/constants/featureFlagDefinitions";
 import { getDbInstance } from "./core";
+import { advanceSettingsRevision, readSettingsRevisionFromDb } from "./settingsRevision";
 import { finishModelCatalogWriteWithoutBackup } from "./models/modelCatalogWriteSignals";
 
 const NAMESPACE = "feature_flags";
@@ -19,7 +20,7 @@ const NAMESPACE = "feature_flags";
 // covers edits made to the store from outside this process. It is keyed by the
 // database instance so a reopened store (tests, resetDbInstance) starts clean.
 const OVERRIDE_CACHE_TTL_MS = 1000;
-type OverrideCacheEntry = { value: string | undefined; expiresAt: number };
+type OverrideCacheEntry = { value: string | undefined; expiresAt: number; revision: number };
 const overrideCaches = new WeakMap<object, Map<string, OverrideCacheEntry>>();
 
 function overrideCacheFor(db: object): Map<string, OverrideCacheEntry> {
@@ -70,12 +71,13 @@ export function getFeatureFlagOverride(key: string): string | undefined {
   const db = getDbInstance();
   const cache = overrideCacheFor(db);
   const now = Date.now();
+  const revision = readSettingsRevisionFromDb(db);
   const cached = cache.get(key);
-  if (cached && cached.expiresAt > now) return cached.value;
+  if (cached && cached.expiresAt > now && cached.revision === revision) return cached.value;
   const row = db
     .prepare("SELECT value FROM key_value WHERE namespace = ? AND key = ?")
     .get(NAMESPACE, key) as { value: string } | undefined;
-  cache.set(key, { value: row?.value, expiresAt: now + OVERRIDE_CACHE_TTL_MS });
+  cache.set(key, { value: row?.value, expiresAt: now + OVERRIDE_CACHE_TTL_MS, revision });
   return row?.value;
 }
 
@@ -97,11 +99,16 @@ export function setFeatureFlagOverride(key: string, value: string): void {
     );
   }
   const db = getDbInstance();
-  db.prepare("INSERT OR REPLACE INTO key_value (namespace, key, value) VALUES (?, ?, ?)").run(
-    NAMESPACE,
-    key,
-    value
-  );
+  const write = db.transaction(() => {
+    const currentRevision = readSettingsRevisionFromDb(db);
+    db.prepare("INSERT OR REPLACE INTO key_value (namespace, key, value) VALUES (?, ?, ?)").run(
+      NAMESPACE,
+      key,
+      value
+    );
+    advanceSettingsRevision(db, currentRevision);
+  });
+  write();
   clearFeatureFlagOverrideCache(key);
   if (CATALOG_RELEVANT_FEATURE_FLAGS.has(key)) {
     finishModelCatalogWriteWithoutBackup();
@@ -114,7 +121,12 @@ export function setFeatureFlagOverride(key: string, value: string): void {
  */
 export function removeFeatureFlagOverride(key: string): void {
   const db = getDbInstance();
-  db.prepare("DELETE FROM key_value WHERE namespace = ? AND key = ?").run(NAMESPACE, key);
+  const write = db.transaction(() => {
+    const currentRevision = readSettingsRevisionFromDb(db);
+    db.prepare("DELETE FROM key_value WHERE namespace = ? AND key = ?").run(NAMESPACE, key);
+    advanceSettingsRevision(db, currentRevision);
+  });
+  write();
   clearFeatureFlagOverrideCache(key);
   if (CATALOG_RELEVANT_FEATURE_FLAGS.has(key)) {
     finishModelCatalogWriteWithoutBackup();
@@ -130,12 +142,18 @@ export function clearAllFeatureFlagOverrides(): void {
   // (parameter-count mismatch) the moment a flag is added to the set above.
   const catalogFlags = Array.from(CATALOG_RELEVANT_FEATURE_FLAGS);
   const placeholders = catalogFlags.map(() => "?").join(", ");
-  const hadRelevantOverride = Boolean(
-    db
-      .prepare(`SELECT 1 FROM key_value WHERE namespace = ? AND key IN (${placeholders}) LIMIT 1`)
-      .get(NAMESPACE, ...catalogFlags)
-  );
-  db.prepare("DELETE FROM key_value WHERE namespace = ?").run(NAMESPACE);
+  const write = db.transaction(() => {
+    const currentRevision = readSettingsRevisionFromDb(db);
+    const hadRelevantOverride = Boolean(
+      db
+        .prepare(`SELECT 1 FROM key_value WHERE namespace = ? AND key IN (${placeholders}) LIMIT 1`)
+        .get(NAMESPACE, ...catalogFlags)
+    );
+    db.prepare("DELETE FROM key_value WHERE namespace = ?").run(NAMESPACE);
+    advanceSettingsRevision(db, currentRevision);
+    return hadRelevantOverride;
+  });
+  const hadRelevantOverride = write();
   clearFeatureFlagOverrideCache();
   if (hadRelevantOverride) {
     finishModelCatalogWriteWithoutBackup();

@@ -2987,7 +2987,7 @@ async function handleChatCoreInner({
     }
   }
   // === /Quota Share enforcement PRE-hook ===
-  if (isFeatureFlagEnabled("CAPABILITY_FILTER_ENABLED")) {
+  if (isFeatureFlagEnabled("CAPABILITY_FILTER_ENABLED", runtimeFeatureFlagOverrides)) {
     const fit = checkRequestCapabilityFit(
       getResolvedModelCapabilities({ provider, model: effectiveModel }),
       deriveRequestCapabilityRequirements(body as Record<string, unknown>),
@@ -5685,6 +5685,7 @@ async function handleChatCoreInner({
     log,
     correlationId,
     traceId,
+    runtimeFeatureFlagOverrides,
     getCredentials: () =>
       getProviderCredentials(provider, null, null, currentModel).catch(() => null),
     applyCredentials: (next) => Object.assign(credentials, next),
@@ -6078,6 +6079,7 @@ async function handleChatCoreInner({
     clientResponseFormat,
     echoModel,
     responseHeaders,
+    runtimeFeatureFlagOverrides,
     // Same adaptive budget the pre-handoff readiness gate above just used —
     // reasoning models that legitimately take a while to say anything keep
     // that same patience for their first REAL content, not just their first

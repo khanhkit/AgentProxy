@@ -8,8 +8,11 @@ import {
  * Resolve the effective value of a feature flag.
  * Priority: DB override > process.env > definition.defaultValue
  */
-export function resolveFeatureFlag(key: string): string {
-  const dbOverride = getFeatureFlagOverride(key);
+export function resolveFeatureFlag(
+  key: string,
+  overrides?: Readonly<Record<string, string>>
+): string {
+  const dbOverride = overrides === undefined ? getFeatureFlagOverride(key) : overrides[key];
   if (dbOverride !== undefined) return dbOverride;
 
   const envValue = process.env[key];
@@ -23,8 +26,11 @@ export function resolveFeatureFlag(key: string): string {
  * Check if a boolean feature flag is enabled.
  * Treats "true", "1", "yes" as enabled.
  */
-export function isFeatureFlagEnabled(key: string): boolean {
-  const value = resolveFeatureFlag(key);
+export function isFeatureFlagEnabled(
+  key: string,
+  overrides?: Readonly<Record<string, string>>
+): boolean {
+  const value = resolveFeatureFlag(key, overrides);
   return value === "true" || value === "1" || value === "yes";
 }
 
@@ -330,9 +336,11 @@ export function isProxyHealthBlockedResetsStreakEnabled(): boolean {
 }
 
 /** Rotation attribution diagnostics; opt-in and fail-safe off. */
-export function isRotationAttributionEnabled(): boolean {
+export function isRotationAttributionEnabled(
+  overrides?: Readonly<Record<string, string>>
+): boolean {
   try {
-    return isFeatureFlagEnabled("ROTATION_ATTRIBUTION");
+    return isFeatureFlagEnabled("ROTATION_ATTRIBUTION", overrides);
   } catch (error) {
     console.error(
       "[featureFlags] Failed to resolve ROTATION_ATTRIBUTION, defaulting to disabled:",

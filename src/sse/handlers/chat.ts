@@ -1842,7 +1842,10 @@ async function handleSingleModelChat(
       // lookup throws.
       let includeAccountId = false;
       try {
-        includeAccountId = isFeatureFlagEnabled("AUTH_LOG_INCLUDE_ACCOUNT_ID");
+        includeAccountId = isFeatureFlagEnabled(
+          "AUTH_LOG_INCLUDE_ACCOUNT_ID",
+          runtimeOptions.runtimeFeatureFlagOverrides
+        );
       } catch {
         includeAccountId = false;
       }
@@ -2040,7 +2043,9 @@ async function handleSingleModelChat(
 
       // 5. Log proxy + translation events (fire-and-forget; never blocks the response)
       // #5217: reflect the proxy the executor actually applied (per-account rotation).
-      const rotationAttributionOn = isRotationAttributionEnabled();
+      const rotationAttributionOn = isRotationAttributionEnabled(
+        runtimeOptions.runtimeFeatureFlagOverrides
+      );
       void safeLogEvents({
         result,
         proxyInfo: mergeAppliedProxySink(proxyInfo, appliedProxySink),

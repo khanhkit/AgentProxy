@@ -22,9 +22,8 @@ import { dirname, resolve } from "node:path";
 const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-test-auth-log-account-id-"));
 process.env.DATA_DIR = tmpDir;
 
-const { FEATURE_FLAG_DEFINITIONS } = await import(
-  "../../src/shared/constants/featureFlagDefinitions.ts"
-);
+const { FEATURE_FLAG_DEFINITIONS } =
+  await import("../../src/shared/constants/featureFlagDefinitions.ts");
 
 test("AUTH_LOG_INCLUDE_ACCOUNT_ID feature flag defaults to OFF, independent of debugMode", async (t) => {
   const def = (key: string) => FEATURE_FLAG_DEFINITIONS.find((d) => d.key === key);
@@ -85,8 +84,8 @@ test("chat.ts AUTH account log line is gated on the narrow flag, not on debugMod
 
   assert.match(
     src,
-    /isFeatureFlagEnabled\("AUTH_LOG_INCLUDE_ACCOUNT_ID"\)/,
-    "chat.ts must resolve the redaction gate via the narrow AUTH_LOG_INCLUDE_ACCOUNT_ID flag"
+    /isFeatureFlagEnabled\(\s*"AUTH_LOG_INCLUDE_ACCOUNT_ID"\s*,\s*runtimeOptions\.runtimeFeatureFlagOverrides\s*\)/,
+    "chat.ts must resolve the narrow AUTH_LOG_INCLUDE_ACCOUNT_ID flag from the request-pinned override projection"
   );
 
   // The old, broad debugMode-derived gate must be gone from this call site.

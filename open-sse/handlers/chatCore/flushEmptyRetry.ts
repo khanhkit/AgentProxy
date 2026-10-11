@@ -43,13 +43,14 @@ export type FlushEmptyRetryArgs = {
   onRetryPrepared?: (retryResult: unknown) => void;
   correlationId?: string | null;
   traceId?: string;
+  runtimeFeatureFlagOverrides?: Readonly<Record<string, string>>;
 };
 
 export async function maybeRetryFlushEmptyTurn(args: FlushEmptyRetryArgs): Promise<Response> {
   if (!args.stream || !args.response.ok || !args.response.body) return args.response;
   let enabled = false;
   try {
-    enabled = isFeatureFlagEnabled("FLUSH_EMPTY_RETRY_ENABLED");
+    enabled = isFeatureFlagEnabled("FLUSH_EMPTY_RETRY_ENABLED", args.runtimeFeatureFlagOverrides);
   } catch {
     enabled = false;
   }
