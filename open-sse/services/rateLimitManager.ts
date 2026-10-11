@@ -346,14 +346,9 @@ export function stopRateLimitWatchdog(): void {
   watchdogInterval = null;
 }
 
-(
-  globalThis as typeof globalThis & { __agentproxyStopRateLimitWatchdog?: () => void }
-).__agentproxyStopRateLimitWatchdog = stopRateLimitWatchdog;
+globalThis.__agentproxyStopRateLimitWatchdog = stopRateLimitWatchdog;
 
-/**
- * Stop accepting watchdog work and await limiter/background teardown. Process
- * signals are owned by the main lifecycle coordinator/entrypoint.
- */
+// Process signals are owned by the main lifecycle coordinator/entrypoint.
 export async function shutdownRateLimitManager(): Promise<void> {
   stopRateLimitWatchdog();
   if (persistTimer) {
@@ -366,24 +361,17 @@ export async function shutdownRateLimitManager(): Promise<void> {
     trackAsyncOperation(Promise.resolve(limiter.stop({ dropWaitingJobs: false })))
   );
   if (stops.length > 0) await Promise.allSettled(stops);
-  if (pendingAsyncOperations.size > 0) {
-    await Promise.allSettled(Array.from(pendingAsyncOperations));
-  }
+  if (pendingAsyncOperations.size > 0) await Promise.allSettled(Array.from(pendingAsyncOperations));
   limiters.clear();
   limiterLastUsed.clear();
   preservedReplacementSettings.clear();
 }
 
-(
-  globalThis as typeof globalThis & { __agentproxyShutdownRateLimit?: () => Promise<void> }
-).__agentproxyShutdownRateLimit = shutdownRateLimitManager;
+globalThis.__agentproxyShutdownRateLimit = shutdownRateLimitManager;
 
 function trackAsyncOperation<T>(promise: Promise<T>): Promise<T> {
   pendingAsyncOperations.add(promise);
-  // Do not use a fire-and-forget `.finally()` here: it creates a derived
-  // Promise that mirrors rejections from `promise`. When the caller intentionally
-  // tracks a background cleanup without awaiting it, that derived Promise can be
-  // reported as an unhandled rejection during Node's test-runner IPC teardown.
+  // Avoid a discarded `.finally()` promise mirroring rejections as unhandled.
   void promise.then(
     () => {
       pendingAsyncOperations.delete(promise);
