@@ -25,7 +25,10 @@ function stripZeroWidth(value: unknown): unknown {
   if (value && typeof value === "object") {
     if (Array.isArray(value)) return value.map(stripZeroWidth);
     return Object.fromEntries(
-      Object.entries(value as Record<string, unknown>).map(([key, nested]) => [key, stripZeroWidth(nested)])
+      Object.entries(value as Record<string, unknown>).map(([key, nested]) => [
+        key,
+        stripZeroWidth(nested),
+      ])
     );
   }
   return value;
@@ -72,18 +75,25 @@ function applyCandidatePart(
     const anonymousPrefix = `gemini-auto-${partIndex}-`;
     const existing = providerId
       ? acc.toolCalls.find((call) => call.id === providerId)
-      : acc.toolCalls.find((call) =>
-          call.id.startsWith(anonymousPrefix) &&
-          call.function.name === fc.name &&
-          call.function.arguments === nextArguments
+      : acc.toolCalls.find(
+          (call) =>
+            call.id.startsWith(anonymousPrefix) &&
+            call.function.name === fc.name &&
+            call.function.arguments === nextArguments
         );
     const id = providerId ?? existing?.id ?? `${anonymousPrefix}${acc.toolCalls.length}`;
     if (existing) {
       let mergedArgs = nextArgs;
       try {
         const previous = JSON.parse(existing.function.arguments) as unknown;
-        if (previous && typeof previous === "object" && !Array.isArray(previous) &&
-            nextArgs && typeof nextArgs === "object" && !Array.isArray(nextArgs)) {
+        if (
+          previous &&
+          typeof previous === "object" &&
+          !Array.isArray(previous) &&
+          nextArgs &&
+          typeof nextArgs === "object" &&
+          !Array.isArray(nextArgs)
+        ) {
           mergedArgs = { ...previous, ...nextArgs };
         }
       } catch {

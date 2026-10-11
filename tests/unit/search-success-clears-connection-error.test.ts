@@ -88,8 +88,16 @@ async function runFetch(port: number, connectionId: string) {
 async function waitForConnectionClear(connectionId: string) {
   let current: Record<string, unknown> = {};
   for (let attempt = 0; attempt < 100; attempt++) {
-    current = (await providersDb.getProviderConnectionById(connectionId)) as Record<string, unknown>;
-    if (current.testStatus === "active" && !current.lastError && !current.errorCode && !current.rateLimitedUntil) {
+    current = (await providersDb.getProviderConnectionById(connectionId)) as Record<
+      string,
+      unknown
+    >;
+    if (
+      current.testStatus === "active" &&
+      !current.lastError &&
+      !current.errorCode &&
+      !current.rateLimitedUntil
+    ) {
       return current;
     }
     await new Promise<void>((resolve) => setTimeout(resolve, 10));
@@ -179,7 +187,6 @@ timedTest("a failed search does not clear the connection error", async () => {
   assert.equal(after.testStatus, "error");
   assert.ok(after.lastError, "failure must keep the recorded error");
 });
-
 
 timedTest("an older successful search never clears a newer recorded failure", async () => {
   const conn = await providersDb.createProviderConnection({
