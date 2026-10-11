@@ -59,15 +59,38 @@ function extractGeminiMarkdownShortcut(parsed: Record<string, unknown>): string 
 }
 
 /** Append one candidate content part (text or textual tool call) onto the accumulator. */
-function applyCandidatePart(part: Record<string, unknown>, acc: GeminiSSEAccumulator): void {
+function applyCandidatePart(
+  part: Record<string, unknown>,
+  acc: GeminiSSEAccumulator,
+  partIndex: number
+): void {
   const fc = part.functionCall as Record<string, unknown> | undefined;
   if (fc && typeof fc.name === "string") {
-    acc.toolCalls.push({
-      id: typeof fc.id === "string" && fc.id.length > 0 ? fc.id : `${fc.name}-${Date.now()}-${acc.toolCalls.length}`,
-      index: acc.toolCalls.length,
-      type: "function",
-      function: { name: fc.name, arguments: JSON.stringify(stripZeroWidth(fc.args ?? {})) },
-    });
+    const id = typeof fc.id === "string" && fc.id.length > 0
+      ? fc.id
+      : `gemini-${partIndex}-${fc.name}`;
+    const nextArgs = stripZeroWidth(fc.args ?? {});
+    const existing = acc.toolCalls.find((call) => call.id === id);
+    if (existing) {
+      let mergedArgs = nextArgs;
+      try {
+        const previous = JSON.parse(existing.function.arguments) as unknown;
+        if (previous && typeof previous === "object" && !Array.isArray(previous) &&
+            nextArgs && typeof nextArgs === "object" && !Array.isArray(nextArgs)) {
+          mergedArgs = { ...previous, ...nextArgs };
+        }
+      } catch {
+        // A malformed earlier fragment must not block the latest valid snapshot.
+      }
+      existing.function.arguments = JSON.stringify(mergedArgs);
+    } else {
+      acc.toolCalls.push({
+        id,
+        index: acc.toolCalls.length,
+        type: "function",
+        function: { name: fc.name, arguments: JSON.stringify(nextArgs) },
+      });
+    }
     acc.sawContent = true;
     return;
   }
@@ -98,8 +121,8 @@ function applyCandidateContentParts(
   const content = candidate?.content as Record<string, unknown> | undefined;
   const parts = content?.parts;
   if (!Array.isArray(parts)) return;
-  for (const part of parts) {
-    applyCandidatePart(part as Record<string, unknown>, acc);
+  for (const [index, part] of parts.entries()) {
+    applyCandidatePart(part as Record<string, unknown>, acc, index);
   }
 }
 
