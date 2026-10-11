@@ -87,7 +87,8 @@ export function pickAccount<T extends RotatableAccount>(
     // instead of resetting to the same refused member and pinning forever.
     const drainedCursorIdx = state.nextAccountIdx % accounts.length;
     const account = accounts[stickyIdx];
-    state.nextAccountIdx = (drainedCursorIdx + 1) % accounts.length;
+    const nextIdx = (drainedCursorIdx + 1) % accounts.length;
+    state.nextAccountIdx = nextIdx === stickyIdx ? (stickyIdx + 1) % accounts.length : nextIdx;
     state.lastHealthyFingerprint = account.fingerprint;
     return account;
   }

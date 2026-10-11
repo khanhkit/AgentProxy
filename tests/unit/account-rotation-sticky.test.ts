@@ -109,3 +109,23 @@ test("AP-ISS-0192 sticky drain survives cursor wraparound", () => {
     "the wrapped sticky serve must consume the drained cursor instead of pinning forever"
   );
 });
+
+test("AP-ISS-0192 two-account sticky drain preserves recovered cursor fairness", () => {
+  const accounts = fleet().slice(0, 2);
+  const refusedKey = proxyEgressKey(accounts[0].proxy);
+  assert.ok(noteProxyRefusal(refusedKey, "ip_quota_429") !== null);
+  const state = { nextAccountIdx: 0, lastHealthyFingerprint: "m1" };
+
+  assert.equal(
+    pickAccount(accounts, state).fingerprint,
+    "m1",
+    "the healthy sticky member bridges the refused cursor while the refusal is active"
+  );
+
+  noteProxyServed(refusedKey);
+  assert.equal(
+    pickAccount(accounts, state).fingerprint,
+    "m0",
+    "once the refusal clears, round-robin must resume at the recovered cursor instead of re-serving sticky"
+  );
+});
