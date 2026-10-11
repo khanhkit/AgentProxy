@@ -163,6 +163,29 @@ export function createSystemPreambleStripper(): PreambleStripper {
     return false;
   };
 
+  const findBalancedTagClose = (
+    s: string,
+    rootTag: string
+  ): { start: number; end: number } | null => {
+    const localStack = [rootTag];
+    const tagRe = /<\/?(analysis|system-reminder|summary)>/gi;
+    let match: RegExpExecArray | null;
+    while ((match = tagRe.exec(s)) !== null) {
+      const full = match[0];
+      const name = match[1].toLowerCase();
+      if (!full.startsWith("</")) {
+        localStack.push(name);
+        continue;
+      }
+      if (localStack[localStack.length - 1] !== name) return null;
+      localStack.pop();
+      if (localStack.length === 0) {
+        return { start: match.index, end: match.index + full.length };
+      }
+    }
+    return null;
+  };
+
   const push = (text: string): string => {
     if (done || text === "") return text;
     buf += text;
@@ -215,9 +238,10 @@ export function createSystemPreambleStripper(): PreambleStripper {
           continue;
         }
         const closeTag = "</" + top + ">";
-        const ci = buf.indexOf(closeTag);
-        if (ci === -1) return ""; // block not closed yet — keep suppressing
-        const afterClose = buf.slice(ci + closeTag.length);
+        const close = findBalancedTagClose(buf, top);
+        if (!close) return ""; // block not closed yet (or malformed nesting) — keep suppressing
+        const ci = close.start;
+        const afterClose = buf.slice(close.end);
         const trailing = afterClose.replace(/^[ \t\r\n]+/, "");
         // A block carrying substantial content (>= SYSTEM_ECHO_THRESHOLD) is the
         // model's real response (e.g. a Claude Code autocompact summary), not a

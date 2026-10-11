@@ -24,6 +24,13 @@ test("strips analysis echo split across streaming chunks", () => {
   assert.equal(strip("</analysis>\n\n대답입니다."), "대답입니다.");
 });
 
+test("AP-ISS-0194: nested analysis blocks stay suppressed until the outer close", () => {
+  const strip = createSystemPreambleStripper();
+  const echoed = "<analysis>outer <analysis>inner</analysis> still-system</analysis>\n\nAnswer";
+
+  assert.equal(strip(echoed), "Answer");
+});
+
 test("strips consecutive analysis + summary echo blocks", () => {
   const strip = createSystemPreambleStripper();
   const t = "<analysis>\nA\n</analysis>\n<summary>\nS\n</summary>\n\n결론";
