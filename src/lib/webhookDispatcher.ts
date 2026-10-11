@@ -53,7 +53,9 @@ export function getWebhookDeliveryStats(): {
   };
 }
 
-export async function drainPendingWebhookDeliveries(): Promise<ReturnType<typeof getWebhookDeliveryStats>> {
+export async function drainPendingWebhookDeliveries(): Promise<
+  ReturnType<typeof getWebhookDeliveryStats>
+> {
   const state = getWebhookLifecycleState();
   while (state.pending.size > 0) {
     await Promise.allSettled(Array.from(state.pending));
@@ -62,6 +64,10 @@ export async function drainPendingWebhookDeliveries(): Promise<ReturnType<typeof
 }
 
 export function __resetWebhookLifecycleForTests(): void {
+  const state = globalThis.__agentproxyWebhookLifecycle;
+  if (state?.pending.size) {
+    throw new Error("Cannot reset webhook lifecycle with pending webhook deliveries");
+  }
   delete globalThis.__agentproxyWebhookLifecycle;
 }
 
@@ -106,7 +112,10 @@ async function fetchWebhookWithValidatedRedirects(
 
     // Match fetch redirect semantics for POST on 301/302 and for 303: the
     // redirected request becomes GET and no payload signature is replayed.
-    if (response.status === 303 || ((response.status === 301 || response.status === 302) && method === "POST")) {
+    if (
+      response.status === 303 ||
+      ((response.status === 301 || response.status === 302) && method === "POST")
+    ) {
       method = "GET";
       body = undefined;
       headers.delete("content-type");

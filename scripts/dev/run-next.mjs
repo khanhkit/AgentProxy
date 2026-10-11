@@ -159,11 +159,11 @@ globalThis.__agentproxyCustomServerOwnsShutdown = true;
 let nextApp = createNextApp();
 let rustCoreHandle = null;
 let shuttingDown = false;
-const parsedShutdownTimeoutMs = Number.parseInt(process.env.SHUTDOWN_TIMEOUT_MS ?? "30000", 10);
-const SHUTDOWN_TIMEOUT_MS = Math.max(
-  1,
-  Number.isFinite(parsedShutdownTimeoutMs) ? parsedShutdownTimeoutMs : 30000
-);
+const parsedShutdownTimeoutMs = Number(process.env.SHUTDOWN_TIMEOUT_MS ?? "30000");
+const SHUTDOWN_TIMEOUT_MS =
+  Number.isFinite(parsedShutdownTimeoutMs) && parsedShutdownTimeoutMs >= 0
+    ? parsedShutdownTimeoutMs
+    : 30000;
 
 // Best-effort self-heal for a corrupted Turbopack persistent dev cache (#6289):
 // on Windows an mmap of an SST cache file can fail ("os error 1455" / paging

@@ -2,6 +2,7 @@ export const LIFECYCLE_PHASES = [
   "STOP_ADMISSION",
   "STOP_SCHEDULERS",
   "DRAIN_ACTIVE",
+  "DRAIN_BACKGROUND",
   "FLUSH_DURABLE",
   "CLOSE_RESOURCES",
   "STOP_CHILDREN",
@@ -119,7 +120,11 @@ export async function runLifecycleShutdown(options: {
 
     const phaseResults = await Promise.all(phaseHooks.map((hook) => runHook(hook, deadline)));
     results.push(...phaseResults);
-    if (phaseResults.some((result) => result.status === "timed_out" || result.status === "skipped_deadline")) {
+    if (
+      phaseResults.some(
+        (result) => result.status === "timed_out" || result.status === "skipped_deadline"
+      )
+    ) {
       deadlineExhausted = true;
     }
   }

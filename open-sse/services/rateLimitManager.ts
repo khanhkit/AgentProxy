@@ -329,7 +329,6 @@ function reconcileEnabledConnections(
   };
 }
 
-
 export function startRateLimitWatchdog(): void {
   if (watchdogInterval) return;
   watchdogInterval = setInterval(() => {
@@ -346,6 +345,10 @@ export function stopRateLimitWatchdog(): void {
   clearInterval(watchdogInterval);
   watchdogInterval = null;
 }
+
+(
+  globalThis as typeof globalThis & { __agentproxyStopRateLimitWatchdog?: () => void }
+).__agentproxyStopRateLimitWatchdog = stopRateLimitWatchdog;
 
 /**
  * Stop accepting watchdog work and await limiter/background teardown. Process
@@ -371,8 +374,9 @@ export async function shutdownRateLimitManager(): Promise<void> {
   preservedReplacementSettings.clear();
 }
 
-(globalThis as typeof globalThis & { __agentproxyShutdownRateLimit?: () => Promise<void> })
-  .__agentproxyShutdownRateLimit = shutdownRateLimitManager;
+(
+  globalThis as typeof globalThis & { __agentproxyShutdownRateLimit?: () => Promise<void> }
+).__agentproxyShutdownRateLimit = shutdownRateLimitManager;
 
 function trackAsyncOperation<T>(promise: Promise<T>): Promise<T> {
   pendingAsyncOperations.add(promise);
@@ -507,7 +511,9 @@ export function refreshConnectionRateLimits(connectionId, overrides) {
     connectionRateLimitOverrides.set(connectionId, overrides);
   }
   clearPreservedReplacementSettings(connectionId);
-  if (stripConnectionCaps(learnedLimits, connectionId, (key, entry) => learnedLimits.set(key, entry))) {
+  if (
+    stripConnectionCaps(learnedLimits, connectionId, (key, entry) => learnedLimits.set(key, entry))
+  ) {
     schedulePersist();
   }
   for (const [key, limiter] of Array.from(limiters)) {
@@ -1129,17 +1135,24 @@ export async function __getLimiterStateForTests(provider, connectionId, model = 
 /** Load persisted learned limits on startup. */
 async function loadPersistedLimits() {
   await loadPersistedLearnedLimitsFromStore({
-    getRaw: async () => (await import("@/lib/db/settings")).getSettings().then((settings) => settings?.learnedRateLimits),
-    restore: (parsed) => restorePersistedLearnedLimits({
-      parsed, nowMs: Date.now(), warn: (message) => warnRateLimit(message),
-      setLearned: (key, entry) => learnedLimits.set(key, entry),
-      isEnabled: (connectionId) => enabledConnections.has(connectionId),
-      getLimiter: (key) => limiters.get(key), hasRpmOverride,
-      resolveCapSettings: (provider, connectionId, cap, source) =>
-        capSettingsWithinBudget(provider, connectionId, cap, source),
-      updateLimiter: (limiter, settings) =>
-        updateLimiterSettings(limiter as Bottleneck, settings as Bottleneck.ConstructorOptions),
-    }),
+    getRaw: async () =>
+      (await import("@/lib/db/settings"))
+        .getSettings()
+        .then((settings) => settings?.learnedRateLimits),
+    restore: (parsed) =>
+      restorePersistedLearnedLimits({
+        parsed,
+        nowMs: Date.now(),
+        warn: (message) => warnRateLimit(message),
+        setLearned: (key, entry) => learnedLimits.set(key, entry),
+        isEnabled: (connectionId) => enabledConnections.has(connectionId),
+        getLimiter: (key) => limiters.get(key),
+        hasRpmOverride,
+        resolveCapSettings: (provider, connectionId, cap, source) =>
+          capSettingsWithinBudget(provider, connectionId, cap, source),
+        updateLimiter: (limiter, settings) =>
+          updateLimiterSettings(limiter as Bottleneck, settings as Bottleneck.ConstructorOptions),
+      }),
     log: (message) => logRateLimit(message),
     error: (message, error) => errorRateLimit(message, error),
   });

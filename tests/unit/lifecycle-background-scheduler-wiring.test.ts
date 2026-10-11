@@ -57,13 +57,20 @@ test("delayed scheduler starters retain a cancellable startup timer", () => {
     "src/lib/contextWindowResolver.ts",
     "src/lib/memory/typedDecay.ts",
   ]) {
-    assert.match(source(path), /[Ss]tartupTimer/, `${path} must retain/cancel its delayed startup timer`);
+    assert.match(
+      source(path),
+      /[Ss]tartupTimer/,
+      `${path} must retain/cancel its delayed startup timer`
+    );
   }
 });
 
 test("auxiliary HTTP listeners expose explicit lifecycle stop APIs", () => {
   assert.match(source("src/lib/apiBridgeServer.ts"), /export function stopApiBridgeServer/);
-  assert.match(source("src/server/ws/liveServer.ts"), /export (?:async )?function stopLiveDashboardServer/);
+  assert.match(
+    source("src/server/ws/liveServer.ts"),
+    /export (?:async )?function stopLiveDashboardServer/
+  );
 });
 
 test("main lifecycle does not trace heavyweight MITM/rate-limit leaves solely for shutdown", () => {
@@ -98,14 +105,24 @@ test("provider limits scheduler recovers from setup failure", () => {
     /void cycle\.finally\(/,
     "cycle cleanup must not create a discarded rejecting finally promise"
   );
+  assert.match(
+    providerLimits,
+    /if \(schedulerTimer \|\| startupTimer \|\| startupSetup \|\| schedulerEnabled\)/,
+    "a pending setup must block a replacement scheduler start"
+  );
+  assert.match(
+    providerLimits,
+    /if \(!schedulerEnabled \|\| startupSetup !== setup\) return;/,
+    "an obsolete async setup must not arm timers after stop/restart"
+  );
 });
 
 test("main lifecycle validates invalid shutdown timeout values", () => {
   const graceful = source("src/lib/gracefulShutdown.ts");
   assert.match(
     graceful,
-    /Number\.isFinite\([\s\S]*?parsedShutdownTimeoutMs[\s\S]*?30000/,
-    "invalid shutdown timeout must fall back to the default budget"
+    /const\s+parsedShutdownTimeoutMs\s*=\s*Number\(process\.env\.SHUTDOWN_TIMEOUT_MS[\s\S]*?Number\.isFinite\(parsedShutdownTimeoutMs\)[\s\S]*?parsedShutdownTimeoutMs\s*>=\s*0/,
+    "main lifecycle must reject partial numeric timeout strings and share zero/invalid semantics with the runner"
   );
 });
 
@@ -113,4 +130,18 @@ test("MITM detector dispatch stays exhaustive when AgentId grows", () => {
   const detection = source("src/mitm/detection/index.ts");
   assert.match(detection, /Record<AgentId, \(\) => DetectionResult>/);
   assert.match(detection, /["']ghe-copilot["']\s*:/);
+});
+
+test("rate-limit lifecycle stops scheduling before active drains and tears down after producers quiesce", () => {
+  const graceful = source("src/lib/gracefulShutdown.ts");
+  const manager = source("open-sse/services/rateLimitManager.ts");
+  assert.match(manager, /__agentproxyStopRateLimitWatchdog/);
+  assert.match(
+    graceful,
+    /register\("rate-limit-scheduler",\s*"STOP_SCHEDULERS"[\s\S]*?__agentproxyStopRateLimitWatchdog/
+  );
+  assert.match(
+    graceful,
+    /register\("rate-limit-drain",\s*"FLUSH_DURABLE"[\s\S]*?__agentproxyShutdownRateLimit/
+  );
 });

@@ -128,7 +128,6 @@ test("OtlpHttpsEventSink drops oldest when the buffer is saturated", async () =>
   }
 });
 
-
 test("OtlpHttpsEventSink stop awaits an in-flight final flush", async () => {
   const originalFetch = global.fetch;
   let release!: () => void;
@@ -172,9 +171,28 @@ test("OtlpHttpsEventSink stop accounts a failed final flush as dropped", async (
   try {
     sink.record(event({ requestId: "req-stop-drop" }));
     await sink.stop();
-    assert.equal(sink.getStats().buffered, 0, "shutdown cannot leave retry-only telemetry buffered");
+    assert.equal(
+      sink.getStats().buffered,
+      0,
+      "shutdown cannot leave retry-only telemetry buffered"
+    );
     assert.equal(sink.getStats().dropped, 1, "failed final flush must be observable as dropped");
   } finally {
     global.fetch = originalFetch;
   }
+});
+
+test("shutdownRoutingObservability unregisters the stopped OTLP sink", async () => {
+  const routing = await import(
+    `../../open-sse/services/routing/index.ts?shutdown-unregister=${Date.now()}`
+  );
+  const events = await import("../../open-sse/services/routing/events.ts");
+  routing.resetRoutingObservability();
+  routing.initRoutingObservability({ AGENTPROXY_OTEL_ENDPOINT: "http://127.0.0.1:9" });
+  assert.ok(events.listRoutingEventSinks().includes("otel"));
+
+  await routing.shutdownRoutingObservability();
+
+  assert.equal(events.listRoutingEventSinks().includes("otel"), false);
+  routing.resetRoutingObservability();
 });

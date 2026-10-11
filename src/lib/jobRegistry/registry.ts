@@ -183,7 +183,6 @@ export class JobRegistry {
     return getJob(jobId)?.config ?? null;
   }
 
-
   private launchRun(jobId: string, handler: () => Promise<HandlerResult>): void {
     if (this.stopping) return;
     const run = this.safeRun(jobId, handler);
@@ -248,6 +247,7 @@ export class JobRegistry {
     tz: string,
     envFlag?: string | null
   ): void {
+    if (this.stopping) return;
     let delay: number;
     try {
       const interval = CronExpressionParser.parse(cronExpr, { tz });
@@ -270,6 +270,7 @@ export class JobRegistry {
       delay = 60_000;
     }
     const timer = setTimeout(() => {
+      if (this.stopping) return;
       let freshCron = cronExpr;
       const getter = this.cronGetters.get(jobId);
       if (getter) {

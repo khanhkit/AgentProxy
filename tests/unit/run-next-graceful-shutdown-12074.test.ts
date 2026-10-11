@@ -11,7 +11,10 @@ test("the custom Next runner owns signals and orders application lifecycle befor
   );
   const prepareCall = runNextSource.indexOf("await prepareWithHeal()");
   assert.ok(ownerRegistration >= 0, "custom server shutdown ownership must be registered");
-  assert.ok(ownerRegistration < prepareCall, "shutdown ownership must exist before instrumentation");
+  assert.ok(
+    ownerRegistration < prepareCall,
+    "shutdown ownership must exist before instrumentation"
+  );
 
   const serverClose = runNextSource.indexOf("server.close(");
   const applicationCleanup = runNextSource.indexOf(
@@ -24,10 +27,22 @@ test("the custom Next runner owns signals and orders application lifecycle befor
   const rustStop = runNextSource.indexOf("await stopRustCore", applicationCleanup);
   const processExit = runNextSource.indexOf("process.exit(exitCode)", rustStop);
 
-  assert.ok(serverClose >= 0 && serverClose < applicationCleanup, "server.close must stop new TCP admission first");
-  assert.ok(closeIdle < applicationCleanup, "idle keep-alive cleanup must happen at admission stop");
-  assert.ok(applicationCleanup < closeAll, "active transport cleanup must wait for application drain");
-  assert.ok(closeAll < awaitServerClose, "force-close remaining sockets before awaiting server close completion");
+  assert.ok(
+    serverClose >= 0 && serverClose < applicationCleanup,
+    "server.close must stop new TCP admission first"
+  );
+  assert.ok(
+    closeIdle < applicationCleanup,
+    "idle keep-alive cleanup must happen at admission stop"
+  );
+  assert.ok(
+    applicationCleanup < closeAll,
+    "active transport cleanup must wait for application drain"
+  );
+  assert.ok(
+    closeAll < awaitServerClose,
+    "force-close remaining sockets before awaiting server close completion"
+  );
   assert.ok(awaitServerClose < nextClose, "HTTP server must be closed before Next teardown");
   assert.ok(nextClose < rustStop, "Rust child must stop only after application/Next cleanup");
   assert.ok(rustStop < processExit, "process exit must remain the final shutdown action");
@@ -36,7 +51,7 @@ test("the custom Next runner owns signals and orders application lifecycle befor
 test("custom Next runner uses the configured global shutdown budget and preserves force-exit semantics", () => {
   assert.match(
     runNextSource,
-    /const\s+parsedShutdownTimeoutMs\s*=\s*Number\.parseInt\(process\.env\.SHUTDOWN_TIMEOUT_MS[\s\S]*?const\s+SHUTDOWN_TIMEOUT_MS/,
+    /const\s+parsedShutdownTimeoutMs\s*=\s*Number\(process\.env\.SHUTDOWN_TIMEOUT_MS[\s\S]*?const\s+SHUTDOWN_TIMEOUT_MS/,
     "custom runner must derive its force-exit budget from SHUTDOWN_TIMEOUT_MS"
   );
   assert.match(
@@ -73,14 +88,20 @@ test("custom Next runner rejects HTTP close errors and closes idle sockets at ad
     /new Promise\(\(resolve, reject\)[\s\S]*?server\.close\(\(error\)[\s\S]*?reject\(error\)/,
     "server.close callback errors must reject the transport-close promise"
   );
-  assert.ok(serverClose >= 0 && closeIdle > serverClose, "idle cleanup must follow admission close");
-  assert.ok(closeIdle < applicationCleanup, "idle keep-alive sockets must close before application drain");
+  assert.ok(
+    serverClose >= 0 && closeIdle > serverClose,
+    "idle cleanup must follow admission close"
+  );
+  assert.ok(
+    closeIdle < applicationCleanup,
+    "idle keep-alive sockets must close before application drain"
+  );
 });
 
 test("custom Next runner validates shutdown timeout before clamping", () => {
   assert.match(
     runNextSource,
-    /const\s+parsedShutdownTimeoutMs\s*=\s*Number\.parseInt\(process\.env\.SHUTDOWN_TIMEOUT_MS[\s\S]*?Number\.isFinite\(parsedShutdownTimeoutMs\)/,
+    /const\s+parsedShutdownTimeoutMs\s*=\s*Number\(process\.env\.SHUTDOWN_TIMEOUT_MS[\s\S]*?Number\.isFinite\(parsedShutdownTimeoutMs\)[\s\S]*?parsedShutdownTimeoutMs\s*>=\s*0/,
     "invalid SHUTDOWN_TIMEOUT_MS must fall back instead of becoming NaN or bypassing the minimum"
   );
 });

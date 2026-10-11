@@ -4,6 +4,7 @@ import test from "node:test";
 import {
   __getLifecycleHooksForTests,
   __resetLifecycleCoordinatorForTests,
+  LIFECYCLE_PHASES,
   registerLifecycleHook,
   runLifecycleShutdown,
 } from "@/lib/lifecycle/coordinator.ts";
@@ -18,11 +19,23 @@ test.after(() => {
 
 test("runs lifecycle phases in strict order", async () => {
   const order: string[] = [];
-  registerLifecycleHook({ name: "close", phase: "CLOSE_RESOURCES", run: () => order.push("close") });
-  registerLifecycleHook({ name: "admission", phase: "STOP_ADMISSION", run: () => order.push("admission") });
+  registerLifecycleHook({
+    name: "close",
+    phase: "CLOSE_RESOURCES",
+    run: () => order.push("close"),
+  });
+  registerLifecycleHook({
+    name: "admission",
+    phase: "STOP_ADMISSION",
+    run: () => order.push("admission"),
+  });
   registerLifecycleHook({ name: "drain", phase: "DRAIN_ACTIVE", run: () => order.push("drain") });
   registerLifecycleHook({ name: "flush", phase: "FLUSH_DURABLE", run: () => order.push("flush") });
-  registerLifecycleHook({ name: "scheduler", phase: "STOP_SCHEDULERS", run: () => order.push("scheduler") });
+  registerLifecycleHook({
+    name: "scheduler",
+    phase: "STOP_SCHEDULERS",
+    run: () => order.push("scheduler"),
+  });
   registerLifecycleHook({ name: "child", phase: "STOP_CHILDREN", run: () => order.push("child") });
 
   const report = await runLifecycleShutdown({ timeoutMs: 500 });
@@ -32,6 +45,17 @@ test("runs lifecycle phases in strict order", async () => {
   assert.equal(report.results.length, 6);
 });
 
+test("background work drains after active producers and before durable flush", () => {
+  assert.deepEqual(LIFECYCLE_PHASES, [
+    "STOP_ADMISSION",
+    "STOP_SCHEDULERS",
+    "DRAIN_ACTIVE",
+    "DRAIN_BACKGROUND",
+    "FLUSH_DURABLE",
+    "CLOSE_RESOURCES",
+    "STOP_CHILDREN",
+  ]);
+});
 test("starts hooks in the same phase concurrently", async () => {
   const started: string[] = [];
   let release!: () => void;
@@ -108,13 +132,22 @@ test("uses one global deadline and skips later hooks after it expires", async ()
 });
 
 test("duplicate hook names replace rather than accumulate across module reloads", () => {
-  const unregisterFirst = registerLifecycleHook({ name: "same", phase: "DRAIN_ACTIVE", run: () => undefined });
+  const unregisterFirst = registerLifecycleHook({
+    name: "same",
+    phase: "DRAIN_ACTIVE",
+    run: () => undefined,
+  });
   registerLifecycleHook({ name: "same", phase: "FLUSH_DURABLE", run: () => undefined });
 
-  assert.deepEqual(__getLifecycleHooksForTests().map(({ name, phase }) => ({ name, phase })), [
-    { name: "same", phase: "FLUSH_DURABLE" },
-  ]);
+  assert.deepEqual(
+    __getLifecycleHooksForTests().map(({ name, phase }) => ({ name, phase })),
+    [{ name: "same", phase: "FLUSH_DURABLE" }]
+  );
 
   unregisterFirst();
-  assert.equal(__getLifecycleHooksForTests().length, 1, "stale unregister must not delete replacement");
+  assert.equal(
+    __getLifecycleHooksForTests().length,
+    1,
+    "stale unregister must not delete replacement"
+  );
 });

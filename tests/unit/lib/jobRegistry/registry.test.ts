@@ -627,6 +627,18 @@ test("stopAll stops scheduling while drain waits for the active handler through 
   assert.equal(runs[0].status, "success");
 });
 
+test("cron scheduling refuses to re-arm after stopAll", () => {
+  const reg = getJobRegistry() as unknown as {
+    stopAll(): void;
+    scheduleNextCron(jobId: string, cronExpr: string, tz: string, envFlag?: string | null): void;
+    timers: Map<string, ReturnType<typeof setTimeout>>;
+  };
+  reg.stopAll();
+  reg.scheduleNextCron("stopped-cron", "* * * * *", "UTC");
+  const timer = reg.timers.get("stopped-cron");
+  if (timer) clearTimeout(timer);
+  assert.equal(timer, undefined, "stopping registry must never arm a replacement cron timer");
+});
 test("queued runNow resolves as stopping instead of starting new work after stopAll", async () => {
   const reg = getJobRegistry();
   let calls = 0;

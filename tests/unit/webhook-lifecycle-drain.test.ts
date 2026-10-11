@@ -39,6 +39,11 @@ test("notifyWebhookEvent stays non-blocking while shutdown drain awaits pending 
     const returned = dispatcher.notifyWebhookEvent("request.completed", { requestId: "req-drain" });
     assert.equal(returned, undefined, "hot-path notification must remain fire-and-forget");
     assert.equal(dispatcher.getWebhookDeliveryStats().pending, 1);
+    assert.throws(
+      () => dispatcher.__resetWebhookLifecycleForTests(),
+      /pending webhook deliver/i,
+      "test reset must not detach pending deliveries from lifecycle tracking"
+    );
 
     let drained = false;
     const drain = dispatcher.drainPendingWebhookDeliveries().then((stats) => {

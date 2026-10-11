@@ -16,7 +16,7 @@ import {
   type LifecycleShutdownReport,
 } from "@/lib/lifecycle/coordinator";
 
-const parsedShutdownTimeoutMs = Number.parseInt(process.env.SHUTDOWN_TIMEOUT_MS ?? "30000", 10);
+const parsedShutdownTimeoutMs = Number(process.env.SHUTDOWN_TIMEOUT_MS ?? "30000");
 const SHUTDOWN_TIMEOUT_MS =
   Number.isFinite(parsedShutdownTimeoutMs) && parsedShutdownTimeoutMs >= 0
     ? parsedShutdownTimeoutMs
@@ -25,11 +25,12 @@ const DRAIN_POLL_INTERVAL_MS = 250;
 
 declare global {
   var __agentproxyRequestShutdown:
-    | ((signal: string) => Promise<LifecycleShutdownReport | void>)
-    | undefined;
+    ((signal: string) => Promise<LifecycleShutdownReport | void>) | undefined;
   var __agentproxyCustomServerOwnsShutdown: boolean | undefined;
   var __agentproxyStopApiBridge: (() => void) | undefined;
+  var __agentproxyDrainApiBridge: (() => Promise<void>) | undefined;
   var __agentproxyStopLiveWs: (() => void) | undefined;
+  var __agentproxyStopRateLimitWatchdog: (() => void) | undefined;
   var __agentproxyShutdownRateLimit: (() => Promise<void>) | undefined;
   var __agentproxyShutdownMitm: (() => Promise<void>) | undefined;
 }
@@ -61,7 +62,12 @@ export function registerMainLifecycleHooks(): void {
     (await import("@/domain/quotaCache")).stopBackgroundRefresh();
   });
   register("provider-limits-scheduler", "STOP_SCHEDULERS", async () => {
-    (await import("@/shared/services/providerLimitsSyncScheduler")).stopProviderLimitsSyncScheduler();
+    (
+      await import("@/shared/services/providerLimitsSyncScheduler")
+    ).stopProviderLimitsSyncScheduler();
+  });
+  register("rate-limit-scheduler", "STOP_SCHEDULERS", () => {
+    globalThis.__agentproxyStopRateLimitWatchdog?.();
   });
   register("quota-auto-ping-scheduler", "STOP_SCHEDULERS", async () => {
     (await import("@/lib/services/quotaAutoPing")).stopQuotaAutoPing();
@@ -125,7 +131,10 @@ export function registerMainLifecycleHooks(): void {
   });
 
   register("request-drain", "DRAIN_ACTIVE", waitForRequestDrain);
-  register("background-task-drain", "DRAIN_ACTIVE", async () => {
+  register("api-bridge-drain", "DRAIN_ACTIVE", async () => {
+    await globalThis.__agentproxyDrainApiBridge?.();
+  });
+  register("background-task-drain", "DRAIN_BACKGROUND", async () => {
     await (await import("@/lib/lifecycle/backgroundTasks")).drainLifecycleBackgroundTasks();
   });
   register("job-registry-drain", "DRAIN_ACTIVE", async () => {
@@ -135,7 +144,9 @@ export function registerMainLifecycleHooks(): void {
     await (await import("@agentproxy/open-sse/services/batchProcessor.ts")).waitForAllBatches();
   });
   register("provider-limits-drain", "DRAIN_ACTIVE", async () => {
-    await (await import("@/shared/services/providerLimitsSyncScheduler")).drainProviderLimitsSyncScheduler();
+    await (
+      await import("@/shared/services/providerLimitsSyncScheduler")
+    ).drainProviderLimitsSyncScheduler();
   });
   register("model-sync-drain", "DRAIN_ACTIVE", async () => {
     await (await import("@/shared/services/modelSyncScheduler")).drainModelSyncScheduler();
@@ -148,9 +159,6 @@ export function registerMainLifecycleHooks(): void {
   });
   // Heavy leaves publish these handles when loaded; importing them here would
   // expand Next's instrumentation webpack graph solely for shutdown.
-  register("rate-limit-drain", "DRAIN_ACTIVE", async () => {
-    await globalThis.__agentproxyShutdownRateLimit?.();
-  });
   register("mitm-drain", "DRAIN_ACTIVE", async () => {
     await globalThis.__agentproxyShutdownMitm?.();
   });
@@ -164,6 +172,9 @@ export function registerMainLifecycleHooks(): void {
   register("call-log-flush", "FLUSH_DURABLE", async () => {
     await (await import("@/lib/usage/callLogs")).closeCallLogSaves();
   });
+  register("rate-limit-drain", "FLUSH_DURABLE", async () => {
+    await globalThis.__agentproxyShutdownRateLimit?.();
+  });
   register("webhook-delivery-drain", "FLUSH_DURABLE", async () => {
     const stats = await (await import("@/lib/webhookDispatcher")).drainPendingWebhookDeliveries();
     if (stats.failed > 0) {
@@ -171,7 +182,9 @@ export function registerMainLifecycleHooks(): void {
     }
   });
   register("routing-observability-flush", "FLUSH_DURABLE", async () => {
-    await (await import("@agentproxy/open-sse/services/routing/index.ts")).shutdownRoutingObservability();
+    await (
+      await import("@agentproxy/open-sse/services/routing/index.ts")
+    ).shutdownRoutingObservability();
   });
 
   register("mcp-audit-db-close", "CLOSE_RESOURCES", async () => {

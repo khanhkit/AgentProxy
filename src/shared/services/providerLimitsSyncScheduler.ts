@@ -40,7 +40,7 @@ function runProviderLimitsSyncCycle(): Promise<void> {
 }
 
 export function startProviderLimitsSyncScheduler(): void {
-  if (schedulerTimer || startupTimer || schedulerEnabled) {
+  if (schedulerTimer || startupTimer || startupSetup || schedulerEnabled) {
     console.log("[ProviderLimitsSync] Scheduler already running — skipping start");
     return;
   }
@@ -65,7 +65,7 @@ export function startProviderLimitsSyncScheduler(): void {
       }
     }
 
-    if (!schedulerEnabled) return;
+    if (!schedulerEnabled || startupSetup !== setup) return;
     startupTimer = setTimeout(() => {
       startupTimer = null;
       if (!schedulerEnabled) return;

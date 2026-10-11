@@ -21,5 +21,16 @@ export async function stopAllSupervisors(): Promise<void> {
   // Supervisors persist terminal status, so the lifecycle coordinator must await
   // them before the database close phase. Signal/final-exit ownership belongs to
   // the process entrypoint, never this leaf registry.
-  await Promise.allSettled(Array.from(supervisors.values()).map((supervisor) => supervisor.stop()));
+  const results = await Promise.allSettled(
+    Array.from(supervisors.values()).map((supervisor) => supervisor.stop())
+  );
+  const failures = results.filter(
+    (result): result is PromiseRejectedResult => result.status === "rejected"
+  );
+  if (failures.length > 0) {
+    throw new AggregateError(
+      failures.map((failure) => failure.reason),
+      "Supervisor shutdown failed"
+    );
+  }
 }
