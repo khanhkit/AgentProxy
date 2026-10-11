@@ -207,8 +207,9 @@ export function resolveSemanticCacheConfig(
     ? Math.max(0, Math.min(1, resolved.similarityThreshold))
     : DEFAULT_SEMANTIC_CACHE_CONFIG.similarityThreshold;
   const positive = (value: number, fallback: number, integer = false): number => {
-    if (!Number.isFinite(value) || value <= 0) return fallback;
-    return integer ? Math.floor(value) : value;
+    if (!Number.isFinite(value)) return fallback;
+    const normalized = integer ? Math.floor(value) : value;
+    return normalized > 0 ? normalized : fallback;
   };
   resolved.ttlMs = positive(resolved.ttlMs, DEFAULT_SEMANTIC_CACHE_CONFIG.ttlMs);
   resolved.maxEntries = positive(

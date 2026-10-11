@@ -906,6 +906,23 @@ describe("Semantic Cache — Dual-Layer Architecture", () => {
 });
 
 describe("AP-ISS-0192 semantic cache config bounds", () => {
+  it("falls back when positive fractional integer limits floor to zero", () => {
+    const conf = resolveSemanticCacheConfig({
+      maxEntries: 0.5,
+      conversationHistoryDepth: 0.5,
+      conversationHistoryThreshold: 0.5,
+    });
+    assert.equal(conf.maxEntries, DEFAULT_SEMANTIC_CACHE_CONFIG.maxEntries);
+    assert.equal(
+      conf.conversationHistoryDepth,
+      DEFAULT_SEMANTIC_CACHE_CONFIG.conversationHistoryDepth
+    );
+    assert.equal(
+      conf.conversationHistoryThreshold,
+      DEFAULT_SEMANTIC_CACHE_CONFIG.conversationHistoryThreshold
+    );
+  });
+
   it("falls back from nonpositive runtime limits instead of creating invalid zero semantics", () => {
     const conf = resolveSemanticCacheConfig({
       ttlMs: -10,

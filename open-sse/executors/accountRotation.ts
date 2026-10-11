@@ -81,7 +81,16 @@ export function pickAccount<T extends RotatableAccount>(
   };
 
   const stickyIdx = stickyServeIndex(accounts, state, isReady, keyOfMember);
-  if (stickyIdx !== null) return serve(stickyIdx);
+  if (stickyIdx !== null) {
+    // Sticky drain is a one-request bridge across the refused cursor member.
+    // Consume that drained cursor so the next request can continue round-robin
+    // instead of resetting to the same refused member and pinning forever.
+    const drainedCursorIdx = state.nextAccountIdx % accounts.length;
+    const account = accounts[stickyIdx];
+    state.nextAccountIdx = (drainedCursorIdx + 1) % accounts.length;
+    state.lastHealthyFingerprint = account.fingerprint;
+    return account;
+  }
 
   for (let i = 0; i < accounts.length; i++) {
     const idx = (state.nextAccountIdx + i) % accounts.length;

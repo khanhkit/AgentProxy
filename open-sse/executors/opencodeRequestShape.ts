@@ -82,7 +82,7 @@ export function shapeKeyOf(
     );
     prompt = textOf(first?.content);
   }
-  const digest = createHash("sha1")
+  const digest = createHash("sha256")
     .update(session ?? "")
     .update("\0")
     .update(prompt)

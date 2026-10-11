@@ -562,6 +562,13 @@ test("a body that is not an object is passed through: nothing to key a replay on
   assert.equal(body, "not an object");
 });
 
+test("AP-ISS-0192 session-scoped shape keys use a strong 256-bit digest", () => {
+  const key = shapeKeyOf("opencode-zen", MODEL, titleBody(), "sensitive-session-id");
+  const digest = key.split("|").at(-1) ?? "";
+  assert.match(digest, /^[0-9a-f]{64}$/u);
+  assert.equal(key.includes("sensitive-session-id"), false);
+});
+
 test("a system prompt that is not text still gets its own class", () => {
   const withObject = { messages: [{ role: "system", content: { rules: ["a"] } }] };
   const otherObject = { messages: [{ role: "system", content: { rules: ["b"] } }] };

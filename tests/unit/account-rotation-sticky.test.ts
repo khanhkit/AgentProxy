@@ -103,4 +103,9 @@ test("AP-ISS-0192 sticky drain survives cursor wraparound", () => {
     "m2",
     "a wrapped cursor must not suppress the last healthy sticky member"
   );
+  assert.equal(
+    pickAccount(accounts, state).fingerprint,
+    "m1",
+    "the wrapped sticky serve must consume the drained cursor instead of pinning forever"
+  );
 });
