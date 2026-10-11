@@ -64,8 +64,18 @@ test("#14202: all-refused saturation still returns an account", () => {
 });
 
 test("#14202: direct account is never drained and noteProxyServed releases set-aside", () => {
-  const direct: RotatableAccount = { fingerprint: "direct", cooldownUntil: 0, consecutiveFails: 0, proxy: null };
-  const proxied: RotatableAccount = { fingerprint: "m1", cooldownUntil: 0, consecutiveFails: 0, proxy: proxy(9002) };
+  const direct: RotatableAccount = {
+    fingerprint: "direct",
+    cooldownUntil: 0,
+    consecutiveFails: 0,
+    proxy: null,
+  };
+  const proxied: RotatableAccount = {
+    fingerprint: "m1",
+    cooldownUntil: 0,
+    consecutiveFails: 0,
+    proxy: proxy(9002),
+  };
   assert.equal(proxyEgressKey(direct.proxy), null);
   const key = proxyEgressKey(proxied.proxy);
   assert.ok(noteProxyRefusal(key, "ip_quota_429") !== null);
@@ -82,4 +92,15 @@ test("#14202: custom readiness always overrides stickiness", () => {
   assert.ok(noteProxyRefusal(proxyEgressKey(accounts[1].proxy), "ip_quota_429") !== null);
   const picked = pickAccount(accounts, state, (account) => account.fingerprint !== "m0");
   assert.notEqual(picked.fingerprint, "m0");
+});
+
+test("AP-ISS-0192 sticky drain survives cursor wraparound", () => {
+  const accounts = fleet();
+  assert.ok(noteProxyRefusal(proxyEgressKey(accounts[0].proxy), "ip_quota_429") !== null);
+  const state = { nextAccountIdx: 0, lastHealthyFingerprint: "m2" };
+  assert.equal(
+    pickAccount(accounts, state).fingerprint,
+    "m2",
+    "a wrapped cursor must not suppress the last healthy sticky member"
+  );
 });

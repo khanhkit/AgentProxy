@@ -151,6 +151,7 @@ type RunOptions = {
   stream?: boolean;
   executor?: OpencodeExecutor;
   credentials?: ProviderCredentials;
+  clientHeaders?: Record<string, string>;
 };
 
 async function run(body: Body, extra: RunOptions = {}): Promise<Response> {
@@ -162,6 +163,7 @@ async function run(body: Body, extra: RunOptions = {}): Promise<Response> {
     signal: extra.signal ?? null,
     skipUpstreamRetry: extra.skipUpstreamRetry,
     credentials: extra.credentials ?? { apiKey: "k", accessToken: null, connectionId: "c" },
+    clientHeaders: extra.clientHeaders,
     log: { debug() {}, info() {}, warn() {}, error() {} },
   })) as { response: Response };
   return result.response;
@@ -239,6 +241,25 @@ test("the shape that worked is remembered: the next identical request goes out b
   assert.deepEqual(shapesOf(0), ["tools", "bare"]);
   assert.equal((await run(titleBody())).status, 200);
   assert.deepEqual(shapesOf(2), ["bare"], "no refusal to pay for the second time");
+});
+
+test("AP-ISS-0192 learned request shape is isolated by explicit client session", async () => {
+  installUpstream(measuredRule);
+  assert.equal(
+    (await run(titleBody(), { clientHeaders: { "x-opencode-session": "session-a" } })).status,
+    200
+  );
+  assert.deepEqual(shapesOf(0), ["tools", "bare"]);
+  const from = bodies.length;
+  assert.equal(
+    (await run(titleBody(), { clientHeaders: { "x-opencode-session": "session-b" } })).status,
+    200
+  );
+  assert.deepEqual(
+    shapesOf(from),
+    ["tools", "bare"],
+    "session B must not inherit session A's learned bare shape"
+  );
 });
 
 test("a remembered bare shape that the upstream stops accepting is replayed with tools and forgotten", async () => {

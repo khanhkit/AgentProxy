@@ -42,12 +42,15 @@ export function normalizeMuseSparkResponse(
         controller.close();
       },
     });
+    const headers = new Headers(response.headers);
+    headers.delete("content-length");
+    headers.delete("content-encoding");
     return {
       ...result,
       response: new Response(stream, {
         status: response.status,
         statusText: response.statusText,
-        headers: response.headers,
+        headers,
       }),
     };
   }
@@ -65,7 +68,8 @@ export function normalizeMuseSparkResponse(
           const { done, value } = await reader.read();
           if (done) {
             buffer += decoder.decode();
-            if (buffer.length > 0 && !closed) controller.enqueue(encoder.encode(normalizer(buffer)));
+            if (buffer.length > 0 && !closed)
+              controller.enqueue(encoder.encode(normalizer(buffer)));
             if (!closed) {
               closed = true;
               controller.close();

@@ -202,9 +202,34 @@ export function resolveSemanticCacheConfig(
     ...overrides,
   };
 
-  // Clamp similarity threshold to [0.0, 1.0]
-  if (resolved.similarityThreshold < 0) resolved.similarityThreshold = 0;
-  if (resolved.similarityThreshold > 1) resolved.similarityThreshold = 1;
+  // Clamp the threshold, and reject invalid operational limits back to documented defaults.
+  resolved.similarityThreshold = Number.isFinite(resolved.similarityThreshold)
+    ? Math.max(0, Math.min(1, resolved.similarityThreshold))
+    : DEFAULT_SEMANTIC_CACHE_CONFIG.similarityThreshold;
+  const positive = (value: number, fallback: number, integer = false): number => {
+    if (!Number.isFinite(value) || value <= 0) return fallback;
+    return integer ? Math.floor(value) : value;
+  };
+  resolved.ttlMs = positive(resolved.ttlMs, DEFAULT_SEMANTIC_CACHE_CONFIG.ttlMs);
+  resolved.maxEntries = positive(
+    resolved.maxEntries,
+    DEFAULT_SEMANTIC_CACHE_CONFIG.maxEntries,
+    true
+  );
+  resolved.embeddingTimeoutMs = positive(
+    resolved.embeddingTimeoutMs,
+    DEFAULT_SEMANTIC_CACHE_CONFIG.embeddingTimeoutMs
+  );
+  resolved.conversationHistoryDepth = positive(
+    resolved.conversationHistoryDepth,
+    DEFAULT_SEMANTIC_CACHE_CONFIG.conversationHistoryDepth,
+    true
+  );
+  resolved.conversationHistoryThreshold = positive(
+    resolved.conversationHistoryThreshold,
+    DEFAULT_SEMANTIC_CACHE_CONFIG.conversationHistoryThreshold,
+    true
+  );
 
   return resolved;
 }

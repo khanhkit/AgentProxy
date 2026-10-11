@@ -371,7 +371,7 @@ export function prepareFreeTierRequest<T>(
     return { body, attempt: null };
   }
   const eligible = isTrackable(origin) && clientToolNames.length === 0;
-  const key = eligible ? shapeKeyOf(provider, model, body) : "";
+  const key = eligible ? shapeKeyOf(provider, model, body, session) : "";
   const plan =
     isTrackable(origin) && eligible
       ? planShape(origin, key)

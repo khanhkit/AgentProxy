@@ -129,8 +129,9 @@ function stickyServeIndex<T extends RotatableAccount>(
   ) {
     return null;
   }
-  if (state.nextAccountIdx <= sticky) return null;
   const cursorIdx = state.nextAccountIdx % accounts.length;
+  const cursorFollowsSticky = cursorIdx === (sticky + 1) % accounts.length;
+  if (!cursorFollowsSticky) return null;
   if (isReady(accounts[cursorIdx]) && !isStoreDrained(accounts[cursorIdx], keyOfMember))
     return null;
   return sticky;
@@ -183,6 +184,7 @@ export interface RotationAccountSnapshot {
   consecutiveFails: number;
 }
 
+const MAX_ROTATION_SNAPSHOT_ENTRIES = 200;
 const rotationSnapshots = new Map<string, RotationAccountSnapshot[]>();
 
 /** Record the current rotation state for a connection (sync, in-memory only). */
@@ -190,6 +192,13 @@ export function recordRotationSnapshot(
   connectionKey: string,
   entries: RotationAccountSnapshot[]
 ): void {
+  // Refresh insertion order for active connections and bound stale connection churn.
+  rotationSnapshots.delete(connectionKey);
+  while (rotationSnapshots.size >= MAX_ROTATION_SNAPSHOT_ENTRIES) {
+    const oldest = rotationSnapshots.keys().next();
+    if (oldest.done) break;
+    rotationSnapshots.delete(oldest.value);
+  }
   rotationSnapshots.set(connectionKey, [...entries]);
 }
 

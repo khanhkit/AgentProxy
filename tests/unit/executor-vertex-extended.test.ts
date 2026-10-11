@@ -571,3 +571,15 @@ test("VertexExecutor.execute synthesizes a genuine Anthropic-format SSE stream w
     globalThis.fetch = originalFetch;
   }
 });
+
+test("AP-ISS-0192 Vertex project and region metadata cannot alter URL path structure", () => {
+  const executor = new VertexExecutor();
+  const url = executor.buildUrl("gemini-2.5-flash", false, 0, {
+    apiKey: createServiceAccountJson({ projectId: "proj/escape?x=1" }),
+    providerSpecificData: { region: "us-central1/../global#frag" },
+  });
+  assert.match(
+    url,
+    /projects\/proj%2Fescape%3Fx%3D1\/locations\/us-central1%2F\.\.%2Fglobal%23frag\//u
+  );
+});

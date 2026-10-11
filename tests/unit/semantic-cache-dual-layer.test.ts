@@ -19,7 +19,10 @@ import {
   normalizeConversationForEmbedding,
   generateEmbeddingWithTimeout,
 } from "../../open-sse/services/cache/embeddingClient.ts";
-import { resolveSemanticCacheConfig } from "../../open-sse/config/semanticCacheConfig.ts";
+import {
+  DEFAULT_SEMANTIC_CACHE_CONFIG,
+  resolveSemanticCacheConfig,
+} from "../../open-sse/config/semanticCacheConfig.ts";
 
 describe("Semantic Cache — Dual-Layer Architecture", () => {
   beforeEach(() => {
@@ -899,5 +902,28 @@ describe("Semantic Cache — Dual-Layer Architecture", () => {
         "Hash mapping must not be deleted by older entry deletion"
       );
     });
+  });
+});
+
+describe("AP-ISS-0192 semantic cache config bounds", () => {
+  it("falls back from nonpositive runtime limits instead of creating invalid zero semantics", () => {
+    const conf = resolveSemanticCacheConfig({
+      ttlMs: -10,
+      maxEntries: -3.7,
+      embeddingTimeoutMs: -5,
+      conversationHistoryDepth: -2.2,
+      conversationHistoryThreshold: -9.8,
+    });
+    assert.equal(conf.ttlMs, DEFAULT_SEMANTIC_CACHE_CONFIG.ttlMs);
+    assert.equal(conf.maxEntries, DEFAULT_SEMANTIC_CACHE_CONFIG.maxEntries);
+    assert.equal(conf.embeddingTimeoutMs, DEFAULT_SEMANTIC_CACHE_CONFIG.embeddingTimeoutMs);
+    assert.equal(
+      conf.conversationHistoryDepth,
+      DEFAULT_SEMANTIC_CACHE_CONFIG.conversationHistoryDepth
+    );
+    assert.equal(
+      conf.conversationHistoryThreshold,
+      DEFAULT_SEMANTIC_CACHE_CONFIG.conversationHistoryThreshold
+    );
   });
 });
