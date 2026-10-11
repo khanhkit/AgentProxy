@@ -191,8 +191,12 @@ function getCachedAuditDb(): AuditDatabase | null | undefined {
   return globalThis.__agentproxyMcpAuditDb;
 }
 
+const AUDIT_DB_RETRY_COOLDOWN_MS = 30_000;
+let auditDbRetryAfter = 0;
+
 function setCachedAuditDb(database: AuditDatabase | null | undefined): void {
   globalThis.__agentproxyMcpAuditDb = database;
+  auditDbRetryAfter = database === null ? Date.now() + AUDIT_DB_RETRY_COOLDOWN_MS : 0;
 }
 
 function toNumber(value: unknown, fallback = 0): number {
@@ -308,10 +312,14 @@ async function openFallbackAuditDb(
  */
 async function getDb(): Promise<AuditDatabase | null> {
   const cachedDb = getCachedAuditDb();
-  // undefined = never tried / retryable; null = driver/connect failure already observed.
-  // Cache only genuine failures so dashboard polling does not reopen and re-log them,
-  // while a missing database file remains retryable when the app creates it later.
-  if (cachedDb !== undefined) return cachedDb;
+  // A failed open is throttled, not permanent: the database may recover without
+  // restarting the process. Missing database files remain immediately retryable.
+  if (cachedDb === null) {
+    if (Date.now() < auditDbRetryAfter) return null;
+    setCachedAuditDb(undefined);
+  } else if (cachedDb !== undefined) {
+    return cachedDb;
+  }
 
   try {
     // Try importing the db module from the main app
