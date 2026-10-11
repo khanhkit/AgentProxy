@@ -24,12 +24,12 @@ Leaf modules expose idempotent stop/drain/flush/dispose functions and never call
 
 The coordinator executes these phases strictly in order:
 
-1. `STOP_ADMISSION`
-2. `STOP_SCHEDULERS`
-3. `DRAIN_ACTIVE`
-4. `FLUSH_DURABLE`
-5. `CLOSE_RESOURCES`
-6. `STOP_CHILDREN`
+1. **STOP_ADMISSION**
+2. **STOP_SCHEDULERS**
+3. **DRAIN_ACTIVE**
+4. **FLUSH_DURABLE**
+5. **CLOSE_RESOURCES**
+6. **STOP_CHILDREN**
 
 `EXIT` is intentionally outside the coordinator and belongs to the entrypoint.
 
@@ -173,7 +173,7 @@ These rulings were made during TDD implementation and are part of the design rec
 - OTLP final shutdown flush is awaitable. If the collector rejects the final delivery opportunity, remaining buffered events are counted as dropped rather than silently left buffered at process exit.
 - Hook timeout consumes the remaining global shutdown budget. Later phases are marked `skipped_deadline`; hook rejection (without deadline exhaustion) is recorded and later phases still run.
 - The custom Next runner initiates `server.close()` before application drain but defers awaiting it; otherwise active SSE/keep-alive sockets could block before lifecycle drain is invoked. Remaining connections are force-closed only after application drain, then Next closes, then the Rust child stops.
-- Main-runtime fire-and-forget scheduler promises that can touch DB/durable state register with one process-global `backgroundTasks` tracker. `STOP_SCHEDULERS` prevents new cycles; `DRAIN_ACTIVE` waits until the tracker is empty before any durable flush/resource close. This is shutdown-only bookkeeping and adds no request-path await/network work.
+- Main-runtime fire-and-forget scheduler promises that can touch DB/durable state register with one process-global `backgroundTasks` tracker. **STOP_SCHEDULERS** prevents new cycles; **DRAIN_ACTIVE** waits until the tracker is empty before any durable flush/resource close. This is shutdown-only bookkeeping and adds no request-path await/network work.
 - Delayed startup timers are lifecycle state, not anonymous fire-and-forget timers. Owners touched by this issue retain cancellable startup handles, and cleanup/proxy-health starters also guard the pending-start window so repeated init cannot accumulate duplicate timers before the recurring handle exists.
 - API Bridge and Live Dashboard WebSocket listeners expose idempotent admission-stop functions and publish process-global stop references when loaded. The shutdown composition root invokes those references without importing/auto-starting an auxiliary listener during shutdown.
 - The custom Next owner handles `SIGHUP` with the same first-signal lifecycle path as `SIGTERM`/`SIGINT`; a second signal of any supported kind remains the explicit force-exit path.

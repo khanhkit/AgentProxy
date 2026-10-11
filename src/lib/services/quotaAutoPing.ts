@@ -148,8 +148,8 @@ export async function resolveQuotaAutoPingModel(
 export function createDefaultQuotaAutoPingDeps(): QuotaAutoPingDeps {
   return {
     getSettings,
-    getProviderConnections: async (filter) =>
-      (await getProviderConnections(filter)) as unknown as QuotaAutoPingConnection[],
+    getProviderConnections:
+      getProviderConnections as unknown as QuotaAutoPingDeps["getProviderConnections"],
     updateProviderConnection,
     refreshAndUpdateCredentials: async (connection) =>
       refreshAndUpdateCredentialsWithResolver(connection, loadQuotaAutoPingExecutor),

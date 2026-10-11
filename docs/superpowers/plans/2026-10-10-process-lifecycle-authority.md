@@ -160,10 +160,10 @@
 - Consumes: all prior tasks.
 - Produces: release-grade verification evidence for AP-ISS-0149.
 
-- [ ] Run all focused lifecycle/adapter/job/webhook/OTLP/MITM/rate-limit tests.
-- [ ] Run `npm run typecheck:core` and applicable open-sse typecheck.
-- [ ] Run `npm run lint` or scoped lint according to repo quality policy.
-- [ ] Run the full project test command required by TDD completion policy; record any unrelated pre-existing failures by name.
-- [ ] Verify standalone MCP/CLI/server signal ownership tests remain explicit and green.
-- [ ] Review `rg` results for main-runtime `process.on/once(SIG*)`, `process.exit`, `process.kill(process.pid, signal)`, and `process.emit =` to prove only entrypoints own termination/global policy.
+- [x] Run all focused lifecycle/adapter/job/webhook/OTLP/MITM/rate-limit tests.
+- [x] Run `npm run typecheck:core` and applicable open-sse typecheck.
+- [x] Run `npm run lint` or scoped lint according to repo quality policy.
+- [x] Run the full project test command required by TDD completion policy; record any unrelated pre-existing failures by name.
+- [x] Verify standalone MCP/CLI/server signal ownership tests remain explicit and green.
+- [x] Review `rg` results for main-runtime `process.on/once(SIG*)`, `process.exit`, `process.kill(process.pid, signal)`, and `process.emit =` to prove only entrypoints own termination/global policy.
 - [ ] Commit final evidence/docs updates.
