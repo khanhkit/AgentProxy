@@ -5,6 +5,8 @@ import {
   getSettingsRevision,
   updateSettings,
   SettingsRevisionConflictError,
+  RuntimeSettingsActivationError,
+  type UpdateSettingsOptions,
 } from "@/lib/db/settings";
 import { getRuntimePorts } from "@/lib/runtime/ports";
 import { updateSettingsSchema } from "@/shared/validation/settingsSchemas";
@@ -14,7 +16,7 @@ import { isFeatureFlagEnabled } from "@/shared/utils/featureFlags";
 import { resolveModelLockoutSettings } from "@/lib/resilience/modelLockoutSettings";
 import {
   validateProxyUrl,
-  upsertUpstreamProxyConfig,
+  upsertUpstreamProxyConfigWithDb,
   getUpstreamProxyConfig,
 } from "@/lib/db/upstreamProxy";
 import { getProviderConnections } from "@/lib/db/providers";
@@ -346,6 +348,19 @@ export async function PATCH(request: Request) {
       }) as typeof body.modelLockout;
     }
 
+    // Validate secondary-store inputs before any durable settings mutation.
+    const cpaUrl = body.cliproxyapi_url;
+    if (typeof cpaUrl === "string") {
+      const urlValidation = validateProxyUrl(cpaUrl);
+      if (urlValidation.valid === false) {
+        emitSettingsFailureAudit(request, actor, "CLIPROXY_URL_INVALID", attemptedKeys);
+        return NextResponse.json(
+          { error: `Invalid CLIProxyAPI URL: ${urlValidation.error}` },
+          { status: 400 }
+        );
+      }
+    }
+
     if (body.oidcEnabled === true) {
       const current = await getSettings();
       const subjects = Array.isArray(body.oidcAllowedSubjects)
@@ -461,11 +476,47 @@ export async function PATCH(request: Request) {
     delete body.currentPassword;
     delete body.expectedRevision;
 
-    // Snapshot BEFORE the write so the success row can record a real diff.
+    // Snapshot BEFORE the write so the success row can record a real diff and
+    // derived secondary rows use the same pre-mutation settings state.
     const beforeSnapshot = (await getSettings()) as Record<string, unknown>;
+    const cpaFallback = body.cliproxyapi_fallback_enabled;
+    const cpaModelMapping = body.cliproxyapi_model_mapping;
+    const touchesUpstreamProxy =
+      cpaFallback !== undefined || cpaUrl !== undefined || cpaModelMapping !== undefined;
+    let transactionMutator: UpdateSettingsOptions["transactionMutator"];
+
+    if (touchesUpstreamProxy) {
+      // Resolve every row input before the settings transaction starts. The mutator
+      // below is deliberately synchronous so settings + derived proxy rows share one
+      // SQLite commit and one revision bump.
+      const enabled = cpaFallback ?? beforeSnapshot.cliproxyapi_fallback_enabled;
+      const mode = enabled ? "fallback" : "native";
+      const EMBEDDED_SERVICE_IDS = new Set(["cliproxyapi", "9router"]);
+      const activeConnections = await getProviderConnections({ isActive: true });
+      const activeProviderIds = [
+        ...new Set(
+          activeConnections
+            .map((connection: Record<string, unknown>) => connection.provider as string)
+            .filter((id: string) => !EMBEDDED_SERVICE_IDS.has(id))
+        ),
+      ];
+      const rowData = {
+        mode,
+        enabled: !!enabled,
+        ...(cpaModelMapping !== undefined ? { cliproxyapiModelMapping: cpaModelMapping } : {}),
+      };
+
+      transactionMutator = (db) => {
+        for (const providerId of activeProviderIds) {
+          upsertUpstreamProxyConfigWithDb(db, { providerId, ...rowData });
+        }
+        upsertUpstreamProxyConfigWithDb(db, { providerId: "cliproxyapi", ...rowData });
+      };
+    }
+
     let settings: Awaited<ReturnType<typeof getSettings>>;
     try {
-      settings = await updateSettings(body, { expectedRevision });
+      settings = await updateSettings(body, { expectedRevision, transactionMutator });
     } catch (error) {
       if (error instanceof SettingsRevisionConflictError) {
         emitSettingsFailureAudit(request, actor, "SETTINGS_REVISION_CONFLICT", attemptedKeys);
@@ -480,65 +531,27 @@ export async function PATCH(request: Request) {
           { status: 409, headers: settingsResponseHeaders(error.currentRevision) }
         );
       }
+      if (error instanceof RuntimeSettingsActivationError) {
+        emitSettingsFailureAudit(request, actor, error.code, attemptedKeys);
+        return NextResponse.json(
+          {
+            error: {
+              code: error.code,
+              message: error.message,
+              desiredRevision: error.desiredRevision,
+              activeRevision: error.activeRevision,
+            },
+          },
+          { status: 500, headers: settingsResponseHeaders(error.desiredRevision) }
+        );
+      }
       throw error;
     }
 
-    // Sync CLIProxyAPI settings to upstream_proxy_config table
-    const cpaUrl = rawBody.cliproxyapi_url as string | undefined;
-    const cpaFallback = rawBody.cliproxyapi_fallback_enabled as boolean | undefined;
-    if (cpaUrl && typeof cpaUrl === "string") {
-      const urlValidation = validateProxyUrl(cpaUrl);
-      if (urlValidation.valid === false) {
-        emitSettingsFailureAudit(request, actor, "CLIPROXY_URL_INVALID", attemptedKeys);
-        return NextResponse.json(
-          { error: `Invalid CLIProxyAPI URL: ${urlValidation.error}` },
-          { status: 400 }
-        );
-      }
-      // Invalidate the executor's URL cache so it picks up the new URL immediately
+    if (typeof cpaUrl === "string") {
+      // Durable settings + derived proxy rows committed and activated together; only
+      // now invalidate the executor cache so request-path state cannot lead SQLite.
       clearCliproxyapiUrlCache();
-    }
-
-    const cpaModelMapping = rawBody.cliproxyapi_model_mapping as Record<string, string> | undefined;
-
-    if (cpaFallback !== undefined || cpaUrl !== undefined || cpaModelMapping !== undefined) {
-      const enabled =
-        cpaFallback ?? (settings as Record<string, unknown>).cliproxyapi_fallback_enabled;
-      const mode = enabled ? "fallback" : "native";
-
-      // Get all distinct active provider IDs so each one gets its own
-      // upstream_proxy_config row. chatCore reads per-provider config
-      // (e.g. getUpstreamProxyConfig("anthropic")), not a single global row.
-      // Embedded service IDs are not real routing targets and must be skipped.
-      const EMBEDDED_SERVICE_IDS = new Set(["cliproxyapi", "9router"]);
-      const activeConnections = await getProviderConnections({ isActive: true });
-      const activeProviderIds = [
-        ...new Set(
-          activeConnections
-            .map((c: Record<string, unknown>) => c.provider as string)
-            .filter((id: string) => !EMBEDDED_SERVICE_IDS.has(id))
-        ),
-      ];
-
-      for (const providerId of activeProviderIds) {
-        await upsertUpstreamProxyConfig({
-          providerId,
-          mode,
-          enabled: !!enabled,
-          ...(cpaModelMapping !== undefined ? { cliproxyapiModelMapping: cpaModelMapping } : {}),
-        });
-      }
-
-      // Update the "cliproxyapi" sentinel row used by GET /api/settings to
-      // retrieve cliproxyapi_model_mapping. This row is NOT used for routing
-      // (chatCore reads per-real-provider rows above); it exists solely as
-      // storage for the global model-mapping blob.
-      await upsertUpstreamProxyConfig({
-        providerId: "cliproxyapi",
-        mode,
-        enabled: !!enabled,
-        ...(cpaModelMapping !== undefined ? { cliproxyapiModelMapping: cpaModelMapping } : {}),
-      });
     }
 
     // Audit success — diff of changed keys only. Idempotent PATCH (no diff)

@@ -360,9 +360,14 @@ export async function ensureInitialSettingsBootstrap(): Promise<{
   return { changed, candidate: await getSettingsCandidate() };
 }
 
+export interface UpdateSettingsOptions {
+  expectedRevision?: number;
+  transactionMutator?: (db: ReturnType<typeof getDbInstance>, nextRevision: number) => void;
+}
+
 export async function updateSettings(
   updates: Record<string, unknown>,
-  options?: { expectedRevision?: number }
+  options?: UpdateSettingsOptions
 ) {
   // Detect first-time setup completion before we overwrite settings.
   let setupJustCompleted = false;
@@ -388,6 +393,8 @@ export async function updateSettings(
       const toStore = key === "oidcClientSecret" ? encrypt(value as string) : value;
       insert.run(key, JSON.stringify(toStore));
     }
+    const nextRevision = currentRevision + 1;
+    options?.transactionMutator?.(db, nextRevision);
     advanceSettingsRevision(db, currentRevision);
   });
   tx();

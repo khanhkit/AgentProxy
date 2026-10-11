@@ -1,5 +1,7 @@
 /** Upstream proxy config persistence for upstream_proxy_config table. */
 import { getDbInstance } from "./core";
+
+type UpstreamProxyDb = ReturnType<typeof getDbInstance>;
 import {
   isCloudMetadataHost,
   isPrivateHost as isPrivateNetworkHost,
@@ -130,7 +132,7 @@ export async function getUpstreamProxyConfig(providerId: string) {
   return rowToConfig(toRecord(row));
 }
 
-export async function upsertUpstreamProxyConfig(data: {
+export interface UpstreamProxyConfigWrite {
   providerId: string;
   mode?: string;
   cliproxyapiModelMapping?: Record<string, unknown> | null;
@@ -139,8 +141,12 @@ export async function upsertUpstreamProxyConfig(data: {
   enabled?: boolean;
   family?: string;
   fallbackBackend?: FallbackBackend;
-}) {
-  const db = getDbInstance();
+}
+
+export function upsertUpstreamProxyConfigWithDb(
+  db: UpstreamProxyDb,
+  data: UpstreamProxyConfigWrite
+): void {
   const mode = data.mode ?? "native";
   const cliproxyapiModelMapping =
     data.cliproxyapiModelMapping !== undefined
@@ -175,7 +181,10 @@ export async function upsertUpstreamProxyConfig(data: {
     family,
     fallbackBackend
   );
+}
 
+export async function upsertUpstreamProxyConfig(data: UpstreamProxyConfigWrite) {
+  upsertUpstreamProxyConfigWithDb(getDbInstance(), data);
   return getUpstreamProxyConfig(data.providerId);
 }
 
