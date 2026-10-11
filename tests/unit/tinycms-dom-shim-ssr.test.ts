@@ -216,6 +216,26 @@ test("withTinyCmsDomMocksAsync serializes overlapping process-global shim lifeti
   assert.equal(typeof g.window, "undefined", "final caller must restore the global shim");
 });
 
+test("withTinyCmsDomMocks fails closed as soon as an async shim caller reserves the queue", async () => {
+  const g = global as Record<string, unknown>;
+  let asyncEntered = false;
+
+  const queuedAsync = withTinyCmsDomMocksAsync(async () => {
+    asyncEntered = true;
+    assert.notEqual(typeof g.window, "undefined");
+    return "async-ok";
+  });
+
+  assert.throws(
+    () => withTinyCmsDomMocks(() => "sync-during-async-reservation"),
+    /TinyCMS DOM mocks are already owned by an async caller/,
+    "an unrelated sync caller must not enter after an async caller reserves the queue"
+  );
+  assert.equal(await queuedAsync, "async-ok");
+  assert.equal(asyncEntered, true);
+  assert.equal(typeof g.window, "undefined");
+});
+
 test("withTinyCmsDomMocks rejects an unrelated sync caller while an async shim owns the globals", async () => {
   const g = global as Record<string, unknown>;
   let releaseAsync!: () => void;
