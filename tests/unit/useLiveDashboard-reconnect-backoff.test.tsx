@@ -5,7 +5,7 @@
 // must count that as a failed attempt: the reconnect delay grows 1s, 2s, 4s,
 // 8s, 16s, 30s, and only an accepted session (the server's "welcome" frame)
 // resets it. Before this guard the hook re-dialed twice a second forever.
-import React, { act } from "react";
+import React, { act, useEffect } from "react";
 import { createRoot, type Root } from "react-dom/client";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { useLiveConnectionStatus } from "../../src/hooks/useLiveDashboard";
@@ -76,8 +76,12 @@ class FakeLiveSocket {
   }
 }
 
+let latestStatus: ReturnType<typeof useLiveConnectionStatus> | null = null;
 function Harness() {
-  useLiveConnectionStatus({ wsUrl: "ws://127.0.0.1:1/live-ws" });
+  const status = useLiveConnectionStatus({ wsUrl: "ws://127.0.0.1:1/live-ws" });
+  useEffect(() => {
+    latestStatus = status;
+  }, [status]);
   return null;
 }
 
@@ -160,6 +164,40 @@ describe("useLiveDashboard reconnect backoff", () => {
       expect(rejectedWithinAMinute).toHaveLength(6);
     }
   );
+
+  it("does not claim connected on WebSocket upgrade before welcome authorization", async () => {
+    behaviors = ["reject"];
+    await act(async () => {
+      root!.render(<Harness />);
+    });
+    await act(async () => {
+      vi.advanceTimersByTime(5);
+    });
+    expect(latestStatus?.isConnected).toBe(false);
+    await act(async () => {
+      vi.advanceTimersByTime(2);
+    });
+    expect(latestStatus?.isConnected).toBe(false);
+  });
+
+  it("manual reconnect during backoff cancels the pending automatic retry", async () => {
+    behaviors = ["reject", "accept", "accept"];
+    await act(async () => {
+      root!.render(<Harness />);
+    });
+    await act(async () => {
+      vi.advanceTimersByTime(7);
+    });
+    expect(timeline.filter((item) => item.kind === "created")).toHaveLength(1);
+    await act(async () => {
+      latestStatus?.reconnect();
+    });
+    expect(timeline.filter((item) => item.kind === "created")).toHaveLength(2);
+    await act(async () => {
+      vi.advanceTimersByTime(1200);
+    });
+    expect(timeline.filter((item) => item.kind === "created")).toHaveLength(2);
+  });
 
   it("resets the backoff only after the server accepts a session", async () => {
     behaviors = ["reject", "reject", "accept", "reject"];

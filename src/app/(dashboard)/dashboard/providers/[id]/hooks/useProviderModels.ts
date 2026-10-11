@@ -139,18 +139,23 @@ export function useProviderModels(
           `/api/synced-available-models?provider=${encodeURIComponent(providerId)}`,
           { cache: "no-store" }
         );
-        if (syncRes.ok) {
-          const syncData = await syncRes.json();
-          if (Array.isArray(syncData.models)) {
-            setSyncedCatalog({
-              providerId,
-              models: syncData.models,
-              authoritative: syncData.authoritative === true,
-            });
-          }
+        if (!syncRes.ok) {
+          setSyncedCatalog({ providerId, models: [], authoritative: false });
+          return;
+        }
+        const syncData = await syncRes.json();
+        if (Array.isArray(syncData.models)) {
+          setSyncedCatalog({
+            providerId,
+            models: syncData.models,
+            authoritative: syncData.authoritative === true,
+          });
+        } else {
+          setSyncedCatalog({ providerId, models: [], authoritative: false });
         }
       } catch {
-        // A transient dashboard request failure must not resurrect retired static models.
+        // A failed discovery must not keep an obsolete authoritative filter.
+        setSyncedCatalog({ providerId, models: [], authoritative: false });
       }
     } catch (e) {
       console.error("fetchProviderModelMeta", e);
