@@ -287,9 +287,9 @@ export async function executeProviderFetch(
         await clearRecoveredProviderState(
           { connectionId },
           {
-            testStatus: current.testStatus ?? null,
-            lastErrorAt: current.lastErrorAt ?? null,
-            rateLimitedUntil: current.rateLimitedUntil ?? null,
+            testStatus: typeof current.testStatus === "string" ? current.testStatus : null,
+            lastErrorAt: typeof current.lastErrorAt === "string" ? current.lastErrorAt : null,
+            rateLimitedUntil: typeof current.rateLimitedUntil === "string" ? current.rateLimitedUntil : null,
           }
         );
       })().catch(() => {
