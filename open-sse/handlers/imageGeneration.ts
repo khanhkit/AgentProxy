@@ -1052,9 +1052,8 @@ async function handleGeminiImageGeneration({ model, providerConfig, body, creden
   const promptText = typeof body.prompt === "string" ? body.prompt : String(body.prompt ?? "");
   const aspectRatio = normalizeImageAspectRatio(body.aspect_ratio, body.size);
   const requestedImageSize = body.image_size ?? body.imageSize;
-  const { value: imageSize, clamped: imageSizeClamped } = normalizeImageGenerationSize(
-    requestedImageSize
-  );
+  const { value: imageSize, clamped: imageSizeClamped } =
+    normalizeImageGenerationSize(requestedImageSize);
   if (imageSizeClamped && log && typeof log.warn === "function") {
     log.warn(
       "IMAGE",

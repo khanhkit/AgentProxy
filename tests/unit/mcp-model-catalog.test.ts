@@ -83,9 +83,7 @@ test("getMcpModelsCatalog includes context_length when present", async () => {
   const result = await getMcpModelsCatalog(
     {},
     {
-      listProviderConnections: async () => [
-        { id: "conn-1", provider: "openai", isActive: true },
-      ],
+      listProviderConnections: async () => [{ id: "conn-1", provider: "openai", isActive: true }],
       fetchJson: async () => ({
         source: "api",
         models: [

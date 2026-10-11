@@ -531,7 +531,15 @@ function extractVideoFallbackUrl(value: unknown, depth = 0): string | null {
     const found = extractUrl(rec[key]);
     if (found) return found;
   }
-  for (const key of ["url", "download_url", "downloadUrl", "output_url", "outputUrl", "file_url", "fileUrl"]) {
+  for (const key of [
+    "url",
+    "download_url",
+    "downloadUrl",
+    "output_url",
+    "outputUrl",
+    "file_url",
+    "fileUrl",
+  ]) {
     const found = extractVideoFallbackUrl(rec[key], depth + 1);
     if (found) return found;
   }

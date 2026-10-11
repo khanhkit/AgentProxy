@@ -97,9 +97,7 @@ export function resolveVideoBaseUrl(
   const pollIntervalMs = Number(body.poll_interval_ms);
   const pollCount = Math.floor(maxPolls);
   return {
-    ...(Number.isFinite(maxPolls) && pollCount > 0
-      ? { maxPolls: Math.min(pollCount, 120) }
-      : {}),
+    ...(Number.isFinite(maxPolls) && pollCount > 0 ? { maxPolls: Math.min(pollCount, 120) } : {}),
     ...(Number.isFinite(pollIntervalMs) && pollIntervalMs > 0
       ? { pollIntervalMs: Math.max(100, Math.min(Math.floor(pollIntervalMs), 60000)) }
       : {}),

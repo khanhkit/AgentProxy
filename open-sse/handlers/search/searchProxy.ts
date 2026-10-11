@@ -289,7 +289,8 @@ export async function executeProviderFetch(
           {
             testStatus: typeof current.testStatus === "string" ? current.testStatus : null,
             lastErrorAt: typeof current.lastErrorAt === "string" ? current.lastErrorAt : null,
-            rateLimitedUntil: typeof current.rateLimitedUntil === "string" ? current.rateLimitedUntil : null,
+            rateLimitedUntil:
+              typeof current.rateLimitedUntil === "string" ? current.rateLimitedUntil : null,
           }
         );
       })().catch(() => {

@@ -435,10 +435,12 @@ test("parseSSEToGeminiResponse ignores thought/thoughtSignature parts", () => {
 test("Gemini signature-only metadata is never surfaced as content or a tool call", () => {
   const rawSSE = `data: ${JSON.stringify({
     response: {
-      candidates: [{
-        content: { parts: [{ thoughtSignature: "sig-only" }, { text: "public answer" }] },
-        finishReason: "STOP",
-      }],
+      candidates: [
+        {
+          content: { parts: [{ thoughtSignature: "sig-only" }, { text: "public answer" }] },
+          finishReason: "STOP",
+        },
+      ],
     },
   })}`;
   const parsed = parseSSEToGeminiResponse(rawSSE, "gemini-test");
@@ -450,7 +452,11 @@ test("Gemini signature-only metadata is never surfaced as content or a tool call
 test("Gemini repeated functionCall snapshots produce one deterministic tool call", () => {
   const line = `data: ${JSON.stringify({
     response: {
-      candidates: [{ content: { parts: [{ functionCall: { name: "search_files", args: { path: "/tmp" } } }] } }],
+      candidates: [
+        {
+          content: { parts: [{ functionCall: { name: "search_files", args: { path: "/tmp" } } }] },
+        },
+      ],
     },
   })}`;
   const parsed = parseSSEToGeminiResponse([line, line].join("\n"), "gemini-test");
@@ -467,10 +473,16 @@ test("Gemini repeated functionCall snapshots produce one deterministic tool call
 test("Gemini same-name calls at distinct part positions remain separate", () => {
   const line = `data: ${JSON.stringify({
     response: {
-      candidates: [{ content: { parts: [
-        { functionCall: { name: "search_files", args: { path: "/tmp/a" } } },
-        { functionCall: { name: "search_files", args: { path: "/tmp/b" } } },
-      ] } }],
+      candidates: [
+        {
+          content: {
+            parts: [
+              { functionCall: { name: "search_files", args: { path: "/tmp/a" } } },
+              { functionCall: { name: "search_files", args: { path: "/tmp/b" } } },
+            ],
+          },
+        },
+      ],
     },
   })}`;
   const parsed = parseSSEToGeminiResponse(line, "gemini-test");
@@ -479,13 +491,14 @@ test("Gemini same-name calls at distinct part positions remain separate", () => 
 });
 
 test("Gemini anonymous calls with changed payloads across SSE chunks remain separate", () => {
-  const payload = (path: string) => `data: ${JSON.stringify({
-    response: {
-      candidates: [{ content: { parts: [
-        { functionCall: { name: "search_files", args: { path } } },
-      ] } }],
-    },
-  })}`;
+  const payload = (path: string) =>
+    `data: ${JSON.stringify({
+      response: {
+        candidates: [
+          { content: { parts: [{ functionCall: { name: "search_files", args: { path } } }] } },
+        ],
+      },
+    })}`;
   const parsed = parseSSEToGeminiResponse(
     [payload("/tmp/a"), payload("/tmp/b")].join("\n"),
     "gemini-test"
@@ -493,18 +506,24 @@ test("Gemini anonymous calls with changed payloads across SSE chunks remain sepa
   assert.ok(parsed);
   const calls = parsed.choices[0].message.tool_calls;
   assert.equal(calls.length, 2);
-  assert.deepEqual(calls.map((call: { function: { arguments: string } }) => JSON.parse(call.function.arguments)), [
-    { path: "/tmp/a" },
-    { path: "/tmp/b" },
-  ]);
+  assert.deepEqual(
+    calls.map((call: { function: { arguments: string } }) => JSON.parse(call.function.arguments)),
+    [{ path: "/tmp/a" }, { path: "/tmp/b" }]
+  );
 });
 
 test("Gemini incremental functionCall fragments merge by provider call ID", () => {
   const payload = (args: Record<string, unknown>) =>
     `data: ${JSON.stringify({
-      response: { candidates: [{ content: { parts: [
-        { functionCall: { id: "stable-call-1", name: "search_files", args } },
-      ] } }] },
+      response: {
+        candidates: [
+          {
+            content: {
+              parts: [{ functionCall: { id: "stable-call-1", name: "search_files", args } }],
+            },
+          },
+        ],
+      },
     })}`;
   const parsed = parseSSEToGeminiResponse(
     [payload({ path: "/tmp" }), payload({ recursive: true })].join("\n"),
