@@ -247,6 +247,21 @@ test("observeResponsesReasoningEvent pairs added to done and flags opaque", asyn
   );
   assert.equal(clear.sawOpaque, false, "readable reasoning is not flagged");
 
+  const plainWithoutSummary = observeResponsesReasoningEvent(
+    new Map(),
+    {
+      type: "response.output_item.done",
+      output_index: 5,
+      item: { id: "rs_plain", type: "reasoning", summary: [] },
+    },
+    9000
+  );
+  assert.equal(
+    plainWithoutSummary.sawOpaque,
+    false,
+    "missing readable summary alone does not prove encrypted reasoning"
+  );
+
   // Sink snapshot scan: opaque output[] → true; plain → false.
   assert.equal(
     snapshotHasOpaqueReasoning({ output: [{ type: "reasoning", encrypted_content: "x" }] }),
@@ -258,4 +273,51 @@ test("observeResponsesReasoningEvent pairs added to done and flags opaque", asyn
     false,
     "snapshot scan ignores non-reasoning output"
   );
+});
+
+test("reasoning observer prefers stable item ids when output indexes are reused", async () => {
+  const { observeResponsesReasoningEvent } =
+    await import("../../open-sse/utils/responsesReasoningObservation.ts");
+  const tracker = new Map();
+
+  observeResponsesReasoningEvent(
+    tracker,
+    {
+      type: "response.output_item.added",
+      output_index: 0,
+      item: { id: "rs_a", type: "reasoning", encrypted_content: "a" },
+    },
+    1000
+  );
+  observeResponsesReasoningEvent(
+    tracker,
+    {
+      type: "response.output_item.added",
+      output_index: 0,
+      item: { id: "rs_b", type: "reasoning", encrypted_content: "b" },
+    },
+    2000
+  );
+
+  const doneA = observeResponsesReasoningEvent(
+    tracker,
+    {
+      type: "response.output_item.done",
+      output_index: 0,
+      item: { id: "rs_a", type: "reasoning", encrypted_content: "a" },
+    },
+    3000
+  );
+  const doneB = observeResponsesReasoningEvent(
+    tracker,
+    {
+      type: "response.output_item.done",
+      output_index: 0,
+      item: { id: "rs_b", type: "reasoning", encrypted_content: "b" },
+    },
+    5000
+  );
+
+  assert.equal(doneA.durationMs, 2000);
+  assert.equal(doneB.durationMs, 3000);
 });

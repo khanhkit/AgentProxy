@@ -97,10 +97,10 @@ export function createReasoningStreamObserver() {
 export type ReasoningStreamObserver = ReturnType<typeof createReasoningStreamObserver>;
 
 export function reasoningEventKey(outputIndex: unknown, itemId: unknown): string | null {
+  if (typeof itemId === "string" && itemId.length > 0) return `id:${itemId}`;
   if (typeof outputIndex === "number" && Number.isInteger(outputIndex) && outputIndex >= 0) {
     return `idx:${outputIndex}`;
   }
-  if (typeof itemId === "string" && itemId.length > 0) return `id:${itemId}`;
   return null;
 }
 
@@ -114,14 +114,6 @@ function reasoningItemOf(record: JsonRecord): JsonRecord | null {
   const item = asRecord(record.item);
   if (!item || item.type !== "reasoning") return null;
   return item;
-}
-
-function hasReadableSummaryText(item: JsonRecord): boolean {
-  const summary = Array.isArray(item.summary) ? item.summary : [];
-  return summary.some((part) => {
-    const text = asRecord(part)?.text;
-    return typeof text === "string" && text.length > 0;
-  });
 }
 
 function noteAdded(
@@ -161,9 +153,8 @@ function noteDone(
  * tracker (stream-local). Returns a completed duration when a terminal
  * `done` pairs with a tracked `added`; sets `sawOpaque` whenever an opaque
  * reasoning item is seen (added or terminal — covers done-without-added).
- * Terminal-only fallback: a `type:"reasoning"` done/completed item with NO
- * readable summary counts as encrypted (a live `added` with `summary: []`
- * is normal mid-item, so non-terminal events never use the fallback).
+ * A missing or empty summary is not evidence of encryption; only explicit
+ * opaque fields set `sawOpaque`.
  */
 export function observeResponsesReasoningEvent(
   tracker: ReasoningStreamTracker,
@@ -183,8 +174,7 @@ export function observeResponsesReasoningEvent(
   const opaque = isEncryptedReasoningItem(item);
   if (kind === "added") return noteAdded(tracker, key, opaque, nowMs);
 
-  // Terminal: opaque OR no readable summary at all.
-  return noteDone(tracker, key, opaque, opaque || !hasReadableSummaryText(item), nowMs);
+  return noteDone(tracker, key, opaque, opaque, nowMs);
 }
 
 /**
