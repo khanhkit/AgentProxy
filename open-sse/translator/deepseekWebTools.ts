@@ -473,14 +473,53 @@ function extractCall(
 const DSML_INVOKE_OPEN_RE = /<[｜|]{1,2}DSML[｜|]{1,2}\s+(calls|invoke|parameter)([^>]*)>/gi;
 const DSML_INVOKE_CLOSE_RE = /<\/[｜|]{1,2}DSML[｜|]{1,2}\s+(calls|invoke|parameter)\s*>/gi;
 
+function hasBalancedAttributeQuotes(attrs: string): boolean {
+  let quote: '"' | "'" | null = null;
+  let escaped = false;
+  for (const ch of attrs) {
+    if (escaped) {
+      escaped = false;
+      continue;
+    }
+    if (quote && ch === "\\") {
+      escaped = true;
+      continue;
+    }
+    if (quote) {
+      if (ch === quote) quote = null;
+      continue;
+    }
+    if (ch === '"' || ch === "'") quote = ch;
+  }
+  return quote === null;
+}
+
+function escapeSyntheticAttribute(value: string): string {
+  return value
+    .replace(/&/g, "&amp;")
+    .replace(/"/g, "&quot;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
+}
+
 function normalizeDsmlInvokeMarkup(text: string): string {
   if (!text.includes("DSML")) return text;
+
+  DSML_INVOKE_OPEN_RE.lastIndex = 0;
+  let opener: RegExpExecArray | null;
+  while ((opener = DSML_INVOKE_OPEN_RE.exec(text)) !== null) {
+    if (!hasBalancedAttributeQuotes(opener[2] || "")) {
+      DSML_INVOKE_OPEN_RE.lastIndex = 0;
+      return text;
+    }
+  }
+  DSML_INVOKE_OPEN_RE.lastIndex = 0;
 
   const withOpens = text.replace(DSML_INVOKE_OPEN_RE, (_full, word: string, attrs: string) => {
     const tag = word.toLowerCase();
     if (tag === "calls") return "";
     const name = getAttr(attrs, "name");
-    const nameAttr = name !== null ? ` name="${name}"` : "";
+    const nameAttr = name !== null ? ` name="${escapeSyntheticAttribute(name)}"` : "";
     return tag === "invoke" ? `<tool${nameAttr}>` : `<parameter${nameAttr}>`;
   });
 
