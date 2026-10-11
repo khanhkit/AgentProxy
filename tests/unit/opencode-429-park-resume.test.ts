@@ -314,7 +314,14 @@ describe("opencode 429 park-and-resume", () => {
           controller.enqueue(new TextEncoder().encode("data: prefix\\n\\n"));
           return;
         }
-        throw new Error("upstream replay cut access_token=secret at /srv/private/provider.ts");
+        return new Promise<void>((resolve) => {
+          setTimeout(() => {
+            controller.error(
+              new Error("upstream replay cut access_token=secret at /srv/private/provider.ts")
+            );
+            resolve();
+          }, 15);
+        });
       },
     });
     const account = {
@@ -344,13 +351,93 @@ describe("opencode 429 park-and-resume", () => {
       log,
     };
     const fallback = { response: new Response(BURST_BODY, { status: 429 }) };
-    const result = await runParkAndReplay(driver, input, 0, fallback, log, "[test] ");
-    assert.ok(result);
+    const { text, actions } = await runWithResilienceActionsContext(async () => {
+      const result = await runParkAndReplay(driver, input, 0, fallback, log, "[test] ");
+      assert.ok(result);
+      const text = await (result as { response: Response }).response.text();
+      return { text, actions: readResilienceActions() };
+    });
+    assert.match(text, /data: prefix/u, "already-emitted replay events remain intact");
+    assert.match(text, /Upstream replay failed/u);
+    assert.doesNotMatch(
+      text,
+      /data: \[DONE\]/u,
+      "mid-stream failure must not look like clean completion"
+    );
+    assert.equal(actions?.replayed, true, "partial replay output must be accounted as replayed");
+    assert.doesNotMatch(text, /access_token|secret|srv\/private|provider\.ts|upstream replay cut/u);
+  });
 
-    const text = await (result as { response: Response }).response.text();
+  it("a replay read failure before any body chunk emits the terminal error marker", async () => {
+    const body = new ReadableStream<Uint8Array>({
+      pull() {
+        throw new Error("private access_token=secret /srv/hidden");
+      },
+    });
+    const account = {
+      fingerprint: "e".repeat(32),
+      cooldownUntil: 0,
+      consecutiveFails: 0,
+      proxy: null,
+    };
+    const driver = {
+      accounts: [account],
+      execute: async () => ({ response: new Response(body, { status: 200 }) }),
+      markCooldown() {},
+      markSuccess() {},
+      sleep: async () => true,
+    };
+    const input = {
+      model: "muse-spark-1.3-contributor-free",
+      body: { messages: [{ role: "user", content: "hi" }] },
+      stream: true,
+      signal: null,
+      credentials: credentialsFor(1),
+      log,
+    };
+    const fallback = { response: new Response(BURST_BODY, { status: 429 }) };
+    const { text, actions } = await runWithResilienceActionsContext(async () => {
+      const result = await runParkAndReplay(driver, input, 0, fallback, log, "[test] ");
+      assert.ok(result);
+      return {
+        text: await (result as { response: Response }).response.text(),
+        actions: readResilienceActions(),
+      };
+    });
     assert.match(text, /Upstream replay failed/u);
     assert.match(text, /data: \[DONE\]/u);
-    assert.doesNotMatch(text, /access_token|secret|srv\/private|provider\.ts|upstream replay cut/u);
+    assert.equal(actions?.replayed, false);
+    assert.doesNotMatch(text, /secret|srv\/hidden|private access_token/u);
+  });
+
+  it("an OK replay with no body emits a sanitized terminal SSE error", async () => {
+    const account = {
+      fingerprint: "n".repeat(32),
+      cooldownUntil: 0,
+      consecutiveFails: 0,
+      proxy: null,
+    };
+    const driver = {
+      accounts: [account],
+      execute: async () => ({ response: new Response(null, { status: 200 }) }),
+      markCooldown() {},
+      markSuccess() {},
+      sleep: async () => true,
+    };
+    const input = {
+      model: "muse-spark-1.3-contributor-free",
+      body: { messages: [{ role: "user", content: "hi" }] },
+      stream: true,
+      signal: null,
+      credentials: credentialsFor(1),
+      log,
+    };
+    const fallback = { response: new Response(BURST_BODY, { status: 429 }) };
+    const result = await runParkAndReplay(driver, input, 0, fallback, log, "[test] ");
+    assert.ok(result);
+    const text = await (result as { response: Response }).response.text();
+    assert.match(text, /data: .*Upstream replay failed/u);
+    assert.match(text, /data: \[DONE\]/u);
   });
 
   it("client abort cancels a stalled successful replay body copy", async () => {

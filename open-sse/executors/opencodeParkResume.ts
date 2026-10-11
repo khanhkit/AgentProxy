@@ -339,6 +339,7 @@ export async function runParkAndReplay<TAccount extends RotatableAccount>(
         const probe = await replayOneLeg(driver, input, driver.accounts, log, cid);
         const finalResponse = probe?.result.response ?? fallback.response;
         let recopied = true;
+        let copiedAny = false;
         try {
           if (!finalResponse.ok) {
             recopied = false;
@@ -368,26 +369,28 @@ export async function runParkAndReplay<TAccount extends RotatableAccount>(
                 const { done, value } = await reader.read();
                 if (done || input.signal?.aborted) break;
                 controller.enqueue(value);
+                copiedAny = true;
               }
               if (input.signal?.aborted) {
                 recopied = false;
                 await reader.cancel(input.signal.reason).catch(() => undefined);
               }
             } catch (error) {
-              recopied = false;
+              // A partial replay has already emitted client-visible events. Keep
+              // its accounting and report the failure without a false [DONE].
+              recopied = copiedAny;
               await reader.cancel(error).catch(() => undefined);
               if (!input.signal?.aborted) {
+                const frame = formatTranslatedStreamError({
+                  error: {
+                    message: "Upstream replay failed",
+                    status: 502,
+                    code: "upstream_replay_failed",
+                  },
+                  status: 502,
+                });
                 controller.enqueue(
-                  encoder.encode(
-                    formatTranslatedStreamError({
-                      error: {
-                        message: "Upstream replay failed",
-                        status: 502,
-                        code: "upstream_replay_failed",
-                      },
-                      status: 502,
-                    })
-                  )
+                  encoder.encode(copiedAny ? frame.replace(/data: \[DONE\]\n\n$/u, "") : frame)
                 );
               }
             } finally {
@@ -396,6 +399,18 @@ export async function runParkAndReplay<TAccount extends RotatableAccount>(
             }
           } else {
             recopied = false;
+            controller.enqueue(
+              encoder.encode(
+                formatTranslatedStreamError({
+                  error: {
+                    message: "Upstream replay failed (empty body)",
+                    status: 502,
+                    code: "upstream_replay_failed",
+                  },
+                  status: 502,
+                })
+              )
+            );
           }
         } catch {
           recopied = false;
