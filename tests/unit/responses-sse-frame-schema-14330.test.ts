@@ -33,6 +33,11 @@ test("#14330: OPENAI_RESPONSES_IN_PROGRESS_FRAME (startup + mid-stream keepalive
     "object",
     "response.in_progress frame is missing the required `response` object"
   );
+  assert.equal(
+    "id" in (payload.response as Record<string, unknown>),
+    false,
+    "a synthetic heartbeat must omit response.id until a real string id is available"
+  );
 });
 
 test("#14330: synthResponsesFailure() produces a response.failed event with a numeric sequence_number", () => {
