@@ -89,16 +89,19 @@ export function resolveVideoBaseUrl(
  * provider/model id. Returns null when the model has no preset configured (or
  * the registry is unreadable), so callers can fall back to the sync path.
  */
-function resolveVideoJobPollingOverrides(body: Record<string, unknown>): {
+/** @testonly */ export function resolveVideoJobPollingOverrides(body: Record<string, unknown>): {
   maxPolls?: number;
   pollIntervalMs?: number;
 } {
   const maxPolls = Number(body.max_polls);
   const pollIntervalMs = Number(body.poll_interval_ms);
+  const pollCount = Math.floor(maxPolls);
   return {
-    ...(Number.isFinite(maxPolls) && maxPolls > 0 ? { maxPolls: Math.floor(maxPolls) } : {}),
+    ...(Number.isFinite(maxPolls) && pollCount > 0
+      ? { maxPolls: Math.min(pollCount, 120) }
+      : {}),
     ...(Number.isFinite(pollIntervalMs) && pollIntervalMs > 0
-      ? { pollIntervalMs: Math.floor(pollIntervalMs) }
+      ? { pollIntervalMs: Math.max(100, Math.min(Math.floor(pollIntervalMs), 60000)) }
       : {}),
   };
 }

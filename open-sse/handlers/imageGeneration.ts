@@ -1051,13 +1051,14 @@ async function handleGeminiImageGeneration({ model, providerConfig, body, creden
     typeof body.n === "number" && Number.isFinite(body.n) && body.n > 0 ? Math.floor(body.n) : 1;
   const promptText = typeof body.prompt === "string" ? body.prompt : String(body.prompt ?? "");
   const aspectRatio = normalizeImageAspectRatio(body.aspect_ratio, body.size);
+  const requestedImageSize = body.image_size ?? body.imageSize;
   const { value: imageSize, clamped: imageSizeClamped } = normalizeImageGenerationSize(
-    body.image_size
+    requestedImageSize
   );
   if (imageSizeClamped && log && typeof log.warn === "function") {
     log.warn(
       "IMAGE",
-      `antigravity/${model}: unsupported image_size ${JSON.stringify(body.image_size)} — clamped to 1K (accepted: 1K|2K|4K)`
+      `antigravity/${model}: unsupported image_size ${JSON.stringify(requestedImageSize)} — clamped to 1K (accepted: 1K|2K|4K)`
     );
   }
 
@@ -1067,7 +1068,7 @@ async function handleGeminiImageGeneration({ model, providerConfig, body, creden
     prompt: promptText.slice(0, 200),
     size: body.size || "default",
     aspect_ratio: aspectRatio,
-    image_size: body.image_size ?? null,
+    image_size: requestedImageSize ?? null,
     image_size_applied: imageSize ?? "default",
     n: candidateCount,
   };

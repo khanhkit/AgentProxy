@@ -44,3 +44,14 @@ test("Antigravity forwards valid image_size and clamps unsupported strings", asy
   assert.equal(bad.warnings.length, 1);
   assert.match(bad.warnings[0], /clamped to 1K/);
 });
+
+test("Antigravity honors legacy camelCase imageSize, preferring explicit snake_case", async () => {
+  assert.deepEqual((await capture({ imageSize: "4K" })).imageConfig, {
+    aspectRatio: "1:1",
+    imageSize: "4K",
+  });
+  assert.deepEqual((await capture({ image_size: "2K", imageSize: "4K" })).imageConfig, {
+    aspectRatio: "1:1",
+    imageSize: "2K",
+  });
+});
