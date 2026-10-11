@@ -20,6 +20,7 @@ import { requestBodyLimitMbFromEnv } from "@/shared/constants/bodySize";
 import { DEFAULT_RESPONSES_PREVIOUS_RESPONSE_ID_MODE } from "@/shared/constants/responsesPreviousResponseId";
 import { decodeUserinfo } from "@/shared/utils/decodeUserinfo";
 import { type JsonRecord, toRecord } from "./settings/shared";
+import { advanceSettingsRevision, readSettingsRevisionFromDb } from "./settingsRevision";
 import { resolveNoAuthSharedProviderProxy } from "./settings/noAuthProxyFallback";
 
 type ProxyValue = JsonRecord | string | null;
@@ -100,8 +101,11 @@ function withFamilyDefault(value: ProxyValue): ProxyValue {
 
 // ──────────────── Settings ────────────────
 
-/** Internal key_value row — not exposed as a user-facing settings field. */
-export const SETTINGS_REVISION_KEY = "_settingsRevision";
+export { SETTINGS_REVISION_KEY } from "./settingsRevision";
+
+export async function getSettingsRevision(): Promise<number> {
+  return readSettingsRevisionFromDb(getDbInstance());
+}
 
 export class SettingsRevisionConflictError extends Error {
   readonly code = "SETTINGS_REVISION_CONFLICT" as const;
@@ -110,23 +114,6 @@ export class SettingsRevisionConflictError extends Error {
     super("Settings revision mismatch");
     this.name = "SettingsRevisionConflictError";
   }
-}
-
-function readSettingsRevision(db: ReturnType<typeof getDbInstance>): number {
-  const row = db
-    .prepare("SELECT value FROM key_value WHERE namespace = 'settings' AND key = ?")
-    .get(SETTINGS_REVISION_KEY) as { value?: string } | undefined;
-  if (!row?.value) return 0;
-  try {
-    const parsed = JSON.parse(row.value) as unknown;
-    return typeof parsed === "number" && Number.isInteger(parsed) && parsed >= 0 ? parsed : 0;
-  } catch {
-    return 0;
-  }
-}
-
-export async function getSettingsRevision(): Promise<number> {
-  return readSettingsRevision(getDbInstance());
 }
 
 /**
@@ -148,9 +135,7 @@ function applySessionAffinityLegacyFallback(settings: Record<string, unknown>): 
   }
 }
 
-export async function getSettings() {
-  const db = getDbInstance();
-  const rows = db.prepare("SELECT key, value FROM key_value WHERE namespace = 'settings'").all();
+function materializeSettings(rows: unknown[]): Record<string, unknown> {
   const settings: Record<string, unknown> = {
     cloudEnabled: true,
     tailscaleEnabled: false,
@@ -296,20 +281,65 @@ export async function getSettings() {
   }
   applySessionAffinityLegacyFallback(settings);
 
-  // Auto-complete onboarding for pre-configured deployments (Docker/VM)
-  // If INITIAL_PASSWORD is set via env, this is a headless deploy — skip the wizard
-  if (!settings.setupComplete && process.env.INITIAL_PASSWORD) {
-    settings.setupComplete = true;
-    settings.requireLogin = true;
-    db.prepare(
-      "INSERT OR REPLACE INTO key_value (namespace, key, value) VALUES ('settings', 'setupComplete', 'true')"
-    ).run();
-    db.prepare(
-      "INSERT OR REPLACE INTO key_value (namespace, key, value) VALUES ('settings', 'requireLogin', 'true')"
-    ).run();
-  }
-
   return settings;
+}
+
+export interface SettingsCandidate {
+  revision: number;
+  settings: Record<string, unknown>;
+  featureFlagOverrides: Record<string, string>;
+}
+
+function readSettingsRows(db: ReturnType<typeof getDbInstance>): unknown[] {
+  return db.prepare("SELECT key, value FROM key_value WHERE namespace = 'settings'").all();
+}
+
+function readFeatureFlagOverrides(db: ReturnType<typeof getDbInstance>): Record<string, string> {
+  const rows = db
+    .prepare("SELECT key, value FROM key_value WHERE namespace = 'feature_flags'")
+    .all() as Array<{ key: string; value: string }>;
+  return Object.fromEntries(rows.map((row) => [row.key, row.value]));
+}
+
+export async function getSettings() {
+  return materializeSettings(readSettingsRows(getDbInstance()));
+}
+
+export async function getSettingsCandidate(): Promise<SettingsCandidate> {
+  const db = getDbInstance();
+  const readCandidate = db.transaction((): SettingsCandidate => ({
+    revision: readSettingsRevisionFromDb(db),
+    settings: materializeSettings(readSettingsRows(db)),
+    featureFlagOverrides: readFeatureFlagOverrides(db),
+  }));
+  return readCandidate();
+}
+
+export async function ensureInitialSettingsBootstrap(): Promise<{
+  changed: boolean;
+  candidate: SettingsCandidate;
+}> {
+  const db = getDbInstance();
+  let changed = false;
+  const bootstrap = db.transaction(() => {
+    const settings = materializeSettings(readSettingsRows(db));
+    if (settings.setupComplete || !process.env.INITIAL_PASSWORD) return;
+
+    const insert = db.prepare(
+      "INSERT OR REPLACE INTO key_value (namespace, key, value) VALUES ('settings', ?, ?)"
+    );
+    insert.run("setupComplete", JSON.stringify(true));
+    insert.run("requireLogin", JSON.stringify(true));
+    advanceSettingsRevision(db);
+    changed = true;
+  });
+  bootstrap();
+
+  if (changed) {
+    backupDbFile("pre-write");
+    invalidateDbCache("settings");
+  }
+  return { changed, candidate: await getSettingsCandidate() };
 }
 
 export async function updateSettings(
@@ -332,7 +362,7 @@ export async function updateSettings(
     "INSERT OR REPLACE INTO key_value (namespace, key, value) VALUES ('settings', ?, ?)"
   );
   const tx = db.transaction(() => {
-    const currentRevision = readSettingsRevision(db);
+    const currentRevision = readSettingsRevisionFromDb(db);
     if (options?.expectedRevision !== undefined && options.expectedRevision !== currentRevision) {
       throw new SettingsRevisionConflictError(currentRevision);
     }
@@ -340,7 +370,7 @@ export async function updateSettings(
       const toStore = key === "oidcClientSecret" ? encrypt(value as string) : value;
       insert.run(key, JSON.stringify(toStore));
     }
-    insert.run(SETTINGS_REVISION_KEY, JSON.stringify(currentRevision + 1));
+    advanceSettingsRevision(db, currentRevision);
   });
   tx();
   backupDbFile("pre-write");
