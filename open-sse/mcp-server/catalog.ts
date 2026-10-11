@@ -138,7 +138,11 @@ function normalizeProviderModelRecord(
   const model = toRecord(rawModel);
   const id = toString(model.id, "");
   const contextLength =
-    typeof model.context_length === "number" ? model.context_length : undefined;
+    typeof model.context_length === "number" &&
+    Number.isSafeInteger(model.context_length) &&
+    model.context_length > 0
+      ? model.context_length
+      : undefined;
 
   return {
     id,

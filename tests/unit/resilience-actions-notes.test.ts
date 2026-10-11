@@ -172,3 +172,18 @@ test("9. combo+resume: a combo leg carries no resumed flag (simple line keeps it
   assert.deepEqual(leg, { rotations: 1 });
   assert.deepEqual(simple, { resumed: true });
 });
+
+test("10. previous-response marker is consumed without mutating caller-owned body", async () => {
+  const { withResilienceActionsContext } =
+    await import("../../open-sse/handlers/chatCore/resilienceAttemptContext.ts");
+  const body = Object.freeze({ model: "example", _agentproxyPreviousResponseResumed: true });
+  const args = Object.freeze({ body, requestId: "r1" });
+  const observed = withResilienceActionsContext([args], (innerArgs) => ({
+    body: innerArgs.body,
+    actions: ctx.readResilienceActions(),
+  }));
+  assert.deepEqual(observed.actions, { resumed: true });
+  assert.equal(body._agentproxyPreviousResponseResumed, true, "caller body must remain intact");
+  assert.equal(Object.hasOwn(observed.body, "_agentproxyPreviousResponseResumed"), false);
+  assert.equal(observed.body.model, "example");
+});
