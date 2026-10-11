@@ -147,3 +147,11 @@ test("MITM library cleanup registration does not claim process signal ownership"
   assert.equal(process.listenerCount("SIGTERM"), beforeTerm);
   assert.equal(typeof manager.shutdownMitm, "function");
 });
+
+test("MITM manager publishes an idempotent main-lifecycle drain handle", () => {
+  assert.equal(
+    (globalThis as typeof globalThis & { __agentproxyShutdownMitm?: () => Promise<void> })
+      .__agentproxyShutdownMitm,
+    manager.shutdownMitm
+  );
+});

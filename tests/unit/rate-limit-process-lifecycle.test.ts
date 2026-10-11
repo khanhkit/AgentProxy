@@ -15,3 +15,11 @@ test("rate-limit watchdog does not install process signal handlers", async () =>
     await manager.__resetRateLimitManagerForTests();
   }
 });
+
+test("rate-limit manager publishes an idempotent main-lifecycle drain handle", () => {
+  assert.equal(
+    (globalThis as typeof globalThis & { __agentproxyShutdownRateLimit?: () => Promise<void> })
+      .__agentproxyShutdownRateLimit,
+    manager.shutdownRateLimitManager
+  );
+});

@@ -65,3 +65,14 @@ test("auxiliary HTTP listeners expose explicit lifecycle stop APIs", () => {
   assert.match(source("src/lib/apiBridgeServer.ts"), /export function stopApiBridgeServer/);
   assert.match(source("src/server/ws/liveServer.ts"), /export (?:async )?function stopLiveDashboardServer/);
 });
+
+test("main lifecycle does not trace heavyweight MITM/rate-limit leaves solely for shutdown", () => {
+  const graceful = source("src/lib/gracefulShutdown.ts");
+  assert.doesNotMatch(graceful, /import\("@\/mitm\/manager"\)/);
+  assert.doesNotMatch(
+    graceful,
+    /import\("@agentproxy\/open-sse\/services\/rateLimitManager\.ts"\)/
+  );
+  assert.match(graceful, /__agentproxyShutdownMitm/);
+  assert.match(graceful, /__agentproxyShutdownRateLimit/);
+});

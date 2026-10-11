@@ -32,6 +32,8 @@ declare global {
   var __agentproxyCustomServerOwnsShutdown: boolean | undefined;
   var __agentproxyStopApiBridge: (() => void) | undefined;
   var __agentproxyStopLiveWs: (() => void) | undefined;
+  var __agentproxyShutdownRateLimit: (() => Promise<void>) | undefined;
+  var __agentproxyShutdownMitm: (() => Promise<void>) | undefined;
 }
 
 function getShutdownState() {
@@ -153,11 +155,13 @@ export function registerMainLifecycleHooks(): void {
   register("service-supervisors-drain", "DRAIN_ACTIVE", async () => {
     await (await import("@/lib/services/registry")).stopAllSupervisors();
   });
+  // Heavy leaves publish these handles when loaded; importing them here would
+  // expand Next's instrumentation webpack graph solely for shutdown.
   register("rate-limit-drain", "DRAIN_ACTIVE", async () => {
-    await (await import("@agentproxy/open-sse/services/rateLimitManager.ts")).shutdownRateLimitManager();
+    await globalThis.__agentproxyShutdownRateLimit?.();
   });
   register("mitm-drain", "DRAIN_ACTIVE", async () => {
-    await (await import("@/mitm/manager")).shutdownMitm();
+    await globalThis.__agentproxyShutdownMitm?.();
   });
 
   register("spend-writer-flush", "FLUSH_DURABLE", async () => {

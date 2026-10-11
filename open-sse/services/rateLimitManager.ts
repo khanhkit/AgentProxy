@@ -371,6 +371,9 @@ export async function shutdownRateLimitManager(): Promise<void> {
   preservedReplacementSettings.clear();
 }
 
+(globalThis as typeof globalThis & { __agentproxyShutdownRateLimit?: () => Promise<void> })
+  .__agentproxyShutdownRateLimit = shutdownRateLimitManager;
+
 function trackAsyncOperation<T>(promise: Promise<T>): Promise<T> {
   pendingAsyncOperations.add(promise);
   // Do not use a fire-and-forget `.finally()` here: it creates a derived
