@@ -133,6 +133,28 @@ test("simulated traffic: global outage never condemns anyone", async () => {
   });
 });
 
+test("AP-ISS-0194: proxy/gateway error responses do not count as cross-egress success", async () => {
+  for (const status of [407, 502, 503]) {
+    memory.__resetTransportEvidenceForTesting();
+    await withEnv({ PROXY_SKIP_RECENTLY_FAILED: "true" }, () =>
+      runWithProxyContext(EGRESS_B, () =>
+        proxyFetch(
+          "http://api.example.com/v1/chat",
+          {},
+          {
+            undiciFetch: async () => new Response(null, { status }),
+          }
+        )
+      )
+    );
+    assert.equal(
+      memory.__transportEvidenceSizeForTesting().successes,
+      0,
+      `HTTP ${status} must not prove destination reachability`
+    );
+  }
+});
+
 test("simulated traffic: a retried-then-recovered attempt records one success, no failure", async () => {
   let calls = 0;
   const flaky = async () => {

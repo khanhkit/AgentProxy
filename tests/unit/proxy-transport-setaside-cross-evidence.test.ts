@@ -137,11 +137,11 @@ test("with the flag explicitly off the dispatcher hooks record no evidence", asy
   const { recordFinalTransportOutcome, recordProxiedSuccess } =
     await import("../../open-sse/utils/proxyTransportOutcome.ts");
   process.env.PROXY_SKIP_RECENTLY_FAILED = "false";
-  recordProxiedSuccess("http://10.9.0.2:8080", "https://api.example.com/v1/chat");
+  recordProxiedSuccess("http://10.9.0.2:8080", "https://api.example.com/v1/chat", 200);
   await recordFinalTransportOutcome("http://10.9.0.1:8080", "https://api.example.com/v1/chat");
   assert.deepEqual(memory.__transportEvidenceSizeForTesting(), { failures: 0, successes: 0 });
   process.env.PROXY_SKIP_RECENTLY_FAILED = "true";
-  recordProxiedSuccess("http://10.9.0.2:8080", "https://api.example.com/v1/chat");
+  recordProxiedSuccess("http://10.9.0.2:8080", "https://api.example.com/v1/chat", 200);
   assert.deepEqual(memory.__transportEvidenceSizeForTesting(), { failures: 0, successes: 1 });
 });
 
