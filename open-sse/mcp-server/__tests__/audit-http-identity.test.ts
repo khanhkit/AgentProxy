@@ -1,8 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import {
-  setMcpHttpAuditApiKeyId,
-  withMcpHttpAuthContext,
-} from "../httpAuthContext.ts";
+import { setMcpHttpAuditApiKeyId, withMcpHttpAuthContext } from "../httpAuthContext.ts";
 import { logToolCall } from "../audit.ts";
 
 type MockAuditDb = {
@@ -32,7 +29,8 @@ describe("AP-ISS-0016 MCP HTTP audit caller identity", () => {
       close: vi.fn(),
       open: true,
     };
-    globalThis.__agentproxyMcpAuditDb = mockDb as unknown as typeof globalThis.__agentproxyMcpAuditDb;
+    globalThis.__agentproxyMcpAuditDb =
+      mockDb as unknown as typeof globalThis.__agentproxyMcpAuditDb;
 
     const invoke = (rawToken: string, id: string, tool: string) =>
       withMcpHttpAuthContext(
@@ -67,12 +65,33 @@ describe("AP-ISS-0016 MCP HTTP audit caller identity", () => {
       close: vi.fn(),
       open: true,
     };
-    globalThis.__agentproxyMcpAuditDb = mockDb as unknown as typeof globalThis.__agentproxyMcpAuditDb;
+    globalThis.__agentproxyMcpAuditDb =
+      mockDb as unknown as typeof globalThis.__agentproxyMcpAuditDb;
     process.env.AGENTPROXY_API_KEY_ID = "stdio-static-id";
 
     await logToolCall("stdio-tool", {}, { ok: true }, 1, true);
 
     expect(run).toHaveBeenCalledTimes(1);
     expect(run.mock.calls[0]?.[4]).toBe("stdio-static-id");
+  }, 30_000);
+
+  it("never attributes an unresolved HTTP caller to the static stdio id", async () => {
+    const run = vi.fn();
+    const mockDb: MockAuditDb = {
+      prepare: vi.fn(() => ({ get: vi.fn(), all: vi.fn(), run })),
+      pragma: vi.fn(),
+      close: vi.fn(),
+      open: true,
+    };
+    globalThis.__agentproxyMcpAuditDb =
+      mockDb as unknown as typeof globalThis.__agentproxyMcpAuditDb;
+    process.env.AGENTPROXY_API_KEY_ID = "stdio-static-id";
+
+    await withMcpHttpAuthContext(new Request("http://localhost/api/mcp"), async () => {
+      await logToolCall("http-unresolved-tool", {}, { ok: true }, 1, true);
+    });
+
+    expect(run).toHaveBeenCalledTimes(1);
+    expect(run.mock.calls[0]?.[4]).toBeNull();
   }, 30_000);
 });
