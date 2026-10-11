@@ -27,6 +27,25 @@ test("AP-ISS-0124: Claude stop sequences map to Gemini stopSequences", () => {
   assert.deepEqual(legacyStop.generationConfig.stopSequences, ["HALT"]);
 });
 
+test("AP-ISS-0194: invalid Claude stop sequences are omitted for Gemini", () => {
+  for (const stop_sequences of [null, 42, { value: "STOP" }, ["END", null, "", 7]]) {
+    const result = claudeToGeminiRequest(
+      "gemini-2.5-pro",
+      {
+        messages: [{ role: "user", content: "hello" }],
+        stop_sequences,
+      } as never,
+      false
+    );
+
+    if (Array.isArray(stop_sequences)) {
+      assert.deepEqual(result.generationConfig.stopSequences, ["END"]);
+    } else {
+      assert.equal("stopSequences" in result.generationConfig, false);
+    }
+  }
+});
+
 test("AP-ISS-0124: Claude HTTPS image maps to Gemini fileData", () => {
   const result = claudeToGeminiRequest(
     "gemini-2.5-pro",
