@@ -54,6 +54,42 @@ export const STRAIN_MARKER_TTL_MS = 300_000;
 /** Upper bound of a marker read. */
 export const STRAIN_MARKER_MAX_BYTES = 1024;
 
+const OPENAI_DONE_SENTINELS = [
+  "data: [DONE]\n\n",
+  "data:[DONE]\n\n",
+  "data: [DONE]\r\n\r\n",
+  "data:[DONE]\r\n\r\n",
+] as const;
+
+function findOpenAiDoneSentinel(text: string): { index: number; value: string } | null {
+  let best: { index: number; value: string } | null = null;
+  for (const sentinel of OPENAI_DONE_SENTINELS) {
+    let index = text.indexOf(sentinel);
+    while (index >= 0) {
+      if (index === 0 || text[index - 1] === "\n" || text[index - 1] === "\r") {
+        if (best == null || index < best.index) best = { index, value: sentinel };
+        break;
+      }
+      index = text.indexOf(sentinel, index + 1);
+    }
+  }
+  return best;
+}
+
+function longestOpenAiDonePrefixSuffix(text: string): number {
+  let longest = 0;
+  for (const sentinel of OPENAI_DONE_SENTINELS) {
+    const max = Math.min(text.length, sentinel.length - 1);
+    for (let length = max; length > longest; length -= 1) {
+      if (text.endsWith(sentinel.slice(0, length))) {
+        longest = length;
+        break;
+      }
+    }
+  }
+  return longest;
+}
+
 export interface PoolStrainMarker {
   fresh: boolean;
   ttlLeftMs: number;
@@ -359,6 +395,32 @@ export async function runParkAndReplay<TAccount extends RotatableAccount>(
             controller.enqueue(encoder.encode(formatTranslatedStreamError(payload)));
           } else if (finalResponse.body) {
             const reader = finalResponse.body.getReader();
+            const decoder = new TextDecoder();
+            let pendingDonePrefix = "";
+            let withheldDone: string | null = null;
+            const emitReplayText = (text: string): void => {
+              if (text === "" || withheldDone != null) return;
+              const combined = pendingDonePrefix + text;
+              const doneSentinel = findOpenAiDoneSentinel(combined);
+              if (doneSentinel) {
+                const beforeDone = combined.slice(0, doneSentinel.index);
+                if (beforeDone !== "") {
+                  controller.enqueue(encoder.encode(beforeDone));
+                  copiedAny = true;
+                }
+                withheldDone = doneSentinel.value;
+                pendingDonePrefix = "";
+                return;
+              }
+
+              const keep = longestOpenAiDonePrefixSuffix(combined);
+              const safeText = keep > 0 ? combined.slice(0, -keep) : combined;
+              if (safeText !== "") {
+                controller.enqueue(encoder.encode(safeText));
+                copiedAny = true;
+              }
+              pendingDonePrefix = keep > 0 ? combined.slice(-keep) : "";
+            };
             const onAbort = (): void => {
               void reader.cancel(input.signal?.reason).catch(() => undefined);
             };
@@ -367,18 +429,26 @@ export async function runParkAndReplay<TAccount extends RotatableAccount>(
             try {
               while (!input.signal?.aborted) {
                 const { done, value } = await reader.read();
-                if (done || input.signal?.aborted) break;
-                controller.enqueue(value);
-                copiedAny = true;
+                if (done || input.signal?.aborted) {
+                  if (done) emitReplayText(decoder.decode());
+                  break;
+                }
+                emitReplayText(decoder.decode(value, { stream: true }));
               }
               if (input.signal?.aborted) {
                 recopied = false;
                 await reader.cancel(input.signal.reason).catch(() => undefined);
+              } else if (withheldDone != null) {
+                controller.enqueue(encoder.encode(withheldDone));
+                copiedAny = true;
+              } else if (pendingDonePrefix !== "") {
+                controller.enqueue(encoder.encode(pendingDonePrefix));
+                copiedAny = true;
               }
             } catch (error) {
-              // A partial replay has already emitted client-visible events. Keep
-              // its accounting and report the failure without a false [DONE].
-              recopied = copiedAny;
+              // A read failure means the replay did not complete, even if some
+              // client-visible bytes were already emitted.
+              recopied = false;
               await reader.cancel(error).catch(() => undefined);
               if (!input.signal?.aborted) {
                 const frame = formatTranslatedStreamError({

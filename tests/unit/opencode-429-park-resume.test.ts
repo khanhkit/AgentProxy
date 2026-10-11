@@ -364,8 +364,75 @@ describe("opencode 429 park-and-resume", () => {
       /data: \[DONE\]/u,
       "mid-stream failure must not look like clean completion"
     );
-    assert.equal(actions?.replayed, true, "partial replay output must be accounted as replayed");
+    assert.equal(
+      actions?.replayed,
+      false,
+      "truncated replay output must not count as replay success"
+    );
     assert.doesNotMatch(text, /access_token|secret|srv\/private|provider\.ts|upstream replay cut/u);
+  });
+
+  it("withholds an upstream DONE marker until replay EOF is confirmed", async () => {
+    let pulls = 0;
+    const brokenBody = new ReadableStream<Uint8Array>({
+      pull(controller) {
+        pulls += 1;
+        if (pulls === 1) {
+          controller.enqueue(new TextEncoder().encode("data: prefix\n\ndata: [DO"));
+          return;
+        }
+        if (pulls === 2) {
+          controller.enqueue(new TextEncoder().encode("NE]\n\n"));
+          return;
+        }
+        controller.error(new Error("late upstream failure access_token=secret /srv/private"));
+      },
+    });
+    const account = {
+      fingerprint: "d".repeat(32),
+      cooldownUntil: 0,
+      consecutiveFails: 0,
+      proxy: null,
+    };
+    const driver = {
+      accounts: [account],
+      execute: async () => ({
+        response: new Response(brokenBody, {
+          status: 200,
+          headers: { "Content-Type": "text/event-stream" },
+        }),
+      }),
+      markCooldown() {},
+      markSuccess() {},
+      sleep: async () => true,
+    };
+    const input = {
+      model: "muse-spark-1.3-contributor-free",
+      body: { messages: [{ role: "user", content: "hi" }] },
+      stream: true,
+      signal: null,
+      credentials: credentialsFor(1),
+      log,
+    };
+    const fallback = { response: new Response(BURST_BODY, { status: 429 }) };
+    const { text, actions } = await runWithResilienceActionsContext(async () => {
+      const result = await runParkAndReplay(driver, input, 0, fallback, log, "[test] ");
+      assert.ok(result);
+      return {
+        text: await (result as { response: Response }).response.text(),
+        actions: readResilienceActions(),
+      };
+    });
+
+    assert.match(
+      text,
+      /data: prefix/u,
+      "real replay events before the terminal marker stay visible"
+    );
+    assert.match(text, /Upstream replay failed/u);
+    assert.doesNotMatch(text, /data: \[DONE\]/u, "failed replay must not publish clean completion");
+    assert.equal(actions?.replayed, false);
+    assert.doesNotMatch(text, /access_token|secret|srv\/private|late upstream failure/u);
   });
 
   it("a replay read failure before any body chunk emits the terminal error marker", async () => {
