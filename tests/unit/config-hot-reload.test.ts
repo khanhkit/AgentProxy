@@ -11,6 +11,7 @@ process.env.AGENTPROXY_CONFIG_HOT_RELOAD_MS = "100";
 const core = await import("../../src/lib/db/core.ts");
 const settingsDb = await import("../../src/lib/db/settings.ts");
 const { getDbInstance } = core;
+const { advanceSettingsRevision } = await import("../../src/lib/db/settingsRevision.ts");
 const runtimeSettings = await import("../../src/lib/config/runtimeSettings.ts");
 const {
   applyRuntimeSettings,
@@ -36,6 +37,7 @@ const { getPayloadRulesConfig, resetPayloadRulesConfigForTests } =
 const { getCacheControlSettings, invalidateCacheControlSettingsCache } =
   await import("../../src/lib/cacheControlSettings.ts");
 const { getSyncStatus, stopPeriodicSync } = await import("../../src/lib/modelsDevSync.ts");
+const { getRuntimeConfigStatus } = await import("../../src/lib/config/runtimeConfigAuthority.ts");
 const { getThinkingBudgetConfig, setThinkingBudgetConfig, DEFAULT_THINKING_CONFIG } =
   await import("../../open-sse/services/thinkingBudget.ts");
 const { getTaskRoutingConfig, setTaskRoutingConfig, getDefaultTaskModelMap } =
@@ -266,20 +268,23 @@ test("MODELS_DEV_SYNC_ENABLED=0 blocks a live settings update from starting the 
   }
 });
 
-test("hot-reload watcher picks up external sqlite changes via polling fallback", async () => {
-  await applyRuntimeSettings(await settingsDb.getSettings(), {
+test("hot-reload watcher picks up external revisioned sqlite changes via polling fallback", async () => {
+  await applyRuntimeSettingsCandidate(await settingsDb.getSettingsCandidate(), {
     force: true,
     source: "test:startup",
   });
   startRuntimeConfigHotReload({ pollIntervalMs: 100 });
 
   const db = getDbInstance();
-  db.prepare(
-    "INSERT OR REPLACE INTO key_value (namespace, key, value) VALUES ('settings', 'cliCompatProviders', ?)"
-  ).run(JSON.stringify(["github", "openai"]));
-  db.prepare(
-    "INSERT OR REPLACE INTO key_value (namespace, key, value) VALUES ('settings', 'antigravitySignatureCacheMode', ?)"
-  ).run(JSON.stringify("bypass-strict"));
+  db.transaction(() => {
+    db.prepare(
+      "INSERT OR REPLACE INTO key_value (namespace, key, value) VALUES ('settings', 'cliCompatProviders', ?)"
+    ).run(JSON.stringify(["github", "openai"]));
+    db.prepare(
+      "INSERT OR REPLACE INTO key_value (namespace, key, value) VALUES ('settings', 'antigravitySignatureCacheMode', ?)"
+    ).run(JSON.stringify("bypass-strict"));
+    advanceSettingsRevision(db);
+  })();
 
   await waitFor(
     () =>
@@ -287,4 +292,23 @@ test("hot-reload watcher picks up external sqlite changes via polling fallback",
       !getCliCompatProviders().includes("openai") &&
       getGeminiThoughtSignatureMode() === "bypass-strict"
   );
+});
+
+test("hot-reload observes feature-flag revision without hot-applying RESTART_REQUIRED flags", async () => {
+  const baseline = await settingsDb.getSettingsCandidate();
+  baseline.featureFlagOverrides.ENABLE_TLS_FINGERPRINT = "false";
+  await applyRuntimeSettingsCandidate(baseline, { force: true, source: "test:startup" });
+  startRuntimeConfigHotReload({ pollIntervalMs: 100 });
+
+  const db = getDbInstance();
+  db.transaction(() => {
+    db.prepare(
+      "INSERT OR REPLACE INTO key_value (namespace, key, value) VALUES ('feature_flags', ?, ?)"
+    ).run("ENABLE_TLS_FINGERPRINT", "true");
+    advanceSettingsRevision(db);
+  })();
+
+  await waitFor(() => getRuntimeConfigStatus().desiredRevision === baseline.revision + 1);
+  assert.equal(getRuntimeConfigStatus().activeRevision, baseline.revision);
+  assert.deepEqual(getRuntimeConfigStatus().restartRequiredKeys, ["ENABLE_TLS_FINGERPRINT"]);
 });

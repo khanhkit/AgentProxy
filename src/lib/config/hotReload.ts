@@ -1,14 +1,17 @@
 import fs from "node:fs";
 import path from "node:path";
 import { SQLITE_FILE } from "@/lib/db/core";
-import { getSettings } from "@/lib/db/settings";
-import { applyRuntimeSettings, type RuntimeReloadChange } from "./runtimeSettings";
+import { getSettingsCandidate, type SettingsCandidate } from "@/lib/db/settings";
+import { applyRuntimeSettingsCandidate, type RuntimeReloadChange } from "./runtimeSettings";
 
 const DEFAULT_POLL_INTERVAL_MS = 5_000;
 const MIN_POLL_INTERVAL_MS = 1_000;
 
+type PendingReload = { source: string; candidate: SettingsCandidate };
+
 let activeCheck: Promise<void> | null = null;
-let queuedSource: string | null = null;
+let activeRevision: number | null = null;
+let queuedReload: PendingReload | null = null;
 let pollTimer: ReturnType<typeof setInterval> | null = null;
 let sqliteWatcher: fs.FSWatcher | null = null;
 
@@ -35,32 +38,50 @@ function logChanges(source: string, changes: RuntimeReloadChange[]) {
   );
 }
 
-async function runHotReloadCheck(source: string) {
-  const settings = await getSettings();
-  const changes = await applyRuntimeSettings(settings, { source });
+async function runHotReloadCheck(source: string, candidate: SettingsCandidate) {
+  const changes = await applyRuntimeSettingsCandidate(candidate, { source });
   logChanges(source, changes);
 }
 
-function queueHotReloadCheck(source: string) {
+function queueCapturedReload(source: string, candidate: SettingsCandidate) {
   if (activeCheck) {
-    queuedSource = source;
+    if (activeRevision !== null && candidate.revision < activeRevision) return;
+    if (queuedReload && candidate.revision < queuedReload.candidate.revision) return;
+    queuedReload = { source, candidate };
     return;
   }
 
-  activeCheck = runHotReloadCheck(source)
+  activeRevision = candidate.revision;
+  activeCheck = runHotReloadCheck(source, candidate)
     .catch((error) => {
       console.warn(
-        `[HOT_RELOAD] Runtime config reload failed for ${source}:`,
+        `[HOT_RELOAD] Runtime config reload failed for ${source} revision=${candidate.revision}:`,
         error instanceof Error ? error.message : error
       );
     })
     .finally(() => {
       activeCheck = null;
-      if (!queuedSource) return;
-      const nextSource = queuedSource;
-      queuedSource = null;
-      queueHotReloadCheck(nextSource);
+      activeRevision = null;
+      if (!queuedReload) return;
+      const next = queuedReload;
+      queuedReload = null;
+      queueCapturedReload(next.source, next.candidate);
     });
+}
+
+async function captureAndQueueHotReloadCheck(source: string) {
+  try {
+    queueCapturedReload(source, await getSettingsCandidate());
+  } catch (error) {
+    console.warn(
+      `[HOT_RELOAD] Runtime config candidate read failed for ${source}:`,
+      error instanceof Error ? error.message : error
+    );
+  }
+}
+
+function queueHotReloadCheck(source: string) {
+  void captureAndQueueHotReloadCheck(source);
 }
 
 export function startRuntimeConfigHotReload(options: { pollIntervalMs?: number } = {}) {
@@ -110,6 +131,7 @@ export function stopRuntimeConfigHotReloadForTests() {
   }
   sqliteWatcher?.close();
   sqliteWatcher = null;
-  queuedSource = null;
+  queuedReload = null;
+  activeRevision = null;
   activeCheck = null;
 }

@@ -1,3 +1,6 @@
+import { resolveFeatureFlag } from "@/shared/utils/featureFlags";
+import { classifyRuntimeSettingKey } from "./runtimeSettingClassification";
+
 export interface RuntimeConfigCandidate {
   revision: number;
   settings: Record<string, unknown>;
@@ -106,6 +109,43 @@ function freezeCandidate(candidate: RuntimeConfigCandidate): RuntimeConfigSnapsh
   return deepFreeze(cloned) as RuntimeConfigSnapshot;
 }
 
+function serializedEqual(left: unknown, right: unknown): boolean {
+  if (Object.is(left, right)) return true;
+  try {
+    return JSON.stringify(left) === JSON.stringify(right);
+  } catch {
+    return false;
+  }
+}
+
+function restartRequiredChanges(
+  previous: RuntimeConfigSnapshot | null,
+  candidate: RuntimeConfigSnapshot
+): string[] {
+  if (!previous) return [];
+  const changed = new Set<string>();
+
+  for (const key of new Set([
+    ...Object.keys(previous.settings),
+    ...Object.keys(candidate.settings),
+  ])) {
+    if (classifyRuntimeSettingKey(key) !== "RESTART_REQUIRED") continue;
+    if (!serializedEqual(previous.settings[key], candidate.settings[key])) changed.add(key);
+  }
+
+  for (const key of new Set([
+    ...Object.keys(previous.featureFlagOverrides),
+    ...Object.keys(candidate.featureFlagOverrides),
+  ])) {
+    if (classifyRuntimeSettingKey(key) !== "RESTART_REQUIRED") continue;
+    const previousValue = resolveFeatureFlag(key, previous.featureFlagOverrides);
+    const candidateValue = resolveFeatureFlag(key, candidate.featureFlagOverrides);
+    if (previousValue !== candidateValue) changed.add(key);
+  }
+
+  return [...changed].sort();
+}
+
 function setActivationFailure(
   store: RuntimeConfigAuthorityStore,
   revision: number,
@@ -138,6 +178,15 @@ async function runAtomicPhase<TPrepared>(
   }
 
   const previous = store.activeSnapshot;
+  const restartRequiredKeys = restartRequiredChanges(previous, snapshot);
+  if (restartRequiredKeys.length > 0) {
+    store.state = "ready";
+    store.lastError = null;
+    store.restartRequiredKeys = restartRequiredKeys;
+    store.reconcileRevision = null;
+    return { snapshot: null, shouldReconcile: false };
+  }
+
   let prepared: TPrepared | undefined;
   try {
     prepared = await hooks.prepare?.(snapshot, previous);

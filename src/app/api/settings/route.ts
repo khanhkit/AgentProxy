@@ -9,6 +9,7 @@ import {
   type UpdateSettingsOptions,
 } from "@/lib/db/settings";
 import { getRuntimePorts } from "@/lib/runtime/ports";
+import { getRuntimeConfigStatus } from "@/lib/config/runtimeConfigAuthority";
 import { updateSettingsSchema } from "@/shared/validation/settingsSchemas";
 import { isValidationFailure, validateBody } from "@/shared/validation/helpers";
 import { getConsistentMachineId } from "@/shared/utils/machineId";
@@ -20,7 +21,7 @@ import {
   getUpstreamProxyConfig,
 } from "@/lib/db/upstreamProxy";
 import { getProviderConnections } from "@/lib/db/providers";
-import { clearCliproxyapiUrlCache } from "@agentproxy/open-sse/executors/cliproxyapi.ts";
+import { clearCliproxyapiRuntimeCache } from "@/lib/services/cliproxyapiRuntime";
 import {
   ensurePersistentManagementPasswordHash,
   getStoredManagementPassword,
@@ -68,6 +69,27 @@ function settingsResponseHeaders(settingsRevision: number): Record<string, strin
   return {
     ...SETTINGS_RESPONSE_HEADERS,
     ETag: String(settingsRevision),
+  };
+}
+
+function publicRuntimeConfigStatus() {
+  const status = getRuntimeConfigStatus();
+  const lastError = status.lastError
+    ? {
+        revision: status.lastError.revision,
+        message:
+          status.state === "reconcile_pending"
+            ? "Runtime configuration reconcile pending"
+            : "Runtime configuration activation failed",
+      }
+    : null;
+  return {
+    desiredRevision: status.desiredRevision,
+    activeRevision: status.activeRevision,
+    state: status.state,
+    restartRequiredKeys: status.restartRequiredKeys,
+    reconcileRevision: status.reconcileRevision,
+    lastError,
   };
 }
 
@@ -262,6 +284,7 @@ export async function GET(request: Request) {
       {
         ...safeSettings,
         settingsRevision,
+        runtimeConfigStatus: publicRuntimeConfigStatus(),
         hasPassword: hasManagementPasswordConfigured(settings),
         runtimePorts,
         apiPort: runtimePorts.apiPort,
@@ -540,6 +563,7 @@ export async function PATCH(request: Request) {
               message: error.message,
               desiredRevision: error.desiredRevision,
               activeRevision: error.activeRevision,
+              runtimeConfigStatus: publicRuntimeConfigStatus(),
             },
           },
           { status: 500, headers: settingsResponseHeaders(error.desiredRevision) }
@@ -551,7 +575,7 @@ export async function PATCH(request: Request) {
     if (typeof cpaUrl === "string") {
       // Durable settings + derived proxy rows committed and activated together; only
       // now invalidate the executor cache so request-path state cannot lead SQLite.
-      clearCliproxyapiUrlCache();
+      await clearCliproxyapiRuntimeCache();
     }
 
     // Audit success — diff of changed keys only. Idempotent PATCH (no diff)
@@ -585,7 +609,7 @@ export async function PATCH(request: Request) {
     } = settings;
     const settingsRevision = await getSettingsRevision();
     const response = NextResponse.json(
-      { ...safeSettings, settingsRevision },
+      { ...safeSettings, settingsRevision, runtimeConfigStatus: publicRuntimeConfigStatus() },
       { headers: settingsResponseHeaders(settingsRevision) }
     );
     const secret = getDashboardJwtSecret();

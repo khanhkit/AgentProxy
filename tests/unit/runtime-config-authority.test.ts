@@ -203,6 +203,52 @@ test("classification uses explicit reconcile, restart and build/deploy exception
   assert.equal(classifyRuntimeSettingKey("DATA_DIR"), "BUILD_DEPLOY_ONLY");
 });
 
+test("RESTART_REQUIRED change advances desired revision without falsely advancing active state", async () => {
+  await activateRuntimeConfigCandidate(
+    candidate(30, { debugMode: false }, { ENABLE_TLS_FINGERPRINT: "false" }),
+    {}
+  );
+
+  await activateRuntimeConfigCandidate(
+    candidate(31, { debugMode: true }, { ENABLE_TLS_FINGERPRINT: "true" }),
+    {}
+  );
+
+  assert.equal(getActiveRuntimeConfigSnapshot()?.revision, 30);
+  assert.equal(getActiveRuntimeConfigSnapshot()?.settings.debugMode, false);
+  assert.equal(
+    getActiveRuntimeConfigSnapshot()?.featureFlagOverrides.ENABLE_TLS_FINGERPRINT,
+    "false"
+  );
+  assert.deepEqual(getRuntimeConfigStatus(), {
+    desiredRevision: 31,
+    activeRevision: 30,
+    state: "ready",
+    lastError: null,
+    restartRequiredKeys: ["ENABLE_TLS_FINGERPRINT"],
+    reconcileRevision: null,
+  });
+});
+
+test("reverting restart-only divergence lets a newer hot revision activate and clears restart status", async () => {
+  await activateRuntimeConfigCandidate(
+    candidate(40, { debugMode: false }, { ENABLE_TLS_FINGERPRINT: "false" }),
+    {}
+  );
+  await activateRuntimeConfigCandidate(
+    candidate(41, { debugMode: true }, { ENABLE_TLS_FINGERPRINT: "true" }),
+    {}
+  );
+  await activateRuntimeConfigCandidate(
+    candidate(42, { debugMode: true }, { ENABLE_TLS_FINGERPRINT: "false" }),
+    {}
+  );
+
+  assert.equal(getActiveRuntimeConfigSnapshot()?.revision, 42);
+  assert.equal(getActiveRuntimeConfigSnapshot()?.settings.debugMode, true);
+  assert.deepEqual(getRuntimeConfigStatus().restartRequiredKeys, []);
+});
+
 test("runtimeSettings rollback restores prior aliases, payload rules and authz after a later section fails", async () => {
   resetRuntimeSettingsStateForTests();
   resetRuntimeConfigAuthorityForTests();
