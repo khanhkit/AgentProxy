@@ -116,6 +116,7 @@ export interface GeminiAutomationPage {
     selector: string,
     opts?: { timeout?: number }
   ): Promise<GeminiAutomationElement | null>;
+  waitForTimeout?(timeout: number): Promise<void>;
   getByRole?(role: "menuitem", opts: { name: string | RegExp }): GeminiAutomationElement;
 }
 
@@ -177,17 +178,36 @@ export async function selectGeminiUiMode(
     }
   }
 
-  const indicator = await page
-    .waitForSelector(activeIndicatorSelector, { timeout: timeoutMs })
-    .catch(() => null);
-  if (!indicator) return { confirmed: false, reason: "indicator_not_found", descriptor };
+  const pollIntervalMs = Math.min(50, Math.max(1, timeoutMs));
+  const attempts = Math.max(1, Math.ceil(timeoutMs / pollIntervalMs));
+  let sawIndicator = false;
 
-  const text = await readIndicatorText(indicator);
-  if (!text || !expectedIndicatorPattern.test(text)) {
-    return { confirmed: false, reason: "indicator_mismatch", descriptor };
+  for (let attempt = 0; attempt < attempts; attempt += 1) {
+    const indicator = await page
+      .waitForSelector(activeIndicatorSelector, { timeout: pollIntervalMs })
+      .catch(() => null);
+    if (!indicator) continue;
+
+    sawIndicator = true;
+    const text = await readIndicatorText(indicator);
+    if (text && expectedIndicatorPattern.test(text)) {
+      return { confirmed: true, descriptor };
+    }
+
+    if (attempt + 1 < attempts) {
+      if (typeof page.waitForTimeout === "function") {
+        await page.waitForTimeout(pollIntervalMs);
+      } else {
+        await new Promise<void>((resolve) => setTimeout(resolve, pollIntervalMs));
+      }
+    }
   }
 
-  return { confirmed: true, descriptor };
+  return {
+    confirmed: false,
+    reason: sawIndicator ? "indicator_mismatch" : "indicator_not_found",
+    descriptor,
+  };
 }
 
 export function resolveGeminiModelMode(modelId: string): GeminiWebModeDescriptor | null {

@@ -32,6 +32,7 @@ type Call = { fn: string; args: unknown[] };
 interface SelectorScriptEntry {
   found: boolean;
   text?: string | null;
+  texts?: Array<string | null>;
 }
 
 interface PageScript {
@@ -83,7 +84,7 @@ function makeFakePlaywright(calls: Call[], script: PageScript = {}) {
               click: async () => {
                 calls.push({ fn: "mode.click", args: [selector] });
               },
-              textContent: async () => entry.text ?? null,
+              textContent: async () => entry.texts?.shift() ?? entry.text ?? null,
             };
           },
           getByRole: (role: string, opts2?: { name?: string | RegExp }) => {
@@ -250,6 +251,28 @@ test("#13381: a confirmed model-mode read-back lets the request proceed to the p
   assert.ok(
     calls.some((c) => c.fn === "editor.click"),
     "must reach the prompt editor once confirmed"
+  );
+});
+
+test("#13381: model selection waits for the active indicator to reflect the requested option", async () => {
+  const descriptor = GEMINI_WEB_MODEL_MODES["gemini-3.7-flash"];
+  assert.ok(descriptor.toggleSelector && descriptor.activeIndicatorSelector);
+
+  const { status, calls } = await runWithFakePage("gemini-3.7-flash", {
+    selectors: {
+      [descriptor.toggleSelector!]: { found: true },
+      [descriptor.activeIndicatorSelector!]: {
+        found: true,
+        texts: ["Gemini 3.1 Pro", "Gemini 3.7 Flash"],
+      },
+    },
+    roleOptions: ["Gemini 3.7 Flash"],
+  });
+
+  assert.equal(status, 502, "selection must tolerate the indicator's asynchronous text update");
+  assert.ok(
+    calls.some((c) => c.fn === "editor.click"),
+    "confirmed selection must reach prompt execution"
   );
 });
 
