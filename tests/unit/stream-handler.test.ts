@@ -944,6 +944,38 @@ test("pipeWithDisconnect flags a stream that only ever produces lifecycle/heartb
   assert.match(text, /"finish_reason":"error"/);
 });
 
+test("AP-ISS-0194: content-stall diagnostics reconstruct SSE lines split across chunks", async () => {
+  const source = new ReadableStream({
+    async start(controller) {
+      controller.enqueue(encoder.encode('data: {"type":"response.in_'));
+      await new Promise((resolve) => setTimeout(resolve, 10));
+      controller.enqueue(
+        encoder.encode('progress","response":{"id":"resp_split","status":"in_progress"}}\n\n')
+      );
+    },
+    cancel() {},
+  });
+
+  let onErrorEvent = null;
+  const streamController = createStreamController({
+    onError(event) {
+      onErrorEvent = event;
+      return true;
+    },
+  });
+
+  const stream = pipeWithDisconnect(new Response(source), new TransformStream(), streamController, {
+    stallTimeoutMs: 5000,
+    contentStallTimeoutMs: 80,
+  });
+  await readStreamText(stream);
+
+  assert.ok(onErrorEvent !== null);
+  assert.match(onErrorEvent.message, /events=1/);
+  assert.match(onErrorEvent.message, /top=response\.in_progress:1/);
+  assert.doesNotMatch(onErrorEvent.message, /non-sse/);
+});
+
 test("pipeWithDisconnect does NOT flag a stream that starts with lifecycle frames but then produces real content", async () => {
   const source = new ReadableStream({
     async start(controller) {
