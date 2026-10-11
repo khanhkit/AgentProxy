@@ -108,6 +108,8 @@ export interface GeminiAutomationElement {
   click(options?: { timeout?: number }): Promise<void>;
   textContent?(): Promise<string | null>;
   innerText?(): Promise<string>;
+  /** Playwright Locator union; ElementHandle-shaped callers may omit it. */
+  or?(locator: GeminiAutomationElement): GeminiAutomationElement;
 }
 
 /** Minimal Playwright-shaped page the selection step needs — the real `Page` satisfies this. */
@@ -117,7 +119,10 @@ export interface GeminiAutomationPage {
     opts?: { timeout?: number }
   ): Promise<GeminiAutomationElement | null>;
   waitForTimeout?(timeout: number): Promise<void>;
-  getByRole?(role: "menuitem", opts: { name: string | RegExp }): GeminiAutomationElement;
+  getByRole?(
+    role: "menuitem" | "menuitemradio",
+    opts: { name: string | RegExp }
+  ): GeminiAutomationElement;
 }
 
 export interface GeminiModeSelectionResult {
@@ -210,15 +215,16 @@ export async function selectGeminiUiMode(
       return { confirmed: false, reason: "option_not_found", descriptor };
     }
     try {
-      await page.getByRole("menuitem", { name: optionNamePattern }).click({
-        timeout: optionClickTimeout,
-      });
+      const menuItem = page.getByRole("menuitem", { name: optionNamePattern });
+      const menuItemRadio = page.getByRole("menuitemradio", { name: optionNamePattern });
+      const option = typeof menuItemRadio.or === "function" ? menuItemRadio.or(menuItem) : menuItem;
+      await option.click({ timeout: optionClickTimeout });
     } catch {
       return { confirmed: false, reason: "option_not_found", descriptor };
     }
   }
 
-  const maxAttempts = Math.max(1, Math.ceil(Math.max(1, timeoutMs) / 50));
+  const maxAttempts = Math.max(1, Math.ceil(Math.max(1, remainingMs()) / 50));
   let sawIndicator = false;
 
   for (let attempt = 0; attempt < maxAttempts; attempt += 1) {

@@ -316,6 +316,55 @@ test("#13381: exact model matching tolerates surrounding whitespace but rejects 
   );
 });
 
+test("#13381: model selection accepts either menuitemradio or menuitem role without a second timeout", async () => {
+  const descriptor = GEMINI_WEB_MODEL_MODES["gemini-3.7-flash"];
+  assert.ok(descriptor.toggleSelector && descriptor.activeIndicatorSelector);
+
+  type FakeRoleLocator = {
+    role: "menuitem" | "menuitemradio";
+    click(options?: { timeout?: number }): Promise<void>;
+    or(other: FakeRoleLocator): FakeRoleLocator;
+  };
+
+  const clickedRoles: string[] = [];
+  const locatorFor = (role: "menuitem" | "menuitemradio"): FakeRoleLocator => ({
+    role,
+    click: async () => {
+      if (role !== "menuitemradio") throw new Error("menuitem role absent");
+      clickedRoles.push(role);
+    },
+    or(other) {
+      return {
+        role,
+        click: async (options) => {
+          try {
+            await this.click(options);
+          } catch {
+            await other.click(options);
+          }
+        },
+        or: this.or,
+      };
+    },
+  });
+
+  const page = {
+    waitForSelector: async (selector: string) => {
+      if (selector === descriptor.toggleSelector) return { click: async () => {} };
+      return {
+        click: async () => {},
+        textContent: async () => "Gemini 3.7 Flash",
+      };
+    },
+    getByRole: (role: "menuitem" | "menuitemradio") => locatorFor(role),
+    waitForTimeout: async () => {},
+  };
+
+  const result = await selectGeminiUiMode(page, descriptor, 100);
+  assert.equal(result.confirmed, true);
+  assert.deepEqual(clickedRoles, ["menuitemradio"]);
+});
+
 test("#13381: model selection shares one timeout budget across every automation phase", async () => {
   const descriptor = GEMINI_WEB_MODEL_MODES["gemini-3.7-flash"];
   assert.ok(descriptor.toggleSelector && descriptor.activeIndicatorSelector);
