@@ -118,9 +118,7 @@ function transformAlibabaQwen3Response(data, options: RerankResponseOptions) {
     typeof options.top_n === "number" && Number.isSafeInteger(options.top_n) && options.top_n > 0
       ? options.top_n
       : null;
-  if (topN !== null) {
-    results.sort((a, b) => (b.relevance_score || 0) - (a.relevance_score || 0));
-  }
+  results.sort((a, b) => (b.relevance_score || 0) - (a.relevance_score || 0));
   return { ...data, results: topN !== null ? results.slice(0, topN) : results };
 }
 

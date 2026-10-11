@@ -39,6 +39,27 @@ test("transformResponseFromProvider passes through string id unchanged", () => {
   assert.equal(result.id, "nvidia-abc");
 });
 
+test("Alibaba Qwen3 rerank sorts by relevance when top_n is omitted", () => {
+  const result = transformResponseFromProvider(
+    { format: "alibaba-qwen3" },
+    {
+      id: "qwen-unsliced",
+      results: [
+        { index: 0, relevance_score: 0.2 },
+        { index: 1, relevance_score: 0.9 },
+        { index: 2, relevance_score: 0.5 },
+      ],
+    },
+    { documents: ["a", "b", "c"], return_documents: false }
+  );
+
+  assert.deepEqual(result.results, [
+    { index: 1, relevance_score: 0.9 },
+    { index: 2, relevance_score: 0.5 },
+    { index: 0, relevance_score: 0.2 },
+  ]);
+});
+
 test("Alibaba Qwen3 rerank honors top_n after sorting by relevance", () => {
   const result = transformResponseFromProvider(
     { format: "alibaba-qwen3" },
