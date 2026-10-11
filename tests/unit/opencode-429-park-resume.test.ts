@@ -311,7 +311,9 @@ describe("opencode 429 park-and-resume", () => {
       pull(controller) {
         pulls += 1;
         if (pulls === 1) {
-          controller.enqueue(new TextEncoder().encode("data: prefix\\n\\n"));
+          controller.enqueue(
+            new TextEncoder().encode('data: {"choices":[{"delta":{"content":"prefix"}}]}\n\n')
+          );
           return;
         }
         return new Promise<void>((resolve) => {
@@ -357,7 +359,7 @@ describe("opencode 429 park-and-resume", () => {
       const text = await (result as { response: Response }).response.text();
       return { text, actions: readResilienceActions() };
     });
-    assert.match(text, /data: prefix/u, "already-emitted replay events remain intact");
+    assert.match(text, /"content":"prefix"/u, "already-emitted replay events remain intact");
     assert.match(text, /Upstream replay failed/u);
     assert.doesNotMatch(
       text,
@@ -378,11 +380,15 @@ describe("opencode 429 park-and-resume", () => {
       pull(controller) {
         pulls += 1;
         if (pulls === 1) {
-          controller.enqueue(new TextEncoder().encode("data: prefix\n\ndata: [DO"));
+          controller.enqueue(
+            new TextEncoder().encode(
+              'data: {"choices":[{"delta":{"content":"prefix"}}]}\r\n\r\ndata:  [DO'
+            )
+          );
           return;
         }
         if (pulls === 2) {
-          controller.enqueue(new TextEncoder().encode("NE]\n\n"));
+          controller.enqueue(new TextEncoder().encode("NE]\r\n\n"));
           return;
         }
         controller.error(new Error("late upstream failure access_token=secret /srv/private"));
@@ -426,13 +432,60 @@ describe("opencode 429 park-and-resume", () => {
 
     assert.match(
       text,
-      /data: prefix/u,
+      /"content":"prefix"/u,
       "real replay events before the terminal marker stay visible"
     );
     assert.match(text, /Upstream replay failed/u);
-    assert.doesNotMatch(text, /data: \[DONE\]/u, "failed replay must not publish clean completion");
+    assert.doesNotMatch(
+      text,
+      /data:[ \t]*\[DONE\]/u,
+      "failed replay must not publish clean completion"
+    );
     assert.equal(actions?.replayed, false);
     assert.doesNotMatch(text, /access_token|secret|srv\/private|late upstream failure/u);
+  });
+
+  it("preserves a whitespace-variant DONE marker after clean replay EOF", async () => {
+    const bodyText = 'data: {"choices":[{"delta":{"content":"ok"}}]}\r\n\r\ndata:  [DONE]\r\n\n';
+    const account = {
+      fingerprint: "c".repeat(32),
+      cooldownUntil: 0,
+      consecutiveFails: 0,
+      proxy: null,
+    };
+    const driver = {
+      accounts: [account],
+      execute: async () => ({
+        response: new Response(bodyText, {
+          status: 200,
+          headers: { "Content-Type": "text/event-stream" },
+        }),
+      }),
+      markCooldown() {},
+      markSuccess() {},
+      sleep: async () => true,
+    };
+    const input = {
+      model: "muse-spark-1.3-contributor-free",
+      body: { messages: [{ role: "user", content: "hi" }] },
+      stream: true,
+      signal: null,
+      credentials: credentialsFor(1),
+      log,
+    };
+    const fallback = { response: new Response(BURST_BODY, { status: 429 }) };
+    const { text, actions } = await runWithResilienceActionsContext(async () => {
+      const result = await runParkAndReplay(driver, input, 0, fallback, log, "[test] ");
+      assert.ok(result);
+      return {
+        text: await (result as { response: Response }).response.text(),
+        actions: readResilienceActions(),
+      };
+    });
+
+    assert.match(text, /"content":"ok"/u);
+    assert.match(text, /data:  \[DONE\]\r\n\n/u);
+    assert.equal(actions?.replayed, true);
   });
 
   it("a replay read failure before any body chunk emits the terminal error marker", async () => {

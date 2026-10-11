@@ -18,6 +18,7 @@ import { proxyKeyOf } from "./opencodeGeoBlock.ts";
 import { runWithProxyContext } from "../utils/proxyFetch.ts";
 import { noteResilienceAction } from "@/lib/usage/resilienceActionsContext.ts";
 import { formatTranslatedStreamError } from "../utils/streamErrorFormat.ts";
+import { parseSSELine } from "../utils/streamHelpers.ts";
 import { noteParkWait, noteReplayed, noteStoredFallback } from "./opencodeResilienceNotes.ts";
 import type { ExecuteInput, ExecutorExecuteResult } from "./base.ts";
 import * as egressPacing from "./opencodeEgressThrottle.ts";
@@ -54,40 +55,14 @@ export const STRAIN_MARKER_TTL_MS = 300_000;
 /** Upper bound of a marker read. */
 export const STRAIN_MARKER_MAX_BYTES = 1024;
 
-const OPENAI_DONE_SENTINELS = [
-  "data: [DONE]\n\n",
-  "data:[DONE]\n\n",
-  "data: [DONE]\r\n\r\n",
-  "data:[DONE]\r\n\r\n",
-] as const;
-
-function findOpenAiDoneSentinel(text: string): { index: number; value: string } | null {
-  let best: { index: number; value: string } | null = null;
-  for (const sentinel of OPENAI_DONE_SENTINELS) {
-    let index = text.indexOf(sentinel);
-    while (index >= 0) {
-      if (index === 0 || text[index - 1] === "\n" || text[index - 1] === "\r") {
-        if (best == null || index < best.index) best = { index, value: sentinel };
-        break;
-      }
-      index = text.indexOf(sentinel, index + 1);
-    }
+function nextCompleteLineEnd(text: string, atEof: boolean): number {
+  for (let index = 0; index < text.length; index += 1) {
+    if (text[index] === "\n") return index + 1;
+    if (text[index] !== "\r") continue;
+    if (index + 1 < text.length) return text[index + 1] === "\n" ? index + 2 : index + 1;
+    return atEof ? index + 1 : 0;
   }
-  return best;
-}
-
-function longestOpenAiDonePrefixSuffix(text: string): number {
-  let longest = 0;
-  for (const sentinel of OPENAI_DONE_SENTINELS) {
-    const max = Math.min(text.length, sentinel.length - 1);
-    for (let length = max; length > longest; length -= 1) {
-      if (text.endsWith(sentinel.slice(0, length))) {
-        longest = length;
-        break;
-      }
-    }
-  }
-  return longest;
+  return atEof && text.length > 0 ? text.length : 0;
 }
 
 export interface PoolStrainMarker {
@@ -396,30 +371,27 @@ export async function runParkAndReplay<TAccount extends RotatableAccount>(
           } else if (finalResponse.body) {
             const reader = finalResponse.body.getReader();
             const decoder = new TextDecoder();
-            let pendingDonePrefix = "";
+            let pendingReplayText = "";
             let withheldDone: string | null = null;
-            const emitReplayText = (text: string): void => {
-              if (text === "" || withheldDone != null) return;
-              const combined = pendingDonePrefix + text;
-              const doneSentinel = findOpenAiDoneSentinel(combined);
-              if (doneSentinel) {
-                const beforeDone = combined.slice(0, doneSentinel.index);
-                if (beforeDone !== "") {
-                  controller.enqueue(encoder.encode(beforeDone));
-                  copiedAny = true;
-                }
-                withheldDone = doneSentinel.value;
-                pendingDonePrefix = "";
+            const emitReplayText = (text: string, atEof = false): void => {
+              if (withheldDone !== null) {
+                withheldDone += text;
                 return;
               }
-
-              const keep = longestOpenAiDonePrefixSuffix(combined);
-              const safeText = keep > 0 ? combined.slice(0, -keep) : combined;
-              if (safeText !== "") {
-                controller.enqueue(encoder.encode(safeText));
+              pendingReplayText += text;
+              while (pendingReplayText !== "") {
+                const lineEnd = nextCompleteLineEnd(pendingReplayText, atEof);
+                if (lineEnd === 0) return;
+                const line = pendingReplayText.slice(0, lineEnd);
+                pendingReplayText = pendingReplayText.slice(lineEnd);
+                if (parseSSELine(line)?.done === true) {
+                  withheldDone = line + pendingReplayText;
+                  pendingReplayText = "";
+                  return;
+                }
+                controller.enqueue(encoder.encode(line));
                 copiedAny = true;
               }
-              pendingDonePrefix = keep > 0 ? combined.slice(-keep) : "";
             };
             const onAbort = (): void => {
               void reader.cancel(input.signal?.reason).catch(() => undefined);
@@ -430,7 +402,7 @@ export async function runParkAndReplay<TAccount extends RotatableAccount>(
               while (!input.signal?.aborted) {
                 const { done, value } = await reader.read();
                 if (done || input.signal?.aborted) {
-                  if (done) emitReplayText(decoder.decode());
+                  if (done) emitReplayText(decoder.decode(), true);
                   break;
                 }
                 emitReplayText(decoder.decode(value, { stream: true }));
@@ -438,11 +410,8 @@ export async function runParkAndReplay<TAccount extends RotatableAccount>(
               if (input.signal?.aborted) {
                 recopied = false;
                 await reader.cancel(input.signal.reason).catch(() => undefined);
-              } else if (withheldDone != null) {
+              } else if (withheldDone !== null) {
                 controller.enqueue(encoder.encode(withheldDone));
-                copiedAny = true;
-              } else if (pendingDonePrefix !== "") {
-                controller.enqueue(encoder.encode(pendingDonePrefix));
                 copiedAny = true;
               }
             } catch (error) {
