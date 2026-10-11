@@ -36,6 +36,9 @@ export function buildPostCallGuardrailContext(
     provider: string | null | undefined;
     responsePayloadFormat: unknown;
     clientResponseFormat: unknown;
+    runtimeSettings?: Readonly<Record<string, unknown>>;
+    runtimeFeatureFlagOverrides?: Readonly<Record<string, string>>;
+    runtimeSettingsRevision?: number;
   },
   resolveDisabledGuardrails: typeof defaultResolveDisabled = defaultResolveDisabled
 ): GuardrailContext {
@@ -54,6 +57,9 @@ export function buildPostCallGuardrailContext(
     method: "POST",
     model: args.model,
     provider: args.provider,
+    runtimeSettings: args.runtimeSettings,
+    runtimeFeatureFlagOverrides: args.runtimeFeatureFlagOverrides,
+    runtimeSettingsRevision: args.runtimeSettingsRevision,
     sourceFormat: optionalString(args.responsePayloadFormat),
     stream: false,
     targetFormat: optionalString(args.clientResponseFormat),

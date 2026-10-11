@@ -496,6 +496,8 @@ async function handleChatCoreInner({
   comboStepId = null,
   comboExecutionKey = null,
   cachedSettings = null,
+  runtimeFeatureFlagOverrides = undefined,
+  runtimeSettingsRevision = undefined,
   skipUpstreamRetry = false,
   createPiiTransform = null,
   correlationId = null,
@@ -5273,6 +5275,9 @@ async function handleChatCoreInner({
         provider,
         responsePayloadFormat,
         clientResponseFormat,
+        runtimeSettings: cachedSettings ?? undefined,
+        runtimeFeatureFlagOverrides,
+        runtimeSettingsRevision,
       });
       const postCallGuardrails = await guardrailRegistry.runPostCallHooks(
         translatedResponse,

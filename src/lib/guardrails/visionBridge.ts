@@ -321,13 +321,16 @@ export class VisionBridgeGuardrail extends BaseGuardrail {
       return { block: false };
     }
 
-    // 6. Get settings (injectable for testing)
+    // 6. Prefer the request-pinned runtime snapshot. The DB loader remains only
+    // for isolated tests / callers that do not provide request runtime context.
     const getSettings = this.deps.getSettings ?? defaultGetSettings;
-    let settings: Record<string, unknown> = {};
-    try {
-      settings = await getSettings();
-    } catch {
-      // If getSettings fails, use defaults
+    let settings: Readonly<Record<string, unknown>> = context.runtimeSettings ?? {};
+    if (!context.runtimeSettings) {
+      try {
+        settings = await getSettings();
+      } catch {
+        // If getSettings fails, use defaults
+      }
     }
 
     // 7. Resolve runtime settings (new modalityBridge* keys win; legacy

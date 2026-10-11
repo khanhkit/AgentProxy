@@ -129,9 +129,9 @@ export class CredentialMaskerGuardrail extends BaseGuardrail {
 
   async preCall(
     payload: unknown,
-    _context: GuardrailContext
+    context: GuardrailContext = {}
   ): Promise<GuardrailResult<unknown> | void> {
-    const _s = await getSettings();
+    const _s = context.runtimeSettings ?? (await getSettings());
     if (!(
       _s.credentialRedactionEnabled === true || process.env.CREDENTIAL_REDACTION_ENABLED === "true"
     ))
@@ -148,9 +148,9 @@ export class CredentialMaskerGuardrail extends BaseGuardrail {
 
   async postCall(
     response: unknown,
-    _context: GuardrailContext
+    context: GuardrailContext = {}
   ): Promise<GuardrailResult<unknown> | void> {
-    const _s = await getSettings();
+    const _s = context.runtimeSettings ?? (await getSettings());
     if (!(
       _s.credentialRedactionEnabled === true || process.env.CREDENTIAL_REDACTION_ENABLED === "true"
     ))

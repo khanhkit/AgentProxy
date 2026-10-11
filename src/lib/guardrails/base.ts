@@ -14,6 +14,9 @@ export interface GuardrailContext {
   method?: string | null;
   model?: string | null;
   provider?: string | null;
+  runtimeSettings?: Readonly<Record<string, unknown>>;
+  runtimeFeatureFlagOverrides?: Readonly<Record<string, string>>;
+  runtimeSettingsRevision?: number;
   /** Caller lifecycle signal; media bridges treat request abort as a deliberate fail-open exception. */
   signal?: AbortSignal;
   sourceFormat?: string | null;

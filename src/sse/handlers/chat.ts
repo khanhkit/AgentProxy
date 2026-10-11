@@ -81,6 +81,7 @@ import {
 } from "@/lib/db/sessionAccountAffinity";
 import { dispatchChatWithAffinityEviction } from "./chatDispatch";
 import { getCachedSettings, getCombosCacheVersion } from "@/lib/db/readCache";
+import { getActiveRuntimeConfigSnapshot } from "@/lib/config/runtimeConfigAuthority";
 import { comboCheckProvider, ghComboGate } from "./chat/githubLiveCatalogFilter.ts";
 import { comboTargetPassesKeyModelPolicy } from "./chat/comboTargetKeyPolicy.ts";
 import { getCombos } from "@/lib/db/combos";
@@ -735,11 +736,14 @@ async function handleChatImplementation(
   // resolution upstream (stripOrphanedCodexFunctionCallOutputs in codex.ts);
   // reconstructing and deleting the field here would make that downstream
   // "preserve" enforcement a no-op since the field would already be gone.
-  const settingsForContinuation = await getCachedSettings().catch(
-    () => ({}) as Record<string, unknown>
-  );
+  const runtimeConfigSnapshot = getActiveRuntimeConfigSnapshot();
+  const pinnedRuntimeSettings =
+    runtimeConfigSnapshot?.settings ??
+    (await getCachedSettings().catch(() => ({}) as Record<string, unknown>));
+  const pinnedRuntimeFeatureFlagOverrides = runtimeConfigSnapshot?.featureFlagOverrides ?? {};
+  const pinnedRuntimeSettingsRevision = runtimeConfigSnapshot?.revision;
   const previousResponseIdMode = normalizeResponsesPreviousResponseIdMode(
-    (settingsForContinuation as { responsesPreviousResponseIdMode?: unknown })
+    (pinnedRuntimeSettings as { responsesPreviousResponseIdMode?: unknown })
       .responsesPreviousResponseIdMode
   );
   if (
@@ -773,7 +777,8 @@ async function handleChatImplementation(
       ? (body as { input: unknown[] }).input
       : [];
     body = { ...body, input: [...stored.input, ...stored.output, ...deltaInput] };
-    delete (body as { previous_response_id?: unknown }).previous_response_id; (body as Record<string, unknown>)._agentproxyPreviousResponseResumed = true;
+    delete (body as { previous_response_id?: unknown }).previous_response_id;
+    (body as Record<string, unknown>)._agentproxyPreviousResponseResumed = true;
   }
 
   const admissionRejection = await admissionContext.acquire(apiKeyInfo?.id, request, body);
@@ -807,6 +812,9 @@ async function handleChatImplementation(
     log,
     method: request.method,
     model: modelStr,
+    runtimeSettings: pinnedRuntimeSettings,
+    runtimeFeatureFlagOverrides: pinnedRuntimeFeatureFlagOverrides,
+    runtimeSettingsRevision: pinnedRuntimeSettingsRevision,
     signal: request.signal,
     stream: body?.stream === true,
   });
@@ -945,7 +953,7 @@ async function handleChatImplementation(
   // Settings are read only when a web-search tool is present; the override lands before
   // auto/combo resolution and the layer-1 fallback so the target's own handling applies.
   if (hasNativeWebSearchTool(body)) {
-    const wsSettings = await getCachedSettings().catch(() => ({}) as Record<string, unknown>);
+    const wsSettings = pinnedRuntimeSettings;
     const wsRoute = resolveWebSearchRouteOverride(resolvedModelStr, body, wsSettings);
     if (wsRoute.wasRouted) {
       log.info(
@@ -1005,10 +1013,8 @@ async function handleChatImplementation(
       if (filtered instanceof Response) return filtered;
       combo = filtered;
     }
-    const [settings, allCombos] = await Promise.all([
-      getCachedSettings().catch(() => ({})),
-      getCombosCachedForChat(),
-    ]);
+    const settings = pinnedRuntimeSettings;
+    const allCombos = await getCombosCachedForChat();
     if (managedLease && isManagedComboUnsupported(combo, settings, allCombos))
       return managedComboRejection();
     log.info(
@@ -1190,7 +1196,9 @@ async function handleChatImplementation(
               comboPreselectedCredentials.delete(key);
               return credentials;
             })(),
-            cachedSettings: settings,
+            cachedSettings: pinnedRuntimeSettings,
+            runtimeFeatureFlagOverrides: pinnedRuntimeFeatureFlagOverrides,
+            runtimeSettingsRevision: pinnedRuntimeSettingsRevision,
             providerId: target?.providerId ?? (target as any)?.provider ?? null,
             correlationId: reqId,
             conversationId,
@@ -1365,6 +1373,9 @@ async function handleChatImplementation(
       correlationId: reqId,
       conversationId,
       routingComboId,
+      cachedSettings: pinnedRuntimeSettings,
+      runtimeFeatureFlagOverrides: pinnedRuntimeFeatureFlagOverrides,
+      runtimeSettingsRevision: pinnedRuntimeSettingsRevision,
       reasoningDecision,
       reasoningIntent,
       reasoningRequestTags: requestRoutingTags.tags,
@@ -1407,7 +1418,9 @@ async function handleSingleModelChat(
     skipUpstreamRetry?: boolean;
     allowRateLimitedConnection?: boolean;
     preselectedCredentials?: any;
-    cachedSettings?: any;
+    cachedSettings?: Readonly<Record<string, unknown>>;
+    runtimeFeatureFlagOverrides?: Readonly<Record<string, string>>;
+    runtimeSettingsRevision?: number;
     providerId?: string | null;
     correlationId?: string | null;
     conversationId?: string | null;
@@ -1983,6 +1996,8 @@ async function handleSingleModelChat(
             modelTargetFormat: targetFormat,
             providerProfile,
             cachedSettings: runtimeOptions.cachedSettings,
+            runtimeFeatureFlagOverrides: runtimeOptions.runtimeFeatureFlagOverrides,
+            runtimeSettingsRevision: runtimeOptions.runtimeSettingsRevision,
             skipUpstreamRetry: runtimeOptions.skipUpstreamRetry ?? false,
             correlationId: runtimeOptions?.correlationId ?? null,
             conversationId: runtimeOptions?.conversationId ?? null,
