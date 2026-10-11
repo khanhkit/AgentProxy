@@ -135,6 +135,16 @@ export async function emitSearchProxyEvent(
   }
 }
 
+/** A successful older attempt cannot erase a later recorded provider failure. */
+export function shouldClearSearchErrorAfterSuccess(
+  connection: { lastErrorAt?: unknown },
+  startedAt: number
+): boolean {
+  if (typeof connection.lastErrorAt !== "string") return false;
+  const failedAt = Date.parse(connection.lastErrorAt);
+  return Number.isFinite(failedAt) && failedAt <= startedAt;
+}
+
 /** Loose result shape mirroring SearchHandlerResult in ../search.ts. */
 export interface ProviderFetchResult {
   success: boolean;
@@ -267,16 +277,24 @@ export async function executeProviderFetch(
     await emitEvent("success", response.status);
 
     if (connectionId) {
-      try {
+      // Cleanup must not delay a successful search or clear an error from a
+      // newer concurrent attempt. The DB CAS protects changes after our read.
+      void (async () => {
         const { getProviderConnectionById } = await import("@/lib/db/providers");
         const current = await getProviderConnectionById(connectionId);
-        if (current) {
-          const { clearAccountError } = await import("@/sse/services/auth.ts");
-          await clearAccountError(connectionId, current as never);
-        }
-      } catch {
+        if (!current || !shouldClearSearchErrorAfterSuccess(current, startTime)) return;
+        const { clearRecoveredProviderState } = await import("@/sse/services/auth.ts");
+        await clearRecoveredProviderState(
+          { connectionId },
+          {
+            testStatus: current.testStatus ?? null,
+            lastErrorAt: current.lastErrorAt ?? null,
+            rateLimitedUntil: current.rateLimitedUntil ?? null,
+          }
+        );
+      })().catch(() => {
         /* non-critical - clearing stale error state must not break the search response */
-      }
+      });
     }
 
     return {

@@ -85,6 +85,18 @@ async function runFetch(port: number, connectionId: string) {
   } as never);
 }
 
+async function waitForConnectionClear(connectionId: string) {
+  let current: Record<string, unknown> = {};
+  for (let attempt = 0; attempt < 100; attempt++) {
+    current = (await providersDb.getProviderConnectionById(connectionId)) as Record<string, unknown>;
+    if (current.testStatus === "active" && !current.lastError && !current.errorCode && !current.rateLimitedUntil) {
+      return current;
+    }
+    await new Promise<void>((resolve) => setTimeout(resolve, 10));
+  }
+  return current;
+}
+
 timedTest("a successful search clears a stale failed-test error on the connection", async () => {
   const conn = await providersDb.createProviderConnection({
     provider: "tavily-search",
@@ -107,7 +119,7 @@ timedTest("a successful search clears a stale failed-test error on the connectio
   );
   assert.equal(result.success, true);
 
-  const after = (await providersDb.getProviderConnectionById(connId)) as Record<string, unknown>;
+  const after = await waitForConnectionClear(connId);
   assert.equal(after.testStatus, "active", "real success must reset testStatus");
   assert.equal(after.lastError ?? null, null, "real success must clear lastError");
   assert.equal(after.errorCode ?? null, null, "real success must clear errorCode");
@@ -136,7 +148,7 @@ timedTest(
     );
     assert.equal(result.success, true);
 
-    const after = (await providersDb.getProviderConnectionById(connId)) as Record<string, unknown>;
+    const after = await waitForConnectionClear(connId);
     assert.equal(after.testStatus, "active");
     assert.equal(after.lastError ?? null, null);
     assert.equal(after.rateLimitedUntil ?? null, null);
@@ -166,4 +178,32 @@ timedTest("a failed search does not clear the connection error", async () => {
   const after = (await providersDb.getProviderConnectionById(connId)) as Record<string, unknown>;
   assert.equal(after.testStatus, "error");
   assert.ok(after.lastError, "failure must keep the recorded error");
+});
+
+
+timedTest("an older successful search never clears a newer recorded failure", async () => {
+  const conn = await providersDb.createProviderConnection({
+    provider: "tavily-search",
+    authType: "apikey",
+    name: "tavily-newer-failure",
+    apiKey: "tvly-test-key-newer",
+    isActive: true,
+    testStatus: "error",
+  });
+  const connId = String(conn.id);
+  const futureFailure = new Date(Date.now() + 60_000).toISOString();
+  await providersDb.updateProviderConnection(connId, {
+    testStatus: "error",
+    lastError: "newer rate limit",
+    lastErrorAt: futureFailure,
+    errorCode: "429",
+  });
+  const result = await withServer(200, JSON.stringify({ results: [] }), (port) =>
+    runFetch(port, connId)
+  );
+  assert.equal(result.success, true);
+  await new Promise<void>((resolve) => setTimeout(resolve, 50));
+  const after = (await providersDb.getProviderConnectionById(connId)) as Record<string, unknown>;
+  assert.equal(after.lastErrorAt, futureFailure);
+  assert.equal(after.testStatus, "error");
 });
