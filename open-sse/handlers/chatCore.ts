@@ -5683,7 +5683,7 @@ async function handleChatCoreInner({
     getCredentials: () =>
       getProviderCredentials(provider, null, null, currentModel).catch(() => null),
     applyCredentials: (next) => Object.assign(credentials, next),
-    executeRetry: () => executeProviderRequest(currentModel, false),
+    // No replayAuthority by design: local/client idempotency does not prove provider-side replay safety.
   });
 
   // Notify success - caller can clear error status if needed.

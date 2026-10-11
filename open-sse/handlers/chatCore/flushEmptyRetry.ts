@@ -11,6 +11,16 @@ import { isFeatureFlagEnabled } from "@/shared/utils/featureFlags";
 import { ensureStreamReadiness } from "../../utils/streamReadiness.ts";
 import { maybeConvertJsonBodyToSse } from "./jsonBodyToSse.ts";
 
+export type FlushEmptyReplayPermit = Readonly<{
+  providerReplayKey: string;
+  allowCredentialRotation: boolean;
+}>;
+
+export type FlushEmptyReplayAuthority = Readonly<{
+  take: () => FlushEmptyReplayPermit | null;
+  executeRetry: (permit: FlushEmptyReplayPermit) => Promise<unknown>;
+}>;
+
 export type FlushEmptyRetryArgs = {
   stream: boolean;
   response: Response;
@@ -29,7 +39,7 @@ export type FlushEmptyRetryArgs = {
   };
   getCredentials: () => Promise<Record<string, unknown> | null>;
   applyCredentials: (next: Record<string, unknown>) => void;
-  executeRetry: () => Promise<unknown>;
+  replayAuthority?: FlushEmptyReplayAuthority;
   onRetryPrepared?: (retryResult: unknown) => void;
   correlationId?: string | null;
   traceId?: string;
@@ -46,8 +56,10 @@ export async function maybeRetryFlushEmptyTurn(args: FlushEmptyRetryArgs): Promi
   const translatePath =
     args.targetFormat === FORMATS.OPENAI_RESPONSES ||
     needsTranslation(args.targetFormat, args.clientResponseFormat);
-  if (!enabled || !translatePath) return args.response;
+  if (!enabled || !translatePath || !args.replayAuthority) return args.response;
 
+  const replayAuthority = args.replayAuthority;
+  let stableReplayKey: string | null = null;
   let response = args.response;
   for (let retries = 0; retries <= STREAM_RECOVERY.EMPTY_TURN_RETRY_MAX; retries++) {
     const verdict = judgeBufferedTurn(
@@ -65,13 +77,27 @@ export async function maybeRetryFlushEmptyTurn(args: FlushEmptyRetryArgs): Promi
     if (verdict.kind === "pass") return response;
     if (retries >= STREAM_RECOVERY.EMPTY_TURN_RETRY_MAX) return response;
 
-    const next = await args.getCredentials().catch(() => null);
-    if (!next?.connectionId) return response;
-    args.applyCredentials(next);
+    let permit: FlushEmptyReplayPermit | null;
+    try {
+      permit = replayAuthority.take();
+    } catch {
+      return response;
+    }
+    const replayKey = permit?.providerReplayKey?.trim();
+    if (!permit || !replayKey) return response;
+    if (stableReplayKey !== null && replayKey !== stableReplayKey) return response;
+    stableReplayKey ??= replayKey;
+    const stablePermit: FlushEmptyReplayPermit = { ...permit, providerReplayKey: replayKey };
+
+    if (stablePermit.allowCredentialRotation === true) {
+      const next = await args.getCredentials().catch(() => null);
+      if (!next?.connectionId) return response;
+      args.applyCredentials(next);
+    }
 
     let retryResult: unknown;
     try {
-      retryResult = await args.executeRetry();
+      retryResult = await replayAuthority.executeRetry(stablePermit);
     } catch {
       return response;
     }

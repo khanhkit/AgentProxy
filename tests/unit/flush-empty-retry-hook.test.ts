@@ -115,11 +115,13 @@ function contentStreamResponse(text: string): Response {
   );
 }
 
-function streamRequest() {
+function streamRequest(idempotencyKey?: string) {
   const nonce = `flush-empty-retry-${Date.now()}-${Math.random().toString(36).slice(2)}`;
+  const headers = new Headers({ "Content-Type": "application/json", Accept: "text/event-stream" });
+  if (idempotencyKey) headers.set("Idempotency-Key", idempotencyKey);
   return new Request("http://localhost/v1/chat/completions", {
     method: "POST",
-    headers: { "Content-Type": "application/json", Accept: "text/event-stream" },
+    headers,
     body: JSON.stringify({
       model: "gemini/gemini-2.5-flash",
       messages: [{ role: "user", content: `Reply with OK only. ${nonce}` }],
@@ -180,20 +182,23 @@ test("flag off: empty reasoning-only turn exposes current behavior with zero ret
   );
 });
 
-test("reasoning-only turn retries once through the normal credential path and serves content", async () => {
+test("flag on alone does not authorize replay of a reasoning-only successful turn", async () => {
   await seedGemini("gemini-empty-a", "sk-flush-empty-a");
   await seedGemini("gemini-content-b", "sk-flush-content-b");
   const dispatches: string[] = [];
   stubFetch(dispatches, (_auth, callIndex) =>
-    callIndex === 0 ? reasoningOnlyStreamResponse() : contentStreamResponse("served-after-retry")
+    callIndex === 0 ? reasoningOnlyStreamResponse() : contentStreamResponse("unsafe-replay")
   );
   const response = await handleChat(streamRequest());
-  const bodyText = await drainText(response);
-  assert.equal(dispatches.length, 2, `expected initial + 1 retry, got ${dispatches.length}`);
-  assert.match(bodyText, /served-after-retry/, "client must receive the retry content");
+  await drainText(response);
+  assert.equal(
+    dispatches.length,
+    1,
+    `flag alone must not authorize replay, got ${dispatches.length}`
+  );
 });
 
-test("persistent empty turns exhaust the budget with exactly 5 dispatches", async () => {
+test("persistent empty turns do not create a helper-local replay budget", async () => {
   await seedGemini("gemini-empty2-a", "sk-flush-empty2-a");
   await seedGemini("gemini-empty2-b", "sk-flush-empty2-b");
   const dispatches: string[] = [];
@@ -202,41 +207,43 @@ test("persistent empty turns exhaust the budget with exactly 5 dispatches", asyn
   await drainText(response);
   assert.equal(
     dispatches.length,
-    5,
-    `budget 4 means 1 initial + 4 retries, got ${dispatches.length}`
+    1,
+    `no replay authority means one initial dispatch, got ${dispatches.length}`
   );
 });
 
-test("single slot retries the same account and serves content", async () => {
+test("single credential availability is not replay-safety authority", async () => {
   await seedGemini("gemini-lone", "sk-flush-lone");
   const dispatches: string[] = [];
   stubFetch(dispatches, (_auth, callIndex) =>
-    callIndex === 0 ? reasoningOnlyStreamResponse() : contentStreamResponse("served-after-retry")
+    callIndex === 0 ? reasoningOnlyStreamResponse() : contentStreamResponse("unsafe-replay")
   );
   const response = await handleChat(streamRequest());
-  const bodyText = await drainText(response);
+  await drainText(response);
   assert.equal(
     dispatches.length,
-    2,
-    `single slot replays the same account, got ${dispatches.length}`
+    1,
+    `credential availability must not authorize replay, got ${dispatches.length}`
   );
-  assert.match(bodyText, /served-after-retry/, "client must receive the retry content");
 });
 
-test("a stream that drops before anything reaches the client retries and serves content", async () => {
+test("an ambiguous dropped provider stream is not replayed without positive safety proof", async () => {
   await seedGemini("gemini-drop-a", "sk-flush-drop-a");
   await seedGemini("gemini-drop-b", "sk-flush-drop-b");
   const dispatches: string[] = [];
   stubFetch(dispatches, (_auth, callIndex) =>
-    callIndex === 0 ? droppedStreamResponse() : contentStreamResponse("served-after-drop")
+    callIndex === 0 ? droppedStreamResponse() : contentStreamResponse("unsafe-replay")
   );
   const response = await handleChat(streamRequest());
-  const bodyText = await drainText(response);
-  assert.equal(dispatches.length, 2, `expected initial + 1 retry, got ${dispatches.length}`);
-  assert.match(bodyText, /served-after-drop/, "client must receive the retry content");
+  await drainText(response);
+  assert.equal(
+    dispatches.length,
+    1,
+    `ambiguous post-dispatch failure must not replay, got ${dispatches.length}`
+  );
 });
 
-test("persistent stream drops exhaust the same budget as empty turns", async () => {
+test("persistent stream drops cannot create a private retry loop", async () => {
   await seedGemini("gemini-drop2-a", "sk-flush-drop2-a");
   await seedGemini("gemini-drop2-b", "sk-flush-drop2-b");
   const dispatches: string[] = [];
@@ -245,8 +252,22 @@ test("persistent stream drops exhaust the same budget as empty turns", async () 
   await drainText(response);
   assert.equal(
     dispatches.length,
-    5,
-    `budget 4 means 1 initial + 4 retries, got ${dispatches.length}`
+    1,
+    `no replay authority means one initial dispatch, got ${dispatches.length}`
+  );
+});
+
+test("client Idempotency-Key does not prove provider replay safety", async () => {
+  await seedGemini("gemini-idempotency-a", "sk-flush-idempotency-a");
+  await seedGemini("gemini-idempotency-b", "sk-flush-idempotency-b");
+  const dispatches: string[] = [];
+  stubFetch(dispatches, () => zeroChunkStreamResponse());
+  const response = await handleChat(streamRequest("client-only-idempotency-key"));
+  await drainText(response);
+  assert.equal(
+    dispatches.length,
+    1,
+    `client idempotency cache is not provider replay authority, got ${dispatches.length}`
   );
 });
 
