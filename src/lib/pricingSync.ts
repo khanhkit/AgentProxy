@@ -10,6 +10,7 @@
  * Opt-in via PRICING_SYNC_ENABLED=true (default: false).
  */
 
+import { trackLifecycleBackgroundTask } from "@/lib/lifecycle/backgroundTasks";
 import { getDbInstance } from "./db/core";
 import { invalidateDbCache, getModelCatalogCacheVersion } from "./db/readCache";
 import { backupDbFile } from "./db/backup";
@@ -461,7 +462,7 @@ export function startPeriodicSync(intervalMs?: number): void {
   console.log(`[PRICING_SYNC] Starting periodic sync every ${interval / 1000}s`);
 
   // Initial sync (non-blocking)
-  syncPricingFromSources()
+  trackLifecycleBackgroundTask("pricing-sync", syncPricingFromSources())
     .then((result) => {
       if (result.success) {
         console.log(
@@ -474,7 +475,7 @@ export function startPeriodicSync(intervalMs?: number): void {
     });
 
   syncTimer = setInterval(() => {
-    syncPricingFromSources()
+    trackLifecycleBackgroundTask("pricing-sync", syncPricingFromSources())
       .then((result) => {
         if (result.success) {
           console.log(`[PRICING_SYNC] Periodic sync complete: ${result.modelCount} models`);

@@ -21,6 +21,7 @@
  * honor settings. `1|true|on|yes` forces sync on even if the setting is off.
  */
 
+import { trackLifecycleBackgroundTask } from "@/lib/lifecycle/backgroundTasks";
 import { getDbInstance } from "./db/core";
 import { invalidateDbCache, getModelCatalogCacheVersion } from "./db/readCache";
 import { backupDbFile } from "./db/backup";
@@ -677,7 +678,10 @@ export function startPeriodicSync(intervalMs?: number): void {
 
     const controller = new AbortController();
     activeSyncAbortController = controller;
-    const promise = syncModelsDev({ signal: controller.signal }).finally(() => {
+    const promise = trackLifecycleBackgroundTask(
+      "models-dev-sync",
+      syncModelsDev({ signal: controller.signal })
+    ).finally(() => {
       if (activeSyncAbortController === controller) {
         activeSyncAbortController = null;
       }

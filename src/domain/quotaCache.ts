@@ -16,6 +16,7 @@
  * @module domain/quotaCache
  */
 
+import { trackLifecycleBackgroundTask } from "@/lib/lifecycle/backgroundTasks";
 import { getUsageForProvider } from "@agentproxy/open-sse/services/usage.ts";
 import { getCachedProviderConnectionById } from "@/lib/db/readCache";
 import { resolveProxyForConnection } from "@/lib/db/settings";
@@ -872,7 +873,9 @@ async function backgroundRefreshTick() {
 export function startBackgroundRefresh() {
   const state = getState();
   if (state.refreshTimer) return;
-  state.refreshTimer = setInterval(backgroundRefreshTick, REFRESH_INTERVAL_MS);
+  state.refreshTimer = setInterval(() => {
+    void trackLifecycleBackgroundTask("quota-cache-refresh", backgroundRefreshTick()).catch(() => undefined);
+  }, REFRESH_INTERVAL_MS);
   state.refreshTimer?.unref?.();
 }
 

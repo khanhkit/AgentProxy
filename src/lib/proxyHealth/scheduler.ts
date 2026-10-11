@@ -22,6 +22,7 @@
  *                               same threshold, not independently tunable.
  */
 
+import { trackLifecycleBackgroundTask } from "@/lib/lifecycle/backgroundTasks";
 import { deleteProxyById, listProxies, updateProxy } from "@/lib/db/proxies";
 import { isProxyLogIncludeIps } from "@/lib/proxyLogger";
 import {
@@ -150,6 +151,7 @@ declare global {
   var __proxyHealthConsecutiveFailures: Map<string, number> | undefined;
   // Recovery timer handle for the opt-in pass (own timer, off by default).
   var __proxyHealthRecoveryInterval: ReturnType<typeof setInterval> | undefined;
+  var __proxyHealthStartupTimer: ReturnType<typeof setTimeout> | undefined;
 }
 
 function getFailureMap(): Map<string, number> {
@@ -497,7 +499,7 @@ export function __recoveryLedgerSizeForTesting(): number {
 function scheduleSweep(): void {
   const interval = getIntervalMs();
   globalThis.__proxyHealthInterval = setInterval(() => {
-    void sweep().catch((err) => {
+    void trackLifecycleBackgroundTask("proxy-health-sweep", sweep()).catch((err) => {
       console.error(`${LOG_PREFIX} Sweep error:`, err);
     });
   }, interval);
@@ -511,7 +513,7 @@ function getRecoveryIntervalMs(): number {
 function scheduleRecoveryPass(): void {
   const interval = getRecoveryIntervalMs();
   globalThis.__proxyHealthRecoveryInterval = setInterval(() => {
-    void runRecoveryPass().catch((err) => {
+    void trackLifecycleBackgroundTask("proxy-health-recovery", runRecoveryPass()).catch((err) => {
       console.error(`${LOG_PREFIX} Recovery error:`, err);
     });
   }, interval);
@@ -519,19 +521,25 @@ function scheduleRecoveryPass(): void {
 
 export function initProxyHealthCheck(): void {
   if (!isEnabled() || isBuildProcess() || isBackgroundServicesDisabled()) return;
-  if (globalThis.__proxyHealthInterval) return;
+  if (globalThis.__proxyHealthInterval || globalThis.__proxyHealthStartupTimer) return;
 
-  setTimeout(() => {
+  globalThis.__proxyHealthStartupTimer = setTimeout(() => {
+    globalThis.__proxyHealthStartupTimer = undefined;
     console.log(`${LOG_PREFIX} Starting proxy health scheduler (interval: ${getIntervalMs()}ms)`);
-    void sweep().catch(() => {});
+    void trackLifecycleBackgroundTask("proxy-health-sweep", sweep()).catch(() => {});
     scheduleSweep();
     // The recovery pass runs on its own timer, off by default. The gate
     // lives inside runRecoveryPass, so the timer is cheap when disabled.
     if (!globalThis.__proxyHealthRecoveryInterval) scheduleRecoveryPass();
   }, INITIAL_DELAY_MS);
+  globalThis.__proxyHealthStartupTimer.unref?.();
 }
 
 export function stopProxyHealthCheck(): void {
+  if (globalThis.__proxyHealthStartupTimer) {
+    clearTimeout(globalThis.__proxyHealthStartupTimer);
+    globalThis.__proxyHealthStartupTimer = undefined;
+  }
   if (globalThis.__proxyHealthInterval) {
     clearInterval(globalThis.__proxyHealthInterval);
     globalThis.__proxyHealthInterval = undefined;

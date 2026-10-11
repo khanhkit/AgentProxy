@@ -51,6 +51,11 @@ test("custom Next runner uses the configured global shutdown budget and preserve
   );
   assert.match(
     runNextSource,
+    /process\.on\(\"SIGHUP\",\s*\(\)\s*=>\s*void shutdown\(\"SIGHUP\"\)\)/,
+    "custom server must route SIGHUP through the same lifecycle owner"
+  );
+  assert.match(
+    runNextSource,
     /lifecycleReport\?\.clean\s*===\s*false[\s\S]*?exitCode\s*=\s*exitCode\s*\|\|\s*1/,
     "a non-clean application lifecycle report must produce a non-zero exit"
   );

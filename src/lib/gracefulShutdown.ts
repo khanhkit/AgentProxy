@@ -30,6 +30,8 @@ declare global {
     | ((signal: string) => Promise<LifecycleShutdownReport | void>)
     | undefined;
   var __agentproxyCustomServerOwnsShutdown: boolean | undefined;
+  var __agentproxyStopApiBridge: (() => void) | undefined;
+  var __agentproxyStopLiveWs: (() => void) | undefined;
 }
 
 function getShutdownState() {
@@ -49,6 +51,12 @@ function register(name: string, phase: LifecyclePhase, run: () => void | Promise
  */
 export function registerMainLifecycleHooks(): void {
   register("server-admission", "STOP_ADMISSION", () => markServerStopping());
+  register("api-bridge-admission", "STOP_ADMISSION", () => {
+    globalThis.__agentproxyStopApiBridge?.();
+  });
+  register("live-ws-admission", "STOP_ADMISSION", () => {
+    globalThis.__agentproxyStopLiveWs?.();
+  });
 
   register("job-registry-scheduler", "STOP_SCHEDULERS", async () => {
     (await import("@/lib/jobRegistry")).getJobRegistry().stopAll();
@@ -110,8 +118,23 @@ export function registerMainLifecycleHooks(): void {
   register("pricing-sync-scheduler", "STOP_SCHEDULERS", async () => {
     (await import("@/lib/pricingSync")).stopPeriodicSync();
   });
+  register("openrouter-stats-scheduler", "STOP_SCHEDULERS", async () => {
+    (await import("@/lib/catalog/openrouterProviderStats")).stopOpenRouterProviderStatsSync();
+  });
+  register("context-window-scheduler", "STOP_SCHEDULERS", async () => {
+    (await import("@/lib/contextWindowResolver")).stopContextWindowReconcile();
+  });
+  register("memory-decay-scheduler", "STOP_SCHEDULERS", async () => {
+    (await import("@/lib/memory/typedDecay")).stopMemoryDecaySweep();
+  });
+  register("backup-schedule-scheduler", "STOP_SCHEDULERS", async () => {
+    (await import("@/lib/jobs/backupScheduleJob")).stopBackupScheduleJob();
+  });
 
   register("request-drain", "DRAIN_ACTIVE", waitForRequestDrain);
+  register("background-task-drain", "DRAIN_ACTIVE", async () => {
+    await (await import("@/lib/lifecycle/backgroundTasks")).drainLifecycleBackgroundTasks();
+  });
   register("job-registry-drain", "DRAIN_ACTIVE", async () => {
     await (await import("@/lib/jobRegistry")).getJobRegistry().drain();
   });

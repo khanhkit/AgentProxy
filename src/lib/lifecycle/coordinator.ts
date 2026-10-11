@@ -75,7 +75,7 @@ async function runHook(hook: LifecycleHook, deadline: number): Promise<Lifecycle
 
   const execution = Promise.resolve()
     .then(() => hook.run())
-    .then<LifecycleHookResult>(
+    .then<LifecycleHookResult, LifecycleHookResult>(
       () => ({ name: hook.name, phase: hook.phase, status: "ok" }),
       (error: unknown) => ({
         name: hook.name,

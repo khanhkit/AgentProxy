@@ -23,6 +23,7 @@
  * existing catalog-sync result shape/assertions stay unchanged.
  */
 
+import { trackLifecycleBackgroundTask } from "@/lib/lifecycle/backgroundTasks";
 import { isFeatureFlagEnabled } from "@/shared/utils/featureFlags";
 import {
   getRadarCache,
@@ -146,7 +147,7 @@ export function ensureRadarSyncScheduler(deps: RadarSchedulerDeps = {}): boolean
   if (timer) return false;
 
   const tick = () => {
-    radarSchedulerTick(deps).catch((err: unknown) => {
+    void trackLifecycleBackgroundTask("radar-sync", radarSchedulerTick(deps)).catch((err: unknown) => {
       const msg = err instanceof Error ? err.message : String(err);
       console.warn("[RADAR_SYNC] Scheduled sync tick failed (non-fatal):", msg);
     });

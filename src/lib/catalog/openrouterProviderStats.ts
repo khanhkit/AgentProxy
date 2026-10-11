@@ -19,6 +19,7 @@
  * (same stale-if-error shape as openrouterCatalog.ts / arenaEloSync.ts).
  */
 
+import { trackLifecycleBackgroundTask } from "@/lib/lifecycle/backgroundTasks";
 import fs from "fs";
 import path from "path";
 import { z } from "zod";
@@ -303,7 +304,7 @@ function startPeriodicSync(intervalMs?: number): void {
   const interval = intervalMs ?? getTTL();
   console.log(`[OpenRouterProviderStats] Starting periodic sync every ${interval / 1000}s`);
 
-  refreshOpenRouterProviderStats()
+  trackLifecycleBackgroundTask("openrouter-provider-stats", refreshOpenRouterProviderStats())
     .then((result) => {
       if (result.ok) {
         console.log(
@@ -321,7 +322,10 @@ function startPeriodicSync(intervalMs?: number): void {
     });
 
   syncTimer = setInterval(() => {
-    refreshOpenRouterProviderStats().catch((err) => {
+    void trackLifecycleBackgroundTask(
+      "openrouter-provider-stats",
+      refreshOpenRouterProviderStats()
+    ).catch((err) => {
       console.warn(
         "[OpenRouterProviderStats] Periodic sync error:",
         err instanceof Error ? err.message : err
@@ -329,6 +333,14 @@ function startPeriodicSync(intervalMs?: number): void {
     });
   }, interval);
   syncTimer.unref();
+}
+
+
+export function stopOpenRouterProviderStatsSync(): void {
+  if (syncTimer) {
+    clearInterval(syncTimer);
+    syncTimer = null;
+  }
 }
 
 /**

@@ -17,6 +17,7 @@
  * pong control frame automatically, so a quiet-but-alive subscriber survives.
  */
 
+import { trackLifecycleBackgroundTask } from "@/lib/lifecycle/backgroundTasks";
 import { WebSocketServer, WebSocket } from "ws";
 import { createServer, type IncomingMessage, type ServerResponse } from "http";
 import { createHash, randomUUID } from "crypto";
@@ -102,6 +103,12 @@ interface ClientState {
 }
 
 const clients = new Map<string, ClientState>();
+
+declare global {
+  var __agentproxyLiveWsServer: import("http").Server | undefined;
+  var __agentproxyLiveWsWss: WebSocketServer | undefined;
+  var __agentproxyStopLiveWs: (() => void) | undefined;
+}
 
 function countClientsForPrincipal(principalKey: string): number {
   let count = 0;
@@ -648,6 +655,9 @@ export async function startLiveDashboardServer(
     },
   });
 
+  globalThis.__agentproxyLiveWsServer = server;
+  globalThis.__agentproxyLiveWsWss = wss;
+
   // Subscribe to EventBus
   const unsubscribe = subscribeToEventBus();
   await seedLatestCompressionRunFromDb();
@@ -751,6 +761,8 @@ export async function startLiveDashboardServer(
   wss.on("close", () => {
     unsubscribe();
     clients.clear();
+    if (globalThis.__agentproxyLiveWsWss === wss) globalThis.__agentproxyLiveWsWss = undefined;
+    if (globalThis.__agentproxyLiveWsServer === server) globalThis.__agentproxyLiveWsServer = undefined;
   });
 
   return new Promise((resolve, reject) => {
@@ -766,12 +778,41 @@ export async function startLiveDashboardServer(
       clients.clear();
       reject(err);
     });
+    if (globalThis.__agentproxyLiveWsServer !== server) {
+      unsubscribe();
+      void wss.close();
+      resolve(server);
+      return;
+    }
     server.listen(port, host, () => {
       console.log("[LiveWS] Dashboard WebSocket server listening on %s:%d", host, port);
       resolve(server);
     });
   });
 }
+
+/** Stop accepting live dashboard connections and close active WebSocket clients. */
+export function stopLiveDashboardServer(): void {
+  const server = globalThis.__agentproxyLiveWsServer;
+  const wss = globalThis.__agentproxyLiveWsWss;
+  globalThis.__agentproxyLiveWsServer = undefined;
+  globalThis.__agentproxyLiveWsWss = undefined;
+
+  for (const client of clients.values()) client.ws.terminate();
+  clients.clear();
+  try {
+    wss?.close();
+  } catch {
+    // Already closed/not listening.
+  }
+  try {
+    server?.close();
+  } catch {
+    // Already closed/not listening.
+  }
+}
+
+globalThis.__agentproxyStopLiveWs = stopLiveDashboardServer;
 
 // ── Auto-start on import ──────────────────────────────────────────────────
 //
@@ -797,7 +838,10 @@ export function isLiveWsEnabled(): boolean {
 if (!isBuildOrTest() && isLiveWsEnabled()) {
   const port = parseInt(process.env.LIVE_WS_PORT || String(DEFAULT_PORT), 10);
   const host = process.env.LIVE_WS_HOST || DEFAULT_HOST;
-  startLiveDashboardServer(port, host).catch((err) => {
+  void trackLifecycleBackgroundTask(
+    "live-ws-startup",
+    startLiveDashboardServer(port, host)
+  ).catch((err) => {
     console.error("[LiveWS] Failed to start: %s", err instanceof Error ? err.message : String(err));
   });
 }

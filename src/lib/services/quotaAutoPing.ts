@@ -20,6 +20,7 @@
  * no real timers, no real DB, no real network.
  */
 
+import { trackLifecycleBackgroundTask } from "@/lib/lifecycle/backgroundTasks";
 import { logger } from "@agentproxy/open-sse/utils/logger.ts";
 import { sanitizeErrorMessage } from "@agentproxy/open-sse/utils/error.ts";
 import type { BaseExecutor } from "@agentproxy/open-sse/executors/base";
@@ -147,7 +148,8 @@ export async function resolveQuotaAutoPingModel(
 export function createDefaultQuotaAutoPingDeps(): QuotaAutoPingDeps {
   return {
     getSettings,
-    getProviderConnections,
+    getProviderConnections: async (filter) =>
+      (await getProviderConnections(filter)) as unknown as QuotaAutoPingConnection[],
     updateProviderConnection,
     refreshAndUpdateCredentials: async (connection) =>
       refreshAndUpdateCredentialsWithResolver(connection, loadQuotaAutoPingExecutor),
@@ -549,9 +551,14 @@ const schedulerState = createQuotaAutoPingState();
 export function startQuotaAutoPing(): void {
   if (schedulerInterval) return;
   log.info("scheduler started");
-  runQuotaAutoPingTick(createDefaultQuotaAutoPingDeps(), schedulerState).catch(() => undefined);
+  const launchTick = () =>
+    trackLifecycleBackgroundTask(
+      "quota-auto-ping",
+      runQuotaAutoPingTick(createDefaultQuotaAutoPingDeps(), schedulerState)
+    ).catch(() => undefined);
+  void launchTick();
   schedulerInterval = setInterval(() => {
-    runQuotaAutoPingTick(createDefaultQuotaAutoPingDeps(), schedulerState).catch(() => undefined);
+    void launchTick();
   }, QUOTA_AUTOPING_TICK_INTERVAL_MS);
   schedulerInterval.unref?.();
 }

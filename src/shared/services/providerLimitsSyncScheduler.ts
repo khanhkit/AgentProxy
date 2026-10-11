@@ -9,7 +9,6 @@ const STARTUP_DELAY_MS = 5_000;
 
 let schedulerTimer: NodeJS.Timeout | null = null;
 let startupTimer: NodeJS.Timeout | null = null;
-let isRunning = false;
 let schedulerEnabled = false;
 let startupSetup: Promise<void> | null = null;
 let activeCycle: Promise<void> | null = null;
@@ -21,7 +20,6 @@ function runProviderLimitsSyncCycle(): Promise<void> {
   }
 
   const cycle = (async () => {
-    isRunning = true;
     const start = Date.now();
 
     try {
@@ -31,8 +29,6 @@ function runProviderLimitsSyncCycle(): Promise<void> {
       );
     } catch (error) {
       console.warn("[ProviderLimitsSync] Cycle failed:", (error as Error).message);
-    } finally {
-      isRunning = false;
     }
   })();
   activeCycle = cycle;

@@ -17,6 +17,7 @@
  *   - Resets to default on success
  */
 
+import { trackLifecycleBackgroundTask } from "@/lib/lifecycle/backgroundTasks";
 import { setImmediate as yieldToEventLoop } from "node:timers/promises";
 
 import { testSingleConnection } from "@/app/api/providers/[id]/test/route";
@@ -434,7 +435,9 @@ function scheduleSweep(): void {
   // cadence observed during the last sweep; fall back to env/default.
   const interval = lastGlobalIntervalMs ?? getSweepInterval();
 
-  state.sweepTimer = setTimeout(sweep, interval);
+  state.sweepTimer = setTimeout(() => {
+    void trackLifecycleBackgroundTask("credential-health-sweep", sweep());
+  }, interval);
 }
 
 // ── Public API ────────────────────────────────────────────────────────────
@@ -457,7 +460,9 @@ export function initCredentialHealthCheck(): boolean {
   );
 
   state.sweepTimer = setTimeout(() => {
-    sweep().catch((err) => console.error(LOG_PREFIX, "Initial sweep failed:", err));
+    void trackLifecycleBackgroundTask("credential-health-sweep", sweep()).catch((err) =>
+      console.error(LOG_PREFIX, "Initial sweep failed:", err)
+    );
   }, INITIAL_DELAY_MS);
   return true;
 }

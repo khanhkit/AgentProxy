@@ -10,6 +10,7 @@
  * On by default; opt out via Dashboard Feature Flags or ARENA_ELO_SYNC_ENABLED=false.
  */
 
+import { trackLifecycleBackgroundTask } from "@/lib/lifecycle/backgroundTasks";
 import { resolveScoresAs } from "@agentproxy/open-sse/services/autoCombo/scoresAs.ts";
 
 import { isArenaEloSyncEnabled } from "@/shared/utils/featureFlags";
@@ -611,7 +612,7 @@ function startPeriodicSync(intervalMs?: number): void {
   console.log(`[ARENA_ELO_SYNC] Starting periodic sync every ${interval / 1000}s`);
 
   // Initial sync (non-blocking)
-  syncArenaElo()
+  trackLifecycleBackgroundTask("arena-elo-sync", syncArenaElo())
     .then((result) => {
       if (result.success) {
         console.log(
@@ -627,7 +628,7 @@ function startPeriodicSync(intervalMs?: number): void {
     });
 
   syncTimer = setInterval(() => {
-    syncArenaElo()
+    trackLifecycleBackgroundTask("arena-elo-sync", syncArenaElo())
       .then((result) => {
         if (result.success) {
           console.log(`[ARENA_ELO_SYNC] Periodic sync complete: ${result.modelCount} entries`);

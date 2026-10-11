@@ -19,7 +19,7 @@ import { detectZed } from "./zed";
 import { detectClaudeCode } from "./claudeCode";
 import { detectOpenCode } from "./openCode";
 
-export const DETECTORS: Record<AgentId, () => DetectionResult> = {
+export const DETECTORS: Partial<Record<AgentId, () => DetectionResult>> = {
   antigravity: detectAntigravity,
   kiro: detectKiro,
   copilot: detectCopilot,

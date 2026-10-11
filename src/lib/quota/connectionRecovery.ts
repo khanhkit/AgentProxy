@@ -21,6 +21,7 @@
  * when to schedule it, so importing this module in tests never spawns a timer.
  */
 
+import { trackLifecycleBackgroundTask } from "@/lib/lifecycle/backgroundTasks";
 import { cooldownUntilMs } from "@agentproxy/open-sse/services/accountFallback.ts";
 import { isAutomatedTestProcess } from "@/shared/utils/testProcess";
 
@@ -333,12 +334,17 @@ const TRUE_ENV_VALUES = new Set(["1", "true", "yes", "on"]);
 
 declare global {
   var __agentproxyConnRecovery:
-    { initialized: boolean; interval: ReturnType<typeof setInterval> | null } | undefined;
+    | {
+        initialized: boolean;
+        interval: ReturnType<typeof setInterval> | null;
+        startupTimer: ReturnType<typeof setTimeout> | null;
+      }
+    | undefined;
 }
 
 function getRecoveryState() {
   if (!globalThis.__agentproxyConnRecovery) {
-    globalThis.__agentproxyConnRecovery = { initialized: false, interval: null };
+    globalThis.__agentproxyConnRecovery = { initialized: false, interval: null, startupTimer: null };
   }
   return globalThis.__agentproxyConnRecovery;
 }
@@ -393,7 +399,10 @@ export function initConnectionRecoveryScheduler(): void {
   };
 
   const runTick = () => {
-    runConnectionRecoveryTick({ logger: tickLogger }).catch((err: unknown) => {
+    void trackLifecycleBackgroundTask(
+      "connection-recovery",
+      runConnectionRecoveryTick({ logger: tickLogger })
+    ).catch((err: unknown) => {
       const msg = err instanceof Error ? err.message : String(err);
       console.warn(`${RECOVERY_LOG_PREFIX} tick error (non-fatal): ${msg}`);
     });
@@ -404,17 +413,23 @@ export function initConnectionRecoveryScheduler(): void {
   );
 
   // Delay the first tick a little so it never piles onto cold-start work.
-  const timer = setTimeout(() => {
+  state.startupTimer = setTimeout(() => {
+    state.startupTimer = null;
+    if (!state.initialized) return;
     runTick();
     state.interval = setInterval(runTick, tickMs);
     (state.interval as { unref?: () => void } | undefined)?.unref?.();
   }, 15_000);
-  (timer as { unref?: () => void } | undefined)?.unref?.();
+  state.startupTimer.unref?.();
 }
 
 /** Stop the scheduler (tests / hot-reload). */
 export function stopConnectionRecoveryScheduler(): void {
   const state = getRecoveryState();
+  if (state.startupTimer) {
+    clearTimeout(state.startupTimer);
+    state.startupTimer = null;
+  }
   if (state.interval) {
     clearInterval(state.interval);
     state.interval = null;

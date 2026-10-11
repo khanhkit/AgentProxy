@@ -322,6 +322,7 @@ async function start() {
 
   process.on("SIGINT", () => void shutdown("SIGINT"));
   process.on("SIGTERM", () => void shutdown("SIGTERM"));
+  process.on("SIGHUP", () => void shutdown("SIGHUP"));
 
   server.listen(dashboardPort, hostname, () => {
     const bundler = dev ? (useTurbopack ? "turbopack" : "webpack") : "production";

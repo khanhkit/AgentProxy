@@ -1,3 +1,4 @@
+import { trackLifecycleBackgroundTask } from "@/lib/lifecycle/backgroundTasks";
 import { getAllSyncedAvailableModels } from "./db/models";
 import { getResolvedModelCapabilities } from "./modelCapabilities";
 import {
@@ -119,6 +120,7 @@ export async function runContextWindowReconcile(): Promise<ReconcileResult> {
 
 const DEFAULT_INTERVAL_MS = 24 * 60 * 60 * 1000; // 24h
 let reconcileTimer: ReturnType<typeof setInterval> | null = null;
+let startupTimer: ReturnType<typeof setTimeout> | null = null;
 
 function resolveIntervalMs(): number {
   const raw = process.env.CONTEXT_WINDOW_RECONCILE_INTERVAL;
@@ -139,18 +141,28 @@ export function startContextWindowReconcile(intervalMs?: number): void {
   if (!interval || interval <= 0) return;
 
   const tick = () => {
-    void runContextWindowReconcile().catch(() => {
-      // Swallow — reconcile is advisory; the catalog still resolves windows.
-    });
+    void trackLifecycleBackgroundTask("context-window-reconcile", runContextWindowReconcile()).catch(
+      () => {
+        // Swallow — reconcile is advisory; the catalog still resolves windows.
+      }
+    );
   };
 
   // Initial non-blocking pass, then on the interval.
-  setTimeout(tick, 0);
+  startupTimer = setTimeout(() => {
+    startupTimer = null;
+    tick();
+  }, 0);
+  startupTimer.unref?.();
   reconcileTimer = setInterval(tick, interval);
   reconcileTimer.unref?.();
 }
 
 export function stopContextWindowReconcile(): void {
+  if (startupTimer) {
+    clearTimeout(startupTimer);
+    startupTimer = null;
+  }
   if (reconcileTimer) {
     clearInterval(reconcileTimer);
     reconcileTimer = null;

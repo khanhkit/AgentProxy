@@ -247,6 +247,8 @@ function proxyUpgrade(
 
 declare global {
   var __agentproxyApiBridgeStarted: boolean | undefined;
+  var __agentproxyApiBridgeServer: http.Server | undefined;
+  var __agentproxyStopApiBridge: (() => void) | undefined;
 }
 
 export function shouldStartApiBridge(
@@ -319,7 +321,12 @@ export function initApiBridgeServer(): void {
   warnIfNonLoopbackWithoutApiKey("API bridge", host);
 
   const server = createApiBridgeServer(dashboardPort);
+  globalThis.__agentproxyApiBridgeServer = server;
   server.on("error", (error: NodeJS.ErrnoException) => {
+    if (globalThis.__agentproxyApiBridgeServer === server) {
+      globalThis.__agentproxyApiBridgeServer = undefined;
+      globalThis.__agentproxyApiBridgeStarted = false;
+    }
     if (error?.code === "EADDRINUSE") {
       console.warn(
         `[API Bridge] Port ${apiPort} is already in use. API bridge disabled. (dashboard: ${dashboardPort})`
@@ -334,3 +341,19 @@ export function initApiBridgeServer(): void {
     console.log(`[API Bridge] Listening on ${host}:${apiPort} -> dashboard:${dashboardPort}`);
   });
 }
+
+
+/** Stop accepting new API-bridge connections without waiting on active relays. */
+export function stopApiBridgeServer(): void {
+  const server = globalThis.__agentproxyApiBridgeServer;
+  globalThis.__agentproxyApiBridgeServer = undefined;
+  globalThis.__agentproxyApiBridgeStarted = false;
+  if (!server) return;
+  try {
+    server.close();
+  } catch {
+    // Already closed/not listening.
+  }
+}
+
+globalThis.__agentproxyStopApiBridge = stopApiBridgeServer;
