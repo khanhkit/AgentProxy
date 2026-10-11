@@ -166,4 +166,4 @@
 - [x] Run the full project test command required by TDD completion policy; record any unrelated pre-existing failures by name.
 - [x] Verify standalone MCP/CLI/server signal ownership tests remain explicit and green.
 - [x] Review `rg` results for main-runtime `process.on/once(SIG*)`, `process.exit`, `process.kill(process.pid, signal)`, and `process.emit =` to prove only entrypoints own termination/global policy.
-- [ ] Commit final evidence/docs updates.
+- [x] Commit final evidence/docs updates.
