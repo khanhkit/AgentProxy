@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
+import { readFileSync } from "node:fs";
 
 const manager = await import("../../open-sse/services/rateLimitManager.ts");
 
@@ -44,4 +45,25 @@ test("rate-limit shutdown latch is cleared after settlement", async () => {
   const second = manager.shutdownRateLimitManager();
   assert.notEqual(second, first);
   await second.catch(() => undefined);
+});
+
+test("rate-limit final persistence propagates failures to lifecycle", () => {
+  const source = readFileSync(
+    new URL("../../open-sse/services/rateLimitManager.ts", import.meta.url),
+    "utf8"
+  );
+  const persist = source.slice(
+    source.indexOf("async function persistLearnedLimitsNow"),
+    source.indexOf("function recordLearnedLimit")
+  );
+  assert.doesNotMatch(
+    persist,
+    /catch\s*\(/,
+    "persistence primitive must reject so shutdown can report durability failure"
+  );
+  assert.match(
+    source,
+    /trackAsyncOperation\(persistLearnedLimitsNow\(\)\)\.catch/,
+    "debounced best-effort persistence must handle its own rejection"
+  );
 });

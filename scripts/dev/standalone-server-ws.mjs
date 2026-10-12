@@ -241,6 +241,8 @@ function wrapRequestListenerWithWebdav(listener) {
 }
 
 http.createServer = function createServerWithResponsesWs(...args) {
+  if (standaloneShuttingDown)
+    throw new Error("Standalone HTTP server creation refused during shutdown");
   // Next's standalone server.js may pass its request listener directly to
   // createServer; wrap it so the real TCP peer IP is stamped before Next runs.
   const lastFnIdx = args.map((a) => typeof a === "function").lastIndexOf(true);

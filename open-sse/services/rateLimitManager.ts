@@ -1025,13 +1025,9 @@ export function getLearnedLimits() {
   return { ...Object.fromEntries(learnedLimits) };
 }
 async function persistLearnedLimitsNow() {
-  try {
-    const { updateSettings } = await import("@/lib/db/settings");
-    await updateSettings({ learnedRateLimits: JSON.stringify(Object.fromEntries(learnedLimits)) });
-    logRateLimit(`💾 [RATE-LIMIT] Persisted learned limits for ${learnedLimits.size} provider(s)`);
-  } catch (err) {
-    errorRateLimit("[RATE-LIMIT] Failed to persist learned limits:", err.message);
-  }
+  const { updateSettings } = await import("@/lib/db/settings");
+  await updateSettings({ learnedRateLimits: JSON.stringify(Object.fromEntries(learnedLimits)) });
+  logRateLimit(`💾 [RATE-LIMIT] Persisted learned limits for ${learnedLimits.size} provider(s)`);
 }
 
 function recordLearnedLimit(
@@ -1053,9 +1049,11 @@ function recordLearnedLimit(
 }
 function schedulePersist(): void {
   if (!persistTimer) {
-    persistTimer = setTimeout(async () => {
+    persistTimer = setTimeout(() => {
       persistTimer = null;
-      await trackAsyncOperation(persistLearnedLimitsNow());
+      void trackAsyncOperation(persistLearnedLimitsNow()).catch((err) =>
+        errorRateLimit("[RATE-LIMIT] Failed to persist learned limits:", err)
+      );
     }, PERSIST_DEBOUNCE_MS);
   }
 }

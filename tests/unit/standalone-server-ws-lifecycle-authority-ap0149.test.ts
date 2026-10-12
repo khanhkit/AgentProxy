@@ -65,7 +65,6 @@ test("packaged standalone shutdown is idempotent across duplicate group/parent s
   );
 });
 
-
 test("packaged standalone direct-run shutdown is bounded without treating duplicate group signals as force-exit", () => {
   assert.match(
     source,
@@ -86,5 +85,13 @@ test("packaged standalone direct-run shutdown is bounded without treating duplic
     source,
     /if\s*\(standaloneShuttingDown\)\s*return/,
     "duplicate process-group/supervisor signals must remain idempotent rather than force-exit mid-flush"
+  );
+});
+
+test("packaged standalone rejects new HTTP server creation after shutdown starts", () => {
+  assert.match(
+    source,
+    /createServerWithResponsesWs[\s\S]*?if \(standaloneShuttingDown\)[\s\S]*?throw new Error/,
+    "shutdown must freeze listener creation so a late startup cannot reopen admission"
   );
 });
