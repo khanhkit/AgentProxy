@@ -134,7 +134,10 @@ export function initFreeProxyAutoSync(): void {
       }, initialDelayMs);
       globalThis.__freeProxyAutoSyncStartupTimer.unref?.();
     })()
-  );
+  ).catch((error) => {
+    globalThis.__freeProxyAutoSyncEnabled = false;
+    console.error(`${LOG_PREFIX} Scheduler bootstrap failed:`, error);
+  });
 }
 
 /** Test/shutdown seam — clears both the startup timer and the recurring interval. */

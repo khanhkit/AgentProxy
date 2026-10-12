@@ -164,6 +164,7 @@ const SHUTDOWN_TIMEOUT_MS =
   Number.isFinite(parsedShutdownTimeoutMs) && parsedShutdownTimeoutMs >= 0
     ? parsedShutdownTimeoutMs
     : 30000;
+const SHUTDOWN_EXIT_MARGIN_MS = 1_000;
 
 // Best-effort self-heal for a corrupted Turbopack persistent dev cache (#6289):
 // on Windows an mmap of an SST cache file can fail ("os error 1455" / paging
@@ -264,7 +265,7 @@ async function start() {
     // A deadline hit is never reported as a clean exit.
     const forceExitTimer = setTimeout(() => {
       process.exit(exitCode || 1);
-    }, SHUTDOWN_TIMEOUT_MS);
+    }, SHUTDOWN_TIMEOUT_MS + SHUTDOWN_EXIT_MARGIN_MS);
     forceExitTimer.unref?.();
 
     systemdNotifier.stopping();

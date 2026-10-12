@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { MitmTargetSchema } from "../types";
 
 export type CaptureSource =
   "agent-bridge" | "custom-host" | "http-proxy" | "system-proxy" | "tproxy";
@@ -37,7 +38,7 @@ export interface InterceptedRequest {
 export const InterceptedRequestSchema = z.object({
   id: z.string().uuid(),
   source: z.enum(["agent-bridge", "custom-host", "http-proxy", "system-proxy", "tproxy"]),
-  agent: z.string().optional(),
+  agent: MitmTargetSchema.shape.id.optional(),
   timestamp: z.string().datetime(),
   method: z.string(),
   host: z.string(),

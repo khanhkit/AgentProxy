@@ -145,3 +145,39 @@ test("rate-limit lifecycle stops scheduling before active drains and tears down 
     /register\("rate-limit-drain",\s*"FLUSH_DURABLE"[\s\S]*?__agentproxyShutdownRateLimit/
   );
 });
+
+test("scheduler lifecycle error paths stay observable and drains cannot resurrect timers", () => {
+  const credential = source("src/lib/credentialHealth/scheduler.ts");
+  assert.match(
+    credential,
+    /trackLifecycleBackgroundTask\("credential-health-sweep", sweep\(\)\)\.catch/
+  );
+
+  const freeProxy = source("src/lib/freeProxyProviders/scheduler.ts");
+  assert.match(
+    freeProxy,
+    /trackLifecycleBackgroundTask\([\s\S]*?"free-proxy-sync-bootstrap"[\s\S]*?\)\.catch/
+  );
+
+  const graceful = source("src/lib/gracefulShutdown.ts");
+  assert.match(graceful, /stopProviderLimitsSyncScheduler\(\)/);
+  assert.match(graceful, /stopModelSyncScheduler\(\)/);
+});
+
+test("rate-limit shutdown continues limiter cleanup when persistence fails", () => {
+  const manager = source("open-sse/services/rateLimitManager.ts");
+  assert.match(manager, /let\s+persistenceError/);
+  assert.match(manager, /catch\s*\(error\)[\s\S]*?persistenceError\s*=\s*error[\s\S]*?const stops/);
+  assert.match(
+    manager,
+    /limiters\.clear\(\)[\s\S]*?if\s*\(persistenceError\)\s*throw\s+persistenceError/
+  );
+});
+
+test("review-touched runtime inputs are validated before typed persistence", () => {
+  const providerTest = source("src/app/api/providers/[id]/test/route.ts");
+  assert.match(providerTest, /Number\.isFinite\(expiresIn\)[\s\S]*?expiresIn\s*>\s*0/);
+
+  const inspectorTypes = source("src/mitm/inspector/types.ts");
+  assert.match(inspectorTypes, /agent:\s*MitmTargetSchema\.shape\.id\.optional\(\)/);
+});

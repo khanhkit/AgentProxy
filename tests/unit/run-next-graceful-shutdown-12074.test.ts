@@ -56,8 +56,13 @@ test("custom Next runner uses the configured global shutdown budget and preserve
   );
   assert.match(
     runNextSource,
-    /setTimeout\([\s\S]*?,\s*SHUTDOWN_TIMEOUT_MS\s*\)/,
-    "force-exit timer must use the same configured shutdown budget"
+    /setTimeout\([\s\S]*?,\s*SHUTDOWN_TIMEOUT_MS\s*\+\s*SHUTDOWN_EXIT_MARGIN_MS\s*\)/,
+    "force-exit timer must outlive the lifecycle deadline by a bounded margin"
+  );
+  assert.match(
+    runNextSource,
+    /const\s+SHUTDOWN_EXIT_MARGIN_MS\s*=\s*1_000/,
+    "custom runner must reserve a bounded post-lifecycle transport teardown margin"
   );
   assert.match(
     runNextSource,

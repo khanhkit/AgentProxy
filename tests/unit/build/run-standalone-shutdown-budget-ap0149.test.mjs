@@ -22,3 +22,17 @@ test("standalone parent escalation outlives the child lifecycle deadline", () =>
     "stopNext must not SIGKILL the child before its lifecycle deadline expires"
   );
 });
+
+test("standalone parent strictly parses the lifecycle timeout", () => {
+  assert.match(source, /const parsed = Number\(runtimeEnv\.SHUTDOWN_TIMEOUT_MS/);
+  assert.doesNotMatch(source, /Number\.parseInt\([\s\S]*?SHUTDOWN_TIMEOUT_MS/);
+});
+
+test("packaged standalone hard deadline leaves cleanup margin", () => {
+  const packaged = readFileSync(
+    new URL("../../../scripts/dev/standalone-server-ws.mjs", import.meta.url),
+    "utf8"
+  );
+  assert.match(packaged, /const SHUTDOWN_EXIT_MARGIN_MS\s*=\s*1_000/);
+  assert.match(packaged, /STANDALONE_SHUTDOWN_TIMEOUT_MS\s*\+\s*SHUTDOWN_EXIT_MARGIN_MS/);
+});

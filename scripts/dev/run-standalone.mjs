@@ -38,10 +38,7 @@ const DEFAULT_APP_SHUTDOWN_TIMEOUT_MS = 30_000;
 const SHUTDOWN_EXIT_MARGIN_MS = 1_000;
 
 function resolveShutdownEscalationTimeoutMs(runtimeEnv = process.env) {
-  const parsed = Number.parseInt(
-    runtimeEnv.SHUTDOWN_TIMEOUT_MS ?? String(DEFAULT_APP_SHUTDOWN_TIMEOUT_MS),
-    10
-  );
+  const parsed = Number(runtimeEnv.SHUTDOWN_TIMEOUT_MS ?? String(DEFAULT_APP_SHUTDOWN_TIMEOUT_MS));
   const lifecycleTimeoutMs =
     Number.isFinite(parsed) && parsed >= 0 ? parsed : DEFAULT_APP_SHUTDOWN_TIMEOUT_MS;
   return lifecycleTimeoutMs + SHUTDOWN_EXIT_MARGIN_MS;

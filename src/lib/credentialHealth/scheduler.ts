@@ -436,7 +436,9 @@ function scheduleSweep(): void {
   const interval = lastGlobalIntervalMs ?? getSweepInterval();
 
   state.sweepTimer = setTimeout(() => {
-    void trackLifecycleBackgroundTask("credential-health-sweep", sweep());
+    void trackLifecycleBackgroundTask("credential-health-sweep", sweep()).catch((err) =>
+      console.error(LOG_PREFIX, "Sweep failed:", err)
+    );
   }, interval);
 }
 

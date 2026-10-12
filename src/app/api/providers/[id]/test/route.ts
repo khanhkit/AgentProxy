@@ -196,9 +196,16 @@ async function refreshOAuthToken(connection: any) {
         update.expiresAt = refreshed.expiresAt;
         update.tokenExpiresAt = refreshed.expiresAt;
       } else if (refreshed.expiresIn) {
-        const expiresAt = new Date(Date.now() + Number(refreshed.expiresIn) * 1000).toISOString();
-        update.expiresAt = expiresAt;
-        update.tokenExpiresAt = expiresAt;
+        const expiresIn = Number(refreshed.expiresIn);
+        if (Number.isFinite(expiresIn) && expiresIn > 0) {
+          const expiresAt = new Date(Date.now() + expiresIn * 1000).toISOString();
+          update.expiresAt = expiresAt;
+          update.tokenExpiresAt = expiresAt;
+        } else {
+          const expiresAt = new Date(Date.now() + FALLBACK_REFRESH_EXPIRY_MS).toISOString();
+          update.expiresAt = expiresAt;
+          update.tokenExpiresAt = expiresAt;
+        }
       } else {
         // Upstream returned neither expiresAt nor expiresIn. Persist a
         // conservative 30-minute expiry so a NULL expiresAt (treated as

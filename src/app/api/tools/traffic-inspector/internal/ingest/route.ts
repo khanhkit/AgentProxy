@@ -117,7 +117,7 @@ export async function POST(request: Request): Promise<Response> {
       method: data.method!,
       host: data.host!,
       path: data.path!,
-      agent: data.agent as InterceptedRequest["agent"],
+      agent: data.agent,
       requestHeaders: sanitizeHeaders(data.requestHeaders || {}),
       requestSize: data.requestSize!,
       responseHeaders: sanitizeHeaders(data.responseHeaders || {}),
