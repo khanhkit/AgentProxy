@@ -61,6 +61,7 @@ function createUncheckedResponsesSequenceNormalizerTransform(): TransformStream<
   let parsingTopLevelKey = false;
   let topLevelKeyMatchIndex = 0;
   let topLevelKeyMismatch = false;
+  let topLevelKeyRaw = "";
   let awaitingTopLevelColon = false;
   let currentTopLevelKeyIsSequence = false;
   let sawTopLevelProperty = false;
@@ -80,6 +81,7 @@ function createUncheckedResponsesSequenceNormalizerTransform(): TransformStream<
     parsingTopLevelKey = false;
     topLevelKeyMatchIndex = 0;
     topLevelKeyMismatch = false;
+    topLevelKeyRaw = "";
     awaitingTopLevelColon = false;
     currentTopLevelKeyIsSequence = false;
     sawTopLevelProperty = false;
@@ -253,32 +255,48 @@ function createUncheckedResponsesSequenceNormalizerTransform(): TransformStream<
         emit(ch);
         if (jsonEscape) {
           jsonEscape = false;
-          if (parsingTopLevelKey) topLevelKeyMismatch = true;
+          if (parsingTopLevelKey) {
+            topLevelKeyRaw += ch;
+            topLevelKeyMismatch = true;
+          }
           return;
         }
         if (ch === "\\") {
           jsonEscape = true;
-          if (parsingTopLevelKey) topLevelKeyMismatch = true;
+          if (parsingTopLevelKey) {
+            topLevelKeyRaw += ch;
+            topLevelKeyMismatch = true;
+          }
           return;
         }
         if (ch === '"') {
           jsonInString = false;
           if (parsingTopLevelKey) {
-            currentTopLevelKeyIsSequence =
-              !topLevelKeyMismatch && topLevelKeyMatchIndex === SEQUENCE_KEY.length;
+            let decodedKey: unknown = topLevelKeyRaw;
+            if (topLevelKeyMismatch) {
+              try {
+                decodedKey = JSON.parse(`"${topLevelKeyRaw}"`);
+              } catch {
+                decodedKey = null;
+              }
+            }
+            currentTopLevelKeyIsSequence = decodedKey === SEQUENCE_KEY;
             parsingTopLevelKey = false;
             awaitingTopLevelColon = true;
           }
           return;
         }
-        if (parsingTopLevelKey && !topLevelKeyMismatch) {
-          if (
-            topLevelKeyMatchIndex >= SEQUENCE_KEY.length ||
-            ch !== SEQUENCE_KEY[topLevelKeyMatchIndex]
-          ) {
-            topLevelKeyMismatch = true;
-          } else {
-            topLevelKeyMatchIndex += 1;
+        if (parsingTopLevelKey) {
+          topLevelKeyRaw += ch;
+          if (!topLevelKeyMismatch) {
+            if (
+              topLevelKeyMatchIndex >= SEQUENCE_KEY.length ||
+              ch !== SEQUENCE_KEY[topLevelKeyMatchIndex]
+            ) {
+              topLevelKeyMismatch = true;
+            } else {
+              topLevelKeyMatchIndex += 1;
+            }
           }
         }
         return;
@@ -310,6 +328,7 @@ function createUncheckedResponsesSequenceNormalizerTransform(): TransformStream<
           parsingTopLevelKey = true;
           topLevelKeyMatchIndex = 0;
           topLevelKeyMismatch = false;
+          topLevelKeyRaw = "";
           return;
         }
         if (ch === "}") {

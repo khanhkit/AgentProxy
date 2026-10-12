@@ -1064,6 +1064,12 @@ export function pipeWithDisconnect(
     }
   };
 
+  const flushStallLineCarry = (): void => {
+    const trimmed = stallLineCarry.trim();
+    stallLineCarry = "";
+    if (trimmed) noteStallLine(trimmed);
+  };
+
   const formatStallSummary = (): string => {
     const top =
       stallTypes.size === 0
@@ -1087,6 +1093,7 @@ export function pipeWithDisconnect(
     contentStallTimer = setTimeout(() => {
       contentStallTimer = null;
       contentStallFired = true;
+      flushStallLineCarry();
       const stallSummary = formatStallSummary();
       const stallError = new Error(
         `stream content stall: no model output within ${contentStallTimeoutMs}ms (${stallSummary})`

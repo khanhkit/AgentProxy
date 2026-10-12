@@ -128,6 +128,9 @@ test("AP-ISS-0194 OCR: duplicate and escaped sequence keys retain one final cano
     const output = await readText(stream.pipeThrough(createResponsesSequenceNormalizerTransform()));
     const payload = JSON.parse(output.split(/\r?\n/)[0].slice("data: ".length));
     assert.equal(payload.sequence_number, 1);
+    if (input.includes("\\u005f")) {
+      assert.equal(output.includes('"sequence_number"'), false, "do not inject a duplicate key");
+    }
   }
 });
 

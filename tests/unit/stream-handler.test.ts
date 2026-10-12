@@ -976,6 +976,37 @@ test("AP-ISS-0194: content-stall diagnostics reconstruct SSE lines split across 
   assert.doesNotMatch(onErrorEvent.message, /non-sse/);
 });
 
+test("AP-ISS-0194 OCR: content-stall diagnostics classify an unterminated final SSE line", async () => {
+  const source = new ReadableStream({
+    start(controller) {
+      controller.enqueue(
+        encoder.encode(
+          'data: {"type":"response.in_progress","response":{"id":"resp_eof","status":"in_progress"}}'
+        )
+      );
+    },
+    cancel() {},
+  });
+
+  let onErrorEvent = null;
+  const streamController = createStreamController({
+    onError(event) {
+      onErrorEvent = event;
+      return true;
+    },
+  });
+
+  const stream = pipeWithDisconnect(new Response(source), new TransformStream(), streamController, {
+    stallTimeoutMs: 5000,
+    contentStallTimeoutMs: 80,
+  });
+  await readStreamText(stream);
+
+  assert.ok(onErrorEvent !== null);
+  assert.match(onErrorEvent.message, /events=1/);
+  assert.match(onErrorEvent.message, /top=response\.in_progress:1/);
+});
+
 test("pipeWithDisconnect does NOT flag a stream that starts with lifecycle frames but then produces real content", async () => {
   const source = new ReadableStream({
     async start(controller) {
