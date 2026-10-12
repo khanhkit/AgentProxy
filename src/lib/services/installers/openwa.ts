@@ -140,7 +140,7 @@ export async function install(version = "latest"): Promise<InstallResult> {
     installedVersion,
     binaryPath: getServerPath(),
     status: "stopped",
-    port: OPENWA_DEFAULT_PORT,
+    port: parseInt(process.env.OPENWA_SERVICE_PORT ?? String(OPENWA_DEFAULT_PORT), 10),
   });
 
   // Invalidate cache so next getLatestVersion() re-fetches
