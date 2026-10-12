@@ -1,4 +1,4 @@
-import { setHealthCheckLogCache } from "@/lib/tokenHealthCheck";
+import { clearHealthCheckLogCache } from "@/lib/tokenHealthCheck";
 import { setCustomBannedSignals } from "@agentproxy/open-sse/services/accountFallback.ts";
 import { setOperatorProviderErrorRules } from "@agentproxy/open-sse/config/providerErrorRules.ts";
 import { isAutomatedTestProcess } from "@/shared/utils/testProcess";
@@ -333,7 +333,7 @@ async function applyAtomicRuntimeSections(
   }
 
   if (force || currentSnapshot.hideHealthCheckLogs !== previousSnapshot.hideHealthCheckLogs) {
-    setHealthCheckLogCache(currentSnapshot.hideHealthCheckLogs);
+    clearHealthCheckLogCache(currentSnapshot.hideHealthCheckLogs);
     markChanged("healthCheckLogs");
   }
 

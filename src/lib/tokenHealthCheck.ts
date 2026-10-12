@@ -439,14 +439,9 @@ function logError(message: string, ...args: any[]) {
 /**
  * Clear the cached hideLogs setting (call when settings are updated).
  */
-export function setHealthCheckLogCache(value: boolean) {
+export function clearHealthCheckLogCache(value: boolean | null = null) {
   cachedHideLogs = value;
-  cacheTimestamp = Date.now();
-}
-
-export function clearHealthCheckLogCache() {
-  cachedHideLogs = null;
-  cacheTimestamp = 0;
+  cacheTimestamp = value === null ? 0 : Date.now();
 }
 
 // ── Singleton guard (globalThis survives HMR re-evaluation) ─────────────────
