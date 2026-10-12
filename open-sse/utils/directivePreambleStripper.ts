@@ -166,7 +166,7 @@ export function createSystemPreambleStripper(): PreambleStripper {
   const findBalancedTagClose = (
     s: string,
     rootTag: string
-  ): { start: number; end: number } | null => {
+  ): { start: number; end: number } | null | false => {
     const localStack = [rootTag];
     const tagRe = /<\/?(analysis|system-reminder|summary)>/gi;
     let match: RegExpExecArray | null;
@@ -177,7 +177,7 @@ export function createSystemPreambleStripper(): PreambleStripper {
         localStack.push(name);
         continue;
       }
-      if (localStack[localStack.length - 1] !== name) return null;
+      if (localStack[localStack.length - 1] !== name) return false;
       localStack.pop();
       if (localStack.length === 0) {
         return { start: match.index, end: match.index + full.length };
@@ -239,7 +239,15 @@ export function createSystemPreambleStripper(): PreambleStripper {
         }
         const closeTag = "</" + top + ">";
         const close = findBalancedTagClose(buf, top);
-        if (!close) return ""; // block not closed yet (or malformed nesting) — keep suppressing
+        if (close === false) {
+          done = true;
+          const out = pendingDrop + buf;
+          pendingDrop = "";
+          buf = "";
+          stack = [];
+          return out;
+        }
+        if (!close) return ""; // block not closed yet — keep suppressing
         const ci = close.start;
         const afterClose = buf.slice(close.end);
         const trailing = afterClose.replace(/^[ \t\r\n]+/, "");

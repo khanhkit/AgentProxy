@@ -177,3 +177,23 @@ test("AP-ISS-0194 OCR: generic JSON data frames are not assigned Responses seque
   const output = await readText(stream.pipeThrough(createResponsesSequenceNormalizerTransform()));
   assert.equal(output, input);
 });
+
+test("AP-ISS-0194 OCR: oversized single-line Responses events fail closed at the wire boundary", async () => {
+  const input =
+    'data: {"type":"response.completed","sequence_number":99,"response":{"output":"' +
+    "x".repeat(16 * 1024 * 1024 + 1024) +
+    '"}}\n\n';
+  const stream = new ReadableStream<Uint8Array>({
+    start(controller) {
+      for (let offset = 0; offset < input.length; offset += 64 * 1024) {
+        controller.enqueue(encoder.encode(input.slice(offset, offset + 64 * 1024)));
+      }
+      controller.close();
+    },
+  });
+
+  await assert.rejects(
+    readText(stream.pipeThrough(createResponsesSequenceNormalizerTransform())),
+    /Responses SSE event line exceeds 16777216 bytes/
+  );
+});

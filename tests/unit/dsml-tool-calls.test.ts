@@ -81,3 +81,12 @@ test("parseDsmlToolCalls: partial opening marker at the tail is held back (strea
     "partial opener returned as holdback"
   );
 });
+
+test("AP-ISS-0194 OCR: marker-only ASCII DSML structural closers are scrubbed", () => {
+  const content = "</parameter>\n</invoke>\n";
+  const result = parseDsmlToolCalls(content);
+
+  assert.equal(result.toolCalls.length, 0);
+  assert.equal(result.content, "");
+  assert.equal(result.holdback, "");
+});

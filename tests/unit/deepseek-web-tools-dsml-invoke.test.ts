@@ -55,3 +55,25 @@ test("AP-ISS-0194: malformed DSML name attributes cannot inject synthetic tool m
   assert.equal(toolCalls, null, "malformed quoted attributes must fail closed as text");
   assert.equal(content, raw, "provider-controlled malformed markup must stay byte-preserved");
 });
+
+test("AP-ISS-0194 OCR: DSML synthetic attributes round-trip XML-escaped tool names", () => {
+  const raw =
+    '<｜DSML｜ calls> <｜DSML｜ invoke name="read&quot;write"> ' +
+    '<｜DSML｜ parameter name="value">hello</｜DSML｜ parameter> ' +
+    "</｜DSML｜ invoke> </｜DSML｜ calls>";
+  const tools = [
+    {
+      type: "function",
+      function: { name: 'read"write', parameters: { properties: { value: {} } } },
+    },
+    {
+      type: "function",
+      function: { name: "other", parameters: { properties: { value: {} } } },
+    },
+  ];
+
+  const { toolCalls } = parseDeepSeekToolCalls(raw, "call", tools);
+  assert.ok(toolCalls);
+  assert.equal(toolCalls.length, 1);
+  assert.equal(toolCalls[0].function.name, 'read"write');
+});

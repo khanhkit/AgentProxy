@@ -26,6 +26,7 @@ export function buildSyntheticResponsesFailedEvent(
 const SEQUENCE_KEY = "sequence_number";
 const DATA_PREFIX = "data:";
 const OUTPUT_FLUSH_CHARS = 16 * 1024;
+const MAX_RESPONSES_SSE_EVENT_LINE_BYTES = 16 * 1024 * 1024;
 
 type LineMode = "leading" | "data-prefix" | "data-space" | "passthrough" | "json" | "after-json";
 type SequenceSkipMode = "before" | "primitive" | "string" | "nested" | "done" | null;
@@ -449,6 +450,7 @@ export function createResponsesSequenceNormalizerTransform(): TransformStream<
   const decoder = new TextDecoder();
   const encoder = new TextEncoder();
   let gateBuffer = "";
+  let gateBufferedBytes = 0;
 
   const writeNormalizedLine = async (
     line: string,
@@ -475,23 +477,36 @@ export function createResponsesSequenceNormalizerTransform(): TransformStream<
     }
   };
 
-  const processCompleteLines = async (
+  const processCompleteLine = async (
     controller: TransformStreamDefaultController<Uint8Array>
   ): Promise<void> => {
-    let newline = gateBuffer.indexOf("\n");
-    while (newline !== -1) {
-      const line = gateBuffer.slice(0, newline + 1);
-      gateBuffer = gateBuffer.slice(newline + 1);
-      if (isCompleteResponsesDataLine(line)) await writeNormalizedLine(line, controller);
-      else controller.enqueue(encoder.encode(line));
-      newline = gateBuffer.indexOf("\n");
+    const line = gateBuffer;
+    gateBuffer = "";
+    gateBufferedBytes = 0;
+    if (isCompleteResponsesDataLine(line)) await writeNormalizedLine(line, controller);
+    else controller.enqueue(encoder.encode(line));
+  };
+
+  const appendGateBytes = (bytes: Uint8Array): void => {
+    gateBufferedBytes += bytes.byteLength;
+    if (gateBufferedBytes > MAX_RESPONSES_SSE_EVENT_LINE_BYTES) {
+      throw new Error(
+        `Responses SSE event line exceeds ${MAX_RESPONSES_SSE_EVENT_LINE_BYTES} bytes`
+      );
     }
+    gateBuffer += decoder.decode(bytes, { stream: true });
   };
 
   return new TransformStream<Uint8Array, Uint8Array>({
     async transform(chunk, controller) {
-      gateBuffer += decoder.decode(chunk, { stream: true });
-      await processCompleteLines(controller);
+      let start = 0;
+      for (let index = 0; index < chunk.byteLength; index += 1) {
+        if (chunk[index] !== 0x0a) continue;
+        appendGateBytes(chunk.subarray(start, index + 1));
+        await processCompleteLine(controller);
+        start = index + 1;
+      }
+      if (start < chunk.byteLength) appendGateBytes(chunk.subarray(start));
     },
     async flush(controller) {
       gateBuffer += decoder.decode();

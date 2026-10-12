@@ -243,7 +243,19 @@ function pairToolBlocks(tokens: TagToken[], textLen: number): ToolBlock[] {
 
 // ── Attribute / XML-child helpers ────────────────────────────────────────────
 
-/** Read an attribute value, tolerating backslash-escaped quotes inside the value. */
+const XML_ATTRIBUTE_ENTITIES: Record<string, string> = {
+  "&amp;": "&",
+  "&quot;": '"',
+  "&apos;": "'",
+  "&lt;": "<",
+  "&gt;": ">",
+};
+
+function decodeXmlAttribute(value: string): string {
+  return value.replace(/&(amp|quot|apos|lt|gt);/g, (entity) => XML_ATTRIBUTE_ENTITIES[entity]);
+}
+
+/** Read an attribute value, tolerating backslash-escaped quotes and XML entities. */
 function getAttr(attrs: string, name: string): string | null {
   const re = new RegExp(`\\b${name}\\s*=\\s*("|')`);
   const m = re.exec(attrs);
@@ -262,7 +274,7 @@ function getAttr(attrs: string, name: string): string | null {
     out += ch;
     j += 1;
   }
-  return out;
+  return decodeXmlAttribute(out);
 }
 
 function getXmlChild(inner: string, tag: string): string | null {

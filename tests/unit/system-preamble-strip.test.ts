@@ -136,3 +136,11 @@ test("REGRESSION (3a8515c): a long <analysis> summary block loses ~90% of its co
     "the summary INSIDE <analysis> MUST survive (not be suppressed as an echo); only ~tail survives today"
   );
 });
+
+test("AP-ISS-0194 OCR: malformed recognized-tag nesting is released as real content immediately", () => {
+  const strip = createSystemPreambleStripper();
+  const malformed = "<analysis>prefix</summary>real answer";
+
+  assert.equal(strip(malformed), malformed);
+  assert.equal(strip(" tail"), " tail");
+});
