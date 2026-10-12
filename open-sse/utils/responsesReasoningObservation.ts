@@ -4,7 +4,8 @@
  *
  * The Responses→chat consumer never sees `output_item.added` (only
  * `done`/`completed`), so the stream loops observe the RAW `parsed` events
- * and pair added→done by `output_index` (fallback `item.id`). The sink side
+ * and pair added→done by composite `output_index` + `item.id` identity when both
+ * are available (falling back to whichever one is present). The sink side
  * (`saveCallLog`) scans terminal `output[]` snapshots, covering non-streaming
  * and batch-completed-without-added payloads.
  *
@@ -97,10 +98,12 @@ export function createReasoningStreamObserver() {
 export type ReasoningStreamObserver = ReturnType<typeof createReasoningStreamObserver>;
 
 export function reasoningEventKey(outputIndex: unknown, itemId: unknown): string | null {
-  if (typeof itemId === "string" && itemId.length > 0) return `id:${itemId}`;
-  if (typeof outputIndex === "number" && Number.isInteger(outputIndex) && outputIndex >= 0) {
-    return `idx:${outputIndex}`;
-  }
+  const hasIndex =
+    typeof outputIndex === "number" && Number.isInteger(outputIndex) && outputIndex >= 0;
+  const hasItemId = typeof itemId === "string" && itemId.length > 0;
+  if (hasIndex && hasItemId) return `idx:${outputIndex}:id:${itemId}`;
+  if (hasItemId) return `id:${itemId}`;
+  if (hasIndex) return `idx:${outputIndex}`;
   return null;
 }
 

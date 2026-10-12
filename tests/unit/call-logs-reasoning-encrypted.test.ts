@@ -321,3 +321,50 @@ test("reasoning observer prefers stable item ids when output indexes are reused"
   assert.equal(doneA.durationMs, 2000);
   assert.equal(doneB.durationMs, 3000);
 });
+
+test("AP-ISS-0194 OCR: reasoning observer separates reused item ids across output indexes", async () => {
+  const { observeResponsesReasoningEvent } =
+    await import("../../open-sse/utils/responsesReasoningObservation.ts");
+  const tracker = new Map();
+
+  observeResponsesReasoningEvent(
+    tracker,
+    {
+      type: "response.output_item.added",
+      output_index: 0,
+      item: { id: "rs_reused", type: "reasoning", encrypted_content: "a" },
+    },
+    1000
+  );
+  observeResponsesReasoningEvent(
+    tracker,
+    {
+      type: "response.output_item.added",
+      output_index: 1,
+      item: { id: "rs_reused", type: "reasoning", encrypted_content: "b" },
+    },
+    2000
+  );
+
+  const done0 = observeResponsesReasoningEvent(
+    tracker,
+    {
+      type: "response.output_item.done",
+      output_index: 0,
+      item: { id: "rs_reused", type: "reasoning", encrypted_content: "a" },
+    },
+    3000
+  );
+  const done1 = observeResponsesReasoningEvent(
+    tracker,
+    {
+      type: "response.output_item.done",
+      output_index: 1,
+      item: { id: "rs_reused", type: "reasoning", encrypted_content: "b" },
+    },
+    5000
+  );
+
+  assert.equal(done0.durationMs, 2000, "index 0 keeps its own added timestamp");
+  assert.equal(done1.durationMs, 3000, "index 1 keeps its own added timestamp despite ID reuse");
+});
