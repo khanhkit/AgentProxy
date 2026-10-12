@@ -14,13 +14,13 @@ const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-chat-pip
 process.env.DATA_DIR = TEST_DATA_DIR;
 process.env.REQUIRE_API_KEY = "false";
 process.env.API_KEY_SECRET = process.env.API_KEY_SECRET || "test-chat-pipeline-secret";
-
 const core = await import("../../src/lib/db/core.ts");
 const providersDb = await import("../../src/lib/db/providers.ts");
 const combosDb = await import("../../src/lib/db/combos.ts");
 const settingsDb = await import("../../src/lib/db/settings.ts");
 const apiKeysDb = await import("../../src/lib/db/apiKeys.ts");
 const readCacheDb = await import("../../src/lib/db/readCache.ts");
+const runtimeSettings = await import("../../src/lib/config/runtimeSettings.ts");
 const { getLatestCallLog, getResponsesCallLogs } = await import("./_chatPipelineCallLogs.ts");
 const { waitForCallLogSaves } = await import("../../src/lib/usage/callLogs.ts");
 const { invalidateMemorySettingsCache } = await import("../../src/lib/memory/settings.ts");
@@ -337,6 +337,7 @@ async function resetStorage() {
   resetAllCircuitBreakers();
   apiKeysDb.resetApiKeyState();
   readCacheDb.invalidateDbCache();
+  runtimeSettings.resetRuntimeSettingsStateForTests();
   invalidateMemorySettingsCache();
   await new Promise((resolve) => setTimeout(resolve, 20));
   // Call-log persistence is fire-and-forget (persistAttemptLogs → saveCallLog with
@@ -353,7 +354,6 @@ async function resetStorage() {
   fs.mkdirSync(TEST_DATA_DIR, { recursive: true });
   initTranslators();
 }
-
 async function seedConnection(provider, overrides: SeedConnectionOverrides = {}) {
   return providersDb.createProviderConnection({
     provider,
