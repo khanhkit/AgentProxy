@@ -27,7 +27,8 @@ export class MemoryVectorStore implements IVectorStore {
   private readonly hashToId = new Map<string, string>();
 
   constructor(options?: { maxEntries?: number }) {
-    this.maxEntries = options?.maxEntries ?? 1000;
+    const configured = options?.maxEntries ?? 1000;
+    this.maxEntries = Number.isFinite(configured) ? Math.max(0, Math.floor(configured)) : 1000;
   }
 
   private isExpired(expiresAt: number): boolean {
@@ -78,6 +79,7 @@ export class MemoryVectorStore implements IVectorStore {
 
   public async set(entry: CacheEntry, ttlMs: number): Promise<void> {
     // If ID already exists, remove it first
+    if (this.maxEntries === 0) return;
     if (this.entries.has(entry.id)) {
       this.removeEntry(entry.id);
     }

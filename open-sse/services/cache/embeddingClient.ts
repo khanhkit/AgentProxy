@@ -1,3 +1,9 @@
+import {
+  parseAndValidateNonMetadataUrl,
+  parseAndValidatePublicUrl,
+} from "../../../src/shared/network/outboundUrlGuard.ts";
+import { getProviderValidationGuard } from "../../../src/shared/network/outboundUrlGuardPolicy.ts";
+
 /**
  * Semantic Cache Embedding Client
  *
@@ -94,6 +100,7 @@ export function normalizeConversationForEmbedding(
 
   return lines.join("\n").trim();
 }
+const timedOutEmbeddingGenerators = new WeakSet<EmbeddingGenerator>();
 
 /**
  * Executes embedding generation with fail-open timeout guard.
@@ -107,6 +114,7 @@ export async function generateEmbeddingWithTimeout(
     timeoutMs?: number;
   }
 ): Promise<EmbeddingResult | null> {
+  if (timedOutEmbeddingGenerators.has(generator)) return null;
   if (!text || text.length === 0) return null;
 
   const timeoutMs = options?.timeoutMs ?? 3000;
@@ -115,6 +123,7 @@ export async function generateEmbeddingWithTimeout(
 
   const timeoutPromise = new Promise<null>((resolve) => {
     timer = setTimeout(() => {
+      timedOutEmbeddingGenerators.add(generator);
       controller.abort();
       console.warn(`[CACHE] Embedding generation timed out after ${timeoutMs}ms`);
       resolve(null);
@@ -122,11 +131,13 @@ export async function generateEmbeddingWithTimeout(
   });
 
   try {
-    const generatorPromise = generator(text, {
-      model: options?.model,
-      provider: options?.provider,
-      signal: controller.signal,
-    });
+    const generatorPromise = Promise.resolve(
+      generator(text, {
+        model: options?.model,
+        provider: options?.provider,
+        signal: controller.signal,
+      })
+    ).finally(() => timedOutEmbeddingGenerators.delete(generator));
 
     const res = await Promise.race([generatorPromise, timeoutPromise]);
     return res;
@@ -171,6 +182,20 @@ export function createDefaultEmbeddingGenerator(config: {
       }
     }
     const apiKey = config.embeddingApiKey;
+
+    if (targetUrl) {
+      try {
+        const guard = getProviderValidationGuard();
+        targetUrl = (
+          guard === "public-only"
+            ? parseAndValidatePublicUrl(targetUrl)
+            : parseAndValidateNonMetadataUrl(targetUrl)
+        ).toString();
+      } catch {
+        console.warn("[CACHE] Blocked invalid or unsafe embedding endpoint");
+        return null;
+      }
+    }
 
     if (!targetUrl) {
       if (provider === "lemonade") {

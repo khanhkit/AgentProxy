@@ -264,7 +264,7 @@ test("request-scoped refusal is not replayed against the same model on another a
   assert.deepEqual(calls, ["codex/gpt-6-astra-high@conn-astra-1", "codex/gpt-5.6-sol@conn-sol"]);
 });
 
-test("combo advances to the next target after a pre-content Responses SSE failure", async () => {
+test("combo does not replay an ambiguous pre-content Responses SSE failure onto another target", async () => {
   const calls: string[] = [];
   const healthy = [
     "event: response.output_text.delta",
@@ -295,12 +295,11 @@ test("combo advances to the next target after a pre-content Responses SSE failur
     relayOptions: null as never,
   });
 
-  assert.equal(result.ok, true);
-  assert.deepEqual(calls, ["openai/primary", "openai/secondary"]);
-  assert.match(await result.text(), /fallback ok/);
+  assert.equal(result.status, 502);
+  assert.deepEqual(calls, ["openai/primary"]);
 });
 
-test("round-robin retries a transient streaming failure on the same target", async () => {
+test("round-robin does not retry an ambiguous streaming failure without replay authority", async () => {
   const calls: string[] = [];
   const result = await handleComboChat({
     body: { stream: true, messages: [{ role: "user", content: "hello" }] },
@@ -322,7 +321,7 @@ test("round-robin retries a transient streaming failure on the same target", asy
   });
 
   assert.equal(result.status, 502);
-  assert.deepEqual(calls, ["codex/gpt-6-astra-high", "codex/gpt-6-astra-high"]);
+  assert.deepEqual(calls, ["codex/gpt-6-astra-high"]);
 });
 
 test("round-robin does not retry a request-scoped streaming refusal", async () => {
@@ -440,7 +439,7 @@ test("transient streaming failure still records a configured model lockout", asy
   assert.notEqual(getModelLockoutInfo("codex", connectionId, model), null);
 });
 
-test("protected pre-content streaming quality rejection retries the same target once without advancing", async () => {
+test("protected pre-content streaming quality rejection fails closed without replay authority", async () => {
   const calls: string[] = [];
   const failed = failedResponsesSse();
   const healthy = [
@@ -477,12 +476,11 @@ test("protected pre-content streaming quality rejection retries the same target 
     relayOptions: null as never,
   });
 
-  assert.equal(result.ok, true);
-  assert.deepEqual(calls, ["openai/primary", "openai/primary"]);
-  assert.match(await result.text(), /retry ok/);
+  assert.equal(result.status, 502);
+  assert.deepEqual(calls, ["openai/primary"]);
 });
 
-test("native pinned pre-content stream failure still retries the same target safely", async () => {
+test("native pinned pre-content stream failure does not replay without provider proof", async () => {
   clearNativeCodexTurnPinsForTests();
   const body = {
     stream: true,
@@ -543,9 +541,8 @@ test("native pinned pre-content stream failure still retries the same target saf
     relayOptions: null as never,
   });
 
-  assert.equal(result.ok, true);
-  assert.deepEqual(calls, ["codex/gpt-5.6-sol", "codex/gpt-5.6-sol"]);
-  assert.match(await result.text(), /retry ok/);
+  assert.equal(result.status, 502);
+  assert.deepEqual(calls, ["codex/gpt-5.6-sol"]);
   clearNativeCodexTurnPinsForTests();
 });
 
@@ -572,6 +569,7 @@ test("combo cancels a discarded upstream stream after a pre-content Responses SS
     "",
   ].join("\n");
 
+  const calls: string[] = [];
   const result = await handleComboChat({
     body: { stream: true, messages: [{ role: "user", content: "hello" }] },
     combo: {
@@ -583,8 +581,10 @@ test("combo cancels a discarded upstream stream after a pre-content Responses SS
       ],
       config: { maxRetries: 0, retryDelayMs: 0 },
     },
-    handleSingleModel: async (_body: unknown, model: string) =>
-      model.endsWith("/primary") ? primary : sseResponse(healthy),
+    handleSingleModel: async (_body: unknown, model: string) => {
+      calls.push(model);
+      return model.endsWith("/primary") ? primary : sseResponse(healthy);
+    },
     isModelAvailable: async () => true,
     log: silentLog(),
     settings: null,
@@ -592,8 +592,8 @@ test("combo cancels a discarded upstream stream after a pre-content Responses SS
     relayOptions: null as never,
   });
 
-  assert.equal(result.ok, true);
-  assert.match(await result.text(), /fallback ok/);
+  assert.equal(result.status, 502);
+  assert.deepEqual(calls, ["openai/primary"]);
 
   let timeout: ReturnType<typeof setTimeout> | undefined;
   try {

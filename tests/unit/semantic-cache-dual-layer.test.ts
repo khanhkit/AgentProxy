@@ -444,6 +444,26 @@ describe("Semantic Cache — Dual-Layer Architecture", () => {
       const stats = await store.getStats();
       assert.equal(stats.entries, 2);
     });
+    it("treats maxEntries=0 as a disabled memory cache", async () => {
+      const store = new MemoryVectorStore({ maxEntries: 0 });
+      const now = Date.now();
+      await store.set(
+        {
+          id: "disabled",
+          hash: "h0",
+          promptText: "p",
+          model: "m",
+          provider: "p",
+          response: {},
+          tokensSaved: 1,
+          createdAt: now,
+          expiresAt: now + 100000,
+        },
+        100000
+      );
+      assert.equal((await store.getStats()).entries, 0);
+      assert.equal(await store.get("disabled"), null);
+    });
 
     it("expires entries past TTL", async () => {
       const store = new MemoryVectorStore();
@@ -606,9 +626,13 @@ describe("Semantic Cache — Dual-Layer Architecture", () => {
     });
 
     it("times out uncooperative generators that ignore AbortSignal via Promise.race", async () => {
-      // Generator that never resolves and completely ignores AbortSignal
-      const hangingGenerator = () =>
-        new Promise<{ embedding: number[]; inputTokens: number }>(() => {});
+      // Generator that never resolves and completely ignores AbortSignal. Once it times out,
+      // repeated requests must not start additional runaway work until it settles.
+      let calls = 0;
+      const hangingGenerator = () => {
+        calls += 1;
+        return new Promise<{ embedding: number[]; inputTokens: number }>(() => {});
+      };
 
       const t0 = Date.now();
       const res = await generateEmbeddingWithTimeout("hello", hangingGenerator, { timeoutMs: 50 });
@@ -616,6 +640,14 @@ describe("Semantic Cache — Dual-Layer Architecture", () => {
 
       assert.equal(res, null, "Should return null on timeout");
       assert.ok(elapsed >= 45 && elapsed < 500, `Should resolve around 50ms, took ${elapsed}ms`);
+
+      const secondStart = Date.now();
+      const second = await generateEmbeddingWithTimeout("hello again", hangingGenerator, {
+        timeoutMs: 50,
+      });
+      assert.equal(second, null);
+      assert.equal(calls, 1, "timed-out uncooperative generator must be quarantined");
+      assert.ok(Date.now() - secondStart < 40, "quarantined generator must fail open immediately");
     });
   });
 

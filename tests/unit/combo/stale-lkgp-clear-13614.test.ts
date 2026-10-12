@@ -98,3 +98,44 @@ test("default writer clears both persisted pins in the real DB, no warning", asy
   assert.equal(await getLKGP("combo-db", "ek-db"), null);
   assert.deepEqual(warnings, []);
 });
+
+test("failed-target clear uses compare-delete instead of the unsafe generic writer", async () => {
+  const settings = await import("../../../src/lib/db/settings.ts");
+  const comboName = "combo-race-path";
+  const modelId = "combo-race-path-id";
+  await settings.setLKGP(comboName, modelId, "openai", "conn-old");
+  let genericClearCalls = 0;
+
+  await clearStaleLKGP(
+    comboName,
+    null,
+    modelId,
+    null,
+    "COMBO",
+    async () => {
+      genericClearCalls += 1;
+    },
+    { provider: "openai", connectionId: "conn-old" }
+  );
+
+  assert.equal(genericClearCalls, 0);
+  assert.equal(await settings.getLKGP(comboName, modelId), null);
+});
+
+test("atomic LKGP compare-delete preserves a newer replacement pin", async () => {
+  const settings = await import("../../../src/lib/db/settings.ts");
+  const comboName = "combo-cas";
+  const modelId = "combo-cas-id";
+  await settings.setLKGP(comboName, modelId, "openai", "conn-old");
+  const observed = await settings.getLKGP(comboName, modelId);
+  assert.ok(observed);
+
+  await settings.setLKGP(comboName, modelId, "anthropic", "conn-new");
+  const deleted = await settings.clearLKGPIfMatch(comboName, modelId, observed);
+
+  assert.equal(deleted, false);
+  assert.deepEqual(await settings.getLKGP(comboName, modelId), {
+    provider: "anthropic",
+    connectionId: "conn-new",
+  });
+});

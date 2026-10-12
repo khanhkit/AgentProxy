@@ -75,6 +75,7 @@ import {
 import { expandTargetsForAllStrategies } from "./connectionAwareExpansion.ts";
 import {
   validateResponseQuality,
+  qualityValidationContext,
   releaseQualityClone,
   releaseRejectedQualityResponse,
   toRetryAfterDisplayValue,
@@ -97,12 +98,12 @@ import {
   getExhaustedTargetSkipReason,
   requestScopedReplayKey,
 } from "./comboPredicates.ts";
-import { handlePreContentStreamRetry } from "./executeTargetClassify.ts";
+import { qualityValidationFailure } from "./executeTargetClassify.ts";
 import { resolveRoundRobinPersistedCooldown } from "./roundRobinPersistedCooldown.ts";
 import { applyComboTargetExhaustion } from "./targetExhaustion.ts";
 import { isRetryAfterEligibleStatus } from "./unavailableRetryGate.ts";
 import { isRecord } from "./comboData.ts";
-import { createRRDashboardEvents } from "./rrDashboardEvents.ts";
+import { createRRDashboardEvents, sanitizeRoundRobinFailureError } from "./rrDashboardEvents.ts";
 import { attemptCompatRejectedFallback } from "./comboCompatFallback.ts";
 import { applyRequestTagRouting } from "./autoStrategy.ts";
 import {
@@ -705,7 +706,6 @@ export async function handleRoundRobinCombo({
             }
           }
 
-          // Success — validate response quality before returning
           if (result.ok) {
             let rrClone: Response;
             try {
@@ -717,18 +717,20 @@ export async function handleRoundRobinCombo({
               rrClone,
               clientRequestedStream,
               log,
-              config.responseValidation
+              config.responseValidation,
+              signal,
+              qualityValidationContext(modelStr, body)
             );
             releaseQualityClone(rrClone, result, quality);
+            if (quality.clientAborted) {
+              return errorResponse(499, "Client disconnected");
+            }
             if (!quality.valid) {
               releaseRejectedQualityResponse(rrClone, result);
               log.warn(
                 "COMBO-RR",
                 `${modelStr} returned 200 but failed quality check: ${quality.reason}`
               );
-              // #6692: same rationale as handleComboChat's quality-fail branch —
-              // a quality-rejected 200 never marks the connection row unhealthy,
-              // so release the sticky pin here rather than on the next turn.
               {
                 const rrSelectedConnectionId =
                   result.headers?.get("X-AgentProxy-Selected-Connection-Id") ||
@@ -759,10 +761,10 @@ export async function handleRoundRobinCombo({
                 error: quality.reason || "upstream response failed quality validation",
                 kind: qualityFailure.kind,
               });
-              if (
-                handlePreContentStreamRetry(quality, retry, { maxRetries, signal, log }, modelStr)
-              )
-                continue;
+              if (quality.upstreamFailure?.retryable) {
+                // Do not replay an ambiguous upstream execution onto another round-robin target.
+                return qualityValidationFailure(quality).response;
+              }
               if (offset > 0) fallbackCount++;
               break; // move to next model
             }
@@ -897,6 +899,8 @@ export async function handleRoundRobinCombo({
             }
           }
 
+          const safeErrorText = sanitizeRoundRobinFailureError(errorText);
+
           const isStreamReadinessFailure =
             (result.status === 502 || result.status === 504) &&
             isStreamReadinessFailureErrorBody(errorBody);
@@ -911,7 +915,7 @@ export async function handleRoundRobinCombo({
               "COMBO-RR",
               `Local rate-limit queue capacity reached for ${modelStr} — returning without upstream fallback`
             );
-            rrEvents.failed(errorText || "Local queue full", Date.now() - startTime);
+            rrEvents.failed(safeErrorText || "Local queue full", Date.now() - startTime);
             recordComboRequest(combo.name, modelStr, {
               success: false,
               latencyMs: Date.now() - startTime,
@@ -1034,8 +1038,6 @@ export async function handleRoundRobinCombo({
             );
           }
 
-          // Transient error → retry same model.
-          // A token-limit 429 is terminal for the client — never retry it.
           const isTransient =
             !isStreamReadinessFailure &&
             !isTokenLimitBreach &&
@@ -1058,8 +1060,7 @@ export async function handleRoundRobinCombo({
             continue;
           }
 
-          // Done with this model
-          rrEvents.failed(errorText || `HTTP ${result.status}`, Date.now() - startTime);
+          rrEvents.failed(safeErrorText || `HTTP ${result.status}`, Date.now() - startTime);
           recordComboRequest(combo.name, modelStr, {
             success: false,
             latencyMs: Date.now() - startTime,
@@ -1080,12 +1081,12 @@ export async function handleRoundRobinCombo({
             target
           );
           recordedAttempts++;
-          lastError = errorText || String(result.status);
+          lastError = safeErrorText || String(result.status);
           lastStatus = result.status;
           rrOutcomes.push({
             model: modelStr,
             status: result.status,
-            error: errorText || String(result.status),
+            error: safeErrorText || String(result.status),
             kind: classifyComboOutcome(result.status, errorText),
           });
           if (offset > 0) fallbackCount++;

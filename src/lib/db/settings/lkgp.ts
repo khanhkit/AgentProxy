@@ -95,6 +95,27 @@ export async function clearLKGP(comboName: string, modelId: string): Promise<voi
   invalidateCachedLKGP(key);
 }
 
+/** Atomically clear one LKGP pin only if it still equals the record the caller observed. */
+export async function clearLKGPIfMatch(
+  comboName: string,
+  modelId: string,
+  expected: LKGPRecord
+): Promise<boolean> {
+  const db = getDbInstance();
+  const key = `${comboName}:${modelId}`;
+  const canonicalExpected: LKGPRecord = { provider: expected.provider };
+  if (expected.connectionId) canonicalExpected.connectionId = expected.connectionId;
+  const result = db
+    .prepare("DELETE FROM key_value WHERE namespace = 'lkgp' AND key = ? AND value = ?")
+    .run(key, JSON.stringify(canonicalExpected)) as { changes?: number | bigint };
+  const deleted = Number(result.changes ?? 0) > 0;
+  if (deleted) {
+    const { invalidateCachedLKGP } = await import("../readCache");
+    invalidateCachedLKGP(key);
+  }
+  return deleted;
+}
+
 /**
  * Delete every persisted LKGP pin belonging to a combo. Pins are keyed by
  * `${comboName}:${modelId}`, so deleting a combo leaves its pins addressable by
