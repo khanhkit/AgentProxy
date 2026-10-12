@@ -37,6 +37,11 @@ const systemdNotifier = createSystemdNotifier();
 let systemdReadySent = false;
 let standaloneShuttingDown = false;
 const standaloneServers = new Set();
+const parsedStandaloneShutdownTimeoutMs = Number(process.env.SHUTDOWN_TIMEOUT_MS ?? "30000");
+const STANDALONE_SHUTDOWN_TIMEOUT_MS =
+  Number.isFinite(parsedStandaloneShutdownTimeoutMs) && parsedStandaloneShutdownTimeoutMs >= 0
+    ? parsedStandaloneShutdownTimeoutMs
+    : 30000;
 
 async function shutdownStandalone(signal) {
   // `agentproxy serve` is normally inside a process group. A terminal SIGTERM
@@ -45,6 +50,8 @@ async function shutdownStandalone(signal) {
   // in-progress durable flush.
   if (standaloneShuttingDown) return;
   standaloneShuttingDown = true;
+  const forceExitTimer = setTimeout(() => process.exit(1), STANDALONE_SHUTDOWN_TIMEOUT_MS);
+  forceExitTimer.unref?.();
   systemdNotifier.stopping();
 
   let clean = true;
@@ -91,6 +98,7 @@ async function shutdownStandalone(signal) {
   }
   await Promise.allSettled(closePromises);
   systemdNotifier.dispose();
+  clearTimeout(forceExitTimer);
   process.exit(clean ? 0 : 1);
 }
 

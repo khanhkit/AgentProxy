@@ -64,3 +64,27 @@ test("packaged standalone shutdown is idempotent across duplicate group/parent s
     "all supported signals must route to the same standalone lifecycle owner"
   );
 });
+
+
+test("packaged standalone direct-run shutdown is bounded without treating duplicate group signals as force-exit", () => {
+  assert.match(
+    source,
+    /const\s+STANDALONE_SHUTDOWN_TIMEOUT_MS\s*=/,
+    "packaged standalone must resolve its own hard shutdown budget"
+  );
+  assert.match(
+    source,
+    /const\s+forceExitTimer\s*=\s*setTimeout\([\s\S]*?process\.exit\(1\)[\s\S]*?STANDALONE_SHUTDOWN_TIMEOUT_MS/,
+    "direct standalone shutdown must force-exit if lifecycle or transport cleanup hangs"
+  );
+  assert.match(
+    source,
+    /clearTimeout\(forceExitTimer\)[\s\S]*?process\.exit\(clean \? 0 : 1\)/,
+    "successful terminal cleanup must cancel the hard timeout before normal exit"
+  );
+  assert.match(
+    source,
+    /if\s*\(standaloneShuttingDown\)\s*return/,
+    "duplicate process-group/supervisor signals must remain idempotent rather than force-exit mid-flush"
+  );
+});

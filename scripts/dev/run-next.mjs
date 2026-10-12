@@ -274,13 +274,21 @@ async function start() {
     // that the application lifecycle must be allowed to drain first.
     let serverClosePromise;
     try {
-      serverClosePromise = new Promise((resolve, reject) =>
-        server.close((error) => (error ? reject(error) : resolve()))
-      );
-      // Idle keep-alive sockets are not active work and must not admit a fresh
-      // request after shutdown has started. Active/SSE sockets remain until the
-      // application lifecycle drains or the shared hard deadline expires.
-      server.closeIdleConnections?.();
+      if (!server.listening) {
+        serverClosePromise = Promise.resolve();
+      } else {
+        serverClosePromise = new Promise((resolve, reject) =>
+          server.close((error) => (error ? reject(error) : resolve()))
+        );
+        // Attach rejection handling immediately so a close callback failure cannot
+        // become unhandled while the application lifecycle is still draining. The
+        // original promise remains rejected and is awaited below for exit status.
+        serverClosePromise.catch(() => {});
+        // Idle keep-alive sockets are not active work and must not admit a fresh
+        // request after shutdown has started. Active/SSE sockets remain until the
+        // application lifecycle drains or the shared hard deadline expires.
+        server.closeIdleConnections?.();
+      }
     } catch (error) {
       console.error("[SHUTDOWN] Failed to stop HTTP admission:", error);
       exitCode = exitCode || 1;

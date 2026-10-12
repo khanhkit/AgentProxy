@@ -98,6 +98,26 @@ test("custom Next runner rejects HTTP close errors and closes idle sockets at ad
   );
 });
 
+test("custom Next runner handles HTTP close rejection immediately and tolerates pre-listen signals", () => {
+  const admissionStop = runNextSource.indexOf("let serverClosePromise");
+  const applicationCleanup = runNextSource.indexOf(
+    "await globalThis.__agentproxyRequestShutdown?.(signal)"
+  );
+  assert.ok(admissionStop >= 0 && applicationCleanup > admissionStop);
+
+  const admissionSlice = runNextSource.slice(admissionStop, applicationCleanup);
+  assert.match(
+    admissionSlice,
+    /if\s*\(\s*!server\.listening\s*\)[\s\S]*?serverClosePromise\s*=\s*Promise\.resolve\(\)/,
+    "an early signal before listen must be a clean no-op for HTTP admission close"
+  );
+  assert.match(
+    admissionSlice,
+    /serverClosePromise\s*=\s*new Promise[\s\S]*?serverClosePromise\.catch\(\(\) => \{\}\)/,
+    "serverClosePromise must attach a rejection handler immediately before lifecycle drain awaits it"
+  );
+});
+
 test("custom Next runner validates shutdown timeout before clamping", () => {
   assert.match(
     runNextSource,
