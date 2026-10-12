@@ -345,10 +345,7 @@ export function stopRateLimitWatchdog(): void {
   clearInterval(watchdogInterval);
   watchdogInterval = null;
 }
-
 globalThis.__agentproxyStopRateLimitWatchdog = stopRateLimitWatchdog;
-
-// Process signals are owned by the main lifecycle coordinator/entrypoint.
 export async function shutdownRateLimitManager(): Promise<void> {
   stopRateLimitWatchdog();
   let persistenceError: unknown;
@@ -362,7 +359,6 @@ export async function shutdownRateLimitManager(): Promise<void> {
       errorRateLimit("[RATE-LIMIT] Failed to persist learned limits during shutdown:", error);
     }
   }
-
   const stops = Array.from(limiters.values(), (limiter) =>
     trackAsyncOperation(Promise.resolve(limiter.stop({ dropWaitingJobs: false })))
   );
@@ -373,9 +369,7 @@ export async function shutdownRateLimitManager(): Promise<void> {
   preservedReplacementSettings.clear();
   if (persistenceError) throw persistenceError;
 }
-
 globalThis.__agentproxyShutdownRateLimit = shutdownRateLimitManager;
-
 function trackAsyncOperation<T>(promise: Promise<T>): Promise<T> {
   pendingAsyncOperations.add(promise);
   // Avoid a discarded `.finally()` promise mirroring rejections as unhandled.
