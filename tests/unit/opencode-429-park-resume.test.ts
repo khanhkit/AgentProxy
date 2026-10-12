@@ -446,7 +446,14 @@ describe("opencode 429 park-and-resume", () => {
   });
 
   it("preserves a whitespace-variant DONE marker after clean replay EOF", async () => {
-    const bodyText = 'data: {"choices":[{"delta":{"content":"ok"}}]}\r\n\r\ndata:  [DONE]\r\n\n';
+    const bodyText = [
+      'data: {"choices":[{"delta":{"content":"ok"}}]}',
+      "",
+      "data:  [DONE]",
+      "",
+      'data: {"provider_internal":"must-not-leak-after-terminal"}',
+      "",
+    ].join("\r\n");
     const account = {
       fingerprint: "c".repeat(32),
       cooldownUntil: 0,
@@ -485,11 +492,18 @@ describe("opencode 429 park-and-resume", () => {
 
     assert.match(text, /"content":"ok"/u);
     assert.match(text, /data: \[DONE\]\n\n/u, "terminal marker is canonicalized after validation");
+    assert.doesNotMatch(
+      text,
+      /must-not-leak-after-terminal/u,
+      "post-terminal replay frames are discarded"
+    );
     assert.equal(actions?.replayed, true);
   });
 
   it("preserves multiline SSE data events until the event boundary", async () => {
     const bodyText = [
+      "id: replay-event-1",
+      "retry: 250",
       'data: {"choices":[{"delta":{"content":',
       'data: "multiline"},"finish_reason":null}]}',
       "",

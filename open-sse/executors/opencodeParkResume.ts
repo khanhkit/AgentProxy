@@ -408,9 +408,10 @@ export async function runParkAndReplay<TAccount extends RotatableAccount>(
               if (data === undefined) return;
               const frame = `${preserveEventPrefix ? `event: ${eventType}\n` : ""}data: ${data}\n\n`;
 
-              if (terminalSeen || isTerminal) {
-                terminalSeen ||= isTerminal;
-                withheldTerminalTail += frame;
+              if (terminalSeen) return;
+              if (isTerminal) {
+                terminalSeen = true;
+                withheldTerminalTail = frame;
                 return;
               }
               controller.enqueue(encoder.encode(frame));
@@ -436,9 +437,10 @@ export async function runParkAndReplay<TAccount extends RotatableAccount>(
                 }
                 const dataLine = line.trimStart();
                 if (dataLine.startsWith("data:")) {
-                  pendingDataLines.push(dataLine.slice("data:".length).trimStart());
+                  pendingDataLines.push(dataLine.slice("data:".length).replace(/^ /u, ""));
                   continue;
                 }
+                if (/^(?:id|retry):/u.test(dataLine)) continue;
                 pendingEventInvalid = true;
               }
               if (atEof) flushReplayEvent();
