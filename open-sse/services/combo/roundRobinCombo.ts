@@ -762,7 +762,6 @@ export async function handleRoundRobinCombo({
                 kind: qualityFailure.kind,
               });
               if (quality.upstreamFailure?.retryable) {
-                // Do not replay an ambiguous upstream execution onto another round-robin target.
                 return qualityValidationFailure(quality).response;
               }
               if (offset > 0) fallbackCount++;

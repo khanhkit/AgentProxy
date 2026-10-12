@@ -100,7 +100,7 @@ export function normalizeConversationForEmbedding(
 
   return lines.join("\n").trim();
 }
-const timedOutEmbeddingGenerators = new WeakSet<EmbeddingGenerator>();
+const embeddingGeneratorCooldownUntil = new WeakMap<EmbeddingGenerator, number>();
 
 /**
  * Executes embedding generation with fail-open timeout guard.
@@ -114,7 +114,10 @@ export async function generateEmbeddingWithTimeout(
     timeoutMs?: number;
   }
 ): Promise<EmbeddingResult | null> {
-  if (timedOutEmbeddingGenerators.has(generator)) return null;
+  const now = Date.now();
+  const cooldownUntil = embeddingGeneratorCooldownUntil.get(generator) ?? 0;
+  if (cooldownUntil > now) return null;
+  if (cooldownUntil) embeddingGeneratorCooldownUntil.delete(generator);
   if (!text || text.length === 0) return null;
 
   const timeoutMs = options?.timeoutMs ?? 3000;
@@ -123,7 +126,7 @@ export async function generateEmbeddingWithTimeout(
 
   const timeoutPromise = new Promise<null>((resolve) => {
     timer = setTimeout(() => {
-      timedOutEmbeddingGenerators.add(generator);
+      embeddingGeneratorCooldownUntil.set(generator, Date.now() + timeoutMs);
       controller.abort();
       console.warn(`[CACHE] Embedding generation timed out after ${timeoutMs}ms`);
       resolve(null);
@@ -137,7 +140,7 @@ export async function generateEmbeddingWithTimeout(
         provider: options?.provider,
         signal: controller.signal,
       })
-    ).finally(() => timedOutEmbeddingGenerators.delete(generator));
+    );
 
     const res = await Promise.race([generatorPromise, timeoutPromise]);
     return res;

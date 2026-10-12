@@ -648,6 +648,13 @@ describe("Semantic Cache — Dual-Layer Architecture", () => {
       assert.equal(second, null);
       assert.equal(calls, 1, "timed-out uncooperative generator must be quarantined");
       assert.ok(Date.now() - secondStart < 40, "quarantined generator must fail open immediately");
+
+      await new Promise((resolve) => setTimeout(resolve, 60));
+      const third = await generateEmbeddingWithTimeout("hello after cooldown", hangingGenerator, {
+        timeoutMs: 50,
+      });
+      assert.equal(third, null);
+      assert.equal(calls, 2, "quarantine must be a bounded cooldown, not a permanent generator ban");
     });
   });
 

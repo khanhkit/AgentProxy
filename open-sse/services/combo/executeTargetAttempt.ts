@@ -454,7 +454,6 @@ export async function executeTargetAttempt(opts: {
         });
         state.observeFailure(false, target.executionKey);
         if (quality.upstreamFailure?.retryable) {
-          // Retryable transport status is not replay authority: execution may already have occurred.
           return qualityValidationFailure(quality);
         }
         return protectedPriorityTarget ? qualityValidationFailure(quality) : null;

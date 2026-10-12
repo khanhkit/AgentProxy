@@ -136,7 +136,7 @@ export const IDENTICAL_MODEL_ERROR_STREAK = 3;
 function normalizeModelErrorForStreak(error: string): string {
   return String(error || "")
     .toLowerCase()
-    .replace(/\brequest[ _-]?id\s*[:=]?\s*(?:req[_-]?)?[a-z0-9._:-]+/gi, "request_id=<id>")
+    .replace(/\brequest[ _-]?id\s*[:=]\s*(?:req[_-]?)?[a-z0-9._:-]+/gi, "request_id=<id>")
     .replace(/\breq_[a-z0-9._:-]+/gi, "<request_id>")
     .replace(
       /\bretry\s+(?:after|in)\s+\d+(?:\.\d+)?\s*(?:ms|s|sec|secs|seconds?)?\b/gi,

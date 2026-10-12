@@ -139,3 +139,22 @@ test("atomic LKGP compare-delete preserves a newer replacement pin", async () =>
     connectionId: "conn-new",
   });
 });
+
+test("atomic LKGP compare-delete accepts legacy semantic encodings without deleting replacements", async () => {
+  const settings = await import("../../../src/lib/db/settings.ts");
+  const db = dbCore.getDbInstance();
+
+  db.prepare("INSERT OR REPLACE INTO key_value (namespace, key, value) VALUES ('lkgp', ?, ?)")
+    .run("combo-legacy:model-a", JSON.stringify("openai"));
+  const legacyObserved = await settings.getLKGP("combo-legacy", "model-a");
+  assert.deepEqual(legacyObserved, { provider: "openai" });
+  assert.equal(await settings.clearLKGPIfMatch("combo-legacy", "model-a", legacyObserved!), true);
+  assert.equal(await settings.getLKGP("combo-legacy", "model-a"), null);
+
+  db.prepare("INSERT OR REPLACE INTO key_value (namespace, key, value) VALUES ('lkgp', ?, ?)")
+    .run("combo-legacy:model-b", JSON.stringify({ connectionId: "conn-1", provider: "openai" }));
+  const reorderedObserved = await settings.getLKGP("combo-legacy", "model-b");
+  assert.deepEqual(reorderedObserved, { connectionId: "conn-1", provider: "openai" });
+  assert.equal(await settings.clearLKGPIfMatch("combo-legacy", "model-b", reorderedObserved!), true);
+  assert.equal(await settings.getLKGP("combo-legacy", "model-b"), null);
+});

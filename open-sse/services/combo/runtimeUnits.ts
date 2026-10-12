@@ -359,7 +359,7 @@ export async function executeRuntimeUnitCombo(args: {
           rejectedModelKeys.add(requestScopedReplayKey(unit.modelStr));
         lastResponse = qualityValidationFailure(quality).response;
         if (qualityRetryable) {
-          // A retryable status alone cannot prove this unit is safe to replay elsewhere.
+          await observeFailure(lastResponse, unit);
           return { response: finalFailure(lastResponse), unit };
         }
       }

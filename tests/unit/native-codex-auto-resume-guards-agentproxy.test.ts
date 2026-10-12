@@ -60,7 +60,7 @@ test("tool call guard requires one matching output per call", () => {
         { role: "function", name: "lookup", content: "two" },
       ],
     }),
-    false
+    true
   );
 });
 

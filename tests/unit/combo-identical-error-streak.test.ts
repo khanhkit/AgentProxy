@@ -101,6 +101,16 @@ test("dynamic request ids, retry hints, and quoted model labels do not reset the
 });
 
 
+
+test("request-id labels without an actual id value do not collapse distinct model errors", () => {
+  const errors = [
+    entry({ error: "[400]: request id missing" }),
+    entry({ error: "[400]: request id malformed" }),
+    entry({ error: "[400]: request id invalid" }),
+  ];
+  assert.equal(hasIdenticalModelErrorStreak(errors), false);
+});
+
 test("request-scoped replay suppression is provider-scoped for the same model id", () => {
   assert.equal(requestScopedReplayKey("openai/shared-model"), "openai/shared-model");
   assert.equal(requestScopedReplayKey("anthropic/shared-model"), "anthropic/shared-model");

@@ -37,22 +37,26 @@ export interface LKGPRecord {
   connectionId?: string;
 }
 
+function parseLKGPValue(value: string | undefined): LKGPRecord | null {
+  if (!value) return null;
+  try {
+    const parsed = JSON.parse(value);
+    if (typeof parsed === "object" && parsed !== null && "provider" in parsed) {
+      return parsed as LKGPRecord;
+    }
+    return { provider: String(parsed) };
+  } catch {
+    return { provider: value };
+  }
+}
+
 export async function getLKGP(comboName: string, modelId: string): Promise<LKGPRecord | null> {
   const db = getDbInstance();
   const key = `${comboName}:${modelId}`;
   const row = db
     .prepare("SELECT value FROM key_value WHERE namespace = 'lkgp' AND key = ?")
     .get(key) as { value?: string } | undefined;
-  if (!row?.value) return null;
-  try {
-    const parsed = JSON.parse(row.value);
-    if (typeof parsed === "object" && parsed !== null && "provider" in parsed) {
-      return parsed as LKGPRecord;
-    }
-    return { provider: String(parsed) };
-  } catch {
-    return { provider: row.value };
-  }
+  return parseLKGPValue(row?.value);
 }
 
 export async function setLKGP(
@@ -103,12 +107,20 @@ export async function clearLKGPIfMatch(
 ): Promise<boolean> {
   const db = getDbInstance();
   const key = `${comboName}:${modelId}`;
-  const canonicalExpected: LKGPRecord = { provider: expected.provider };
-  if (expected.connectionId) canonicalExpected.connectionId = expected.connectionId;
-  const result = db
-    .prepare("DELETE FROM key_value WHERE namespace = 'lkgp' AND key = ? AND value = ?")
-    .run(key, JSON.stringify(canonicalExpected)) as { changes?: number | bigint };
-  const deleted = Number(result.changes ?? 0) > 0;
+  const matchesExpected = (current: LKGPRecord | null): boolean =>
+    current?.provider === expected.provider &&
+    (current.connectionId ?? null) === (expected.connectionId ?? null);
+  let deleted = false;
+  db.immediate(() => {
+    const row = db
+      .prepare("SELECT value FROM key_value WHERE namespace = 'lkgp' AND key = ?")
+      .get(key) as { value?: string } | undefined;
+    if (!matchesExpected(parseLKGPValue(row?.value))) return;
+    const result = db
+      .prepare("DELETE FROM key_value WHERE namespace = 'lkgp' AND key = ?")
+      .run(key) as { changes?: number | bigint };
+    deleted = Number(result.changes ?? 0) > 0;
+  });
   if (deleted) {
     const { invalidateCachedLKGP } = await import("../readCache");
     invalidateCachedLKGP(key);
