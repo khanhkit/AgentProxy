@@ -197,3 +197,27 @@ test("AP-ISS-0194 OCR: oversized single-line Responses events fail closed at the
     /Responses SSE event line exceeds 16777216 bytes/
   );
 });
+
+test("AP-ISS-0194 OCR: downstream cancellation propagates through the sequence normalizer", async () => {
+  let cancelReason: unknown = null;
+  const source = new ReadableStream<Uint8Array>({
+    start(controller) {
+      controller.enqueue(encoder.encode('data: {"type":"response.output_text.delta"'));
+    },
+    cancel(reason) {
+      cancelReason = reason;
+    },
+  });
+
+  const reader = source.pipeThrough(createResponsesSequenceNormalizerTransform()).getReader();
+  const pendingRead = reader.read();
+  await new Promise((resolve) => setTimeout(resolve, 0));
+  await reader.cancel("client-disconnect");
+
+  assert.deepEqual(await pendingRead, { value: undefined, done: true });
+  assert.equal(
+    cancelReason,
+    "client-disconnect",
+    "downstream cancellation reaches upstream source"
+  );
+});
