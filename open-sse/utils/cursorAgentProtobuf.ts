@@ -1474,7 +1474,8 @@ function assistantMessageLines(message: ChatMessage, text: string): string[] {
   // of the gateway's own serialization on every subsequent turn — this
   // breaks the compounding loop at the carrier. Only ASSISTANT text is
   // scrubbed: a user legitimately quoting a dialect line must reach the model.
-  const lines = text ? [`Assistant: ${scrubKimiNarrationText(text).content || text}`] : [];
+  const scrubbedText = text ? scrubKimiNarrationText(text).content : "";
+  const lines = scrubbedText ? [`Assistant: ${scrubbedText}`] : [];
   for (const toolCall of message.tool_calls ?? []) {
     const name = toolCall.function?.name ?? "(unknown)";
     const args = toolCall.function?.arguments ?? "";

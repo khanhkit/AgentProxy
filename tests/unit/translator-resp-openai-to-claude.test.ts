@@ -441,6 +441,35 @@ test("OpenAI stream: XML <invoke> block in content becomes tool_use at finish", 
   assert.equal(delta.delta.stop_reason, "tool_use");
 });
 
+test("AP-ISS-0194: incomplete DSML holdback is released as text at stream finish", () => {
+  const state = createState();
+  const partial = "Before <｜DSML｜:Read><path>/tmp/unfinished";
+  const first = openaiToClaudeResponse(
+    {
+      id: "chatcmpl-dsml-holdback",
+      model: "deepseek-v4",
+      choices: [{ index: 0, delta: { content: partial }, finish_reason: null }],
+    },
+    state
+  );
+  const final = openaiToClaudeResponse(
+    {
+      id: "chatcmpl-dsml-holdback",
+      model: "deepseek-v4",
+      choices: [{ index: 0, delta: {}, finish_reason: "stop" }],
+      usage: { prompt_tokens: 3, completion_tokens: 4, total_tokens: 7 },
+    },
+    state
+  );
+  const result = flatten([first, final]);
+  const text = result
+    .filter((event) => event.type === "content_block_delta" && event.delta?.type === "text_delta")
+    .map((event) => event.delta.text)
+    .join("");
+
+  assert.equal(text, partial, "terminal flush must not silently drop an incomplete DSML block");
+});
+
 test("OpenAI stream: XML invoke block across two streaming chunks", () => {
   const state = createState();
   // Chunk 1: partial XML

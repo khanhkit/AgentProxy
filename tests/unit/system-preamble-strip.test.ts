@@ -24,6 +24,13 @@ test("strips analysis echo split across streaming chunks", () => {
   assert.equal(strip("</analysis>\n\n대답입니다."), "대답입니다.");
 });
 
+test("AP-ISS-0194: nested analysis blocks stay suppressed until the outer close", () => {
+  const strip = createSystemPreambleStripper();
+  const echoed = "<analysis>outer <analysis>inner</analysis> still-system</analysis>\n\nAnswer";
+
+  assert.equal(strip(echoed), "Answer");
+});
+
 test("strips consecutive analysis + summary echo blocks", () => {
   const strip = createSystemPreambleStripper();
   const t = "<analysis>\nA\n</analysis>\n<summary>\nS\n</summary>\n\n결론";
@@ -128,4 +135,12 @@ test("REGRESSION (3a8515c): a long <analysis> summary block loses ~90% of its co
     out.includes(inside.slice(0, 40)),
     "the summary INSIDE <analysis> MUST survive (not be suppressed as an echo); only ~tail survives today"
   );
+});
+
+test("AP-ISS-0194 OCR: malformed recognized-tag nesting is released as real content immediately", () => {
+  const strip = createSystemPreambleStripper();
+  const malformed = "<analysis>prefix</summary>real answer";
+
+  assert.equal(strip(malformed), malformed);
+  assert.equal(strip(" tail"), " tail");
 });

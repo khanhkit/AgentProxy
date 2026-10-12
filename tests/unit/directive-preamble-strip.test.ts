@@ -38,6 +38,12 @@ test("flushes matched prefix as real content when stream diverges from directive
   assert.equal(strip("x"), "Respond ONLY in the samx"); // diverges at 'x'
 });
 
+test("does not duplicate a same-chunk match prefix when the chunk later diverges", () => {
+  const strip = createDirectivePreambleStripper(DIRECTIVE);
+  assert.equal(strip("Respond ONLY in the sam"), "");
+  assert.equal(strip("eXtail"), "Respond ONLY in the sameXtail");
+});
+
 test("passes content through untouched when it never matches the directive", () => {
   const strip = createDirectivePreambleStripper(DIRECTIVE);
   assert.equal(strip("안녕하세요. 일반적인 응답입니다."), "안녕하세요. 일반적인 응답입니다.");

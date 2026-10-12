@@ -256,7 +256,7 @@ export async function sampleResourceSignals(
         readText(path.join(cgroupDirectory, "memory.high")),
         readText(path.join(cgroupDirectory, "memory.events")),
         readText(path.join(cgroupDirectory, "memory.stat")),
-        readText(path.join(cgroupDirectory, "memory.pressure")),
+        readText(path.join(cgroupDirectory, "memory.pressure")).catch(() => null),
       ])
     : null;
   // Named bindings instead of positional indices: the read order above is

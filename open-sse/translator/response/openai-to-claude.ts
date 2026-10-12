@@ -568,7 +568,10 @@ export function openaiToClaudeResponse(chunk, state) {
     const flushedPreamble =
       (state._directiveStripper?.flush?.() ?? "") +
       (state._systemPreambleStripper?.flush?.() ?? "");
-    if (flushedPreamble) {
+    const flushedDsmlHoldback = state._dsmlHoldback || "";
+    state._dsmlHoldback = undefined;
+    const flushedText = flushedPreamble + flushedDsmlHoldback;
+    if (flushedText) {
       if (!state.textBlockStarted || state.textBlockClosed) {
         state.textBlockIndex = state.nextBlockIndex++;
         state.textBlockStarted = true;
@@ -582,7 +585,7 @@ export function openaiToClaudeResponse(chunk, state) {
       results.push({
         type: "content_block_delta",
         index: state.textBlockIndex,
-        delta: { type: "text_delta", text: flushedPreamble },
+        delta: { type: "text_delta", text: flushedText },
       });
     }
 

@@ -71,18 +71,15 @@ export type AddedWaitCause = "throttle" | "park" | "throttle+park";
 
 /**
  * Cumulative wait before dispatch (pacing, park) on the capture sink.
- * Snapshot: callers publish cumulative totals, so last-write-wins loses
- * nothing. Best-effort like noteRotationAccount: no-op outside a capture.
+ * Snapshot: callers publish cumulative totals. Empty or invalid later
+ * snapshots do not erase the last valid cumulative value.
+ * Best-effort like noteRotationAccount: no-op outside a capture.
  */
 export function noteAddedWait(totalMs: number, causes: Set<AddedWaitCause>): void {
   try {
     const sink = getAppliedProxyContext().getStore();
     if (!sink) return;
-    if (!Number.isFinite(totalMs) || totalMs <= 0 || causes.size === 0) {
-      sink.addedWaitMs = null;
-      sink.addedWaitCause = null;
-      return;
-    }
+    if (!Number.isFinite(totalMs) || totalMs <= 0 || causes.size === 0) return;
     sink.addedWaitMs = Math.round(totalMs);
     sink.addedWaitCause = causes.size > 1 ? "throttle+park" : ([...causes][0] ?? null);
   } catch {
@@ -106,4 +103,3 @@ export function readAddedWait(): { ms: number | null; cause: string | null } | n
     return null;
   }
 }
-

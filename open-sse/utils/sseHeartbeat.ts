@@ -14,7 +14,7 @@ const HEARTBEAT_ENCODER = new TextEncoder();
 const OPENAI_RESPONSES_IN_PROGRESS_PAYLOAD = `data: ${JSON.stringify({
   type: "response.in_progress",
   sequence_number: SYNTHETIC_RESPONSES_SEQUENCE_NUMBER,
-  response: { id: null, status: "in_progress" },
+  response: { status: "in_progress" },
 })}\n\n`;
 
 export const DEFAULT_SSE_HEARTBEAT_INTERVAL_MS = 15_000;
