@@ -173,6 +173,32 @@ test("default does not override a budget-only signal and force replaces discrete
   assert.equal(policy.applyReasoningRuleDirective(untouched), untouched);
 });
 
+test("format-specific default routing drops stale incompatible reasoning effort carriers", () => {
+  const directive = {
+    id: "default-high",
+    effortMode: "default",
+    targetEffort: "high",
+    budgetAction: "preserve",
+    budgetTokens: null,
+  };
+  const input = {
+    reasoning: { effort: "low", summary: "auto" },
+    output_config: { effort: "low", format: "compact" },
+    _agentproxyReasoningRule: directive,
+  };
+  const claude = policy.applyReasoningRuleDirective(input, "claude") as Record<string, unknown>;
+  assert.deepEqual(claude.reasoning, { summary: "auto" });
+  assert.deepEqual(claude.output_config, { effort: "high", format: "compact" });
+
+  const responses = policy.applyReasoningRuleDirective(input, "openai-responses") as Record<
+    string,
+    unknown
+  >;
+  assert.deepEqual(responses.reasoning, { effort: "high", summary: "auto" });
+  assert.deepEqual(responses.output_config, { format: "compact" });
+  assert.deepEqual(input.reasoning, { effort: "low", summary: "auto" });
+});
+
 test("CRUD validates references, invalidates cache, and cascades deleted owners", async () => {
   const key = await apiKeysDb.createApiKey("Owner", "reasoning-owner-machine");
   const combo = await combosDb.createCombo({
