@@ -1010,6 +1010,7 @@ export function pipeWithDisconnect(
   let stallBytes = 0;
   let stallEvents = 0;
   let stallTail = "";
+  let stallLineCarry = "";
   const stallTypes = new Map<string, number>();
 
   const bumpStallType = (name: string): void => {
@@ -1050,11 +1051,23 @@ export function pipeWithDisconnect(
     if (stallTail.length > STALL_TAIL_MAX) {
       stallTail = stallTail.slice(-STALL_TAIL_MAX);
     }
-    for (const line of text.split("\n")) {
+
+    const lines = `${stallLineCarry}${text}`.split("\n");
+    stallLineCarry = lines.pop() ?? "";
+    if (stallLineCarry.length > STALL_TAIL_MAX) {
+      stallLineCarry = stallLineCarry.slice(-STALL_TAIL_MAX);
+    }
+    for (const line of lines) {
       const trimmed = line.trim();
       if (!trimmed) continue;
       noteStallLine(trimmed);
     }
+  };
+
+  const flushStallLineCarry = (): void => {
+    const trimmed = stallLineCarry.trim();
+    stallLineCarry = "";
+    if (trimmed) noteStallLine(trimmed);
   };
 
   const formatStallSummary = (): string => {
@@ -1080,6 +1093,7 @@ export function pipeWithDisconnect(
     contentStallTimer = setTimeout(() => {
       contentStallTimer = null;
       contentStallFired = true;
+      flushStallLineCarry();
       const stallSummary = formatStallSummary();
       const stallError = new Error(
         `stream content stall: no model output within ${contentStallTimeoutMs}ms (${stallSummary})`

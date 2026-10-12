@@ -526,6 +526,16 @@ test("handleResponsesCore injects SSE keepalive frames for Responses streams", a
     assert.match(sse, /data: \{"type":"response\.in_progress",/);
     assert.match(sse, /event: response\.created/);
     assert.match(sse, /data: \[DONE\]/);
+
+    const sequenceNumbers = Array.from(sse.matchAll(/"sequence_number":(\d+)/g), (match) =>
+      Number(match[1])
+    );
+    assert.ok(sequenceNumbers.length >= 2, "expected real events plus a synthetic heartbeat");
+    assert.deepEqual(
+      sequenceNumbers,
+      sequenceNumbers.map((_, index) => index + 1),
+      "Responses wire events must have one strictly monotonic per-stream sequence"
+    );
   } finally {
     t.mock.timers.reset();
   }

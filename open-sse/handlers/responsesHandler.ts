@@ -9,6 +9,7 @@ import { convertResponsesApiFormat } from "../translator/helpers/responsesApiHel
 import { collectResponsesCustomToolNames } from "../translator/request/openai-responses/additionalTools.ts";
 import { createResponsesApiTransformStream } from "../transformer/responsesTransformer.ts";
 import { createSseHeartbeatTransform, HEARTBEAT_SHAPES } from "../utils/sseHeartbeat.ts";
+import { createResponsesSequenceNormalizerTransform } from "../utils/responsesSequence.ts";
 import { SSE_HEARTBEAT_INTERVAL_MS } from "../config/constants.ts";
 
 /**
@@ -94,13 +95,16 @@ export async function handleResponsesCore({
     customToolNames,
     requestToolIdentityMap,
   });
-  const transformedBody = response.body.pipeThrough(transformStream).pipeThrough(
-    createSseHeartbeatTransform({
-      signal,
-      intervalMs: SSE_HEARTBEAT_INTERVAL_MS,
-      shape: HEARTBEAT_SHAPES.OPENAI_RESPONSES_IN_PROGRESS,
-    })
-  );
+  const transformedBody = response.body
+    .pipeThrough(transformStream)
+    .pipeThrough(
+      createSseHeartbeatTransform({
+        signal,
+        intervalMs: SSE_HEARTBEAT_INTERVAL_MS,
+        shape: HEARTBEAT_SHAPES.OPENAI_RESPONSES_IN_PROGRESS,
+      })
+    )
+    .pipeThrough(createResponsesSequenceNormalizerTransform());
 
   return {
     success: true,

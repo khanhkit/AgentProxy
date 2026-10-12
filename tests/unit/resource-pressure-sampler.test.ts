@@ -190,6 +190,37 @@ describe("sampleResourceSignals", () => {
     assert.equal(signals.psi?.fullAvg10, 0);
   });
 
+  it("keeps cgroup metrics and falls back to host PSI when optional memory.pressure rejects", async () => {
+    const files = new Map<string, string>([
+      ["/proc/self/cgroup", "0::/slice/service\n"],
+      ["/proc/self/mountinfo", "43 34 0:35 / /sys/fs/cgroup rw - cgroup2 cgroup2 rw\n"],
+      ["/sys/fs/cgroup/slice/service/memory.current", `${800 * MiB}\n`],
+      ["/sys/fs/cgroup/slice/service/memory.max", `${GiB}\n`],
+      ["/sys/fs/cgroup/slice/service/memory.high", "max\n"],
+      ["/sys/fs/cgroup/slice/service/memory.events", "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\n"],
+      ["/sys/fs/cgroup/slice/service/memory.stat", "anon 268435456\nfile 0\n"],
+      [
+        "/proc/pressure/memory",
+        "some avg10=1.50 avg60=2.00 avg300=3.25 total=9\nfull avg10=0.25 avg60=0.50 avg300=0.75 total=1\n",
+      ],
+    ]);
+    const signals = await sampleResourceSignals({
+      nowMs: () => 42,
+      memoryUsage: () => memoryUsage(250 * MiB),
+      heapStatistics: () => ({ heap_size_limit: GiB, used_heap_size: 250 * MiB }),
+      fs: {
+        readText: async (filePath) => {
+          if (filePath.endsWith("/memory.pressure")) throw new Error("ENOENT");
+          return files.get(filePath) ?? null;
+        },
+      },
+    });
+
+    assert.equal(signals.cgroup.currentBytes, 800 * MiB);
+    assert.equal(signals.cgroup.maxBytes, GiB);
+    assert.equal(signals.psi?.someAvg10, 1.5);
+  });
+
   it("falls back to host PSI when cgroup memory.pressure is absent", async () => {
     const fs = mapFs([
       ["/proc/self/cgroup", "0::/slice/service\n"],

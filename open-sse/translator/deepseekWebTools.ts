@@ -243,7 +243,19 @@ function pairToolBlocks(tokens: TagToken[], textLen: number): ToolBlock[] {
 
 // ── Attribute / XML-child helpers ────────────────────────────────────────────
 
-/** Read an attribute value, tolerating backslash-escaped quotes inside the value. */
+const XML_ATTRIBUTE_ENTITIES: Record<string, string> = {
+  "&amp;": "&",
+  "&quot;": '"',
+  "&apos;": "'",
+  "&lt;": "<",
+  "&gt;": ">",
+};
+
+function decodeXmlAttribute(value: string): string {
+  return value.replace(/&(amp|quot|apos|lt|gt);/g, (entity) => XML_ATTRIBUTE_ENTITIES[entity]);
+}
+
+/** Read an attribute value, tolerating backslash-escaped quotes and XML entities. */
 function getAttr(attrs: string, name: string): string | null {
   const re = new RegExp(`\\b${name}\\s*=\\s*("|')`);
   const m = re.exec(attrs);
@@ -262,7 +274,7 @@ function getAttr(attrs: string, name: string): string | null {
     out += ch;
     j += 1;
   }
-  return out;
+  return decodeXmlAttribute(out);
 }
 
 function getXmlChild(inner: string, tag: string): string | null {
@@ -473,14 +485,53 @@ function extractCall(
 const DSML_INVOKE_OPEN_RE = /<[｜|]{1,2}DSML[｜|]{1,2}\s+(calls|invoke|parameter)([^>]*)>/gi;
 const DSML_INVOKE_CLOSE_RE = /<\/[｜|]{1,2}DSML[｜|]{1,2}\s+(calls|invoke|parameter)\s*>/gi;
 
+function hasBalancedAttributeQuotes(attrs: string): boolean {
+  let quote: '"' | "'" | null = null;
+  let escaped = false;
+  for (const ch of attrs) {
+    if (escaped) {
+      escaped = false;
+      continue;
+    }
+    if (quote && ch === "\\") {
+      escaped = true;
+      continue;
+    }
+    if (quote) {
+      if (ch === quote) quote = null;
+      continue;
+    }
+    if (ch === '"' || ch === "'") quote = ch;
+  }
+  return quote === null;
+}
+
+function escapeSyntheticAttribute(value: string): string {
+  return value
+    .replace(/&/g, "&amp;")
+    .replace(/"/g, "&quot;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
+}
+
 function normalizeDsmlInvokeMarkup(text: string): string {
   if (!text.includes("DSML")) return text;
+
+  DSML_INVOKE_OPEN_RE.lastIndex = 0;
+  let opener: RegExpExecArray | null;
+  while ((opener = DSML_INVOKE_OPEN_RE.exec(text)) !== null) {
+    if (!hasBalancedAttributeQuotes(opener[2] || "")) {
+      DSML_INVOKE_OPEN_RE.lastIndex = 0;
+      return text;
+    }
+  }
+  DSML_INVOKE_OPEN_RE.lastIndex = 0;
 
   const withOpens = text.replace(DSML_INVOKE_OPEN_RE, (_full, word: string, attrs: string) => {
     const tag = word.toLowerCase();
     if (tag === "calls") return "";
     const name = getAttr(attrs, "name");
-    const nameAttr = name !== null ? ` name="${name}"` : "";
+    const nameAttr = name !== null ? ` name="${escapeSyntheticAttribute(name)}"` : "";
     return tag === "invoke" ? `<tool${nameAttr}>` : `<parameter${nameAttr}>`;
   });
 

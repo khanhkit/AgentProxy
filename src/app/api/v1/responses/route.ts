@@ -24,6 +24,7 @@ import {
 } from "@agentproxy/open-sse/utils/earlyStreamKeepalive";
 import { resolveKeepaliveThreshold } from "@agentproxy/open-sse/utils/keepaliveThreshold";
 import { OPENAI_RESPONSES_IN_PROGRESS_FRAME } from "@agentproxy/open-sse/utils/sseHeartbeat";
+import { normalizeResponsesSequenceResponse } from "@agentproxy/open-sse/utils/responsesSequence";
 
 // NOTE: We do NOT call initTranslators() here — the translator registry is
 // bootstrapped at module level inside open-sse/translator/index.ts when it
@@ -196,7 +197,7 @@ async function postHandler(request: any) {
         admission.lease,
         { signal: request.signal }
       );
-      return await withEarlyStreamKeepalive(handlerResponse, {
+      const keepaliveResponse = await withEarlyStreamKeepalive(handlerResponse, {
         signal: request.signal,
         thresholdMs,
         startupFrame: OPENAI_RESPONSES_IN_PROGRESS_FRAME,
@@ -208,6 +209,7 @@ async function postHandler(request: any) {
         correlationId,
         deadlineController: getDeadlineController(request),
       });
+      return normalizeResponsesSequenceResponse(keepaliveResponse);
     }
 
     return finishAdmission(await handleChat(resolved, null, resolvedBody));

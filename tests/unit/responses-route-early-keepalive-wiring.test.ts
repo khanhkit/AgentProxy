@@ -27,6 +27,11 @@ test("Responses route wires dual-cadence neutral keepalives", () => {
     "frequent transport ticks must not all become application events"
   );
   assert.doesNotMatch(routeSource, /RESPONSES_STARTUP_THINKING_FRAME/);
+  assert.match(
+    routeSource,
+    /return\s+normalizeResponsesSequenceResponse\(keepaliveResponse\)/,
+    "outer early/application keepalives must pass through the final wire sequence authority"
+  );
 });
 
 test("Responses route applies heavyweight admission through the SSE lifecycle", () => {

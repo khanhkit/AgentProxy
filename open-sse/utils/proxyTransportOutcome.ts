@@ -57,10 +57,21 @@ export function recordFinalTransportOutcome(proxyUrl: string | null, targetUrl: 
   }
 }
 
-/** Record a proxied success as cross-evidence. Best effort, never throws. */
-export function recordProxiedSuccess(proxyUrl: string | null, targetUrl: string): void {
+/**
+ * Record a proxied response as cross-egress reachability evidence. Only final
+ * 2xx responses count as destination reachability evidence. Redirects,
+ * 4xx policy/throttle/auth responses, and 5xx gateway responses may be generated
+ * by the proxy itself, so they must never be used to condemn a different egress.
+ * Best effort.
+ */
+export function recordProxiedSuccess(
+  proxyUrl: string | null,
+  targetUrl: string,
+  status: number
+): void {
   try {
     if (!isProxySkipRecentlyFailedEnabled()) return;
+    if (!Number.isInteger(status) || status < 200 || status >= 300) return;
     recordTransportSuccess(transportDestinationKey(targetUrl), proxyEgressKey(proxyUrl));
   } catch {
     /* evidence is best-effort; never break the request path */

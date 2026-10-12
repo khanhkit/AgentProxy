@@ -180,7 +180,7 @@ test("shape: openai-responses-in-progress emits response.in_progress data event"
     // object so a strict Responses decoder does not abort on it.
     assert.equal(
       emitted[0],
-      'data: {"type":"response.in_progress","sequence_number":1,"response":{"id":null,"status":"in_progress"}}\n\n'
+      'data: {"type":"response.in_progress","sequence_number":1,"response":{"status":"in_progress"}}\n\n'
     );
   });
 });

@@ -1139,7 +1139,7 @@ async function patchedFetchUnrecorded(
         dispatcher:
           attempt === 0 ? createProxyDispatcher(proxyUrl) : getProxyRetryDispatcher(proxyUrl),
       });
-      recordProxiedSuccess(proxyUrl, targetUrl); // completed response, any status
+      recordProxiedSuccess(proxyUrl, targetUrl, response.status);
       return response;
     } catch (error) {
       if (isCallerAbort(error, getEffectiveSignal(input, options))) throw error;

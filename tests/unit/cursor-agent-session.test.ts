@@ -1,9 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import {
-  CursorSessionManager,
-  type CursorSession,
-} from "../../open-sse/services/cursorSessionManager";
+import { CursorSessionManager } from "../../open-sse/services/cursorSessionManager";
 import { flattenMessages } from "../../open-sse/utils/cursorAgentProtobuf";
 
 // ─── Test doubles for h2 ───────────────────────────────────────────────────
@@ -87,6 +84,19 @@ test("flattenMessages handles assistant with text + tool_calls in same message",
   assert.match(out, /Assistant: Let me check\./);
   assert.match(out, /Assistant called tool check \(c1\) with arguments: \{\}/);
   assert.match(out, /Tool result \(c1\): result/);
+});
+
+test("flattenMessages omits assistant narration when scrubbing removes it entirely", () => {
+  const narration =
+    'Assistant called tool terminal (call_x) with arguments: {"command":"ls"}' +
+    "<|close|>argument<|sep|><|close|>call<|sep|><|close|>tools<|sep|>";
+  const out = flattenMessages([
+    { role: "user", content: "run it" },
+    { role: "assistant", content: narration },
+  ]);
+
+  assert.equal(out, "User: run it");
+  assert.doesNotMatch(out, /Assistant called tool|<\|close\|>/);
 });
 
 test("flattenMessages handles parallel tool_calls", () => {

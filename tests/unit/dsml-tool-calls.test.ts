@@ -61,6 +61,14 @@ test("parseDsmlToolCalls: content with no DSML markers passes through unchanged"
   assert.equal(result.content, content);
 });
 
+test("parseDsmlToolCalls: ordinary XML closers survive when no DSML marker exists", () => {
+  const content = "Example: <invoke><parameter>value</parameter></invoke>";
+  const result = parseDsmlToolCalls(content);
+
+  assert.equal(result.toolCalls.length, 0);
+  assert.equal(result.content, content);
+});
+
 test("parseDsmlToolCalls: partial opening marker at the tail is held back (streaming-safe)", () => {
   // A truncated stream might end mid-marker; the partial opener must not leak.
   const content = `normal text <${FW}DSML${FW}:Wri`;
@@ -72,4 +80,24 @@ test("parseDsmlToolCalls: partial opening marker at the tail is held back (strea
     "<" + FW + "DSML" + FW + ":Wri",
     "partial opener returned as holdback"
   );
+});
+
+test("AP-ISS-0194 OCR: marker-only ASCII DSML structural closers are scrubbed", () => {
+  const content = "</parameter>\n</invoke>\n";
+  const result = parseDsmlToolCalls(content);
+
+  assert.equal(result.toolCalls.length, 0);
+  assert.equal(result.content, "");
+  assert.equal(result.holdback, "");
+});
+
+test("AP-ISS-0194 CodeQL: near-match ASCII closers do not catastrophically backtrack", () => {
+  const content = Array.from({ length: 22 }, () => "\t</invoke>").join("") + "X";
+  const startedAt = performance.now();
+  const result = parseDsmlToolCalls(content);
+  const elapsedMs = performance.now() - startedAt;
+
+  assert.equal(result.toolCalls.length, 0);
+  assert.equal(result.content, content, "near-match input must remain ordinary content");
+  assert.ok(elapsedMs < 1000, `near-match recognition took ${elapsedMs.toFixed(1)}ms`);
 });

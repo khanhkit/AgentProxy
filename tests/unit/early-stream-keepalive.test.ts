@@ -214,7 +214,7 @@ test("slow Responses handler uses comments plus sparse in_progress events", asyn
   assert.deepEqual(JSON.parse(earlyFrames[0].slice("data: ".length)), {
     type: "response.in_progress",
     sequence_number: 1,
-    response: { id: null, status: "in_progress" },
+    response: { status: "in_progress" },
   });
   assert.ok(
     earlyFrames.some((frame) => frame === ": keepalive"),
@@ -226,7 +226,7 @@ test("slow Responses handler uses comments plus sparse in_progress events", asyn
     assert.deepEqual(JSON.parse(frame.slice("data: ".length)), {
       type: "response.in_progress",
       sequence_number: 1,
-      response: { id: null, status: "in_progress" },
+      response: { status: "in_progress" },
     });
     assert.doesNotMatch(frame, /output_item|reasoning|✨/);
   }
