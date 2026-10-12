@@ -297,6 +297,7 @@ test("combo does not replay an ambiguous pre-content Responses SSE failure onto 
 
   assert.equal(result.status, 502);
   assert.deepEqual(calls, ["openai/primary"]);
+  assert.match(await result.text(), /streaming upstream error: server_error: peak capacity/i);
 });
 
 test("round-robin does not retry an ambiguous streaming failure without replay authority", async () => {
@@ -478,6 +479,7 @@ test("protected pre-content streaming quality rejection fails closed without rep
 
   assert.equal(result.status, 502);
   assert.deepEqual(calls, ["openai/primary"]);
+  assert.match(await result.text(), /streaming upstream error: server_error: peak capacity/i);
 });
 
 test("native pinned pre-content stream failure does not replay without provider proof", async () => {
@@ -543,6 +545,7 @@ test("native pinned pre-content stream failure does not replay without provider 
 
   assert.equal(result.status, 502);
   assert.deepEqual(calls, ["codex/gpt-5.6-sol"]);
+  assert.match(await result.text(), /streaming upstream error: server_error: peak capacity/i);
   clearNativeCodexTurnPinsForTests();
 });
 
