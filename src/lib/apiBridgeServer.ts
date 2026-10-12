@@ -68,11 +68,27 @@ const FORWARDING_HEADERS = new Set([
   "x-client-ip",
 ]);
 
+function isExplicitTrustedPrivateProxy(peer: string): boolean {
+  const configured = process.env.AGENTPROXY_TRUSTED_PROXY_PEERS;
+  if (!configured) return false;
+  return configured.split(",").some((entry) => {
+    const candidate = entry.trim();
+    return (
+      net.isIP(candidate) !== 0 &&
+      candidate.replace(/^::ffff:/, "").toLowerCase() === peer.toLowerCase()
+    );
+  });
+}
+
 function resolveClientPolicy(remoteAddress: string | undefined): ClientPolicy {
   const scope = classifyIpScope(remoteAddress);
   if (scope === "loopback") return { kind: "local" };
   const peer = remoteAddress ? remoteAddress.replace(/^::ffff:/, "") : "unknown";
-  if (scope === "private" && getTrustProxyMode() === "private") {
+  if (
+    scope === "private" &&
+    getTrustProxyMode() === "private" &&
+    isExplicitTrustedPrivateProxy(peer)
+  ) {
     return { kind: "trusted-proxy", peer };
   }
   return { kind: "remote", peer };
