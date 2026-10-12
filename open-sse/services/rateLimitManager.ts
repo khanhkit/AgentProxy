@@ -372,7 +372,9 @@ export function shutdownRateLimitManager(): Promise<void> {
     limiterLastUsed.clear();
     preservedReplacementSettings.clear();
     if (persistenceError) throw persistenceError;
-  })();
+  })().finally(() => {
+    shutdownPromise = null;
+  });
   return shutdownPromise;
 }
 globalThis.__agentproxyShutdownRateLimit = shutdownRateLimitManager;
@@ -1074,6 +1076,7 @@ export async function __runLimiterWatchdogForTests(now = Date.now()): Promise<vo
   await limiterWatchdog.run(now);
 }
 export async function __resetRateLimitManagerForTests() {
+  if (shutdownPromise) await shutdownPromise.catch(() => undefined);
   if (persistTimer) {
     clearTimeout(persistTimer);
     persistTimer = null;
