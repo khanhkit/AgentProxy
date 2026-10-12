@@ -35,6 +35,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import CursorAgentNudge from "../CursorAgentNudge";
 
 const STORAGE_KEY = "agentproxy.cursorAgentNudgeDismissed";
+const mountedRoots = new Set<ReturnType<typeof createRoot>>();
 
 vi.mock("next-intl", () => ({ useTranslations: () => (k: string) => k }));
 
@@ -57,6 +58,7 @@ function renderNudge(): HTMLDivElement {
   const container = document.createElement("div");
   document.body.appendChild(container);
   const root = createRoot(container);
+  mountedRoots.add(root);
   act(() => {
     root.render(<CursorAgentNudge />);
   });
@@ -72,6 +74,10 @@ describe("CursorAgentNudge", () => {
   });
 
   afterEach(() => {
+    act(() => {
+      for (const root of mountedRoots) root.unmount();
+    });
+    mountedRoots.clear();
     document.body.innerHTML = "";
     localStorage.removeItem(STORAGE_KEY);
     vi.unstubAllGlobals();
@@ -184,8 +190,9 @@ describe("CursorAgentNudge", () => {
 
     try {
       act(() => {
-        hydrateRoot(container, <CursorAgentNudge />);
+        mountedRoots.add(hydrateRoot(container, <CursorAgentNudge />));
       });
+      await flushEffects();
     } finally {
       console.error = originalConsoleError;
     }
