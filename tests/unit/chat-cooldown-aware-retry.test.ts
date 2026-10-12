@@ -9,6 +9,8 @@ process.env.STREAM_READINESS_TIMEOUT_MS = "50";
 const harness = await createChatPipelineHarness("chat-cooldown-aware-retry");
 const auth = await import("../../src/sse/services/auth.ts");
 const { getProviderConnectionById } = await import("../../src/lib/db/providers.ts");
+const { getActiveRuntimeConfigSnapshot } =
+  await import("../../src/lib/config/runtimeConfigAuthority.ts");
 const { __setTlsFetchOverrideForTesting } =
   await import("../../open-sse/services/claudeTlsClient.ts");
 const {
@@ -67,6 +69,22 @@ test.afterEach(async () => {
 
 test.after(async () => {
   await harness.cleanup();
+});
+
+test("chat harness reset clears runtime config authority with the reset database", async () => {
+  await settingsDb.updateSettings({
+    requestRetry: 1,
+    maxRetryIntervalSec: 1,
+  });
+  assert.equal(getActiveRuntimeConfigSnapshot()?.settings.requestRetry, 1);
+
+  await resetStorage();
+  await settingsDb.updateSettings({
+    requestRetry: 3,
+    maxRetryIntervalSec: 3,
+  });
+
+  assert.equal(getActiveRuntimeConfigSnapshot()?.settings.requestRetry, 3);
 });
 
 test("handleChat does not probe Claude Web repeatedly after an upstream 429", async () => {

@@ -25,6 +25,7 @@ export async function createChatPipelineHarness(prefix) {
   const callLogsDb = await import("../../src/lib/usage/callLogs.ts");
   const modelComboMappingsDb = await import("../../src/lib/db/modelComboMappings.ts");
   const readCacheDb = await import("../../src/lib/db/readCache.ts");
+  const runtimeSettings = await import("../../src/lib/config/runtimeSettings.ts");
   const memoryStore = await import("../../src/lib/memory/store.ts");
   const memoryToolsModule = await import("../../open-sse/mcp-server/tools/memoryTools.ts");
   const { invalidateMemorySettingsCache } = await import("../../src/lib/memory/settings.ts");
@@ -283,6 +284,7 @@ export async function createChatPipelineHarness(prefix) {
     resetAllCircuitBreakers();
     apiKeysDb.resetApiKeyState();
     readCacheDb.invalidateDbCache();
+    runtimeSettings.resetRuntimeSettingsStateForTests();
     reasoningRulesDb.invalidateReasoningRoutingRuleCache();
     invalidateMemorySettingsCache();
     clearSkillState();
@@ -309,6 +311,7 @@ export async function createChatPipelineHarness(prefix) {
     clearInflight();
     idempotencyLayerModule.clearIdempotency();
     semanticCacheModule.clearCache();
+    runtimeSettings.resetRuntimeSettingsStateForTests();
     clearSkillState();
     resetAllCircuitBreakers();
     await callLogsDb.waitForCallLogSaves(10_000);
