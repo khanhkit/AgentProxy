@@ -196,3 +196,19 @@ test("shutdownRoutingObservability unregisters the stopped OTLP sink", async () 
   assert.equal(events.listRoutingEventSinks().includes("otel"), false);
   routing.resetRoutingObservability();
 });
+
+test("routing observability can reinitialize OTLP after lifecycle shutdown", async () => {
+  const routing = await import(
+    `../../open-sse/services/routing/index.ts?shutdown-reinit=${Date.now()}`
+  );
+  routing.resetRoutingObservability();
+  const env = { AGENTPROXY_OTEL_ENDPOINT: "http://127.0.0.1:9" };
+  const first = routing.initRoutingObservability(env);
+  assert.equal(first.otelEnabled, true);
+  await routing.shutdownRoutingObservability();
+  const second = routing.initRoutingObservability(env);
+  assert.equal(second.otelEnabled, true);
+  assert.ok(second.sinks.includes("otel"));
+  await routing.shutdownRoutingObservability();
+  routing.resetRoutingObservability();
+});

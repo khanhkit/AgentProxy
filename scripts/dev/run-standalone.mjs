@@ -36,6 +36,7 @@ let shuttingDown = false;
 
 const DEFAULT_APP_SHUTDOWN_TIMEOUT_MS = 30_000;
 const SHUTDOWN_EXIT_MARGIN_MS = 1_000;
+const PARENT_SIGNAL_DELIVERY_MARGIN_MS = 1_000;
 
 function resolveShutdownEscalationTimeoutMs(runtimeEnv = process.env) {
   const parsed = Number(runtimeEnv.SHUTDOWN_TIMEOUT_MS ?? String(DEFAULT_APP_SHUTDOWN_TIMEOUT_MS));
@@ -50,7 +51,7 @@ function childExited(child) {
 
 async function stopNext(
   signal = "SIGTERM",
-  graceMs = resolveShutdownEscalationTimeoutMs(childEnv)
+  graceMs = resolveShutdownEscalationTimeoutMs(childEnv) + PARENT_SIGNAL_DELIVERY_MARGIN_MS
 ) {
   if (childExited(nextChild)) return;
   nextChild.kill(signal === "SIGINT" ? "SIGINT" : "SIGTERM");

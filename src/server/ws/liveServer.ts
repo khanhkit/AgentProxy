@@ -103,11 +103,13 @@ interface ClientState {
 }
 
 const clients = new Map<string, ClientState>();
+let liveWsClosePromise: Promise<void> = Promise.resolve();
 
 declare global {
   var __agentproxyLiveWsServer: import("http").Server | undefined;
   var __agentproxyLiveWsWss: WebSocketServer | undefined;
   var __agentproxyStopLiveWs: (() => void) | undefined;
+  var __agentproxyDrainLiveWs: (() => Promise<void>) | undefined;
 }
 
 function countClientsForPrincipal(principalKey: string): number {
@@ -777,6 +779,9 @@ export async function startLiveDashboardServer(
     wss.once("error", (err: NodeJS.ErrnoException) => {
       unsubscribe();
       clients.clear();
+      if (globalThis.__agentproxyLiveWsServer === server)
+        globalThis.__agentproxyLiveWsServer = undefined;
+      if (globalThis.__agentproxyLiveWsWss === wss) globalThis.__agentproxyLiveWsWss = undefined;
       reject(err);
     });
     if (globalThis.__agentproxyLiveWsServer !== server) {
@@ -801,7 +806,7 @@ export async function startLiveDashboardServer(
   });
 }
 
-/** Stop accepting live dashboard connections and close active WebSocket clients. */
+/** Stop accepting live dashboard connections; drain waits for listener close callbacks. */
 export function stopLiveDashboardServer(): void {
   const server = globalThis.__agentproxyLiveWsServer;
   const wss = globalThis.__agentproxyLiveWsWss;
@@ -810,19 +815,38 @@ export function stopLiveDashboardServer(): void {
 
   for (const client of clients.values()) client.ws.terminate();
   clients.clear();
-  try {
-    wss?.close();
-  } catch {
-    // Already closed/not listening.
+  const closeTasks: Promise<void>[] = [];
+  if (wss) {
+    closeTasks.push(
+      new Promise((resolve) => {
+        try {
+          wss.close(() => resolve());
+        } catch {
+          resolve();
+        }
+      })
+    );
   }
-  try {
-    server?.close();
-  } catch {
-    // Already closed/not listening.
+  if (server) {
+    closeTasks.push(
+      new Promise((resolve) => {
+        try {
+          server.close(() => resolve());
+        } catch {
+          resolve();
+        }
+      })
+    );
   }
+  liveWsClosePromise = Promise.allSettled(closeTasks).then(() => undefined);
+}
+
+export async function drainLiveDashboardServer(): Promise<void> {
+  await liveWsClosePromise;
 }
 
 globalThis.__agentproxyStopLiveWs = stopLiveDashboardServer;
+globalThis.__agentproxyDrainLiveWs = drainLiveDashboardServer;
 
 // ── Auto-start on import ──────────────────────────────────────────────────
 //

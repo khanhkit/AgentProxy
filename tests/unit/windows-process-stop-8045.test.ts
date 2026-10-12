@@ -99,5 +99,7 @@ test("shutdown escalation budget outlives the app lifecycle deadline", async () 
 
   assert.equal(resolveShutdownEscalationTimeoutMs({}), 31_000);
   assert.equal(resolveShutdownEscalationTimeoutMs({ SHUTDOWN_TIMEOUT_MS: "45" }), 1_045);
+  assert.equal(resolveShutdownEscalationTimeoutMs({ SHUTDOWN_TIMEOUT_MS: "1e3" }), 2_000);
+  assert.equal(resolveShutdownEscalationTimeoutMs({ SHUTDOWN_TIMEOUT_MS: "30000junk" }), 31_000);
   assert.equal(resolveShutdownEscalationTimeoutMs({ SHUTDOWN_TIMEOUT_MS: "invalid" }), 31_000);
 });

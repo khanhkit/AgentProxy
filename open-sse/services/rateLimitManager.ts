@@ -346,28 +346,34 @@ export function stopRateLimitWatchdog(): void {
   watchdogInterval = null;
 }
 globalThis.__agentproxyStopRateLimitWatchdog = stopRateLimitWatchdog;
-export async function shutdownRateLimitManager(): Promise<void> {
-  stopRateLimitWatchdog();
-  let persistenceError: unknown;
-  if (persistTimer) {
-    clearTimeout(persistTimer);
-    persistTimer = null;
-    try {
-      await trackAsyncOperation(persistLearnedLimitsNow());
-    } catch (error) {
-      persistenceError = error;
-      errorRateLimit("[RATE-LIMIT] Failed to persist learned limits during shutdown:", error);
+let shutdownPromise: Promise<void> | null = null;
+export function shutdownRateLimitManager(): Promise<void> {
+  if (shutdownPromise) return shutdownPromise;
+  shutdownPromise = (async () => {
+    stopRateLimitWatchdog();
+    let persistenceError: unknown;
+    if (persistTimer) {
+      clearTimeout(persistTimer);
+      persistTimer = null;
+      try {
+        await trackAsyncOperation(persistLearnedLimitsNow());
+      } catch (error) {
+        persistenceError = error;
+        errorRateLimit("[RATE-LIMIT] Failed to persist learned limits during shutdown:", error);
+      }
     }
-  }
-  const stops = Array.from(limiters.values(), (limiter) =>
-    trackAsyncOperation(Promise.resolve(limiter.stop({ dropWaitingJobs: false })))
-  );
-  if (stops.length > 0) await Promise.allSettled(stops);
-  if (pendingAsyncOperations.size > 0) await Promise.allSettled(Array.from(pendingAsyncOperations));
-  limiters.clear();
-  limiterLastUsed.clear();
-  preservedReplacementSettings.clear();
-  if (persistenceError) throw persistenceError;
+    const stops = Array.from(limiters.values(), (limiter) =>
+      trackAsyncOperation(Promise.resolve(limiter.stop({ dropWaitingJobs: false })))
+    );
+    if (stops.length > 0) await Promise.allSettled(stops);
+    if (pendingAsyncOperations.size > 0)
+      await Promise.allSettled(Array.from(pendingAsyncOperations));
+    limiters.clear();
+    limiterLastUsed.clear();
+    preservedReplacementSettings.clear();
+    if (persistenceError) throw persistenceError;
+  })();
+  return shutdownPromise;
 }
 globalThis.__agentproxyShutdownRateLimit = shutdownRateLimitManager;
 function trackAsyncOperation<T>(promise: Promise<T>): Promise<T> {
@@ -1016,7 +1022,6 @@ export function getAllRateLimitStatus() {
 export function getLearnedLimits() {
   return { ...Object.fromEntries(learnedLimits) };
 }
-// ─── Persistence ────────────────────────────────────────────────────────────
 async function persistLearnedLimitsNow() {
   try {
     const { updateSettings } = await import("@/lib/db/settings");
@@ -1027,9 +1032,6 @@ async function persistLearnedLimitsNow() {
   }
 }
 
-/**
- * Record a learned limit for debounced persistence.
- */
 function recordLearnedLimit(
   provider: string,
   connectionId: string,
@@ -1077,10 +1079,6 @@ export async function __resetRateLimitManagerForTests() {
     persistTimer = null;
   }
 
-  // Collect and await all disconnect() Promises so Bottleneck's internal
-  // yieldLoop(0) calls settle before the next test starts. Not awaiting
-  // these can cause the Node.js test runner IPC channel to receive a
-  // corrupted message when the pending Promise fires during IPC serialization.
   const disconnectPromises: Promise<unknown>[] = [];
   for (const limiter of limiters.values()) {
     disconnectPromises.push(limiter.disconnect());
@@ -1092,11 +1090,10 @@ export async function __resetRateLimitManagerForTests() {
   preservedReplacementSettings.clear();
   limiterFactory = defaultLimiterFactory;
   limiterWatchdog.reset();
-
+  shutdownPromise = null;
   for (const key of [...learnedLimits.keys()]) {
     learnedLimits.delete(key);
   }
-
   if (pendingAsyncOperations.size > 0) {
     await Promise.allSettled(Array.from(pendingAsyncOperations));
   }

@@ -181,3 +181,22 @@ test("review-touched runtime inputs are validated before typed persistence", () 
   const inspectorTypes = source("src/mitm/inspector/types.ts");
   assert.match(inspectorTypes, /agent:\s*MitmTargetSchema\.shape\.id\.optional\(\)/);
 });
+
+test("LiveWS shutdown publishes an awaitable close drain", () => {
+  const liveWs = source("src/server/ws/liveServer.ts");
+  const graceful = source("src/lib/gracefulShutdown.ts");
+  assert.match(liveWs, /__agentproxyDrainLiveWs/);
+  assert.match(liveWs, /export async function drainLiveDashboardServer/);
+  assert.match(
+    graceful,
+    /register\("live-ws-drain",\s*"DRAIN_ACTIVE"[\s\S]*?__agentproxyDrainLiveWs/
+  );
+});
+
+test("LiveWS bind failure clears lifecycle ownership before rejecting", () => {
+  const liveWs = source("src/server/ws/liveServer.ts");
+  assert.match(
+    liveWs,
+    /wss\.once\("error"[\s\S]*?__agentproxyLiveWsServer === server[\s\S]*?__agentproxyLiveWsWss === wss/
+  );
+});

@@ -30,6 +30,7 @@ declare global {
   var __agentproxyStopApiBridge: (() => void) | undefined;
   var __agentproxyDrainApiBridge: (() => Promise<void>) | undefined;
   var __agentproxyStopLiveWs: (() => void) | undefined;
+  var __agentproxyDrainLiveWs: (() => Promise<void>) | undefined;
   var __agentproxyStopRateLimitWatchdog: (() => void) | undefined;
   var __agentproxyShutdownRateLimit: (() => Promise<void>) | undefined;
   var __agentproxyShutdownMitm: (() => Promise<void>) | undefined;
@@ -133,6 +134,9 @@ export function registerMainLifecycleHooks(): void {
   register("request-drain", "DRAIN_ACTIVE", waitForRequestDrain);
   register("api-bridge-drain", "DRAIN_ACTIVE", async () => {
     await globalThis.__agentproxyDrainApiBridge?.();
+  });
+  register("live-ws-drain", "DRAIN_ACTIVE", async () => {
+    await globalThis.__agentproxyDrainLiveWs?.();
   });
   register("background-task-drain", "DRAIN_BACKGROUND", async () => {
     await (await import("@/lib/lifecycle/backgroundTasks")).drainLifecycleBackgroundTasks();

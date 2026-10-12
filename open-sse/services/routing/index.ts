@@ -115,6 +115,7 @@ export function routingOtelStats(): { buffered: number; dropped: number } | null
 }
 
 export async function shutdownRoutingObservability(): Promise<void> {
+  initialized = false;
   if (!otelSink) return;
   const sink = otelSink;
   otelSink = null;

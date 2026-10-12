@@ -42,10 +42,7 @@ const SHUTDOWN_EXIT_MARGIN_MS = 1_000;
 export function resolveShutdownEscalationTimeoutMs(
   env: Pick<NodeJS.ProcessEnv, "SHUTDOWN_TIMEOUT_MS"> = process.env
 ): number {
-  const parsed = Number.parseInt(
-    env.SHUTDOWN_TIMEOUT_MS ?? String(DEFAULT_APP_SHUTDOWN_TIMEOUT_MS),
-    10
-  );
+  const parsed = Number(env.SHUTDOWN_TIMEOUT_MS ?? String(DEFAULT_APP_SHUTDOWN_TIMEOUT_MS));
   const lifecycleTimeoutMs =
     Number.isFinite(parsed) && parsed >= 0 ? parsed : DEFAULT_APP_SHUTDOWN_TIMEOUT_MS;
   return lifecycleTimeoutMs + SHUTDOWN_EXIT_MARGIN_MS;

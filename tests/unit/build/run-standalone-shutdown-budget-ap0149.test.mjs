@@ -36,3 +36,11 @@ test("packaged standalone hard deadline leaves cleanup margin", () => {
   assert.match(packaged, /const SHUTDOWN_EXIT_MARGIN_MS\s*=\s*1_000/);
   assert.match(packaged, /STANDALONE_SHUTDOWN_TIMEOUT_MS\s*\+\s*SHUTDOWN_EXIT_MARGIN_MS/);
 });
+
+test("standalone parent adds signal-delivery margin beyond child hard deadline", () => {
+  assert.match(source, /const PARENT_SIGNAL_DELIVERY_MARGIN_MS\s*=\s*1_000/);
+  assert.match(
+    source,
+    /graceMs\s*=\s*resolveShutdownEscalationTimeoutMs\(childEnv\)\s*\+\s*PARENT_SIGNAL_DELIVERY_MARGIN_MS/
+  );
+});
