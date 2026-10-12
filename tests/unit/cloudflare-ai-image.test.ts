@@ -84,6 +84,40 @@ test("handleImageGeneration rejects Cloudflare Workers AI with no API token befo
   }
 });
 
+test("Cloudflare Workers AI falls back to a non-empty access token when apiKey is whitespace", async () => {
+  const originalFetch = globalThis.fetch;
+  try {
+    globalThis.fetch = (async (_url: string | URL | Request, init?: RequestInit) => {
+      assert.equal(
+        init?.headers && (init.headers as Record<string, string>).Authorization,
+        "Bearer access-token"
+      );
+      return {
+        ok: true,
+        status: 200,
+        text: async () => JSON.stringify({ result: { image: "ZmFrZQ==" }, success: true }),
+      } as unknown as Response;
+    }) as typeof fetch;
+
+    const result = await handleCloudflareAiImageGeneration({
+      model: "@cf/black-forest-labs/flux-1-schnell",
+      provider: "cloudflare-ai",
+      providerConfig: { baseUrl: "https://api.cloudflare.com/client/v4/accounts" },
+      body: { prompt: "a red panda" },
+      credentials: {
+        apiKey: "   ",
+        accessToken: " access-token ",
+        providerSpecificData: { accountId: "acct-123" },
+      },
+      log: null,
+    });
+
+    assert.equal(result.success, true);
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+});
+
 test("Cloudflare Workers AI bounds a hung fetch with its timeout signal", async () => {
   const originalFetch = globalThis.fetch;
   try {
@@ -117,6 +151,7 @@ test("Cloudflare Workers AI bounds a hung fetch with its timeout signal", async 
       "timeout-bound fetch must settle promptly in the focused test"
     );
     assert.equal(result.success, false);
+    assert.equal(result.status, 504);
   } finally {
     globalThis.fetch = originalFetch;
   }
@@ -126,7 +161,9 @@ test("handleImageGeneration relays caller cancellation into Cloudflare fetch", a
   const originalFetch = globalThis.fetch;
   try {
     const caller = new AbortController();
+    const cancellation = new Error("caller cancelled");
     let observedSignal: AbortSignal | undefined;
+    let errorLogs = 0;
     globalThis.fetch = ((_url: string | URL | Request, init?: RequestInit) => {
       observedSignal = init?.signal ?? undefined;
       return new Promise<Response>((_resolve, reject) => {
@@ -144,16 +181,24 @@ test("handleImageGeneration relays caller cancellation into Cloudflare fetch", a
         prompt: "a red panda",
       },
       credentials: { apiKey: "test-token", providerSpecificData: { accountId: "acct-123" } },
-      log: null,
+      log: {
+        error: () => {
+          errorLogs += 1;
+        },
+      },
       signal: caller.signal,
     });
     await Promise.resolve();
-    caller.abort(new Error("caller cancelled"));
-    const result = await pending;
+    caller.abort(cancellation);
 
+    await assert.rejects(pending, (error: unknown) => error === cancellation);
     assert.ok(observedSignal, "Cloudflare fetch must receive the relayed caller signal");
     assert.equal(observedSignal?.aborted, true);
-    assert.equal(result.success, false);
+    assert.equal(
+      errorLogs,
+      0,
+      "caller cancellation must not be logged as an upstream provider failure"
+    );
   } finally {
     globalThis.fetch = originalFetch;
   }

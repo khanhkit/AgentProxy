@@ -106,7 +106,7 @@ export async function handleCloudflareAiImageGeneration({
     };
   }
 
-  const token = (credentials?.apiKey || credentials?.accessToken || "").trim();
+  const token = credentials?.apiKey?.trim() || credentials?.accessToken?.trim() || "";
   if (!token) {
     return {
       success: false as const,
@@ -201,10 +201,14 @@ export async function handleCloudflareAiImageGeneration({
       },
     };
   } catch (err: unknown) {
+    if (signal?.aborted) throw signal.reason ?? err;
+
+    const isTimeout = err instanceof Error && err.name === "TimeoutError";
+    const status = isTimeout ? 504 : 502;
     const errMsg = err instanceof Error ? err.message : String(err);
     log?.error?.("IMAGE", `${provider} fetch error: ${errMsg}`);
     logCloudflareAiCall({
-      status: 502,
+      status,
       model: `${provider}/${model}`,
       provider,
       duration: Date.now() - startTime,
@@ -212,7 +216,7 @@ export async function handleCloudflareAiImageGeneration({
     });
     return {
       success: false as const,
-      status: 502,
+      status,
       error: `Image provider error: ${sanitizeErrorMessage(errMsg)}`,
     };
   }
