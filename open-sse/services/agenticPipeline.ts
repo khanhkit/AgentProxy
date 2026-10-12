@@ -109,58 +109,57 @@ export function hasTrailingToolResult(body: Body): boolean {
 
 /** Count completed tool-result turns to bound client-driven sequential loops. */
 export function countToolResultTurns(body: Body): number {
-  let count = 0;
-  const messages = Array.isArray(body.messages) ? body.messages : [];
-  let messageBoundary = 0;
-  for (let index = messages.length - 1; index >= 0; index--) {
-    const record = asRecord(messages[index]);
-    if (
-      record?.role === "user" &&
-      !contentHasType(record.content, new Set(["tool_result", "function_call_output"]))
-    ) {
-      messageBoundary = index + 1;
-      break;
+  // Mirror pipeline.ts representation precedence. Adapters may preserve a legacy
+  // shape while adding the active one; counting more than one representation
+  // would charge the same client tool round multiple times.
+  if (Array.isArray(body.input)) {
+    let boundary = 0;
+    for (let index = body.input.length - 1; index >= 0; index--) {
+      const record = asRecord(body.input[index]);
+      if (record?.role === "user" && record.type !== "function_call_output") {
+        boundary = index + 1;
+        break;
+      }
     }
-  }
-  for (const message of messages.slice(messageBoundary)) {
-    const record = asRecord(message);
-    if (record?.role === "tool") count++;
-    else if (contentHasType(record?.content, new Set(["tool_result"]))) count++;
+    const outputTypes = new Set([
+      "function_call_output",
+      "computer_call_output",
+      "local_shell_call_output",
+    ]);
+    return body.input.slice(boundary).filter((item) => {
+      const type = asRecord(item)?.type;
+      return typeof type === "string" && outputTypes.has(type);
+    }).length;
   }
 
-  const input = Array.isArray(body.input) ? body.input : [];
-  let inputBoundary = 0;
-  for (let index = input.length - 1; index >= 0; index--) {
-    const record = asRecord(input[index]);
-    if (record?.role === "user" && record?.type !== "function_call_output") {
-      inputBoundary = index + 1;
+  if (Array.isArray(body.contents)) {
+    let boundary = 0;
+    for (let index = body.contents.length - 1; index >= 0; index--) {
+      const record = asRecord(body.contents[index]);
+      if (record?.role === "user" && !geminiPartsHaveFunctionResponse(record.parts)) {
+        boundary = index + 1;
+        break;
+      }
+    }
+    return body.contents
+      .slice(boundary)
+      .filter((content) => geminiPartsHaveFunctionResponse(asRecord(content)?.parts)).length;
+  }
+
+  const messages = Array.isArray(body.messages) ? body.messages : [];
+  let boundary = 0;
+  const toolResultTypes = new Set(["tool_result", "function_call_output"]);
+  for (let index = messages.length - 1; index >= 0; index--) {
+    const record = asRecord(messages[index]);
+    if (record?.role === "user" && !contentHasType(record.content, toolResultTypes)) {
+      boundary = index + 1;
       break;
     }
   }
-  for (const item of input.slice(inputBoundary)) {
-    const record = asRecord(item);
-    if (
-      typeof record?.type === "string" &&
-      new Set(["function_call_output", "computer_call_output", "local_shell_call_output"]).has(
-        record.type
-      )
-    ) {
-      count++;
-    }
-  }
-  const contents = Array.isArray(body.contents) ? body.contents : [];
-  let contentsBoundary = 0;
-  for (let index = contents.length - 1; index >= 0; index--) {
-    const record = asRecord(contents[index]);
-    if (record?.role === "user" && !geminiPartsHaveFunctionResponse(record.parts)) {
-      contentsBoundary = index + 1;
-      break;
-    }
-  }
-  for (const content of contents.slice(contentsBoundary)) {
-    if (geminiPartsHaveFunctionResponse(asRecord(content)?.parts)) count++;
-  }
-  return count;
+  return messages.slice(boundary).filter((message) => {
+    const record = asRecord(message);
+    return record?.role === "tool" || contentHasType(record?.content, new Set(["tool_result"]));
+  }).length;
 }
 
 function availableToolsPrompt(body: Body): string {

@@ -141,7 +141,8 @@ export async function fetchMoonshotQuota(
     provider: typeof connection?.provider === "string" ? connection.provider : undefined,
     providerSpecificData: connection?.providerSpecificData,
   };
-  if (isKimiCodingConnection(codingConn)) {
+  const nodeBaseUrl = typeof connection?.baseUrl === "string" ? connection.baseUrl : undefined;
+  if (isKimiCodingConnection(codingConn, nodeBaseUrl)) {
     try {
       await throttleQuotaFetch();
       const codingQuota = await fetchKimiCodingQuotaAsPreflight(connection);
@@ -156,10 +157,13 @@ export async function fetchMoonshotQuota(
   const apiKey = connectionApiKey(connection);
   if (!apiKey) return null;
 
-  const origin = resolveMoonshotOrigin({
-    provider: typeof connection?.provider === "string" ? connection.provider : undefined,
-    providerSpecificData: connection?.providerSpecificData,
-  });
+  const origin = resolveMoonshotOrigin(
+    {
+      provider: typeof connection?.provider === "string" ? connection.provider : undefined,
+      providerSpecificData: connection?.providerSpecificData,
+    },
+    nodeBaseUrl
+  );
   if (!origin) return null;
 
   const url = moonshotBalanceUrl(origin);
@@ -204,9 +208,7 @@ export type MoonshotUsageConnection = {
   providerSpecificData?: unknown;
 };
 
-export async function getMoonshotOpenPlatformUsage(
-  connection: MoonshotUsageConnection
-): Promise<{
+export async function getMoonshotOpenPlatformUsage(connection: MoonshotUsageConnection): Promise<{
   plan?: string;
   quotas?: Record<string, UsageQuota>;
   message?: string;

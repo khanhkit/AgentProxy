@@ -35,7 +35,7 @@ import {
   parseResetTime,
   toPlainHeaders,
 } from "./rateLimitManager/headers";
-import { checkQueueAdmission } from "./rateLimitManager/admission";
+import { checkQueueAdmission, hasActiveLimiterWork } from "./rateLimitManager/admission";
 import {
   markLocalRateLimitError,
   RATE_LIMIT_EXECUTION_TIMEOUT_CODE,
@@ -1187,7 +1187,7 @@ export function updateFromResponseBody(provider, connectionId, responseBody, sta
   if (!plan) return;
   const limiterKey = getLimiterKey(provider, connectionId, model);
   const existing = limiters.get(limiterKey);
-  if (existing) evictLimiter(limiterKey, existing);
+  if (existing && !hasActiveLimiterWork(existing.counts())) evictLimiter(limiterKey, existing);
   recordLearnedLimit(provider, connectionId, plan.learned, model);
   const limiter = getLimiter(provider, connectionId, model);
   if (hasRpmOverride(connectionId)) {

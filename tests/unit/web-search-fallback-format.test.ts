@@ -338,3 +338,15 @@ test("#3384 end-to-end: interceptSearchOverride=true converts the tool on the Cl
   assert.equal(fallback.enabled, true);
   assert.equal(fallback.toolName, AGENTPROXY_WEB_SEARCH_FALLBACK_TOOL_NAME);
 });
+
+test("AP-ISS-0196: Antigravity provider does not bypass fallback for an OpenAI target", () => {
+  assert.equal(
+    supportsNativeWebSearchFallbackBypass({
+      provider: "antigravity",
+      sourceFormat: "openai",
+      targetFormat: "openai",
+      nativeCodexPassthrough: false,
+    }),
+    false
+  );
+});

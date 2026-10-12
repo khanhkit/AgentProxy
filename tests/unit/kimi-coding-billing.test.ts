@@ -473,3 +473,14 @@ test("message-only Kimi failures preserve last-known-good billing", () => {
   assert.equal(mergeProviderLimitsCacheEntry("kimi-coding", failure, previous), previous);
   assert.equal(mergeProviderLimitsCacheEntry("kimi-coding-apikey", failure, previous), previous);
 });
+
+test("AP-ISS-0196: used_ratio accepts percentage units without clamping to 100", async () => {
+  const usage = await getUsage({
+    user: { membership: { level: "LEVEL_ADVANCED" } },
+    usages: {
+      limit_7d: { used_ratio: 25, reset_time: "2099-09-25T02:24:04Z" },
+    },
+  });
+  assert.equal(usage.quotas?.code_7d?.used, 25);
+  assert.equal(usage.quotas?.code_7d?.remainingPercentage, 75);
+});

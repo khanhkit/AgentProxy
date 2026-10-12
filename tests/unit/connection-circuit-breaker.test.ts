@@ -37,3 +37,12 @@ test("Koosha's shared model-scope source still advances wrapped model 400s", () 
   assert.equal(isModelScoped400("Bad Request: The model is not supported"), true);
   assert.equal(isModelScoped400("Invalid message format: the request body is malformed."), false);
 });
+
+test("AP-ISS-0196: credential or request-shape wording is not model-scoped fallback", () => {
+  for (const text of [
+    "invalid api key: permission rejected while resolving model metadata",
+    "invalid_request_error: permission parameter cannot be used with model gpt-5",
+  ]) {
+    assert.equal(isModelScoped400(text), false, text);
+  }
+});

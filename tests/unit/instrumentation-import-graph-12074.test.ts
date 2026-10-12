@@ -45,10 +45,12 @@ test("quota auto-ping lazily loads only the Codex executor", () => {
 });
 
 test("startup still registers bespoke, batch, and generic quota fetchers", async () => {
-  const [{ registerQuotaFetchers }, { getQuotaFetcher }] = await Promise.all([
-    import("../../src/instrumentation-node.ts"),
-    import("../../open-sse/services/quotaPreflight.ts"),
-  ]);
+  const [{ registerQuotaFetchers }, { getQuotaFetcher }, { fetchLlmgatewayQuota }] =
+    await Promise.all([
+      import("../../src/instrumentation-node.ts"),
+      import("../../open-sse/services/quotaPreflight.ts"),
+      import("../../open-sse/services/llmgatewayQuotaFetcher.ts"),
+    ]);
 
   await registerQuotaFetchers();
 
@@ -62,10 +64,16 @@ test("startup still registers bespoke, batch, and generic quota fetchers", async
     "openrouter",
     "opencode-go",
     "grok-web",
+    "llmgateway",
     "antigravity",
   ]) {
     assert.equal(typeof getQuotaFetcher(provider), "function", `${provider} quota fetcher missing`);
   }
+  assert.equal(
+    getQuotaFetcher("llmgateway"),
+    fetchLlmgatewayQuota,
+    "startup must preserve the bespoke LLM Gateway DevPass fetcher instead of generic fallback"
+  );
 });
 
 test("provider-limit startup uses the refresh-only executor resolver", () => {

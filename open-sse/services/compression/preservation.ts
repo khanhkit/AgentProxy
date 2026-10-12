@@ -88,6 +88,10 @@ export function extractPreservedBlocks(
 
   result = extractFrontmatter(result, addBlock);
 
+  // Fence code first so user/system regexes can never carve nested sentinels out
+  // of a block whose byte-exact contents must be preserved as one unit.
+  result = extractFencedCodeBlocks(result, (content) => addBlock(content, "fenced_code"));
+
   const regionPatterns: CompiledPattern[] = [
     ...compileUserPatterns(options.preservePatterns),
     { pattern: /<system-reminder>[\s\S]*?<\/system-reminder>/g, kind: "system_instruction" },
@@ -100,8 +104,6 @@ export function extractPreservedBlocks(
   for (const { pattern, kind } of regionPatterns) {
     result = replacePattern(result, ensureGlobal(pattern), kind, addBlock);
   }
-
-  result = extractFencedCodeBlocks(result, (content) => addBlock(content, "fenced_code"));
 
   const builtIns: CompiledPattern[] = [
     { pattern: /\$\$[\s\S]*?\$\$/g, kind: "math_block" },

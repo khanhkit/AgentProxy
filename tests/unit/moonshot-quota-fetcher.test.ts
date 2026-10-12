@@ -337,3 +337,25 @@ test("registerMoonshotFetchersForNodes still wires a kimi.com/coding node", asyn
   assert.equal(typeof getQuotaFetcher("coding-node"), "function");
   assert.equal(typeof getQuotaFetcher("kcode"), "function");
 });
+
+test("AP-ISS-0196: top-level Kimi Coding node baseUrl selects /usages preflight", async () => {
+  const calls: string[] = [];
+  const originalFetch = globalThis.fetch;
+  globalThis.fetch = (async (url: unknown) => {
+    calls.push(String(url));
+    return jsonResponse({
+      usage: { limit: "100", used: "20", remaining: "80", resetTime: "2099-09-25T02:24:04Z" },
+    });
+  }) as typeof fetch;
+  try {
+    const quota = await fetchMoonshotQuota(`node-base-${Date.now()}`, {
+      provider: "moonshot",
+      apiKey: "sk-coding-key",
+      baseUrl: "https://api.kimi.com/coding/v1",
+    } as Record<string, unknown>);
+    assert.deepEqual(calls, ["https://api.kimi.com/coding/v1/usages"]);
+    assert.ok(quota);
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+});

@@ -111,13 +111,28 @@ export function parseLyceumCreditsResponse(data: unknown): LyceumCreditsFields |
     "remaining_credits" in inner || "available_credits" in inner || "used_credits" in inner;
   if (!hasBalance) return null;
 
-  const availableCredits = toFiniteNumber(inner.available_credits, 0);
+  const availableCredits = toFiniteNumber(inner.available_credits, Number.NaN);
+  const usedCredits = toFiniteNumber(inner.used_credits, Number.NaN);
+  const remainingCredits =
+    inner.remaining_credits === undefined
+      ? availableCredits
+      : toFiniteNumber(inner.remaining_credits, Number.NaN);
+  if (
+    !Number.isFinite(availableCredits) ||
+    !Number.isFinite(usedCredits) ||
+    !Number.isFinite(remainingCredits) ||
+    availableCredits < 0 ||
+    usedCredits < 0 ||
+    remainingCredits < 0
+  ) {
+    return null;
+  }
   return {
     availableCredits,
-    usedCredits: toFiniteNumber(inner.used_credits, 0),
-    remainingCredits: toFiniteNumber(inner.remaining_credits, availableCredits),
-    monthlyFreeCredits: toFiniteNumber(inner.monthly_free_credits, 0),
-    purchasedCredits: toFiniteNumber(inner.purchased_credits, 0),
+    usedCredits,
+    remainingCredits,
+    monthlyFreeCredits: Math.max(0, toFiniteNumber(inner.monthly_free_credits, 0)),
+    purchasedCredits: Math.max(0, toFiniteNumber(inner.purchased_credits, 0)),
   };
 }
 

@@ -274,3 +274,26 @@ test("resetAllCircuitBreakers cleans up test state", () => {
   assert.equal(breaker.state, "CLOSED");
   assert.equal(breaker.failureCount, 0);
 });
+
+test("AP-ISS-0196: connection success closes a HALF_OPEN provider-wide network breaker", async () => {
+  const provider = uniqueProvider("network-shared-recovery");
+  const connectionId = "conn-network";
+  recordProviderFailure(
+    provider,
+    undefined,
+    connectionId,
+    {
+      failureThreshold: 1,
+      resetTimeoutMs: 100,
+    },
+    { isNetworkError: true }
+  );
+  const shared = getCircuitBreaker(provider);
+  assert.equal(shared.state, "OPEN");
+  await new Promise((resolve) => setTimeout(resolve, 150));
+  shared.canExecute();
+  assert.equal(shared.state, "HALF_OPEN");
+  recordProviderSuccess(provider, connectionId);
+  assert.equal(shared.state, "CLOSED");
+  assert.equal(shared.failureCount, 0);
+});

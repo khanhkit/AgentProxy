@@ -103,8 +103,14 @@ export function cancelQueuedJob(limiter: Bottleneck, jobId: string): Promise<boo
         const found = findQueuedNode(internals, jobId);
         // Never unlink a job that could not then be settled: it would vanish.
         if (!found || typeof found.node.value.doDrop !== "function") return false;
+        // Settle the Bottleneck job state/promise first. `doDrop()` does not
+        // unlink the queue node; if settlement refuses or throws, leave the
+        // node intact so it cannot silently disappear from the queue.
+        if (found.node.value.doDrop({ message: ABANDONED_JOB_DROP_MESSAGE }) !== true) {
+          return false;
+        }
         unlink(found.list, found.node);
-        return found.node.value.doDrop({ message: ABANDONED_JOB_DROP_MESSAGE }) === true;
+        return true;
       })
     )
     .catch(() => false);

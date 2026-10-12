@@ -240,3 +240,14 @@ test("getLyceumUsage returns a message when no API key given", async () => {
   assert.ok(usage.message);
   assert.equal(usage.quotas, undefined);
 });
+
+test("AP-ISS-0196: malformed negative Lyceum balances are rejected", () => {
+  assert.equal(
+    parseLyceumCreditsResponse(creditsResponse({ used_credits: -5, remaining_credits: 40 })),
+    null
+  );
+  assert.equal(
+    parseLyceumCreditsResponse(creditsResponse({ used_credits: 5, remaining_credits: -1 })),
+    null
+  );
+});

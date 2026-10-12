@@ -44,3 +44,9 @@ test("#13350: TPM wording on a provider 400 is treated as fallback-worthy capaci
     assert.equal(result.cooldownMs, 0, message);
   }
 });
+
+test("AP-ISS-0196: generic payload-too-large 413 is terminal, not account fallback", () => {
+  const result = checkFallbackError(413, "request body exceeds maximum size", 0, null, "openai");
+  assert.equal(result.shouldFallback, false);
+  assert.equal(result.cooldownMs, 0);
+});

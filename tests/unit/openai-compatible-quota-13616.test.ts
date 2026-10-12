@@ -180,3 +180,12 @@ test("the gate follows the connection, not the provider id", () => {
     "a url with no mapping can be fetched but never yields a quota"
   );
 });
+
+test("AP-ISS-0196: malformed mapped quota numbers are omitted rather than rendered as 0/0", async () => {
+  let result: { message?: string; quotas?: unknown } | undefined;
+  await withFetch({ data: { used_usd: "not-a-number", limit_usd: -10 } }, 200, async () => {
+    result = (await getOpenAiCompatibleUsage("sk-test", { quotaEndpoint: ENDPOINT })) as never;
+  });
+  assert.equal(result?.quotas, undefined);
+  assert.match(String(result?.message), /no mapping resolved/i);
+});

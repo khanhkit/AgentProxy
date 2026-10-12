@@ -10,6 +10,8 @@ process.env.DATA_DIR = TEST_DATA_DIR;
 const core = await import("../../src/lib/db/core.ts");
 const resilienceSettings = await import("../../src/lib/resilience/settings.ts");
 const rateLimitManager = await import("../../open-sse/services/rateLimitManager.ts");
+const { capSettingsWithinBudget } =
+  await import("../../open-sse/services/rateLimitManager/requestCapPolicy.ts");
 
 test.afterEach(async () => {
   await rateLimitManager.__resetRateLimitManagerForTests();
@@ -40,4 +42,21 @@ test("#14164 maxWaitMs=0 disables the queue-wait deadline instead of timing out 
   );
 
   assert.equal(result, "ok");
+});
+
+test("AP-ISS-0196: unlimited queue wait accepts a valid learned request cap", () => {
+  const warnings: string[] = [];
+  const settings = capSettingsWithinBudget({
+    provider: "openai",
+    connectionId: "conn-unlimited-cap",
+    cap: { requests: 5, windowMs: 60_000 },
+    source: "learned",
+    globalMinTimeMs: 0,
+    queueBudgetMs: 0,
+    warn: (message) => warnings.push(message),
+  });
+
+  assert.ok(settings, "maxWaitMs=0 means unlimited queue wait, not a zero-millisecond budget");
+  assert.equal(settings.minTime, 12_000);
+  assert.deepEqual(warnings, []);
 });

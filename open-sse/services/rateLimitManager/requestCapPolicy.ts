@@ -1,8 +1,4 @@
-import {
-  requestCapSettings,
-  type RequestCap,
-  type RequestCapSettings,
-} from "./requestCap.ts";
+import { requestCapSettings, type RequestCap, type RequestCapSettings } from "./requestCap.ts";
 
 export function hasRpmOverride(
   overrides: Map<string, Record<string, number>>,
@@ -34,7 +30,7 @@ export function capSettingsWithinBudget(args: {
   } = args;
   const settings = requestCapSettings(cap);
   settings.minTime = Math.max(globalMinTimeMs, connectionMinTimeMs ?? 0, settings.minTime);
-  if (settings.minTime <= queueBudgetMs) return settings;
+  if (queueBudgetMs === 0 || settings.minTime <= queueBudgetMs) return settings;
   warn(
     `[RATE-LIMIT] ${provider}:${connectionId.slice(0, 8)} — ignoring ${source} cap of ${cap.requests} request(s) per ${Math.ceil(cap.windowMs / 1000)}s: ${settings.minTime}ms between requests exceeds the ${queueBudgetMs}ms queue budget (raise the request queue maxWaitMs to honour it)`
   );

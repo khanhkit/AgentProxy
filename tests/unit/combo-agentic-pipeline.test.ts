@@ -55,17 +55,61 @@ test("agentic detector recognizes trailing tool results across supported request
   );
 });
 
-test("agentic detector counts completed rounds for bounded sequential loops", () => {
+test("agentic detector counts completed rounds for bounded sequential loops in each request format", () => {
   assert.equal(
     countToolResultTurns({
       messages: [
         { role: "tool", content: "one" },
         { role: "user", content: [{ type: "tool_result", tool_use_id: "two" }] },
       ],
-      input: [{ type: "function_call_output", call_id: "three" }],
-      contents: [{ role: "user", parts: [{ functionResponse: { name: "four" } }] }],
     }),
-    4
+    2
+  );
+  assert.equal(
+    countToolResultTurns({
+      input: [
+        { type: "function_call_output", call_id: "three" },
+        { type: "computer_call_output", call_id: "four" },
+      ],
+    }),
+    2
+  );
+  assert.equal(
+    countToolResultTurns({
+      contents: [
+        { role: "user", parts: [{ functionResponse: { name: "five" } }] },
+        { role: "user", parts: [{ functionResponse: { name: "six" } }] },
+      ],
+    }),
+    2
+  );
+});
+
+test("AP-ISS-0196: duplicated request representations count one tool-result round once", () => {
+  assert.equal(
+    countToolResultTurns({
+      messages: [{ role: "tool", tool_call_id: "same", content: "ok" }],
+      input: [{ type: "function_call_output", call_id: "same", output: "ok" }],
+      contents: [
+        {
+          role: "user",
+          parts: [{ functionResponse: { id: "same", name: "same", response: { ok: true } } }],
+        },
+      ],
+    }),
+    1,
+    "parallel representations of the same conversation must not consume three loop rounds"
+  );
+});
+
+test("AP-ISS-0196: mixed representations select one active shape even when adapter ids differ", () => {
+  assert.equal(
+    countToolResultTurns({
+      messages: [{ role: "tool", tool_call_id: "legacy-id", content: "ok" }],
+      input: [{ type: "function_call_output", call_id: "responses-id", output: "ok" }],
+    }),
+    1,
+    "Responses input is authoritative when present; preserved messages must not add another round"
   );
 });
 

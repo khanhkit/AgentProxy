@@ -108,6 +108,11 @@ describe("header precedence in resolveBasePlan (Phase 3)", () => {
     const plan = planWithHeader(config, "bogus");
     assert.equal(plan.mode, "stacked");
     assert.equal(plan.source, "active-profile");
+    assert.deepEqual(
+      plan.stackedPipeline,
+      [{ engine: "session-dedup" }, { engine: "lite" }],
+      "an unrecognized header is not a lossy opt-in"
+    );
   });
 
   it("master-off beats the header (hard kill switch)", () => {

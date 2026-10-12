@@ -88,6 +88,16 @@ export function resolvePath(root: unknown, path: string): unknown {
   return cursor;
 }
 
+function nonNegativeFiniteNumber(value: unknown): number | null {
+  const parsed =
+    typeof value === "number"
+      ? value
+      : typeof value === "string" && value.trim()
+        ? Number(value)
+        : Number.NaN;
+  return Number.isFinite(parsed) && parsed >= 0 ? parsed : null;
+}
+
 /** A mapping is usable only if it can produce a total or a remaining. */
 function buildMappedQuota(body: unknown, mapping: OpenAiCompatibleQuotaMapping): UsageQuota | null {
   const total = mapping.total === undefined ? undefined : resolvePath(body, mapping.total);
@@ -100,15 +110,23 @@ function buildMappedQuota(body: unknown, mapping: OpenAiCompatibleQuotaMapping):
   // 0/0 here would render as a fully-exhausted quota, so report nothing.
   if (total === undefined && remaining === undefined) return null;
 
-  // total absent but remaining present: derive the total so the bar has a scale.
-  const effectiveTotal =
-    total !== undefined ? total : Number(remaining ?? 0) + Number(used !== undefined ? used : 0);
+  const parsedTotal = total === undefined ? null : nonNegativeFiniteNumber(total);
+  const parsedUsed = used === undefined ? null : nonNegativeFiniteNumber(used);
+  const parsedRemaining = remaining === undefined ? null : nonNegativeFiniteNumber(remaining);
+  if (
+    (total !== undefined && parsedTotal === null) ||
+    (used !== undefined && parsedUsed === null) ||
+    (remaining !== undefined && parsedRemaining === null)
+  ) {
+    return null;
+  }
 
-  const quota = createQuotaFromUsage(
-    used !== undefined ? used : Number(effectiveTotal ?? 0) - Number(remaining ?? 0),
-    effectiveTotal,
-    resetAt
-  );
+  // total absent but remaining present: derive the total so the bar has a scale.
+  const effectiveTotal = parsedTotal ?? (parsedRemaining ?? 0) + (parsedUsed ?? 0);
+  const effectiveUsed = parsedUsed ?? effectiveTotal - (parsedRemaining ?? 0);
+  if (effectiveUsed > effectiveTotal || (parsedRemaining ?? 0) > effectiveTotal) return null;
+
+  const quota = createQuotaFromUsage(effectiveUsed, effectiveTotal, resetAt);
 
   if (mapping.currency) quota.currency = mapping.currency;
   if (mapping.displayName) quota.displayName = mapping.displayName;

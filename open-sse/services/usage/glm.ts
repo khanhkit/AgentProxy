@@ -14,6 +14,8 @@ import { type UsageQuota } from "./quota.ts";
 import { buildGlmQuotaFetch, getGlmTeamQuotaConfig } from "../../config/glmProvider.ts";
 import { fetchGlmResetCardCount } from "./glmResetCards.ts";
 
+const GLM_USAGE_RESET_CARD_TIMEOUT_MS = 1_000;
+
 type JsonRecord = Record<string, unknown>;
 
 function getGlmTokenQuotaName(
@@ -249,7 +251,7 @@ export async function getGlmUsage(apiKey: string, providerSpecificData?: Record<
   // authoritative "no cards"), while a transport/envelope failure reports null so the
   // cache layer can preserve the previously known count instead of erasing it.
   const bankedResetCredits = hasResettableGlmWindow(quotas)
-    ? await fetchGlmResetCardCount(apiKey, providerSpecificData)
+    ? await fetchGlmResetCardCount(apiKey, providerSpecificData, GLM_USAGE_RESET_CARD_TIMEOUT_MS)
     : 0;
 
   return {

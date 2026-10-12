@@ -8,6 +8,7 @@ import {
   isRetryableStreamError,
   hasTerminalMarker,
   createRecoverableStream,
+  scanOpenAiSseText,
 } from "../../open-sse/services/streamRecovery.ts";
 
 const enc = (s: string) => new TextEncoder().encode(s);
@@ -137,7 +138,7 @@ test("isRetryableStreamError: client aborts and unknown errors are NOT retryable
 test("hasTerminalMarker detects OpenAI and Anthropic stream terminators", () => {
   assert.equal(hasTerminalMarker(enc("data: {...}\n\ndata: [DONE]\n\n")), true);
   assert.equal(hasTerminalMarker(enc("event: message_stop\ndata: {}\n\n")), true);
-  assert.equal(hasTerminalMarker(enc("data: {\"choices\":[]}\n\n")), false);
+  assert.equal(hasTerminalMarker(enc('data: {"choices":[]}\n\n')), false);
   assert.equal(hasTerminalMarker(enc("")), false);
 });
 
@@ -273,4 +274,12 @@ test("createRecoverableStream does not spend an upstream re-open after a client 
   await new Promise((r) => setTimeout(r, 10)); // let any in-flight pull settle
   assert.equal(reopened, 0, "a client cancel must never trigger a transparent re-open");
   assert.equal(finalizeCount, 1);
+});
+
+test("AP-ISS-0196: data null SSE payload is ignored safely", () => {
+  assert.doesNotThrow(() => scanOpenAiSseText("data: null\n\n"));
+  const scan = scanOpenAiSseText("data: null\n\n");
+  assert.equal(scan.parsedOpenAi, false);
+  assert.equal(scan.parsedResponses, false);
+  assert.equal(scan.text, "");
 });

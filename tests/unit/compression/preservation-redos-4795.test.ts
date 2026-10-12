@@ -28,8 +28,7 @@ describe("preservation ReDoS guard (#4795)", () => {
   });
 
   it("does not hang on Windows-path-style payloads with backslashes after a `$`", () => {
-    const evil =
-      "$C:\\Users\\Alpha\\Net\\DESKTOP\\" + "sub\\".repeat(120) + "no-closing-dollar";
+    const evil = "$C:\\Users\\Alpha\\Net\\DESKTOP\\" + "sub\\".repeat(120) + "no-closing-dollar";
     const start = Date.now();
     extractPreservedBlocks(evil);
     assert.ok(Date.now() - start < 1000, "Windows-path payload must resolve quickly");
@@ -56,4 +55,15 @@ describe("preservation ReDoS guard (#4795)", () => {
       "inline math with an escaped dollar must still be captured via the `\\.` branch"
     );
   });
+});
+
+it("AP-ISS-0196: fenced code is tombstoned before user preserve patterns", () => {
+  const text = "before\n```txt\nSECRET=alpha\nline two\n```\nafter";
+  const out = extractPreservedBlocks(text, { preservePatterns: [/SECRET=alpha/g] });
+  const fenced = out.blocks.filter((block) => block.kind === "fenced_code");
+  assert.equal(fenced.length, 1);
+  assert.match(fenced[0].content, /SECRET=alpha/);
+  assert.doesNotMatch(fenced[0].content, /OMNI_CAVEMAN/);
+  assert.equal(out.blocks.filter((block) => block.kind === "custom").length, 0);
+  assert.equal(restorePreservedBlocks(out.text, out.blocks), text);
 });
