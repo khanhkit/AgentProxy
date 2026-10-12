@@ -152,11 +152,8 @@ export async function resolveModelOrError(
     !isCodexNativeResponsesRequest(body, endpointPath, requestHeaders) &&
     (await hasOnlyActiveCodexAccount())
   ) {
-    // #2877: keep the bare model id (do NOT bake a `-medium` suffix). The Codex
-    // executor reads a model-name suffix as an explicit `modelEffort` that (per
-    // #2331) overrides the client's `reasoning.effort`, so injecting `-medium`
-    // here silently demoted a genuine `reasoning.effort=xhigh`. The default
-    // effort still comes from the connection fallback when the client sends none.
+    // #2877/#2331: keep the bare id; a synthetic effort suffix would override the
+    // client's reasoning.effort. Connection defaults still fill an omitted effort.
     log.info("ROUTING", `${modelStr} → codex/gpt-5.5 (Codex-only active account)`);
     modelInfo.provider = "codex";
     modelInfo.model = "gpt-5.5";
@@ -311,12 +308,8 @@ export async function resolveModelOrError(
         ? ((modelInfo as { apiFormat?: string }).apiFormat as string)
         : undefined
       : undefined;
-  // customModelTargetFormat: #2905 per-model wire-format override for custom models,
-  // injected by getModelInfo. Must be threaded into the same resolution formula
-  // chatCore.ts uses (static registry > custom-model DB override > provider default) —
-  // a model that's ALSO a static registry entry (e.g. a Vertex Claude model with no
-  // per-model registry targetFormat) otherwise silently drops the DB override and
-  // falls through to the provider default, breaking response translation.
+  // #2905: preserve the custom-model targetFormat in chatCore's precedence chain;
+  // otherwise a matching static registry entry can silently discard the DB override.
   const customModelTargetFormat: string | undefined =
     modelInfo && typeof modelInfo === "object" && "targetFormat" in modelInfo
       ? typeof (modelInfo as { targetFormat?: unknown }).targetFormat === "string"
@@ -455,9 +448,7 @@ export async function executeChatWithBreaker({
   reasoningTransportFallback = "drop",
   sessionAffinityKey = null,
   managedLease = null,
-  // #12150 P1b: additive, optional video-bridge log/Memory shadow — undefined
-  // for every non-video request. Passed straight through to handleChatCore;
-  // see its own destructure default for the shape and consumers.
+  // #12150: optional video-bridge log/Memory shadow, forwarded unchanged.
   videoBridgeLog = undefined,
   forcedConnectionId = null,
 }: ExecuteChatWithBreakerOptions): Promise<ExecuteChatWithBreakerResult> {
@@ -467,9 +458,7 @@ export async function executeChatWithBreaker({
       : "production";
   const isShadowTraffic = normalizedTrafficType === "shadow";
 
-  // #5217: capture the proxy actually applied during execution so the caller can
-  // merge it into proxyInfo before the egress log (executors pinning a per-account
-  // proxy internally otherwise leave the egress log reading "direct").
+  // #5217: capture the executor-selected proxy so egress logs do not report "direct".
   const capture = <T>(fn: () => T): T =>
     appliedProxySink ? runWithAppliedProxyCapture(appliedProxySink, fn) : fn();
 
@@ -484,12 +473,8 @@ export async function executeChatWithBreaker({
         runWithProxyContext(proxyInfo?.proxy || null, () =>
           (handleChatCore as any)({
             body: { ...body, model: `${provider}/${model}` },
-            // #2905-followup: forward the already-resolved custom-model targetFormat
-            // override through as modelInfo.targetFormat. Without this, chatCore.ts's
-            // own resolveChatCoreRequestSetup() reads customModelTargetFormat off THIS
-            // modelInfo object (not the one resolveModelOrError computed it from) and
-            // finds nothing, silently re-deriving targetFormat from the static registry
-            // / provider default and discarding the DB override a second time.
+            // #2905: preserve the already-resolved custom-model targetFormat; otherwise
+            // chatCore would re-derive it and could discard the DB override.
             modelInfo: {
               provider,
               model,
@@ -531,8 +516,7 @@ export async function executeChatWithBreaker({
                 expiresIn: newCreds.expiresIn,
                 expiresAt: newCreds.expiresAt,
                 providerSpecificData: newCreds.providerSpecificData,
-                // Cookie/session providers may rotate apiKey mid-request; forward it so the DB
-                // credential doesn't go stale after Set-Cookie rotation.
+                // Persist mid-request cookie/session apiKey rotation.
                 apiKey: newCreds.apiKey,
                 testStatus: newCreds.testStatus ?? "active",
                 isActive: newCreds.isActive,
@@ -553,9 +537,7 @@ export async function executeChatWithBreaker({
               ) {
                 return;
               }
-              // A3 guard: if 401 and connection has extra keys, skip connection-level disable
-              // (key-level failure already recorded in chatCore.ts via T07)
-              // Check extra keys directly from credentials for reliability across restarts
+              // A3: extra-key 401s are handled per-key in chatCore; do not disable the connection.
               const extraKeys =
                 (credentials.providerSpecificData?.extraApiKeys as string[] | undefined) ?? [];
               const hasExtraKeys =
@@ -586,9 +568,7 @@ export async function executeChatWithBreaker({
       provider,
       sessionScope: credentials.connectionId,
     };
-    // Track whenever direct TLS is possible. proxyFetch decides against wreq only
-    // after resolving NO_PROXY/local bypasses, so predicting from proxyInfo here
-    // would drop the account scope when a configured proxy resolves to direct.
+    // Track whenever direct TLS is possible; NO_PROXY may turn a configured proxy direct.
     const tlsFingerprintActive = isTlsFingerprintActive(provider);
 
     if (isShadowTraffic) {

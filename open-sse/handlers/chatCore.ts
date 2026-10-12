@@ -506,22 +506,13 @@ async function handleChatCoreInner({
   skipResourcePressureGuard = false,
   reasoningTransportFallback = "drop",
   managedLease = null,
-  // #12150 P1b: additive, optional video-bridge log/Memory shadow — shape is
-  // VideoBridgeLogParam (defined near the top of this file). Built once in chat.ts from
-  // preCallGuardrails.results (video-bridge guardrail meta) and threaded here
-  // through executeChatWithBreaker. `undefined` for every non-video request,
-  // so this parameter changes nothing on the byte-identical default path.
-  // `observed` gates durable Memory extraction (surface 3); `redaction` is
-  // applied to a CLONE of `body` at the persistAttemptLogs sink (surface 1) —
-  // the model-bound `body` itself is never touched.
+  // #12150: optional video-bridge shadow metadata; redaction applies only to a log clone,
+  // while `observed` gates Memory extraction. The model-bound body is never mutated.
   videoBridgeLog = undefined,
 }) {
   let { provider, model, extendedContext } = modelInfo;
   const reasoningRuleDirective = body?._agentproxyReasoningRule;
-  // #12150 P1b: true iff the video-bridge guardrail rendered >=1 transcript
-  // cue into a replaced part of this request. Gates both request- and
-  // response-derived Memory extraction
-  // (chatCore/memoryExtraction.ts::runMemoryExtractionGate).
+  // #12150: only rendered transcript cues enable request/response Memory extraction.
   const videoBridgeObserved: boolean =
     (videoBridgeLog as VideoBridgeLogParam | undefined)?.observed === true;
   const resilienceSettings = resolveResilienceSettings(cachedSettings);
