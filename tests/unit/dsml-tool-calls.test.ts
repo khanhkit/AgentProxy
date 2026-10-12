@@ -90,3 +90,14 @@ test("AP-ISS-0194 OCR: marker-only ASCII DSML structural closers are scrubbed", 
   assert.equal(result.content, "");
   assert.equal(result.holdback, "");
 });
+
+test("AP-ISS-0194 CodeQL: near-match ASCII closers do not catastrophically backtrack", () => {
+  const content = Array.from({ length: 22 }, () => "\t</invoke>").join("") + "X";
+  const startedAt = performance.now();
+  const result = parseDsmlToolCalls(content);
+  const elapsedMs = performance.now() - startedAt;
+
+  assert.equal(result.toolCalls.length, 0);
+  assert.equal(result.content, content, "near-match input must remain ordinary content");
+  assert.ok(elapsedMs < 1000, `near-match recognition took ${elapsedMs.toFixed(1)}ms`);
+});

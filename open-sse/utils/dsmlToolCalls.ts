@@ -77,7 +77,8 @@ const DSML_STRAY_CLOSE_RE = new RegExp(STRAY_CLOSE_SRC, "gi");
 // that never closes — hold it back so it cannot leak as visible text and can
 // be re-evaluated once more bytes arrive.
 const DSML_PARTIAL_OPEN_RE = new RegExp(`(<${FW}DSML${FW}[^<]*)$`, "i");
-const ASCII_STRUCTURAL_CLOSERS_ONLY_RE = /^(?:\s*<\/(?:parameter|invoke)>\s*)+$/i;
+const ASCII_STRUCTURAL_CLOSERS_ONLY_RE =
+  /^\s*<\/(?:parameter|invoke)>(?:\s*<\/(?:parameter|invoke)>)*\s*$/i;
 
 export interface DsmlToolCall {
   id: string;
