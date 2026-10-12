@@ -56,47 +56,22 @@ test("AP-ISS-0194: non-SSE responses are returned unchanged", () => {
   assert.equal(normalizeResponsesSequenceResponse(response), response);
 });
 
-test("AP-ISS-0194: sequence normalization starts forwarding a large event before its line completes", async () => {
-  const transform = createResponsesSequenceNormalizerTransform();
-  const writer = transform.writable.getWriter();
-  const reader = transform.readable.getReader();
-  const largePrefix =
+test("AP-ISS-0194: a large event is normalized only after its complete line validates", async () => {
+  const input =
     'data: {"type":"response.completed","sequence_number":99,"response":{"output":"' +
-    "x".repeat(64 * 1024);
+    "x".repeat(64 * 1024) +
+    '"}}\n\n';
+  const stream = new ReadableStream<Uint8Array>({
+    start(controller) {
+      controller.enqueue(encoder.encode(input.slice(0, 32_000)));
+      controller.enqueue(encoder.encode(input.slice(32_000)));
+      controller.close();
+    },
+  });
 
-  const writePromise = writer.write(encoder.encode(largePrefix));
-  const firstRead = await Promise.race([
-    reader.read(),
-    new Promise<"timeout">((resolve) => setTimeout(() => resolve("timeout"), 100)),
-  ]);
-
-  if (firstRead === "timeout") {
-    await reader.cancel();
-    await writer.abort();
-    await writePromise.catch(() => undefined);
-    assert.fail("normalizer buffered the entire SSE line instead of forwarding a bounded prefix");
-  }
-
-  assert.equal(firstRead.done, false);
-  const firstText = decoder.decode(firstRead.value, { stream: true });
-  assert.match(firstText, /"sequence_number":1/);
-  assert.ok(firstText.includes("x".repeat(1024)), "large payload bytes should already be flowing");
-  await writePromise;
-
-  const finishWrite = writer.write(encoder.encode('"}}\n\n'));
-  const remaining: string[] = [firstText];
-  while (true) {
-    const next = await reader.read();
-    if (next.done) break;
-    remaining.push(decoder.decode(next.value, { stream: true }));
-    if (remaining.join("").endsWith("\n\n")) break;
-  }
-  await finishWrite;
-  await writer.close();
-  await reader.cancel();
-
-  const output = remaining.join("");
+  const output = await readText(stream.pipeThrough(createResponsesSequenceNormalizerTransform()));
   assert.ok(output.endsWith('"}}\n\n'));
+  assert.match(output, /"sequence_number":1/);
   assert.equal(output.includes('"sequence_number":99'), false);
 });
 
@@ -135,12 +110,50 @@ test("AP-ISS-0194: only the top-level sequence field is replaced when nested dat
   assert.equal(payload.response.sequence_number, 777);
 });
 
+test("AP-ISS-0194 OCR: duplicate and escaped sequence keys retain one final canonical value", async () => {
+  const inputs = [
+    'data: {"type":"response.completed","sequence_number":7,"sequence_number":8}\r\n\r\n',
+    'data: {"type":"response.completed","sequence\\u005fnumber":9}\r\n\r\n',
+  ];
+
+  for (const input of inputs) {
+    const stream = new ReadableStream<Uint8Array>({
+      start(controller) {
+        const split = input.indexOf("sequence") + 5;
+        controller.enqueue(encoder.encode(input.slice(0, split)));
+        controller.enqueue(encoder.encode(input.slice(split)));
+        controller.close();
+      },
+    });
+    const output = await readText(stream.pipeThrough(createResponsesSequenceNormalizerTransform()));
+    const payload = JSON.parse(output.split(/\r?\n/)[0].slice("data: ".length));
+    assert.equal(payload.sequence_number, 1);
+  }
+});
+
 test("AP-ISS-0194 OCR: malformed multiline Responses data is preserved byte-identical", async () => {
   const input =
     'data: {"type":"response.completed","sequence_number":99,\ndata: "response":{"status":"completed"}}\n\n';
   const stream = new ReadableStream<Uint8Array>({
     start(controller) {
       controller.enqueue(encoder.encode(input));
+      controller.close();
+    },
+  });
+
+  const output = await readText(stream.pipeThrough(createResponsesSequenceNormalizerTransform()));
+  assert.equal(output, input);
+});
+
+test("AP-ISS-0194 OCR: large truncated sequence values are preserved byte-identical at EOF", async () => {
+  const input =
+    'data: {"type":"response.completed","padding":"' +
+    "x".repeat(17 * 1024) +
+    '","sequence_number":"unterminated';
+  const stream = new ReadableStream<Uint8Array>({
+    start(controller) {
+      controller.enqueue(encoder.encode(input.slice(0, 16_500)));
+      controller.enqueue(encoder.encode(input.slice(16_500)));
       controller.close();
     },
   });

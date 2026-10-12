@@ -405,8 +405,6 @@ function createUncheckedResponsesSequenceNormalizerTransform(): TransformStream<
   });
 }
 
-const RESPONSES_VALIDATION_PREFIX_CHARS = OUTPUT_FLUSH_CHARS;
-
 function isCompleteResponsesDataLine(line: string): boolean {
   const match = /^\s*data:[ \t]*(\{.*\})\r?\n?$/s.exec(line);
   if (!match) return false;
@@ -418,15 +416,9 @@ function isCompleteResponsesDataLine(line: string): boolean {
   }
 }
 
-function hasLeadingResponsesType(linePrefix: string): boolean {
-  return /^\s*data:[ \t]*\{[ \t]*"type"[ \t]*:[ \t]*"response\.[^"]+"/.test(linePrefix);
-}
-
 /**
- * Validate complete, bounded SSE lines before rewriting them. A line is passed through unless
- * it is valid JSON with a Responses event `type`. For a very large event, the canonical
- * serializer's leading `type` field lets normalization begin after a bounded prefix so payload
- * bytes can keep flowing without materializing the complete line.
+ * Validate each complete SSE line before rewriting it. Malformed or truncated JSON is passed
+ * through byte-identical; only valid Responses event objects reach the sequence scanner.
  */
 export function createResponsesSequenceNormalizerTransform(): TransformStream<
   Uint8Array,
@@ -438,64 +430,62 @@ export function createResponsesSequenceNormalizerTransform(): TransformStream<
   const decoder = new TextDecoder();
   const encoder = new TextEncoder();
   let gateBuffer = "";
-  let streamingMode: "normalize" | "passthrough" | null = null;
-  let pump: Promise<void> | null = null;
+
+  const writeNormalizedLine = async (
+    line: string,
+    controller: TransformStreamDefaultController<Uint8Array>
+  ): Promise<void> => {
+    const appendedNewline = !line.endsWith("\n");
+    const writePromise = writer.write(encoder.encode(appendedNewline ? `${line}\n` : line));
+    const buffered: Uint8Array[] = [];
+
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) throw new Error("Responses sequence normalizer ended before the SSE line");
+      if (appendedNewline) buffered.push(value);
+      else controller.enqueue(value);
+      if (value[value.length - 1] === 0x0a) break;
+    }
+    await writePromise;
+
+    if (appendedNewline) {
+      const last = buffered.pop();
+      if (!last) return;
+      for (const value of buffered) controller.enqueue(value);
+      if (last.length > 1) controller.enqueue(last.subarray(0, -1));
+    }
+  };
+
+  const processCompleteLines = async (
+    controller: TransformStreamDefaultController<Uint8Array>
+  ): Promise<void> => {
+    let newline = gateBuffer.indexOf("\n");
+    while (newline !== -1) {
+      const line = gateBuffer.slice(0, newline + 1);
+      gateBuffer = gateBuffer.slice(newline + 1);
+      if (isCompleteResponsesDataLine(line)) await writeNormalizedLine(line, controller);
+      else controller.enqueue(encoder.encode(line));
+      newline = gateBuffer.indexOf("\n");
+    }
+  };
 
   return new TransformStream<Uint8Array, Uint8Array>({
-    start(controller) {
-      pump = (async () => {
-        while (true) {
-          const { done, value } = await reader.read();
-          if (done) return;
-          controller.enqueue(value);
-        }
-      })();
-    },
     async transform(chunk, controller) {
-      let text = decoder.decode(chunk, { stream: true });
-      while (text) {
-        if (streamingMode) {
-          const newline = text.indexOf("\n");
-          const part = newline === -1 ? text : text.slice(0, newline + 1);
-          if (streamingMode === "normalize") await writer.write(encoder.encode(part));
-          else controller.enqueue(encoder.encode(part));
-          text = newline === -1 ? "" : text.slice(newline + 1);
-          if (newline !== -1) streamingMode = null;
-          continue;
-        }
-
-        gateBuffer += text;
-        text = "";
-        while (streamingMode === null) {
-          const newline = gateBuffer.indexOf("\n");
-          if (newline !== -1) {
-            const line = gateBuffer.slice(0, newline + 1);
-            gateBuffer = gateBuffer.slice(newline + 1);
-            if (isCompleteResponsesDataLine(line)) await writer.write(encoder.encode(line));
-            else controller.enqueue(encoder.encode(line));
-            if (!gateBuffer) break;
-            continue;
-          }
-          if (gateBuffer.length < RESPONSES_VALIDATION_PREFIX_CHARS) break;
-          streamingMode = hasLeadingResponsesType(gateBuffer) ? "normalize" : "passthrough";
-          const prefix = gateBuffer;
-          gateBuffer = "";
-          if (streamingMode === "normalize") await writer.write(encoder.encode(prefix));
-          else controller.enqueue(encoder.encode(prefix));
-        }
-      }
+      gateBuffer += decoder.decode(chunk, { stream: true });
+      await processCompleteLines(controller);
     },
     async flush(controller) {
       gateBuffer += decoder.decode();
       if (gateBuffer) {
-        if (streamingMode === "normalize" || isCompleteResponsesDataLine(gateBuffer)) {
-          await writer.write(encoder.encode(gateBuffer));
+        if (isCompleteResponsesDataLine(gateBuffer)) {
+          await writeNormalizedLine(gateBuffer, controller);
         } else {
           controller.enqueue(encoder.encode(gateBuffer));
         }
       }
       await writer.close();
-      await pump;
+      const { done } = await reader.read();
+      if (!done) throw new Error("Responses sequence normalizer emitted unexpected trailing data");
     },
   });
 }
