@@ -1,10 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import {
-  findIdentityViolations,
-  isHistoricalContentPath,
-} from "../../../scripts/check/check-agentproxy-identity.mjs";
+import { findIdentityViolations } from "../../../scripts/check/check-agentproxy-identity.mjs";
 
 const oldProduct = ["Omni", "Route"].join("");
 const oldEnv = ["OMNI", "ROUTE", "_TOKEN"].join("");
@@ -32,7 +29,7 @@ test("AP-ISS-0113 identity guard rejects former-base paths and active content", 
   );
 });
 
-test("AP-ISS-0113 identity guard permits AgentProxy identity and only explicit changelog history", () => {
+test("AP-ISS-0171 identity guard treats changelogs as active product docs", () => {
   const files = [
     "src/current.ts",
     "README.md",
@@ -47,12 +44,16 @@ test("AP-ISS-0113 identity guard permits AgentProxy identity and only explicit c
   ]);
 
   const violations = findIdentityViolations(files, (file) => content.get(file) ?? Buffer.from(""));
-  assert.deepEqual(violations, []);
-  assert.equal(isHistoricalContentPath("CHANGELOG.md"), true);
-  assert.equal(isHistoricalContentPath("docs/i18n/fr/CHANGELOG.md"), true);
-  assert.equal(isHistoricalContentPath("THIRD_PARTY_NOTICES.md"), false);
-  assert.equal(isHistoricalContentPath("README.md"), false);
-
+  assert.equal(
+    violations.filter((item) => item.kind === "content" && item.file === "CHANGELOG.md").length,
+    1
+  );
+  assert.equal(
+    violations.filter(
+      (item) => item.kind === "content" && item.file === "docs/i18n/fr/CHANGELOG.md"
+    ).length,
+    1
+  );
   const attributionViolations = findIdentityViolations(
     ["THIRD_PARTY_NOTICES.md"],
     () => Buffer.from(oldScope)
