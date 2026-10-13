@@ -175,6 +175,11 @@ test("chat wiring captures one active snapshot and threads it through guardrails
   assert.match(code, /runtimeSettings:\s*pinnedRuntimeSettings/);
   assert.match(code, /runtimeSettingsRevision:\s*pinnedRuntimeSettingsRevision/);
   assert.match(code, /cachedSettings:\s*pinnedRuntimeSettings/);
+  assert.match(
+    code,
+    /const\s+pinnedRuntimeFeatureFlagOverrides\s*=\s*runtimeConfigSnapshot\?\.featureFlagOverrides\s*;/,
+    "no active snapshot must preserve DB > env > default feature-flag fallback"
+  );
   assert.doesNotMatch(
     code,
     /const\s+settingsForContinuation\s*=\s*await\s+getCachedSettings\s*\(/,

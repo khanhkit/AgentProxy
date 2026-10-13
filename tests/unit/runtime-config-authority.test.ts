@@ -162,11 +162,12 @@ test("reconcile failure keeps active snapshot and same revision retries reconcil
   assert.equal(getRuntimeConfigStatus().lastError, null);
 });
 
-test("older reconcile completion cannot clear newer revision status", async () => {
+test("older reconcile completes before a newer candidate may activate", async () => {
   let releaseRevision7!: () => void;
   const revision7Blocked = new Promise<void>((resolve) => {
     releaseRevision7 = resolve;
   });
+  let revision8Applied = false;
 
   const first = activateRuntimeConfigCandidate(candidate(7, { marker: "seven" }), {
     reconcile: async () => {
@@ -174,25 +175,30 @@ test("older reconcile completion cannot clear newer revision status", async () =
     },
   });
 
-  // Let revision 7 publish before revision 8 activates while its reconcile is blocked.
+  // Let revision 7 publish and enter reconcile before revision 8 is submitted.
   await new Promise<void>((resolve) => setImmediate(resolve));
 
-  await activateRuntimeConfigCandidate(candidate(8, { marker: "eight" }), {
-    reconcile: async () => {
-      throw new Error("revision 8 reconcile pending");
+  const second = activateRuntimeConfigCandidate(candidate(8, { marker: "eight" }), {
+    applyAtomic: async () => {
+      revision8Applied = true;
     },
   });
+  await new Promise<void>((resolve) => setImmediate(resolve));
+
+  assert.equal(
+    revision8Applied,
+    false,
+    "newer activation must wait for older reconcile side effects"
+  );
+  assert.equal(getActiveRuntimeConfigSnapshot()?.revision, 7);
 
   releaseRevision7();
-  await first;
+  await Promise.all([first, second]);
 
+  assert.equal(revision8Applied, true);
   assert.equal(getActiveRuntimeConfigSnapshot()?.revision, 8);
-  assert.equal(getRuntimeConfigStatus().state, "reconcile_pending");
-  assert.equal(getRuntimeConfigStatus().reconcileRevision, 8);
-  assert.deepEqual(getRuntimeConfigStatus().lastError, {
-    revision: 8,
-    message: "revision 8 reconcile pending",
-  });
+  assert.equal(getRuntimeConfigStatus().state, "ready");
+  assert.equal(getRuntimeConfigStatus().reconcileRevision, null);
 });
 
 test("classification uses explicit reconcile, restart and build/deploy exceptions", () => {

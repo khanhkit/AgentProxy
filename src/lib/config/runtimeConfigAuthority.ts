@@ -250,20 +250,20 @@ export async function activateRuntimeConfigCandidate<TPrepared = unknown>(
   store.desiredRevision = Math.max(store.desiredRevision, candidate.revision);
   const snapshot = freezeCandidate(candidate);
 
-  const atomicPhase = store.activationTail.then(
-    () => runAtomicPhase(store, snapshot, hooks),
-    () => runAtomicPhase(store, snapshot, hooks)
-  );
-  store.activationTail = atomicPhase.then(
+  const activateAndReconcile = async () => {
+    const result = await runAtomicPhase(store, snapshot, hooks);
+    if (result.snapshot && result.shouldReconcile) {
+      await runReconcile(store, result.snapshot, hooks.reconcile);
+    }
+    return result;
+  };
+  const activation = store.activationTail.then(activateAndReconcile, activateAndReconcile);
+  store.activationTail = activation.then(
     () => undefined,
     () => undefined
   );
 
-  const result = await atomicPhase;
-  if (result.snapshot && result.shouldReconcile) {
-    await runReconcile(store, result.snapshot, hooks.reconcile);
-  }
-  return result.snapshot;
+  return (await activation).snapshot;
 }
 
 export function getActiveRuntimeConfigSnapshot(): RuntimeConfigSnapshot | null {

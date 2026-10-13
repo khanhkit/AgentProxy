@@ -734,7 +734,7 @@ async function handleChatImplementation(
   const pinnedRuntimeSettings =
     runtimeConfigSnapshot?.settings ??
     (await getCachedSettings().catch(() => ({}) as Record<string, unknown>));
-  const pinnedRuntimeFeatureFlagOverrides = runtimeConfigSnapshot?.featureFlagOverrides ?? {};
+  const pinnedRuntimeFeatureFlagOverrides = runtimeConfigSnapshot?.featureFlagOverrides;
   const pinnedRuntimeSettingsRevision = runtimeConfigSnapshot?.revision;
   const previousResponseIdMode = normalizeResponsesPreviousResponseIdMode(
     (pinnedRuntimeSettings as { responsesPreviousResponseIdMode?: unknown })
