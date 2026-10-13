@@ -12,6 +12,7 @@
 
 import { saveRequestUsage } from "@/lib/usageDb";
 import { recordKeyQuotaUsage } from "@/domain/keyQuota";
+import type { KeyQuotaCounterReservation } from "@/lib/db/keyQuota";
 import { formatUsageLog } from "@/lib/usage/tokenAccounting";
 import { COLORS } from "../../utils/stream.ts";
 import { recordTokenUsage } from "../../services/tokenLimitCounter.ts";
@@ -24,7 +25,10 @@ export type RecordNonStreamingUsageStatsContext = {
   connectionId: string | null | undefined;
   model: string | null | undefined;
   startTime: number;
-  apiKeyInfo: { id?: string | null; name?: string | null } | null | undefined;
+  apiKeyInfo:
+    | { id?: string | null; name?: string | null; keyQuotaReservation?: KeyQuotaCounterReservation | null }
+    | null
+    | undefined;
   effectiveServiceTier: EffectiveServiceTier;
   isCombo: boolean;
   comboStrategy: string | null | undefined;
@@ -77,7 +81,9 @@ function recordBillableTokens(
     // Key-quota tpm/rpm counters advance for every successful call regardless
     // of token count (rpm always +1), so the gate in apiKeyPolicy sees current
     // usage. Mirrors recordTokenUsage's swallow-and-continue.
-    recordKeyQuotaUsage(apiKeyInfo.id, billable);
+    recordKeyQuotaUsage(apiKeyInfo.id, billable, {
+      reservation: apiKeyInfo.keyQuotaReservation,
+    });
     if (billable > 0)
       recordTokenUsage(apiKeyInfo.id, provider || "unknown", model || "unknown", billable);
   } catch {

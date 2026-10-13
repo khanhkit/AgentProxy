@@ -42,6 +42,16 @@ test("Codex safe discovery quarantines unproven GitHub metadata and newer-client
   );
 });
 
+test("Codex safe discovery accepts case-insensitive list visibility from GitHub metadata", () => {
+  assert.deepEqual(
+    classifyCodexDiscoveryModel(
+      { id: "future-codex", visibility: "LIST", supportedInApi: true },
+      { source: "github", mode: "safe", implementedClientVersion: "0.153.4" }
+    ),
+    { status: "active" }
+  );
+});
+
 test("Codex discovery mode keeps legacy autoFetchModels opt-in safe by default", () => {
   assert.equal(getCodexDiscoveryMode({}), "off");
   assert.equal(getCodexDiscoveryMode({ autoFetchModels: true }), "safe");

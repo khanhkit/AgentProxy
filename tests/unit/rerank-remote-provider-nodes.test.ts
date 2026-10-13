@@ -78,10 +78,10 @@ function resetEnv() {
 }
 
 test.describe("loopback host classification (shared)", () => {
-  test("accepts localhost, 127.0.0.1 and 172.16/12; rejects ::1, LAN, public, user@host", () => {
+  test("accepts only true local endpoints; private Docker/LAN ranges remain remote", () => {
     assert.equal(isLoopbackNodeHost("http://localhost:8080/v1"), true);
     assert.equal(isLoopbackNodeHost("http://127.0.0.1:8080/v1"), true);
-    assert.equal(isLoopbackNodeHost("http://172.31.255.1:8080/v1"), true);
+    assert.equal(isLoopbackNodeHost("http://172.31.255.1:8080/v1"), false);
     assert.equal(isLoopbackNodeHost("http://[::1]:8080/v1"), false);
     assert.equal(isLoopbackNodeHost("http://10.10.50.19:8888/v1"), false);
     assert.equal(isLoopbackNodeHost("http://192.168.1.10:8888/v1"), false);
@@ -130,14 +130,14 @@ test.describe("remote node policy", () => {
 test.describe("selectRerankProviderNodes", () => {
   test.afterEach(() => resetEnv());
 
-  test("flag off: only loopback/Docker nodes are selected (previous behavior)", () => {
+  test("flag off: only true loopback nodes are selected", () => {
     const selected = selectRerankProviderNodes(
       [LOOPBACK_NODE, DOCKER_NODE, LAN_NODE, METADATA_NODE, PUBLIC_NODE],
       { allowRemote: false }
     );
     assert.deepEqual(
       selected.map((p) => p.id),
-      ["loop", "dockernode"]
+      ["loop"]
     );
     assert.equal(selected[0].baseUrl, "http://127.0.0.1:8000/v1/rerank");
     assert.equal(selected[0].providerId, LOOPBACK_NODE.id);

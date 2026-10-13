@@ -12,6 +12,7 @@
 
 import { saveRequestUsage } from "@/lib/usageDb";
 import { recordKeyQuotaUsage } from "@/domain/keyQuota";
+import type { KeyQuotaCounterReservation } from "@/lib/db/keyQuota";
 import { recordTokenUsage } from "../../services/tokenLimitCounter.ts";
 import { computeBillableTokens } from "./upstreamTimeouts.ts";
 import { type EffectiveServiceTier } from "./serviceTier.ts";
@@ -24,7 +25,10 @@ export type RecordStreamingUsageStatsContext = {
   ttft: number;
   streamErrorCode: string | null | undefined;
   connectionId: string | null | undefined;
-  apiKeyInfo: { id?: string | null; name?: string | null } | null | undefined;
+  apiKeyInfo:
+    | { id?: string | null; name?: string | null; keyQuotaReservation?: KeyQuotaCounterReservation | null }
+    | null
+    | undefined;
   effectiveServiceTier: EffectiveServiceTier;
   isCombo: boolean;
   comboStrategy: string | null | undefined;
@@ -61,7 +65,9 @@ function recordStreamingBillableTokens(usage: object, ctx: RecordStreamingUsageS
   try {
     const billable = computeBillableTokens(usage);
     // Key-quota tpm/rpm counters advance on every completed stream.
-    recordKeyQuotaUsage(ctx.apiKeyInfo.id, billable);
+    recordKeyQuotaUsage(ctx.apiKeyInfo.id, billable, {
+      reservation: ctx.apiKeyInfo.keyQuotaReservation,
+    });
     if (billable > 0)
       recordTokenUsage(
         ctx.apiKeyInfo.id,

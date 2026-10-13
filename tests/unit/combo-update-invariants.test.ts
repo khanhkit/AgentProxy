@@ -50,6 +50,11 @@ test("updateComboSchema accepts nullable allowedProviders, allowedModelFamilies,
   assert.equal(parsedArray.success, true);
 });
 
+test("updateComboSchema accepts overrideAllowedProviders as the only PATCH field", () => {
+  const parsed = updateComboSchema.safeParse({ overrideAllowedProviders: true });
+  assert.equal(parsed.success, true);
+});
+
 test("updateCombo allows updating allowedProviders and clearing with null", async () => {
   const combo = await combosDb.createCombo({
     name: "claude-combo",

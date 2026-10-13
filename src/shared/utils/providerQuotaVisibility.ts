@@ -44,6 +44,6 @@ export function hasOpenAiCompatibleQuotaEndpoint(
   const psd = providerSpecificData as { quotaEndpoint?: unknown } | null | undefined;
   const endpoint = psd?.quotaEndpoint as
     { url?: unknown; quotas?: Record<string, unknown> } | null | undefined;
-  if (!endpoint || typeof endpoint.url !== "string" || endpoint.url.length === 0) return false;
+  if (!endpoint || typeof endpoint.url !== "string" || endpoint.url.trim().length === 0) return false;
   return !!endpoint.quotas && Object.keys(endpoint.quotas).length > 0;
 }

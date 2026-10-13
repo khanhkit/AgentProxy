@@ -34,6 +34,12 @@ test("DashboardLayout desktop sidebar uses the explicit visibility class, not th
   );
 });
 
+test("DashboardLayout accepts both current and legacy public E2E mode env names", () => {
+  const source = readSrc("src/shared/components/layouts/DashboardLayout.tsx");
+  assert.match(source, /NEXT_PUBLIC_OMNIROUTE_E2E_MODE/);
+  assert.match(source, /NEXT_PUBLIC_AGENTPROXY_E2E_MODE/);
+});
+
 test("globals.css defines dashboard-sidebar-desktop hidden by default and flex at >=1024px", () => {
   const css = readSrc("src/app/globals.css");
 

@@ -49,10 +49,22 @@
  */
 
 const COMBO_ABORT_REASONS = new Set(["hedge-cancelled", "combo-per-model-timeout"]);
-const CLIENT_DISCONNECT_REASONS = new Set([
-  "request_signal_aborted",
-  "client_closed",
-  "cancelled",
+const CLIENT_DISCONNECT_REASONS = new Set(["request_signal_aborted", "client_closed"]);
+const EXPLICIT_UPSTREAM_ERROR_CODES = new Set([
+  "PROXY_UNREACHABLE",
+  "UND_ERR_SOCKET",
+  "UND_ERR_CONNECT_TIMEOUT",
+  "UND_ERR_HEADERS_TIMEOUT",
+  "UND_ERR_BODY_TIMEOUT",
+]);
+const FETCH_NETWORK_CAUSE_CODES = new Set([
+  ...EXPLICIT_UPSTREAM_ERROR_CODES,
+  "ECONNRESET",
+  "ECONNREFUSED",
+  "EHOSTUNREACH",
+  "ENETUNREACH",
+  "EAI_AGAIN",
+  "ETIMEDOUT",
 ]);
 
 /**
@@ -162,22 +174,12 @@ export function isIntentionalComboAbort(err) {
  */
 export function isUpstreamNetworkError(err) {
   if (!err || typeof err !== "object") return false;
-  const e = /** @type {NodeJS.ErrnoException} */ (err);
-  if (e.name === "TypeError" && e.message === "fetch failed") return true;
-  switch (e.code) {
-    case "PROXY_UNREACHABLE":
-    case "UND_ERR_SOCKET":
-    case "UND_ERR_CONNECT_TIMEOUT":
-    case "UND_ERR_HEADERS_TIMEOUT":
-    case "UND_ERR_BODY_TIMEOUT":
-    case "ECONNREFUSED":
-    case "EHOSTUNREACH":
-    case "ENETUNREACH":
-    case "EAI_AGAIN":
-      return true;
-    default:
-      return false;
-  }
+  const e = /** @type {NodeJS.ErrnoException & { cause?: unknown }} */ (err);
+  if (EXPLICIT_UPSTREAM_ERROR_CODES.has(String(e.code))) return true;
+  if (e.name !== "TypeError" || e.message !== "fetch failed") return false;
+  const cause = e.cause;
+  if (!cause || typeof cause !== "object") return false;
+  return FETCH_NETWORK_CAUSE_CODES.has(String(/** @type {NodeJS.ErrnoException} */ (cause).code));
 }
 
 /**

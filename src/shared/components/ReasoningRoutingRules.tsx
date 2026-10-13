@@ -93,13 +93,20 @@ function supportsExtendedCodexEffort(model: string, effort: "max" | "ultra"): bo
     : /^gpt-5\.6-(?:sol|terra|luna)(?:-|$)/.test(normalized);
 }
 
-export default function ReasoningRoutingRules({
-  apiKeyId: fixedApiKeyId,
-  initialApiKeyId,
-}: {
+type ReasoningRoutingRulesProps = {
   apiKeyId?: string;
   initialApiKeyId?: string;
-}) {
+};
+
+export default function ReasoningRoutingRules(props: ReasoningRoutingRulesProps) {
+  const initialSelectedApiKeyId = props.initialApiKeyId ?? props.apiKeyId ?? "";
+  return <ReasoningRoutingRulesEditor key={initialSelectedApiKeyId} {...props} />;
+}
+
+function ReasoningRoutingRulesEditor({
+  apiKeyId: fixedApiKeyId,
+  initialApiKeyId,
+}: ReasoningRoutingRulesProps) {
   const t = useTranslations("reasoningRouting");
   const initialSelectedApiKeyId = initialApiKeyId ?? fixedApiKeyId ?? "";
   const lockedApiKey = fixedApiKeyId !== undefined && initialApiKeyId === undefined;

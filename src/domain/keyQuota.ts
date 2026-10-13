@@ -21,6 +21,9 @@
 import {
   getKeyQuotaStatus,
   incrementKeyQuotaCounter,
+  reconcileKeyQuotaReservation,
+  reserveKeyQuotaCounters,
+  type KeyQuotaCounterReservation,
   type KeyQuotaStatus,
 } from "@/lib/db/keyQuota";
 
@@ -42,6 +45,7 @@ export interface CheckKeyQuotaDeps {
 
 export interface RecordKeyQuotaDeps {
   now?: () => number;
+  reservation?: KeyQuotaCounterReservation | null;
 }
 
 // ---------------------------------------------------------------------------
@@ -87,6 +91,38 @@ export function checkKeyQuota(
 }
 
 /**
+ * PRE-request atomic quota reservation. Reserves one RPM slot and the caller's
+ * estimated prompt tokens in the same SQLite write transaction used to check
+ * remaining capacity. Fail-open matches the legacy quota gate on DB failure.
+ */
+export function reserveKeyQuotaForRequest(
+  apiKeyId: string | null | undefined,
+  estimatedTokens: number,
+  deps: CheckKeyQuotaDeps = {}
+): KeyQuotaVerdict & { reservation: KeyQuotaCounterReservation | null } {
+  if (!apiKeyId) {
+    return { allowed: true, reason: null, dimension: null, reservation: null };
+  }
+  try {
+    const result = reserveKeyQuotaCounters(apiKeyId, estimatedTokens, deps);
+    if (result.allowed) {
+      return {
+        allowed: true,
+        reason: null,
+        dimension: null,
+        status: result.status,
+        reservation: result.reservation,
+      };
+    }
+    const blocked = result.blockedDimension;
+    const blockedVerdict = verdict(false, blocked, result.status);
+    return { ...blockedVerdict, reservation: null };
+  } catch {
+    return { allowed: true, reason: null, dimension: null, reservation: null };
+  }
+}
+
+/**
  * POST-response consumption recorder. Fire-and-forget (B29): increments tpm by
  * billable tokens and rpm by 1. Never throws to the caller.
  */
@@ -98,6 +134,12 @@ export function recordKeyQuotaUsage(
   if (!apiKeyId) return;
   const nowMs = (deps.now ?? Date.now)();
   try {
+    if (deps.reservation) {
+      if (deps.reservation.settled) return;
+      reconcileKeyQuotaReservation(apiKeyId, billableTokens, deps.reservation);
+      deps.reservation.settled = true;
+      return;
+    }
     if (billableTokens > 0) incrementKeyQuotaCounter(apiKeyId, "tpm", billableTokens, nowMs);
     incrementKeyQuotaCounter(apiKeyId, "rpm", 1, nowMs);
   } catch {

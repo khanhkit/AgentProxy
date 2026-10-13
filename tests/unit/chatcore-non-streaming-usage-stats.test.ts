@@ -14,6 +14,8 @@ process.env.DATA_DIR = testDataDir;
 
 const coreDb = await import("../../src/lib/db/core.ts");
 const { getUsageHistory } = await import("../../src/lib/usage/usageHistory.ts");
+const keyQuotaDb = await import("../../src/lib/db/keyQuota.ts");
+const keyQuotaDomain = await import("../../src/domain/keyQuota.ts");
 const { recordNonStreamingUsageStats } =
   await import("../../open-sse/handlers/chatCore/nonStreamingUsageStats.ts");
 
@@ -96,6 +98,24 @@ test("valid usage persists a row with the mapped fields", async () => {
   assert.equal(row.status, "200");
   assert.equal(row.tokens.input, 11);
   assert.equal(row.tokens.output, 7);
+});
+
+test("completed usage reconciles a pre-dispatch key quota reservation exactly once", () => {
+  keyQuotaDb.clearKeyQuotaLimits("key-reserved");
+  keyQuotaDb.upsertKeyQuotaLimits("key-reserved", { tpmLimit: 100, rpmLimit: 5 });
+  const reserved = keyQuotaDomain.reserveKeyQuotaForRequest("key-reserved", 80);
+  assert.ok(reserved.reservation);
+
+  const ctx = baseCtx({
+    apiKeyInfo: { id: "key-reserved", name: "Reserved", keyQuotaReservation: reserved.reservation },
+    provider: "quota-reconcile",
+  });
+  recordNonStreamingUsageStats({ prompt_tokens: 10, completion_tokens: 10 }, ctx);
+  recordNonStreamingUsageStats({ prompt_tokens: 10, completion_tokens: 10 }, ctx);
+
+  const status = keyQuotaDb.getKeyQuotaStatus("key-reserved");
+  assert.equal(status.counters.tpmUsed, 20);
+  assert.equal(status.counters.rpmUsed, 1);
 });
 
 test("falls back to 'unknown' provider/model when absent", async () => {

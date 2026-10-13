@@ -800,6 +800,34 @@ test("enforceApiKeyPolicy rejects an API key whose per-key rpm quota is exhauste
   assert.match(await readErrorMessage(result.rejection), /Request-per-minute quota exceeded/i);
 });
 
+test("enforceApiKeyPolicy atomically reserves estimated key quota for dispatch", async () => {
+  const limitedKey = await createKeyWithPolicy();
+  keyQuotaDb.upsertKeyQuotaLimits(limitedKey.id, { rpmLimit: 1, tpmLimit: 100 });
+  const policy = await loadPolicy("key-quota-reservation");
+
+  const first = await policy.enforceApiKeyPolicy(
+    makePolicyRequest(limitedKey.key),
+    "openai/gpt-4.1",
+    { keyQuotaEstimatedTokens: 80 }
+  );
+  assert.equal(first.rejection, null);
+  assert.equal(first.keyQuotaReservation?.tokens, 80);
+
+  const second = await policy.enforceApiKeyPolicy(
+    makePolicyRequest(limitedKey.key),
+    "openai/gpt-4.1",
+    { keyQuotaEstimatedTokens: 1 }
+  );
+  assert.ok(second.rejection);
+  assert.equal(second.rejection.status, 429);
+});
+
+test("chat dispatch supplies a request token estimate and carries the quota reservation", () => {
+  const chatSource = fs.readFileSync(path.join(process.cwd(), "src/sse/handlers/chat.ts"), "utf8");
+  assert.match(chatSource, /keyQuotaEstimatedTokens:\s*estimateTokens\(body\)/);
+  assert.match(chatSource, /apiKeyInfo\.keyQuotaReservation\s*=\s*policy\.keyQuotaReservation/);
+});
+
 test("enforceApiKeyPolicy applies configured throttle delay", async () => {
   const delayedKey = await createKeyWithPolicy({ throttleDelayMs: 25 });
   const policy = await loadPolicy("throttle-delay");

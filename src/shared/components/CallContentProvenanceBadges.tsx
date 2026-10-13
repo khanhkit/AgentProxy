@@ -5,7 +5,7 @@ import { useTranslations } from "next-intl";
 type UsageProvenance = "reported" | "estimated" | "absent" | null | undefined;
 
 /**
- * Translation keys (namespace `requestLogger.detail`) for what a finished request
+ * Translation keys (namespace `requestLogger.columns`) for what a finished request
  * says about its reply: an empty reply (`hasContent === 0`) is a different fact
  * from provider metering that never arrived (`usageProvenance === "absent"`) or
  * token counts estimated locally. Unknown values (null) produce nothing.
@@ -28,7 +28,7 @@ export function CallContentProvenanceBadges({
   hasContent?: number | boolean | null;
   usageProvenance?: UsageProvenance;
 }) {
-  const t = useTranslations("requestLogger.detail");
+  const t = useTranslations("requestLogger.columns");
   const keys = getContentProvenanceKeys(hasContent, usageProvenance);
   if (keys.length === 0) return null;
   const labelKey = "contentProvenance";

@@ -14,7 +14,8 @@ import { getComboByName } from "@/lib/db/combos";
 import { isDashboardSessionAuthenticated } from "./apiAuth";
 import { resolveComboForModel } from "@/lib/db/modelComboMappings";
 import { checkBudget } from "@/domain/costRules";
-import { checkKeyQuota } from "@/domain/keyQuota";
+import { checkKeyQuota, reserveKeyQuotaForRequest } from "@/domain/keyQuota";
+import type { KeyQuotaCounterReservation } from "@/lib/db/keyQuota";
 import { checkTokenLimits } from "@agentproxy/open-sse/services/tokenLimitCounter.ts";
 import {
   errorResponse,
@@ -99,6 +100,7 @@ export interface ApiKeyMetadata {
   dailyUsageLimitUsd?: number | null;
   weeklyUsageLimitUsd?: number | null;
   compressionEnabled?: boolean;
+  keyQuotaReservation?: KeyQuotaCounterReservation | null;
 }
 
 /**
@@ -412,6 +414,8 @@ export interface ApiKeyPolicyResult {
   apiKeyInfo: ApiKeyMetadata | null;
   /** If set, the request should be rejected with this Response */
   rejection: Response | null;
+  /** Request-scoped quota reservation for completion-time reconciliation. */
+  keyQuotaReservation?: KeyQuotaCounterReservation | null;
 }
 
 export interface EnforceApiKeyPolicyOptions {
@@ -431,6 +435,8 @@ export interface EnforceApiKeyPolicyOptions {
    * entirely. Every other check on this path is unaffected.
    */
   meteredBudget?: "enforce" | "defer-to-candidate";
+  /** Estimated input tokens to reserve atomically immediately before dispatch. */
+  keyQuotaEstimatedTokens?: number;
 }
 
 /**
@@ -716,6 +722,21 @@ function buildRateLimitRules(apiKeyInfo: ApiKeyMetadata): RateLimitRule[] {
   return rules;
 }
 
+function reserveKeyQuotaForDispatch(
+  context: PolicyContext,
+  estimatedTokens: number | undefined
+): { rejection: Response | null; reservation: KeyQuotaCounterReservation | null } {
+  if (estimatedTokens === undefined || !context.apiKeyInfo.id) {
+    return { rejection: null, reservation: null };
+  }
+  const verdict = reserveKeyQuotaForRequest(context.apiKeyInfo.id, estimatedTokens);
+  if (verdict.allowed) return { rejection: null, reservation: verdict.reservation };
+  return {
+    rejection: errorResponse(HTTP_STATUS.RATE_LIMITED, verdict.reason || "API key quota exceeded"),
+    reservation: null,
+  };
+}
+
 async function validateRateLimitAndThrottle(context: PolicyContext): Promise<Response | null> {
   const { apiKeyInfo } = context;
   if (!apiKeyInfo.id) return null;
@@ -814,6 +835,15 @@ export async function enforceApiKeyPolicy(
   if (tokenRejection) return { apiKey, apiKeyInfo, rejection: tokenRejection };
   const rateRejection = await validateRateLimitAndThrottle(context);
   if (rateRejection) return { apiKey, apiKeyInfo, rejection: rateRejection };
+  const keyQuotaReservation = reserveKeyQuotaForDispatch(context, options?.keyQuotaEstimatedTokens);
+  if (keyQuotaReservation.rejection) {
+    return { apiKey, apiKeyInfo, rejection: keyQuotaReservation.rejection };
+  }
 
-  return { apiKey, apiKeyInfo, rejection: null };
+  return {
+    apiKey,
+    apiKeyInfo,
+    rejection: null,
+    keyQuotaReservation: keyQuotaReservation.reservation,
+  };
 }

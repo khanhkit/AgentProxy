@@ -52,6 +52,21 @@ export interface KeyQuotaStatus {
 
 export type KeyQuotaDimension = "tpm" | "rpm";
 
+export interface KeyQuotaCounterReservation {
+  reservedAtMs: number;
+  tokens: number;
+  tpmReserved: boolean;
+  rpmReserved: boolean;
+  settled?: boolean;
+}
+
+export interface KeyQuotaReservationResult {
+  allowed: boolean;
+  blockedDimension: "tpm" | "rpm" | "monthly" | null;
+  status: KeyQuotaStatus;
+  reservation: KeyQuotaCounterReservation | null;
+}
+
 // ---------------------------------------------------------------------------
 // Constants
 // ---------------------------------------------------------------------------
@@ -201,16 +216,24 @@ function effectiveWindowCount(apiKeyId: string, dimensionKey: string, nowMs: num
 /**
  * Atomically add `delta` to the current window bucket (UPSERT).
  */
-export function incrementKeyQuotaCounter(
+function adjustKeyQuotaCounter(
   apiKeyId: string,
   dimension: KeyQuotaDimension,
   delta: number,
-  nowMs = Date.now()
+  nowMs: number
 ): void {
-  if (!apiKeyId || delta <= 0) return;
+  if (!apiKeyId || !Number.isFinite(delta) || delta === 0) return;
   const dimensionKey = dimension === "tpm" ? DIMENSION_TPM : DIMENSION_RPM;
   const bucket = bucketIndex(nowMs);
   const db = getDbInstance();
+  if (delta < 0) {
+    db.prepare(
+      `UPDATE api_key_quota_counters
+       SET consumed = MAX(0, consumed + ?), updated_at = ?
+       WHERE api_key_id = ? AND dimension_key = ? AND bucket_index = ?`
+    ).run(delta, nowMs, apiKeyId, dimensionKey, bucket);
+    return;
+  }
   db.prepare(
     `INSERT INTO api_key_quota_counters (api_key_id, dimension_key, bucket_index, consumed, updated_at)
      VALUES (?, ?, ?, ?, ?)
@@ -220,9 +243,88 @@ export function incrementKeyQuotaCounter(
   ).run(apiKeyId, dimensionKey, bucket, delta, nowMs);
 }
 
+export function incrementKeyQuotaCounter(
+  apiKeyId: string,
+  dimension: KeyQuotaDimension,
+  delta: number,
+  nowMs = Date.now()
+): void {
+  if (delta <= 0) return;
+  adjustKeyQuotaCounter(apiKeyId, dimension, delta, nowMs);
+}
+
 /**
- * Increment both tpm (by billable tokens) and rpm (by 1) for a completed call.
+ * Atomically reserve one request plus its estimated prompt tokens. SQLite's
+ * IMMEDIATE transaction serializes the read/check/increment boundary so two
+ * concurrent requests cannot both admit against the same remaining capacity.
  */
+export function reserveKeyQuotaCounters(
+  apiKeyId: string,
+  estimatedTokens: number,
+  deps: { now?: () => number; monthTotalUsd?: number } = {}
+): KeyQuotaReservationResult {
+  const nowMs = (deps.now ?? Date.now)();
+  const tokens = Number.isFinite(estimatedTokens) ? Math.max(0, Math.ceil(estimatedTokens)) : 0;
+  const db = getDbInstance();
+  let result: KeyQuotaReservationResult | null = null;
+
+  db.immediate(() => {
+    const status = getKeyQuotaStatus(apiKeyId, deps);
+    if (status.monthlyExceeded) {
+      result = { allowed: false, blockedDimension: "monthly", status, reservation: null };
+      return;
+    }
+    if (status.limits.tpmLimit !== null && status.counters.tpmUsed + tokens > status.limits.tpmLimit) {
+      result = { allowed: false, blockedDimension: "tpm", status, reservation: null };
+      return;
+    }
+    if (status.limits.rpmLimit !== null && status.counters.rpmUsed + 1 > status.limits.rpmLimit) {
+      result = { allowed: false, blockedDimension: "rpm", status, reservation: null };
+      return;
+    }
+
+    if (tokens > 0) adjustKeyQuotaCounter(apiKeyId, "tpm", tokens, nowMs);
+    adjustKeyQuotaCounter(apiKeyId, "rpm", 1, nowMs);
+    result = {
+      allowed: true,
+      blockedDimension: null,
+      status,
+      reservation: {
+        reservedAtMs: nowMs,
+        tokens,
+        tpmReserved: tokens > 0,
+        rpmReserved: true,
+      },
+    };
+  });
+
+  if (!result) throw new Error("Key quota reservation transaction did not produce a result");
+  return result;
+}
+
+/** Reconcile a completed call against a pre-request reservation. */
+export function reconcileKeyQuotaReservation(
+  apiKeyId: string,
+  billableTokens: number,
+  reservation: KeyQuotaCounterReservation
+): void {
+  if (!apiKeyId) return;
+  const actualTokens = Number.isFinite(billableTokens) ? Math.max(0, Math.ceil(billableTokens)) : 0;
+  if (reservation.tpmReserved) {
+    adjustKeyQuotaCounter(
+      apiKeyId,
+      "tpm",
+      actualTokens - reservation.tokens,
+      reservation.reservedAtMs
+    );
+  } else if (actualTokens > 0) {
+    incrementKeyQuotaCounter(apiKeyId, "tpm", actualTokens, reservation.reservedAtMs);
+  }
+  if (!reservation.rpmReserved) {
+    incrementKeyQuotaCounter(apiKeyId, "rpm", 1, reservation.reservedAtMs);
+  }
+}
+
 export function recordKeyQuotaUsage(
   apiKeyId: string,
   billableTokens: number,

@@ -100,12 +100,33 @@ export function createBoundedCollector(maxBytes: number = MITM_PIPE_MAX_COLLECT_
   truncated: boolean;
 } {
   let collected = "";
+  let retainedBytes = 0;
   let totalBytes = 0;
   const acc = {
     push(chunk: string): void {
-      totalBytes += Buffer.byteLength(chunk);
-      if (collected.length < maxBytes) {
-        collected += chunk.slice(0, maxBytes - collected.length);
+      const bytes = Buffer.from(chunk);
+      totalBytes += bytes.length;
+      const remaining = maxBytes - retainedBytes;
+      if (remaining <= 0) return;
+      if (bytes.length <= remaining) {
+        collected += chunk;
+        retainedBytes += bytes.length;
+        return;
+      }
+
+      // `chunk` is valid JS text, so its UTF-8 form is valid. A byte ceiling can
+      // only cut through the final code point; back up to its boundary instead
+      // of retaining a replacement character or exceeding the byte cap.
+      let end = remaining;
+      while (end > 0) {
+        try {
+          const prefix = new TextDecoder("utf-8", { fatal: true }).decode(bytes.subarray(0, end));
+          collected += prefix;
+          retainedBytes += end;
+          break;
+        } catch {
+          end -= 1;
+        }
       }
     },
     get text(): string {
@@ -115,7 +136,7 @@ export function createBoundedCollector(maxBytes: number = MITM_PIPE_MAX_COLLECT_
       return totalBytes;
     },
     get truncated(): boolean {
-      return totalBytes > Buffer.byteLength(collected);
+      return totalBytes > retainedBytes;
     },
   };
   return acc;
@@ -217,6 +238,7 @@ export abstract class MitmHandlerBase {
     }
 
     const reader = upstream.body.getReader();
+    const inspectorDecoder = onChunk ? new TextDecoder() : null;
     // #13395: a downstream disconnect must stop the upstream read — otherwise an
     // abandoned stream keeps the reader (and its buffers) alive for the full
     // upstream lifetime and the handler closure retains the transcript.
@@ -232,15 +254,24 @@ export abstract class MitmHandlerBase {
         const { done, value } = await reader.read();
         if (done) break;
         const buf = Buffer.from(value);
-        if (onChunk) {
+        if (onChunk && inspectorDecoder) {
           try {
-            onChunk(buf);
+            const decoded = inspectorDecoder.decode(buf, { stream: true });
+            if (decoded) onChunk(Buffer.from(decoded));
           } catch {
             // Inspector hook must never break the upstream pipe.
           }
         }
         if (downstreamClosed || res.closed || res.destroyed) break;
         res.write(buf);
+      }
+      if (!downstreamClosed && onChunk && inspectorDecoder) {
+        try {
+          const tail = inspectorDecoder.decode();
+          if (tail) onChunk(Buffer.from(tail));
+        } catch {
+          // Inspector hook must never break the upstream pipe.
+        }
       }
     } finally {
       res.off("close", onClose);
