@@ -174,32 +174,6 @@ export function createDefaultEmbeddingGenerator(config: {
     const provider = options?.provider || config.embeddingProvider || "openai";
 
     let targetUrl = config.embeddingBaseUrl;
-    if (targetUrl) {
-      targetUrl = targetUrl.trim();
-      if (!targetUrl.endsWith("/embeddings")) {
-        if (!targetUrl.endsWith("/v1")) {
-          targetUrl = `${targetUrl.replace(/\/+$/, "")}/v1/embeddings`;
-        } else {
-          targetUrl = `${targetUrl.replace(/\/+$/, "")}/embeddings`;
-        }
-      }
-    }
-    const apiKey = config.embeddingApiKey;
-
-    if (targetUrl) {
-      try {
-        const guard = getProviderValidationGuard();
-        targetUrl = (
-          guard === "public-only"
-            ? parseAndValidatePublicUrl(targetUrl)
-            : parseAndValidateNonMetadataUrl(targetUrl)
-        ).toString();
-      } catch {
-        console.warn("[CACHE] Blocked invalid or unsafe embedding endpoint");
-        return null;
-      }
-    }
-
     if (!targetUrl) {
       if (provider === "lemonade") {
         targetUrl = "http://localhost:13305/v1/embeddings";
@@ -207,8 +181,27 @@ export function createDefaultEmbeddingGenerator(config: {
         targetUrl = "http://localhost:11434/v1/embeddings";
       }
     }
+    if (!targetUrl) return null;
 
-    if (!targetUrl) {
+    targetUrl = targetUrl.trim();
+    if (!targetUrl.endsWith("/embeddings")) {
+      if (!targetUrl.endsWith("/v1")) {
+        targetUrl = `${targetUrl.replace(/\/+$/, "")}/v1/embeddings`;
+      } else {
+        targetUrl = `${targetUrl.replace(/\/+$/, "")}/embeddings`;
+      }
+    }
+    const apiKey = config.embeddingApiKey;
+
+    try {
+      const guard = getProviderValidationGuard();
+      targetUrl = (
+        guard === "public-only"
+          ? parseAndValidatePublicUrl(targetUrl)
+          : parseAndValidateNonMetadataUrl(targetUrl)
+      ).toString();
+    } catch {
+      console.warn("[CACHE] Blocked invalid or unsafe embedding endpoint");
       return null;
     }
 
