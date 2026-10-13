@@ -284,3 +284,48 @@ test("log detail exposes an empty reply apart from missing metering", async () =
     cleanup([emptyId, silentId]);
   }
 });
+
+test("AP-ISS-0200 4233404911: textual route names containing media words stay measurable", async () => {
+  const ids = ["ccp-audio-preview", "ccp-realtime-proxy", "ccp-websocket-test"];
+  for (const [id, path] of [
+    [ids[0], "/v1/models/audio-preview"],
+    [ids[1], "/v1/providers/realtime-proxy"],
+    [ids[2], "/v1/websocket-test"],
+  ] as const) {
+    await saveCallLog({
+      id,
+      path,
+      status: 200,
+      tokens: { prompt_tokens: 1, completion_tokens: 1 },
+      clientResponse: { choices: [{ message: { content: "text" } }] },
+    });
+  }
+  try {
+    for (const id of ids) assert.equal(rowFor(id).has_content, 1, `${id} must remain text-measurable`);
+  } finally {
+    cleanup(ids);
+  }
+});
+
+test("AP-ISS-0200 4233405403: metadata-only tool_calls do not count as rendered content", async () => {
+  const cases = [
+    ["ccp-empty-tool-call", {}],
+    ["ccp-id-only-tool-call", { id: "call_1" }],
+    ["ccp-type-only-tool-call", { type: "function" }],
+  ] as const;
+  for (const [id, toolCall] of cases) {
+    await saveCallLog({
+      id,
+      status: 200,
+      tokens: { prompt_tokens: 1, completion_tokens: 0 },
+      clientResponse: { choices: [{ message: { content: null, tool_calls: [toolCall] } }] },
+    });
+  }
+  try {
+    for (const [id] of cases) {
+      assert.equal(rowFor(id).has_content, 0, `${id} must not count metadata as content`);
+    }
+  } finally {
+    cleanup(cases.map(([id]) => id));
+  }
+});

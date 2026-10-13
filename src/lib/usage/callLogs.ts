@@ -295,7 +295,7 @@ function extractAssistantMessage(responseBody: unknown): unknown {
 // a CHARACTER count, never a token count — it must not touch cost math.
 //
 // Encrypted-reasoning observability: an opaque Responses `reasoning` item
-// (`encrypted_content` / signature / format, no readable summary) overrides
+// with non-empty `encrypted_content` overrides
 // every other source with 'encrypted'. The sink-side scan covers non-streaming
 // snapshots and batch-completed-without-added payloads; the streaming path
 // threads the same signal via `entry.reasoningMeta` (flag + wall-clock delta).
@@ -320,10 +320,7 @@ function snapshotHasOpaqueReasoningItem(body: unknown): boolean {
         : null;
     if (!itemRecord || itemRecord.type !== "reasoning") return false;
     return (
-      (typeof itemRecord.encrypted_content === "string" &&
-        itemRecord.encrypted_content.length > 0) ||
-      itemRecord.signature !== undefined ||
-      itemRecord.format !== undefined
+      typeof itemRecord.encrypted_content === "string" && itemRecord.encrypted_content.length > 0
     );
   });
 }
@@ -803,7 +800,7 @@ export function saveCallLog(entry: any): Promise<void> {
   // Usage is also needed by the live dashboard when disk history is disabled.
   // Retain only counters, never the request/response bodies from this entry.
   if (entry?.tokens && typeof entry.tokens === "object") {
-    updateRequestTokensById(entry.pendingRequestId ?? entry.id, {
+    updateRequestTokensById(entry.pendingRequestId, {
       in: getLoggedInputTokens(entry.tokens),
       out: getLoggedOutputTokens(entry.tokens),
       cacheRead: getPromptCacheReadTokensOrNull(entry.tokens),
@@ -1168,8 +1165,10 @@ export async function* iterateCallLogsSince(
 
     for (const row of page) {
       const log = await getCallLogById(row.id);
-      if (log) yield log;
-      processed++;
+      if (log) {
+        processed++;
+        yield log;
+      }
       if (processed >= maxRows) break;
     }
 

@@ -66,6 +66,7 @@ test("concurrent requests keep separate usage and missing updates preserve recor
   const second = history.trackPendingRequest("model", "provider", "connection", true);
   await saveCallLog({
     id: first,
+    pendingRequestId: first,
     tokens: {
       input_tokens: 20,
       output_tokens: 0,
@@ -74,7 +75,11 @@ test("concurrent requests keep separate usage and missing updates preserve recor
     },
   });
   await saveCallLog({ id: first });
-  await saveCallLog({ id: second, tokens: { input: 900, output: 12 } });
+  await saveCallLog({
+    id: second,
+    pendingRequestId: second,
+    tokens: { input: 900, output: 12 },
+  });
   for (const id of [first, second])
     history.finalizePendingRequestById(id, {
       providerResponse: {},
@@ -148,7 +153,7 @@ test("late artifact enrichment does not erase usage recorded after finalization"
 
   // Finalization starts asynchronous artifact recovery with a pre-usage snapshot.
   history.finalizePendingRequestById(id, { status: 200 });
-  await saveCallLog({ id, tokens: { input: 4321, output: 65 } });
+  await saveCallLog({ id, pendingRequestId: id, tokens: { input: 4321, output: 65 } });
   const deadline = Date.now() + 5000;
   while (!history.getCompletedDetails().get(id)?.providerResponse && Date.now() < deadline) {
     await new Promise((resolve) => setTimeout(resolve, 10));

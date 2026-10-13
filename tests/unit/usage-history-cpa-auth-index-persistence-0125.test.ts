@@ -27,7 +27,7 @@ test("TC-OMNIDB-CPA-013B: usageHistory persists cpaAuthIndex and permits sanitiz
   const source = read("src/lib/usage/usageHistory.ts");
 
   assert.match(source, /cpaAuthIndex\?:\s*string\s*\|\s*null/);
-  assert.match(source, /SELECT id, endpoint, cpa_auth_index FROM usage_history/);
+  assert.match(source, /SELECT id, provider, endpoint, cpa_auth_index FROM usage_history/);
   assert.match(
     source,
     /if \(!existing\.cpa_auth_index && entry\.cpaAuthIndex\)[\s\S]{0,220}?UPDATE usage_history SET cpa_auth_index = \? WHERE id = \?/
