@@ -121,17 +121,17 @@ export function extractPreservedBlocks(
       kind: "system_instruction",
     },
   ];
+  // Custom regions keep their historical precedence, but fenced code is opaque so a
+  // user regex cannot fragment a fence before the whole block is preserved.
+  for (const { pattern, kind } of compileUserPatterns(options.preservePatterns)) {
+    result = replacePatternOutsideFences(result, pattern, kind, addBlock);
+  }
+
   for (const { pattern, kind } of systemPatterns) {
     result = replacePatternOutsideFences(result, pattern, kind, addBlock);
   }
 
-  // Fences are opaque to user preserve patterns, while an outer instruction envelope
-  // remains one opaque region even when it contains fenced code.
   result = extractFencedCodeBlocks(result, (content) => addBlock(content, "fenced_code"));
-
-  for (const { pattern, kind } of compileUserPatterns(options.preservePatterns)) {
-    result = replacePattern(result, pattern, kind, addBlock);
-  }
 
   const builtIns: CompiledPattern[] = [
     { pattern: /\$\$[\s\S]*?\$\$/g, kind: "math_block" },

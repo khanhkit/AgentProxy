@@ -74,6 +74,14 @@ test("AP-ISS-0196 review: partial Lyceum balance payloads retain supported defau
   });
 });
 
+test("AP-ISS-0196 review: malformed ancillary Lyceum credit fields reject the payload", () => {
+  assert.equal(parseLyceumCreditsResponse(creditsResponse({ monthly_free_credits: -1 })), null);
+  assert.equal(
+    parseLyceumCreditsResponse(creditsResponse({ purchased_credits: "not-a-number" })),
+    null
+  );
+});
+
 test("parseLyceumCreditsResponse falls back remaining to available", () => {
   const fields = parseLyceumCreditsResponse({ available_credits: 12.5, used_credits: 2 });
   assert.ok(fields);

@@ -120,13 +120,17 @@ export function parseLyceumCreditsResponse(data: unknown): LyceumCreditsFields |
   const usedCredits = readCredit("used_credits", 0);
   if (availableCredits === null || usedCredits === null) return null;
   const remainingCredits = readCredit("remaining_credits", availableCredits);
-  if (remainingCredits === null) return null;
+  const monthlyFreeCredits = readCredit("monthly_free_credits", 0);
+  const purchasedCredits = readCredit("purchased_credits", 0);
+  if (remainingCredits === null || monthlyFreeCredits === null || purchasedCredits === null) {
+    return null;
+  }
   return {
     availableCredits,
     usedCredits,
     remainingCredits,
-    monthlyFreeCredits: Math.max(0, toFiniteNumber(inner.monthly_free_credits, 0)),
-    purchasedCredits: Math.max(0, toFiniteNumber(inner.purchased_credits, 0)),
+    monthlyFreeCredits,
+    purchasedCredits,
   };
 }
 

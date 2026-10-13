@@ -113,6 +113,22 @@ test("AP-ISS-0196: mixed representations select one active shape even when adapt
   );
 });
 
+test("AP-ISS-0196 review: legacy function_call_output content counts toward the active tool round", () => {
+  assert.equal(
+    countToolResultTurns({
+      messages: [
+        { role: "user", content: "run the tool" },
+        { role: "assistant", content: [{ type: "tool_use", id: "call-1" }] },
+        {
+          role: "user",
+          content: [{ type: "function_call_output", call_id: "call-1", output: "ok" }],
+        },
+      ],
+    }),
+    1
+  );
+});
+
 test("AP-ISS-0196 review: empty stale representations fall through to active history", () => {
   assert.equal(
     countToolResultTurns({

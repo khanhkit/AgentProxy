@@ -158,7 +158,7 @@ export function countToolResultTurns(body: Body): number {
   }
   return messages.slice(boundary).filter((message) => {
     const record = asRecord(message);
-    return record?.role === "tool" || contentHasType(record?.content, new Set(["tool_result"]));
+    return record?.role === "tool" || contentHasType(record?.content, toolResultTypes);
   }).length;
 }
 

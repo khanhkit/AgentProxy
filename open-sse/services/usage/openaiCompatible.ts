@@ -124,7 +124,7 @@ function buildMappedQuota(body: unknown, mapping: OpenAiCompatibleQuotaMapping):
   // total absent but remaining present: derive the total so the bar has a scale.
   const effectiveTotal = parsedTotal ?? (parsedRemaining ?? 0) + (parsedUsed ?? 0);
   const effectiveUsed = parsedUsed ?? effectiveTotal - (parsedRemaining ?? 0);
-  if (effectiveUsed > effectiveTotal || (parsedRemaining ?? 0) > effectiveTotal) return null;
+  if ((parsedRemaining ?? 0) > effectiveTotal) return null;
 
   const quota = createQuotaFromUsage(effectiveUsed, effectiveTotal, resetAt);
 

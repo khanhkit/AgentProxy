@@ -69,6 +69,8 @@ test("isModelScoped400 recognizes model-not-supported shapes (incl. invalid/Bad 
   );
   assert.equal(isModelScoped400("permission to access model gpt-5 denied"), true);
   assert.equal(isModelScoped400("model gpt-5 permission denied"), true);
+  assert.equal(isModelScoped400("access denied for model gpt-5"), true);
+  assert.equal(isModelScoped400("permission denied for model gpt-5"), true);
   // Genuinely body-specific — must NOT be treated as model-scoped
   assert.equal(isModelScoped400("Invalid message format: the request body is malformed."), false);
   assert.equal(isModelScoped400("malformed JSON in request body"), false);
