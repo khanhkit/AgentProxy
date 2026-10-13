@@ -74,8 +74,7 @@ import {
 } from "./rrState.ts";
 import { expandTargetsForAllStrategies } from "./connectionAwareExpansion.ts";
 import {
-  validateResponseQuality,
-  qualityValidationContext,
+  validateResponseQuality, qualityValidationContext,
   releaseQualityClone,
   releaseRejectedQualityResponse,
   toRetryAfterDisplayValue,
