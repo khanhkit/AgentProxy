@@ -84,7 +84,7 @@ function hasNonBlankText(value: unknown): boolean {
 function hasToolCall(value: unknown): boolean {
   const call = asRecord(value);
   if (!call) return false;
-  if ([call.id, call.name, call.type, call.arguments].some(hasNonBlankText)) return true;
+  if ([call.name, call.arguments].some(hasNonBlankText)) return true;
   const fn = asRecord(call.function);
   return fn !== null && [fn.name, fn.arguments].some(hasNonBlankText);
 }

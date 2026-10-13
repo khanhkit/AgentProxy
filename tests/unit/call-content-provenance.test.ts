@@ -307,17 +307,25 @@ test("AP-ISS-0200 4233404911: textual route names containing media words stay me
   }
 });
 
-test("AP-ISS-0200 4233405403: structurally empty tool_calls do not count as rendered content", async () => {
-  const id = "ccp-empty-tool-call";
-  await saveCallLog({
-    id,
-    status: 200,
-    tokens: { prompt_tokens: 1, completion_tokens: 0 },
-    clientResponse: { choices: [{ message: { content: null, tool_calls: [{}] } }] },
-  });
+test("AP-ISS-0200 4233405403: metadata-only tool_calls do not count as rendered content", async () => {
+  const cases = [
+    ["ccp-empty-tool-call", {}],
+    ["ccp-id-only-tool-call", { id: "call_1" }],
+    ["ccp-type-only-tool-call", { type: "function" }],
+  ] as const;
+  for (const [id, toolCall] of cases) {
+    await saveCallLog({
+      id,
+      status: 200,
+      tokens: { prompt_tokens: 1, completion_tokens: 0 },
+      clientResponse: { choices: [{ message: { content: null, tool_calls: [toolCall] } }] },
+    });
+  }
   try {
-    assert.equal(rowFor(id).has_content, 0);
+    for (const [id] of cases) {
+      assert.equal(rowFor(id).has_content, 0, `${id} must not count metadata as content`);
+    }
   } finally {
-    cleanup([id]);
+    cleanup(cases.map(([id]) => id));
   }
 });
