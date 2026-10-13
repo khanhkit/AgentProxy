@@ -21,7 +21,6 @@
  */
 
 import * as yaml from "js-yaml";
-import { createHash } from "node:crypto";
 import { readFile } from "node:fs/promises";
 import { errorResponse, buildErrorBody, parseUpstreamError } from "../utils/error.ts";
 import { stripSensitiveResponseHeaders } from "../utils/upstreamResponseHeaders.ts";
@@ -68,7 +67,7 @@ export interface SelfHostedRuntime {
 }
 
 let cachedRuntime: SelfHostedRuntime | null = null;
-let cachedRuntimeSignature = "";
+let cachedRuntimeSources: SelfHostedSources | null = null;
 let failedConfigLoad: string | null = null;
 
 interface SelfHostedSources {
@@ -103,15 +102,13 @@ async function resolveSelfHostedSources(
   return { providersFile, providersSource, strategySource };
 }
 
-/** Content signature used to skip re-parsing when nothing has changed. */
-function signatureFor(sources: SelfHostedSources): string {
-  const hash = createHash("sha256");
-  hash.update(sources.providersFile ?? "");
-  hash.update("\0");
-  hash.update(sources.providersSource);
-  hash.update("\0");
-  hash.update(sources.strategySource);
-  return hash.digest("hex");
+/** Exact source equality used to skip re-parsing when nothing has changed. */
+function sameSources(left: SelfHostedSources, right: SelfHostedSources): boolean {
+  return (
+    left.providersFile === right.providersFile &&
+    left.providersSource === right.providersSource &&
+    left.strategySource === right.strategySource
+  );
 }
 
 /** Parse providers + strategy and build the router/engine pair. May throw. */
@@ -150,14 +147,13 @@ async function loadSelfHostedRuntime(
   const sources = await resolveSelfHostedSources(options);
   if (!sources) return null;
 
-  const signature = signatureFor(sources);
-  if (cachedRuntime && cachedRuntimeSignature === signature) {
+  if (cachedRuntime && cachedRuntimeSources && sameSources(cachedRuntimeSources, sources)) {
     return cachedRuntime;
   }
 
   try {
     cachedRuntime = buildSelfHostedRuntime(sources);
-    cachedRuntimeSignature = signature;
+    cachedRuntimeSources = sources;
     failedConfigLoad = null;
     return cachedRuntime;
   } catch (error) {

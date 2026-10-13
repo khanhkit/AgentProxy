@@ -60,6 +60,31 @@ function replacePattern(
   });
 }
 
+function replacePatternOutsideFences(
+  text: string,
+  pattern: RegExp,
+  kind: string,
+  addBlock: (content: string, kind: string) => string
+): string {
+  const masked = extractFencedCodeBlocks(text, (content) => "\u0000".repeat(content.length));
+  pattern.lastIndex = 0;
+  const matches = Array.from(masked.matchAll(ensureGlobal(pattern)));
+  if (!matches.length) return text;
+
+  let output = "";
+  let cursor = 0;
+  for (const match of matches) {
+    const start = match.index ?? -1;
+    if (start < cursor) continue;
+    const end = start + match[0].length;
+    const content = text.slice(start, end);
+    output += text.slice(cursor, start);
+    output += content.includes(SENTINEL_PREFIX) ? content : addBlock(content, kind);
+    cursor = end;
+  }
+  return output + text.slice(cursor);
+}
+
 export function findFencedCodeBlocks(text: string): string[] {
   const blocks: string[] = [];
   extractFencedCodeBlocks(text, (content) => {
@@ -88,12 +113,7 @@ export function extractPreservedBlocks(
 
   result = extractFrontmatter(result, addBlock);
 
-  // Fence code first so user/system regexes can never carve nested sentinels out
-  // of a block whose byte-exact contents must be preserved as one unit.
-  result = extractFencedCodeBlocks(result, (content) => addBlock(content, "fenced_code"));
-
-  const regionPatterns: CompiledPattern[] = [
-    ...compileUserPatterns(options.preservePatterns),
+  const systemPatterns: CompiledPattern[] = [
     { pattern: /<system-reminder>[\s\S]*?<\/system-reminder>/g, kind: "system_instruction" },
     { pattern: /<instructions?>[\s\S]*?<\/instructions?>/g, kind: "system_instruction" },
     {
@@ -101,8 +121,16 @@ export function extractPreservedBlocks(
       kind: "system_instruction",
     },
   ];
-  for (const { pattern, kind } of regionPatterns) {
-    result = replacePattern(result, ensureGlobal(pattern), kind, addBlock);
+  for (const { pattern, kind } of systemPatterns) {
+    result = replacePatternOutsideFences(result, pattern, kind, addBlock);
+  }
+
+  // Fences are opaque to user preserve patterns, while an outer instruction envelope
+  // remains one opaque region even when it contains fenced code.
+  result = extractFencedCodeBlocks(result, (content) => addBlock(content, "fenced_code"));
+
+  for (const { pattern, kind } of compileUserPatterns(options.preservePatterns)) {
+    result = replacePattern(result, pattern, kind, addBlock);
   }
 
   const builtIns: CompiledPattern[] = [
