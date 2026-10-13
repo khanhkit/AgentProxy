@@ -120,7 +120,17 @@ describe("OpencodeExecutor proxy refusal memory", () => {
     clearCooldowns(exec);
     assert.deepStrictEqual((await run(exec, proxied(), [200])).observed, [port(2)]);
     clearCooldowns(exec);
-    assert.deepStrictEqual((await run(exec, proxied(), [200])).observed, [port(1)]);
+    assert.deepStrictEqual(
+      (await run(exec, proxied(), [200])).observed,
+      [port(2)],
+      "wraparound preserves the last healthy member once while proxy 0 is set aside"
+    );
+    clearCooldowns(exec);
+    assert.deepStrictEqual(
+      (await run(exec, proxied(), [200])).observed,
+      [port(1)],
+      "the sticky wrap must then advance past the drained cursor instead of pinning forever"
+    );
   });
 
   it("with the flag opted out the refused proxy is tried again in turn", async () => {

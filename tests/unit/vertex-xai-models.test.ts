@@ -140,3 +140,8 @@ test("Vertex registries contain the documented xAI MaaS models as partial live c
     assert.equal(grok.contextLength, 524288);
   }
 });
+
+test("AP-ISS-0192 native publisher namespace strips an optional models/ segment", () => {
+  assert.equal(normalizeVertexModelId("google/models/gemini-2.5-pro"), "gemini-2.5-pro");
+  assert.equal(getVertexModelTransport("google/models/gemini-2.5-pro"), "gemini");
+});

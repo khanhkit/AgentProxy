@@ -775,29 +775,38 @@ export async function saveRequestUsage(entry: UsageEntry) {
     // + connectionId + apiKeyId + token counts. If only the endpoint is missing
     // on the existing row, fill it in rather than inserting a duplicate.
     let inserted = false;
+    const canonicalProvider = entry.provider ? resolveProviderId(entry.provider) : null;
 
     db.transaction(() => {
-      const existing = db
+      const candidates = db
         .prepare(
-          `SELECT id, endpoint, cpa_auth_index FROM usage_history
+          `SELECT id, provider, endpoint, cpa_auth_index FROM usage_history
            WHERE timestamp = ?
-             AND COALESCE(provider, '')     = COALESCE(?, '')
              AND COALESCE(model, '')        = COALESCE(?, '')
              AND COALESCE(connection_id, '') = COALESCE(?, '')
              AND COALESCE(api_key_id, '')   = COALESCE(?, '')
              AND tokens_input  = ?
              AND tokens_output = ?
-           ORDER BY id DESC LIMIT 1`
+           ORDER BY id DESC`
         )
-        .get(
+        .all(
           timestamp,
-          entry.provider ? resolveProviderId(entry.provider) : null,
           entry.model || null,
           entry.connectionId || null,
           entry.apiKeyId || null,
           tokensInput,
           tokensOutput
-        ) as { id: number; endpoint: string | null; cpa_auth_index: string | null } | undefined;
+        ) as Array<{
+        id: number;
+        provider: string | null;
+        endpoint: string | null;
+        cpa_auth_index: string | null;
+      }>;
+      const existing = candidates.find((candidate) => {
+        const storedProvider = candidate.provider || null;
+        if (canonicalProvider === null) return storedProvider === null;
+        return storedProvider !== null && resolveProviderId(storedProvider) === canonicalProvider;
+      });
 
       if (existing) {
         // Back-fill endpoint if the original row missed it.
@@ -825,7 +834,7 @@ export async function saveRequestUsage(entry: UsageEntry) {
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       `
       ).run(
-        entry.provider ? resolveProviderId(entry.provider) : null,
+        canonicalProvider,
         entry.model || null,
         entry.connectionId || null,
         accountIdentity.accountKey,

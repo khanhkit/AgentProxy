@@ -275,3 +275,10 @@ describe("OpencodeExecutor 429 wave", () => {
     });
   });
 });
+
+it("AP-ISS-0192 Retry-After zero is a valid rate-limit signal", () => {
+  assert.equal(parseRetryAfterSeconds(0), 0);
+  assert.equal(parseRetryAfterSeconds("0"), 0);
+  assert.equal(classify429({ retryAfter: 0 }), "rate_limited");
+  assert.equal(classify429({ retryAfter: "0" }), "rate_limited");
+});

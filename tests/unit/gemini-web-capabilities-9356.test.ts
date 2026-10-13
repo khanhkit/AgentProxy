@@ -250,9 +250,12 @@ test("#9356 the tool_choice capability guard runs ahead of the credential check"
 test("#9356 a supported request still falls through the guard untouched", async () => {
   // tool_choice:"auto" + tools[] is the #7286 emulation contract. It must NOT
   // be blocked — reaching the (missing) credential check proves the guard let
-  // it pass, without needing a browser to prove it.
+  // it pass, without needing a browser to prove it. Pick from the live registry
+  // so model-catalog churn cannot silently turn this supported-path fixture stale.
+  const supportedModel = gemini_webProvider.models[0]?.id;
+  assert.ok(supportedModel, "gemini-web must advertise at least one supported model");
   const result = await new GeminiWebExecutor().execute({
-    model: "gemini-3.6-flash",
+    model: supportedModel,
     body: {
       messages: [{ role: "user", content: "hi" }],
       tools: [GET_WEATHER_TOOL],
