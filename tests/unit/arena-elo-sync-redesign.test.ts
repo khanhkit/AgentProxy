@@ -175,7 +175,7 @@ describe("arenaEloSync redesign", () => {
     mockFetch(
       fetchServing({
         text: [makeModelEntry({ model: "fresh-model" })],
-        code: [],
+        code: [makeModelEntry({ model: "fresh-code-model" })],
       })
     );
     const result = await syncArenaElo();
@@ -185,6 +185,29 @@ describe("arenaEloSync redesign", () => {
     assert.ok(!models.includes("stale-model"), "stale entry must be pruned");
     assert.ok(models.includes("fresh-model"), "fresh entry must be present");
     assert.equal(getLastFailedAt(), null, "success must clear lastFailedAt");
+  });
+
+  it("empty category fetch preserves the previous dataset and is not marked fresh", async () => {
+    seedEntry("existing-model");
+    mockFetch(
+      fetchServing({
+        text: [makeModelEntry({ model: "partial-new-model" })],
+        code: [],
+      })
+    );
+
+    const result = await syncArenaElo();
+    assert.equal(result.success, false);
+    assert.deepEqual(
+      getAllEntries().map((r) => r.model),
+      ["existing-model"]
+    );
+    const marker = testAdapter
+      .prepare(
+        "SELECT value FROM key_value WHERE namespace='arena_elo' AND key='lastCompleteRefreshAt'"
+      )
+      .get();
+    assert.equal(marker, undefined);
   });
 
   it("freshness guard: skips only after a recorded complete refresh", async () => {

@@ -543,9 +543,10 @@ export async function syncArenaElo(dryRun = false): Promise<SyncResult> {
     // sync while the upstream was rate-limiting; remediation 2026-09-12).
     const leaderboards = await fetchArenaLeaderboards();
     const entries = transformToModelIntelligence(leaderboards);
-    const completeRefresh =
-      entries.length > 0 &&
-      FETCH_CATEGORIES.every((category) => leaderboards[category] !== undefined);
+    const completeRefresh = FETCH_CATEGORIES.every((category) => {
+      const models = leaderboards[category]?.models;
+      return Array.isArray(models) && models.length > 0;
+    });
     if (!completeRefresh) {
       if (!dryRun) writeLastFailedAt(Date.now());
       return {
