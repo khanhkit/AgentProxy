@@ -2,6 +2,9 @@ import * as yaml from "js-yaml";
 import { safeOutboundFetch } from "@/shared/network/safeOutboundFetch";
 import { getProviderOutboundGuard } from "@/shared/network/outboundUrlGuardPolicy";
 import { openaiToClaudeRequest } from "../translator/request/openai-to-claude.ts";
+import { translateNonStreamingResponse } from "../handlers/responseTranslator.ts";
+import { FORMATS } from "../translator/formats.ts";
+import { createSSETransformStreamWithLogger } from "../utils/stream.ts";
 
 export type ProviderKind = "openai" | "anthropic" | "local";
 
@@ -91,7 +94,35 @@ const anthropicAdapter: ProviderAdapter = {
       },
       config,
       fetchImpl
-    );
+    ).then(async (response) => {
+      if (!response.ok) return response;
+      const responseHeaders = new Headers(response.headers);
+      responseHeaders.delete("content-length");
+      if (request.stream && response.body) {
+        responseHeaders.set("content-type", "text/event-stream");
+        const transform = createSSETransformStreamWithLogger(
+          FORMATS.CLAUDE,
+          FORMATS.OPENAI,
+          config.id,
+          null,
+          null,
+          model
+        );
+        return new Response(response.body.pipeThrough(transform), {
+          status: response.status,
+          statusText: response.statusText,
+          headers: responseHeaders,
+        });
+      }
+      const payload = await response.json();
+      const translated = translateNonStreamingResponse(payload, FORMATS.CLAUDE, FORMATS.OPENAI);
+      responseHeaders.set("content-type", "application/json");
+      return new Response(JSON.stringify(translated), {
+        status: response.status,
+        statusText: response.statusText,
+        headers: responseHeaders,
+      });
+    });
   },
 };
 

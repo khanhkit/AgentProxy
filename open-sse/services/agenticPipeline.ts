@@ -112,7 +112,7 @@ export function countToolResultTurns(body: Body): number {
   // Mirror pipeline.ts representation precedence. Adapters may preserve a legacy
   // shape while adding the active one; counting more than one representation
   // would charge the same client tool round multiple times.
-  if (Array.isArray(body.input)) {
+  if (Array.isArray(body.input) && body.input.length > 0) {
     let boundary = 0;
     for (let index = body.input.length - 1; index >= 0; index--) {
       const record = asRecord(body.input[index]);
@@ -132,7 +132,7 @@ export function countToolResultTurns(body: Body): number {
     }).length;
   }
 
-  if (Array.isArray(body.contents)) {
+  if (Array.isArray(body.contents) && body.contents.length > 0) {
     let boundary = 0;
     for (let index = body.contents.length - 1; index >= 0; index--) {
       const record = asRecord(body.contents[index]);

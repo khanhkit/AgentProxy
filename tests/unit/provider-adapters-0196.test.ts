@@ -75,3 +75,60 @@ test("AP-ISS-0196: duplicate provider ids are rejected during config parsing", (
     /duplicate.*provider|provider.*duplicate/i
   );
 });
+
+test("AP-ISS-0196 review: Anthropic adapter normalizes non-stream success to OpenAI", async () => {
+  const config = parseProviderConfig(`providers:
+  - id: anthropic-response
+    kind: anthropic
+    baseUrl: http://127.0.0.1:8899
+    model: claude-sonnet-4-5
+`);
+  const router = new ProviderRouter(config);
+  const response = await router.complete(
+    { messages: [{ role: "user", content: "hello" }], stream: false },
+    "anthropic-response",
+    async () =>
+      Response.json({
+        id: "msg_1",
+        type: "message",
+        role: "assistant",
+        model: "claude-sonnet-4-5",
+        content: [{ type: "text", text: "hello back" }],
+        stop_reason: "end_turn",
+        usage: { input_tokens: 3, output_tokens: 2 },
+      })
+  );
+  const body = await response.json();
+  assert.equal(body.object, "chat.completion");
+  assert.equal(body.choices?.[0]?.message?.content, "hello back");
+  assert.deepEqual(body.usage, { prompt_tokens: 3, completion_tokens: 2, total_tokens: 5 });
+});
+
+test("AP-ISS-0196 review: Anthropic adapter normalizes streaming success to OpenAI SSE", async () => {
+  const config = parseProviderConfig(`providers:
+  - id: anthropic-stream
+    kind: anthropic
+    baseUrl: http://127.0.0.1:8899
+    model: claude-sonnet-4-5
+`);
+  const router = new ProviderRouter(config);
+  const anthropicSse = [
+    'event: message_start\ndata: {"type":"message_start","message":{"id":"msg_1","model":"claude-sonnet-4-5","usage":{"input_tokens":1,"output_tokens":0}}}\n\n',
+    'event: content_block_delta\ndata: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"hello"}}\n\n',
+    'event: message_delta\ndata: {"type":"message_delta","delta":{"stop_reason":"end_turn"},"usage":{"output_tokens":1}}\n\n',
+    'event: message_stop\ndata: {"type":"message_stop"}\n\n',
+  ].join("");
+  const response = await router.complete(
+    { messages: [{ role: "user", content: "hello" }], stream: true },
+    "anthropic-stream",
+    async () =>
+      new Response(anthropicSse, {
+        status: 200,
+        headers: { "content-type": "text/event-stream" },
+      })
+  );
+  const body = await response.text();
+  assert.match(body, /chat\.completion\.chunk/);
+  assert.match(body, /hello/);
+  assert.doesNotMatch(body, /text_delta/);
+});

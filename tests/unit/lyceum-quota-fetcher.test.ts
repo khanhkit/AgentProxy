@@ -57,6 +57,23 @@ test("parseLyceumCreditsResponse returns null on unexpected shape", () => {
   assert.equal(parseLyceumCreditsResponse({ foo: "bar" }), null);
 });
 
+test("AP-ISS-0196 review: partial Lyceum balance payloads retain supported defaults", () => {
+  assert.deepEqual(parseLyceumCreditsResponse({ remaining_credits: 7.5 }), {
+    availableCredits: 0,
+    usedCredits: 0,
+    remainingCredits: 7.5,
+    monthlyFreeCredits: 0,
+    purchasedCredits: 0,
+  });
+  assert.deepEqual(parseLyceumCreditsResponse({ used_credits: 2 }), {
+    availableCredits: 0,
+    usedCredits: 2,
+    remainingCredits: 0,
+    monthlyFreeCredits: 0,
+    purchasedCredits: 0,
+  });
+});
+
 test("parseLyceumCreditsResponse falls back remaining to available", () => {
   const fields = parseLyceumCreditsResponse({ available_credits: 12.5, used_credits: 2 });
   assert.ok(fields);

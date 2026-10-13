@@ -111,22 +111,16 @@ export function parseLyceumCreditsResponse(data: unknown): LyceumCreditsFields |
     "remaining_credits" in inner || "available_credits" in inner || "used_credits" in inner;
   if (!hasBalance) return null;
 
-  const availableCredits = toFiniteNumber(inner.available_credits, Number.NaN);
-  const usedCredits = toFiniteNumber(inner.used_credits, Number.NaN);
-  const remainingCredits =
-    inner.remaining_credits === undefined
-      ? availableCredits
-      : toFiniteNumber(inner.remaining_credits, Number.NaN);
-  if (
-    !Number.isFinite(availableCredits) ||
-    !Number.isFinite(usedCredits) ||
-    !Number.isFinite(remainingCredits) ||
-    availableCredits < 0 ||
-    usedCredits < 0 ||
-    remainingCredits < 0
-  ) {
-    return null;
-  }
+  const readCredit = (key: string, fallback: number): number | null => {
+    if (inner[key] === undefined) return fallback;
+    const value = toFiniteNumber(inner[key], Number.NaN);
+    return Number.isFinite(value) && value >= 0 ? value : null;
+  };
+  const availableCredits = readCredit("available_credits", 0);
+  const usedCredits = readCredit("used_credits", 0);
+  if (availableCredits === null || usedCredits === null) return null;
+  const remainingCredits = readCredit("remaining_credits", availableCredits);
+  if (remainingCredits === null) return null;
   return {
     availableCredits,
     usedCredits,

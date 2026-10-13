@@ -113,6 +113,26 @@ test("AP-ISS-0196: mixed representations select one active shape even when adapt
   );
 });
 
+test("AP-ISS-0196 review: empty stale representations fall through to active history", () => {
+  assert.equal(
+    countToolResultTurns({
+      input: [],
+      messages: [{ role: "tool", tool_call_id: "active", content: "ok" }],
+    }),
+    1,
+    "an empty Responses mirror must not hide active chat history"
+  );
+  assert.equal(
+    countToolResultTurns({
+      input: [],
+      contents: [],
+      messages: [{ role: "tool", tool_call_id: "active", content: "ok" }],
+    }),
+    1,
+    "empty higher-priority mirrors must fall through to the populated representation"
+  );
+});
+
 test("round counting ignores completed tool loops before the current user request", () => {
   assert.equal(
     countToolResultTurns({
