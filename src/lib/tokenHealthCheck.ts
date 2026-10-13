@@ -378,6 +378,7 @@ function getHealthCheckSkipProviders(): Set<string> {
 let cachedHideLogs: boolean | null = null;
 let cacheTimestamp = 0;
 let pendingHideLogs: Promise<boolean> | null = null;
+let hideLogsCacheGeneration = 0;
 const CACHE_TTL = 30_000; // Cache settings for 30 seconds
 
 export async function shouldHideLogs(): Promise<boolean> {
@@ -401,21 +402,32 @@ export async function shouldHideLogs(): Promise<boolean> {
     return pendingHideLogs;
   }
 
-  // Create new promise for DB query
-  pendingHideLogs = (async () => {
+  // Create new promise for DB query. A hot-setting update can invalidate this
+  // read while it is awaiting SQLite; only the generation that started it may
+  // publish its result or clear the currently tracked request.
+  const generation = hideLogsCacheGeneration;
+  const query = (async () => {
     try {
       const settings = await getSettings();
-      cachedHideLogs = settings.hideHealthCheckLogs === true;
-      cacheTimestamp = now;
-      return cachedHideLogs;
+      const resolved = settings.hideHealthCheckLogs === true;
+      if (generation === hideLogsCacheGeneration) {
+        cachedHideLogs = resolved;
+        cacheTimestamp = now;
+        return resolved;
+      }
+      return cachedHideLogs ?? resolved;
     } catch {
+      if (generation !== hideLogsCacheGeneration && cachedHideLogs !== null) {
+        return cachedHideLogs;
+      }
       return false;
     } finally {
-      pendingHideLogs = null;
+      if (pendingHideLogs === query) pendingHideLogs = null;
     }
   })();
+  pendingHideLogs = query;
 
-  return pendingHideLogs;
+  return query;
 }
 
 function log(message: string, ...args: any[]) {
@@ -440,6 +452,8 @@ function logError(message: string, ...args: any[]) {
  * Clear the cached hideLogs setting (call when settings are updated).
  */
 export function clearHealthCheckLogCache(value: boolean | null = null) {
+  hideLogsCacheGeneration++;
+  pendingHideLogs = null;
   cachedHideLogs = value;
   cacheTimestamp = value === null ? 0 : Date.now();
 }
