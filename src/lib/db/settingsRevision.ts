@@ -4,6 +4,12 @@ export const SETTINGS_REVISION_KEY = "_settingsRevision";
 
 type SettingsDb = ReturnType<typeof getDbInstance>;
 
+let inProcessSettingsRevisionGeneration = 0;
+
+export function getSettingsRevisionGeneration(): number {
+  return inProcessSettingsRevisionGeneration;
+}
+
 export function readSettingsRevisionFromDb(db: SettingsDb): number {
   const row = db
     .prepare("SELECT value FROM key_value WHERE namespace = 'settings' AND key = ?")
@@ -22,6 +28,7 @@ export function advanceSettingsRevision(db: SettingsDb, currentRevision?: number
   db.prepare(
     "INSERT OR REPLACE INTO key_value (namespace, key, value) VALUES ('settings', ?, ?)"
   ).run(SETTINGS_REVISION_KEY, JSON.stringify(nextRevision));
+  inProcessSettingsRevisionGeneration++;
   return nextRevision;
 }
 

@@ -53,6 +53,36 @@ test("feature flag override cache", async (t) => {
     assert.equal(getFeatureFlagOverride(FLAG), undefined);
   });
 
+  await t.test("warm cache reads do not query the durable settings revision", () => {
+    setFeatureFlagOverride(FLAG, "true");
+    assert.equal(getFeatureFlagOverride(FLAG), "true");
+
+    const db = core.getDbInstance();
+    const originalPrepare = db.prepare;
+    let revisionReads = 0;
+    let featureFlagReads = 0;
+    db.prepare = ((sql: string) => {
+      if (sql.includes("namespace = 'settings' AND key = ?")) revisionReads++;
+      if (sql.includes("namespace = ? AND key = ?")) featureFlagReads++;
+      return originalPrepare.call(db, sql);
+    }) as typeof db.prepare;
+
+    try {
+      for (let i = 0; i < 20; i++) {
+        assert.equal(getFeatureFlagOverride(FLAG), "true");
+      }
+    } finally {
+      db.prepare = originalPrepare;
+    }
+
+    assert.equal(
+      revisionReads,
+      0,
+      "warm hot-path reads must not synchronously query revision state"
+    );
+    assert.equal(featureFlagReads, 0, "warm hot-path reads must not query the feature flag row");
+  });
+
   await t.test("a reopened database starts with an empty cache", () => {
     setFeatureFlagOverride(FLAG, "true");
     assert.equal(getFeatureFlagOverride(FLAG), "true");

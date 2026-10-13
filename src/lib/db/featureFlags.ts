@@ -8,7 +8,11 @@
 
 import { FEATURE_FLAG_DEFINITIONS } from "@/shared/constants/featureFlagDefinitions";
 import { getDbInstance } from "./core";
-import { advanceSettingsRevision, readSettingsRevisionFromDb } from "./settingsRevision";
+import {
+  advanceSettingsRevision,
+  getSettingsRevisionGeneration,
+  readSettingsRevisionFromDb,
+} from "./settingsRevision";
 import { finishModelCatalogWriteWithoutBackup } from "./models/modelCatalogWriteSignals";
 
 const NAMESPACE = "feature_flags";
@@ -20,7 +24,7 @@ const NAMESPACE = "feature_flags";
 // covers edits made to the store from outside this process. It is keyed by the
 // database instance so a reopened store (tests, resetDbInstance) starts clean.
 const OVERRIDE_CACHE_TTL_MS = 1000;
-type OverrideCacheEntry = { value: string | undefined; expiresAt: number; revision: number };
+type OverrideCacheEntry = { value: string | undefined; expiresAt: number; generation: number };
 const overrideCaches = new WeakMap<object, Map<string, OverrideCacheEntry>>();
 
 function overrideCacheFor(db: object): Map<string, OverrideCacheEntry> {
@@ -71,13 +75,13 @@ export function getFeatureFlagOverride(key: string): string | undefined {
   const db = getDbInstance();
   const cache = overrideCacheFor(db);
   const now = Date.now();
-  const revision = readSettingsRevisionFromDb(db);
+  const generation = getSettingsRevisionGeneration();
   const cached = cache.get(key);
-  if (cached && cached.expiresAt > now && cached.revision === revision) return cached.value;
+  if (cached && cached.expiresAt > now && cached.generation === generation) return cached.value;
   const row = db
     .prepare("SELECT value FROM key_value WHERE namespace = ? AND key = ?")
     .get(NAMESPACE, key) as { value: string } | undefined;
-  cache.set(key, { value: row?.value, expiresAt: now + OVERRIDE_CACHE_TTL_MS, revision });
+  cache.set(key, { value: row?.value, expiresAt: now + OVERRIDE_CACHE_TTL_MS, generation });
   return row?.value;
 }
 
