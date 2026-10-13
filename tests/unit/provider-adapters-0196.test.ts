@@ -2,6 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 
 import { ProviderRouter, parseProviderConfig } from "../../open-sse/services/providerAdapters.ts";
+import { setSafeOutboundPinnedFetchTestOverride } from "../../src/shared/network/safeOutboundFetch.ts";
 
 test("AP-ISS-0196: credential-bearing provider adapters block metadata before fetch", async () => {
   for (const kind of ["openai", "anthropic", "local"] as const) {
@@ -14,16 +15,67 @@ test("AP-ISS-0196: credential-bearing provider adapters block metadata before fe
 `);
     const router = new ProviderRouter(config);
     let calls = 0;
-    await assert.rejects(
-      router.complete({ messages: [{ role: "user", content: "hi" }] }, kind, async () => {
-        calls++;
-        return new Response("unexpected");
-      }),
-      /blocked|outbound|metadata|guard/i,
-      kind
-    );
+    setSafeOutboundPinnedFetchTestOverride(() => async () => {
+      calls++;
+      return new Response("unexpected");
+    });
+    try {
+      await assert.rejects(
+        router.complete({ messages: [{ role: "user", content: "hi" }] }, kind),
+        /blocked|outbound|metadata|guard/i,
+        kind
+      );
+    } finally {
+      setSafeOutboundPinnedFetchTestOverride(undefined);
+    }
     assert.equal(calls, 0, `${kind}: blocked destination must not receive configured credentials`);
   }
+});
+
+test("AP-ISS-0196 review: credentialed default provider transport uses the DNS-pinned fetch", async () => {
+  const config = parseProviderConfig(`providers:
+  - id: pinned
+    kind: openai
+    baseUrl: http://127.0.0.1:8899
+    model: test-model
+    apiKey: pinned-secret
+`);
+  const router = new ProviderRouter(config);
+  const pinnedTo: string[] = [];
+  setSafeOutboundPinnedFetchTestOverride((address) => {
+    pinnedTo.push(address);
+    return async () => Response.json({ ok: true });
+  });
+  try {
+    const response = await router.complete(
+      { messages: [{ role: "user", content: "hi" }] },
+      "pinned"
+    );
+    assert.equal(response.status, 200);
+    assert.deepEqual(pinnedTo, ["127.0.0.1"]);
+  } finally {
+    setSafeOutboundPinnedFetchTestOverride(undefined);
+  }
+});
+
+test("AP-ISS-0196 review: credentialed provider rejects a custom transport that cannot preserve DNS pinning", async () => {
+  const config = parseProviderConfig(`providers:
+  - id: pinned-custom
+    kind: openai
+    baseUrl: http://127.0.0.1:8899
+    model: test-model
+    apiKey: pinned-secret
+`);
+  const router = new ProviderRouter(config);
+  let calls = 0;
+  await assert.rejects(
+    router.complete({ messages: [{ role: "user", content: "hi" }] }, "pinned-custom", async () => {
+      calls++;
+      return Response.json({ ok: true });
+    }),
+    /credentialed.*custom transport|custom transport.*DNS pin/i
+  );
+  assert.equal(calls, 0);
 });
 
 test("AP-ISS-0196: Anthropic adapter translates OpenAI system messages before dispatch", async () => {

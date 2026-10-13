@@ -46,6 +46,11 @@ function providerFetch(
   fetchImpl: typeof fetch
 ): Promise<Response> {
   const configuredGuard = getProviderOutboundGuard();
+  if (config.apiKey && fetchImpl !== fetch) {
+    return Promise.reject(
+      new Error("Credentialed provider requests cannot use a custom transport without DNS pinning")
+    );
+  }
   return safeOutboundFetch(url, {
     ...init,
     // Configured provider endpoints may intentionally be local/LAN, but a
@@ -54,7 +59,7 @@ function providerFetch(
     pinDns: true,
     allowRedirect: false,
     retry: false,
-    fetchImpl,
+    ...(fetchImpl === fetch ? {} : { fetchImpl }),
   });
 }
 

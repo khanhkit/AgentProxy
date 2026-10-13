@@ -120,17 +120,13 @@ export function parseLyceumCreditsResponse(data: unknown): LyceumCreditsFields |
   const usedCredits = readCredit("used_credits", 0);
   if (availableCredits === null || usedCredits === null) return null;
   const remainingCredits = readCredit("remaining_credits", availableCredits);
-  const monthlyFreeCredits = readCredit("monthly_free_credits", 0);
-  const purchasedCredits = readCredit("purchased_credits", 0);
-  if (remainingCredits === null || monthlyFreeCredits === null || purchasedCredits === null) {
-    return null;
-  }
+  if (remainingCredits === null) return null;
   return {
     availableCredits,
     usedCredits,
     remainingCredits,
-    monthlyFreeCredits,
-    purchasedCredits,
+    monthlyFreeCredits: readCredit("monthly_free_credits", 0) ?? 0,
+    purchasedCredits: readCredit("purchased_credits", 0) ?? 0,
   };
 }
 

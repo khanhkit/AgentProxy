@@ -85,6 +85,18 @@ test("agentic detector counts completed rounds for bounded sequential loops in e
   );
 });
 
+test("AP-ISS-0196 review: Responses custom_tool_call_output counts toward the active tool round", () => {
+  assert.equal(
+    countToolResultTurns({
+      input: [
+        { type: "message", role: "user", content: [{ type: "input_text", text: "run it" }] },
+        { type: "custom_tool_call_output", call_id: "custom-1", output: "done" },
+      ],
+    }),
+    1
+  );
+});
+
 test("AP-ISS-0196: duplicated request representations count one tool-result round once", () => {
   assert.equal(
     countToolResultTurns({

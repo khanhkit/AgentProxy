@@ -113,19 +113,21 @@ export function countToolResultTurns(body: Body): number {
   // shape while adding the active one; counting more than one representation
   // would charge the same client tool round multiple times.
   if (Array.isArray(body.input) && body.input.length > 0) {
+    const outputTypes = new Set([
+      "function_call_output",
+      "custom_tool_call_output",
+      "computer_call_output",
+      "local_shell_call_output",
+    ]);
     let boundary = 0;
     for (let index = body.input.length - 1; index >= 0; index--) {
       const record = asRecord(body.input[index]);
-      if (record?.role === "user" && record.type !== "function_call_output") {
+      const type = typeof record?.type === "string" ? record.type : "";
+      if (record?.role === "user" && !outputTypes.has(type)) {
         boundary = index + 1;
         break;
       }
     }
-    const outputTypes = new Set([
-      "function_call_output",
-      "computer_call_output",
-      "local_shell_call_output",
-    ]);
     return body.input.slice(boundary).filter((item) => {
       const type = asRecord(item)?.type;
       return typeof type === "string" && outputTypes.has(type);

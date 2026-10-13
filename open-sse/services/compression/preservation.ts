@@ -68,7 +68,9 @@ function replacePatternOutsideFences(
 ): string {
   const masked = extractFencedCodeBlocks(text, (content) => "\u0000".repeat(content.length));
   pattern.lastIndex = 0;
-  const matches = Array.from(masked.matchAll(ensureGlobal(pattern)));
+  const matches = Array.from(masked.matchAll(ensureGlobal(pattern))).filter(
+    (match) => !match[0].includes("\u0000")
+  );
   if (!matches.length) return text;
 
   let output = "";
