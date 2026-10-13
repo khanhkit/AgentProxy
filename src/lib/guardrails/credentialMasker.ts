@@ -129,7 +129,7 @@ async function resolveCredentialMaskerSettings(
   try {
     return await getSettings();
   } catch {
-    return {};
+    return { credentialRedactionEnabled: true };
   }
 }
 

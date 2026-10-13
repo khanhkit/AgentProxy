@@ -18,7 +18,7 @@ test.after(() => {
   fs.rmSync(TEST_DATA_DIR, { recursive: true, force: true, maxRetries: 5, retryDelay: 100 });
 });
 
-test("credential masker does not fail the request when settings loading fails", async () => {
+test("credential masker fails closed to redaction when settings loading fails", async () => {
   const db = core.getDbInstance();
   const originalPrepare = db.prepare;
   db.prepare = ((sql: string) => {
@@ -34,6 +34,12 @@ test("credential masker does not fail the request when settings loading fails", 
     const post = await guardrail.postCall({ headers: { Authorization: "Bearer secret" } });
     assert.equal(pre?.block, false);
     assert.equal(post?.block, false);
+    assert.deepEqual(pre?.modifiedPayload, {
+      headers: { Authorization: "Bearer [REDACTED:auth_header]" },
+    });
+    assert.deepEqual(post?.modifiedResponse, {
+      headers: { Authorization: "Bearer [REDACTED:auth_header]" },
+    });
   } finally {
     db.prepare = originalPrepare;
   }
