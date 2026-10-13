@@ -25,6 +25,21 @@ function stripComments(src: string): string {
   return src.replace(/\/\*[\s\S]*?\*\//g, "").replace(/^\s*\/\/.*$/gm, "");
 }
 
+test("startup persists INITIAL_PASSWORD onboarding before runtime candidate hydration", () => {
+  const code = stripComments(readFileSync(BOOT_PATH, "utf8"));
+  const bootstrapIndex = code.indexOf("await ensureInitialSettingsBootstrap()");
+  const candidateIndex = code.indexOf("await getSettingsCandidate()");
+
+  assert.ok(
+    bootstrapIndex >= 0,
+    "instrumentation-node.ts must run the explicit INITIAL_PASSWORD bootstrap transaction"
+  );
+  assert.ok(
+    candidateIndex > bootstrapIndex,
+    "startup must persist onboarding state before reading the runtime settings candidate"
+  );
+});
+
 test("#5312 RC-A: production boot activates the revisioned runtime candidate without one-off hydrators", () => {
   const code = stripComments(readFileSync(BOOT_PATH, "utf8"));
   assert.match(

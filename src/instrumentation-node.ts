@@ -405,7 +405,7 @@ export async function registerNodejs(): Promise<void> {
     { startBackgroundRefresh },
     { ensureCloudSyncInitialized },
     { startProviderLimitsSyncScheduler },
-    { getSettings, getSettingsCandidate },
+    { ensureInitialSettingsBootstrap, getSettingsCandidate },
     { applyRuntimeSettingsCandidate },
     { startRuntimeConfigHotReload },
     { startSpendBatchWriter },
@@ -472,7 +472,8 @@ export async function registerNodejs(): Promise<void> {
       import("@/lib/db/sessionAccountAffinity"),
       import("@/lib/modelAliasSeed"),
     ]);
-    let settings = await getSettings();
+    const initialBootstrap = await ensureInitialSettingsBootstrap();
+    let settings = initialBootstrap.candidate.settings;
     const passwordState = await ensurePersistentManagementPasswordHash({
       logger: console,
       settings,

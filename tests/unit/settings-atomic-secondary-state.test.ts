@@ -111,6 +111,20 @@ test("combined settings and upstream-proxy mutation commits atomically with one 
   );
 });
 
+test("post-commit CLIProxy cache invalidation is best-effort", () => {
+  const routeSource = fs.readFileSync("src/app/api/settings/route.ts", "utf8");
+  const invalidationStart = routeSource.indexOf('if (typeof cpaUrl === "string")');
+  const auditStart = routeSource.indexOf("// Audit success", invalidationStart);
+  assert.ok(invalidationStart >= 0 && auditStart > invalidationStart);
+  const invalidationBlock = routeSource.slice(invalidationStart, auditStart);
+
+  assert.match(invalidationBlock, /await clearCliproxyapiRuntimeCache\(\);/);
+  assert.match(
+    invalidationBlock,
+    /try \{[\s\S]*?await clearCliproxyapiRuntimeCache\(\);[\s\S]*?\} catch \(/,
+    "a cache-clear failure after durable activation must not turn a committed PATCH into HTTP 500"
+  );
+});
 test("runtime activation failure is returned as actionable desired-vs-active divergence", async () => {
   const baseline = await settingsDb.getSettingsCandidate();
   await runtimeSettings.applyRuntimeSettingsCandidate(baseline, {

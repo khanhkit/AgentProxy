@@ -574,9 +574,17 @@ export async function PATCH(request: Request) {
     }
 
     if (typeof cpaUrl === "string") {
-      // Durable settings + derived proxy rows committed and activated together; only
-      // now invalidate the executor cache so request-path state cannot lead SQLite.
-      await clearCliproxyapiRuntimeCache();
+      // Durable settings + derived proxy rows have already committed and activated.
+      // Cache invalidation is secondary and must not turn a successful mutation into
+      // a retryable HTTP failure after commit.
+      try {
+        await clearCliproxyapiRuntimeCache();
+      } catch (error) {
+        console.warn(
+          "[CLIPROXYAPI] Cache invalidation failed after committed settings update:",
+          sanitizeErrorMessage(error instanceof Error ? error.message : String(error))
+        );
+      }
     }
 
     // Audit success — diff of changed keys only. Idempotent PATCH (no diff)
