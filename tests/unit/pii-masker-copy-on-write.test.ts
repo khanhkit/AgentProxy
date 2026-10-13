@@ -71,18 +71,57 @@ test("PII masker guardrail", async (t) => {
   });
 });
 
-test("PII post-call fails open for non-JSON provider response values", async () => {
-  const circular: Record<string, unknown> = { value: "safe" };
+test("PII post-call sanitizes circular and BigInt provider responses without failing open", async () => {
+  const responseContext = {
+    runtimeFeatureFlagOverrides: {
+      PII_RESPONSE_SANITIZATION: "true",
+      PII_RESPONSE_SANITIZATION_MODE: "redact",
+    },
+  } as GuardrailContext;
+  const circular: Record<string, unknown> = { content: `my ssn is ${SSN}` };
   circular.self = circular;
 
-  const circularResult = await guardrail.postCall(circular, CONTEXT);
+  const circularResult = await guardrail.postCall(circular, responseContext);
   assert.equal(circularResult.block, false);
-  assert.equal(circularResult.modifiedResponse, undefined);
+  const circularOut = circularResult.modifiedResponse as Record<string, unknown>;
+  assert.ok(circularOut, "a sanitized circular response is returned");
+  assert.equal(circularOut.content, "my ssn is [SSN_REDACTED]");
+  assert.equal(circularOut.self, "[CIRCULAR_REFERENCE_REDACTED]");
+  assert.equal(circular.content, `my ssn is ${SSN}`, "the original circular response is untouched");
   assert.equal(circular.self, circular);
 
-  const bigintResponse = { usage: 1n };
-  const bigintResult = await guardrail.postCall(bigintResponse, CONTEXT);
+  const bigintResponse = { content: `my ssn is ${SSN}`, usage: 1n };
+  const bigintResult = await guardrail.postCall(bigintResponse, responseContext);
   assert.equal(bigintResult.block, false);
-  assert.equal(bigintResult.modifiedResponse, undefined);
-  assert.equal(bigintResponse.usage, 1n);
+  const bigintOut = bigintResult.modifiedResponse as typeof bigintResponse;
+  assert.ok(bigintOut, "a sanitized BigInt response is returned");
+  assert.equal(bigintOut.content, "my ssn is [SSN_REDACTED]");
+  assert.equal(bigintOut.usage, 1n);
+  assert.equal(
+    bigintResponse.content,
+    `my ssn is ${SSN}`,
+    "the original BigInt response is untouched"
+  );
+
+  const uncloneable = {
+    content: `my ssn is ${SSN}`,
+    toJSON() {
+      throw new Error("provider toJSON failure");
+    },
+  };
+  const uncloneableResult = await guardrail.postCall(uncloneable, responseContext);
+  assert.equal(uncloneableResult.block, true);
+  assert.equal(uncloneableResult.message, "Unable to sanitize provider response");
+
+  const tooDeep: Record<string, unknown> = { usage: 1n };
+  let cursor = tooDeep;
+  for (let depth = 0; depth < 102; depth++) {
+    const next: Record<string, unknown> = {};
+    cursor.nested = next;
+    cursor = next;
+  }
+  cursor.content = `my ssn is ${SSN}`;
+  const tooDeepResult = await guardrail.postCall(tooDeep, responseContext);
+  assert.equal(tooDeepResult.block, true);
+  assert.equal(tooDeepResult.message, "Unable to sanitize provider response");
 });

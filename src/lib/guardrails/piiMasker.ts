@@ -1,3 +1,5 @@
+import { isDeepStrictEqual } from "node:util";
+
 import { BaseGuardrail, type GuardrailContext, type GuardrailResult } from "./base";
 import { processPII } from "@/shared/utils/inputSanitizer";
 import { sanitizePII, sanitizePIIResponse } from "@/lib/piiSanitizer";
@@ -236,30 +238,27 @@ export class PIIMaskerGuardrail extends BaseGuardrail {
       return { block: false };
     }
 
-    let clonedResponse: JsonRecord;
     try {
-      clonedResponse = JSON.parse(JSON.stringify(response)) as JsonRecord;
+      const clonedResponse = structuredClone(response) as JsonRecord;
+      const sanitized = sanitizePIIResponse(
+        clonedResponse,
+        context.runtimeFeatureFlagOverrides
+      ) as JsonRecord;
+      const modifiedResponsesShape = maskResponsesOutput(
+        sanitized,
+        context.runtimeFeatureFlagOverrides
+      );
+      const modified = !isDeepStrictEqual(response, sanitized) || modifiedResponsesShape;
+
+      if (!modified) return { block: false };
+
+      return {
+        block: false,
+        meta: { redacted: true },
+        modifiedResponse: sanitized,
+      };
     } catch {
-      return { block: false };
+      return { block: true, message: "Unable to sanitize provider response" };
     }
-    const before = JSON.stringify(clonedResponse);
-    const sanitized = sanitizePIIResponse(
-      clonedResponse,
-      context.runtimeFeatureFlagOverrides
-    ) as JsonRecord;
-    const modifiedResponsesShape = maskResponsesOutput(
-      sanitized,
-      context.runtimeFeatureFlagOverrides
-    );
-    const after = JSON.stringify(sanitized);
-    const modified = before !== after || modifiedResponsesShape;
-
-    if (!modified) return { block: false };
-
-    return {
-      block: false,
-      meta: { redacted: true },
-      modifiedResponse: sanitized,
-    };
   }
 }
