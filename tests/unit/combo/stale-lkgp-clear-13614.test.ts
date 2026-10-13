@@ -219,3 +219,30 @@ test("LKGP invalidation fences an in-flight read from repopulating a deleted pin
   assert.equal(await settings.getLKGP(comboName, modelId), null);
   assert.equal(await cache.getCachedLKGP(comboName, modelId), null);
 });
+
+test("LKGP idle invalidations do not allocate persistent per-key generation state", async () => {
+  const cache = await import("../../../src/lib/db/readCache.ts");
+  const originalSet = Map.prototype.set;
+  const allocatedKeys = new Set<string>();
+  const prefix = "lkgp:combo-version-bounded-";
+
+  Map.prototype.set = function (key, value) {
+    if (typeof key === "string" && key.startsWith(prefix)) allocatedKeys.add(key);
+    return originalSet.call(this, key, value);
+  };
+
+  try {
+    for (let index = 0; index < 64; index += 1) {
+      cache.invalidateCachedLKGP(`combo-version-bounded-${index}:model`);
+    }
+  } finally {
+    Map.prototype.set = originalSet;
+    cache.invalidateCachedLKGP();
+  }
+
+  assert.equal(
+    allocatedKeys.size,
+    0,
+    "invalidating idle LKGP keys must not create retained per-key generation entries"
+  );
+});

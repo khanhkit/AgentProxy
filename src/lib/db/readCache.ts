@@ -185,7 +185,8 @@ interface LKGPRecordCache {
 
 const lkgpCache = new TTLCache<LKGPRecordCache | null>(SETTINGS_TTL_MS);
 let lkgpCacheEpoch = 0;
-const lkgpCacheKeyVersions = new Map<string, number>();
+type LKGPActiveReadState = { readers: number; version: number };
+const lkgpActiveReads = new Map<string, LKGPActiveReadState>();
 
 export async function getCachedLKGP(
   comboName: string,
@@ -195,17 +196,32 @@ export async function getCachedLKGP(
   const cached = lkgpCache.get(cacheKey);
   if (cached !== undefined) return cached;
 
-  const readEpoch = lkgpCacheEpoch;
-  const readKeyVersion = lkgpCacheKeyVersions.get(cacheKey) ?? 0;
-  const { getLKGP } = await import("@/lib/db/settings");
-  const value = await getLKGP(comboName, modelId);
-  if (
-    readEpoch === lkgpCacheEpoch &&
-    readKeyVersion === (lkgpCacheKeyVersions.get(cacheKey) ?? 0)
-  ) {
-    lkgpCache.set(cacheKey, value);
+  let readState = lkgpActiveReads.get(cacheKey);
+  if (!readState) {
+    readState = { readers: 0, version: 0 };
+    lkgpActiveReads.set(cacheKey, readState);
   }
-  return value;
+  readState.readers += 1;
+  const readEpoch = lkgpCacheEpoch;
+  const readKeyVersion = readState.version;
+
+  try {
+    const { getLKGP } = await import("@/lib/db/settings");
+    const value = await getLKGP(comboName, modelId);
+    if (
+      readEpoch === lkgpCacheEpoch &&
+      lkgpActiveReads.get(cacheKey) === readState &&
+      readKeyVersion === readState.version
+    ) {
+      lkgpCache.set(cacheKey, value);
+    }
+    return value;
+  } finally {
+    readState.readers -= 1;
+    if (readState.readers === 0 && lkgpActiveReads.get(cacheKey) === readState) {
+      lkgpActiveReads.delete(cacheKey);
+    }
+  }
 }
 
 export async function setCachedLKGP(
@@ -229,12 +245,13 @@ export async function setCachedLKGP(
 export function invalidateCachedLKGP(pinKey?: string): void {
   if (pinKey) {
     const cacheKey = `lkgp:${pinKey}`;
-    lkgpCacheKeyVersions.set(cacheKey, (lkgpCacheKeyVersions.get(cacheKey) ?? 0) + 1);
+    const activeRead = lkgpActiveReads.get(cacheKey);
+    if (activeRead) activeRead.version += 1;
     lkgpCache.invalidate(cacheKey);
     return;
   }
   lkgpCacheEpoch += 1;
-  lkgpCacheKeyVersions.clear();
+  lkgpActiveReads.clear();
   lkgpCache.invalidate();
 }
 
