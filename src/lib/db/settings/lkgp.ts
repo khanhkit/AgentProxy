@@ -44,6 +44,9 @@ function parseLKGPValue(value: string | undefined): LKGPRecord | null {
     if (typeof parsed === "string") {
       return parsed.trim() ? { provider: parsed } : null;
     }
+    if (typeof parsed === "number" || typeof parsed === "boolean") {
+      return { provider: String(parsed) };
+    }
     if (typeof parsed !== "object" || parsed === null || Array.isArray(parsed)) return null;
 
     const record = parsed as Record<string, unknown>;

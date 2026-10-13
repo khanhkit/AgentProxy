@@ -60,7 +60,19 @@ test("tool call guard requires one matching output per call", () => {
         { role: "function", name: "lookup", content: "two" },
       ],
     }),
-    true
+    false,
+    "repeated legacy function names are resolved when call and output counts match"
+  );
+  assert.equal(
+    hasUnresolvedToolCalls({
+      messages: [
+        { role: "assistant", function_call: { name: "lookup", arguments: "{\"q\":1}" } },
+        { role: "function", name: "lookup", content: "one" },
+        { role: "assistant", function_call: { name: "lookup", arguments: "{\"q\":2}" } },
+      ],
+    }),
+    true,
+    "repeated legacy function names remain unresolved when an output is missing"
   );
 });
 

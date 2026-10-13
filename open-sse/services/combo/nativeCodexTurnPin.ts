@@ -384,7 +384,7 @@ export function hasUnresolvedToolCalls(body: Record<string, unknown>): boolean {
 
   if (legacyCallCounts.size !== legacyOutputCounts.size) return true;
   for (const [name, count] of legacyCallCounts) {
-    if (count > 1 || legacyOutputCounts.get(name) !== count) return true;
+    if (legacyOutputCounts.get(name) !== count) return true;
   }
 
   if (callCounts.size === 0 && outputCounts.size === 0) return false;

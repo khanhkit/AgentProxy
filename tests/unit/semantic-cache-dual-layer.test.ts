@@ -628,24 +628,29 @@ describe("Semantic Cache — Dual-Layer Architecture", () => {
       assert.equal(res, null);
     });
 
-    it("times out uncooperative generators that ignore AbortSignal via Promise.race", async () => {
-      // Generator that never resolves and completely ignores AbortSignal. Once it times out,
-      // repeated requests must not start additional runaway work until it settles.
+    it("does not overlap an uncooperative timed-out generator before its in-flight work settles", async () => {
+      // A provider may ignore AbortSignal. The timeout must still fail open quickly, but the
+      // same provider/model key must not start billable overlapping work until that promise settles.
       let calls = 0;
-      const hangingGenerator = () => {
+      let resolveFirst!: (value: { embedding: number[]; inputTokens: number }) => void;
+      const first = new Promise<{ embedding: number[]; inputTokens: number }>((resolve) => {
+        resolveFirst = resolve;
+      });
+      const generator = () => {
         calls += 1;
-        return new Promise<{ embedding: number[]; inputTokens: number }>(() => {});
+        if (calls === 1) return first;
+        return Promise.resolve({ embedding: [1, 0], inputTokens: 1 });
       };
 
       const t0 = Date.now();
-      const res = await generateEmbeddingWithTimeout("hello", hangingGenerator, { timeoutMs: 50 });
+      const res = await generateEmbeddingWithTimeout("hello", generator, { timeoutMs: 50 });
       const elapsed = Date.now() - t0;
 
       assert.equal(res, null, "Should return null on timeout");
       assert.ok(elapsed >= 45 && elapsed < 500, `Should resolve around 50ms, took ${elapsed}ms`);
 
       const secondStart = Date.now();
-      const second = await generateEmbeddingWithTimeout("hello again", hangingGenerator, {
+      const second = await generateEmbeddingWithTimeout("hello again", generator, {
         timeoutMs: 50,
       });
       assert.equal(second, null);
@@ -653,11 +658,19 @@ describe("Semantic Cache — Dual-Layer Architecture", () => {
       assert.ok(Date.now() - secondStart < 40, "quarantined generator must fail open immediately");
 
       await new Promise((resolve) => setTimeout(resolve, 60));
-      const third = await generateEmbeddingWithTimeout("hello after cooldown", hangingGenerator, {
+      const third = await generateEmbeddingWithTimeout("hello after cooldown", generator, {
         timeoutMs: 50,
       });
-      assert.equal(third, null);
-      assert.equal(calls, 2, "quarantine must be a bounded cooldown, not a permanent generator ban");
+      assert.equal(third, null, "elapsed cooldown must not permit overlap with live in-flight work");
+      assert.equal(calls, 1, "same provider/model must remain fenced until the timed-out work settles");
+
+      resolveFirst({ embedding: [0, 1], inputTokens: 1 });
+      await new Promise((resolve) => setImmediate(resolve));
+      const fourth = await generateEmbeddingWithTimeout("hello after settlement", generator, {
+        timeoutMs: 50,
+      });
+      assert.deepEqual(fourth, { embedding: [1, 0], inputTokens: 1 });
+      assert.equal(calls, 2, "settled work must release the in-flight fence");
     });
 
     it("scopes timeout cooldown to the embedding provider and model", async () => {

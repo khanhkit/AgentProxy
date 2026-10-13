@@ -157,6 +157,14 @@ test("atomic LKGP compare-delete accepts legacy semantic encodings without delet
   assert.deepEqual(reorderedObserved, { connectionId: "conn-1", provider: "openai" });
   assert.equal(await settings.clearLKGPIfMatch("combo-legacy", "model-b", reorderedObserved!), true);
   assert.equal(await settings.getLKGP("combo-legacy", "model-b"), null);
+
+  db.prepare("INSERT OR REPLACE INTO key_value (namespace, key, value) VALUES ('lkgp', ?, ?)")
+    .run("combo-legacy:model-number", JSON.stringify(123));
+  assert.deepEqual(await settings.getLKGP("combo-legacy", "model-number"), { provider: "123" });
+
+  db.prepare("INSERT OR REPLACE INTO key_value (namespace, key, value) VALUES ('lkgp', ?, ?)")
+    .run("combo-legacy:model-boolean", JSON.stringify(true));
+  assert.deepEqual(await settings.getLKGP("combo-legacy", "model-boolean"), { provider: "true" });
 });
 
 test("malformed structured LKGP rows fail closed instead of entering provider routing", async () => {
