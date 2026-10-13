@@ -61,11 +61,14 @@ const NON_TEXT_REQUEST_TYPES = new Set([
   "search",
 ]);
 
-const NON_TEXT_PATH_PATTERN = /\/v1\/(audio|images|videos)\/|audio|images|realtime|websocket/i;
+const NON_TEXT_PATH_SEGMENTS = new Set(["audio", "images", "videos", "realtime", "websocket"]);
 
 export function isNonTextRequest(requestType: unknown, path: unknown): boolean {
   if (typeof requestType === "string" && NON_TEXT_REQUEST_TYPES.has(requestType)) return true;
-  if (typeof path === "string" && NON_TEXT_PATH_PATTERN.test(path)) return true;
+  if (typeof path === "string") {
+    const pathname = path.split(/[?#]/, 1)[0].toLowerCase();
+    if (pathname.split("/").some((segment) => NON_TEXT_PATH_SEGMENTS.has(segment))) return true;
+  }
   return false;
 }
 
@@ -78,16 +81,23 @@ function hasNonBlankText(value: unknown): boolean {
   return typeof value === "string" && value.trim().length > 0;
 }
 
+function hasToolCall(value: unknown): boolean {
+  const call = asRecord(value);
+  if (!call) return false;
+  if ([call.id, call.name, call.type, call.arguments].some(hasNonBlankText)) return true;
+  const fn = asRecord(call.function);
+  return fn !== null && [fn.name, fn.arguments].some(hasNonBlankText);
+}
+
 function hasToolCalls(value: unknown): boolean {
-  if (!Array.isArray(value)) return false;
-  return value.length > 0;
+  return Array.isArray(value) && value.some(hasToolCall);
 }
 
 function messageHasContent(message: Record<string, unknown>): boolean | null {
   if (hasNonBlankText(message.content)) return true;
   if (
     hasToolCalls(message.tool_calls) ||
-    (message.function_call !== undefined && message.function_call !== null) ||
+    hasToolCall(message.function_call) ||
     hasToolCalls(message.tool_uses)
   ) {
     return true;
@@ -194,7 +204,7 @@ export function hasRenderedContent(clientBody: unknown): boolean | null {
   if ([body.content, body.text, body.output_text].some(hasNonBlankText)) return true;
   const claude = claudeBlocksContent(body.content);
   if (claude === true) return true;
-  if (hasToolCalls(body.tool_calls) || (body.function_call ?? null) !== null) return true;
+  if (hasToolCalls(body.tool_calls) || hasToolCall(body.function_call)) return true;
   const responses = responsesOutputContent(body.output);
   if (responses !== null) return responses;
   return claude;

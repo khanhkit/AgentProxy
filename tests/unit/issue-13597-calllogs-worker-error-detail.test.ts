@@ -23,7 +23,7 @@ process.env.DATA_DIR = TEST_DATA_DIR;
 const { writeCallArtifactAsync, closeCallLogArtifactWriter, __setCallLogWorkerOverrideForTests } =
   await import("../../src/lib/usage/callLogArtifactWriter.ts");
 
-const CRASH_MESSAGE = "probe-13597-worker-init-crash";
+const CRASH_MESSAGE = "probe-13597-worker-init-crash /home/coder/private/worker.ts";
 const crashWorkerFile = path.join(TEST_DATA_DIR, "crash-worker.mjs");
 fs.writeFileSync(crashWorkerFile, `throw new Error(${JSON.stringify(CRASH_MESSAGE)});\n`);
 
@@ -87,12 +87,14 @@ test("issue #13597: a crashed call-log worker logs the underlying error detail, 
     const failureWarnings = warnings.filter((w) => w.includes("[callLogs]"));
     assert.ok(failureWarnings.length > 0, "expected a [callLogs] warning to be logged");
 
-    const detailed = failureWarnings.some((w) => w.includes(CRASH_MESSAGE));
+    const detailed = failureWarnings.some((w) => w.includes("probe-13597-worker-init-crash"));
     assert.ok(
       detailed,
       `expected a [callLogs] warning to include the underlying error detail ` +
         `("${CRASH_MESSAGE}"), got: ${JSON.stringify(failureWarnings)}`
     );
+    assert.ok(failureWarnings.every((w) => !w.includes("/home/coder/private/worker.ts")));
+    assert.ok(failureWarnings.some((w) => w.includes("<path>")));
   } finally {
     console.warn = originalWarn;
   }

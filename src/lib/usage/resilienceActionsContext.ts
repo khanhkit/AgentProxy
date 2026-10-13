@@ -154,8 +154,10 @@ export function readResilienceActions(): ResilienceActionsSnapshot | null {
 /** Explicit reset, called by the sink only after a successful INSERT. */
 export function resetResilienceActions(): void {
   try {
-    if (resilienceActionsContext.getStore()) {
-      resilienceActionsContext.enterWith(freshAccumulator());
+    const store = resilienceActionsContext.getStore();
+    if (store) {
+      Object.assign(store, freshAccumulator());
+      delete (store as { __notes?: number }).__notes;
     }
   } catch {
     /* best-effort */

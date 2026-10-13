@@ -3,6 +3,8 @@ import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { Worker } from "node:worker_threads";
 
+import { sanitizeErrorMessage } from "@agentproxy/open-sse/utils/errorSanitization.ts";
+
 import type { CallLogArtifact, CallLogArtifactWriteResult } from "./callLogArtifacts.ts";
 
 const MAX_QUEUED_JOBS = 128;
@@ -117,8 +119,8 @@ function warnRateLimited(message: string): void {
 }
 
 function describeFailureDetail(detail: unknown): string {
-  if (detail instanceof Error) return `${detail.name}: ${detail.message}`;
-  return String(detail ?? "unknown error");
+  const raw = detail instanceof Error ? `${detail.name}: ${detail.message}` : String(detail ?? "unknown error");
+  return sanitizeErrorMessage(raw) || "unknown error";
 }
 
 function failOpen(warn = false, detail?: unknown): void {

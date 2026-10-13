@@ -368,3 +368,22 @@ test("AP-ISS-0194 OCR: reasoning observer separates reused item ids across outpu
   assert.equal(done0.durationMs, 2000, "index 0 keeps its own added timestamp");
   assert.equal(done1.durationMs, 3000, "index 1 keeps its own added timestamp despite ID reuse");
 });
+
+test("AP-ISS-0200 4233406388: format/signature metadata alone does not imply encrypted reasoning", async () => {
+  const db = getDbInstance();
+  const testId = `${PREFIX}-metadata-${Date.now()}`;
+  await saveCallLog({
+    id: testId,
+    status: 200,
+    tokens: { prompt_tokens: 1, completion_tokens: 1 },
+    responseBody: {
+      output: [{ type: "reasoning", format: "summary_text", signature: "", summary: [] }],
+    },
+  });
+  const row = db.prepare("SELECT reasoning_source, reasoning_encrypted FROM call_logs WHERE id = ?").get(testId) as {
+    reasoning_source: string | null;
+    reasoning_encrypted: number | null;
+  };
+  assert.notEqual(row.reasoning_source, "encrypted");
+  assert.notEqual(row.reasoning_encrypted, 1);
+});
