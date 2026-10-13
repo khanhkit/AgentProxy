@@ -4,10 +4,7 @@ import {
   isMuseDcaToken,
   museCodeHeaders,
 } from "@agentproxy/open-sse/config/museCode.ts";
-import {
-  mintMuseApiKey,
-  type MuseMintedKey,
-} from "@agentproxy/open-sse/services/museCodeAuth.ts";
+import { mintMuseApiKey, type MuseMintedKey } from "@agentproxy/open-sse/services/museCodeAuth.ts";
 import { MUSE_CODE_CONFIG } from "../constants/oauth";
 import { safeOutboundFetch } from "@/shared/network/safeOutboundFetch";
 import { getProviderOutboundGuard } from "@/shared/network/outboundUrlGuardPolicy";
@@ -67,14 +64,10 @@ export const museCode = {
       user_code: requiredText(data.user_code, "user_code"),
       verification_uri: typeof data.verification_uri === "string" ? data.verification_uri : "",
       verification_uri_complete:
-        typeof data.verification_uri_complete === "string"
-          ? data.verification_uri_complete
-          : "",
+        typeof data.verification_uri_complete === "string" ? data.verification_uri_complete : "",
       expires_in: expiresIn,
       interval:
-        Number.isFinite(interval) && interval > 0
-          ? interval
-          : MUSE_CODE_DEFAULT_POLL_INTERVAL_SEC,
+        Number.isFinite(interval) && interval > 0 ? interval : MUSE_CODE_DEFAULT_POLL_INTERVAL_SEC,
     };
   },
   pollToken: async (config, deviceCode: string) => {

@@ -131,7 +131,6 @@ test("#14006 dynamic catalog source includes auto groups, active providers, and 
   }
 });
 
-
 test("fetchAvailableModels ignores client Host when forwarding authorization upstream", async () => {
   const result = await runHandler(new AntigravityHandler([]), {}, "unused", {
     url: "/v1internal:fetchAvailableModels",

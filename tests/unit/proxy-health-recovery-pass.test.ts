@@ -23,12 +23,7 @@ test("success ends the set-aside: the proxy is no longer avoided", async () => {
   process.env.PROXY_HEALTH_RECOVERY_ENABLED = "true";
   memory.noteProxyRefusal(KEY, "ip_quota_429");
   assert.equal(memory.isProxyAvoided(KEY), true);
-  const result = await scheduler.runRecoveryPass(
-    async () => "ok",
-    CANDIDATES,
-    LIMITS,
-    process.env
-  );
+  const result = await scheduler.runRecoveryPass(async () => "ok", CANDIDATES, LIMITS, process.env);
   assert.equal(result.recovered, 1);
   assert.equal(memory.isProxyAvoided(KEY), false);
 });
@@ -80,7 +75,6 @@ test("the injected probe receives the egress key string (no id-object mismatch)"
   assert.equal(seen, KEY);
   assert.equal(result.recovered, 1);
 });
-
 
 for (const outcome of ["fail", "hang"] as const) {
   test(`${outcome} recovery probe does not manufacture a fresh ip_quota_429 cooldown`, async () => {

@@ -122,7 +122,6 @@ test("default path: sweep-observed 429 is re-tested and recovered, no injected p
   }
 });
 
-
 test("inconclusive recovery keeps the sweep-owned 429 ledger entry for a later retry", async () => {
   const port = await freePort();
   const created = await proxiesDb.createProxy({

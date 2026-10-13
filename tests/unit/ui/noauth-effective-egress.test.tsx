@@ -390,7 +390,6 @@ describe("NoAuthAccountCard effective egress", () => {
   });
 });
 
-
 describe("NoAuthAccountCard assignment refresh failure", () => {
   it("clears assignment knowledge on both non-OK and thrown refresh failures", async () => {
     const source = await import("node:fs/promises").then((fs) =>

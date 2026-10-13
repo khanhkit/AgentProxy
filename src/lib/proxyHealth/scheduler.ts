@@ -109,9 +109,10 @@ export function planRecoveryProbes(
   candidates: RecoveryCandidate[],
   limits: RecoveryProbeLimits
 ): RecoveryCandidate[] {
-  const max = Number.isFinite(limits.maxCandidates) && limits.maxCandidates > 0
-    ? Math.floor(limits.maxCandidates)
-    : 0;
+  const max =
+    Number.isFinite(limits.maxCandidates) && limits.maxCandidates > 0
+      ? Math.floor(limits.maxCandidates)
+      : 0;
   if (max === 0) return [];
   return candidates
     .filter((c) => c.key !== null && c.kind === "ip_quota_429")
@@ -299,7 +300,9 @@ async function testOneProxy(proxy: {
     // never resolves for anyone (e.g. databricks's default azuredatabricks.net host is
     // literally 16 zeros). A connection failure there says nothing about this proxy —
     // same principle as the 5xx case above, extended to connection-level errors.
-    return providerTarget ? { outcome: "inconclusive", status: null } : { outcome: "fail", status: null };
+    return providerTarget
+      ? { outcome: "inconclusive", status: null }
+      : { outcome: "fail", status: null };
   } finally {
     clearTimeout(timeout);
   }
@@ -425,11 +428,13 @@ export async function runRecoveryPass(
   const empty = { planned: 0, recovered: 0, refused: 0 };
   if (!isRecoveryEnabled(env)) return empty;
   const active = limits ?? resolveRecoveryLimits(env);
-  const entries = candidates ?? [...recoveryLedger.entries()].map(([key, { setAsideAt }]) => ({
-    key,
-    kind: "ip_quota_429" as const,
-    setAsideAt,
-  }));
+  const entries =
+    candidates ??
+    [...recoveryLedger.entries()].map(([key, { setAsideAt }]) => ({
+      key,
+      kind: "ip_quota_429" as const,
+      setAsideAt,
+    }));
   const planned = planRecoveryProbes(entries, active);
   if (planned.length === 0) return empty;
   const concurrency = Math.max(

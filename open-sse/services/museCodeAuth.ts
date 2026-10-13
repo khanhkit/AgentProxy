@@ -1,8 +1,4 @@
-import {
-  MUSE_CODE_MINT_URL,
-  museCodeHeaders,
-  normalizeMuseBaseUrl,
-} from "../config/museCode.ts";
+import { MUSE_CODE_MINT_URL, museCodeHeaders, normalizeMuseBaseUrl } from "../config/museCode.ts";
 import { safeOutboundFetch } from "@/shared/network/safeOutboundFetch";
 import { getProviderOutboundGuard } from "@/shared/network/outboundUrlGuardPolicy";
 

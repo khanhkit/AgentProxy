@@ -88,8 +88,6 @@ test("mintMuseApiKey posts dca_token with Bearer + muse-code UA", async () => {
   assert.equal(minted.canSubscribe, true);
 });
 
-
-
 test("Muse OAuth device endpoint refuses metadata targets before native fetch", async () => {
   let nativeFetchCalls = 0;
   globalThis.fetch = (async () => {
@@ -160,10 +158,13 @@ test("supportsTokenRefresh includes the muse-code remint path", () => {
 test("refreshMuseCodeToken remints from refreshToken without duplicating DCA into provider metadata", async () => {
   globalThis.fetch = async (_url, init = {}) => {
     assert.equal((init.headers as Record<string, string>).Authorization, "Bearer dca:from-data");
-    return new Response(JSON.stringify({ api_key: "LLM|new", base_url: "https://api.meta.ai/v1" }), {
-      status: 200,
-      headers: { "Content-Type": "application/json" },
-    });
+    return new Response(
+      JSON.stringify({ api_key: "LLM|new", base_url: "https://api.meta.ai/v1" }),
+      {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
+      }
+    );
   };
 
   const result = await refreshMuseCodeToken(

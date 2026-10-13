@@ -473,7 +473,9 @@ async function fetchSubscriptionContent(url: string): Promise<string> {
  */
 async function upsertSubscriptionProxy(payload: ProxyPayload) {
   const db = getDbInstance();
-  const type = String(payload.type || "").trim().toLowerCase();
+  const type = String(payload.type || "")
+    .trim()
+    .toLowerCase();
   const host = String(payload.host || "").trim();
   const port = Number(payload.port);
   const username = String(payload.username || "").trim();
@@ -481,7 +483,8 @@ async function upsertSubscriptionProxy(payload: ProxyPayload) {
     .prepare(
       "SELECT id, subscription_id FROM proxy_registry WHERE LOWER(type) = ? AND host = ? AND port = ? AND COALESCE(username, '') = ? LIMIT 1"
     )
-    .get(type, host, port, username) as { id?: string; subscription_id?: string | null } | undefined;
+    .get(type, host, port, username) as
+    { id?: string; subscription_id?: string | null } | undefined;
 
   if (existing?.id) {
     if ((existing.subscription_id ?? null) !== (payload.subscriptionId ?? null)) {

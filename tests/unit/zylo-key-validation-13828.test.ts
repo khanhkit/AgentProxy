@@ -87,7 +87,6 @@ test("the zylo alias uses the same authenticated validation probe", async () => 
   assert.equal(result.valid, false);
 });
 
-
 test("explicit Zylo chat endpoint path is preserved verbatim", () => {
   assert.equal(
     resolveZyloChatUrl("https://gateway.example.test/custom/chat/completions"),

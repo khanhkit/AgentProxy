@@ -11,18 +11,12 @@ test("only GitLab direct-connections-disabled 403 falls back to public Code Sugg
     shouldFallbackToPublicCodeSuggestions(403, '{"error":"direct connections are disabled"}'),
     true
   );
-  assert.equal(
-    shouldFallbackToPublicCodeSuggestions(403, '{"error":"insufficient_scope"}'),
-    false
-  );
+  assert.equal(shouldFallbackToPublicCodeSuggestions(403, '{"error":"insufficient_scope"}'), false);
   assert.equal(shouldFallbackToPublicCodeSuggestions(400, '{"error":"bad_request"}'), false);
 });
 
 test("GitLab executor no longer hard-fails a generic direct_access 403", () => {
-  const source = fs.readFileSync(
-    path.join(process.cwd(), "open-sse/executors/gitlab.ts"),
-    "utf8"
-  );
+  const source = fs.readFileSync(path.join(process.cwd(), "open-sse/executors/gitlab.ts"), "utf8");
 
   assert.doesNotMatch(
     source,
