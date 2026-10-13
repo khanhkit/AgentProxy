@@ -96,6 +96,17 @@ test("ensureInitialSettingsBootstrap writes setup settings and advances revision
   assert.equal(rawSettingsRevision(), beforeRevision + 1);
 });
 
+test("empty and value-identical updateSettings calls do not advance revision", async () => {
+  await settingsDb.updateSettings({ debugMode: true });
+  const baseline = await settingsDb.getSettingsRevision();
+
+  await settingsDb.updateSettings({});
+  assert.equal(await settingsDb.getSettingsRevision(), baseline);
+
+  await settingsDb.updateSettings({ debugMode: true });
+  assert.equal(await settingsDb.getSettingsRevision(), baseline);
+});
+
 test("ordinary updateSettings advances revision exactly once", async () => {
   const beforeRevision = await settingsDb.getSettingsRevision();
 

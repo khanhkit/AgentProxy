@@ -100,6 +100,11 @@ export function setFeatureFlagOverride(key: string, value: string): void {
   }
   const db = getDbInstance();
   const write = db.transaction(() => {
+    const current = db
+      .prepare("SELECT value FROM key_value WHERE namespace = ? AND key = ?")
+      .get(NAMESPACE, key) as { value: string } | undefined;
+    if (current?.value === value) return false;
+
     const currentRevision = readSettingsRevisionFromDb(db);
     db.prepare("INSERT OR REPLACE INTO key_value (namespace, key, value) VALUES (?, ?, ?)").run(
       NAMESPACE,
@@ -107,8 +112,10 @@ export function setFeatureFlagOverride(key: string, value: string): void {
       value
     );
     advanceSettingsRevision(db, currentRevision);
+    return true;
   });
-  write();
+  const changed = write();
+  if (!changed) return;
   clearFeatureFlagOverrideCache(key);
   if (CATALOG_RELEVANT_FEATURE_FLAGS.has(key)) {
     finishModelCatalogWriteWithoutBackup();
@@ -122,11 +129,18 @@ export function setFeatureFlagOverride(key: string, value: string): void {
 export function removeFeatureFlagOverride(key: string): void {
   const db = getDbInstance();
   const write = db.transaction(() => {
+    const exists = db
+      .prepare("SELECT 1 FROM key_value WHERE namespace = ? AND key = ?")
+      .get(NAMESPACE, key);
+    if (!exists) return false;
+
     const currentRevision = readSettingsRevisionFromDb(db);
     db.prepare("DELETE FROM key_value WHERE namespace = ? AND key = ?").run(NAMESPACE, key);
     advanceSettingsRevision(db, currentRevision);
+    return true;
   });
-  write();
+  const changed = write();
+  if (!changed) return;
   clearFeatureFlagOverrideCache(key);
   if (CATALOG_RELEVANT_FEATURE_FLAGS.has(key)) {
     finishModelCatalogWriteWithoutBackup();
@@ -143,6 +157,11 @@ export function clearAllFeatureFlagOverrides(): void {
   const catalogFlags = Array.from(CATALOG_RELEVANT_FEATURE_FLAGS);
   const placeholders = catalogFlags.map(() => "?").join(", ");
   const write = db.transaction(() => {
+    const anyOverride = db
+      .prepare("SELECT 1 FROM key_value WHERE namespace = ? LIMIT 1")
+      .get(NAMESPACE);
+    if (!anyOverride) return { changed: false, hadRelevantOverride: false };
+
     const currentRevision = readSettingsRevisionFromDb(db);
     const hadRelevantOverride = Boolean(
       db
@@ -151,9 +170,10 @@ export function clearAllFeatureFlagOverrides(): void {
     );
     db.prepare("DELETE FROM key_value WHERE namespace = ?").run(NAMESPACE);
     advanceSettingsRevision(db, currentRevision);
-    return hadRelevantOverride;
+    return { changed: true, hadRelevantOverride };
   });
-  const hadRelevantOverride = write();
+  const { changed, hadRelevantOverride } = write();
+  if (!changed) return;
   clearFeatureFlagOverrideCache();
   if (hadRelevantOverride) {
     finishModelCatalogWriteWithoutBackup();

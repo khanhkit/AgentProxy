@@ -389,17 +389,27 @@ export async function updateSettings(
     if (options?.expectedRevision !== undefined && options.expectedRevision !== currentRevision) {
       throw new SettingsRevisionConflictError(currentRevision);
     }
+
+    const currentSettings = materializeSettings(readSettingsRows(db));
+    let settingsChanged = false;
     for (const [key, value] of Object.entries(updates)) {
+      if (JSON.stringify(currentSettings[key]) === JSON.stringify(value)) continue;
       const toStore = key === "oidcClientSecret" ? encrypt(value as string) : value;
       insert.run(key, JSON.stringify(toStore));
+      settingsChanged = true;
     }
+
+    if (!settingsChanged && !options?.transactionMutator) return false;
     const nextRevision = currentRevision + 1;
     options?.transactionMutator?.(db, nextRevision);
     advanceSettingsRevision(db, currentRevision);
+    return true;
   });
-  tx();
-  backupDbFile("pre-write");
-  invalidateDbCache("settings"); // Bust the read cache immediately
+  const changed = tx();
+  if (changed) {
+    backupDbFile("pre-write");
+    invalidateDbCache("settings"); // Bust the read cache immediately
+  }
 
   // Bust proxy resolution cache when proxy toggle settings change
   const PROXY_TOGGLE_KEYS = ["proxyEnabled", "perKeyProxyEnabled"];

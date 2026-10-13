@@ -42,6 +42,22 @@ test("set, remove, and clear each advance the shared settings revision exactly o
   assert.equal(await settingsDb.getSettingsRevision(), beforeClear + 1);
 });
 
+test("no-op feature flag writes do not advance the shared revision", async () => {
+  featureFlags.setFeatureFlagOverride(FLAG, "true");
+  const afterSet = await settingsDb.getSettingsRevision();
+
+  featureFlags.setFeatureFlagOverride(FLAG, "true");
+  assert.equal(await settingsDb.getSettingsRevision(), afterSet);
+
+  featureFlags.removeFeatureFlagOverride(FLAG);
+  const afterRemove = await settingsDb.getSettingsRevision();
+  featureFlags.removeFeatureFlagOverride(FLAG);
+  assert.equal(await settingsDb.getSettingsRevision(), afterRemove);
+
+  featureFlags.clearAllFeatureFlagOverrides();
+  assert.equal(await settingsDb.getSettingsRevision(), afterRemove);
+});
+
 test("feature flag override and revision advance are one SQLite transaction", async () => {
   const db = core.getDbInstance();
   db.exec(`
