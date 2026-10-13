@@ -70,3 +70,19 @@ test("PII masker guardrail", async (t) => {
     }
   });
 });
+
+test("PII post-call fails open for non-JSON provider response values", async () => {
+  const circular: Record<string, unknown> = { value: "safe" };
+  circular.self = circular;
+
+  const circularResult = await guardrail.postCall(circular, CONTEXT);
+  assert.equal(circularResult.block, false);
+  assert.equal(circularResult.modifiedResponse, undefined);
+  assert.equal(circular.self, circular);
+
+  const bigintResponse = { usage: 1n };
+  const bigintResult = await guardrail.postCall(bigintResponse, CONTEXT);
+  assert.equal(bigintResult.block, false);
+  assert.equal(bigintResult.modifiedResponse, undefined);
+  assert.equal(bigintResponse.usage, 1n);
+});

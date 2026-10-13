@@ -236,7 +236,12 @@ export class PIIMaskerGuardrail extends BaseGuardrail {
       return { block: false };
     }
 
-    const clonedResponse = JSON.parse(JSON.stringify(response)) as JsonRecord;
+    let clonedResponse: JsonRecord;
+    try {
+      clonedResponse = JSON.parse(JSON.stringify(response)) as JsonRecord;
+    } catch {
+      return { block: false };
+    }
     const before = JSON.stringify(clonedResponse);
     const sanitized = sanitizePIIResponse(
       clonedResponse,
