@@ -24,12 +24,12 @@ export function parseRetryAfterSeconds(
   now = Date.now()
 ): number | null {
   if (typeof retryAfter === "number") {
-    return Number.isFinite(retryAfter) && retryAfter > 0 ? Math.ceil(retryAfter) : null;
+    return Number.isFinite(retryAfter) && retryAfter >= 0 ? Math.ceil(retryAfter) : null;
   }
   if (typeof retryAfter !== "string") return null;
   const text = retryAfter.trim();
   if (text === "") return null;
-  if (/^\d+$/.test(text)) return Math.max(Number(text), 1);
+  if (/^\d+$/.test(text)) return Number(text);
   const ms = Date.parse(text);
   if (Number.isFinite(ms)) return Math.max(Math.ceil((ms - now) / 1000), 1);
   return null;

@@ -27,6 +27,7 @@ import {
 } from "./gemini-web/capabilities.ts";
 import {
   describeModeSelectionFailure,
+  resolveGeminiModelMode,
   selectGeminiExtendedThinking,
   selectGeminiModel,
 } from "./gemini-web/modeSelection.ts";
@@ -158,9 +159,36 @@ export function buildGeminiToolPrompt(
     .filter((m) => m.role === "system" && typeof m.content === "string")
     .map((m) => m.content as string)
     .join("\n\n");
-  const lastUserMsg = [...effectiveMessages].reverse().find((m) => m.role === "user");
+  const lastUserIdx = effectiveMessages.findLastIndex((m) => m.role === "user");
+  const lastUserMsg = lastUserIdx >= 0 ? effectiveMessages[lastUserIdx] : undefined;
   const userText = typeof lastUserMsg?.content === "string" ? lastUserMsg.content : "";
-  return toolPrompt ? `${toolPrompt}\n\n${userText}` : userText;
+  const priorTurns = effectiveMessages.filter(
+    (m, index) =>
+      index < lastUserIdx &&
+      (m.role === "user" || m.role === "assistant" || m.role === "tool" || m.role === "function") &&
+      typeof m.content === "string" &&
+      m.content.length > 0
+  );
+  if (priorTurns.length === 0) return toolPrompt ? `${toolPrompt}\n\n${userText}` : userText;
+
+  const history = priorTurns
+    .map((m) => {
+      const roleLabel =
+        m.role === "assistant"
+          ? "Assistant"
+          : m.role === "tool"
+            ? "Tool"
+            : m.role === "function"
+              ? "Function"
+              : "User";
+      return `${roleLabel}: ${m.content as string}`;
+    })
+    .join("\n\n");
+  const parts: string[] = [];
+  if (toolPrompt) parts.push(toolPrompt);
+  parts.push(`Previous conversation:\n${history}`);
+  parts.push(`Current user message:\n${userText}`);
+  return parts.join("\n\n");
 }
 
 /**
@@ -441,6 +469,7 @@ export class GeminiWebExecutor extends BaseExecutor {
       };
     }
     const wantsExtendedThinking = requestsThinkingBudget(rawBody.reasoning_effort);
+    const modelId = model || DEFAULT_MODEL_ID;
 
     const cookie = resolveGeminiWebCookie(credentials);
     if (!cookie) {
@@ -449,6 +478,23 @@ export class GeminiWebExecutor extends BaseExecutor {
           status: 401,
           headers: { "Content-Type": "application/json" },
         }),
+        url: GEMINI_URL,
+        headers: {},
+        transformedBody: body,
+      };
+    }
+
+    if (model && !resolveGeminiModelMode(modelId)) {
+      return {
+        response: new Response(
+          JSON.stringify(
+            buildErrorBody(400, describeModeSelectionFailure(modelId, "unknown_model"), null, {
+              type: "invalid_request_error",
+              code: GEMINI_WEB_UNSUPPORTED_CONTROL_CODE,
+            })
+          ),
+          { status: 400, headers: { "Content-Type": "application/json" } }
+        ),
         url: GEMINI_URL,
         headers: {},
         transformedBody: body,
@@ -487,10 +533,8 @@ export class GeminiWebExecutor extends BaseExecutor {
       };
     }
 
-    // Resolved up front (#13381) — the pre-fix code only read `model` AFTER the
-    // response was already captured, purely to stamp it on the reply. It now also
-    // drives the in-browser mode-selection step below, before anything is typed.
-    const modelId = model || DEFAULT_MODEL_ID;
+    // `modelId` was resolved and unknown IDs were rejected before browser startup.
+    // Known non-default models are still selected and read back below before typing.
 
     let browser: any = null;
     let abortBrowser: (() => void) | null = null;

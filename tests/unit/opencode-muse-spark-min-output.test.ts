@@ -148,3 +148,63 @@ test("closes the Muse Responses stream at response.completed before post-complet
     globalThis.fetch = originalFetch;
   }
 });
+
+test("AP-ISS-0192 rewritten MuseSpark JSON drops stale representation headers", async () => {
+  const { normalizeMuseSparkResponse } =
+    await import("../../open-sse/executors/opencodeMuseSparkResponse.ts");
+  const original = new Response(
+    JSON.stringify({ choices: [{ finish_reason: "length" }], usage: { completion_tokens: 1 } }),
+    {
+      status: 200,
+      headers: {
+        "content-type": "application/json",
+        "content-length": "9999",
+        "content-encoding": "gzip",
+        "x-provider": "keep-me",
+      },
+    }
+  );
+  const normalized = normalizeMuseSparkResponse(
+    { model: "muse-spark-1.2-contributor", body: { max_tokens: 128000 } } as never,
+    { response: original, url: "https://example.test", headers: {} } as never
+  );
+  const response = normalized instanceof Response ? normalized : normalized.response;
+  assert.equal(response.headers.get("content-length"), null);
+  assert.equal(response.headers.get("content-encoding"), null);
+  assert.equal(response.headers.get("x-provider"), "keep-me");
+  const text = await response.text();
+  assert.doesNotThrow(() => JSON.parse(text));
+});
+
+test("AP-ISS-0192 OCR rewritten MuseSpark SSE drops stale representation headers", async () => {
+  const { normalizeMuseSparkResponse } =
+    await import("../../open-sse/executors/opencodeMuseSparkResponse.ts");
+  const original = new Response(
+    [
+      'data: {"choices":[],"usage":{"completion_tokens":1}}',
+      'data: {"choices":[{"index":0,"delta":{},"finish_reason":"length"}]}',
+      "data: [DONE]",
+      "",
+    ].join("\n"),
+    {
+      status: 200,
+      headers: {
+        "content-type": "text/event-stream",
+        "content-length": "9999",
+        "content-encoding": "gzip",
+        "x-provider": "keep-me",
+      },
+    }
+  );
+  const normalized = normalizeMuseSparkResponse(
+    { model: "muse-spark-1.2-contributor", body: { max_tokens: 128000 } } as never,
+    { response: original, url: "https://example.test", headers: {} } as never
+  );
+  const response = normalized instanceof Response ? normalized : normalized.response;
+
+  assert.equal(response.headers.get("content-length"), null);
+  assert.equal(response.headers.get("content-encoding"), null);
+  assert.equal(response.headers.get("x-provider"), "keep-me");
+  const text = await response.text();
+  assert.match(text, /"finish_reason":"stop"/);
+});

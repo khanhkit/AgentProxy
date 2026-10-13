@@ -81,7 +81,17 @@ export function pickAccount<T extends RotatableAccount>(
   };
 
   const stickyIdx = stickyServeIndex(accounts, state, isReady, keyOfMember);
-  if (stickyIdx !== null) return serve(stickyIdx);
+  if (stickyIdx !== null) {
+    // Sticky drain is a one-request bridge across the refused cursor member.
+    // Consume that drained cursor so the next request can continue round-robin
+    // instead of resetting to the same refused member and pinning forever.
+    const drainedCursorIdx = state.nextAccountIdx % accounts.length;
+    const account = accounts[stickyIdx];
+    const nextIdx = (drainedCursorIdx + 1) % accounts.length;
+    state.nextAccountIdx = nextIdx === stickyIdx ? (stickyIdx + 1) % accounts.length : nextIdx;
+    state.lastHealthyFingerprint = account.fingerprint;
+    return account;
+  }
 
   for (let i = 0; i < accounts.length; i++) {
     const idx = (state.nextAccountIdx + i) % accounts.length;
@@ -129,8 +139,9 @@ function stickyServeIndex<T extends RotatableAccount>(
   ) {
     return null;
   }
-  if (state.nextAccountIdx <= sticky) return null;
   const cursorIdx = state.nextAccountIdx % accounts.length;
+  const cursorFollowsSticky = cursorIdx === (sticky + 1) % accounts.length;
+  if (!cursorFollowsSticky) return null;
   if (isReady(accounts[cursorIdx]) && !isStoreDrained(accounts[cursorIdx], keyOfMember))
     return null;
   return sticky;
@@ -183,6 +194,7 @@ export interface RotationAccountSnapshot {
   consecutiveFails: number;
 }
 
+const MAX_ROTATION_SNAPSHOT_ENTRIES = 200;
 const rotationSnapshots = new Map<string, RotationAccountSnapshot[]>();
 
 /** Record the current rotation state for a connection (sync, in-memory only). */
@@ -190,6 +202,13 @@ export function recordRotationSnapshot(
   connectionKey: string,
   entries: RotationAccountSnapshot[]
 ): void {
+  // Refresh insertion order for active connections and bound stale connection churn.
+  rotationSnapshots.delete(connectionKey);
+  while (rotationSnapshots.size >= MAX_ROTATION_SNAPSHOT_ENTRIES) {
+    const oldest = rotationSnapshots.keys().next();
+    if (oldest.done) break;
+    rotationSnapshots.delete(oldest.value);
+  }
   rotationSnapshots.set(connectionKey, [...entries]);
 }
 

@@ -131,14 +131,20 @@ function isOwnerLockedDown(mode: number, uid: number | undefined): boolean {
 }
 
 async function defaultReadMarker(markerPath: string): Promise<{ mtimeMs: number; text: string }> {
-  const { lstat, open } = await import("node:fs/promises");
-  const st = await lstat(markerPath);
-  if (!st.isFile()) throw new Error("pool-strain marker is not a regular file");
-  if (!isOwnerLockedDown(st.mode, st.uid)) {
-    throw new Error("pool-strain marker is not owner-locked-down");
+  const [{ open }, { constants }] = await Promise.all([
+    import("node:fs/promises"),
+    import("node:fs"),
+  ]);
+  if (typeof constants.O_NOFOLLOW !== "number") {
+    throw new Error("pool-strain marker no-follow open is unavailable");
   }
-  const handle = await open(markerPath, "r");
+  const handle = await open(markerPath, constants.O_RDONLY | constants.O_NOFOLLOW);
   try {
+    const st = await handle.stat();
+    if (!st.isFile()) throw new Error("pool-strain marker is not a regular file");
+    if (!isOwnerLockedDown(st.mode, st.uid)) {
+      throw new Error("pool-strain marker is not owner-locked-down");
+    }
     const buffer = Buffer.alloc(STRAIN_MARKER_MAX_BYTES);
     const { bytesRead } = await handle.read(buffer, 0, STRAIN_MARKER_MAX_BYTES, 0);
     return { mtimeMs: st.mtimeMs, text: buffer.toString("utf8", 0, bytesRead) };

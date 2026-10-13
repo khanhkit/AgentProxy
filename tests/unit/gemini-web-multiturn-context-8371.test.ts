@@ -10,7 +10,8 @@ import assert from "node:assert/strict";
 // pin that flatten behavior while guaranteeing single-turn requests stay
 // byte-for-byte identical (regression guard for the existing no-tools path).
 
-const { buildGeminiPrompt } = await import("../../open-sse/executors/gemini-web.ts");
+const { buildGeminiPrompt, buildGeminiToolPrompt } =
+  await import("../../open-sse/executors/gemini-web.ts");
 
 // ─── Single-turn: byte-for-byte identical to the original derivation ─────────
 
@@ -70,4 +71,34 @@ test("#8371: non-string / empty message contents are ignored without throwing", 
   // Empty assistant turn drops out; the earlier user turn is still preserved.
   assert.match(prompt, /First question/);
   assert.match(prompt, /Second question/);
+});
+
+test("AP-ISS-0192 OCR tool mode preserves prior tool/function results", () => {
+  const prompt = buildGeminiToolPrompt([
+    { role: "system", content: "Tool contract: use results from tools." },
+    { role: "user", content: "Check weather and calendar." },
+    { role: "assistant", content: "I will query both." },
+    { role: "tool", content: "weather=rain" },
+    { role: "function", content: "calendar=free" },
+    { role: "user", content: "What should I do next?" },
+  ]);
+
+  assert.match(prompt, /Assistant: I will query both\./);
+  assert.match(prompt, /Tool: weather=rain/);
+  assert.match(prompt, /Function: calendar=free/);
+  assert.match(prompt, /Current user message:\nWhat should I do next\?/);
+});
+
+test("AP-ISS-0192 4233291677 tool mode preserves prior user/assistant turns", () => {
+  const prompt = buildGeminiToolPrompt([
+    { role: "system", content: "Tool contract: call search when needed." },
+    { role: "user", content: "I am in Berlin." },
+    { role: "assistant", content: "Noted: Berlin." },
+    { role: "user", content: "Find today's weather." },
+  ]);
+
+  assert.match(prompt, /Tool contract: call search when needed\./);
+  assert.match(prompt, /User: I am in Berlin\./);
+  assert.match(prompt, /Assistant: Noted: Berlin\./);
+  assert.match(prompt, /Find today's weather\./);
 });
