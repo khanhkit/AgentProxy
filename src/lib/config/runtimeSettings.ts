@@ -259,7 +259,11 @@ async function applyModelsDevSyncSection(
   }
 }
 
-type RuntimeSettingsFaultInjector = (section: RuntimeReloadSection) => void;
+type RuntimeSettingsFaultPhase = "apply" | "rollback";
+type RuntimeSettingsFaultInjector = (
+  section: RuntimeReloadSection,
+  phase: RuntimeSettingsFaultPhase
+) => void;
 let runtimeSettingsFaultInjectorForTests: RuntimeSettingsFaultInjector | null = null;
 
 export function setRuntimeSettingsFaultInjectorForTests(
@@ -279,127 +283,149 @@ async function applyAtomicRuntimeSections(
     force: boolean;
     source: string;
     allowFaultInjection: boolean;
+    faultInjectionPhase: RuntimeSettingsFaultPhase;
+    continueOnError?: boolean;
   }
 ): Promise<RuntimeReloadChange[]> {
-  const { force, source, allowFaultInjection } = options;
+  const {
+    force,
+    source,
+    allowFaultInjection,
+    faultInjectionPhase,
+    continueOnError = false,
+  } = options;
   const changes: RuntimeReloadChange[] = [];
+  const failures: Array<{ section: RuntimeReloadSection; error: unknown }> = [];
   const markChanged = (section: RuntimeReloadSection) => {
     changes.push({ section, source });
-    if (allowFaultInjection) runtimeSettingsFaultInjectorForTests?.(section);
+    if (allowFaultInjection) runtimeSettingsFaultInjectorForTests?.(section, faultInjectionPhase);
+  };
+  const runSection = async (
+    section: RuntimeReloadSection,
+    shouldApply: boolean,
+    apply: () => void | Promise<void>
+  ) => {
+    if (!shouldApply) return;
+    try {
+      await apply();
+      markChanged(section);
+    } catch (error) {
+      if (!continueOnError) throw error;
+      failures.push({ section, error });
+    }
   };
 
-  if (force || hasChanged(currentSnapshot.payloadRules, previousSnapshot.payloadRules)) {
-    await applyPayloadRulesSection(currentSnapshot.payloadRules);
-    markChanged("payloadRules");
-  }
-
-  if (force || hasChanged(currentSnapshot.modelAliases, previousSnapshot.modelAliases)) {
-    await applyModelAliasesSection(currentSnapshot.modelAliases);
-    markChanged("modelAliases");
-  }
-
-  if (
+  await runSection(
+    "payloadRules",
+    force || hasChanged(currentSnapshot.payloadRules, previousSnapshot.payloadRules),
+    () => applyPayloadRulesSection(currentSnapshot.payloadRules)
+  );
+  await runSection(
+    "modelAliases",
+    force || hasChanged(currentSnapshot.modelAliases, previousSnapshot.modelAliases),
+    () => applyModelAliasesSection(currentSnapshot.modelAliases)
+  );
+  await runSection(
+    "backgroundDegradation",
     force ||
-    hasChanged(currentSnapshot.backgroundDegradation, previousSnapshot.backgroundDegradation)
-  ) {
-    await applyBackgroundDegradationSection(currentSnapshot.backgroundDegradation);
-    markChanged("backgroundDegradation");
-  }
-
-  if (
+      hasChanged(currentSnapshot.backgroundDegradation, previousSnapshot.backgroundDegradation),
+    () => applyBackgroundDegradationSection(currentSnapshot.backgroundDegradation)
+  );
+  await runSection(
+    "cliCompatProviders",
+    force || hasChanged(currentSnapshot.cliCompatProviders, previousSnapshot.cliCompatProviders),
+    () => applyCliCompatProvidersSection(currentSnapshot.cliCompatProviders)
+  );
+  await runSection(
+    "cacheControl",
     force ||
-    hasChanged(currentSnapshot.cliCompatProviders, previousSnapshot.cliCompatProviders)
-  ) {
-    await applyCliCompatProvidersSection(currentSnapshot.cliCompatProviders);
-    markChanged("cliCompatProviders");
-  }
-
-  if (
+      hasChanged(
+        currentSnapshot.alwaysPreserveClientCache,
+        previousSnapshot.alwaysPreserveClientCache
+      ),
+    () => applyCacheControlSection(currentSnapshot.alwaysPreserveClientCache)
+  );
+  await runSection(
+    "usageTracking",
+    force || hasChanged(currentSnapshot.usageTokenBuffer, previousSnapshot.usageTokenBuffer),
+    () =>
+      applyUsageTrackingSection(
+        typeof currentSnapshot.usageTokenBuffer === "number"
+          ? currentSnapshot.usageTokenBuffer
+          : null
+      )
+  );
+  await runSection(
+    "healthCheckLogs",
+    force || currentSnapshot.hideHealthCheckLogs !== previousSnapshot.hideHealthCheckLogs,
+    () => clearHealthCheckLogCache(currentSnapshot.hideHealthCheckLogs)
+  );
+  await runSection(
+    "thoughtSignature",
     force ||
-    hasChanged(
-      currentSnapshot.alwaysPreserveClientCache,
-      previousSnapshot.alwaysPreserveClientCache
-    )
-  ) {
-    await applyCacheControlSection(currentSnapshot.alwaysPreserveClientCache);
-    markChanged("cacheControl");
-  }
+      hasChanged(
+        currentSnapshot.antigravitySignatureCacheMode,
+        previousSnapshot.antigravitySignatureCacheMode
+      ),
+    () => applyThoughtSignatureSection(currentSnapshot.antigravitySignatureCacheMode)
+  );
+  await runSection(
+    "corsOrigins",
+    force || hasChanged(currentSnapshot.corsOrigins, previousSnapshot.corsOrigins),
+    () => applyCorsOriginsSection(currentSnapshot.corsOrigins)
+  );
+  await runSection(
+    "ccBridgeTransforms",
+    force || hasChanged(currentSnapshot.ccBridgeTransforms, previousSnapshot.ccBridgeTransforms),
+    () => applyCcBridgeTransformsSection(currentSnapshot.ccBridgeTransforms)
+  );
+  await runSection(
+    "systemTransforms",
+    force || hasChanged(currentSnapshot.systemTransforms, previousSnapshot.systemTransforms),
+    () => applySystemTransformsSection(currentSnapshot.systemTransforms)
+  );
+  await runSection(
+    "systemPrompt",
+    force || hasChanged(currentSnapshot.systemPrompt, previousSnapshot.systemPrompt),
+    () => applySystemPromptSection(currentSnapshot.systemPrompt)
+  );
+  await runSection(
+    "authzBypass",
+    force || hasChanged(currentSnapshot.authzBypass, previousSnapshot.authzBypass),
+    () => applyAuthzBypassSection(currentSnapshot.authzBypass)
+  );
+  await runSection(
+    "bannedSignals",
+    force || hasChanged(currentSnapshot.customBannedSignals, previousSnapshot.customBannedSignals),
+    () => setCustomBannedSignals(currentSnapshot.customBannedSignals)
+  );
+  await runSection(
+    "providerErrorRules",
+    force || hasChanged(currentSnapshot.providerErrorRules, previousSnapshot.providerErrorRules),
+    () => setOperatorProviderErrorRules(currentSnapshot.providerErrorRules ?? undefined)
+  );
+  await runSection(
+    "thinkingBudget",
+    force || hasChanged(currentSnapshot.thinkingBudget, previousSnapshot.thinkingBudget),
+    () => applyThinkingBudgetSection(currentSnapshot.thinkingBudget)
+  );
+  await runSection(
+    "taskRouting",
+    force || hasChanged(currentSnapshot.taskRouting, previousSnapshot.taskRouting),
+    () => applyTaskRoutingSection(currentSnapshot.taskRouting)
+  );
 
-  if (force || hasChanged(currentSnapshot.usageTokenBuffer, previousSnapshot.usageTokenBuffer)) {
-    await applyUsageTrackingSection(
-      typeof currentSnapshot.usageTokenBuffer === "number" ? currentSnapshot.usageTokenBuffer : null
+  if (failures.length > 0) {
+    const details = failures
+      .map(
+        ({ section, error }) =>
+          `${section}: ${error instanceof Error ? error.message : String(error)}`
+      )
+      .join("; ");
+    throw new AggregateError(
+      failures.map(({ error }) => error),
+      `Runtime settings ${faultInjectionPhase} failed: ${details}`
     );
-    markChanged("usageTracking");
-  }
-
-  if (force || currentSnapshot.hideHealthCheckLogs !== previousSnapshot.hideHealthCheckLogs) {
-    clearHealthCheckLogCache(currentSnapshot.hideHealthCheckLogs);
-    markChanged("healthCheckLogs");
-  }
-
-  if (
-    force ||
-    hasChanged(
-      currentSnapshot.antigravitySignatureCacheMode,
-      previousSnapshot.antigravitySignatureCacheMode
-    )
-  ) {
-    await applyThoughtSignatureSection(currentSnapshot.antigravitySignatureCacheMode);
-    markChanged("thoughtSignature");
-  }
-
-  if (force || hasChanged(currentSnapshot.corsOrigins, previousSnapshot.corsOrigins)) {
-    await applyCorsOriginsSection(currentSnapshot.corsOrigins);
-    markChanged("corsOrigins");
-  }
-
-  if (
-    force ||
-    hasChanged(currentSnapshot.ccBridgeTransforms, previousSnapshot.ccBridgeTransforms)
-  ) {
-    await applyCcBridgeTransformsSection(currentSnapshot.ccBridgeTransforms);
-    markChanged("ccBridgeTransforms");
-  }
-
-  if (force || hasChanged(currentSnapshot.systemTransforms, previousSnapshot.systemTransforms)) {
-    await applySystemTransformsSection(currentSnapshot.systemTransforms);
-    markChanged("systemTransforms");
-  }
-
-  if (force || hasChanged(currentSnapshot.systemPrompt, previousSnapshot.systemPrompt)) {
-    await applySystemPromptSection(currentSnapshot.systemPrompt);
-    markChanged("systemPrompt");
-  }
-
-  if (force || hasChanged(currentSnapshot.authzBypass, previousSnapshot.authzBypass)) {
-    applyAuthzBypassSection(currentSnapshot.authzBypass);
-    markChanged("authzBypass");
-  }
-
-  if (
-    force ||
-    hasChanged(currentSnapshot.customBannedSignals, previousSnapshot.customBannedSignals)
-  ) {
-    setCustomBannedSignals(currentSnapshot.customBannedSignals);
-    markChanged("bannedSignals");
-  }
-
-  if (
-    force ||
-    hasChanged(currentSnapshot.providerErrorRules, previousSnapshot.providerErrorRules)
-  ) {
-    setOperatorProviderErrorRules(currentSnapshot.providerErrorRules ?? undefined);
-    markChanged("providerErrorRules");
-  }
-
-  if (force || hasChanged(currentSnapshot.thinkingBudget, previousSnapshot.thinkingBudget)) {
-    await applyThinkingBudgetSection(currentSnapshot.thinkingBudget);
-    markChanged("thinkingBudget");
-  }
-
-  if (force || hasChanged(currentSnapshot.taskRouting, previousSnapshot.taskRouting)) {
-    await applyTaskRoutingSection(currentSnapshot.taskRouting);
-    markChanged("taskRouting");
   }
 
   return changes;
@@ -447,7 +473,7 @@ export async function applyRuntimeSettingsCandidate(
       changes = await applyAtomicRuntimeSections(
         preparedCandidate.previous,
         preparedCandidate.current,
-        { force, source, allowFaultInjection: true }
+        { force, source, allowFaultInjection: true, faultInjectionPhase: "apply" }
       );
     },
     rollbackAtomic: async (preparedCandidate) => {
@@ -455,7 +481,9 @@ export async function applyRuntimeSettingsCandidate(
       await applyAtomicRuntimeSections(preparedCandidate.current, preparedCandidate.previous, {
         force: true,
         source: `${source}:rollback`,
-        allowFaultInjection: false,
+        allowFaultInjection: true,
+        faultInjectionPhase: "rollback",
+        continueOnError: true,
       });
     },
     reconcile: async (activeCandidate) => {
@@ -494,6 +522,7 @@ export async function applyRuntimeSettings(
     force,
     source,
     allowFaultInjection: true,
+    faultInjectionPhase: "apply",
   });
 
   if (

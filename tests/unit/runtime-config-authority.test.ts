@@ -336,3 +336,55 @@ test("runtimeSettings rollback restores prior aliases, payload rules and authz a
   assert.equal(getRuntimeConfigStatus().desiredRevision, 21);
   assert.equal(getRuntimeConfigStatus().state, "activation_failed");
 });
+
+test("runtimeSettings rollback continues restoring later sections after a rollback section fails", async () => {
+  resetRuntimeSettingsStateForTests();
+  resetRuntimeConfigAuthorityForTests();
+
+  await applyRuntimeSettingsCandidate(
+    candidate(30, {
+      modelAliases: { stable: "openai/gpt-4o-mini" },
+      localOnlyManageScopeBypassEnabled: false,
+      localOnlyManageScopeBypassPrefixes: ["/api/mcp/"],
+      taskRouting: { enabled: true },
+    }),
+    { force: true, source: "test:rollback-failure-baseline" }
+  );
+
+  setRuntimeSettingsFaultInjectorForTests((section, phase?: "apply" | "rollback") => {
+    if (phase === "rollback" && section === "modelAliases") {
+      throw new Error("injected rollback section failure");
+    }
+    if (phase !== "rollback" && section === "taskRouting") {
+      throw new Error("injected activation section failure");
+    }
+  });
+
+  try {
+    await assert.rejects(
+      applyRuntimeSettingsCandidate(
+        candidate(31, {
+          modelAliases: { unstable: "anthropic/claude-fable-5" },
+          localOnlyManageScopeBypassEnabled: true,
+          localOnlyManageScopeBypassPrefixes: ["/api/mcp/", "/api/extra/"],
+          taskRouting: {
+            enabled: false,
+            patternOverrides: { coding: { patterns: ["candidate-only"] } },
+          },
+        }),
+        { source: "test:rollback-failure" }
+      ),
+      /rollback failed.*injected rollback section failure/i
+    );
+  } finally {
+    setRuntimeSettingsFaultInjectorForTests(null);
+  }
+
+  assert.deepEqual(getCustomAliases(), { stable: "openai/gpt-4o-mini" });
+  assert.deepEqual(getAuthzBypassSnapshot(), { enabled: false, prefixes: ["/api/mcp/"] });
+  assert.equal(getTaskRoutingConfig().enabled, true);
+  assert.equal(getTaskRoutingConfig().patternOverrides, undefined);
+  assert.equal(getActiveRuntimeConfigSnapshot()?.revision, 30);
+  assert.equal(getRuntimeConfigStatus().desiredRevision, 31);
+  assert.equal(getRuntimeConfigStatus().state, "activation_failed");
+});
