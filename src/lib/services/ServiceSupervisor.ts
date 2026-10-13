@@ -4,7 +4,7 @@ import { EventEmitter } from "node:events";
 import { spawn } from "node:child_process";
 import type { ChildProcess } from "node:child_process";
 import { sanitizeErrorMessage } from "@agentproxy/open-sse/utils/error";
-import { getServiceRow, updateServiceField, setToolStatus } from "@/lib/db/versionManager";
+import { getServiceRow, setToolStatus } from "@/lib/db/versionManager";
 import { RingBuffer } from "./ringBuffer";
 import { HealthChecker } from "./healthCheck";
 import {
@@ -68,6 +68,9 @@ export class ServiceSupervisor extends EventEmitter {
       // fires a full ProxyFetch dispatcher+native fetch pair (e.g. against a
       // CLIProxyAPI binary that cannot execute on this platform).
       if (h === "unhealthy" && (this.state === "running" || this.state === "starting")) {
+        if (this.state === "starting" && this.config.healthFailureDuringStartup === "tolerate") {
+          return;
+        }
         this.checker.stop();
         this.lastError = sanitizeErrorMessage(
           `Health probe failed for ${this.config.tool} (port ${this.config.port})`

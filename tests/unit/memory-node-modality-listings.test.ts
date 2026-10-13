@@ -102,6 +102,25 @@ test.describe("buildProviderNodeModalityListings (pure)", () => {
     }
   });
 
+  test("catalog rows keyed by the public provider prefix survive a different node id", () => {
+    const out = buildProviderNodeModalityListings(
+      "embeddings",
+      [
+        {
+          id: "openai-compatible-uuid-123",
+          prefix: "skilled-prefix",
+          baseUrl: "http://127.0.0.1:8888/v1",
+          apiType: "embeddings",
+        },
+      ],
+      { "skilled-prefix": [{ id: "bge-m3", name: "bge-m3" }] },
+      {}
+    );
+    assert.deepEqual(out[0]?.models, [
+      { id: "skilled-prefix/bge-m3", name: "bge-m3", dimensions: null },
+    ]);
+  });
+
   test("invalid prefixes are skipped", () => {
     const out = buildProviderNodeModalityListings("rerank", nodes, synced, custom);
     assert.equal(

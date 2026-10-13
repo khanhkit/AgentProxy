@@ -40,7 +40,7 @@ const testAllSchema = z.object({
 });
 
 export interface BatchTestResultEntry {
-  status: "ok" | "error" | "slow";
+  status: "ok" | "error" | "slow" | "skipped";
   latencyMs: number;
   responseText?: string;
   error?: string;
@@ -56,7 +56,14 @@ function toBatchEntry(
   result: Awaited<ReturnType<typeof runSingleModelTest>>
 ): BatchTestResultEntry {
   const entry: BatchTestResultEntry = {
-    status: result.status === "ok" ? "ok" : result.status === "slow" ? "slow" : "error",
+    status:
+      result.status === "ok"
+        ? "ok"
+        : result.status === "slow"
+          ? "slow"
+          : result.status === "skipped"
+            ? "skipped"
+            : "error",
     latencyMs: result.latencyMs,
   };
   if (result.responseText !== undefined) entry.responseText = result.responseText;
