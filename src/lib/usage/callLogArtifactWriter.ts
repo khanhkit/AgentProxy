@@ -199,7 +199,7 @@ function pump(): void {
 export function writeCallArtifactAsync(
   artifact: CallLogArtifact
 ): Promise<CallLogArtifactWriteResult | null> {
-  if (closing || queue.length >= MAX_QUEUED_JOBS) {
+  if (closing || queue.length + (active ? 1 : 0) >= MAX_QUEUED_JOBS) {
     warnRateLimited("[callLogs] Call-log artifact queue unavailable; detail omitted.");
     return Promise.resolve(null);
   }
