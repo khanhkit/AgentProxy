@@ -130,7 +130,9 @@ export function extractPreservedBlocks(
   }
 
   for (const { pattern, kind } of systemPatterns) {
-    result = replacePatternOutsideFences(result, pattern, kind, addBlock);
+    // System instruction envelopes are themselves opaque and may legitimately
+    // contain fenced code, so preserve the whole envelope before fence extraction.
+    result = replacePattern(result, pattern, kind, addBlock);
   }
 
   result = extractFencedCodeBlocks(result, (content) => addBlock(content, "fenced_code"));

@@ -144,70 +144,63 @@ test("AP-ISS-0196: network failures do not expose internal transport details", a
 });
 
 test("AP-ISS-0196: same-length provider config edits after byte 64 invalidate the runtime cache", async () => {
-  const originalFetch = globalThis.fetch;
   const authorizations: string[] = [];
-  globalThis.fetch = async (_url, init) => {
-    authorizations.push(new Headers(init?.headers).get("authorization") ?? "");
-    return new Response('{"ok":true}', {
-      status: 200,
-      headers: { "content-type": "application/json" },
-    });
-  };
-  const prefix = `# ${"x".repeat(96)}\n`;
-  const makeSource = (secret: string) =>
-    `${prefix}providers:\n  - id: cache-test\n    kind: openai\n    baseUrl: http://127.0.0.1:7444\n    model: test-model\n    apiKey: ${secret}\n`;
-  const request = req({ authorization: "Bearer entry-key" });
-  try {
-    const first = await handleSelfHostedCompletions(
-      request,
-      { messages: [{ role: "user", content: "first" }] },
-      { providers: makeSource("secret-A"), apiKey: "entry-key" }
-    );
-    assert.equal(first?.status, 200);
-    const second = await handleSelfHostedCompletions(
-      request,
-      { messages: [{ role: "user", content: "second" }] },
-      { providers: makeSource("secret-B"), apiKey: "entry-key" }
-    );
-    assert.equal(second?.status, 200);
-    assert.deepEqual(authorizations, ["Bearer secret-A", "Bearer secret-B"]);
-  } finally {
-    globalThis.fetch = originalFetch;
-  }
+  await withServer(
+    (request) => {
+      authorizations.push(request.headers.authorization ?? "");
+      return { status: 200, body: '{"ok":true}' };
+    },
+    async (baseUrl) => {
+      const prefix = `# ${"x".repeat(96)}\n`;
+      const makeSource = (secret: string) =>
+        `${prefix}providers:\n  - id: cache-test\n    kind: openai\n    baseUrl: ${baseUrl}\n    model: test-model\n    apiKey: ${secret}\n`;
+      const request = req({ authorization: "Bearer entry-key" });
+      const first = await handleSelfHostedCompletions(
+        request,
+        { messages: [{ role: "user", content: "first" }] },
+        { providers: makeSource("secret-A"), apiKey: "entry-key" }
+      );
+      assert.equal(first?.status, 200);
+      const second = await handleSelfHostedCompletions(
+        request,
+        { messages: [{ role: "user", content: "second" }] },
+        { providers: makeSource("secret-B"), apiKey: "entry-key" }
+      );
+      assert.equal(second?.status, 200);
+      assert.deepEqual(authorizations, ["Bearer secret-A", "Bearer secret-B"]);
+    }
+  );
 });
 
 test("AP-ISS-0196: partial strategy override preserves omitted inline rules", async () => {
-  const originalFetch = globalThis.fetch;
-  const urls: string[] = [];
-  globalThis.fetch = async (url) => {
-    urls.push(String(url));
-    return new Response('{"ok":true}', {
-      status: 200,
-      headers: { "content-type": "application/json" },
-    });
-  };
-  const providers = `providers:
+  await withServer(
+    () => ({ status: 200, body: '{"ok":true}' }),
+    async (blockedUrl, blockedCalls) => {
+      await withServer(
+        () => ({ status: 200, body: '{"ok":true}' }),
+        async (allowedUrl, allowedCalls) => {
+          const providers = `providers:
   - id: blocked
     kind: openai
-    baseUrl: http://127.0.0.1:9001
+    baseUrl: ${blockedUrl}
     model: blocked-model
   - id: allowed
     kind: openai
-    baseUrl: http://127.0.0.1:9002
+    baseUrl: ${allowedUrl}
     model: allowed-model
 strategy:
   blacklist: [blocked]
 `;
-  try {
-    const res = await handleSelfHostedCompletions(
-      req(),
-      { messages: [{ role: "user", content: "hi" }] },
-      { providers, strategy: "costPriority: true\n" }
-    );
-    assert.equal(res?.status, 200);
-    assert.equal(urls.length, 1);
-    assert.match(urls[0], /127\.0\.0\.1:9002/);
-  } finally {
-    globalThis.fetch = originalFetch;
-  }
+          const res = await handleSelfHostedCompletions(
+            req(),
+            { messages: [{ role: "user", content: "hi" }] },
+            { providers, strategy: "costPriority: true\n" }
+          );
+          assert.equal(res?.status, 200);
+          assert.equal(blockedCalls(), 0);
+          assert.equal(allowedCalls(), 1);
+        }
+      );
+    }
+  );
 });
