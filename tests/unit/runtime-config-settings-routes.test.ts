@@ -9,6 +9,7 @@ process.env.DATA_DIR = TEST_DATA_DIR;
 process.env.REQUIRE_API_KEY = "false";
 
 const core = await import("../../src/lib/db/core.ts");
+const settingsDb = await import("../../src/lib/db/settings.ts");
 const { invalidateDbCache } = await import("../../src/lib/db/readCache.ts");
 const thinkingRoute = await import("../../src/app/api/settings/thinking-budget/route.ts");
 const taskRoutingRoute = await import("../../src/app/api/settings/task-routing/route.ts");
@@ -83,4 +84,33 @@ test("task-routing persistence failure leaves the previous in-memory config acti
   assert.equal(getTaskRoutingConfig().enabled, before.enabled);
   assert.equal(getTaskRoutingConfig().detectionEnabled, before.detectionEnabled);
   assert.deepEqual(getTaskRoutingConfig().taskModelMap, before.taskModelMap);
+});
+
+test("task-routing PUT merges against durable state instead of a stale runtime snapshot", async () => {
+  await settingsDb.updateSettings({
+    taskRouting: JSON.stringify({ enabled: false, detectionEnabled: false }),
+  });
+  setTaskRoutingConfig({ detectionEnabled: true });
+  assert.equal(
+    getTaskRoutingConfig().detectionEnabled,
+    true,
+    "runtime snapshot is intentionally stale"
+  );
+
+  const request = await makeManagementSessionRequest("http://localhost/api/settings/task-routing", {
+    method: "PUT",
+    body: { enabled: true },
+  });
+  const response = await taskRoutingRoute.PUT(request);
+
+  assert.equal(response.status, 200);
+  const candidate = await settingsDb.getSettingsCandidate();
+  const persisted = JSON.parse(String(candidate.settings.taskRouting)) as Record<string, unknown>;
+  assert.equal(persisted.enabled, true);
+  assert.equal(
+    persisted.detectionEnabled,
+    false,
+    "unrelated durable field must not be overwritten"
+  );
+  assert.equal(getTaskRoutingConfig().detectionEnabled, false);
 });

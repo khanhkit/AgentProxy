@@ -5,7 +5,12 @@ import {
   getDefaultTaskModelMap,
   getDefaultTaskPatterns,
 } from "@agentproxy/open-sse/services/taskAwareRouter.ts";
-import { updateSettings } from "@/lib/db/settings";
+import {
+  getSettingsCandidate,
+  SettingsRevisionConflictError,
+  updateSettings,
+} from "@/lib/db/settings";
+import { buildRuntimeSettingsSnapshot } from "@/lib/config/runtimeSettingsSnapshot";
 import { taskRoutingActionSchema, updateTaskRoutingSchema } from "@/shared/validation/schemas";
 import { isValidationFailure, validateBody } from "@/shared/validation/helpers";
 import { requireManagementAuth } from "@/lib/api/requireManagementAuth";
@@ -61,14 +66,33 @@ export async function PUT(request: Request) {
     const config =
       validation.data as import("@agentproxy/open-sse/services/taskAwareRouter.ts").TaskRoutingConfig;
 
-    // Compute the same top-level merge setTaskRoutingConfig historically applied,
-    // but do not mutate memory before the durable revision commits.
-    const { stats: _stats, ...current } = getTaskRoutingConfig();
-    const persistable = { ...current, ...config };
-    await updateSettings({ taskRouting: JSON.stringify(persistable) });
+    // Merge against the same durable revision we CAS below. Runtime memory can lag
+    // the persisted desired state while activation/reconcile work is in flight.
+    let lastConflict: SettingsRevisionConflictError | null = null;
+    for (let attempt = 0; attempt < 3; attempt++) {
+      const candidate = await getSettingsCandidate();
+      const current = buildRuntimeSettingsSnapshot(candidate.settings).taskRouting ?? {};
+      const persistable = { ...current, ...config };
+      try {
+        await updateSettings(
+          { taskRouting: JSON.stringify(persistable) },
+          { expectedRevision: candidate.revision }
+        );
+        return NextResponse.json({ success: true, ...getTaskRoutingConfig() });
+      } catch (error) {
+        if (!(error instanceof SettingsRevisionConflictError)) throw error;
+        lastConflict = error;
+      }
+    }
 
-    return NextResponse.json({ success: true, ...getTaskRoutingConfig() });
+    throw lastConflict ?? new Error("Task-routing settings update did not commit");
   } catch (error) {
+    if (error instanceof SettingsRevisionConflictError) {
+      return NextResponse.json(
+        { error: "Concurrent settings update", currentRevision: error.currentRevision },
+        { status: 409 }
+      );
+    }
     console.error("[API ERROR] /api/settings/task-routing PUT:", error);
     return NextResponse.json({ error: "Failed to update config" }, { status: 500 });
   }
