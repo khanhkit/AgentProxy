@@ -12,7 +12,12 @@ test("TC-OMNIDB-USAGE-045A: live usage rows persist canonical provider ids", () 
   assert.match(history, /import \{ resolveProviderId \} from "@\/shared\/constants\/providers"/);
   const start = history.indexOf("export async function saveRequestUsage");
   const body = history.slice(start);
-  assert.ok((body.match(/entry\.provider \? resolveProviderId\(entry\.provider\) : null/g) ?? []).length >= 2);
+  assert.match(
+    body,
+    /const canonicalProvider = entry\.provider \? resolveProviderId\(entry\.provider\) : null/
+  );
+  assert.match(body, /resolveProviderId\(storedProvider\) === canonicalProvider/);
+  assert.match(body, /\.run\(\s*canonicalProvider,/);
 });
 
 test("TC-OMNIDB-USAGE-045B: legacy usage import canonicalizes provider aliases too", () => {
