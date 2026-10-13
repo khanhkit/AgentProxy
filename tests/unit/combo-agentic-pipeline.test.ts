@@ -40,6 +40,10 @@ test("agentic detector recognizes trailing tool results across supported request
     true
   );
   assert.equal(
+    hasTrailingToolResult({ input: [{ type: "custom_tool_call_output", call_id: "c2" }] }),
+    true
+  );
+  assert.equal(
     hasTrailingToolResult({ contents: [{ role: "user", parts: [{ functionResponse: {} }] }] }),
     true
   );

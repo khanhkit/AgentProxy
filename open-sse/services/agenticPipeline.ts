@@ -88,9 +88,12 @@ export function hasTrailingToolResult(body: Body): boolean {
     const last = asRecord(input[input.length - 1]);
     if (
       typeof last?.type === "string" &&
-      new Set(["function_call_output", "computer_call_output", "local_shell_call_output"]).has(
-        last.type
-      )
+      new Set([
+        "function_call_output",
+        "custom_tool_call_output",
+        "computer_call_output",
+        "local_shell_call_output",
+      ]).has(last.type)
     ) {
       return true;
     }
