@@ -62,13 +62,18 @@ function textOf(content: unknown): string {
 }
 
 /**
- * The class a request belongs to: provider, model and a digest of its prompt.
+ * The class a request belongs to: provider, model and a digest of its explicit session + prompt.
  *
  * Responses bodies carry the prompt as `instructions`, Chat Completions bodies as the first
  * system or developer message. A request with no prompt hashes the empty string: it is a class
  * like any other, so a remembered shape and the replay bookkeeping apply to it too.
  */
-export function shapeKeyOf(provider: string, model: string, body: unknown): string {
+export function shapeKeyOf(
+  provider: string,
+  model: string,
+  body: unknown,
+  session?: string
+): string {
   const record = isObject(body) ? (body as Record<string, unknown>) : {};
   let prompt = typeof record.instructions === "string" ? record.instructions : "";
   if (!prompt && Array.isArray(record.messages)) {
@@ -77,7 +82,11 @@ export function shapeKeyOf(provider: string, model: string, body: unknown): stri
     );
     prompt = textOf(first?.content);
   }
-  const digest = createHash("sha1").update(prompt).digest("hex");
+  const digest = createHash("sha256")
+    .update(session ?? "")
+    .update("\0")
+    .update(prompt)
+    .digest("hex");
   return `${provider}|${model}|${digest}`;
 }
 

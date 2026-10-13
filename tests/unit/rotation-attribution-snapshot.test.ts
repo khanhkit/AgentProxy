@@ -40,3 +40,13 @@ test("maskAccountId never emits the full id; empty means direct", () => {
   const masked = maskAccountId("abcdef1234567890");
   assert.ok(!masked.includes("1234567890"));
 });
+
+test("AP-ISS-0192 rotation snapshots stay bounded under connection churn", () => {
+  for (let i = 0; i <= 200; i += 1) {
+    recordRotationSnapshot(`conn-bound-${i}`, [
+      { masked: `m${i}…`, ready: true, cooldownUntilMs: null, consecutiveFails: 0 },
+    ]);
+  }
+  assert.equal(readRotationSnapshot("conn-bound-0"), null, "oldest snapshot must be evicted");
+  assert.ok(readRotationSnapshot("conn-bound-200"), "newest snapshot must remain available");
+});

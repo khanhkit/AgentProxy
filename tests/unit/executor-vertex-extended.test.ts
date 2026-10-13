@@ -571,3 +571,27 @@ test("VertexExecutor.execute synthesizes a genuine Anthropic-format SSE stream w
     globalThis.fetch = originalFetch;
   }
 });
+
+test("AP-ISS-0192 Vertex project and region metadata cannot alter URL path structure", () => {
+  const executor = new VertexExecutor();
+  const url = executor.buildUrl("gemini-2.5-flash", false, 0, {
+    apiKey: createServiceAccountJson({ projectId: "proj/escape?x=1" }),
+    providerSpecificData: { region: "us-central1/../global#frag" },
+  });
+  assert.match(
+    url,
+    /projects\/proj%2Fescape%3Fx%3D1\/locations\/us-central1%2F\.\.%2Fglobal%23frag\//u
+  );
+});
+
+test("AP-ISS-0192 Vertex native model IDs cannot escape their model path segment", () => {
+  const executor = new VertexExecutor();
+  const url = executor.buildUrl("anthropic/claude-sonnet-4/../../evil?x=1#frag", false, 0, {
+    apiKey: createServiceAccountJson({ projectId: "proj-model" }),
+  });
+
+  assert.equal(
+    url,
+    "https://aiplatform.googleapis.com/v1/projects/proj-model/locations/us-central1/publishers/anthropic/models/claude-sonnet-4%2F..%2F..%2Fevil%3Fx%3D1%23frag:rawPredict"
+  );
+});
