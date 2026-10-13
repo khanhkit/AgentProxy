@@ -7,15 +7,21 @@
  * fail-closed) and exposes the park decision helpers for the opencode loop.
  */
 
-import { isProxyAvoided, noteProxyRefusal, proxyEgressKey, proxySetAsideSeq } from "../utils/proxyRefusalMemory.ts";
+import {
+  isProxyAvoided,
+  noteProxyRefusal,
+  proxyEgressKey,
+  proxySetAsideSeq,
+} from "../utils/proxyRefusalMemory.ts";
 import { maskAccountId, type RotatableAccount } from "./accountRotation.ts";
 import { proxyKeyOf } from "./opencodeGeoBlock.ts";
 import { runWithProxyContext } from "../utils/proxyFetch.ts";
 import { noteResilienceAction } from "@/lib/usage/resilienceActionsContext.ts";
+import { formatTranslatedStreamError } from "../utils/streamErrorFormat.ts";
+import { hasOpenAIFinishReason, parseSSEDataLines } from "../utils/streamHelpers.ts";
 import { noteParkWait, noteReplayed, noteStoredFallback } from "./opencodeResilienceNotes.ts";
 import type { ExecuteInput, ExecutorExecuteResult } from "./base.ts";
 import * as egressPacing from "./opencodeEgressThrottle.ts";
-
 
 /** Abort-aware sleep local to the park helper; current canonical main has no transient-backoff sleep export. */
 export async function parkSleepAbortable(
@@ -48,6 +54,16 @@ export const PARK_PROBE_MAX = 3;
 export const STRAIN_MARKER_TTL_MS = 300_000;
 /** Upper bound of a marker read. */
 export const STRAIN_MARKER_MAX_BYTES = 1024;
+
+function nextCompleteLineEnd(text: string, atEof: boolean): number {
+  for (let index = 0; index < text.length; index += 1) {
+    if (text[index] === "\n") return index + 1;
+    if (text[index] !== "\r") continue;
+    if (index + 1 < text.length) return text[index + 1] === "\n" ? index + 2 : index + 1;
+    return atEof ? index + 1 : 0;
+  }
+  return atEof && text.length > 0 ? text.length : 0;
+}
 
 export interface PoolStrainMarker {
   fresh: boolean;
@@ -203,7 +219,13 @@ export async function handlePacedParkable429<TAccount extends RotatableAccount>(
     args.result.response,
     () => false
   );
-  egressPacing.log429Outcome(args.log, args.cid, arm, maskAccountId(account.fingerprint), setAsideMs);
+  egressPacing.log429Outcome(
+    args.log,
+    args.cid,
+    arm,
+    maskAccountId(account.fingerprint),
+    setAsideMs
+  );
   if (arm === "park") {
     if (!parkEnabled) return { kind: "break" };
     state.burstStreak = Math.max(state.burstStreak + 1, BURST_PARK_THRESHOLD);
@@ -214,7 +236,10 @@ export async function handlePacedParkable429<TAccount extends RotatableAccount>(
   const marker = await readPoolStrainMarker();
   if (state.burstStreak < BURST_PARK_THRESHOLD && !marker.fresh) return { kind: "continue" };
   state.parked = true;
-  args.log?.warn?.("OPENCODE", `${args.cid}burstStreak=${state.burstStreak} freshD2=${marker.fresh} park`);
+  args.log?.warn?.(
+    "OPENCODE",
+    `${args.cid}burstStreak=${state.burstStreak} freshD2=${marker.fresh} park`
+  );
   const parkStartMs = Date.now();
   const replay = await runParkAndReplay(
     args.driver,
@@ -323,10 +348,174 @@ export async function runParkAndReplay<TAccount extends RotatableAccount>(
           return;
         }
         const probe = await replayOneLeg(driver, input, driver.accounts, log, cid);
-        const finalBody = probe?.result.response ?? fallback.response;
+        const finalResponse = probe?.result.response ?? fallback.response;
         let recopied = true;
+        let copiedAny = false;
         try {
-          controller.enqueue(encoder.encode(await finalBody.text()));
+          if (!finalResponse.ok) {
+            recopied = false;
+            // The replay response is an untrusted provider boundary. Once the
+            // outer SSE status is committed, publish only a synthetic status
+            // error: provider HTML, partial idle reads, diagnostics, tokens,
+            // paths, and arbitrary fields must never become client-visible.
+            const payload = {
+              error: {
+                message: `Upstream replay failed (${finalResponse.status})`,
+                status: finalResponse.status,
+                code: "upstream_replay_failed",
+              },
+              status: finalResponse.status,
+            };
+            await finalResponse.body?.cancel().catch(() => undefined);
+            controller.enqueue(encoder.encode(formatTranslatedStreamError(payload)));
+          } else if (finalResponse.body) {
+            const reader = finalResponse.body.getReader();
+            const decoder = new TextDecoder();
+            let pendingReplayText = "";
+            let pendingEventType = "";
+            let pendingDataLines: string[] = [];
+            let pendingEventInvalid = false;
+            let terminalSeen = false;
+            let withheldTerminalTail = "";
+            const flushReplayEvent = (): void => {
+              const eventType = pendingEventType;
+              const dataLines = pendingDataLines;
+              const invalid = pendingEventInvalid;
+              pendingEventType = "";
+              pendingDataLines = [];
+              pendingEventInvalid = false;
+              if (invalid || dataLines.length === 0) return;
+
+              const parsed = parseSSEDataLines(dataLines, {
+                eventType,
+                logWarning: false,
+              });
+              if (parsed === null) return;
+              const record =
+                typeof parsed === "object" && parsed !== null && !Array.isArray(parsed)
+                  ? (parsed as Record<string, unknown>)
+                  : null;
+              const type = record && typeof record.type === "string" ? record.type : "";
+              const isTerminal =
+                record?.done === true ||
+                type === "response.completed" ||
+                type === "message_stop" ||
+                (record !== null && hasOpenAIFinishReason(record));
+              const preserveEventPrefix =
+                eventType.startsWith("response.") ||
+                /^(?:message_|content_block_|error$|ping$)/u.test(eventType);
+              const data = record?.done === true ? "[DONE]" : JSON.stringify(parsed);
+              if (data === undefined) return;
+              const frame = `${preserveEventPrefix ? `event: ${eventType}\n` : ""}data: ${data}\n\n`;
+
+              if (terminalSeen) return;
+              if (isTerminal) {
+                terminalSeen = true;
+                withheldTerminalTail = frame;
+                return;
+              }
+              controller.enqueue(encoder.encode(frame));
+              copiedAny = true;
+            };
+            const emitReplayText = (text: string, atEof = false): void => {
+              pendingReplayText += text;
+              while (pendingReplayText !== "") {
+                const lineEnd = nextCompleteLineEnd(pendingReplayText, atEof);
+                if (lineEnd === 0) break;
+                const rawLine = pendingReplayText.slice(0, lineEnd);
+                pendingReplayText = pendingReplayText.slice(lineEnd);
+                const line = rawLine.replace(/(?:\r\n|\r|\n)$/u, "");
+                const trimmed = line.trim();
+                if (trimmed === "") {
+                  flushReplayEvent();
+                  continue;
+                }
+                if (trimmed.startsWith(":")) continue;
+                if (trimmed.startsWith("event:")) {
+                  pendingEventType = trimmed.slice("event:".length).trim();
+                  continue;
+                }
+                const dataLine = line.trimStart();
+                if (dataLine.startsWith("data:")) {
+                  pendingDataLines.push(dataLine.slice("data:".length).replace(/^ /u, ""));
+                  continue;
+                }
+                if (/^(?:id|retry):/u.test(dataLine)) continue;
+                pendingEventInvalid = true;
+              }
+              if (atEof) flushReplayEvent();
+            };
+            const onAbort = (): void => {
+              void reader.cancel(input.signal?.reason).catch(() => undefined);
+            };
+            if (input.signal?.aborted) onAbort();
+            else input.signal?.addEventListener("abort", onAbort, { once: true });
+            try {
+              while (!input.signal?.aborted) {
+                const { done, value } = await reader.read();
+                if (done || input.signal?.aborted) {
+                  if (done) emitReplayText(decoder.decode(), true);
+                  break;
+                }
+                emitReplayText(decoder.decode(value, { stream: true }));
+              }
+              if (input.signal?.aborted) {
+                recopied = false;
+                await reader.cancel(input.signal.reason).catch(() => undefined);
+              } else if (terminalSeen) {
+                controller.enqueue(encoder.encode(withheldTerminalTail));
+                copiedAny = true;
+              } else {
+                recopied = false;
+                const frame = formatTranslatedStreamError({
+                  error: {
+                    message: "Upstream replay failed",
+                    status: 502,
+                    code: "upstream_replay_failed",
+                  },
+                  status: 502,
+                });
+                controller.enqueue(
+                  encoder.encode(copiedAny ? frame.replace(/data: \[DONE\]\n\n$/u, "") : frame)
+                );
+              }
+            } catch (error) {
+              // A read failure means the replay did not complete, even if some
+              // client-visible bytes were already emitted.
+              recopied = false;
+              await reader.cancel(error).catch(() => undefined);
+              if (!input.signal?.aborted) {
+                const frame = formatTranslatedStreamError({
+                  error: {
+                    message: "Upstream replay failed",
+                    status: 502,
+                    code: "upstream_replay_failed",
+                  },
+                  status: 502,
+                });
+                controller.enqueue(
+                  encoder.encode(copiedAny ? frame.replace(/data: \[DONE\]\n\n$/u, "") : frame)
+                );
+              }
+            } finally {
+              input.signal?.removeEventListener("abort", onAbort);
+              reader.releaseLock();
+            }
+          } else {
+            recopied = false;
+            controller.enqueue(
+              encoder.encode(
+                formatTranslatedStreamError({
+                  error: {
+                    message: "Upstream replay failed (empty body)",
+                    status: 502,
+                    code: "upstream_replay_failed",
+                  },
+                  status: 502,
+                })
+              )
+            );
+          }
         } catch {
           recopied = false;
         }
