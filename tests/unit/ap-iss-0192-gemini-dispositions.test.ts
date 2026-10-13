@@ -3,6 +3,31 @@ import assert from "node:assert/strict";
 
 import { GeminiWebExecutor } from "../../open-sse/executors/gemini-web.ts";
 
+test("AP-ISS-0192 unknown model does not bypass missing-credential 401", async () => {
+  const playwright = await import("playwright");
+  const originalLaunch = playwright.chromium.launch;
+  let launches = 0;
+  playwright.chromium.launch = (async () => {
+    launches += 1;
+    throw new Error("Chromium launch should not be reached without credentials");
+  }) as typeof originalLaunch;
+
+  try {
+    const result = await new GeminiWebExecutor().execute({
+      model: "gemini-definitely-unknown",
+      body: { messages: [{ role: "user", content: "hello" }] },
+      stream: false,
+      credentials: {},
+      signal: AbortSignal.timeout(5000),
+      log: null,
+    });
+    assert.equal(result.response.status, 401);
+    assert.equal(launches, 0);
+  } finally {
+    playwright.chromium.launch = originalLaunch;
+  }
+});
+
 test("AP-ISS-0192 4233291693 rejects unknown model before launching Chromium", async () => {
   const playwright = await import("playwright");
   const originalLaunch = playwright.chromium.launch;

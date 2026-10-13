@@ -470,6 +470,20 @@ export class GeminiWebExecutor extends BaseExecutor {
     }
     const wantsExtendedThinking = requestsThinkingBudget(rawBody.reasoning_effort);
     const modelId = model || DEFAULT_MODEL_ID;
+
+    const cookie = resolveGeminiWebCookie(credentials);
+    if (!cookie) {
+      return {
+        response: new Response(JSON.stringify({ error: "Missing Gemini cookies" }), {
+          status: 401,
+          headers: { "Content-Type": "application/json" },
+        }),
+        url: GEMINI_URL,
+        headers: {},
+        transformedBody: body,
+      };
+    }
+
     if (model && !resolveGeminiModelMode(modelId)) {
       return {
         response: new Response(
@@ -481,19 +495,6 @@ export class GeminiWebExecutor extends BaseExecutor {
           ),
           { status: 400, headers: { "Content-Type": "application/json" } }
         ),
-        url: GEMINI_URL,
-        headers: {},
-        transformedBody: body,
-      };
-    }
-
-    const cookie = resolveGeminiWebCookie(credentials);
-    if (!cookie) {
-      return {
-        response: new Response(JSON.stringify({ error: "Missing Gemini cookies" }), {
-          status: 401,
-          headers: { "Content-Type": "application/json" },
-        }),
         url: GEMINI_URL,
         headers: {},
         transformedBody: body,
