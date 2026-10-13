@@ -723,6 +723,7 @@ export async function handleRoundRobinCombo({
             );
             releaseQualityClone(rrClone, result, quality);
             if (quality.clientAborted) {
+              releaseRejectedQualityResponse(rrClone, result);
               return errorResponse(499, "Client disconnected");
             }
             if (!quality.valid) {

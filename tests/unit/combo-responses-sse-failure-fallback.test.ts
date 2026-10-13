@@ -631,3 +631,46 @@ test("streaming quality still replays normal Responses lifecycle and content", a
   assert.ok(result.clonedResponse);
   assert.equal(await result.clonedResponse.text(), body);
 });
+
+for (const strategy of ["priority", "round-robin"] as const) {
+  test(`${strategy}: client abort cancels the discarded original quality response`, async () => {
+    const abort = new AbortController();
+    let cancelled = false;
+    const result = await handleComboChat({
+      body: { stream: true, messages: [{ role: "user", content: "hello" }] },
+      combo: {
+        name: `abort-release-${strategy}`,
+        strategy,
+        models: [{ model: "openai/primary", weight: 0 }],
+        config: { maxRetries: 0, retryDelayMs: 0 },
+      },
+      handleSingleModel: async () => {
+        const response = new Response(
+          new ReadableStream<Uint8Array>({
+            pull() {
+              return new Promise<void>(() => {});
+            },
+            cancel() {
+              cancelled = true;
+            },
+          }),
+          { status: 200, headers: { "content-type": "text/event-stream" } }
+        );
+        queueMicrotask(() => abort.abort(new Error("client gone")));
+        return response;
+      },
+      isModelAvailable: async () => true,
+      log: silentLog(),
+      settings: null,
+      allCombos: null,
+      relayOptions: null as never,
+      signal: abort.signal,
+    });
+
+    assert.equal(result.status, 499);
+    for (let i = 0; i < 20 && !cancelled; i += 1) {
+      await new Promise((resolve) => setTimeout(resolve, 5));
+    }
+    assert.equal(cancelled, true, "discarded original upstream body must be cancelled");
+  });
+}

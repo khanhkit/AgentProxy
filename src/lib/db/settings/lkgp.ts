@@ -40,13 +40,21 @@ export interface LKGPRecord {
 function parseLKGPValue(value: string | undefined): LKGPRecord | null {
   if (!value) return null;
   try {
-    const parsed = JSON.parse(value);
-    if (typeof parsed === "object" && parsed !== null && "provider" in parsed) {
-      return parsed as LKGPRecord;
+    const parsed: unknown = JSON.parse(value);
+    if (typeof parsed === "string") {
+      return parsed.trim() ? { provider: parsed } : null;
     }
-    return { provider: String(parsed) };
+    if (typeof parsed !== "object" || parsed === null || Array.isArray(parsed)) return null;
+
+    const record = parsed as Record<string, unknown>;
+    const provider = record.provider;
+    if (typeof provider !== "string" || !provider.trim()) return null;
+    const connectionId = record.connectionId;
+    if (connectionId === undefined) return { provider };
+    if (typeof connectionId !== "string") return null;
+    return { provider, connectionId };
   } catch {
-    return { provider: value };
+    return value.trim() ? { provider: value } : null;
   }
 }
 

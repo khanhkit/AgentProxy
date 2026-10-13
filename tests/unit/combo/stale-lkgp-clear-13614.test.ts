@@ -158,3 +158,64 @@ test("atomic LKGP compare-delete accepts legacy semantic encodings without delet
   assert.equal(await settings.clearLKGPIfMatch("combo-legacy", "model-b", reorderedObserved!), true);
   assert.equal(await settings.getLKGP("combo-legacy", "model-b"), null);
 });
+
+test("malformed structured LKGP rows fail closed instead of entering provider routing", async () => {
+  const settings = await import("../../../src/lib/db/settings.ts");
+  const db = dbCore.getDbInstance();
+  const rows: Array<[string, unknown]> = [
+    ["numeric-provider", { provider: 123 }],
+    ["null-provider", { provider: null }],
+    ["empty-provider", { provider: "" }],
+    ["numeric-connection", { provider: "openai", connectionId: 123 }],
+  ];
+
+  for (const [modelId, value] of rows) {
+    db.prepare("INSERT OR REPLACE INTO key_value (namespace, key, value) VALUES ('lkgp', ?, ?)")
+      .run(`combo-malformed:${modelId}`, JSON.stringify(value));
+    assert.equal(await settings.getLKGP("combo-malformed", modelId), null, modelId);
+  }
+});
+
+test("LKGP invalidation fences an in-flight read from repopulating a deleted pin", async () => {
+  const settings = await import("../../../src/lib/db/settings.ts");
+  const cache = await import("../../../src/lib/db/readCache.ts");
+  const comboName = "combo-read-race";
+  const modelId = "model-race";
+  const key = `${comboName}:${modelId}`;
+
+  await settings.setLKGP(comboName, modelId, "openai", "conn-old");
+  cache.invalidateCachedLKGP(key);
+
+  const db = dbCore.getDbInstance();
+  const originalPrepare = db.prepare.bind(db);
+  let intercepted = false;
+  db.prepare = ((sql: string) => {
+    const statement = originalPrepare(sql);
+    if (!intercepted && sql.includes("SELECT value FROM key_value WHERE namespace = 'lkgp'")) {
+      return {
+        get: (...args: unknown[]) => {
+          const row = statement.get(...args);
+          intercepted = true;
+          db.prepare = originalPrepare;
+          originalPrepare("DELETE FROM key_value WHERE namespace = 'lkgp' AND key = ?").run(key);
+          cache.invalidateCachedLKGP(key);
+          return row;
+        },
+      };
+    }
+    return statement;
+  }) as typeof db.prepare;
+
+  try {
+    assert.deepEqual(await cache.getCachedLKGP(comboName, modelId), {
+      provider: "openai",
+      connectionId: "conn-old",
+    });
+  } finally {
+    db.prepare = originalPrepare;
+  }
+
+  assert.equal(intercepted, true);
+  assert.equal(await settings.getLKGP(comboName, modelId), null);
+  assert.equal(await cache.getCachedLKGP(comboName, modelId), null);
+});

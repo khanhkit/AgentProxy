@@ -396,6 +396,7 @@ export async function executeTargetAttempt(opts: {
       );
       releaseQualityClone(qualityClone, result, quality);
       if (quality.clientAborted) {
+        releaseRejectedQualityResponse(qualityClone, result);
         return { ok: false, response: errorResponse(499, "Client disconnected") };
       }
       if (!quality.valid) {

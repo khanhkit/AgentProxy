@@ -341,6 +341,7 @@ export async function executeRuntimeUnitCombo(args: {
         );
         releaseQualityClone(unitClone, response, quality);
         if (quality.clientAborted) {
+          releaseRejectedQualityResponse(unitClone, response);
           return { response: errorResponse(499, "Client disconnected"), unit };
         }
         if (quality.valid) {

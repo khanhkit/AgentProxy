@@ -656,6 +656,52 @@ describe("Semantic Cache — Dual-Layer Architecture", () => {
       assert.equal(third, null);
       assert.equal(calls, 2, "quarantine must be a bounded cooldown, not a permanent generator ban");
     });
+
+    it("scopes timeout cooldown to the embedding provider and model", async () => {
+      const calls: string[] = [];
+      const generator = async (
+        _text: string,
+        options?: { model?: string; provider?: string; signal?: AbortSignal }
+      ) => {
+        const key = `${options?.provider ?? ""}:${options?.model ?? ""}`;
+        calls.push(key);
+        if (key === "slow-provider:slow-model") {
+          return new Promise<{ embedding: number[]; inputTokens: number }>(() => {});
+        }
+        return { embedding: [1, 0], inputTokens: 1 };
+      };
+
+      assert.equal(
+        await generateEmbeddingWithTimeout("slow", generator, {
+          provider: "slow-provider",
+          model: "slow-model",
+          timeoutMs: 20,
+        }),
+        null
+      );
+
+      assert.deepEqual(
+        await generateEmbeddingWithTimeout("different model", generator, {
+          provider: "slow-provider",
+          model: "fast-model",
+          timeoutMs: 20,
+        }),
+        { embedding: [1, 0], inputTokens: 1 }
+      );
+      assert.deepEqual(
+        await generateEmbeddingWithTimeout("different provider", generator, {
+          provider: "fast-provider",
+          model: "slow-model",
+          timeoutMs: 20,
+        }),
+        { embedding: [1, 0], inputTokens: 1 }
+      );
+      assert.deepEqual(calls, [
+        "slow-provider:slow-model",
+        "slow-provider:fast-model",
+        "fast-provider:slow-model",
+      ]);
+    });
   });
 
   describe("Multi-Tenant Partition Isolation", () => {

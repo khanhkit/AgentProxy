@@ -184,6 +184,8 @@ interface LKGPRecordCache {
 }
 
 const lkgpCache = new TTLCache<LKGPRecordCache | null>(SETTINGS_TTL_MS);
+let lkgpCacheEpoch = 0;
+const lkgpCacheKeyVersions = new Map<string, number>();
 
 export async function getCachedLKGP(
   comboName: string,
@@ -193,9 +195,16 @@ export async function getCachedLKGP(
   const cached = lkgpCache.get(cacheKey);
   if (cached !== undefined) return cached;
 
+  const readEpoch = lkgpCacheEpoch;
+  const readKeyVersion = lkgpCacheKeyVersions.get(cacheKey) ?? 0;
   const { getLKGP } = await import("@/lib/db/settings");
   const value = await getLKGP(comboName, modelId);
-  lkgpCache.set(cacheKey, value);
+  if (
+    readEpoch === lkgpCacheEpoch &&
+    readKeyVersion === (lkgpCacheKeyVersions.get(cacheKey) ?? 0)
+  ) {
+    lkgpCache.set(cacheKey, value);
+  }
   return value;
 }
 
@@ -207,7 +216,7 @@ export async function setCachedLKGP(
 ): Promise<void> {
   const { setLKGP } = await import("@/lib/db/settings");
   await setLKGP(comboName, modelId, providerId, connectionId);
-  lkgpCache.invalidate(`lkgp:${comboName}:${modelId}`);
+  invalidateCachedLKGP(`${comboName}:${modelId}`);
 }
 
 /**
@@ -218,7 +227,15 @@ export async function setCachedLKGP(
  * for the rest of the TTL window.
  */
 export function invalidateCachedLKGP(pinKey?: string): void {
-  lkgpCache.invalidate(pinKey ? `lkgp:${pinKey}` : undefined);
+  if (pinKey) {
+    const cacheKey = `lkgp:${pinKey}`;
+    lkgpCacheKeyVersions.set(cacheKey, (lkgpCacheKeyVersions.get(cacheKey) ?? 0) + 1);
+    lkgpCache.invalidate(cacheKey);
+    return;
+  }
+  lkgpCacheEpoch += 1;
+  lkgpCacheKeyVersions.clear();
+  lkgpCache.invalidate();
 }
 
 // ──────────────── Combo Cache Invalidation Signal ────────────────
