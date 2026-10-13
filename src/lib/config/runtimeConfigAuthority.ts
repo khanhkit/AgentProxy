@@ -129,7 +129,8 @@ function restartRequiredChanges(
     ...Object.keys(previous.settings),
     ...Object.keys(candidate.settings),
   ])) {
-    if (classifyRuntimeSettingKey(key) !== "RESTART_REQUIRED") continue;
+    const settingClass = classifyRuntimeSettingKey(key);
+    if (settingClass !== "RESTART_REQUIRED" && settingClass !== "BUILD_DEPLOY_ONLY") continue;
     if (!serializedEqual(previous.settings[key], candidate.settings[key])) changed.add(key);
   }
 

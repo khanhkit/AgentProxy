@@ -236,6 +236,30 @@ test("RESTART_REQUIRED change advances desired revision without falsely advancin
   });
 });
 
+test("BUILD_DEPLOY_ONLY change cannot silently advance active runtime state", async () => {
+  await activateRuntimeConfigCandidate(
+    candidate(35, { DATA_DIR: "/srv/agentproxy-a", debugMode: false }),
+    {}
+  );
+
+  await activateRuntimeConfigCandidate(
+    candidate(36, { DATA_DIR: "/srv/agentproxy-b", debugMode: true }),
+    {}
+  );
+
+  assert.equal(getActiveRuntimeConfigSnapshot()?.revision, 35);
+  assert.equal(getActiveRuntimeConfigSnapshot()?.settings.DATA_DIR, "/srv/agentproxy-a");
+  assert.equal(getActiveRuntimeConfigSnapshot()?.settings.debugMode, false);
+  assert.deepEqual(getRuntimeConfigStatus(), {
+    desiredRevision: 36,
+    activeRevision: 35,
+    state: "ready",
+    lastError: null,
+    restartRequiredKeys: ["DATA_DIR"],
+    reconcileRevision: null,
+  });
+});
+
 test("reverting restart-only divergence lets a newer hot revision activate and clears restart status", async () => {
   await activateRuntimeConfigCandidate(
     candidate(40, { debugMode: false }, { ENABLE_TLS_FINGERPRINT: "false" }),
