@@ -140,3 +140,22 @@ test("saveRequestUsage: two entries with different providers are both inserted",
     "Two entries with different providers should both be inserted"
   );
 });
+
+test("AP-ISS-0200 4233409381: canonical save dedupes a legacy provider-alias row", async () => {
+  const db = getDbInstance();
+  const timestamp = new Date(Date.now() + 12345).toISOString();
+  const entry = makeEntry({
+    timestamp,
+    provider: "codex",
+    model: "alias-dedup-model",
+    connectionId: "alias-dedup-connection",
+    tokens: { input_tokens: 7, output_tokens: 11 },
+  });
+  db.prepare(`INSERT INTO usage_history
+    (provider, model, connection_id, tokens_input, tokens_output, status, success, timestamp)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?)`)
+    .run("cx", entry.model, entry.connectionId, 7, 11, "success", 1, timestamp);
+  const before = countRows(db);
+  await saveRequestUsage(entry);
+  assert.equal(countRows(db), before, "legacy alias row and canonical provider must be one request");
+});

@@ -187,3 +187,18 @@ test("10. previous-response marker is consumed without mutating caller-owned bod
   assert.equal(Object.hasOwn(observed.body, "_agentproxyPreviousResponseResumed"), false);
   assert.equal(observed.body.model, "example");
 });
+
+test("AP-ISS-0200 4233409355: reset keeps sibling async work on the same cleared accumulator", async () => {
+  await ctx.runWithResilienceActionsContext(async () => {
+    ctx.noteResilienceAction({ rotations: 1 });
+    let siblingSnapshot: unknown = null;
+    const sibling = Promise.resolve().then(() => {
+      siblingSnapshot = ctx.readResilienceActions();
+    });
+    ctx.resetResilienceActions();
+    ctx.noteResilienceAction({ resumed: true });
+    await sibling;
+    assert.deepEqual(siblingSnapshot, { resumed: true });
+    assert.deepEqual(ctx.readResilienceActions(), { resumed: true });
+  });
+});
