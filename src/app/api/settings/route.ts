@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { sanitizeErrorMessage } from "@agentproxy/open-sse/utils/error";
 import { z } from "zod";
 import {
   getSettings,
@@ -560,7 +561,7 @@ export async function PATCH(request: Request) {
           {
             error: {
               code: error.code,
-              message: error.message,
+              message: sanitizeErrorMessage(error.message),
               desiredRevision: error.desiredRevision,
               activeRevision: error.activeRevision,
               runtimeConfigStatus: publicRuntimeConfigStatus(),

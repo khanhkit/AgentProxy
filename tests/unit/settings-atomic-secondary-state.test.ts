@@ -119,7 +119,8 @@ test("runtime activation failure is returned as actionable desired-vs-active div
   });
 
   runtimeSettings.setRuntimeSettingsFaultInjectorForTests((section) => {
-    if (section === "bannedSignals") throw new Error("injected activation failure");
+    if (section === "bannedSignals")
+      throw new Error("password=route-secret-123 activation failure");
   });
 
   try {
@@ -138,6 +139,7 @@ test("runtime activation failure is returned as actionable desired-vs-active div
     assert.equal(payload.error?.desiredRevision, baseline.revision + 1);
     assert.equal(payload.error?.activeRevision, baseline.revision);
     assert.match(String(payload.error?.message || ""), /persisted but runtime activation failed/i);
+    assert.equal(String(payload.error?.message || "").includes("route-secret-123"), false);
   } finally {
     runtimeSettings.setRuntimeSettingsFaultInjectorForTests(null);
   }
