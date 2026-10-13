@@ -9,12 +9,8 @@ export function resolveZyloChatUrl(baseUrl: string): string {
   const normalized = normalizeBaseUrl(baseUrl);
   if (!normalized) return "";
 
-  const cleaned = normalized
-    .replace(/\/chat\/completions$/, "")
-    .replace(/\/models$/, "")
-    .replace(/\/v1$/, "");
-
-  return `${cleaned}/v1/chat/completions`;
+  if (/\/chat\/completions$/i.test(normalized)) return normalized;
+  return `${normalized.replace(/\/v1$/i, "")}/v1/chat/completions`;
 }
 
 export async function validateZyloApiProvider({ apiKey, providerSpecificData = {} }: any) {

@@ -14,6 +14,7 @@ import { SafeOutboundFetchError } from "@/shared/network/safeOutboundFetch";
 import { normalizeSessionCookieHeader } from "@/lib/providers/webCookieAuth";
 import { normalizeGeminiCookieInput } from "@agentproxy/open-sse/utils/geminiCookies.ts";
 import { buildJulesApiUrl } from "@/lib/cloudAgent/julesApi.ts";
+import { checkKnownPath, getKnownToolPaths } from "@/shared/services/cliRuntime";
 import {
   META_AI_ASBD_ID,
   META_AI_FRIENDLY_NAME,
@@ -518,7 +519,18 @@ export async function validateJulesProvider({ apiKey }: { apiKey: string }) {
 async function validateDevinCliKeyFallback(
   apiKey: unknown
 ): Promise<{ valid: boolean; error: string | null }> {
-  const bin = process.env.CLI_DEVIN_BIN?.trim() || "devin";
+  let bin: string | null = null;
+  for (const candidate of getKnownToolPaths("devin")) {
+    const checked = await checkKnownPath(candidate);
+    if (checked.installed && checked.commandPath) {
+      bin = checked.commandPath;
+      break;
+    }
+  }
+  if (!bin) {
+    return { valid: false, error: "Devin CLI not available for fallback validation" };
+  }
+
   return new Promise((resolve) => {
     try {
       const child = spawn(bin, ["acp", "--agent-type", "summarizer"], {

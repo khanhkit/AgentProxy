@@ -430,9 +430,11 @@ export class AntigravityHandler extends MitmHandlerBase {
     intercepted: InterceptedRequest,
     startedAt: number
   ): Promise<void> {
-    const host =
-      (typeof req.headers.host === "string" && req.headers.host) || "cloudcode-pa.googleapis.com";
-    const upstreamUrl = `https://${host}${req.url || "/v1internal:fetchAvailableModels"}`;
+    const requestPath =
+      typeof req.url === "string" && req.url.startsWith("/")
+        ? req.url
+        : "/v1internal:fetchAvailableModels";
+    const upstreamUrl = `https://cloudcode-pa.googleapis.com${requestPath}`;
 
     const upstreamHeaders: Record<string, string> = {};
     for (const [key, value] of Object.entries(req.headers)) {

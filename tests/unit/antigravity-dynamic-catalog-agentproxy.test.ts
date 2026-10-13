@@ -130,3 +130,18 @@ test("#14006 dynamic catalog source includes auto groups, active providers, and 
     await deleteCombo(name);
   }
 });
+
+
+test("fetchAvailableModels ignores client Host when forwarding authorization upstream", async () => {
+  const result = await runHandler(new AntigravityHandler([]), {}, "unused", {
+    url: "/v1internal:fetchAvailableModels",
+    headers: { host: "169.254.169.254", authorization: "Bearer secret-token" },
+    upstreamBody: JSON.stringify({ models: {}, agentModelSorts: [] }),
+  });
+  assert.equal(result.status, 200);
+  assert.equal(
+    result.fetchUrl,
+    "https://cloudcode-pa.googleapis.com/v1internal:fetchAvailableModels"
+  );
+  assert.equal(result.fetchHeaders.authorization, "Bearer secret-token");
+});

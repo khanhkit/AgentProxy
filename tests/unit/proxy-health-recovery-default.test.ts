@@ -121,3 +121,32 @@ test("default path: sweep-observed 429 is re-tested and recovered, no injected p
     if (created) await proxiesDb.deleteProxyById(created.id, { force: true });
   }
 });
+
+
+test("inconclusive recovery keeps the sweep-owned 429 ledger entry for a later retry", async () => {
+  const port = await freePort();
+  const created = await proxiesDb.createProxy({
+    name: `recovery-inconclusive ${port}`,
+    type: "http",
+    host: "127.0.0.1",
+    port,
+  });
+  const relay = await startRelay(port);
+  try {
+    await scheduler.forceProxyHealthSweep();
+    assert.equal(scheduler.__recoveryLedgerSizeForTesting(), 1);
+    const result = await scheduler.runRecoveryPass(
+      async () => "inconclusive",
+      undefined,
+      { maxCandidates: 10, durationMs: 60_000, concurrency: 2 },
+      process.env
+    );
+    assert.equal(result.recovered, 0);
+    assert.equal(result.refused, 0);
+    assert.equal(scheduler.__recoveryLedgerSizeForTesting(), 1);
+  } finally {
+    relay.closeAllConnections();
+    await new Promise<void>((resolve) => relay.close(() => resolve()));
+    if (created) await proxiesDb.deleteProxyById(created.id, { force: true });
+  }
+});

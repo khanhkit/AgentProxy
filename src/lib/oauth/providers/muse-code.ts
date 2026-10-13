@@ -9,6 +9,8 @@ import {
   type MuseMintedKey,
 } from "@agentproxy/open-sse/services/museCodeAuth.ts";
 import { MUSE_CODE_CONFIG } from "../constants/oauth";
+import { safeOutboundFetch } from "@/shared/network/safeOutboundFetch";
+import { getProviderOutboundGuard } from "@/shared/network/outboundUrlGuardPolicy";
 
 function requiredText(value: unknown, field: string): string {
   if (typeof value !== "string" || !value.trim()) {
@@ -17,11 +19,22 @@ function requiredText(value: unknown, field: string): string {
   return value.trim();
 }
 
+function museFetch(url: string, init: RequestInit) {
+  const guard = getProviderOutboundGuard();
+  return safeOutboundFetch(url, {
+    ...init,
+    guard: guard === "none" ? "block-metadata" : guard,
+    pinDns: true,
+    allowRedirect: false,
+    retry: false,
+  });
+}
+
 async function postForm(
   url: string,
   params: Record<string, string>
 ): Promise<{ ok: boolean; status: number; data: Record<string, unknown> }> {
-  const response = await fetch(url, {
+  const response = await museFetch(url, {
     method: "POST",
     headers: museCodeHeaders({ "Content-Type": "application/x-www-form-urlencoded" }),
     body: new URLSearchParams(params),
@@ -117,7 +130,6 @@ export const museCode = {
       email: minted?.email,
       displayName: minted?.name,
       providerSpecificData: {
-        dcaToken,
         authKind: "oauth",
         baseUrl: minted?.baseUrl,
         email: minted?.email,

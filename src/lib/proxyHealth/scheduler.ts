@@ -454,14 +454,21 @@ export async function runRecoveryPass(
       if (result.status !== "fulfilled") continue;
       const { candidate, outcome } = result.value;
       const key = candidate.key as string;
-      recoveryLedger.delete(key);
       if (outcome === "ok") {
+        recoveryLedger.delete(key);
         noteProxyRecovered(key, "ip_quota_429");
         recovered++;
-      } else if (outcome === "blocked" || outcome === "fail" || outcome === "hang") {
+      } else if (outcome === "blocked") {
+        // Only an observed target refusal proves the original 429 condition is
+        // still present. Keep the ledger candidate for a later recovery retry.
         noteProxyRefusal(key, "ip_quota_429");
         refused++;
+      } else if (outcome === "fail" || outcome === "hang") {
+        // Transport failures are not quota evidence. Retain the ledger entry
+        // without extending or manufacturing an ip_quota_429 cooldown.
+        refused++;
       }
+      // `inconclusive` is neutral: retain the ledger entry for a later retry.
     }
   }
   return { planned: planned.length, recovered, refused };

@@ -80,3 +80,20 @@ test("the injected probe receives the egress key string (no id-object mismatch)"
   assert.equal(seen, KEY);
   assert.equal(result.recovered, 1);
 });
+
+
+for (const outcome of ["fail", "hang"] as const) {
+  test(`${outcome} recovery probe does not manufacture a fresh ip_quota_429 cooldown`, async () => {
+    process.env.PROXY_HEALTH_RECOVERY_ENABLED = "true";
+    memory.noteProxyRecovered(KEY, "ip_quota_429");
+    assert.equal(memory.isProxyAvoided(KEY), false);
+    const result = await scheduler.runRecoveryPass(
+      async () => outcome,
+      CANDIDATES,
+      LIMITS,
+      process.env
+    );
+    assert.equal(result.refused, 1);
+    assert.equal(memory.isProxyAvoided(KEY), false);
+  });
+}

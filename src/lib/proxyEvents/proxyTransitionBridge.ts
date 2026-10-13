@@ -42,10 +42,27 @@ function splitOnce(value: string, sep: string): [string, string] {
 /** Mask a proxy egress key: scheme and port verbatim, user and host masked. */
 export function maskEgressKey(key: string): string {
   const [scheme, rest] = splitOnce(key, "://");
-  const [authority, port] = splitOnce(rest, ":");
-  const [user, host] = authority.includes("@") ? splitOnce(authority, "@") : ["", authority];
+  const at = rest.lastIndexOf("@");
+  const user = at >= 0 ? rest.slice(0, at) : "";
+  const hostPort = at >= 0 ? rest.slice(at + 1) : rest;
+
+  let host: string;
+  let port: string;
+  let brackets = false;
+  if (hostPort.startsWith("[") && hostPort.includes("]")) {
+    const close = hostPort.indexOf("]");
+    host = hostPort.slice(1, close);
+    port = hostPort.slice(close + 1).replace(/^:/, "");
+    brackets = true;
+  } else {
+    const colon = hostPort.lastIndexOf(":");
+    host = colon >= 0 ? hostPort.slice(0, colon) : hostPort;
+    port = colon >= 0 ? hostPort.slice(colon + 1) : "";
+  }
+
   const maskedUser = user ? `${maskSegment(user)}@` : "";
-  return `${scheme}://${maskedUser}${maskSegment(host)}:${port}`;
+  const maskedHost = maskSegment(host);
+  return `${scheme}://${maskedUser}${brackets ? `[${maskedHost}]` : maskedHost}:${port}`;
 }
 
 const lastEmitByKey = new Map<string, number>();

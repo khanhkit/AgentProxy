@@ -24,10 +24,16 @@ import { parseDetailedRetryHintFromJsonBody } from "../../open-sse/services/retr
 import { resolvePublicCred } from "../../open-sse/utils/publicCreds.ts";
 import { CLIPROXY_TYPE_TO_PROVIDER } from "../../src/lib/oauth/utils/cliProxyAuthImport.ts";
 import { muse_codeProvider } from "../../open-sse/config/providers/registry/muse-code/index.ts";
+import { setSafeOutboundPinnedFetchTestOverride } from "../../src/shared/network/safeOutboundFetch.ts";
 
 const originalFetch = globalThis.fetch;
 
+test.beforeEach(() => {
+  setSafeOutboundPinnedFetchTestOverride(() => (input, init) => globalThis.fetch(input, init));
+});
+
 test.afterEach(() => {
+  setSafeOutboundPinnedFetchTestOverride(undefined);
   globalThis.fetch = originalFetch;
 });
 
@@ -82,6 +88,37 @@ test("mintMuseApiKey posts dca_token with Bearer + muse-code UA", async () => {
   assert.equal(minted.canSubscribe, true);
 });
 
+
+
+test("Muse OAuth device endpoint refuses metadata targets before native fetch", async () => {
+  let nativeFetchCalls = 0;
+  globalThis.fetch = (async () => {
+    nativeFetchCalls += 1;
+    return new Response("metadata-secret", { status: 200 });
+  }) as typeof fetch;
+
+  await assert.rejects(() =>
+    museCode.requestDeviceCode({
+      ...MUSE_CODE_CONFIG,
+      deviceCodeUrl: "http://169.254.169.254/latest/meta-data/",
+    })
+  );
+  assert.equal(nativeFetchCalls, 0);
+});
+
+test("Muse key mint refuses metadata targets before native fetch", async () => {
+  let nativeFetchCalls = 0;
+  globalThis.fetch = (async () => {
+    nativeFetchCalls += 1;
+    return new Response("metadata-secret", { status: 200 });
+  }) as typeof fetch;
+
+  await assert.rejects(() =>
+    mintMuseApiKey("dca:test", "http://169.254.169.254/latest/meta-data/")
+  );
+  assert.equal(nativeFetchCalls, 0);
+});
+
 test("postExchange keeps the dca token when mint fails (CLIProxyAPI best-effort)", async () => {
   globalThis.fetch = async () =>
     new Response("nope", { status: 500, headers: { "Content-Type": "text/plain" } });
@@ -113,14 +150,14 @@ test("mapTokens does not copy DCA expiry onto a minted inference key", () => {
   assert.equal(mapped.accessToken, "LLM|k");
   assert.equal(mapped.refreshToken, "dca:login");
   assert.equal(mapped.expiresIn, undefined);
-  assert.equal(mapped.providerSpecificData.dcaToken, "dca:login");
+  assert.equal(mapped.providerSpecificData.dcaToken, undefined);
 });
 
 test("supportsTokenRefresh includes the muse-code remint path", () => {
   assert.equal(supportsTokenRefresh("muse-code"), true);
 });
 
-test("refreshMuseCodeToken remints from providerSpecificData.dcaToken", async () => {
+test("refreshMuseCodeToken remints from refreshToken without duplicating DCA into provider metadata", async () => {
   globalThis.fetch = async (_url, init = {}) => {
     assert.equal((init.headers as Record<string, string>).Authorization, "Bearer dca:from-data");
     return new Response(JSON.stringify({ api_key: "LLM|new", base_url: "https://api.meta.ai/v1" }), {
@@ -129,9 +166,15 @@ test("refreshMuseCodeToken remints from providerSpecificData.dcaToken", async ()
     });
   };
 
-  const result = await refreshMuseCodeToken("not-a-dca", { dcaToken: "dca:from-data" }, null);
+  const result = await refreshMuseCodeToken(
+    "dca:from-data",
+    { dcaToken: "dca:legacy-copy", harmless: "keep" },
+    null
+  );
   assert.equal(result?.accessToken, "LLM|new");
   assert.equal(result?.refreshToken, "dca:from-data");
+  assert.equal(result?.providerSpecificData.dcaToken, undefined);
+  assert.equal(result?.providerSpecificData.harmless, "keep");
 });
 
 test("429 subscription quota error.resets_at is parsed as a cooldown", () => {

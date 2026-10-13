@@ -272,3 +272,27 @@ test("ghe-copilot post-login lookups do not follow a redirect from the GHE host"
   assert.equal(res.status, 200);
   assert.equal(JSON.parse(text).success, true);
 });
+
+
+test("ghe-copilot successful non-JSON optional enrichment does not fail login", async () => {
+  const tokenUrl = "https://ghe.example.test/login/oauth/access_token";
+  globalThis.fetch = (async (input: RequestInfo | URL) => {
+    const url = String(input instanceof Request ? input.url : input);
+    requestedUrls.push(url);
+    if (url === tokenUrl) {
+      return new Response(JSON.stringify({ access_token: "gho_test", expires_in: 3600 }), {
+        status: 200,
+        headers: { "content-type": "application/json" },
+      });
+    }
+    return new Response("<html>enterprise proxy page</html>", {
+      status: 200,
+      headers: { "content-type": "text/html" },
+    });
+  }) as typeof fetch;
+
+  const res = await poll("https://ghe.example.test");
+  const body = await res.json();
+  assert.equal(res.status, 200);
+  assert.equal(body.success, true);
+});

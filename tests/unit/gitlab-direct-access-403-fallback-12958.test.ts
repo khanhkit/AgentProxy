@@ -5,7 +5,7 @@ import path from "node:path";
 
 import { shouldFallbackToPublicCodeSuggestions } from "../../src/lib/oauth/gitlab.ts";
 
-test("all GitLab direct_access 403 responses fall back to public Code Suggestions", () => {
+test("only GitLab direct-connections-disabled 403 falls back to public Code Suggestions", () => {
   assert.equal(shouldFallbackToPublicCodeSuggestions(401, "{}"), true);
   assert.equal(
     shouldFallbackToPublicCodeSuggestions(403, '{"error":"direct connections are disabled"}'),
@@ -13,7 +13,7 @@ test("all GitLab direct_access 403 responses fall back to public Code Suggestion
   );
   assert.equal(
     shouldFallbackToPublicCodeSuggestions(403, '{"error":"insufficient_scope"}'),
-    true
+    false
   );
   assert.equal(shouldFallbackToPublicCodeSuggestions(400, '{"error":"bad_request"}'), false);
 });
