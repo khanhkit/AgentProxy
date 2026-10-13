@@ -246,6 +246,8 @@ export async function execFileWithPassword(
   return stdout;
 }
 
+type StepResult = Awaited<ReturnType<typeof runStep>>;
+
 function stepOutputOrThrow(result: StepResult): string {
   if (result.error) {
     throw new Error(`Command failed: ${getErrorMessage(result.error)}\n${result.stderr}`);
