@@ -98,6 +98,7 @@ const anthropicAdapter: ProviderAdapter = {
       if (!response.ok) return response;
       const responseHeaders = new Headers(response.headers);
       responseHeaders.delete("content-length");
+      responseHeaders.delete("content-encoding");
       if (request.stream && response.body) {
         responseHeaders.set("content-type", "text/event-stream");
         const transform = createSSETransformStreamWithLogger(

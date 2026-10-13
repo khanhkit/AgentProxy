@@ -124,9 +124,19 @@ test("AP-ISS-0196 review: Anthropic adapter normalizes streaming success to Open
     async () =>
       new Response(anthropicSse, {
         status: 200,
-        headers: { "content-type": "text/event-stream" },
+        headers: {
+          "content-type": "text/event-stream",
+          "content-encoding": "gzip",
+          "content-length": String(anthropicSse.length),
+        },
       })
   );
+  assert.equal(
+    response.headers.get("content-encoding"),
+    null,
+    "a transformed decoded body must not retain upstream content-encoding"
+  );
+  assert.equal(response.headers.get("content-length"), null);
   const body = await response.text();
   assert.match(body, /chat\.completion\.chunk/);
   assert.match(body, /hello/);
