@@ -186,7 +186,7 @@ test("two subscriptions listing the same tuple: the row stays with the first one
   }
 });
 
-test("a refresh keeps the dead local core row a needs-core feed binds", async () => {
+test("an unreachable local core is never registered or bound", async () => {
   reset();
   const server = await startFeedServer("ss://YWVzLTI1Ni1nY206cGFzcw@203.0.113.9:8388#ss-node");
   try {
@@ -195,15 +195,16 @@ test("a refresh keeps the dead local core row a needs-core feed binds", async ()
       .getDbInstance()
       .prepare("UPDATE proxy_subscriptions SET local_core_endpoint = ? WHERE id = ?")
       .run("socks5://127.0.0.1:18106", "s1");
+
     const first = await sub.syncSubscription("s1");
-    const id = rowIdFor(18106);
-    assert.equal(first.boundProxies, 1);
-    assert.equal((await proxies.getProxyById(id))?.subscriptionId, "s1");
-    await proxies.updateProxy(id, { status: "dead" });
+    const rows = core
+      .getDbInstance()
+      .prepare("SELECT id FROM proxy_registry WHERE subscription_id = ?")
+      .all("s1");
 
-    await sub.syncSubscription("s1");
-
-    assert.equal((await proxies.getProxyById(id))?.status, "dead");
+    assert.equal(first.boundProxies, 0);
+    assert.equal(first.status, "error");
+    assert.equal(rows.length, 0);
   } finally {
     await server.close();
   }

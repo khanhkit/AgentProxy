@@ -28,6 +28,7 @@ import {
   createProxy,
   deleteProxyById,
   updateProxy,
+  upsertProxy,
 } from "../db/proxies";
 import type { ProxyPayload } from "../db/proxies/types";
 import { bumpProxyConfigGeneration } from "../db/settings";
@@ -618,7 +619,7 @@ async function syncSubscriptionUnsafe(id: string): Promise<SyncResult> {
   try {
     // Directly-usable nodes → upsert into the registry as a pool.
     for (const node of parsed.nodes) {
-      const upserted = await upsertSubscriptionProxy(
+      const upserted = await upsertProxy(
         {
           name: node.name || `${sub.name} (${node.host}:${node.port})`,
           type: node.type,
@@ -717,22 +718,19 @@ async function syncSubscriptionUnsafe(id: string): Promise<SyncResult> {
           const valid = validEntries[i];
           if (!probeVerdicts[i]) continue;
           try {
-            const upserted = await upsertSubscriptionProxy(
-              {
-                name:
-                  validEntries.length > 1
-                    ? `${sub.name} (local core :${valid.port}/${valid.coreType})`
-                    : `${sub.name} (local core)`,
-                type: valid.coreType,
-                host: valid.coreUrl.hostname,
-                port: valid.port,
-                username: valid.username,
-                password: valid.password,
-                source: "subscription",
-                subscriptionId: id,
-              },
-              { claimOwnership: false }
-            );
+            const upserted = await upsertSubscriptionProxy({
+              name:
+                validEntries.length > 1
+                  ? `${sub.name} (local core :${valid.port}/${valid.coreType})`
+                  : `${sub.name} (local core)`,
+              type: valid.coreType,
+              host: valid.coreUrl.hostname,
+              port: valid.port,
+              username: valid.username,
+              password: valid.password,
+              source: "subscription",
+              subscriptionId: id,
+            });
             await keepOwnedSyncedRow(upserted, keptIds);
           } catch {
             invalid.push(redactCoreEntryForDetail(valid.entry));

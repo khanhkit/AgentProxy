@@ -237,9 +237,11 @@ test("re-sync of an unreachable entry keeps it non-routable", async () => {
   const feed = await startFeedServer(NEEDS_CORE_FEED);
   try {
     insertSubscription("s1", feed.url, `socks5://127.0.0.1:${shut}`);
-    await sub.syncSubscription("s1");
+    const first = await sub.syncSubscription("s1");
+    assert.equal(first.boundProxies, 0);
     assert.equal(rowsForSub("s1").length, 0);
-    await sub.syncSubscription("s1");
+    const second = await sub.syncSubscription("s1");
+    assert.equal(second.boundProxies, 0);
     assert.equal(rowsForSub("s1").length, 0);
   } finally {
     await feed.close();
