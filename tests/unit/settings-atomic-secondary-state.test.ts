@@ -111,6 +111,25 @@ test("combined settings and upstream-proxy mutation commits atomically with one 
   );
 });
 
+test("upstream-proxy rows use provider activity from the settings transaction", async () => {
+  await seedActiveProvider("openai");
+  const db = core.getDbInstance();
+  db.exec(`
+    CREATE TRIGGER deactivate_openai_during_settings_write
+    AFTER INSERT ON key_value
+    WHEN NEW.namespace = 'settings' AND NEW.key = 'cliproxyapi_fallback_enabled'
+    BEGIN
+      UPDATE provider_connections SET is_active = 0 WHERE provider = 'openai';
+    END;
+  `);
+
+  const response = await patch({ cliproxyapi_fallback_enabled: true });
+
+  assert.equal(response.status, 200);
+  assert.equal(await upstreamProxy.getUpstreamProxyConfig("openai"), null);
+  assert.ok(await upstreamProxy.getUpstreamProxyConfig("cliproxyapi"));
+});
+
 test("post-commit CLIProxy cache invalidation is best-effort", () => {
   const routeSource = fs.readFileSync("src/app/api/settings/route.ts", "utf8");
   const invalidationStart = routeSource.indexOf('if (typeof cpaUrl === "string")');

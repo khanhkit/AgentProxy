@@ -21,7 +21,6 @@ import {
   upsertUpstreamProxyConfigWithDb,
   getUpstreamProxyConfig,
 } from "@/lib/db/upstreamProxy";
-import { getProviderConnections } from "@/lib/db/providers";
 import { clearCliproxyapiRuntimeCache } from "@/lib/services/cliproxyapiRuntime";
 import {
   ensurePersistentManagementPasswordHash,
@@ -510,20 +509,12 @@ export async function PATCH(request: Request) {
     let transactionMutator: UpdateSettingsOptions["transactionMutator"];
 
     if (touchesUpstreamProxy) {
-      // Resolve every row input before the settings transaction starts. The mutator
-      // below is deliberately synchronous so settings + derived proxy rows share one
-      // SQLite commit and one revision bump.
+      // Resolve provider membership inside the same SQLite transaction that writes
+      // settings + derived proxy rows. A provider may be activated/deactivated after
+      // request validation, so an earlier async snapshot is not authoritative here.
       const enabled = cpaFallback ?? beforeSnapshot.cliproxyapi_fallback_enabled;
       const mode = enabled ? "fallback" : "native";
       const EMBEDDED_SERVICE_IDS = new Set(["cliproxyapi", "9router"]);
-      const activeConnections = await getProviderConnections({ isActive: true });
-      const activeProviderIds = [
-        ...new Set(
-          activeConnections
-            .map((connection: Record<string, unknown>) => connection.provider as string)
-            .filter((id: string) => !EMBEDDED_SERVICE_IDS.has(id))
-        ),
-      ];
       const rowData = {
         mode,
         enabled: !!enabled,
@@ -531,6 +522,17 @@ export async function PATCH(request: Request) {
       };
 
       transactionMutator = (db) => {
+        const activeProviderIds = [
+          ...new Set(
+            (
+              db
+                .prepare("SELECT DISTINCT provider FROM provider_connections WHERE is_active = 1")
+                .all() as Array<{ provider: string }>
+            )
+              .map(({ provider }) => provider)
+              .filter((id) => !EMBEDDED_SERVICE_IDS.has(id))
+          ),
+        ];
         for (const providerId of activeProviderIds) {
           upsertUpstreamProxyConfigWithDb(db, { providerId, ...rowData });
         }
