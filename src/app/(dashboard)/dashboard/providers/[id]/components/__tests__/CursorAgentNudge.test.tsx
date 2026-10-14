@@ -29,12 +29,13 @@
 // otherwise terminate a block comment early.)
 import React from "react";
 import { act } from "react";
-import { createRoot, hydrateRoot } from "react-dom/client";
+import { createRoot, hydrateRoot, type Root } from "react-dom/client";
 import { renderToString } from "react-dom/server";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import CursorAgentNudge from "../CursorAgentNudge";
 
 const STORAGE_KEY = "agentproxy.cursorAgentNudgeDismissed";
+const mountedRoots = new Set<Root>();
 
 vi.mock("next-intl", () => ({ useTranslations: () => (k: string) => k }));
 
@@ -57,6 +58,7 @@ function renderNudge(): HTMLDivElement {
   const container = document.createElement("div");
   document.body.appendChild(container);
   const root = createRoot(container);
+  mountedRoots.add(root);
   act(() => {
     root.render(<CursorAgentNudge />);
   });
@@ -72,6 +74,10 @@ describe("CursorAgentNudge", () => {
   });
 
   afterEach(() => {
+    act(() => {
+      for (const root of mountedRoots) root.unmount();
+    });
+    mountedRoots.clear();
     document.body.innerHTML = "";
     localStorage.removeItem(STORAGE_KEY);
     vi.unstubAllGlobals();
@@ -143,6 +149,7 @@ describe("CursorAgentNudge", () => {
     const first = document.createElement("div");
     document.body.appendChild(first);
     const firstRoot = createRoot(first);
+    mountedRoots.add(firstRoot);
     act(() => {
       firstRoot.render(<CursorAgentNudge />);
     });
@@ -156,6 +163,7 @@ describe("CursorAgentNudge", () => {
     act(() => {
       firstRoot.unmount();
     });
+    mountedRoots.delete(firstRoot);
     first.remove();
 
     const second = renderNudge();
@@ -184,8 +192,9 @@ describe("CursorAgentNudge", () => {
 
     try {
       act(() => {
-        hydrateRoot(container, <CursorAgentNudge />);
+        mountedRoots.add(hydrateRoot(container, <CursorAgentNudge />));
       });
+      await flushEffects();
     } finally {
       console.error = originalConsoleError;
     }
