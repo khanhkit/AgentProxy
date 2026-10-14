@@ -374,7 +374,6 @@ function getHealthCheckSkipProviders(): Set<string> {
   );
 }
 
-// ── Logging helper ───────────────────────────────────────────────────────────
 let cachedHideLogs: boolean | null = null;
 let cacheTimestamp = 0;
 let pendingHideLogs: Promise<boolean> | null = null;
@@ -392,19 +391,9 @@ export async function shouldHideLogs(): Promise<boolean> {
 
   const now = Date.now();
 
-  // Return cached value if valid
-  if (cachedHideLogs !== null && now - cacheTimestamp < CACHE_TTL) {
-    return cachedHideLogs;
-  }
+  if (cachedHideLogs !== null && now - cacheTimestamp < CACHE_TTL) return cachedHideLogs;
+  if (pendingHideLogs !== null) return pendingHideLogs;
 
-  // Return pending promise if a query is already in progress (request coalescing)
-  if (pendingHideLogs !== null) {
-    return pendingHideLogs;
-  }
-
-  // Create new promise for DB query. A hot-setting update can invalidate this
-  // read while it is awaiting SQLite; only the generation that started it may
-  // publish its result or clear the currently tracked request.
   const generation = hideLogsCacheGeneration;
   const query = (async () => {
     try {
@@ -448,17 +437,12 @@ function logError(message: string, ...args: any[]) {
   });
 }
 
-/**
- * Clear the cached hideLogs setting (call when settings are updated).
- */
 export function clearHealthCheckLogCache(value: boolean | null = null) {
   hideLogsCacheGeneration++;
   pendingHideLogs = null;
   cachedHideLogs = value;
   cacheTimestamp = value === null ? 0 : Date.now();
 }
-
-// ── Singleton guard (globalThis survives HMR re-evaluation) ─────────────────
 
 declare global {
   var __agentproxyTokenHC:

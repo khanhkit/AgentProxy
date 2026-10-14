@@ -19,6 +19,8 @@ import { resolveModelLockoutSettings } from "@/lib/resilience/modelLockoutSettin
 import {
   validateProxyUrl,
   upsertUpstreamProxyConfigWithDb,
+  getActiveUpstreamProxyProviderIdsWithDb,
+  deleteInactiveProviderProxyConfigsWithDb,
   getUpstreamProxyConfig,
 } from "@/lib/db/upstreamProxy";
 import { clearCliproxyapiRuntimeCache } from "@/lib/services/cliproxyapiRuntime";
@@ -522,29 +524,13 @@ export async function PATCH(request: Request) {
       };
 
       transactionMutator = (db) => {
-        db.prepare(
-          `DELETE FROM upstream_proxy_config
-           WHERE provider_id NOT IN ('cliproxyapi', '9router')
-             AND EXISTS (
-               SELECT 1 FROM provider_connections
-               WHERE provider_connections.provider = upstream_proxy_config.provider_id
-             )
-             AND NOT EXISTS (
-               SELECT 1 FROM provider_connections
-               WHERE provider_connections.provider = upstream_proxy_config.provider_id
-                 AND provider_connections.is_active = 1
-             )`
-        ).run();
+        deleteInactiveProviderProxyConfigsWithDb(db);
 
         const activeProviderIds = [
           ...new Set(
-            (
-              db
-                .prepare("SELECT DISTINCT provider FROM provider_connections WHERE is_active = 1")
-                .all() as Array<{ provider: string }>
+            getActiveUpstreamProxyProviderIdsWithDb(db).filter(
+              (id) => !EMBEDDED_SERVICE_IDS.has(id)
             )
-              .map(({ provider }) => provider)
-              .filter((id) => !EMBEDDED_SERVICE_IDS.has(id))
           ),
         ];
         for (const providerId of activeProviderIds) {

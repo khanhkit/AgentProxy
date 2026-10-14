@@ -188,6 +188,30 @@ export async function upsertUpstreamProxyConfig(data: UpstreamProxyConfigWrite) 
   return getUpstreamProxyConfig(data.providerId);
 }
 
+export function getActiveUpstreamProxyProviderIdsWithDb(db: UpstreamProxyDb): string[] {
+  return (
+    db
+      .prepare("SELECT DISTINCT provider FROM provider_connections WHERE is_active = 1")
+      .all() as Array<{ provider: string }>
+  ).map(({ provider }) => provider);
+}
+
+export function deleteInactiveProviderProxyConfigsWithDb(db: UpstreamProxyDb): void {
+  db.prepare(
+    `DELETE FROM upstream_proxy_config
+     WHERE provider_id NOT IN ('cliproxyapi', '9router')
+       AND EXISTS (
+         SELECT 1 FROM provider_connections
+         WHERE provider_connections.provider = upstream_proxy_config.provider_id
+       )
+       AND NOT EXISTS (
+         SELECT 1 FROM provider_connections
+         WHERE provider_connections.provider = upstream_proxy_config.provider_id
+           AND provider_connections.is_active = 1
+       )`
+  ).run();
+}
+
 export async function updateUpstreamProxyConfig(
   providerId: string,
   updates: Record<string, unknown>
