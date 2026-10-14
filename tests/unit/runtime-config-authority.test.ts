@@ -61,10 +61,10 @@ test("first successful candidate publishes one deeply frozen active snapshot", a
 });
 
 test("stale revision is a no-op and cannot replace newer active state", async () => {
-  await activateRuntimeConfigCandidate(candidate(2, { marker: "new" }), {});
+  await activateRuntimeConfigCandidate(candidate(2, { theme: "new" }), {});
   let atomicCalls = 0;
 
-  await activateRuntimeConfigCandidate(candidate(1, { marker: "old" }), {
+  await activateRuntimeConfigCandidate(candidate(1, { theme: "old" }), {
     applyAtomic: async () => {
       atomicCalls++;
     },
@@ -72,7 +72,7 @@ test("stale revision is a no-op and cannot replace newer active state", async ()
 
   assert.equal(atomicCalls, 0);
   assert.equal(getActiveRuntimeConfigSnapshot()?.revision, 2);
-  assert.equal(getActiveRuntimeConfigSnapshot()?.settings.marker, "new");
+  assert.equal(getActiveRuntimeConfigSnapshot()?.settings.theme, "new");
   assert.equal(getRuntimeConfigStatus().desiredRevision, 2);
 });
 
@@ -88,20 +88,20 @@ test("same revision is idempotent when reconcile is not pending", async () => {
     },
   };
 
-  await activateRuntimeConfigCandidate(candidate(3, { marker: "same" }), hooks);
-  await activateRuntimeConfigCandidate(candidate(3, { marker: "same" }), hooks);
+  await activateRuntimeConfigCandidate(candidate(3, { theme: "same" }), hooks);
+  await activateRuntimeConfigCandidate(candidate(3, { theme: "same" }), hooks);
 
   assert.equal(atomicCalls, 1);
   assert.equal(reconcileCalls, 1);
 });
 
 test("HOT_ATOMIC failure rolls back and leaves previous active snapshot intact", async () => {
-  await activateRuntimeConfigCandidate(candidate(4, { marker: "known-good" }), {});
+  await activateRuntimeConfigCandidate(candidate(4, { theme: "known-good" }), {});
   const previous = getActiveRuntimeConfigSnapshot();
   const calls: string[] = [];
 
   await assert.rejects(
-    activateRuntimeConfigCandidate(candidate(5, { marker: "broken" }), {
+    activateRuntimeConfigCandidate(candidate(5, { theme: "broken" }), {
       prepare: async () => {
         calls.push("prepare");
         return { prepared: true };
@@ -142,7 +142,7 @@ test("reconcile failure keeps active snapshot and same revision retries reconcil
     },
   };
 
-  await activateRuntimeConfigCandidate(candidate(6, { marker: "active" }), hooks);
+  await activateRuntimeConfigCandidate(candidate(6, { theme: "active" }), hooks);
 
   assert.equal(getActiveRuntimeConfigSnapshot()?.revision, 6);
   assert.equal(getRuntimeConfigStatus().state, "reconcile_pending");
@@ -153,7 +153,7 @@ test("reconcile failure keeps active snapshot and same revision retries reconcil
   });
 
   fail = false;
-  await activateRuntimeConfigCandidate(candidate(6, { marker: "active" }), hooks);
+  await activateRuntimeConfigCandidate(candidate(6, { theme: "active" }), hooks);
 
   assert.equal(atomicCalls, 1);
   assert.equal(reconcileCalls, 2);
@@ -169,7 +169,7 @@ test("older reconcile completes before a newer candidate may activate", async ()
   });
   let revision8Applied = false;
 
-  const first = activateRuntimeConfigCandidate(candidate(7, { marker: "seven" }), {
+  const first = activateRuntimeConfigCandidate(candidate(7, { theme: "seven" }), {
     reconcile: async () => {
       await revision7Blocked;
     },
@@ -178,7 +178,7 @@ test("older reconcile completes before a newer candidate may activate", async ()
   // Let revision 7 publish and enter reconcile before revision 8 is submitted.
   await new Promise<void>((resolve) => setImmediate(resolve));
 
-  const second = activateRuntimeConfigCandidate(candidate(8, { marker: "eight" }), {
+  const second = activateRuntimeConfigCandidate(candidate(8, { theme: "eight" }), {
     applyAtomic: async () => {
       revision8Applied = true;
     },
@@ -206,7 +206,27 @@ test("classification uses explicit reconcile, restart and build/deploy exception
   assert.equal(classifyRuntimeSettingKey("modelsDevSyncEnabled"), "HOT_RECONCILE");
   assert.equal(classifyRuntimeSettingKey("modelsDevSyncInterval"), "HOT_RECONCILE");
   assert.equal(classifyRuntimeSettingKey("ENABLE_TLS_FINGERPRINT"), "RESTART_REQUIRED");
+  assert.equal(classifyRuntimeSettingKey("PII_RESPONSE_SANITIZATION"), "HOT_ATOMIC");
+  for (const key of [
+    "autoDisableBannedScope",
+    "call_log_pipeline_enabled",
+    "cloudEnabled",
+    "comboAutoPromoteEnabled",
+    "idempotencyWindowMs",
+    "tailscaleEnabled",
+    "tailscaleUrl",
+  ]) {
+    assert.equal(
+      classifyRuntimeSettingKey(key),
+      "HOT_ATOMIC",
+      `${key} is an existing persisted key`
+    );
+  }
   assert.equal(classifyRuntimeSettingKey("DATA_DIR"), "BUILD_DEPLOY_ONLY");
+  assert.equal(
+    classifyRuntimeSettingKey("future_unregistered_restart_sensitive_setting"),
+    "RESTART_REQUIRED"
+  );
 });
 
 test("RESTART_REQUIRED change advances desired revision without falsely advancing active state", async () => {
