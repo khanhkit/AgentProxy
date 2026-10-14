@@ -346,6 +346,21 @@ test("#14296 AgentProxy route guard accepts and consumes the valid one-shot toke
   assert.equal(bootstrapToken.peekBootstrapToken(token), false, "successful write consumes token");
 });
 
+test("#14296 concurrent remote bootstrap writes can consume the one-shot token only once", async () => {
+  await settingsDb.updateSettings({ requireLogin: true, password: "", setupComplete: false });
+  const token = bootstrapToken.getOrCreateBootstrapToken({ log: () => {} });
+
+  const responses = await Promise.all([
+    route.POST(remoteBootstrapPost(token)),
+    route.POST(remoteBootstrapPost(token)),
+  ]);
+  assert.deepEqual(
+    responses.map((response) => response.status).sort((a, b) => a - b),
+    [200, 403]
+  );
+  assert.equal(bootstrapToken.peekBootstrapToken(token), false);
+});
+
 test("public login bootstrap route POST returns 500 when hashing fails", async () => {
   bcrypt.hash = async () => {
     throw new Error("hash failed");
