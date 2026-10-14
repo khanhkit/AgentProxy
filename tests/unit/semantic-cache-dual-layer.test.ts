@@ -468,8 +468,8 @@ describe("Semantic Cache — Dual-Layer Architecture", () => {
       assert.equal(await store.get("disabled"), null);
     });
 
-    it("falls back from invalid direct maxEntries instead of silently disabling storage", async () => {
-      for (const maxEntries of [-1, -2.5, 0.5, Number.NaN, Number.POSITIVE_INFINITY]) {
+    it("falls back from invalid negative direct maxEntries instead of silently disabling storage", async () => {
+      for (const maxEntries of [-1, -2.5, Number.NaN, Number.POSITIVE_INFINITY]) {
         const store = new MemoryVectorStore({ maxEntries });
         const now = Date.now();
         await store.set(
@@ -492,6 +492,26 @@ describe("Semantic Cache — Dual-Layer Architecture", () => {
           `invalid direct maxEntries=${String(maxEntries)} must fall back to usable capacity`
         );
       }
+    });
+
+    it("preserves direct positive fractional maxEntries flooring to zero capacity", async () => {
+      const store = new MemoryVectorStore({ maxEntries: 0.5 });
+      const now = Date.now();
+      await store.set(
+        {
+          id: "fractional",
+          hash: "fractional-hash",
+          promptText: "p",
+          model: "m",
+          provider: "p",
+          response: {},
+          tokensSaved: 1,
+          createdAt: now,
+          expiresAt: now + 100000,
+        },
+        100000
+      );
+      assert.equal((await store.getStats()).entries, 0);
     });
 
     it("expires entries past TTL", async () => {

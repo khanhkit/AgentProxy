@@ -28,9 +28,8 @@ export class MemoryVectorStore implements IVectorStore {
 
   constructor(options?: { maxEntries?: number }) {
     const configured = options?.maxEntries ?? 1000;
-    const bounded = Math.floor(configured);
-    this.maxEntries =
-      configured === 0 ? 0 : Number.isFinite(configured) && bounded > 0 ? bounded : 1000;
+    const bounded = Number.isFinite(configured) ? Math.floor(configured) : 1000;
+    this.maxEntries = bounded < 0 ? 1000 : bounded;
   }
 
   private isExpired(expiresAt: number): boolean {
