@@ -62,3 +62,18 @@ test("notifyWebhookEvent stays non-blocking while shutdown drain awaits pending 
     global.fetch = originalFetch;
   }
 });
+
+test("webhook drain closes notification admission before it reports empty", async () => {
+  dispatcher.__resetWebhookLifecycleForTests();
+
+  const before = await dispatcher.drainPendingWebhookDeliveries();
+  assert.equal(before.pending, 0);
+  assert.equal(before.started, 0);
+
+  dispatcher.notifyWebhookEvent("request.completed", { requestId: "req-after-drain" });
+  await new Promise((resolve) => setImmediate(resolve));
+
+  const after = dispatcher.getWebhookDeliveryStats();
+  assert.equal(after.started, 0, "notifications arriving after drain begins must not be admitted");
+  assert.equal(after.pending, 0);
+});

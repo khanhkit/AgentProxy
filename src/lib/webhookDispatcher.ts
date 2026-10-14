@@ -19,6 +19,7 @@ export interface WebhookPayload {
 
 interface WebhookLifecycleState {
   pending: Set<Promise<void>>;
+  accepting: boolean;
   started: number;
   completed: number;
   failed: number;
@@ -31,6 +32,7 @@ declare global {
 function getWebhookLifecycleState(): WebhookLifecycleState {
   globalThis.__agentproxyWebhookLifecycle ??= {
     pending: new Set(),
+    accepting: true,
     started: 0,
     completed: 0,
     failed: 0,
@@ -57,6 +59,7 @@ export async function drainPendingWebhookDeliveries(): Promise<
   ReturnType<typeof getWebhookDeliveryStats>
 > {
   const state = getWebhookLifecycleState();
+  state.accepting = false;
   while (state.pending.size > 0) {
     await Promise.allSettled(Array.from(state.pending));
   }
@@ -249,6 +252,7 @@ export function notifyWebhookEvent(event: WebhookEvent, data: Record<string, any
   // Intentionally not awaited by callers. Track the Promise process-wide so the
   // lifecycle coordinator can drain delivery + DB-record work before DB close.
   const state = getWebhookLifecycleState();
+  if (!state.accepting) return;
   const delivery = dispatchEvent(event, data);
   state.started += 1;
   state.pending.add(delivery);

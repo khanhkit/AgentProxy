@@ -245,6 +245,10 @@ function proxyUpgrade(
   });
 }
 
+type ApiBridgeServer = http.Server & {
+  __agentproxyUpgradeSockets?: Set<net.Socket>;
+};
+
 declare global {
   var __agentproxyApiBridgeStarted: boolean | undefined;
   var __agentproxyApiBridgeServer: http.Server | undefined;
@@ -287,7 +291,11 @@ export function createApiBridgeServer(dashboardPort: number): http.Server {
   server.headersTimeout = API_BRIDGE_TIMEOUTS.serverHeadersTimeoutMs;
   server.keepAliveTimeout = API_BRIDGE_TIMEOUTS.serverKeepAliveTimeoutMs;
   server.setTimeout(API_BRIDGE_TIMEOUTS.serverSocketTimeoutMs);
+  const upgradeSockets = new Set<net.Socket>();
+  (server as ApiBridgeServer).__agentproxyUpgradeSockets = upgradeSockets;
   server.on("upgrade", (req, socket, head) => {
+    upgradeSockets.add(socket);
+    socket.once("close", () => upgradeSockets.delete(socket));
     const rawUrl = req.url || "/";
     const pathname = rawUrl.split("?")[0] || "/";
 
@@ -376,6 +384,9 @@ export function stopApiBridgeServer(): void {
   };
 
   try {
+    for (const socket of (server as ApiBridgeServer).__agentproxyUpgradeSockets ?? []) {
+      socket.destroy();
+    }
     server.closeIdleConnections?.();
     server.close((error) => finish(error));
   } catch (error) {
@@ -391,6 +402,7 @@ export function stopApiBridgeServer(): void {
 }
 
 export async function drainApiBridgeServer(): Promise<void> {
+  stopApiBridgeServer();
   await globalThis.__agentproxyApiBridgeClosePromise;
 }
 
