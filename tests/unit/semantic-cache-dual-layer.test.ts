@@ -468,6 +468,32 @@ describe("Semantic Cache — Dual-Layer Architecture", () => {
       assert.equal(await store.get("disabled"), null);
     });
 
+    it("falls back from invalid direct maxEntries instead of silently disabling storage", async () => {
+      for (const maxEntries of [-1, -2.5, 0.5, Number.NaN, Number.POSITIVE_INFINITY]) {
+        const store = new MemoryVectorStore({ maxEntries });
+        const now = Date.now();
+        await store.set(
+          {
+            id: `entry-${String(maxEntries)}`,
+            hash: `hash-${String(maxEntries)}`,
+            promptText: "p",
+            model: "m",
+            provider: "p",
+            response: {},
+            tokensSaved: 1,
+            createdAt: now,
+            expiresAt: now + 100000,
+          },
+          100000
+        );
+        assert.equal(
+          (await store.getStats()).entries,
+          1,
+          `invalid direct maxEntries=${String(maxEntries)} must fall back to usable capacity`
+        );
+      }
+    });
+
     it("expires entries past TTL", async () => {
       const store = new MemoryVectorStore();
       const now = Date.now();
@@ -628,17 +654,15 @@ describe("Semantic Cache — Dual-Layer Architecture", () => {
       assert.equal(res, null);
     });
 
-    it("does not overlap an uncooperative timed-out generator before its in-flight work settles", async () => {
-      // A provider may ignore AbortSignal. The timeout must still fail open quickly, but the
-      // same provider/model key must not start billable overlapping work until that promise settles.
+    it("bounds quarantine for an uncooperative timed-out generator", async () => {
+      // A provider may ignore AbortSignal forever. Fail open immediately during a bounded
+      // quarantine, then allow recovery without requiring the abandoned promise to settle.
       let calls = 0;
-      let resolveFirst!: (value: { embedding: number[]; inputTokens: number }) => void;
-      const first = new Promise<{ embedding: number[]; inputTokens: number }>((resolve) => {
-        resolveFirst = resolve;
-      });
       const generator = () => {
         calls += 1;
-        if (calls === 1) return first;
+        if (calls === 1) {
+          return new Promise<{ embedding: number[]; inputTokens: number }>(() => {});
+        }
         return Promise.resolve({ embedding: [1, 0], inputTokens: 1 });
       };
 
@@ -654,23 +678,15 @@ describe("Semantic Cache — Dual-Layer Architecture", () => {
         timeoutMs: 50,
       });
       assert.equal(second, null);
-      assert.equal(calls, 1, "timed-out uncooperative generator must be quarantined");
+      assert.equal(calls, 1, "timed-out uncooperative generator must be quarantined initially");
       assert.ok(Date.now() - secondStart < 40, "quarantined generator must fail open immediately");
 
-      await new Promise((resolve) => setTimeout(resolve, 60));
-      const third = await generateEmbeddingWithTimeout("hello after cooldown", generator, {
+      await new Promise((resolve) => setTimeout(resolve, 70));
+      const recovered = await generateEmbeddingWithTimeout("hello after bounded quarantine", generator, {
         timeoutMs: 50,
       });
-      assert.equal(third, null, "elapsed cooldown must not permit overlap with live in-flight work");
-      assert.equal(calls, 1, "same provider/model must remain fenced until the timed-out work settles");
-
-      resolveFirst({ embedding: [0, 1], inputTokens: 1 });
-      await new Promise((resolve) => setImmediate(resolve));
-      const fourth = await generateEmbeddingWithTimeout("hello after settlement", generator, {
-        timeoutMs: 50,
-      });
-      assert.deepEqual(fourth, { embedding: [1, 0], inputTokens: 1 });
-      assert.equal(calls, 2, "settled work must release the in-flight fence");
+      assert.deepEqual(recovered, { embedding: [1, 0], inputTokens: 1 });
+      assert.equal(calls, 2, "bounded quarantine must not permanently disable embeddings");
     });
 
     it("scopes timeout cooldown to the embedding provider and model", async () => {

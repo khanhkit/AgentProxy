@@ -101,10 +101,7 @@ export function normalizeConversationForEmbedding(
   return lines.join("\n").trim();
 }
 const embeddingGeneratorCooldownUntil = new WeakMap<EmbeddingGenerator, Map<string, number>>();
-const embeddingGeneratorTimedOutInFlight = new WeakMap<
-  EmbeddingGenerator,
-  Map<string, Promise<EmbeddingResult | null>>
->();
+const embeddingGeneratorTimedOutInFlight = new WeakMap<EmbeddingGenerator, Map<string, symbol>>();
 
 /**
  * Executes embedding generation with fail-open timeout guard.
@@ -134,6 +131,14 @@ export async function generateEmbeddingWithTimeout(
   const controller = new AbortController();
   let timer: NodeJS.Timeout | undefined;
   let generatorPromise: Promise<EmbeddingResult | null> | undefined;
+  let quarantineToken: symbol | undefined;
+  const clearTimedOutInFlight = () => {
+    if (!quarantineToken) return;
+    const inFlight = embeddingGeneratorTimedOutInFlight.get(generator);
+    if (inFlight?.get(cooldownKey) !== quarantineToken) return;
+    inFlight.delete(cooldownKey);
+    if (inFlight.size === 0) embeddingGeneratorTimedOutInFlight.delete(generator);
+  };
 
   const timeoutPromise = new Promise<null>((resolve) => {
     timer = setTimeout(() => {
@@ -141,11 +146,11 @@ export async function generateEmbeddingWithTimeout(
       cooldowns.set(cooldownKey, Date.now() + timeoutMs);
       embeddingGeneratorCooldownUntil.set(generator, cooldowns);
       if (generatorPromise) {
-        const inFlight =
-          embeddingGeneratorTimedOutInFlight.get(generator) ??
-          new Map<string, Promise<EmbeddingResult | null>>();
-        inFlight.set(cooldownKey, generatorPromise);
+        quarantineToken = Symbol(cooldownKey);
+        const inFlight = embeddingGeneratorTimedOutInFlight.get(generator) ?? new Map<string, symbol>();
+        inFlight.set(cooldownKey, quarantineToken);
         embeddingGeneratorTimedOutInFlight.set(generator, inFlight);
+        setTimeout(clearTimedOutInFlight, timeoutMs);
       }
       controller.abort();
       console.warn(`[CACHE] Embedding generation timed out after ${timeoutMs}ms`);
@@ -162,12 +167,6 @@ export async function generateEmbeddingWithTimeout(
       })
     );
     const currentPromise = generatorPromise;
-    const clearTimedOutInFlight = () => {
-      const inFlight = embeddingGeneratorTimedOutInFlight.get(generator);
-      if (inFlight?.get(cooldownKey) !== currentPromise) return;
-      inFlight.delete(cooldownKey);
-      if (inFlight.size === 0) embeddingGeneratorTimedOutInFlight.delete(generator);
-    };
     void currentPromise.then(clearTimedOutInFlight, clearTimedOutInFlight);
 
     const res = await Promise.race([currentPromise, timeoutPromise]);
