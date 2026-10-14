@@ -11,6 +11,7 @@ let activeCheck: Promise<void> | null = null;
 let queuedSource: string | null = null;
 let pollTimer: ReturnType<typeof setInterval> | null = null;
 let sqliteWatcher: fs.FSWatcher | null = null;
+let reloadStopped = false;
 
 function getPollIntervalMs() {
   const parsed = Number.parseInt(process.env.AGENTPROXY_CONFIG_HOT_RELOAD_MS || "", 10);
@@ -42,6 +43,7 @@ async function runHotReloadCheck(source: string) {
 }
 
 function queueHotReloadCheck(source: string) {
+  if (reloadStopped) return;
   if (activeCheck) {
     queuedSource = source;
     return;
@@ -65,6 +67,7 @@ function queueHotReloadCheck(source: string) {
 
 export function startRuntimeConfigHotReload(options: { pollIntervalMs?: number } = {}) {
   if (pollTimer || sqliteWatcher) return;
+  reloadStopped = false;
 
   const pollIntervalMs = Math.max(
     options.pollIntervalMs || getPollIntervalMs(),
@@ -105,6 +108,7 @@ export function startRuntimeConfigHotReload(options: { pollIntervalMs?: number }
 }
 
 export function stopRuntimeConfigHotReload(): void {
+  reloadStopped = true;
   if (pollTimer) {
     clearInterval(pollTimer);
     pollTimer = null;

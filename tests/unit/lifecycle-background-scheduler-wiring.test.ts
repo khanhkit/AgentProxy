@@ -164,6 +164,14 @@ test("scheduler lifecycle error paths stay observable and drains cannot resurrec
   assert.match(graceful, /stopModelSyncScheduler\(\)/);
 });
 
+test("runtime config hot reload closes admission before drain", () => {
+  const hotReload = source("src/lib/config/hotReload.ts");
+  assert.match(hotReload, /let\s+reloadStopped\s*=\s*false/);
+  assert.match(hotReload, /function queueHotReloadCheck[\s\S]*?if\s*\(reloadStopped\)\s*return/);
+  assert.match(hotReload, /startRuntimeConfigHotReload[\s\S]*?reloadStopped\s*=\s*false/);
+  assert.match(hotReload, /stopRuntimeConfigHotReload[\s\S]*?reloadStopped\s*=\s*true/);
+});
+
 test("rate-limit shutdown continues limiter cleanup when persistence fails", () => {
   const manager = source("open-sse/services/rateLimitManager.ts");
   assert.match(manager, /let\s+persistenceError/);
