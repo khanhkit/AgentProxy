@@ -21,10 +21,9 @@
  * `score`-only response left the memory engine — which reads `relevance_score` — with
  * undefined scores. These two pure helpers close that gap:
  *
- *  - {@link buildLocalRerankRequestBody} sends both spellings (`documents` + `texts`,
- *    `return_documents` + `return_text`). Every server named above ignores the fields it
- *    does not know (TEI's request struct is not `deny_unknown_fields`; the OpenAI-shaped
- *    servers tolerate extras), so one body serves all of them.
+ *  - {@link buildLocalRerankRequestBody} emits one strict dialect at a time. The route
+ *    sends Cohere/OpenAI first and performs one bounded TEI retry only after a
+ *    schema-validation response, so strict servers never receive unknown fields.
  *  - {@link normalizeLocalRerankResponse} folds any of the observed response shapes into
  *    the Cohere envelope, backfilling `relevance_score` from `score`, sorting by score,
  *    honouring `top_n`, and attaching `document.text` when the caller asked for documents
@@ -62,25 +61,31 @@ export function documentText(doc: unknown): string {
   return doc === null || doc === undefined ? "" : String(doc);
 }
 
-/**
- * Build the upstream request body for a local rerank node. Includes both the
- * Cohere/OpenAI spelling (`documents`, `return_documents`) and the TEI spelling
- * (`texts`, `return_text`) so the same body works against every known local server.
- */
-export function buildLocalRerankRequestBody(input: LocalRerankRequestInput) {
-  const texts = input.documents.map(documentText);
+export type LocalRerankDialect = "cohere" | "tei";
+
+/** Build one strict upstream request dialect; never mix unknown fields across dialects. */
+export function buildLocalRerankRequestBody(
+  input: LocalRerankRequestInput,
+  dialect: LocalRerankDialect = "cohere"
+): Record<string, unknown> {
   const topN = input.top_n || input.documents.length;
-  // Cohere default: documents are only echoed back when the caller asks for them.
   const returnDocuments = input.return_documents === true;
-  return {
+  const common = {
     model: input.model,
     query: input.query,
-    documents: input.documents,
     top_n: topN,
+  };
+  if (dialect === "tei") {
+    return {
+      ...common,
+      texts: input.documents.map(documentText),
+      return_text: returnDocuments,
+    };
+  }
+  return {
+    ...common,
+    documents: input.documents,
     return_documents: returnDocuments,
-    // TEI spelling
-    texts,
-    return_text: returnDocuments,
   };
 }
 
