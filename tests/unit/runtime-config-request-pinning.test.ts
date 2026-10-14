@@ -38,7 +38,7 @@ test.beforeEach(() => {
 
 test("post-call context keeps the exact pinned revision N objects after N+1 activates", async () => {
   await activateRuntimeConfigCandidate(
-    candidate(40, { marker: "revision-40" }, { FEATURE_A: "on" }),
+    candidate(40, { theme: "revision-40" }, { PII_RESPONSE_SANITIZATION: "true" }),
     {}
   );
   const pinned = getActiveRuntimeConfigSnapshot();
@@ -51,7 +51,7 @@ test("post-call context keeps the exact pinned revision N objects after N+1 acti
   } as GuardrailContext;
 
   await activateRuntimeConfigCandidate(
-    candidate(41, { marker: "revision-41" }, { FEATURE_A: "off" }),
+    candidate(41, { theme: "revision-41" }, { PII_RESPONSE_SANITIZATION: "false" }),
     {}
   );
 
@@ -74,7 +74,7 @@ test("post-call context keeps the exact pinned revision N objects after N+1 acti
     preContext.runtimeFeatureFlagOverrides
   );
   assert.equal(postContext.runtimeSettingsRevision, 40);
-  assert.equal(postContext.runtimeSettings?.marker, "revision-40");
+  assert.equal(postContext.runtimeSettings?.theme, "revision-40");
   assert.equal(getActiveRuntimeConfigSnapshot()?.revision, 41);
 });
 
