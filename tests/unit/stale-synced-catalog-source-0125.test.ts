@@ -14,7 +14,10 @@ test("TC-OMNIDB-CATALOG-003A: migration 177 adds synced_models_at", () => {
   try {
     db.exec("CREATE TABLE provider_connections (id TEXT PRIMARY KEY)");
     db.exec(sql);
-    const columns = db.prepare("PRAGMA table_info(provider_connections)").all().map((r) => (r as { name: unknown }).name);
+    const columns = db
+      .prepare("PRAGMA table_info(provider_connections)")
+      .all()
+      .map((r) => (r as { name: unknown }).name);
     assert.ok(columns.includes("synced_models_at"));
   } finally {
     db.close();
@@ -50,4 +53,18 @@ test("TC-OMNIDB-CATALOG-004B: migration runner treats 177 as already applied whe
     source,
     /case "177":[\s\S]{0,250}?hasColumn\(db, "provider_connections", "synced_models_at"\)/
   );
+});
+
+test("AP-ISS-0198 4233380941: future sync timestamps are never fresh", () => {
+  const source = read("src/lib/db/models/activeSyncedCatalog.ts");
+  assert.match(source, /const ageMs = Date\.now\(\) - syncedAtMs/);
+  assert.match(source, /ageMs >= 0 && ageMs <= getSyncedCatalogStaleAfterMs\(\)/);
+});
+
+test("AP-ISS-0198 4233385456: sync timestamp writes invalidate the connection read cache", () => {
+  const providers = read("src/lib/db/providers.ts");
+  const start = providers.indexOf("export async function touchConnectionSyncedModelsAt");
+  const end = providers.indexOf("export async function resetConnectionBackoff", start);
+  const fn = providers.slice(start, end);
+  assert.match(fn, /invalidateDbCache\("connections", id, \{ skipModelCatalog: true \}\)/);
 });

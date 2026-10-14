@@ -21,7 +21,9 @@ test("TC-OMNIDB-RECLAIM-017B: incremental reclaim is bounded and checkpoints liv
   const source=read("src/lib/db/reclaimFreedPages.ts");
   assert.match(source,/PRAGMA incremental_vacuum\(\$\{batchPages\}\)/);
   assert.match(source,/INCREMENTAL_VACUUM_MAX_BATCHES\s*=\s*2048/);
-  assert.match(source,/INCREMENTAL_VACUUM_TIME_BUDGET_MS\s*=\s*30_000/);
+  const budget = source.match(/INCREMENTAL_VACUUM_TIME_BUDGET_MS\s*=\s*([0-9_]+)/);
+  assert.ok(budget, "reclaim must define a synchronous wall-time budget");
+  assert.ok(Number(budget[1].replaceAll("_", "")) <= 1_000, "sync reclaim budget must stay <= 1s");
   assert.match(source,/checkpointQuietly\(db, "PASSIVE"\)/);
   assert.doesNotMatch(source,/checkpointQuietly\(db, "TRUNCATE"\)/);
   assert.match(source,/requestFullVacuum\(/);

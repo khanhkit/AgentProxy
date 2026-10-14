@@ -202,3 +202,19 @@ test("lastRunAt survives a simulated restart (state reloaded from key_value)", a
   assert.equal(afterRestart, beforeRestart);
   scheduler.stop();
 });
+
+test("AP-ISS-0198 4233388287: runNow honors a pending full-vacuum request before incremental maintenance", async () => {
+  const fs = await import("node:fs");
+  const source = fs.readFileSync(
+    new URL("../../../src/lib/db/vacuumScheduler.ts", import.meta.url),
+    "utf8"
+  );
+  const runNow = source.slice(
+    source.indexOf("export async function runNow"),
+    source.indexOf("function hydrateFromPersistedState")
+  );
+  const fullRequest = runNow.indexOf("currentState.fullVacuumRequestedAt");
+  const incremental = runNow.indexOf('getAutoVacuumModeForDb(db) === "INCREMENTAL"');
+  assert.ok(fullRequest >= 0 && fullRequest < incremental);
+  assert.match(runNow, /fullVacuumRequestedAt[^\n]*\n[\s\S]{0,160}?db\.exec\("VACUUM"\)/);
+});

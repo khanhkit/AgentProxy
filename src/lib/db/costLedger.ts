@@ -66,7 +66,7 @@ export function recordLedgerEntry(entry: CostLedgerEntry): void {
   const db = getDbInstance();
   db.prepare(
     `
-    INSERT INTO request_cost_ledger (
+    INSERT OR IGNORE INTO request_cost_ledger (
       api_key_id, provider, model,
       tokens_input, tokens_output, tokens_cache_read, tokens_cache_creation, tokens_reasoning,
       unit_price_input, unit_price_output, amount_usd,
@@ -88,7 +88,7 @@ export function recordLedgerEntry(entry: CostLedgerEntry): void {
     entry.serviceTier || "standard",
     entry.success === false ? 0 : 1,
     entry.timestamp || new Date().toISOString(),
-    entry.requestId ?? null
+    entry.requestId?.trim() || null
   );
 }
 
@@ -112,7 +112,7 @@ export function recordLedgerEntries(entries: CostLedgerEntry[]): void {
   const db = getDbInstance();
   const stmt = db.prepare(
     `
-    INSERT INTO request_cost_ledger (
+    INSERT OR IGNORE INTO request_cost_ledger (
       api_key_id, provider, model,
       tokens_input, tokens_output, tokens_cache_read, tokens_cache_creation, tokens_reasoning,
       unit_price_input, unit_price_output, amount_usd,
@@ -138,7 +138,7 @@ export function recordLedgerEntries(entries: CostLedgerEntry[]): void {
         entry.serviceTier || "standard",
         entry.success === false ? 0 : 1,
         entry.timestamp || new Date().toISOString(),
-        entry.requestId ?? null
+        entry.requestId?.trim() || null
       );
     }
   });

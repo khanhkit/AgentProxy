@@ -88,13 +88,12 @@ export function findAgenticConversationsByFingerprint(
   return rows.map(toRow);
 }
 
-export function updateAgenticConversation(id: string, patch: { turnCount: number }): void {
+export function updateAgenticConversation(id: string, patch: { turnCount: number }): boolean {
   const db = getDbInstance();
-  db.prepare(`UPDATE agentic_conversations SET turn_count = ?, last_seen_at = ? WHERE id = ?`).run(
-    patch.turnCount,
-    new Date().toISOString(),
-    id
-  );
+  const result = db
+    .prepare(`UPDATE agentic_conversations SET turn_count = ?, last_seen_at = ? WHERE id = ?`)
+    .run(patch.turnCount, new Date().toISOString(), id);
+  return result.changes > 0;
 }
 
 // ── Turn-node tree (migration 156) ───────────────────────────────────────

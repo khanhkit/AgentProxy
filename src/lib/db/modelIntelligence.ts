@@ -217,7 +217,7 @@ export function applyArenaEloRefresh(
     for (const entry of entries) {
       upsertStmt.run(
         entry.model,
-        entry.source,
+        source,
         entry.category,
         entry.score,
         entry.eloRaw ?? null,

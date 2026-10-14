@@ -1049,7 +1049,7 @@ export async function setApiKeyExpiry(id: string, expiresAt: string | null): Pro
 export async function validateApiKey(key: string | null | undefined) {
   if (!key || typeof key !== "string") return false;
 
-  if (isConfiguredEnvApiKey(key) || isSelfLoopBearer(key)) return true;
+  if (isConfiguredEnvApiKey(key)) return true;
 
   const now = Date.now();
   const hashedKey = await hashKey(key);

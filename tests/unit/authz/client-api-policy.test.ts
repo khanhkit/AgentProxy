@@ -13,6 +13,8 @@ const apiKeysDb = await import("../../../src/lib/db/apiKeys.ts");
 const featureFlagsDb = await import("../../../src/lib/db/featureFlags.ts");
 const core = await import("../../../src/lib/db/core.ts");
 
+const { resolveSelfLoopBearer } = await import("../../../src/shared/middleware/chatAdmissionIdentity.ts");
+
 const ORIGINAL_AGENTPROXY_API_KEY = process.env.AGENTPROXY_API_KEY;
 const ORIGINAL_ROUTER_API_KEY = process.env.ROUTER_API_KEY;
 const ORIGINAL_JWT_SECRET = process.env.JWT_SECRET;
@@ -308,4 +310,24 @@ test("clientApiPolicy: ROUTER_API_KEY remains accepted for client API routes", a
   if (out.allow) {
     assert.equal(out.subject.kind, "client_api_key");
   }
+});
+
+
+test("AP-ISS-0198: internal self-loop bearer is rejected on the models endpoint", async () => {
+  const bearer = resolveSelfLoopBearer();
+  const policy = await loadPolicy();
+  const out = await policy.evaluate(
+    ctx(new Headers({ authorization: `Bearer ${bearer}` }), "GET", "/api/v1/models")
+  );
+  assert.equal(out.allow, false);
+  if (!out.allow) assert.equal(out.status, 401);
+});
+
+test("AP-ISS-0198: internal self-loop bearer remains allowed on chat", async () => {
+  const bearer = resolveSelfLoopBearer();
+  const policy = await loadPolicy();
+  const out = await policy.evaluate(
+    ctx(new Headers({ authorization: `Bearer ${bearer}` }), "POST", "/api/v1/chat/completions")
+  );
+  assert.equal(out.allow, true);
 });

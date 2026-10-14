@@ -5,32 +5,20 @@ import type { SqliteAdapter } from "./adapters/types";
 import { pruneBackupDirectory, resolveDbBackupRetention } from "./backupRetention";
 
 interface SqlJsSnapshotDatabase {
-  constructor: unknown;
-  exec(sql: string): Array<{ values: unknown[][] }>;
-  run(sql: string, params: string[]): void;
   export(): Uint8Array;
-  close(): void;
 }
 
-type SqlJsSnapshotConstructor = new (data: Uint8Array) => SqlJsSnapshotDatabase;
-
 function exportSqlJsSnapshot(owner: SqlJsSnapshotDatabase): Uint8Array {
-  const Database = owner.constructor as SqlJsSnapshotConstructor;
-  const snapshot = new Database(new Uint8Array());
-  let image: Uint8Array;
-  try {
-    const filename = snapshot
-      .exec("PRAGMA database_list")[0]
-      ?.values.find((row) => row[1] === "main")?.[2];
-    if (typeof filename !== "string" || !filename) {
-      throw new Error("Missing sql.js snapshot filename");
-    }
-    owner.run("VACUUM main INTO ?", [filename]);
-    image = snapshot.export();
-  } finally {
-    snapshot.close();
-  }
-  return image;
+  return owner.export();
+}
+
+function sanitizeBackupReason(reason: string): string {
+  return (
+    reason
+      .trim()
+      .replace(/[^A-Za-z0-9_-]+/g, "_")
+      .slice(0, 64) || "backup"
+  );
 }
 
 export function createManagedDbBackup(
@@ -44,7 +32,8 @@ export function createManagedDbBackup(
     }
 
     const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
-    const backupPath = path.join(backupDir, `db_${timestamp}_${reason}.sqlite`);
+    const safeReason = sanitizeBackupReason(reason);
+    const backupPath = path.join(backupDir, `db_${timestamp}_${safeReason}.sqlite`);
     const escapedBackupPath = backupPath.replace(/'/g, "''");
 
     if (db.driver === "sql.js") {

@@ -84,6 +84,25 @@ test("cost ledger: record a per-request entry and read it back with full breakdo
   assert.equal(entry.requestId, "req-abc");
 });
 
+test("AP-ISS-0198 4233375490: retrying the same completed request is idempotent", () => {
+  const entry = {
+    apiKeyId: "key-1",
+    provider: "openai",
+    model: "gpt-4o",
+    amountUsd: 1.25,
+    success: true,
+    timestamp: "2026-09-14T10:00:00.000Z",
+    requestId: "req-retry-1",
+  };
+  costLedger.recordLedgerEntry(entry);
+  costLedger.recordLedgerEntry(entry);
+
+  assert.equal(costLedger.listLedgerEntries("key-1").length, 1);
+  const agg = costLedger.aggregateLedgerThisMonth("key-1", "2026-09-14T12:00:00.000Z");
+  assert.equal(agg.amountUsd, 1.25);
+  assert.equal(agg.requestCount, 1);
+});
+
 test("cost ledger: amount-only row (unknown provider/model) is acceptable and traceable", () => {
   costLedger.recordLedgerEntry({
     apiKeyId: "key-1",

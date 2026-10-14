@@ -31,3 +31,10 @@ test("TC-OMNIDB-ELO-041C: membership uses composite model-category keys", () => 
   assert.match(source, /entries\.map\(\(e\) => `\$\{e\.model\}\\u0000\$\{e\.category\}`\)/);
   assert.match(source, /model \|\| char\(0\) \|\| category/);
 });
+
+
+test("AP-ISS-0198 4233380522: Arena refresh persists the refresh source rather than caller-controlled entry.source", () => {
+  const fn = source.slice(source.indexOf("export function applyArenaEloRefresh"), source.indexOf("export function setUserFitnessOverrideEntry"));
+  assert.match(fn, /upsertStmt\.run\(\s*entry\.model,\s*source,/);
+  assert.doesNotMatch(fn, /upsertStmt\.run\(\s*entry\.model,\s*entry\.source,/);
+});

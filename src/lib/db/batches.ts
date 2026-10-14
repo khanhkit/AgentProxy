@@ -621,9 +621,14 @@ export function deleteTerminalBatchesOlderThan(days: number): {
        LIMIT 1`
     );
 
+    const batchOwnedFile = db.prepare(
+      "SELECT 1 FROM files WHERE id = ? AND purpose = 'batch' AND deleted_at IS NULL LIMIT 1"
+    );
+
     let deletedFiles = 0;
     for (const fileId of fileIds) {
       if (stillReferenced.get(fileId, fileId, fileId)) continue;
+      if (!batchOwnedFile.get(fileId)) continue;
       try {
         if (deleteFile(fileId)) deletedFiles++;
       } catch {

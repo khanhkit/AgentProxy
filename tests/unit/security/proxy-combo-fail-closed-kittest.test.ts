@@ -60,13 +60,19 @@ test("AP-ISS-0025: dead combo-scoped assignment blocks DIRECT fallback", async (
   await proxiesDb.assignProxyToScope("combo", comboId, proxy.id);
 
   assert.equal(
-    proxiesDb.hasBlockingProxyAssignment(connectionId, "openai"),
+    proxiesDb.hasBlockingProxyAssignment(connectionId, "openai", comboId),
     true,
-    "dead combo assignment must be part of the fail-closed guard"
+    "dead combo assignment must be part of the fail-closed guard when that combo is active"
+  );
+
+  assert.equal(
+    proxiesDb.hasBlockingProxyAssignment(connectionId, "openai"),
+    false,
+    "AP-ISS-0198 4233385890: an ordinary request must ignore unrelated combo-scoped pools"
   );
 
   await assert.rejects(
-    safeResolveProxy(connectionId, undefined, "openai"),
+    safeResolveProxy(connectionId, undefined, "openai", comboId),
     (error: unknown) =>
       error instanceof Error &&
       (error as Error & { code?: string }).code === "PROXY_ASSIGNED_UNAVAILABLE",

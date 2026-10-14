@@ -201,7 +201,13 @@ export function getRecentEgressIpForProxy(
   host: string,
   port: number
 ): { egressIp: string; at: string } | null {
-  const normalizedHost = typeof host === "string" ? host.trim().replace(/^\[|\]$/g, "").toLowerCase() : "";
+  const normalizedHost =
+    typeof host === "string"
+      ? host
+          .trim()
+          .replace(/^\[|\]$/g, "")
+          .toLowerCase()
+      : "";
   if (!normalizedHost || !Number.isInteger(port) || port < 1 || port > 65535) return null;
   const db = getDbInstance();
   const since = new Date(Date.now() - EGRESS_IP_LOOKUP_WINDOW_MS).toISOString();
@@ -215,7 +221,6 @@ export function getRecentEgressIpForProxy(
     .get(normalizedHost, port, since) as { egress_ip: string; timestamp: string } | undefined;
   return row ? { egressIp: row.egress_ip, at: row.timestamp } : null;
 }
-
 
 export type PoolEgressFailureFamily = {
   family: string;
@@ -374,10 +379,12 @@ export function getRecentEgressIpsForProxy(
   const db = getDbInstance();
   const rows = db
     .prepare(
-      `SELECT DISTINCT egress_ip FROM proxy_logs
+      `SELECT egress_ip FROM proxy_logs
        WHERE LOWER(TRIM(REPLACE(REPLACE(proxy_host, '[', ''), ']', ''))) = ?
          AND proxy_port = ?
          AND egress_ip IS NOT NULL AND timestamp >= ?
+       GROUP BY egress_ip
+       ORDER BY MAX(timestamp) DESC, egress_ip ASC
        LIMIT ?`
     )
     .all(normalizedHost, port, sinceIso, capped) as Array<{ egress_ip: string }>;

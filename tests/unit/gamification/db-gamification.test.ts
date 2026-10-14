@@ -5,6 +5,30 @@ import { calculateLevel } from "../../../src/lib/gamification/xp";
 import { getDbInstance } from "../../../src/lib/db/core";
 
 describe("DB Gamification — addXp level computation", () => {
+  it("AP-ISS-0198 4233376578: rolls back audit and action count when the level write fails", () => {
+    const testKey = `test-addxp-atomic-${Date.now()}`;
+    const db = getDbInstance();
+    db.exec(`CREATE TRIGGER fail_ap0198_user_level
+      BEFORE INSERT ON user_levels
+      WHEN NEW.api_key_id = '${testKey}'
+      BEGIN SELECT RAISE(ABORT, 'forced level failure'); END`);
+    try {
+      assert.throws(() => addXp(testKey, "request", 7), /forced level failure/);
+      const audit = db
+        .prepare("SELECT COUNT(*) AS n FROM xp_audit_log WHERE api_key_id = ?")
+        .get(testKey) as { n: number };
+      const counts = db
+        .prepare("SELECT COUNT(*) AS n FROM xp_action_counts WHERE api_key_id = ?")
+        .get(testKey) as { n: number };
+      assert.equal(audit.n, 0);
+      assert.equal(counts.n, 0);
+    } finally {
+      db.exec("DROP TRIGGER IF EXISTS fail_ap0198_user_level");
+      db.prepare("DELETE FROM xp_audit_log WHERE api_key_id = ?").run(testKey);
+      db.prepare("DELETE FROM xp_action_counts WHERE api_key_id = ?").run(testKey);
+      db.prepare("DELETE FROM user_levels WHERE api_key_id = ?").run(testKey);
+    }
+  });
   it("sets correct level for large initial XP", () => {
     const testKey = `test-addxp-level-${Date.now()}`;
     addXp(testKey, "invite_redeem", 50000);

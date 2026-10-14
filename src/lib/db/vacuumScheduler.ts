@@ -317,6 +317,8 @@ export async function runNow(): Promise<{
       );
       setAutoVacuumForDb(db, drift.configured);
       clearAutoVacuumDrift();
+    } else if (currentState.fullVacuumRequestedAt !== null) {
+      db.exec("VACUUM");
     } else if (getAutoVacuumModeForDb(db) === "INCREMENTAL") {
       reclaimedPages = runBoundedIncrementalVacuum(db);
     } else {

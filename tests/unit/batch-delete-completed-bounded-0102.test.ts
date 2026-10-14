@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { createFile, getFile } from "@/lib/db/files";
-import { createBatch, deleteCompletedBatches, getBatch } from "@/lib/db/batches";
+import { createBatch, deleteCompletedBatches, deleteTerminalBatchesOlderThan, getBatch } from "@/lib/db/batches";
 import { getDbInstance } from "@/lib/db/core";
 
 const CLEANUP_PAGE_SIZE = 100;
@@ -135,4 +135,26 @@ describe("AP-ISS-0102 bounded reference-safe completed batch cleanup", () => {
     assert.ok(getBatch(batch.id), "failed DB deletion must leave the batch row intact");
     assert.ok(getFile(file.id), "rollback must preserve the file referenced by the surviving row");
   });
+});
+
+it("AP-ISS-0198: retention cleanup preserves a non-batch-purpose file", () => {
+  const shared = createFile({
+    bytes: 2,
+    filename: "ap-iss-0198-shared.json",
+    purpose: "assistants",
+    content: Buffer.from("{}"),
+  });
+  const old = createBatch({
+    endpoint: "/v1/chat/completions",
+    completionWindow: "24h",
+    inputFileId: shared.id,
+    status: "completed",
+  });
+  const db = getDbInstance();
+  db.prepare("UPDATE batches SET completed_at = ? WHERE id = ?").run(1, old.id);
+
+  deleteTerminalBatchesOlderThan(0);
+
+  assert.equal(getBatch(old.id), null, "the expired terminal batch should still be deleted");
+  assert.ok(getFile(shared.id), "cleanup must not delete a general-purpose file");
 });

@@ -63,6 +63,39 @@ test("TC-OMNIDB-QUOTA-008B: cost ledger supports traceable monthly successful-sp
   }
 });
 
+test("AP-ISS-0198 4233375490: migration 194 deduplicates existing request identities and preserves anonymous rows", () => {
+  const db = createDbFromMigration();
+  try {
+    const insert = db.prepare(
+      `INSERT INTO request_cost_ledger
+       (api_key_id, provider, model, amount_usd, success, timestamp, request_id)
+       VALUES (?, 'openai', 'gpt', ?, 1, '2026-09-14T00:00:00.000Z', ?)`
+    );
+    insert.run("k1", 1, "retry-1");
+    insert.run("k1", 1, "retry-1");
+    insert.run("k2", 2, "retry-1");
+    insert.run("k1", 3, null);
+    insert.run("k1", 4, null);
+
+    db.exec(read("src/lib/db/migrations/194_request_cost_ledger_request_id_unique.sql"));
+
+    const keyed = (db
+      .prepare("SELECT api_key_id, COUNT(*) AS n FROM request_cost_ledger WHERE request_id = 'retry-1' GROUP BY api_key_id ORDER BY api_key_id")
+      .all() as Array<{ api_key_id: string; n: number }>).map((row) => ({ ...row }));
+    assert.deepEqual(keyed, [
+      { api_key_id: "k1", n: 1 },
+      { api_key_id: "k2", n: 1 },
+    ]);
+    const anonymous = db
+      .prepare("SELECT COUNT(*) AS n FROM request_cost_ledger WHERE request_id IS NULL")
+      .get() as { n: number };
+    assert.equal(anonymous.n, 2);
+    assert.throws(() => insert.run("k1", 9, "retry-1"), /UNIQUE/);
+  } finally {
+    db.close();
+  }
+});
+
 test("TC-OMNIDB-QUOTA-009A: key quota limits preserve NULL-as-unlimited and atomic counters", () => {
   const db = createDbFromMigration();
   try {
