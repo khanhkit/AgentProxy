@@ -469,8 +469,11 @@ export async function runRecoveryPass(
         noteProxyRefusal(key, "ip_quota_429");
         refused++;
       } else if (outcome === "fail" || outcome === "hang") {
-        // Transport failures are not quota evidence. Retain the ledger entry
-        // without extending or manufacturing an ip_quota_429 cooldown.
+        // Transport failures are not quota evidence. Rotate this candidate to
+        // the back of the bounded recovery queue without extending the shared
+        // ip_quota_429 cooldown, so newer set-asides still get a probe slot.
+        recoveryLedger.delete(key);
+        recoveryLedger.set(key, { setAsideAt: Date.now() });
         refused++;
       }
       // `inconclusive` is neutral: retain the ledger entry for a later retry.

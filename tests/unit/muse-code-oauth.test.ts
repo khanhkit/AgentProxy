@@ -117,6 +117,45 @@ test("Muse key mint refuses metadata targets before native fetch", async () => {
   assert.equal(nativeFetchCalls, 0);
 });
 
+test("Muse OAuth device endpoint refuses loopback targets before native fetch", async () => {
+  let nativeFetchCalls = 0;
+  globalThis.fetch = (async () => {
+    nativeFetchCalls += 1;
+    return new Response(
+      JSON.stringify({
+        device_code: "device-local",
+        user_code: "local",
+        verification_uri: "https://www.meta.com/device",
+        expires_in: 600,
+        interval: 5,
+      }),
+      { status: 200, headers: { "Content-Type": "application/json" } }
+    );
+  }) as typeof fetch;
+
+  await assert.rejects(() =>
+    museCode.requestDeviceCode({
+      ...MUSE_CODE_CONFIG,
+      deviceCodeUrl: "http://127.0.0.1:18080/device",
+    })
+  );
+  assert.equal(nativeFetchCalls, 0);
+});
+
+test("Muse key mint refuses loopback targets before native fetch", async () => {
+  let nativeFetchCalls = 0;
+  globalThis.fetch = (async () => {
+    nativeFetchCalls += 1;
+    return new Response(
+      JSON.stringify({ api_key: "LLM|local", base_url: "https://api.meta.ai/v1" }),
+      { status: 200, headers: { "Content-Type": "application/json" } }
+    );
+  }) as typeof fetch;
+
+  await assert.rejects(() => mintMuseApiKey("dca:test", "http://127.0.0.1:18080/mint"));
+  assert.equal(nativeFetchCalls, 0);
+});
+
 test("postExchange keeps the dca token when mint fails (CLIProxyAPI best-effort)", async () => {
   globalThis.fetch = async () =>
     new Response("nope", { status: 500, headers: { "Content-Type": "text/plain" } });

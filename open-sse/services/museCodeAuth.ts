@@ -1,6 +1,5 @@
 import { MUSE_CODE_MINT_URL, museCodeHeaders, normalizeMuseBaseUrl } from "../config/museCode.ts";
 import { safeOutboundFetch } from "@/shared/network/safeOutboundFetch";
-import { getProviderOutboundGuard } from "@/shared/network/outboundUrlGuardPolicy";
 
 export type MuseMintedKey = {
   apiKey: string;
@@ -27,7 +26,6 @@ export async function mintMuseApiKey(
   if (!token) {
     throw new Error("Muse Code mint requires a device access token.");
   }
-  const guard = getProviderOutboundGuard();
   const response = await safeOutboundFetch(mintUrl, {
     method: "POST",
     headers: museCodeHeaders({
@@ -35,7 +33,7 @@ export async function mintMuseApiKey(
       "Content-Type": "application/json",
     }),
     body: JSON.stringify({ dca_token: token }),
-    guard: guard === "none" ? "block-metadata" : guard,
+    guard: "public-only",
     pinDns: true,
     allowRedirect: false,
     retry: false,

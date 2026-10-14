@@ -7,7 +7,6 @@ import {
 import { mintMuseApiKey, type MuseMintedKey } from "@agentproxy/open-sse/services/museCodeAuth.ts";
 import { MUSE_CODE_CONFIG } from "../constants/oauth";
 import { safeOutboundFetch } from "@/shared/network/safeOutboundFetch";
-import { getProviderOutboundGuard } from "@/shared/network/outboundUrlGuardPolicy";
 
 function requiredText(value: unknown, field: string): string {
   if (typeof value !== "string" || !value.trim()) {
@@ -17,10 +16,9 @@ function requiredText(value: unknown, field: string): string {
 }
 
 function museFetch(url: string, init: RequestInit) {
-  const guard = getProviderOutboundGuard();
   return safeOutboundFetch(url, {
     ...init,
-    guard: guard === "none" ? "block-metadata" : guard,
+    guard: "public-only",
     pinDns: true,
     allowRedirect: false,
     retry: false,
