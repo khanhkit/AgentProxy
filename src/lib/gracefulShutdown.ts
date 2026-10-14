@@ -240,7 +240,7 @@ async function waitForRequestDrain(): Promise<void> {
 
 export function requestGracefulShutdown(signal: string): Promise<LifecycleShutdownReport> {
   const state = getShutdownState();
-  if (state.shutdownPromise) return state.shutdownPromise;
+  if (state.shutdownPromise) return state.shutdownPromise as Promise<LifecycleShutdownReport>;
 
   state.shuttingDown = true;
   registerMainLifecycleHooks();
