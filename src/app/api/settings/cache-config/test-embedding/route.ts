@@ -5,6 +5,7 @@ import { sanitizeErrorMessage } from "@agentproxy/open-sse/utils/error";
 import { z } from "zod";
 import { isValidationFailure, validateBody } from "@/shared/validation/helpers";
 import { resolveProviderConnectionDetails } from "@/lib/cache/semanticCacheDbBridge";
+import { parseAndValidatePublicUrl } from "@/shared/network/outboundUrlGuard";
 
 const testEmbeddingSchema = z.object({
   provider: z.string().trim().min(1),
@@ -34,12 +35,25 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: validation.error }, { status: 400 });
   }
 
-  const { provider, model, baseUrl, apiKey } = validation.data;
+  const { provider, model, baseUrl, apiKey, dimensions } = validation.data;
 
-  // Resolve connection details from DB if not explicitly passed
+  // A caller-supplied endpoint is untrusted input: keep it public-only and never
+  // pair it with a credential silently loaded from persistent provider state.
+  if (baseUrl) {
+    try {
+      parseAndValidatePublicUrl(baseUrl);
+    } catch {
+      return NextResponse.json({
+        ok: false,
+        error: "Embedding base URL must be a safe public URL",
+      });
+    }
+  }
+
+  // Saved connection credentials may only travel to the saved connection endpoint.
   const conn = resolveProviderConnectionDetails(provider);
   const effectiveBaseUrl = baseUrl || conn.baseUrl;
-  const effectiveApiKey = apiKey || conn.apiKey;
+  const effectiveApiKey = apiKey || (baseUrl ? undefined : conn.apiKey);
 
   try {
     const generator = createDefaultEmbeddingGenerator({
@@ -47,6 +61,7 @@ export async function POST(request: Request) {
       embeddingModel: model,
       embeddingBaseUrl: effectiveBaseUrl,
       embeddingApiKey: effectiveApiKey,
+      embeddingDimension: dimensions,
     });
 
     const start = Date.now();
@@ -61,6 +76,14 @@ export async function POST(request: Request) {
         },
         { status: 200 }
       );
+    }
+
+    if (dimensions !== undefined && result.embedding.length !== dimensions) {
+      return NextResponse.json({
+        ok: false,
+        error: `Embedding dimension mismatch: expected ${dimensions}, got ${result.embedding.length}`,
+        dimensions: result.embedding.length,
+      });
     }
 
     return NextResponse.json({
