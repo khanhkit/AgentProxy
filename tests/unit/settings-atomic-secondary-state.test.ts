@@ -111,8 +111,14 @@ test("combined settings and upstream-proxy mutation commits atomically with one 
   );
 });
 
-test("upstream-proxy rows use provider activity from the settings transaction", async () => {
+test("upstream-proxy sync removes stale rows for providers inactive in the settings transaction", async () => {
   await seedActiveProvider("openai");
+  await upstreamProxy.upsertUpstreamProxyConfig({
+    providerId: "openai",
+    mode: "cliproxyapi",
+    enabled: true,
+    cliproxyapiModelMapping: { stale: "mapping" },
+  });
   const db = core.getDbInstance();
   db.exec(`
     CREATE TRIGGER deactivate_openai_during_settings_write

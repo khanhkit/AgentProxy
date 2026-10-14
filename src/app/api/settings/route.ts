@@ -522,6 +522,20 @@ export async function PATCH(request: Request) {
       };
 
       transactionMutator = (db) => {
+        db.prepare(
+          `DELETE FROM upstream_proxy_config
+           WHERE provider_id NOT IN ('cliproxyapi', '9router')
+             AND EXISTS (
+               SELECT 1 FROM provider_connections
+               WHERE provider_connections.provider = upstream_proxy_config.provider_id
+             )
+             AND NOT EXISTS (
+               SELECT 1 FROM provider_connections
+               WHERE provider_connections.provider = upstream_proxy_config.provider_id
+                 AND provider_connections.is_active = 1
+             )`
+        ).run();
+
         const activeProviderIds = [
           ...new Set(
             (
