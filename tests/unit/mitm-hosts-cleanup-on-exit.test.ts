@@ -148,6 +148,14 @@ test("MITM library cleanup registration does not claim process signal ownership"
   assert.equal(typeof manager.shutdownMitm, "function");
 });
 
+test("MITM lifecycle cleanup is conditional on active or stale MITM state", () => {
+  const source = fs.readFileSync(path.join(process.cwd(), "src/mitm/manager.ts"), "utf8");
+  assert.match(
+    source,
+    /shutdownMitm[\s\S]*?if \(!serverProcess && !fs\.existsSync\(PID_FILE\)\) return;/
+  );
+});
+
 test("MITM manager publishes an idempotent main-lifecycle drain handle", () => {
   assert.equal(
     (globalThis as typeof globalThis & { __agentproxyShutdownMitm?: () => Promise<void> })

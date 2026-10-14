@@ -874,7 +874,7 @@ export function startBackgroundRefresh() {
   const state = getState();
   if (state.refreshTimer) return;
   state.refreshTimer = setInterval(() => {
-    void trackLifecycleBackgroundTask("quota-cache-refresh", backgroundRefreshTick()).catch(
+    void trackLifecycleBackgroundTask("quota-cache-refresh", () => backgroundRefreshTick())?.catch(
       () => undefined
     );
   }, REFRESH_INTERVAL_MS);

@@ -36,6 +36,37 @@ test("main-runtime durable background schedulers register active work with lifec
   }
 });
 
+test("shutdown-sensitive scheduler callbacks defer work until lifecycle admission", () => {
+  const cases: Array<[string, RegExp]> = [
+    ["src/domain/quotaCache.ts", /trackLifecycleBackgroundTask\("quota-cache-refresh",\s*\(\) => backgroundRefreshTick\(\)\)/],
+    ["src/lib/credentialHealth/scheduler.ts", /trackLifecycleBackgroundTask\("credential-health-sweep",\s*\(\) => sweep\(\)\)/],
+    ["src/lib/freeProxyProviders/scheduler.ts", /trackLifecycleBackgroundTask\("free-proxy-sync",\s*\(\) => runCycle\(\)\)/],
+    ["src/lib/proxyHealth/scheduler.ts", /trackLifecycleBackgroundTask\("proxy-health-sweep",\s*\(\) => sweep\(\)\)/],
+    ["src/lib/proxyHealth/scheduler.ts", /trackLifecycleBackgroundTask\("proxy-health-recovery",\s*\(\) => runRecoveryPass\(\)\)/],
+    ["src/lib/quota/connectionRecovery.ts", /trackLifecycleBackgroundTask\([\s\S]*?"connection-recovery"[\s\S]*?\(\) => runConnectionRecoveryTick/],
+    ["src/lib/radar/scheduler.ts", /trackLifecycleBackgroundTask\("radar-sync",\s*\(\) => radarSchedulerTick\(deps\)\)/],
+    ["src/lib/services/quotaAutoPing.ts", /trackLifecycleBackgroundTask\([\s\S]*?"quota-auto-ping"[\s\S]*?\(\) => runQuotaAutoPingTick/],
+  ];
+
+  for (const [path, pattern] of cases) {
+    assert.match(source(path), pattern, `${path} must defer scheduler work until lifecycle admission`);
+  }
+});
+
+test("periodic sync schedulers keep at most one sync in flight", () => {
+  const arena = source("src/lib/arenaEloSync.ts");
+  assert.match(arena, /if \(syncInProgress\)/);
+
+  for (const path of [
+    "src/lib/pricingSync.ts",
+    "src/lib/catalog/openrouterProviderStats.ts",
+  ]) {
+    const body = source(path);
+    assert.match(body, /let syncInFlight = false/);
+    assert.match(body, /if \(syncInFlight\) return null;/);
+  }
+});
+
 test("delayed scheduler starters reject duplicate init while startup is pending", () => {
   assert.match(
     source("src/lib/db/cleanup.ts"),
@@ -150,7 +181,7 @@ test("scheduler lifecycle error paths stay observable and drains cannot resurrec
   const credential = source("src/lib/credentialHealth/scheduler.ts");
   assert.match(
     credential,
-    /trackLifecycleBackgroundTask\("credential-health-sweep", sweep\(\)\)\.catch/
+    /trackLifecycleBackgroundTask\("credential-health-sweep", \(\) => sweep\(\)\)\?\.catch/
   );
 
   const freeProxy = source("src/lib/freeProxyProviders/scheduler.ts");
@@ -188,6 +219,14 @@ test("review-touched runtime inputs are validated before typed persistence", () 
 
   const inspectorTypes = source("src/mitm/inspector/types.ts");
   assert.match(inspectorTypes, /agent:\s*MitmTargetSchema\.shape\.id\.optional\(\)/);
+});
+
+test("LiveWS restart waits for the prior listener close", () => {
+  const liveWs = source("src/server/ws/liveServer.ts");
+  assert.match(
+    liveWs,
+    /startLiveDashboardServer[\s\S]*?await liveWsClosePromise;[\s\S]*?createServer\(/
+  );
 });
 
 test("LiveWS shutdown publishes an awaitable close drain", () => {

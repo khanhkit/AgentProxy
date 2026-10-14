@@ -1,3 +1,5 @@
+import { isDraining } from "@/lib/shutdownState";
+
 interface LifecycleBackgroundTaskState {
   tasks: Map<Promise<unknown>, string>;
 }
@@ -15,7 +17,18 @@ function getState(): LifecycleBackgroundTaskState {
  * Track process-owned background work that must settle before durable resources
  * close. Callers stay responsible for logging/recovering their own failures.
  */
-export function trackLifecycleBackgroundTask<T>(name: string, promise: Promise<T>): Promise<T> {
+export function trackLifecycleBackgroundTask<T>(name: string, promise: Promise<T>): Promise<T>;
+export function trackLifecycleBackgroundTask<T>(
+  name: string,
+  task: () => Promise<T>
+): Promise<T> | undefined;
+export function trackLifecycleBackgroundTask<T>(
+  name: string,
+  work: Promise<T> | (() => Promise<T>)
+): Promise<T> | undefined {
+  if (typeof work === "function" && isDraining()) return undefined;
+
+  const promise = typeof work === "function" ? work() : work;
   const state = getState();
   state.tasks.set(promise, name);
   void promise.then(

@@ -547,3 +547,21 @@ test("model sync stop cancels both startup timers and exposes active-cycle drain
     timers.restore();
   }
 });
+
+test("model sync queued callbacks cannot resurrect work after stop", async () => {
+  const timers = installTimerStubs();
+  try {
+    const scheduler = await loadScheduler("shutdown-queued-callback");
+    scheduler.startModelSyncScheduler("http://127.0.0.1:7777", 1000);
+    assert.equal(timers.timeouts.length, 2);
+
+    scheduler.stopModelSyncScheduler();
+    await timers.timeouts[0].fn();
+    timers.timeouts[1].fn();
+
+    assert.equal(timers.intervals.length, 0, "a queued phase callback must not re-arm the scheduler");
+    await scheduler.drainModelSyncScheduler();
+  } finally {
+    timers.restore();
+  }
+});

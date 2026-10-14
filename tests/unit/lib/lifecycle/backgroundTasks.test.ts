@@ -7,6 +7,7 @@ import {
   drainLifecycleBackgroundTasks,
   trackLifecycleBackgroundTask,
 } from "../../../../src/lib/lifecycle/backgroundTasks.ts";
+import { getShutdownState } from "../../../../src/lib/shutdownState.ts";
 
 test("tracked background work remains drainable through settlement", async () => {
   __resetLifecycleBackgroundTasksForTests();
@@ -36,4 +37,20 @@ test("a rejected background task does not make lifecycle drain reject", async ()
   await assert.rejects(tracked, /boom/);
   await drainLifecycleBackgroundTasks();
   assert.equal(__getLifecycleBackgroundTaskCountForTests(), 0);
+});
+
+test("deferred background work is not admitted after shutdown starts", async () => {
+  __resetLifecycleBackgroundTasksForTests();
+  delete globalThis.__agentproxyShutdown;
+  getShutdownState().shuttingDown = true;
+  let started = false;
+
+  const tracked = trackLifecycleBackgroundTask("late-db-work", async () => {
+    started = true;
+  });
+
+  assert.equal(tracked, undefined);
+  assert.equal(started, false);
+  assert.equal(__getLifecycleBackgroundTaskCountForTests(), 0);
+  delete globalThis.__agentproxyShutdown;
 });

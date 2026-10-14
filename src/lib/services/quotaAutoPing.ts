@@ -554,8 +554,8 @@ export function startQuotaAutoPing(): void {
   const launchTick = () =>
     trackLifecycleBackgroundTask(
       "quota-auto-ping",
-      runQuotaAutoPingTick(createDefaultQuotaAutoPingDeps(), schedulerState)
-    ).catch(() => undefined);
+      () => runQuotaAutoPingTick(createDefaultQuotaAutoPingDeps(), schedulerState)
+    )?.catch(() => undefined);
   void launchTick();
   schedulerInterval = setInterval(() => {
     void launchTick();

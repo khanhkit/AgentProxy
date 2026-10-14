@@ -293,9 +293,20 @@ export async function refreshOpenRouterProviderStats(): Promise<{
 // ─── Periodic sync (mirrors arenaEloSync.ts's startPeriodicSync shape) ──────
 
 let syncTimer: ReturnType<typeof setInterval> | null = null;
+let syncInFlight = false;
 
 function getEffectiveOpenRouterProviderStatsEnabled(): boolean {
   return process.env.OPENROUTER_PROVIDER_STATS_ENABLED !== "false";
+}
+
+async function runPeriodicProviderStatsSync() {
+  if (syncInFlight) return null;
+  syncInFlight = true;
+  try {
+    return await refreshOpenRouterProviderStats();
+  } finally {
+    syncInFlight = false;
+  }
 }
 
 function startPeriodicSync(intervalMs?: number): void {
@@ -304,9 +315,9 @@ function startPeriodicSync(intervalMs?: number): void {
   const interval = intervalMs ?? getTTL();
   console.log(`[OpenRouterProviderStats] Starting periodic sync every ${interval / 1000}s`);
 
-  trackLifecycleBackgroundTask("openrouter-provider-stats", refreshOpenRouterProviderStats())
-    .then((result) => {
-      if (result.ok) {
+  trackLifecycleBackgroundTask("openrouter-provider-stats", () => runPeriodicProviderStatsSync())
+    ?.then((result) => {
+      if (result?.ok) {
         console.log(
           `[OpenRouterProviderStats] Initial sync complete: ${result.data.length} providers`
         );
@@ -324,8 +335,8 @@ function startPeriodicSync(intervalMs?: number): void {
   syncTimer = setInterval(() => {
     void trackLifecycleBackgroundTask(
       "openrouter-provider-stats",
-      refreshOpenRouterProviderStats()
-    ).catch((err) => {
+      () => runPeriodicProviderStatsSync()
+    )?.catch((err) => {
       console.warn(
         "[OpenRouterProviderStats] Periodic sync error:",
         err instanceof Error ? err.message : err

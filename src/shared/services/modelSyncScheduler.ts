@@ -128,6 +128,7 @@ let phaseTimer: NodeJS.Timeout | null = null;
 let startupTimer: NodeJS.Timeout | null = null;
 let activeCycle: Promise<void> | null = null;
 let isRunning = false;
+let schedulerEnabled = false;
 let internalAuthToken: string | null = null;
 
 function getInternalAuthToken(): string {
@@ -303,6 +304,7 @@ async function runSyncCycle(apiBaseUrl: string): Promise<void> {
 }
 
 function launchSyncCycle(apiBaseUrl: string): Promise<void> {
+  if (!schedulerEnabled) return Promise.resolve();
   if (activeCycle) {
     console.log("[ModelSync] Skipping cycle — previous run still in progress");
     return activeCycle;
@@ -329,10 +331,11 @@ export function startModelSyncScheduler(
   apiBaseUrl = getModelSyncInternalBaseUrl(),
   intervalMs = DEFAULT_INTERVAL_MS
 ): void {
-  if (schedulerTimer || phaseTimer) {
+  if (schedulerTimer || phaseTimer || startupTimer || schedulerEnabled) {
     console.log("[ModelSync] Scheduler already running — skipping start");
     return;
   }
+  schedulerEnabled = true;
 
   // Read MODEL_SYNC_INTERVAL_HOURS env override
   const envHours = parseInt(process.env.MODEL_SYNC_INTERVAL_HOURS ?? "", 10);
@@ -365,6 +368,7 @@ export function startModelSyncScheduler(
   // away from cleanup.ts so the two 6h jobs do not collide for process lifetime.
   phaseTimer = setTimeout(() => {
     phaseTimer = null;
+    if (!schedulerEnabled) return;
     schedulerTimer = setInterval(() => launchSyncCycle(trustedApiBaseUrl), effectiveIntervalMs);
     schedulerTimer.unref?.();
   }, MODEL_SYNC_STAGGER_OFFSET_MS);
@@ -375,6 +379,7 @@ export function startModelSyncScheduler(
  * Stop the model sync scheduler.
  */
 export function stopModelSyncScheduler(): void {
+  schedulerEnabled = false;
   if (startupTimer) {
     clearTimeout(startupTimer);
     startupTimer = null;

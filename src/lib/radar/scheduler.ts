@@ -147,7 +147,7 @@ export function ensureRadarSyncScheduler(deps: RadarSchedulerDeps = {}): boolean
   if (timer) return false;
 
   const tick = () => {
-    void trackLifecycleBackgroundTask("radar-sync", radarSchedulerTick(deps)).catch(
+    void trackLifecycleBackgroundTask("radar-sync", () => radarSchedulerTick(deps))?.catch(
       (err: unknown) => {
         const msg = err instanceof Error ? err.message : String(err);
         console.warn("[RADAR_SYNC] Scheduled sync tick failed (non-fatal):", msg);

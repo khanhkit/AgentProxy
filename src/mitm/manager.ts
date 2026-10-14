@@ -289,6 +289,7 @@ export function installCleanupHandlers(): void {
 }
 
 export async function shutdownMitm(): Promise<void> {
+  if (!serverProcess && !fs.existsSync(PID_FILE)) return;
   await handleExitCleanup("lifecycle");
 }
 

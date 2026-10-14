@@ -405,8 +405,8 @@ export function initConnectionRecoveryScheduler(): void {
   const runTick = () => {
     void trackLifecycleBackgroundTask(
       "connection-recovery",
-      runConnectionRecoveryTick({ logger: tickLogger })
-    ).catch((err: unknown) => {
+      () => runConnectionRecoveryTick({ logger: tickLogger })
+    )?.catch((err: unknown) => {
       const msg = err instanceof Error ? err.message : String(err);
       console.warn(`${RECOVERY_LOG_PREFIX} tick error (non-fatal): ${msg}`);
     });

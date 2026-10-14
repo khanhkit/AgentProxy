@@ -90,7 +90,7 @@ async function runCycle(): Promise<void> {
 
 function scheduleInterval(intervalMs: number): void {
   globalThis.__freeProxyAutoSyncInterval = setInterval(() => {
-    void trackLifecycleBackgroundTask("free-proxy-sync", runCycle());
+    void trackLifecycleBackgroundTask("free-proxy-sync", () => runCycle());
   }, intervalMs);
   globalThis.__freeProxyAutoSyncInterval.unref?.();
 }
@@ -129,7 +129,7 @@ export function initFreeProxyAutoSync(): void {
       globalThis.__freeProxyAutoSyncStartupTimer = setTimeout(() => {
         globalThis.__freeProxyAutoSyncStartupTimer = undefined;
         if (!globalThis.__freeProxyAutoSyncEnabled) return;
-        void trackLifecycleBackgroundTask("free-proxy-sync", runCycle());
+        void trackLifecycleBackgroundTask("free-proxy-sync", () => runCycle());
         scheduleInterval(intervalMs);
       }, initialDelayMs);
       globalThis.__freeProxyAutoSyncStartupTimer.unref?.();
