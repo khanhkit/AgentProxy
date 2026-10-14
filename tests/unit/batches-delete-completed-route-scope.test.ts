@@ -11,11 +11,10 @@
  *   - an inference key must only sweep its own completed batches and the response
  *     must report 0 deletions when it owns none — proven against an un-scoped
  *     `{ allTenants: true }` regression (the "flip" recorded in the PR notes);
- *   - a presented API key always scopes the sweep to that key, even alongside a
- *     dashboard session cookie (the key wins, like GET /v1/batches); only a
- *     session WITHOUT a key sweeps the whole instance;
- *   - a presented key that does not resolve (deleted/rotated/mistyped) is rejected
- *     with 401 even when a session cookie is also present (fail closed);
+ *   - a dashboard session is instance-operator authority even when an incidental
+ *     API-key header is also present (AP-ISS-0197); key-only calls stay owner-scoped;
+ *   - unresolved/invalid presented keys fail closed for key-only callers; a valid
+ *     dashboard session does not get narrowed or invalidated by an incidental key;
  *   - a presented key that resolves but is no longer VALID (revoked, deactivated,
  *     banned or expired) is rejected with 401 too — existence of the row is not
  *     authorization (CWE-613); the 401 body is the `buildErrorBody()` shape;
@@ -136,7 +135,7 @@ describe("DELETE /api/v1/batches/delete-completed — caller scope (GHSA-wvxc-jp
     assert.strictEqual(getFile(other.file.id), null, "session sweep soft-deletes the files too");
   });
 
-  it("a request carrying BOTH a session cookie and an API key is scoped to the key (the key wins, like GET /v1/batches)", async () => {
+  it("a request carrying BOTH a dashboard session and an API key sweeps the whole instance", async () => {
     const keyA = await createApiKey("wvxc-route-both-a", "machine-wvxc-ba", []);
     const keyB = await createApiKey("wvxc-route-both-b", "machine-wvxc-bb", []);
     const own = seedCompletedBatch(keyA.id, "wvxc-route-both-own");
@@ -149,21 +148,13 @@ describe("DELETE /api/v1/batches/delete-completed — caller scope (GHSA-wvxc-jp
     });
 
     assert.strictEqual(res.status, 200);
-    assert.strictEqual(body.deletedBatches, 1, "only key A's own completed batch is swept");
-    assert.strictEqual(getBatch(own.batch.id), null, "key A's own batch is swept");
-    assert.ok(
-      getBatch(other.batch.id),
-      "key B's batch survives — a presented key never widens the sweep"
-    );
-    assert.ok(getBatch(unowned.batch.id), "the unowned batch survives a key-scoped sweep");
-    assert.strictEqual(
-      getFileContent(other.file.id)?.toString(),
-      "wvxc-route-both-other",
-      "key B's file content is intact"
-    );
+    assert.strictEqual(body.deletedBatches, 3, "dashboard session remains instance-wide");
+    assert.strictEqual(getBatch(own.batch.id), null);
+    assert.strictEqual(getBatch(other.batch.id), null);
+    assert.strictEqual(getBatch(unowned.batch.id), null);
   });
 
-  it("rejects a presented API key that does not resolve with 401 — even alongside a session cookie — and deletes nothing", async () => {
+  it("dashboard session ignores an incidental unresolvable API key and still sweeps instance-wide", async () => {
     const keyB = await createApiKey("wvxc-route-unknown-b", "machine-wvxc-ub", []);
     const other = seedCompletedBatch(keyB.id, "wvxc-route-unknown-other");
 
@@ -172,18 +163,9 @@ describe("DELETE /api/v1/batches/delete-completed — caller scope (GHSA-wvxc-jp
       cookie: await sessionCookie(),
     });
 
-    assert.strictEqual(
-      res.status,
-      401,
-      "an unresolvable key must fail closed, not fall through to the session"
-    );
-    assert.match(body.error?.message ?? "", /Invalid API key/);
-    assert.ok(getBatch(other.batch.id), "nothing is swept on a rejected credential");
-    assert.strictEqual(
-      getFileContent(other.file.id)?.toString(),
-      "wvxc-route-unknown-other",
-      "file content is intact on a rejected credential"
-    );
+    assert.strictEqual(res.status, 200);
+    assert.strictEqual(body.deletedBatches, 1);
+    assert.strictEqual(getBatch(other.batch.id), null);
   });
 
   it("rejects a REVOKED key with 401 — the row still exists but is no longer valid — and deletes nothing", async () => {
@@ -229,7 +211,7 @@ describe("DELETE /api/v1/batches/delete-completed — caller scope (GHSA-wvxc-jp
     assert.ok(getBatch(own.batch.id), "nothing is swept with a banned key");
   });
 
-  it("rejects an EXPIRED key with 401 — even alongside a session cookie — and deletes nothing", async () => {
+  it("dashboard session ignores an incidental expired API key and still sweeps instance-wide", async () => {
     const keyA = await createApiKey("wvxc-route-expired-a", "machine-wvxc-ea", []);
     const own = seedCompletedBatch(keyA.id, "wvxc-route-expired-own");
     const unowned = seedCompletedBatch(null, "wvxc-route-expired-unowned");
@@ -240,14 +222,13 @@ describe("DELETE /api/v1/batches/delete-completed — caller scope (GHSA-wvxc-jp
       cookie: await sessionCookie(),
     });
 
-    assert.strictEqual(
-      res.status,
-      401,
-      "an expired key must fail closed, not fall through to the session"
+    assert.strictEqual(res.status, 200);
+    assert.ok(
+      (body.deletedBatches ?? 0) >= 2,
+      "session sweep includes current and previously retained completed batches"
     );
-    assert.strictEqual(body.error?.message, "Invalid API key");
-    assert.ok(getBatch(own.batch.id), "nothing is swept with an expired key");
-    assert.ok(getBatch(unowned.batch.id), "the session branch is never reached");
+    assert.strictEqual(getBatch(own.batch.id), null);
+    assert.strictEqual(getBatch(unowned.batch.id), null);
   });
 
   it("rejects an unauthenticated request with 401 and deletes nothing", async () => {

@@ -40,7 +40,9 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
   // on scope.apiKeyId let that transport skip the endpoint allowlist,
   // schedule, usage cap, rate limit and key quota entirely (round-2 PoC
   // against e543b64). A keyless caller (session/anonymous) is a no-op here.
-  const policy = await enforceApiKeyPolicy(request, null);
+  const policy = scope.isSessionAuth
+    ? { apiKeyInfo: null, rejection: null }
+    : await enforceApiKeyPolicy(request, null);
   if (policy.rejection) return policy.rejection;
 
   const { id } = await params;
@@ -55,7 +57,17 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
   // Session = operator, key = own rows only, null owner = denied
   // (GHSA-2jm2-mpx8-6523): the previous local check let ANY caller read or
   // delete an unowned batch by id.
-  if (!batch || !canAccessOwnedRecord({ ...scope, apiKeyId: effectiveApiKeyId }, batch.apiKeyId)) {
+  if (
+    !batch ||
+    !canAccessOwnedRecord(
+      {
+        ...scope,
+        apiKeyId: effectiveApiKeyId,
+        apiKeyMetadata: scope.apiKeyMetadata ?? policy.apiKeyInfo,
+      },
+      batch.apiKeyId
+    )
+  ) {
     return NextResponse.json(
       { error: { message: "Batch not found", type: "invalid_request_error" } },
       { status: 404, headers: CORS_HEADERS }
@@ -91,7 +103,9 @@ export async function DELETE(request: Request, { params }: { params: Promise<{ i
   // on scope.apiKeyId let that transport skip the endpoint allowlist,
   // schedule, usage cap, rate limit and key quota entirely (round-2 PoC
   // against e543b64). A keyless caller (session/anonymous) is a no-op here.
-  const policy = await enforceApiKeyPolicy(request, null);
+  const policy = scope.isSessionAuth
+    ? { apiKeyInfo: null, rejection: null }
+    : await enforceApiKeyPolicy(request, null);
   if (policy.rejection) return policy.rejection;
 
   const { id } = await params;
@@ -103,7 +117,17 @@ export async function DELETE(request: Request, { params }: { params: Promise<{ i
   // (LEDGER-27, omni-code-sec round 3).
   const effectiveApiKeyId = resolveEffectiveApiKeyId(scope, policy.apiKeyInfo);
 
-  if (!batch || !canAccessOwnedRecord({ ...scope, apiKeyId: effectiveApiKeyId }, batch.apiKeyId)) {
+  if (
+    !batch ||
+    !canAccessOwnedRecord(
+      {
+        ...scope,
+        apiKeyId: effectiveApiKeyId,
+        apiKeyMetadata: scope.apiKeyMetadata ?? policy.apiKeyInfo,
+      },
+      batch.apiKeyId
+    )
+  ) {
     return NextResponse.json(
       { error: { message: "Batch not found", type: "invalid_request_error" } },
       { status: 404, headers: CORS_HEADERS }
