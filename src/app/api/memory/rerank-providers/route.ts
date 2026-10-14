@@ -40,7 +40,7 @@ export async function GET(request: NextRequest) {
 
     // Local provider nodes, listed with the rerank-typed models they expose
     // (synced + custom rows; see nodeModalityListings.ts).
-    const extra = await listProviderNodeModalityListings("rerank");
+    const extra = await listProviderNodeModalityListings("rerank").catch(() => []);
 
     return NextResponse.json({ providers: mergeRerankProviderListings(curated, extra) });
   } catch (err: unknown) {

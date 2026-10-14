@@ -40,3 +40,12 @@ test("GET /api/memory/rerank-providers includes rerank-capable local provider no
     { provider: "local-reranker", hasKey: true, models: [] }
   );
 });
+
+test("local node listing failure is isolated from curated rerank providers", () => {
+  const source = fs.readFileSync("src/app/api/memory/rerank-providers/route.ts", "utf8");
+  assert.match(
+    source,
+    /listProviderNodeModalityListings\("rerank"\)\.catch\(\(\) => \[\]\)/,
+    "optional local-node listing must fail open to [] instead of failing the whole route"
+  );
+});
