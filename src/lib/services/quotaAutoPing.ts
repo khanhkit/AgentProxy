@@ -30,6 +30,7 @@ import { getCodexUsage } from "@agentproxy/open-sse/services/usage/codex.ts";
 import { throttleQuotaFetch } from "@agentproxy/open-sse/services/quotaFetchThrottle.ts";
 import { getSettings } from "@/lib/db/settings";
 import { getProviderConnections, updateProviderConnection } from "@/lib/db/providers";
+import { toProviderConnection } from "@/lib/db/providers/lazyConnectionView";
 import { isConnectionUnavailableToAuxiliaryActivity } from "@/lib/exclusiveLeaseIsolation";
 import { refreshAndUpdateCredentialsWithResolver } from "@/lib/usage/providerLimits/credentialRefresh";
 import { getCircuitBreaker } from "@/shared/utils/circuitBreaker";
@@ -148,8 +149,24 @@ export async function resolveQuotaAutoPingModel(
 export function createDefaultQuotaAutoPingDeps(): QuotaAutoPingDeps {
   return {
     getSettings,
-    getProviderConnections:
-      getProviderConnections as unknown as QuotaAutoPingDeps["getProviderConnections"],
+    getProviderConnections: async (filter) =>
+      (await getProviderConnections(filter)).map((row) => {
+        const connection = toProviderConnection(row);
+        return {
+          id: connection.id,
+          provider: connection.provider,
+          authType: connection.authType ?? undefined,
+          accessToken: connection.accessToken ?? undefined,
+          refreshToken: connection.refreshToken ?? undefined,
+          tokenExpiresAt: connection.tokenExpiresAt,
+          expiresAt: connection.expiresAt,
+          providerSpecificData: connection.providerSpecificData,
+          rateLimitedUntil: connection.rateLimitedUntil,
+          lastPingAt: typeof row.lastPingAt === "string" ? row.lastPingAt : null,
+          lastPingedResetKey:
+            typeof row.lastPingedResetKey === "string" ? row.lastPingedResetKey : null,
+        };
+      }),
     updateProviderConnection,
     refreshAndUpdateCredentials: async (connection) =>
       refreshAndUpdateCredentialsWithResolver(connection, loadQuotaAutoPingExecutor),

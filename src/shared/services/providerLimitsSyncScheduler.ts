@@ -108,6 +108,9 @@ export function stopProviderLimitsSyncScheduler(): void {
 
 export async function drainProviderLimitsSyncScheduler(): Promise<void> {
   while (startupSetup || activeCycle) {
-    await Promise.allSettled([startupSetup, activeCycle].filter(Boolean) as Promise<void>[]);
+    const pending: Promise<void>[] = [];
+    if (startupSetup) pending.push(startupSetup);
+    if (activeCycle) pending.push(activeCycle);
+    await Promise.allSettled(pending);
   }
 }

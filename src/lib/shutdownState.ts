@@ -1,3 +1,5 @@
+import type { LifecycleShutdownReport } from "@/lib/lifecycle/coordinator";
+
 /**
  * Dependency-light process shutdown state shared with request hot paths.
  *
@@ -12,7 +14,7 @@ declare global {
         init: boolean;
         shuttingDown: boolean;
         activeRequests: number;
-        shutdownPromise?: Promise<unknown>;
+        shutdownPromise?: Promise<LifecycleShutdownReport>;
       }
     | undefined;
 }
