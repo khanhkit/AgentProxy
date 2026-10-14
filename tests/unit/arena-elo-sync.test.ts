@@ -672,7 +672,10 @@ describe("syncArenaElo()", () => {
 
     mockFetch(async (url: string) => {
       if (url.includes("name=text")) return jsonResponse(textData);
-      if (url.includes("name=code")) return jsonResponse(makeLeaderboardData([], "code"));
+      if (url.includes("name=code"))
+        return jsonResponse(
+          makeLeaderboardData([makeModelEntry({ model: "code-test-model" })], "code")
+        );
       return new Response("Not found", { status: 404 });
     });
 
@@ -695,7 +698,10 @@ describe("syncArenaElo()", () => {
 
     mockFetch(async (url: string) => {
       if (url.includes("name=text")) return jsonResponse(textData);
-      if (url.includes("name=code")) return jsonResponse(makeLeaderboardData([], "code"));
+      if (url.includes("name=code"))
+        return jsonResponse(
+          makeLeaderboardData([makeModelEntry({ model: "code-test-model" })], "code")
+        );
       return new Response("Not found", { status: 404 });
     });
 
@@ -722,7 +728,10 @@ describe("syncArenaElo()", () => {
 
     mockFetch(async (url: string) => {
       if (url.includes("name=text")) return jsonResponse(textData);
-      if (url.includes("name=code")) return jsonResponse(makeLeaderboardData([], "code"));
+      if (url.includes("name=code"))
+        return jsonResponse(
+          makeLeaderboardData([makeModelEntry({ model: "code-test-model" })], "code")
+        );
       return new Response("Not found", { status: 404 });
     });
 
@@ -750,7 +759,7 @@ describe("syncArenaElo()", () => {
     );
   });
 
-  it("calls deleteExpiredIntelligence before writing new entries", async () => {
+  it("complete refresh atomically prunes stale entries", async () => {
     testAdapter
       .prepare(
         "INSERT INTO model_intelligence (model, source, category, score, elo_raw, confidence, synced_at, expires_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
@@ -775,7 +784,10 @@ describe("syncArenaElo()", () => {
 
     mockFetch(async (url: string) => {
       if (url.includes("name=text")) return jsonResponse(textData);
-      if (url.includes("name=code")) return jsonResponse(makeLeaderboardData([], "code"));
+      if (url.includes("name=code"))
+        return jsonResponse(
+          makeLeaderboardData([makeModelEntry({ model: "code-test-model" })], "code")
+        );
       return new Response("Not found", { status: 404 });
     });
 
@@ -788,17 +800,21 @@ describe("syncArenaElo()", () => {
     assert.strictEqual(expiredEntry, undefined);
   });
 
-  it("handles empty leaderboard gracefully (0 entries, no DB write)", async () => {
+  it("empty leaderboard is incomplete and preserves an empty DB", async () => {
     mockFetch(async (url: string) => {
       if (url.includes("name=text")) return jsonResponse(makeLeaderboardData([], "text"));
-      if (url.includes("name=code")) return jsonResponse(makeLeaderboardData([], "code"));
+      if (url.includes("name=code"))
+        return jsonResponse(
+          makeLeaderboardData([makeModelEntry({ model: "code-test-model" })], "code")
+        );
       return new Response("Not found", { status: 404 });
     });
 
     const result = await syncArenaElo();
 
-    assert.strictEqual(result.success, true);
+    assert.strictEqual(result.success, false);
     assert.strictEqual(result.modelCount, 0);
+    assert.match(result.error ?? "", /Incomplete Arena refresh/);
     assert.strictEqual(countArenaEloEntries(), 0);
   });
 
@@ -810,7 +826,10 @@ describe("syncArenaElo()", () => {
 
     mockFetch(async (url: string) => {
       if (url.includes("name=text")) return jsonResponse(textData);
-      if (url.includes("name=code")) return jsonResponse(makeLeaderboardData([], "code"));
+      if (url.includes("name=code"))
+        return jsonResponse(
+          makeLeaderboardData([makeModelEntry({ model: "code-test-model" })], "code")
+        );
       return new Response("Not found", { status: 404 });
     });
 
@@ -836,7 +855,10 @@ describe("syncArenaElo()", () => {
 
     mockFetch(async (url: string) => {
       if (url.includes("name=text")) return jsonResponse(textData);
-      if (url.includes("name=code")) return jsonResponse(makeLeaderboardData([], "code"));
+      if (url.includes("name=code"))
+        return jsonResponse(
+          makeLeaderboardData([makeModelEntry({ model: "code-test-model" })], "code")
+        );
       return new Response("Not found", { status: 404 });
     });
 

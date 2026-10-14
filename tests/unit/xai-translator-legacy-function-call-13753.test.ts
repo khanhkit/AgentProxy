@@ -42,6 +42,44 @@ test("xAI chat translator pairs legacy function output with the generated call i
   assert.equal(output?.output, '{"answer":42}');
 });
 
+test("xAI chat translator drops an orphan legacy function output", () => {
+  const out = chatRequestToXaiResponses({
+    model: "grok-4.1-fast",
+    messages: [{ role: "function", name: "lookup", content: '{"answer":42}' }],
+  } as never);
+
+  assert.equal(
+    out.input.some((entry) => entry.role === "function"),
+    false
+  );
+  assert.equal(
+    out.input.some((entry) => entry.type === "function_call_output"),
+    false
+  );
+});
+
+test("xAI chat translator drops a mismatched legacy function output", () => {
+  const out = chatRequestToXaiResponses({
+    model: "grok-4.1-fast",
+    messages: [
+      {
+        role: "assistant",
+        function_call: { name: "lookup", arguments: '{"q":"x"}' },
+      },
+      { role: "function", name: "other", content: '{"answer":42}' },
+    ],
+  } as never);
+
+  assert.equal(
+    out.input.some((entry) => entry.role === "function"),
+    false
+  );
+  assert.equal(
+    out.input.some((entry) => entry.type === "function_call_output"),
+    false
+  );
+});
+
 test("xAI reverse translators derive total tokens from prompt/completion aliases", () => {
   const completed = {
     usage: { prompt_tokens: 7, completion_tokens: 5 },
