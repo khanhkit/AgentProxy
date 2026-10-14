@@ -4,7 +4,12 @@ import { handleChat } from "@/sse/handlers/chat";
 import { generateRequestId } from "@/shared/utils/requestId";
 import { resolveIncomingCorrelationId } from "@/shared/utils/correlationPreserve.ts";
 import { errorResponse } from "@agentproxy/open-sse/utils/error.ts";
-import { handleSelfHostedCompletions } from "@agentproxy/open-sse/services/selfHostedEntry.ts";
+import {
+  CONFIG_ENV as SELF_HOSTED_CONFIG_ENV,
+  CONFIG_FILE_ENV as SELF_HOSTED_CONFIG_FILE_ENV,
+  handleSelfHostedCompletions,
+} from "@agentproxy/open-sse/services/selfHostedEntry.ts";
+import { enforceApiKeyPolicy } from "@/shared/utils/apiKeyPolicy";
 import { initTranslators } from "@agentproxy/open-sse/translator/index.ts";
 import { createInjectionGuard } from "@/middleware/promptInjectionGuard";
 import { acceptHeaderForcesStream } from "@agentproxy/open-sse/utils/aiSdkCompat.ts";
@@ -168,28 +173,39 @@ export async function POST(request) {
             );
           }
 
-        const { blocked, result } = injectionGuard(parsedBody);
-        if (blocked) {
-          return finishAdmission(
-            new Response(
-              JSON.stringify({
-                error: {
-                  message: "Request blocked: potential prompt injection detected",
-                  type: "injection_detected",
-                  code: "SECURITY_001",
-                  detections: result.detections.length,
-                },
-              }),
-              { status: 400, headers: { ...CORS_HEADERS, "Content-Type": "application/json" } }
-            )
-          );
-        }
+          const { blocked, result } = injectionGuard(parsedBody);
+          if (blocked) {
+            return finishAdmission(
+              new Response(
+                JSON.stringify({
+                  error: {
+                    message: "Request blocked: potential prompt injection detected",
+                    type: "injection_detected",
+                    code: "SECURITY_001",
+                    detections: result.detections.length,
+                  },
+                }),
+                { status: 400, headers: { ...CORS_HEADERS, "Content-Type": "application/json" } }
+              )
+            );
+          }
 
           // Self-hosted unified entry (D4 — RIC-738): when a provider config is
           // present, divert BEFORE the cloud-only model retirement/alias checks so
           // self-hosted model ids (`local/llama3`, `ollama/qwen2`, ...) never trip
           // cloud-peer 410s or alias rewrites. Config-absent requests proceed to the
           // normal cloud pipeline unchanged.
+          const selfHostedConfigured = Boolean(
+            process.env[SELF_HOSTED_CONFIG_ENV] || process.env[SELF_HOSTED_CONFIG_FILE_ENV]
+          );
+          if (selfHostedConfigured) {
+            const requestedModel = typeof parsedBody.model === "string" ? parsedBody.model : null;
+            const selfHostedPolicy = await enforceApiKeyPolicy(request, requestedModel);
+            if (selfHostedPolicy.rejection) {
+              return finishAdmission(selfHostedPolicy.rejection);
+            }
+          }
+
           const selfHostedResponse = await handleSelfHostedCompletions(request, parsedBody);
           if (selfHostedResponse) {
             return finishAdmission(selfHostedResponse);
@@ -244,7 +260,6 @@ export async function POST(request) {
             /* swallow — fall through with original model */
           });
         }
-
       }
     } catch (error) {
       console.error("[SECURITY] Prompt injection guard failed:", error);
