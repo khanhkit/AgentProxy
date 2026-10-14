@@ -8,6 +8,7 @@ import { APP_CONFIG } from "@/shared/constants/config";
 import { AI_PROVIDERS } from "@/shared/constants/providers";
 import { isAuthenticated } from "@/shared/utils/apiAuth";
 import { requireManagementAuth } from "@/lib/api/requireManagementAuth";
+import { parseAndValidatePublicUrl } from "@/shared/network/outboundUrlGuard";
 
 /**
  * GET /api/monitoring/health — System health overview
@@ -83,9 +84,7 @@ function resolveDeepHealthTarget(): { url: string; token?: string } | null {
   const rawUrl = (process.env.DEEP_HEALTH_CHECK_URL ?? "").trim();
   if (!rawUrl) return null;
   try {
-    const parsed = new URL(rawUrl);
-    if (parsed.protocol !== "http:" && parsed.protocol !== "https:") return null;
-    if (parsed.username || parsed.password) return null;
+    const parsed = parseAndValidatePublicUrl(rawUrl);
     const token = (process.env.DEEP_HEALTH_CHECK_TOKEN ?? "").trim();
     return { url: parsed.toString(), ...(token ? { token } : {}) };
   } catch {
@@ -94,7 +93,9 @@ function resolveDeepHealthTarget(): { url: string; token?: string } | null {
 }
 
 function withDeepHealth(payload: unknown, wantDeep: boolean): unknown {
-  if (!wantDeep || !deepHealthVerdictCache) return payload;
+  if (!wantDeep || !deepHealthVerdictCache || Date.now() > deepHealthVerdictCache.expiresAt) {
+    return payload;
+  }
   return { ...(payload as Record<string, unknown>), deepHealth: deepHealthVerdictCache.verdict };
 }
 

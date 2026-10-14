@@ -5,6 +5,8 @@ import {
 import type { AdaptiveAdmissionPublicSnapshot } from "@agentproxy/open-sse/services/admission/runtime.ts";
 import type { PerConnectionAdmissionController } from "@/shared/middleware/chatBodyAdmission";
 import type { WalMaintenanceState } from "@/lib/db/walMaintenance";
+import { safeOutboundFetch } from "@/shared/network/safeOutboundFetch";
+import { parseAndValidatePublicUrl } from "@/shared/network/outboundUrlGuard";
 
 type JsonRecord = Record<string, unknown>;
 
@@ -643,7 +645,11 @@ export async function probeDeepHealth(
   });
 
   try {
-    const request = fetcher(url, {
+    // Reject obvious private/link-local targets before any transport. Production
+    // also uses safeOutboundFetch below, which re-validates DNS answers immediately
+    // before egress so a public hostname cannot rebind to an internal address.
+    parseAndValidatePublicUrl(url);
+    const init: RequestInit = {
       method: "POST",
       headers: {
         "content-type": "application/json",
@@ -651,7 +657,18 @@ export async function probeDeepHealth(
       },
       body: JSON.stringify({ max_tokens: 1, stream: false }),
       signal: controller.signal,
-    });
+      redirect: "manual",
+    };
+    const request = opts.fetcher
+      ? fetcher(url, init)
+      : safeOutboundFetch(url, {
+          ...init,
+          timeoutMs,
+          guard: "public-only",
+          pinDns: true,
+          allowRedirect: false,
+          retry: false,
+        });
     const timeout = new Promise<never>((_, reject) => {
       timeoutHandle = setTimeout(() => {
         controller.abort();
