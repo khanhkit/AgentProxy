@@ -35,11 +35,12 @@ const MAX_EMBEDDING_URL_LENGTH = 2048;
 const MAX_MEDIA_TYPE_LENGTH = 255;
 // Four base64 characters encode at most three bytes. Reject by encoded length first
 // so multi-megabyte oversize payloads never reach format validation.
-const MAX_EMBEDDING_INLINE_ITEM_BASE64_LENGTH = Math.ceil(MAX_EMBEDDING_INLINE_ITEM_BYTES / 3) * 4;
+export const MAX_EMBEDDING_INLINE_ITEM_BASE64_LENGTH =
+  Math.ceil(MAX_EMBEDDING_INLINE_ITEM_BYTES / 3) * 4;
 const BASE64_CHUNK_RE = /^[A-Za-z0-9+/]{4}$/;
 const BASE64_LAST_CHUNK_RE = /^(?:[A-Za-z0-9+/]{4}|[A-Za-z0-9+/]{3}=|[A-Za-z0-9+/]{2}==)$/;
 
-function decodedBase64Bytes(data: string): number {
+export function decodedBase64Bytes(data: string): number {
   const padding = data.endsWith("==") ? 2 : data.endsWith("=") ? 1 : 0;
   return (data.length * 3) / 4 - padding;
 }

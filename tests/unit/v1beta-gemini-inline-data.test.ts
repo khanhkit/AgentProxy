@@ -3,6 +3,10 @@ import assert from "node:assert/strict";
 
 const { convertGeminiToInternal } =
   await import("../../src/app/api/v1beta/models/[...path]/convertGeminiToInternal.ts");
+const { v1betaGeminiGenerateSchema } =
+  await import("../../src/shared/validation/schemas/gemini.ts");
+const { MAX_EMBEDDING_INLINE_ITEM_BYTES } =
+  await import("../../src/shared/validation/schemas/apiV1.ts");
 
 const PNG = "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJ";
 
@@ -79,4 +83,47 @@ test("v1beta does not emit assistant inlineData as image content", () => {
     false
   );
   assert.deepEqual(out.messages, [{ role: "assistant", content: "done" }]);
+});
+
+test("v1beta rejects a single inlineData blob larger than 8 MiB decoded", () => {
+  const data = Buffer.alloc(MAX_EMBEDDING_INLINE_ITEM_BYTES + 1).toString("base64");
+  const parsed = v1betaGeminiGenerateSchema.safeParse({
+    contents: [{ role: "user", parts: [{ inlineData: { mimeType: "image/png", data } }] }],
+  });
+  assert.equal(parsed.success, false);
+  if (!parsed.success) {
+    assert.match(parsed.error.issues.map((issue) => issue.message).join(" "), /8 MiB/i);
+  }
+});
+
+test("v1beta rejects more than 16 MiB aggregate inline media", () => {
+  const exactlyEightMiB = Buffer.alloc(MAX_EMBEDDING_INLINE_ITEM_BYTES).toString("base64");
+  const parsed = v1betaGeminiGenerateSchema.safeParse({
+    contents: [
+      {
+        role: "user",
+        parts: [
+          { inlineData: { mimeType: "image/png", data: exactlyEightMiB } },
+          { inline_data: { mime_type: "image/png", data: exactlyEightMiB } },
+          { inlineData: { mimeType: "image/png", data: "AAAA" } },
+        ],
+      },
+    ],
+  });
+  assert.equal(parsed.success, false);
+  if (!parsed.success) {
+    assert.match(parsed.error.issues.map((issue) => issue.message).join(" "), /16 MiB/i);
+  }
+});
+
+test("v1beta still accepts bounded inlineData", () => {
+  const parsed = v1betaGeminiGenerateSchema.safeParse({
+    contents: [
+      {
+        role: "user",
+        parts: [{ text: "describe" }, { inlineData: { mimeType: "image/png", data: PNG } }],
+      },
+    ],
+  });
+  assert.equal(parsed.success, true);
 });
