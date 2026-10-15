@@ -95,13 +95,13 @@
 
 ## [0.1.0] — 2026-09-12
 
-Initial **AgentProxy** release, published as an independent repository seeded from AgentProxy.
+Initial **AgentProxy** release, published as an independent repository seeded from its predecessor codebase.
 
 - Added the Rust inference gateway with native Codex Responses streaming, first-event commit, pre-commit account fallback, in-memory API-key admission, and connection-aware scheduling.
 - Added Node→Rust snapshot synchronization, process supervision, split API/dashboard ports, and legacy HTTP/WebSocket fallback.
 - Reworked the container path so the standalone bundle ships and supervises the Rust gateway.
 - Replaced inherited Docker Hub publishing with AgentProxy GHCR multi-architecture publishing and per-architecture runtime smoke checks.
-- Preserved AgentProxy history below for attribution and migration reference; AgentProxy versioning starts at `0.1.0`.
+- Preserved predecessor project history below for attribution and migration reference; AgentProxy versioning starts at `0.1.0`.
 
 
 

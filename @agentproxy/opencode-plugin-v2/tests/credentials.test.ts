@@ -71,36 +71,6 @@ describe("gateway credential resolution", () => {
     assert.deepEqual(env, { key: "from-env", origin: "env" });
   });
 
-  it("prefers AGENTPROXY_API_KEY over the legacy AGENTPROXY_API_KEY fallback", async () => {
-    const previousLegacy = process.env.AGENTPROXY_API_KEY;
-    process.env.AGENTPROXY_API_KEY = "legacy-env";
-    try {
-      const { log } = collectingLogger();
-      const got = await withEnv("agentproxy-env", () =>
-        resolveApiKey(ctxWith(undefined), "agentproxy", undefined, log)
-      );
-      assert.deepEqual(got, { key: "agentproxy-env", origin: "env" });
-    } finally {
-      if (previousLegacy === undefined) delete process.env.AGENTPROXY_API_KEY;
-      else process.env.AGENTPROXY_API_KEY = previousLegacy;
-    }
-  });
-
-  it("keeps AGENTPROXY_API_KEY as a legacy fallback when the canonical env is absent", async () => {
-    const previousLegacy = process.env.AGENTPROXY_API_KEY;
-    process.env.AGENTPROXY_API_KEY = "legacy-env";
-    try {
-      const { log } = collectingLogger();
-      const got = await withEnv(undefined, () =>
-        resolveApiKey(ctxWith(undefined), "agentproxy", undefined, log)
-      );
-      assert.deepEqual(got, { key: "legacy-env", origin: "env" });
-    } finally {
-      if (previousLegacy === undefined) delete process.env.AGENTPROXY_API_KEY;
-      else process.env.AGENTPROXY_API_KEY = previousLegacy;
-    }
-  });
-
   it("reports no key rather than pretending an empty one works", async () => {
     const { log, warnings } = collectingLogger();
     const got = await withEnv(undefined, () =>

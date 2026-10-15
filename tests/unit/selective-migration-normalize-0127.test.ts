@@ -201,7 +201,7 @@ test("TC-MIG-NORM-050 normalizes 9Router and AgentProxy SQLite KV aliases/pricin
     ],
   });
 
-  const omniRoute = normalizeAgentProxySqliteRows({
+  const agentProxy = normalizeAgentProxySqliteRows({
     modelAliases: [{ key: "fast", value: JSON.stringify("openai/gpt-example") }],
     pricing: [
       {
@@ -217,7 +217,7 @@ test("TC-MIG-NORM-050 normalizes 9Router and AgentProxy SQLite KV aliases/pricin
     nineRouter.filter((item) =>
       ["modelAliases", "pricing"].includes(item.category)
     ),
-    omniRoute.filter((item) =>
+    agentProxy.filter((item) =>
       ["modelAliases", "pricing"].includes(item.category)
     )
   );
