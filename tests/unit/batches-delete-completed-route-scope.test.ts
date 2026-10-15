@@ -152,6 +152,7 @@ describe("DELETE /api/v1/batches/delete-completed — caller scope (GHSA-wvxc-jp
     assert.strictEqual(getBatch(own.batch.id), null);
     assert.strictEqual(getBatch(other.batch.id), null);
     assert.strictEqual(getBatch(unowned.batch.id), null);
+    assert.strictEqual(getFile(other.file.id), null, "session sweep soft-deletes key B's file");
   });
 
   it("dashboard session ignores an incidental unresolvable API key and still sweeps instance-wide", async () => {
@@ -166,6 +167,7 @@ describe("DELETE /api/v1/batches/delete-completed — caller scope (GHSA-wvxc-jp
     assert.strictEqual(res.status, 200);
     assert.strictEqual(body.deletedBatches, 1);
     assert.strictEqual(getBatch(other.batch.id), null);
+    assert.strictEqual(getFile(other.file.id), null, "session sweep soft-deletes the batch file");
   });
 
   it("rejects a REVOKED key with 401 — the row still exists but is no longer valid — and deletes nothing", async () => {
