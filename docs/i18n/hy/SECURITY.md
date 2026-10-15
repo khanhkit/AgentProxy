@@ -77,7 +77,7 @@ AgentProxy-ը տրամադրվում է առանց վերագործարկման 
 | `pii-masker`            | 10                | Կանչից առաջ և հետո PII-ի թաքցնում (էլփոստի հասցեներ, հեռախոսահամարներ, CPF, CNPJ, վարկային քարտեր, SSN)                           |
 | `prompt-injection`      | 20                | Հայտնաբերում է հրահանգների վերասահմանման, դերերի զավթման, սահմանափակումների շրջանցման և արտահոսքի օրինաչափությունները             |
 
-Հատուկ պաշտպանիչ սահմանափակումները գրանցվում են `registerGuardrail(new MyGuardrail())`-ի միջոցով։ Մոդելն աշխատում է fail-open սկզբունքով (բացառությունները երբեք չեն արգելափակում երթևեկությունը)։ Յուրաքանչյուր հարցման համար կարելի է հրաժարվել՝ օգտագործելով `x-omniroute-disabled-guardrails` վերնագիրը։ → Տե՛ս [`docs/security/GUARDRAILS.md`](docs/security/GUARDRAILS.md)։
+Հատուկ պաշտպանիչ սահմանափակումները գրանցվում են `registerGuardrail(new MyGuardrail())`-ի միջոցով։ Մոդելն աշխատում է fail-open սկզբունքով (բացառությունները երբեք չեն արգելափակում երթևեկությունը)։ Յուրաքանչյուր հարցման համար կարելի է հրաժարվել՝ օգտագործելով `x-agentproxy-disabled-guardrails` վերնագիրը։ → Տե՛ս [`docs/security/GUARDRAILS.md`](docs/security/GUARDRAILS.md)։
 
 ### 🧠 Հրահանգի ներդրումից պաշտպանություն
 
@@ -182,15 +182,15 @@ STORAGE_ENCRYPTION_KEY=$(openssl rand -hex 32)
 
 ```bash
 docker run -d \
-  --name omniroute \
+  --name agentproxy \
   --restart unless-stopped \
   --read-only \
   -p 20128:20128 \
-  -v omniroute-data:/app/data \
+  -v agentproxy-data:/app/data \
   -e JWT_SECRET="$(openssl rand -base64 48)" \
   -e API_KEY_SECRET="$(openssl rand -hex 32)" \
   -e STORAGE_ENCRYPTION_KEY="$(openssl rand -hex 32)" \
-  diegosouzapw/omniroute:latest
+  diegosouzapw/agentproxy:latest
 ```
 
 ---
@@ -224,7 +224,7 @@ docker run -d \
 
 > **Շրջանակի նշում․** պահոցի արմատում գտնվող `socket.yml`-ը միայն սահմանում է `projectIgnorePaths`-ը՝ Socket.dev-ի ռեեստրի կողմում հրապարակումից հետո կատարվող՝ հրապարակված npm արտեֆակտի սկանավորման համար․ այն պարտադիր կիրառվող CI/PR միավորման արգելափակիչ չէ։ `.github/workflows`-ում ոչ մի աշխատանքային հոսք, `package.json`-ում ոչ մի սկրիպտ և `Makefile`-ում ոչ մի թիրախ չի կանչում Socket.dev-ը։
 
-Հրապարակված `omniroute` npm արտեֆակտը ներառում է Next.js-ի `output: "standalone"`
+Հրապարակված `agentproxy` npm արտեֆակտը ներառում է Next.js-ի `output: "standalone"`
 կառուցումը, ինչը նշանակում է, որ երթուղիների յուրաքանչյուր մշակիչ՝ ներառյալ փաստագրված արտոնյալ
 գործառույթները (MITM, Zed ներմուծում, Cloud Sync, ներկառուցված ծառայությունների վերահսկիչ), հայտնվում է
 `.next/server/*.js` փոքրացված հատվածներում։ Էվրիստիկական մատակարարման շղթայի սկաներները
@@ -247,7 +247,7 @@ GitHub App-ի կողմից, այլ ոչ թե այս պահոցի աշխատան�
   հղում են կատարում նույն փաստաթղթին։
 
 Այն օգտատերերի համար, որոնց խողովակաշարը չի կարող մեղմացնել ահազանգը՝ կառուցեք
-`OMNIROUTE_BUILD_PROFILE=minimal npm run build` հրամանով։ Այն չորս
+`AGENTPROXY_BUILD_PROFILE=minimal npm run build` հրամանով։ Այն չորս
 զգայուն մոդուլները փոխարինում է կեղծակներով, որոնք կատարման պահին վերադարձնում են HTTP 503 `feature-disabled`,
 ուստի արտոնյալ կոդային ուղիները ֆիզիկապես բացակայում են փաթեթից։
 Հրապարակման ընթացակարգի համար տե՛ս [`docs/security/SOCKET_DEV_FINDINGS.md`](docs/security/SOCKET_DEV_FINDINGS.md)։

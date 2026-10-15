@@ -77,7 +77,7 @@ AgentProxy dostavlja hot-reloadable **guardrails registry** (`src/lib/guardrails
 | `pii-masker`       | 10        | Pre+post poziv PII redakcija (email, telefon, CPF, CNPJ, kreditne kartice, SSN)          |
 | `prompt-injection` | 20        | Detektuje override/role-hijack/jailbreak/leak obraste                                    |
 
-Prilagođeni guardrails se registruju preko `registerGuardrail(new MyGuardrail())`. Model je fail-open (izuzeci nikada ne blokiraju saobraćaj). Opt-out po zahtjevu preko `x-omniroute-disabled-guardrails` zaglavlja. → Vidi [`docs/security/GUARDRAILS.md`](docs/security/GUARDRAILS.md).
+Prilagođeni guardrails se registruju preko `registerGuardrail(new MyGuardrail())`. Model je fail-open (izuzeci nikada ne blokiraju saobraćaj). Opt-out po zahtjevu preko `x-agentproxy-disabled-guardrails` zaglavlja. → Vidi [`docs/security/GUARDRAILS.md`](docs/security/GUARDRAILS.md).
 
 ### 🧠 Prompt Injection Guard
 
@@ -181,15 +181,15 @@ Server aktivno odbija poznate slabe vrijednosti poput `changeme`, `secret` ili `
 
 ```bash
 docker run -d \
-  --name omniroute \
+  --name agentproxy \
   --restart unless-stopped \
   --read-only \
   -p 20128:20128 \
-  -v omniroute-data:/app/data \
+  -v agentproxy-data:/app/data \
   -e JWT_SECRET="$(openssl rand -base64 48)" \
   -e API_KEY_SECRET="$(openssl rand -hex 32)" \
   -e STORAGE_ENCRYPTION_KEY="$(openssl rand -hex 32)" \
-  diegosouzapw/omniroute:latest
+  diegosouzapw/agentproxy:latest
 ```
 
 ---
@@ -221,7 +221,7 @@ Ova pravila se provode putem alata i recenzenata:
 
 ## Rezultati skeniranja opskrbnog lanca (Socket.dev / Snyk / slični)
 
-Objavljeni npm paket `omniroute` sadrži Next.js build sa opcijom `output: "standalone"`, što znači da svi rukovatelji ruta – uključujući dokumentovane privilegovane funkcije (MITM, Zed import, Cloud Sync, ugrađeni nadzornik servisa) – završavaju u minificiranim chunk-ovima u `.next/server/*.js`. Heuristički skeneri opskrbnog lanca često uspoređuju ove chunk-ove sa potpisima malvera.
+Objavljeni npm paket `agentproxy` sadrži Next.js build sa opcijom `output: "standalone"`, što znači da svi rukovatelji ruta – uključujući dokumentovane privilegovane funkcije (MITM, Zed import, Cloud Sync, ugrađeni nadzornik servisa) – završavaju u minificiranim chunk-ovima u `.next/server/*.js`. Heuristički skeneri opskrbnog lanca često uspoređuju ove chunk-ove sa potpisima malvera.
 
 Konfiguracija skenera koju koristimo nalazi se u datoteci `socket.yml` u korijenu repozitorijuma (Socket.dev GitHub App format v2 – pogledajte <https://docs.socket.dev/docs/socket-yml>). Ona eksplicitno isključuje direktorijume koji nisu objavljeni (tests/, _tasks/, _references/, _ideia/, _mono_repo/, docs/ itd.), tako da skener izvještava samo o kodnim putanjama koje stvarno dolaze do objavljenih korisnika. Skeniranje je pokrenuto Socket GitHub App-om koji čita tu datoteku, a ne radnim tokom u ovom repozitorijumu.
 
@@ -230,7 +230,7 @@ Za svaku kategoriju nalaza održavamo potvrdu održavaoca za svaki pojedinačni 
 - **[`docs/security/SOCKET_DEV_FINDINGS.md`](docs/security/SOCKET_DEV_FINDINGS.md)** – mapa po nalazima: izvorni fajl ↔ označen chunk ↔ ponašanje ↔ primenjena mitigacija u verziji 3.8.6.
 - In-source `SECURITY-AUDITOR-NOTE:` blokovi u svakoj označenoj funkciji upućuju na isti dokument.
 
-Za korisnike čija pipeline ne može da opusti upozorenje: izgradite sa `OMNIROUTE_BUILD_PROFILE=minimal npm run build`. To zamenjuje četiri osjetljiva modula stubovima koji vraćaju HTTP 503 `feature-disabled` pri izvršavanju, tako da privilegovani kodni putovi fizički nisu prisutni u bundle-u. Za recept za objavljivanje pogledajte [`docs/security/SOCKET_DEV_FINDINGS.md`](docs/security/SOCKET_DEV_FINDINGS.md).
+Za korisnike čija pipeline ne može da opusti upozorenje: izgradite sa `AGENTPROXY_BUILD_PROFILE=minimal npm run build`. To zamenjuje četiri osjetljiva modula stubovima koji vraćaju HTTP 503 `feature-disabled` pri izvršavanju, tako da privilegovani kodni putovi fizički nisu prisutni u bundle-u. Za recept za objavljivanje pogledajte [`docs/security/SOCKET_DEV_FINDINGS.md`](docs/security/SOCKET_DEV_FINDINGS.md).
 
 ## Reference
 

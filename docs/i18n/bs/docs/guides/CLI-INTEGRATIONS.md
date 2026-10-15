@@ -12,14 +12,14 @@ AgentProxy sistema (lokalnog ili udaljenog) i zapisuje vlastitu konfiguracijsku 
 računaru. API ključ se navodi putem varijable okruženja gdje god alat
 to podržava. Naredbe koje trajno pohranjuju lokalnu datoteku okruženja alata navedene su u nastavku.
 
-Postoji i generički pokretač — `omniroute run <target>` — koji pokreće
+Postoji i generički pokretač — `agentproxy run <target>` — koji pokreće
 `claude`, `codex`, `aider`, `goose`, `opencode`, `qwen` ili `gemini` s
 ispravno umetnutim varijablama okruženja, bez zapisivanja bilo kakve konfiguracije. Ciljevi i njihovi
 aliasi dolaze iz kanonskog manifesta `bin/cli/cli-manifest.mjs`
 (`claude-code|cc|anthropic`, `codex-cli|openai-codex|openai`, `goose-cli`,
-`open-code`, `qwen-code`, `gemini-cli`), a `omniroute completion` nudi iste
+`open-code`, `qwen-code`, `gemini-cli`), a `agentproxy completion` nudi iste
 ciljne riječi izvedene iz manifesta. Naslijeđeni pokretači za pojedinačne alate —
-`omniroute launch` (Claude Code) i `omniroute launch-codex` (Codex) — ostaju
+`agentproxy launch` (Claude Code) i `agentproxy launch-codex` (Codex) — ostaju
 dostupni.
 
 Uvođenje pružalaca dostupno je iz istog lokalnog/udaljenog konteksta. Naredbe
@@ -27,11 +27,11 @@ u nastavku, prvenstveno zasnovane na API-ju, drže autentifikaciju za upravljanj
 podataka pružaoca i nikada ne ispisuju pristupne podatke u strukturiranom izlazu:
 
 ```bash
-omniroute providers add glm --credential-env GLM_API_KEY --name work
-omniroute providers import ./providers.json --dry-run --json
-omniroute providers auth openai
-omniroute providers edit <connection-id> --default-model glm/glm-5.2
-omniroute providers remove <connection-id> --yes
+agentproxy providers add glm --credential-env GLM_API_KEY --name work
+agentproxy providers import ./providers.json --dry-run --json
+agentproxy providers auth openai
+agentproxy providers edit <connection-id> --default-model glm/glm-5.2
+agentproxy providers remove <connection-id> --yes
 ```
 
 Za skripte preferirajte `--credential-stdin` ili `--credential-env`; `--credential`
@@ -52,7 +52,7 @@ detaljne vodiče za pojedinačne alate:
 
 ## Glavna tabela
 
-Svaka naredba poštuje **aktivni kontekst** (postavljen pomoću `omniroute connect`, pogledajte
+Svaka naredba poštuje **aktivni kontekst** (postavljen pomoću `agentproxy connect`, pogledajte
 [Udaljeni način rada](./REMOTE-MODE.md)) ili eksplicitne zastavice `--remote <url> --api-key <key>`.
 „Lokalno naspram udaljenog“ u nastavku znači: bez zastavica cilja `http://localhost:20128`;
 s opcijom `--remote` (ili aktivnim udaljenim kontekstom) preuzima katalog s tog
@@ -60,28 +60,28 @@ servera i lokalno zapisuje konfiguraciju.
 
 | Naredba                    | Alat                                         | Šta zapisuje                                                                                                                                                                        | Ključne opcije                                                                                                                             | Lokalno ili udaljeno |
 | -------------------------- | -------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ | -------------------- |
-| `omniroute setup-codex`    | OpenAI Codex CLI                             | `~/.codex/<name>.config.toml` — jedan profil po kompatibilnom tekstualnom modelu (`codex --profile <name>`)                                                                         | `--remote` `--api-key` `--only` `--dry-run` `--port` `--codex-home`                                                                        | Oboje                |
-| `omniroute setup-claude`   | Claude Code                                  | `~/.claude/profiles/<name>/settings.json` — jedan profil po podudarnom modelu (`CLAUDE_CONFIG_DIR`)                                                                                 | `--remote` `--api-key` `--only` `--dry-run` `--port` `--claude-home`                                                                       | Oboje                |
-| `omniroute setup-opencode` | OpenCode (kompatibilan s OpenAI)             | `~/.config/opencode/opencode.json` — `omniroute` pružalac sa svakim modelom iz kataloga (`opencode -m omniroute/<model>`)                                                           | `--remote` `--api-key` `--only` `--model` `--dry-run` `--port`                                                                             | Oboje                |
-| `omniroute setup-cline`    | Cline                                        | `~/.cline/data/{globalState,secrets}.json` (CLI režim) + ispisuje postavke ekstenzije za VS Code                                                                                    | `--remote` `--api-key` `--model` `--yes` `--dry-run` `--port` `--cline-dir`                                                                | Oboje                |
-| `omniroute setup-kilo`     | Kilo Code                                    | `~/.local/share/kilo/auth.json` (CLI) + spaja `kilocode.*` u VS Code `settings.json` ako postoji                                                                                    | `--remote` `--api-key` `--model` `--yes` `--dry-run` `--port` `--auth-path` `--vscode-settings`                                            | Oboje                |
-| `omniroute setup-continue` | Continue / `cn` CLI                          | `~/.continue/config.yaml` — modeli s `provider: openai`, ključ putem `${{ secrets.OMNIROUTE_API_KEY }}`                                                                             | `--remote` `--api-key` `--only` `--dry-run` `--port` `--config-path`                                                                       | Oboje                |
-| `omniroute setup-cursor`   | Cursor                                       | Ništa — ispisuje korake unutar aplikacije (Cursor konfiguracija je neprozirni SQLite)                                                                                               | `--remote` `--api-key` `--only` `--port`                                                                                                   | Oboje                |
-| `omniroute setup-roo`      | Roo Code                                     | `~/.omniroute/roo-settings.json` (dokument za uvoz) + postavlja `roo-cline.autoImportSettingsPath` ako postoji VS Code `settings.json`                                              | `--remote` `--api-key` `--model` `--yes` `--dry-run` `--port` `--import-path` `--vscode-settings`                                          | Oboje                |
-| `omniroute setup-crush`    | Crush                                        | `~/.config/crush/crush.json` — `openai-compat` pružalac, ključ putem `$OMNIROUTE_API_KEY`                                                                                           | `--remote` `--api-key` `--only` `--dry-run` `--port` `--config-path`                                                                       | Oboje                |
-| `omniroute setup-goose`    | Goose                                        | `~/.config/goose/config.yaml` (`GOOSE_PROVIDER`/`OPENAI_HOST`/`GOOSE_MODEL`) + ispisuje upute za varijable okruženja                                                                | `--remote` `--api-key` `--model` `--yes` `--dry-run` `--port` `--config-path`                                                              | Oboje                |
-| `omniroute setup-aider`    | Aider                                        | `~/.aider.conf.yml` (`openai-api-base` + `model: openai/<id>`) + ispisuje upute za varijable okruženja                                                                              | `--remote` `--api-key` `--model` `--yes` `--dry-run` `--port` `--config-path`                                                              | Oboje                |
-| `omniroute setup-qwen`     | Qwen Code                                    | `~/.qwen/settings.json` — V4 niz `modelProviders.openai` + `OMNIROUTE_API_KEY` u `~/.qwen/.env`                                                                                     | `--remote` `--api-key` `--model` `--yes` `--dry-run` `--port` `--config-path` `--env-path`                                                 | Oboje                |
-| `omniroute setup-5dive`    | 5dive (flota agenata)                        | Ništa unutar `$HOME` — zapisuje 5dive **profil za autentifikaciju** (`/var/lib/5dive/auth-profiles/<name>/`) putem `5dive agent auth set`; samo za root, izvršava se na hostu flote | `--remote` `--api-key` `--model` `--auth-profile` `--agent` `--byo-provider` `--fivedive-bin` `--no-sudo` `--yes` `--dry-run` `--port`     | Oboje                |
-| `omniroute run <target>`   | Pokretanje u vrijeme izvršavanja (generičko) | Ništa — pokreće `claude`/`codex`/`aider`/`goose`/`opencode`/`qwen`/`gemini` s odgovarajućim okruženjem i argumentima; Qwen i Gemini koriste privremeni izolirani početni direktorij | `--remote` `--base-url` `--context` `--provider` `--model` `--api-key` `--api-key-env` `--dry-run` `--json` `--port` `--profile` `--token` | Oba                  |
-| `omniroute launch`         | Claude Code                                  | Ništa — pokreće `claude` s umetnutim varijablama `ANTHROPIC_BASE_URL`/`ANTHROPIC_AUTH_TOKEN`                                                                                        | `--remote` `--api-key` `--token` `--profile` `--port`                                                                                      | Oba                  |
-| `omniroute launch-codex`   | OpenAI Codex CLI                             | Ništa — pokreće `codex` s pružateljem `omniroute` umetnutim putem oznaka `-c`                                                                                                       | `--remote` `--api-key` `--profile` (`-p`) `--port`                                                                                         | Oba                  |
+| `agentproxy setup-codex`    | OpenAI Codex CLI                             | `~/.codex/<name>.config.toml` — jedan profil po kompatibilnom tekstualnom modelu (`codex --profile <name>`)                                                                         | `--remote` `--api-key` `--only` `--dry-run` `--port` `--codex-home`                                                                        | Oboje                |
+| `agentproxy setup-claude`   | Claude Code                                  | `~/.claude/profiles/<name>/settings.json` — jedan profil po podudarnom modelu (`CLAUDE_CONFIG_DIR`)                                                                                 | `--remote` `--api-key` `--only` `--dry-run` `--port` `--claude-home`                                                                       | Oboje                |
+| `agentproxy setup-opencode` | OpenCode (kompatibilan s OpenAI)             | `~/.config/opencode/opencode.json` — `agentproxy` pružalac sa svakim modelom iz kataloga (`opencode -m agentproxy/<model>`)                                                           | `--remote` `--api-key` `--only` `--model` `--dry-run` `--port`                                                                             | Oboje                |
+| `agentproxy setup-cline`    | Cline                                        | `~/.cline/data/{globalState,secrets}.json` (CLI režim) + ispisuje postavke ekstenzije za VS Code                                                                                    | `--remote` `--api-key` `--model` `--yes` `--dry-run` `--port` `--cline-dir`                                                                | Oboje                |
+| `agentproxy setup-kilo`     | Kilo Code                                    | `~/.local/share/kilo/auth.json` (CLI) + spaja `kilocode.*` u VS Code `settings.json` ako postoji                                                                                    | `--remote` `--api-key` `--model` `--yes` `--dry-run` `--port` `--auth-path` `--vscode-settings`                                            | Oboje                |
+| `agentproxy setup-continue` | Continue / `cn` CLI                          | `~/.continue/config.yaml` — modeli s `provider: openai`, ključ putem `${{ secrets.AGENTPROXY_API_KEY }}`                                                                             | `--remote` `--api-key` `--only` `--dry-run` `--port` `--config-path`                                                                       | Oboje                |
+| `agentproxy setup-cursor`   | Cursor                                       | Ništa — ispisuje korake unutar aplikacije (Cursor konfiguracija je neprozirni SQLite)                                                                                               | `--remote` `--api-key` `--only` `--port`                                                                                                   | Oboje                |
+| `agentproxy setup-roo`      | Roo Code                                     | `~/.agentproxy/roo-settings.json` (dokument za uvoz) + postavlja `roo-cline.autoImportSettingsPath` ako postoji VS Code `settings.json`                                              | `--remote` `--api-key` `--model` `--yes` `--dry-run` `--port` `--import-path` `--vscode-settings`                                          | Oboje                |
+| `agentproxy setup-crush`    | Crush                                        | `~/.config/crush/crush.json` — `openai-compat` pružalac, ključ putem `$AGENTPROXY_API_KEY`                                                                                           | `--remote` `--api-key` `--only` `--dry-run` `--port` `--config-path`                                                                       | Oboje                |
+| `agentproxy setup-goose`    | Goose                                        | `~/.config/goose/config.yaml` (`GOOSE_PROVIDER`/`OPENAI_HOST`/`GOOSE_MODEL`) + ispisuje upute za varijable okruženja                                                                | `--remote` `--api-key` `--model` `--yes` `--dry-run` `--port` `--config-path`                                                              | Oboje                |
+| `agentproxy setup-aider`    | Aider                                        | `~/.aider.conf.yml` (`openai-api-base` + `model: openai/<id>`) + ispisuje upute za varijable okruženja                                                                              | `--remote` `--api-key` `--model` `--yes` `--dry-run` `--port` `--config-path`                                                              | Oboje                |
+| `agentproxy setup-qwen`     | Qwen Code                                    | `~/.qwen/settings.json` — V4 niz `modelProviders.openai` + `AGENTPROXY_API_KEY` u `~/.qwen/.env`                                                                                     | `--remote` `--api-key` `--model` `--yes` `--dry-run` `--port` `--config-path` `--env-path`                                                 | Oboje                |
+| `agentproxy setup-5dive`    | 5dive (flota agenata)                        | Ništa unutar `$HOME` — zapisuje 5dive **profil za autentifikaciju** (`/var/lib/5dive/auth-profiles/<name>/`) putem `5dive agent auth set`; samo za root, izvršava se na hostu flote | `--remote` `--api-key` `--model` `--auth-profile` `--agent` `--byo-provider` `--fivedive-bin` `--no-sudo` `--yes` `--dry-run` `--port`     | Oboje                |
+| `agentproxy run <target>`   | Pokretanje u vrijeme izvršavanja (generičko) | Ništa — pokreće `claude`/`codex`/`aider`/`goose`/`opencode`/`qwen`/`gemini` s odgovarajućim okruženjem i argumentima; Qwen i Gemini koriste privremeni izolirani početni direktorij | `--remote` `--base-url` `--context` `--provider` `--model` `--api-key` `--api-key-env` `--dry-run` `--json` `--port` `--profile` `--token` | Oba                  |
+| `agentproxy launch`         | Claude Code                                  | Ništa — pokreće `claude` s umetnutim varijablama `ANTHROPIC_BASE_URL`/`ANTHROPIC_AUTH_TOKEN`                                                                                        | `--remote` `--api-key` `--token` `--profile` `--port`                                                                                      | Oba                  |
+| `agentproxy launch-codex`   | OpenAI Codex CLI                             | Ništa — pokreće `codex` s pružateljem `agentproxy` umetnutim putem oznaka `-c`                                                                                                       | `--remote` `--api-key` `--profile` (`-p`) `--port`                                                                                         | Oba                  |
 
 Napomene o oznakama (provjereno u izvornom kodu naredbe):
 
 - `--remote <url>` — dohvaća katalog s udaljenog AgentProxya (nadjačava `--port`
   i aktivni kontekst). `--api-key <key>` pruža vjerodajnicu za taj
-  server (zadana je vrijednost varijable okruženja `OMNIROUTE_API_KEY` ili token aktivnog konteksta).
+  server (zadana je vrijednost varijable okruženja `AGENTPROXY_API_KEY` ili token aktivnog konteksta).
 - `--only <patterns>` — podnizovi odvojeni zarezima; zadržava samo ID-ove modela koji se podudaraju
   (npr. `--only glm,kimi`). Dostupno za `setup-codex`, `setup-claude`,
   `setup-opencode`, `setup-continue`, `setup-cursor`, `setup-crush`.
@@ -92,17 +92,17 @@ Napomene o oznakama (provjereno u izvornom kodu naredbe):
   automatsko otkrivanje modela: Cline, Kilo, Roo, Goose, Qwen, Aider, 5dive. Ti alati
   također prihvataju `--yes` za neinteraktivna pokretanja (koja tada zahtijevaju `--model`).
   `setup-opencode` prihvata `--model` radi postavljanja zadanog modela najvišeg nivoa.
-- `--model <id>` u naredbi `omniroute run` slijedi povezivanje po ciljevima iz manifesta
+- `--model <id>` u naredbi `agentproxy run` slijedi povezivanje po ciljevima iz manifesta
   (`bin/cli/cli-manifest.mjs`): **aider** prima `--model openai/<id>`, a
-  **opencode** `--model omniroute/<id>` (prefiks se dodaje samo kada ga ID
+  **opencode** `--model agentproxy/<id>` (prefiks se dodaje samo kada ga ID
   već ne sadrži); **qwen** i **gemini** primaju ID bez izmjena;
   **claude** ga dobija putem `ANTHROPIC_MODEL`, **goose** putem `GOOSE_MODEL`, a
-  **codex** putem argumenata `-c model_providers.omniroute.*`. **Qwen je jedini cilj naredbe run
-  koji strogo zahtijeva `--model`** — `omniroute run qwen` bez njega završava
+  **codex** putem argumenata `-c model_providers.agentproxy.*`. **Qwen je jedini cilj naredbe run
+  koji strogo zahtijeva `--model`** — `agentproxy run qwen` bez njega završava
   kodom `2` uz izričitu grešku.
 - `--port <port>` — lokalni AgentProxy port (zadano `20128`, zanemaruje se kada je postavljen `--remote`).
   Prisutan je u svim naredbama `setup-*` i oba pokretača.
-- Izlazni kodovi naredbe `omniroute run`: izlazni kod podređenog CLI-ja prenosi se
+- Izlazni kodovi naredbe `agentproxy run`: izlazni kod podređenog CLI-ja prenosi se
   bez izmjena; `2` = nevažeći argumenti (nepodržani cilj, nedostaje obavezni
   `--model`, zaštita kontejnera); `127` = ciljna izvršna datoteka nije u `PATH`;
   `130`/`143`/`129` kada se pokretanje prekine signalom `SIGINT`/`SIGTERM`/`SIGHUP`;
@@ -115,9 +115,9 @@ Interaktivni birač također se dijeli među receptima za postavljanje:
 
 ```bash
 # Odaberite iz aktivnog lokalnog ili udaljenog kataloga modela i konfigurirajte cilj.
-omniroute configure claude
-omniroute configure opencode --provider glm
-omniroute configure qwen --model qwen/qwen3.8-max-preview --yes
+agentproxy configure claude
+agentproxy configure opencode --provider glm
+agentproxy configure qwen --model qwen/qwen3.8-max-preview --yes
 ```
 
 `configure` trenutno delegira na testirane recepte za `codex`, `claude`,
@@ -127,17 +127,17 @@ MITM-u i vodičima ostaju izričiti tokovi `setup-*`/ručnog postavljanja i
 nisu predstavljene kao ciljevi koji se mogu pokrenuti.
 
 > `setup-opencode` je **lagana integracija OpenCodea kompatibilna s OpenAI-jem**.
-> Postoji i bogatija integracija dodatka — `omniroute setup opencode` — koja
-> instalira `@omniroute/opencode-plugin`. To su različite naredbe; gornja tabela
+> Postoji i bogatija integracija dodatka — `agentproxy setup opencode` — koja
+> instalira `@agentproxy/opencode-plugin`. To su različite naredbe; gornja tabela
 > dokumentira `setup-opencode`.
 >
 > Dodatak dolazi u dva paketa, po jedan za svaku glavnu verziju OpenCodea, jer dva
 > učitavača očekuju različite ulazne tačke:
-> `@omniroute/opencode-plugin` za OpenCode v1 i
-> `@omniroute/opencode-plugin-v2` za OpenCode v2. Paket v2 je nov
+> `@agentproxy/opencode-plugin` za OpenCode v1 i
+> `@agentproxy/opencode-plugin-v2` za OpenCode v2. Paket v2 je nov
 > (`0.1.0`) i slijedi ugovor domaćina koji se još mijenja, pa čita
 > strukturu koju OpenCode postavlja u nacrt kataloga umjesto da je unaprijed pretpostavlja. Instalirajte
-> ga dodavanjem stavke `plugins` u `opencode.json`; `omniroute setup opencode`
+> ga dodavanjem stavke `plugins` u `opencode.json`; `agentproxy setup opencode`
 > i dalje instalira paket v1. Opcije i redoslijed traženja vjerodajnica nalaze se u
 > README-u paketa.
 
@@ -150,42 +150,42 @@ alata. Katalog se preuzima s lokalnog servera.
 
 ```bash
 # Codex: zapišite profil za svaki odgovarajući model u ~/.codex/
-omniroute setup-codex
+agentproxy setup-codex
 codex --profile glm52            # koristite generisani profil
 
 # Claude Code: zapišite profile za svaki model, a zatim pokrenite jedan
-omniroute setup-claude
-omniroute launch --profile glm52
+agentproxy setup-claude
+agentproxy launch --profile glm52
 
 # OpenCode: zapišite pružaoca kompatibilnog s OpenAI-jem sa svim modelima iz kataloga
-omniroute setup-opencode
-export OMNIROUTE_API_KEY=sk-...  # koristi se putem {env:OMNIROUTE_API_KEY}, nikada se ne zapisuje na disk
-opencode -m omniroute/glm/glm-5.2 "..."
+agentproxy setup-opencode
+export AGENTPROXY_API_KEY=sk-...  # koristi se putem {env:AGENTPROXY_API_KEY}, nikada se ne zapisuje na disk
+opencode -m agentproxy/glm/glm-5.2 "..."
 
 # Alatima bez automatskog otkrivanja potreban je eksplicitno naveden model:
-omniroute setup-aider --model glm/glm-5.2
-omniroute setup-qwen --model qwen/qwen3.8-max-preview
+agentproxy setup-aider --model glm/glm-5.2
+agentproxy setup-qwen --model qwen/qwen3.8-max-preview
 
 # Pregled bez ikakvog zapisivanja:
-omniroute setup-continue --dry-run
+agentproxy setup-continue --dry-run
 ```
 
 Pokretanje bez zapisivanja bilo kakve konfiguracije (samo ubacivanje varijabli okruženja):
 
 ```bash
-omniroute launch                 # Claude Code → lokalni AgentProxy
-omniroute launch-codex           # Codex CLI → lokalni AgentProxy
-omniroute launch-codex --profile glm52
-omniroute run claude --model openai/gpt-5.4
-omniroute run codex --model openai/gpt-5.4 --dry-run --json
-omniroute run aider --model glm/glm-5.2 -- --message "reply OK"
-omniroute run goose --model glm/glm-5.2
-omniroute run opencode --model glm/glm-5.2 -- run "reply OK"
-omniroute run qwen --model glm/glm-5.2 -- -p "reply OK"
-omniroute run gemini --model glm/glm-5.2 -- --skip-trust -p "reply OK"
+agentproxy launch                 # Claude Code → lokalni AgentProxy
+agentproxy launch-codex           # Codex CLI → lokalni AgentProxy
+agentproxy launch-codex --profile glm52
+agentproxy run claude --model openai/gpt-5.4
+agentproxy run codex --model openai/gpt-5.4 --dry-run --json
+agentproxy run aider --model glm/glm-5.2 -- --message "reply OK"
+agentproxy run goose --model glm/glm-5.2
+agentproxy run opencode --model glm/glm-5.2 -- run "reply OK"
+agentproxy run qwen --model glm/glm-5.2 -- -p "reply OK"
+agentproxy run gemini --model glm/glm-5.2 -- --skip-trust -p "reply OK"
 
 # Eksplicitna putanja naredbe: proslijedite sve što dolazi nakon --
-omniroute run claude -- --print-system-prompt "review this diff"
+agentproxy run claude -- --print-system-prompt "review this diff"
 ```
 
 ---
@@ -197,26 +197,26 @@ Katalog se preuzima s udaljenog servera, a konfiguracija se zapisuje na vašem l
 
 ```bash
 # OpenCode povezan s udaljenim VPS-om, zadržite samo glm/kimi modele
-omniroute setup-opencode --remote http://192.168.0.15:20128 --api-key oma_live_xxx \
+agentproxy setup-opencode --remote http://192.168.0.15:20128 --api-key oma_live_xxx \
   --only glm,kimi
-opencode -m omniroute/glm/glm-5.2 "..."   # prvo izvezite OMNIROUTE_API_KEY
+opencode -m agentproxy/glm/glm-5.2 "..."   # prvo izvezite AGENTPROXY_API_KEY
 
 # Codex profili iz udaljenog kataloga
-omniroute setup-codex --remote http://192.168.0.15:20128 --api-key oma_live_xxx
+agentproxy setup-codex --remote http://192.168.0.15:20128 --api-key oma_live_xxx
 
 # Pokrenite CLI direktno prema udaljenom serveru
-omniroute launch       --remote http://192.168.0.15:20128 --api-key oma_live_xxx
-omniroute launch-codex --remote http://192.168.0.15:20128 --api-key oma_live_xxx
+agentproxy launch       --remote http://192.168.0.15:20128 --api-key oma_live_xxx
+agentproxy launch-codex --remote http://192.168.0.15:20128 --api-key oma_live_xxx
 ```
 
 Umjesto prosljeđivanja `--remote`/`--api-key` svaki put, prijavite se jednom i dopustite
 da ih **aktivni kontekst** automatski navede:
 
 ```bash
-omniroute connect 192.168.0.15        # izdaje token ograničenog opsega i pohranjuje kontekst
-omniroute setup-codex                 # ← sada koristi udaljeni katalog
-omniroute setup-opencode              # ← isto
-omniroute launch                      # ← Claude Code povezan s udaljenim serverom
+agentproxy connect 192.168.0.15        # izdaje token ograničenog opsega i pohranjuje kontekst
+agentproxy setup-codex                 # ← sada koristi udaljeni katalog
+agentproxy setup-opencode              # ← isto
+agentproxy launch                      # ← Claude Code povezan s udaljenim serverom
 ```
 
 Pogledajte [Udaljeni način rada](./REMOTE-MODE.md) za informacije o kontekstima, opsezima i upravljanju tokenima.
@@ -227,11 +227,11 @@ Pogledajte [Udaljeni način rada](./REMOTE-MODE.md) za informacije o kontekstima
 
 [5dive](https://5dive.ai) pokreće flotu dugotrajnih agenata za programiranje, od kojih je svaki
 systemd jedinica pod vlastitim Unix korisnikom. Sam po sebi nije CLI za programiranje, pa
-`omniroute run` nema šta pokrenuti — `5dive` je odredište **samo za konfiguraciju**.
+`agentproxy run` nema šta pokrenuti — `5dive` je odredište **samo za konfiguraciju**.
 
 ```bash
-omniroute configure 5dive --model failover-demo --yes
-omniroute setup-5dive --model failover-demo --auth-profile omniroute --agent worker1
+agentproxy configure 5dive --model failover-demo --yes
+agentproxy setup-5dive --model failover-demo --auth-profile agentproxy --agent worker1
 ```
 
 Oba oblika zapisuju jedan 5dive **profil za autentifikaciju**, a svako `claude` mjesto povezano s tim
@@ -274,7 +274,7 @@ njen alat očekuje (provjereno u izvornom kodu naredbe):
 | `setup-aider` (`OPENAI_API_BASE`)                                          | korijen             | Ne — LiteLLM dodaje `/v1/chat/completions` |
 | `setup-kilo`, `setup-roo`, `setup-continue`, `setup-crush`, `setup-cursor` | s `/v1`             | Da                                         |
 | `setup-claude` (`ANTHROPIC_BASE_URL`), `launch`                            | korijen             | Ne — Claude Code dodaje `/v1/messages`     |
-| `setup-codex`, `launch-codex` (`model_providers.omniroute.base_url`)       | s `/v1`             | Da                                         |
+| `setup-codex`, `launch-codex` (`model_providers.agentproxy.base_url`)       | s `/v1`             | Da                                         |
 | `setup-qwen` (`modelProviders.openai[].baseUrl`)                           | s `/v1`             | Da                                         |
 | `run gemini` (`GOOGLE_GEMINI_BASE_URL`)                                    | korijen             | Ne — SDK dodaje `/v1beta/models/…`         |
 | `setup-5dive` (`ANTHROPIC_BASE_URL` u profilu za autentifikaciju)          | korijen             | Ne — Claude Code dodaje `/v1/messages`     |
@@ -283,14 +283,14 @@ njen alat očekuje (provjereno u izvornom kodu naredbe):
 
 ## Zadržavanje izvornih zavisnosti pri ažuriranju: `--include=optional`
 
-Kada izvršite ažuriranje pomoću `omniroute update` (nakon potvrde ili uz `--apply`),
+Kada izvršite ažuriranje pomoću `agentproxy update` (nakon potvrde ili uz `--apply`),
 AgentProxy pokreće instalaciju s ugrađenom opcijom `--include=optional`:
 
 ```bash
-npm install -g omniroute@latest --include=optional
+npm install -g agentproxy@latest --include=optional
 ```
 
-Ovo **nije** opcija koju prosljeđujete naredbi `omniroute update` — program za
+Ovo **nije** opcija koju prosljeđujete naredbi `agentproxy update` — program za
 ažuriranje je uvijek primjenjuje. Ona garantuje da će `optionalDependencies`
 (`better-sqlite3`, `keytar`, `tls-client`, LLMLingua SLM skup) ostati prisutne
 nakon ažuriranja čak i ako vaša npm konfiguracija ima postavljeno
@@ -299,22 +299,22 @@ program i povezivanje sa spremištem ključeva operativnog sistema. Za pregled
 tačne naredbe bez njene primjene:
 
 ```bash
-omniroute update --dry-run
-# [PROBNO POKRETANJE] Pokrenulo bi se: npm install -g omniroute@latest --include=optional
+agentproxy update --dry-run
+# [PROBNO POKRETANJE] Pokrenulo bi se: npm install -g agentproxy@latest --include=optional
 ```
 
-Ostale opcije naredbe `omniroute update` (provjereno u izvornom kodu): `--check`
+Ostale opcije naredbe `agentproxy update` (provjereno u izvornom kodu): `--check`
 (izlazni kod 1 ako je verzija zastarjela), `--apply` (instalacija bez upita),
 `--changelog`, `--no-backup`, `--yes`.
 
 ---
 
-## Google Gemini CLI putem `omniroute run gemini`
+## Google Gemini CLI putem `agentproxy run gemini`
 
 Ugovor provjeren u odnosu na `@google/gemini-cli` 0.50.0: CLI poštuje
 `GOOGLE_GEMINI_BASE_URL` i šalje `POST /v1beta/models/<model>:generateContent`
 (i `:streamGenerateContent?alt=sse`) na tu adresu — upravo na izvorni Gemini
-interfejs AgentProxya (`/v1beta`). `omniroute run gemini` to automatski podešava:
+interfejs AgentProxya (`/v1beta`). `agentproxy run gemini` to automatski podešava:
 
 - `GOOGLE_GEMINI_BASE_URL` → aktivni osnovni URL AgentProxya (korijen, bez `/v1`);
 - `GEMINI_API_KEY` → razrijeđena vjerodajnica AgentProxya (opcija/okruženje/kontekst);
@@ -331,7 +331,7 @@ interfejs AgentProxya (`/v1beta`). `omniroute run gemini` to automatski podešav
 - ubacivanje `--model <id>` iz `--provider`/`--model`.
 
 ```bash
-omniroute run gemini --model glm/glm-5.2 -- --skip-trust -p "hello"
+agentproxy run gemini --model glm/glm-5.2 -- --skip-trust -p "hello"
 ```
 
 Gemini zaštita povjerenja u radni prostor i dalje se primjenjuje u bezglavom
@@ -355,21 +355,21 @@ autentifikacijske / upstream / konfiguracijske umjesto kao običnu Booleovu vrij
 
 ```bash
 RUN_CLI_SMOKE=1 \
-OMNIROUTE_SMOKE_BASE_URL="http://localhost:20128" \
-OMNIROUTE_SMOKE_MODEL="<provider/model>" \
-OMNIROUTE_SMOKE_API_KEY_ENV="OMNIROUTE_API_KEY" \
+AGENTPROXY_SMOKE_BASE_URL="http://localhost:20128" \
+AGENTPROXY_SMOKE_MODEL="<provider/model>" \
+AGENTPROXY_SMOKE_API_KEY_ENV="AGENTPROXY_API_KEY" \
 node --import tsx/esm --test tests/integration/upstream-cli-smoke.int.test.ts
 ```
 
-Opcionalno: `OMNIROUTE_SMOKE_TARGETS="codex,opencode,qwen"` ograničava skup testova;
-`OMNIROUTE_SMOKE_TIMEOUT_MS` zamjenjuje zadano vremensko ograničenje od 120 s po cilju.
+Opcionalno: `AGENTPROXY_SMOKE_TARGETS="codex,opencode,qwen"` ograničava skup testova;
+`AGENTPROXY_SMOKE_TIMEOUT_MS` zamjenjuje zadano vremensko ograničenje od 120 s po cilju.
 
 ---
 
 ## Također pogledajte
 
 - [Konfiguracija za Claude Code](./CLAUDE-CODE-CONFIGURATION.md) — detaljniji vodič za Claude Code
-- [Konfiguracija za Codex CLI](./CODEX-CLI-CONFIGURATION.md) — jednokratno osnovno postavljanje `[model_providers.omniroute]`
+- [Konfiguracija za Codex CLI](./CODEX-CLI-CONFIGURATION.md) — jednokratno osnovno postavljanje `[model_providers.agentproxy]`
 - [Udaljeni način rada](./REMOTE-MODE.md) — konteksti, pristupni tokeni ograničenog opsega i upravljanje udaljenim serverom
 - [Referenca CLI alata](../reference/CLI-TOOLS.md) — potpuni katalog podržanih alata i stranica nadzorne ploče
 - [Vodič za postavljanje](./SETUP_GUIDE.md) — metode instalacije i početno podešavanje pri prvom pokretanju

@@ -10,7 +10,7 @@ import path from "node:path";
  * `auto/chat` and provider-prefixed catalog labels duplicated the provider
  * name. `buildModelEntry()`'s name precedence (highest to lowest) is:
  *   1. an existing custom name already set by the user in opencode.json
- *   2. a readable label for `auto/*` ids (OmniRoute's own virtual routing ids)
+ *   2. a readable label for `auto/*` ids (AgentProxy's own virtual routing ids)
  *   3. the catalog's `display_name` (falling back to `name`), with a leading
  *      `owned_by/` prefix stripped once
  *   4. the raw catalog/model id, when nothing else is known

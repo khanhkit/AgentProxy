@@ -116,7 +116,7 @@ boshqaruv paneli UI fayllarini vaqtincha stub fayllar bilan almashtiradi, API ma
 soʻng asl fayllarni tiklaydi. Boshqaruv paneli UI qismiga taʼsir qiladigan oʻzgarishlar yoki relizni toʻliq
 tekshirish uchun `npm run build` dan foydalaning; hissa qoʻshuvchi profili reliz buildining oʻrnini bosa olmaydi.
 
-> **VPS deploy eslatmasi:** masofaviy image katalogi `/usr/lib/node_modules/omniroute/app/`
+> **VPS deploy eslatmasi:** masofaviy image katalogi `/usr/lib/node_modules/agentproxy/app/`
 > oʻzgarmagan. Deploy vositalari `dist/` tarkibini unga rsync orqali koʻchiradi.
 > Faqat repozitoriy ichidagi build natijasi yoʻli oʻzgardi (`app/` → `dist/`).
 
@@ -321,7 +321,7 @@ src/                        # TypeScript (.ts / .tsx)
 │   └── validation/         # Zod v4 sxemalari
 └── sse/                    # SSE proksi konveyeri
 
-open-sse/                   # @omniroute/open-sse ish maydoni
+open-sse/                   # @agentproxy/open-sse ish maydoni
 ├── executors/              # 89 ta ijrochi amalga oshirish moduli
 ├── handlers/               # 11 ta soʻrov ishlovchisi (chat, javoblar, embeddinglar, tasvirlar va boshqalar)
 ├── mcp-server/             # MCP serveri (110 ta noyob vosita, 3 ta transport, 33 ta doira)

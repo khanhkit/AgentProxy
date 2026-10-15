@@ -8,7 +8,7 @@ import path from "node:path";
 // proxy field schema rewrote the stored status on every update or import that simply
 // omitted it. These tests pin "a status is written only when the caller sends one".
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-proxy-status-schema-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-proxy-status-schema-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 process.env.API_KEY_SECRET = "test-secret";
 

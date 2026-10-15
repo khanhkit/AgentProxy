@@ -125,7 +125,7 @@ function normalizeMessagesForHash(conversation: unknown): Array<{ role: string; 
 function getCacheHeader(headers: unknown, suffix: string): string | null {
   return (
     getHeader(headers, `x-agentproxy-cache-${suffix}`) ??
-    getHeader(headers, `x-omniroute-cache-${suffix}`)
+    getHeader(headers, `x-agentproxy-cache-${suffix}`)
   );
 }
 
@@ -206,7 +206,7 @@ export class SemanticCacheManager {
 
   private isBypassed(headers: unknown, body: Record<string, unknown>): boolean {
     const noCacheHeader =
-      getHeader(headers, "x-agentproxy-no-cache") ?? getHeader(headers, "x-omniroute-no-cache");
+      getHeader(headers, "x-agentproxy-no-cache") ?? getHeader(headers, "x-agentproxy-no-cache");
     if (noCacheHeader && noCacheHeader.toLowerCase() === "true") {
       return true;
     }

@@ -87,7 +87,7 @@ let lastAppliedSnapshot: RuntimeSettingsSnapshot | null = null;
 
 // Shared bypass-policy store. A globalThis-backed value is visible to every
 // independently evaluated server bundle/chunk that imports this module.
-const AUTHZ_BYPASS_GLOBAL_KEY = "__omniroute_authzBypass_config__";
+const AUTHZ_BYPASS_GLOBAL_KEY = "__agentproxy_authzBypass_config__";
 const authzBypassStore = globalThis as unknown as Record<
   string,
   AuthzBypassSnapshot | undefined

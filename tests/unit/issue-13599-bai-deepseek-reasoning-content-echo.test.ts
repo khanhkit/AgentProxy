@@ -7,7 +7,7 @@ import { DefaultExecutor } from "../../open-sse/executors/default.ts";
 // `bai` provider (api.b.ai) are rejected upstream with
 //   400 The `reasoning_content` in the thinking mode must be passed back to the API
 // because standard OpenAI-shaped clients do not preserve `reasoning_content` on the prior
-// assistant turn when they replay conversation history. OmniRoute already has a mechanism
+// assistant turn when they replay conversation history. AgentProxy already has a mechanism
 // for exactly this requirement (open-sse/utils/reasoningContentInjector.ts, ported from
 // 9router#1480), but DefaultExecutor.transformRequest only invoked it when
 // `this.provider === "kimi" || this.provider === "moonshot"` (open-sse/executors/default.ts) —

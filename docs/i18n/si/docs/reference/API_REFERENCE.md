@@ -64,7 +64,7 @@ Content-Type: application/json
 | ශීර්ෂකය                  | දිශාව     | විස්තරය                                                                                                                                                                                                  |
 | ------------------------ | --------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `X-AgentProxy-No-Cache`   | ඉල්ලීම    | හැඹිලිය මඟහැරීමට `true` ලෙස සකසන්න                                                                                                                                                                       |
-| `x-omniroute-no-memory`  | ඉල්ලීම    | මෙම ඉල්ලීම සඳහා මතකය + කුසලතා ඇතුළත් කිරීම මඟහැරීමට `true` ලෙස සකසන්න (හැඹිලි-රහිත ක්රියාකාරීත්වයට සමාන වේ; එක් ඇමතුමකට ඇති ටෝකන/පිරිවැය අතිරේකය වළක්වයි)                                                |
+| `x-agentproxy-no-memory`  | ඉල්ලීම    | මෙම ඉල්ලීම සඳහා මතකය + කුසලතා ඇතුළත් කිරීම මඟහැරීමට `true` ලෙස සකසන්න (හැඹිලි-රහිත ක්රියාකාරීත්වයට සමාන වේ; එක් ඇමතුමකට ඇති ටෝකන/පිරිවැය අතිරේකය වළක්වයි)                                                |
 | `X-AgentProxy-Progress`   | ඉල්ලීම    | ප්රගති සිදුවීම් සඳහා `true` ලෙස සකසන්න                                                                                                                                                                   |
 | `X-Session-Id`           | ඉල්ලීම    | බාහිර සැසි අනුබද්ධතාව සඳහා ස්ථාවර සැසි යතුර                                                                                                                                                              |
 | `x_session_id`           | ඉල්ලීම    | යටි ඉරි සහිත ප්රභේදය ද පිළිගනු ලැබේ (සෘජු HTTP)                                                                                                                                                          |
@@ -159,7 +159,7 @@ X-AgentProxy-Lease-Generation: 1
 
 මෙම ප්රතිචාරය අදහස් කරන්නේ සාමාන්ය සුදුසුකම් ලත් කට්ටලය හිස් නොවන බවත්, සෑම නිදහස් අපේක්ෂකයෙකුම විදේශීය සක්රීය බද්දක් මගින් රඳවාගෙන සිටි බවත් පමණි. සහාය නොදක්වන ආකෘති/සැපයුම්කරුවන්, ප්රතිපත්ති නොගැලපීම, සිසිලන කාලය, කෝටා, සෞඛ්යය, සහ අනෙකුත් සාමාන්ය සුදුසුකම් අසාර්ථක වීම් ඔවුන්ගේ පවතින AgentProxy ප්රතිචාර රඳවා ගනී.
 
-### `x-omniroute-compression`
+### `x-agentproxy-compression`
 
 සම්පීඩන සැලැස්මේ ඉල්ලීම අනුව අතික්රමණය. ඉහළම ප්රමුඛතාවය — මාර්ගගත කිරීමේ-සංයෝජන අතික්රමණය, සක්රීය පැතිකඩ, ස්වයංක්රීය-ප්රේරකය, සහ පැනල පෙරනිමිය පරදවයි. අගයන්:
 
@@ -395,10 +395,10 @@ query පරාමිතිය නොමැතිව වුවද `dual`-ප්�
 
 ### සිතීම-රහිත මාදිලි ප්රභේද
 
-සිතීමේ හැකියාව ඇති Claude මාදිලි සඳහා, `/v1/models` විසින් `claude-3-omniroute-no-thinking/` උපසර්ගය සහිත **සිතීම-රහිත** ප්රභේදයක් ද ප්රකාශයට පත් කරයි:
+සිතීමේ හැකියාව ඇති Claude මාදිලි සඳහා, `/v1/models` විසින් `claude-3-agentproxy-no-thinking/` උපසර්ගය සහිත **සිතීම-රහිත** ප්රභේදයක් ද ප්රකාශයට පත් කරයි:
 
 ```
-claude-3-omniroute-no-thinking/<provider>/<model>
+claude-3-agentproxy-no-thinking/<provider>/<model>
 ```
 
 මෙම id එක තේරීමෙන් (උදා. සැමවිටම `thinking` block එකක් අමුණන Claude Code වින්යාසයක) reasoning යටපත් කරමින් සැබෑ `<provider>/<model>` වෙත නැවත විසඳේ — `/v1/messages` මාර්ගයෙහි `thinking:{type:"disabled"}` භාවිතයෙන් හෝ `/v1/chat/completions` මාර්ගයෙහි `reasoning`/`reasoning_effort` ක්ෂේත්ර ඉවත් කිරීමෙන්. මෙම ප්රභේදය ලැයිස්තුගත කරන්නේ සිතීමට සහාය දක්වන **සහ** `disabled` පිළිපදින Claude-පවුලේ මාදිලි සඳහා පමණි (එබැවින්, උදාහරණයක් ලෙස, `disabled` ප්රතික්ෂේප කරන adaptive-only මාදිලි බැහැර කෙරේ). ක්රියාකරුවන්ට `ModelSpec.noThinkingAlias` හරහා එක් එක් මාදිලිය සඳහා මෙම ප්රභේදය බලහත්කාරයෙන් සක්රිය හෝ අක්රිය කළ හැක.
@@ -484,7 +484,7 @@ POST /v1/music/generations  { "model": "suno/v3.5",   "prompt": "..." }
 > නෝඩ (`localhost`, `127.0.0.1`, `172.16.0.0/12`) සෑම විටම සුදුසුකම් ලබයි. වෙනත් ඕනෑම
 > සත්කාරකයක ඇති නෝඩයක් — LAN යන්ත්රයක් හෝ Tailscale සමකක්ෂයක් — සුදුසුකම් ලබන්නේ ක්රියාකරු
 > `RERANK_REMOTE_PROVIDER_NODES` විශේෂාංග ධජය සක්රීය කර ඇති **සහ** නෝඩයේ මූලික URL එක සපයන්නාගේ
-> පිටතට යන URL ප්රතිපත්තිය (`OMNIROUTE_ALLOW_LOCAL_PROVIDER_URLS` / `OMNIROUTE_ALLOW_PRIVATE_PROVIDER_URLS`)
+> පිටතට යන URL ප්රතිපත්තිය (`AGENTPROXY_ALLOW_LOCAL_PROVIDER_URLS` / `AGENTPROXY_ALLOW_PRIVATE_PROVIDER_URLS`)
 > සමත් වන අවස්ථාවක පමණි; ක්ලවුඩ්-පාරදත්ත සත්කාරක වෙත කිසිවිටෙක මාර්ගගත නොකෙරේ. මතක එන්ජිමේ නැවත ශ්රේණිගත කිරීමේ පියවර මෙම මාර්ගය
 > loopback හරහා කැඳවන බැවින්, මතක සැකසුම්වල `rerankProviderModel` සඳහා ද එම රීතියම අදාළ වේ.
 >
@@ -606,8 +606,8 @@ WebSocket උත්ශ්රේණිගත කිරීමේ handshake එක�
 
 ```bash
 # HTTP API එකට සමාන host:port (පෙරනිමි 20128); සම්බන්ධතාව උත්ශ්රේණිගත කරන්න:
-wscat -c "ws://localhost:20128/v1/responses?api_key=<OMNIROUTE_API_KEY>"
-# (හෝ: -H "Authorization: Bearer <OMNIROUTE_API_KEY>")
+wscat -c "ws://localhost:20128/v1/responses?api_key=<AGENTPROXY_API_KEY>"
+# (හෝ: -H "Authorization: Bearer <AGENTPROXY_API_KEY>")
 
 # පළමු frame එක response.create විය යුතුමය:
 { "type": "response.create", "model": "gpt-5.5", "input": [ { "role": "user", "content": "hi" } ] }
@@ -643,18 +643,18 @@ Codex CLI එක AgentProxy වෙත යොමු කරන්න (පවති
 
 ```toml
 model = "gpt-5.5"                 # සරල id එක — "codex/gpt-5.5" නොවේ
-model_provider = "omniroute"
+model_provider = "agentproxy"
 
-[model_providers.omniroute]
+[model_providers.agentproxy]
 name = "AgentProxy (WS)"
 base_url = "http://localhost:20128/v1"   # අවසානයේ slash එකක් නැත; WS URL එක ව්යුත්පන්න කෙරේ (නිෂ්පාදනයේදී https/wss භාවිත කරන්න)
 wire_api = "responses"                    # Feb 2026 සිට සහාය දක්වන එකම අගය
 supports_websockets = true                # Responses-over-WS ප්රවාහනය සක්රීය කරයි
-env_key = "OMNIROUTE_API_KEY"             # AgentProxy API යතුර (Bearer) රඳවා ගනී
+env_key = "AGENTPROXY_API_KEY"             # AgentProxy API යතුර (Bearer) රඳවා ගනී
 ```
 
 ```bash
-export OMNIROUTE_API_KEY=sk-...           # AgentProxy API යතුරක් (REQUIRE_API_KEY=false නම් ඕනෑම යතුරක්)
+export AGENTPROXY_API_KEY=sk-...           # AgentProxy API යතුරක් (REQUIRE_API_KEY=false නම් ඕනෑම යතුරක්)
 codex exec "Responda apenas: PONG"
 ```
 
@@ -1009,7 +1009,7 @@ Content-Type: application/json
 {
   "success": true,
   "repaired": ["CLAUDE_CODE_OAUTH_CLIENT_ID", "CLAUDE_CODE_OAUTH_CLIENT_SECRET"],
-  "backupPath": "/home/user/.omniroute/backups/env-repair-2026-04-11.bak"
+  "backupPath": "/home/user/.agentproxy/backups/env-repair-2026-04-11.bak"
 }
 ```
 
@@ -1383,7 +1383,7 @@ AgentProxy විසින් A2A (Agent-to-Agent) JSON-RPC 2.0 අන්ත ල
 
 ```bash
 POST /a2a
-Authorization: Bearer your-api-key   # OMNIROUTE_API_KEY සකසා නොමැති නම් විකල්පීයයි
+Authorization: Bearer your-api-key   # AGENTPROXY_API_KEY සකසා නොමැති නම් විකල්පීයයි
 Content-Type: application/json
 
 {
@@ -1426,7 +1426,7 @@ GET /.well-known/agent.json
 | GET   | `/api/a2a/tasks/[id]`        | එක් කාර්යයක් ලබාගන්න                                                                                                        |
 | POST  | `/api/a2a/tasks/[id]/cancel` | කාර්යයක් අවලංගු කරන්න                                                                                                       |
 
-**සත්යාපනය:** REST උපකාරක කළමනාකරණ සත්යාපනයකින් තොරව ක්රියාත්මක වේ (උපකරණ පුවරුවෙන් කියවිය හැක); JSON-RPC `/a2a` මාර්ගය වින්යාස කර ඇත්නම් Bearer `OMNIROUTE_API_KEY` භාවිත කරයි.
+**සත්යාපනය:** REST උපකාරක කළමනාකරණ සත්යාපනයකින් තොරව ක්රියාත්මක වේ (උපකරණ පුවරුවෙන් කියවිය හැක); JSON-RPC `/a2a` මාර්ගය වින්යාස කර ඇත්නම් Bearer `AGENTPROXY_API_KEY` භාවිත කරයි.
 
 ---
 
@@ -1743,7 +1743,7 @@ AgentProxy ප්ලගින (තෙවන පාර්ශ්ව දිගු) 
 
 ## ආරක්ෂක සීමා
 
-ධාවන කාල ආරක්ෂක සීමා (PII හඳුනාගැනීම, ප්රේරක එන්නත් හඳුනාගැනීම, දෘශ්ය සම්බන්ධකරණය) පරීක්ෂා කරන්න. සෑම ඉල්ලීමකදීම ආරක්ෂක සීමා ක්රියාත්මක වේ; එක් එක් ඇමතුම සඳහා ඉවත් වීම `x-omniroute-disabled-guardrails` ඉල්ලීම් ශීර්ෂය හරහා සිදු වේ — ස්ථිරව පවතින සක්රිය/අක්රිය අතුරුමුහුණතක් නොමැත.
+ධාවන කාල ආරක්ෂක සීමා (PII හඳුනාගැනීම, ප්රේරක එන්නත් හඳුනාගැනීම, දෘශ්ය සම්බන්ධකරණය) පරීක්ෂා කරන්න. සෑම ඉල්ලීමකදීම ආරක්ෂක සීමා ක්රියාත්මක වේ; එක් එක් ඇමතුම සඳහා ඉවත් වීම `x-agentproxy-disabled-guardrails` ඉල්ලීම් ශීර්ෂය හරහා සිදු වේ — ස්ථිරව පවතින සක්රිය/අක්රිය අතුරුමුහුණතක් නොමැත.
 
 | ක්රමය | මාර්ගය                 | විස්තරය                                                                                                          |
 | ----- | ---------------------- | ---------------------------------------------------------------------------------------------------------------- |

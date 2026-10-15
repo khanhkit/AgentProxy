@@ -31,7 +31,7 @@ test("canonical AgentProxy config-key header is accepted", () => {
   assert.equal(readConfigApiKey(req), "agentproxy-secret");
 });
 
-test("legacy OmniRoute config-key header remains a migration alias", () => {
+test("legacy AgentProxy config-key header remains a migration alias", () => {
   const req = new Request("http://localhost/api/cli-tools/config", {
     headers: { [LEGACY_CONFIG_API_KEY_HEADER]: "legacy-secret" },
   });

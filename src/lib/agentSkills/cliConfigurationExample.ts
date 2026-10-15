@@ -9,7 +9,7 @@ export function buildCliConfigurationExample(operation: {
   if (method === "GET" && path === "/api/cli-tools/config") {
     return [
       `curl https://localhost:20128${path} \\`,
-      '  -H "Authorization: Bearer $OMNIROUTE_TOKEN" \\',
+      '  -H "Authorization: Bearer $AGENTPROXY_TOKEN" \\',
       '  -H "x-agentproxy-config-api-key: <configuration-api-key>"',
     ];
   }
@@ -23,7 +23,7 @@ export function buildCliConfigurationExample(operation: {
   };
   return [
     `curl -X POST https://localhost:20128${path} \\`,
-    '  -H "Authorization: Bearer $OMNIROUTE_TOKEN" \\',
+    '  -H "Authorization: Bearer $AGENTPROXY_TOKEN" \\',
     '  -H "Content-Type: application/json" \\',
     `  -d '${JSON.stringify(body)}'`,
   ];

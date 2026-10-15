@@ -8954,7 +8954,7 @@ paths:
       description: >-
         Returns redacted, non-cacheable previews. Send the configuration API key
         in x-agentproxy-config-api-key, separate from management authentication.
-        The legacy x-omniroute-config-api-key header remains a migration alias.
+        The legacy x-agentproxy-config-api-key header remains a migration alias.
         API keys in query strings are rejected. Preview content must not be
         copied into a credential-bearing configuration or submitted as an apply payload.
       parameters:

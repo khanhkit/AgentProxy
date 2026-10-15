@@ -10,7 +10,7 @@
 - နောက်ဆက်တွဲ ကုဒ်အပ်ဒိတ်များကို ထုတ်ဝေခြင်း
 - တူညီသော ဖြန့်ချိမှုလုပ်ငန်းစဉ်ကို လိုက်နာသည့် ပရောဂျက်အသစ်များ
 
-ဤလမ်းညွှန်သည် လက်ရှိပရောဂျက်အတွက် စစ်ဆေးအတည်ပြုပြီး အလုပ်လုပ်သည့် ဖွဲ့စည်းသတ်မှတ်ချက်ကို အခြေခံထားသည်။ အပလီကေးရှင်းအမည်မှာ `omniroute` ဖြစ်သည်။
+ဤလမ်းညွှန်သည် လက်ရှိပရောဂျက်အတွက် စစ်ဆေးအတည်ပြုပြီး အလုပ်လုပ်သည့် ဖွဲ့စည်းသတ်မှတ်ချက်ကို အခြေခံထားသည်။ အပလီကေးရှင်းအမည်မှာ `agentproxy` ဖြစ်သည်။
 
 ---
 
@@ -20,7 +20,7 @@
 - ဖြန့်ချိမှုနည်းလမ်း- Local `flyctl` ဖြင့် တိုက်ရိုက်ထုတ်ဝေခြင်း
 - Runtime- Repository အတွင်းရှိ လက်ရှိ `Dockerfile` နှင့် `fly.toml` ကို အသုံးပြုခြင်း
 - ဒေတာတည်မြဲမှု- `/data` တွင် mount လုပ်ထားသော Fly Volume
-- ဝင်ရောက်အသုံးပြုနိုင်သည့် URL- `https://omniroute.fly.dev/`
+- ဝင်ရောက်အသုံးပြုနိုင်သည့် URL- `https://agentproxy.online`
 
 ---
 
@@ -29,7 +29,7 @@
 လက်ရှိ repository ရှိ `fly.toml` တွင် အောက်ပါအဓိကအချက်များ ပါဝင်ကြောင်း အတည်ပြုပြီးဖြစ်သည်-
 
 ```toml
-app = 'omniroute'
+app = 'agentproxy'
 primary_region = 'sin'
 
 [[mounts]]
@@ -51,7 +51,7 @@ primary_region = 'sin'
 
 မှတ်ချက်များ-
 
-- `app = 'omniroute'` သည် ဖြန့်ချိမှုက ရည်ညွှန်းမည့် Fly အက်ပ်ကို သတ်မှတ်ပေးသည်
+- `app = 'agentproxy'` သည် ဖြန့်ချိမှုက ရည်ညွှန်းမည့် Fly အက်ပ်ကို သတ်မှတ်ပေးသည်
 - `destination = '/data'` သည် တည်မြဲသိုလှောင်မှု volume ကို mount လုပ်မည့် directory ကို သတ်မှတ်ပေးသည်
 - ဤပရောဂျက်တွင် `DATA_DIR=/data` ကို မဖြစ်မနေ သတ်မှတ်ရမည်။ မသတ်မှတ်ပါက database နှင့် key များကို container ၏ ယာယီ directory ထဲသို့ ရေးသားသွားမည်
 
@@ -98,29 +98,29 @@ cd AgentProxy
 `fly.toml` ကိုဖွင့်ပြီး အောက်ပါစာကြောင်းကို စစ်ဆေးပါ-
 
 ```toml
-app = 'omniroute'
+app = 'agentproxy'
 ```
 
 သင်၏ကိုယ်ပိုင် အက်ပ်အသစ်သို့ ဖြန့်ချိနေပါက ၎င်းကို ကမ္ဘာတစ်ဝန်း ထပ်တူမရှိသည့် အမည်တစ်ခုသို့ ပြောင်းလဲနိုင်သည်။ ဥပမာ-
 
 ```toml
-app = 'omniroute-yourname'
+app = 'agentproxy-yourname'
 ```
 
 မှတ်ချက်-
 
 - Console တွင် မြင်ရသော အက်ပ်အမည်သည် `fly.toml` ရှိ `app` တန်ဖိုးနှင့် ကိုက်ညီကြောင်း သေချာစေပါ
-- ယခင်က `oroute` ကဲ့သို့ မတူညီသောအမည်တစ်ခုကို အသုံးပြုခဲ့ပါက ၎င်းကို `omniroute` နှင့် မရောထွေးပါနှင့်
+- ယခင်က `oroute` ကဲ့သို့ မတူညီသောအမည်တစ်ခုကို အသုံးပြုခဲ့ပါက ၎င်းကို `agentproxy` နှင့် မရောထွေးပါနှင့်
 
 ### 4.3 အက်ပ်ကို ဖန်တီးခြင်း
 
 အက်ပ် မရှိသေးပါက-
 
 ```powershell
-flyctl apps create omniroute
+flyctl apps create agentproxy
 ```
 
-အက်ပ်အမည်ကို ပြောင်းထားပါက `omniroute` နေရာတွင် သင်ရွေးချယ်ထားသောအမည်ကို အစားထိုးပါ။
+အက်ပ်အမည်ကို ပြောင်းထားပါက `agentproxy` နေရာတွင် သင်ရွေးချယ်ထားသောအမည်ကို အစားထိုးပါ။
 
 ### 4.4 ပထမဆုံး ဖြန့်ချိခြင်း
 
@@ -136,14 +136,14 @@ flyctl deploy
 
 ### 5.1 အတည်ပြုပြီးသော Parameter များ
 
-ဤ parameter များကို လက်ရှိ `omniroute` အက်ပ်၏ လက်တွေ့ဖြန့်ချိမှုများတွင် အသုံးပြုပြီးဖြစ်သည်-
+ဤ parameter များကို လက်ရှိ `agentproxy` အက်ပ်၏ လက်တွေ့ဖြန့်ချိမှုများတွင် အသုံးပြုပြီးဖြစ်သည်-
 
 - `API_KEY_SECRET`
 - `DATA_DIR`
 - `JWT_SECRET`
 - `MACHINE_ID_SALT`
 - `NEXT_PUBLIC_BASE_URL`
-- `OMNIROUTE_WS_BRIDGE_SECRET` (production တွင် မဖြစ်မနေလိုအပ်သည် — WebSocket bridge စစ်မှန်ကြောင်းအတည်ပြုမှုအတွက် အသုံးပြုသည်)
+- `AGENTPROXY_WS_BRIDGE_SECRET` (production တွင် မဖြစ်မနေလိုအပ်သည် — WebSocket bridge စစ်မှန်ကြောင်းအတည်ပြုမှုအတွက် အသုံးပြုသည်)
 - `STORAGE_ENCRYPTION_KEY`
 
 ### 5.2 `INITIAL_PASSWORD` အကြောင်း
@@ -171,7 +171,7 @@ Fly Secrets အတွက် အောက်ပါ variable များကို
 | ------------------------------- | --------------------------------- | -------------------------------------------------------------------------- |
 | `API_KEY_SECRET`                | မဖြစ်မနေလိုအပ်သည်                 | API Key ထုတ်လုပ်ခြင်းနှင့် အတည်ပြုခြင်းအတွက် အသုံးပြုသည်                   |
 | `JWT_SECRET`                    | မဖြစ်မနေလိုအပ်သည်                 | login session များနှင့် JWT လက်မှတ်ရေးထိုးခြင်းအတွက် အသုံးပြုသည်           |
-| `OMNIROUTE_WS_BRIDGE_SECRET`    | production တွင် မဖြစ်မနေလိုအပ်သည် | WebSocket bridge အထောက်အထားစစ်ဆေးမှု လျှို့ဝှက်တန်ဖိုး                     |
+| `AGENTPROXY_WS_BRIDGE_SECRET`    | production တွင် မဖြစ်မနေလိုအပ်သည် | WebSocket bridge အထောက်အထားစစ်ဆေးမှု လျှို့ဝှက်တန်ဖိုး                     |
 | `STORAGE_ENCRYPTION_KEY`        | အထူးအကြံပြုထားသည်                 | သိမ်းဆည်းထားသော အရေးကြီး connection အချက်အလက်များကို ကုဒ်ဝှက်ပေးသည်        |
 | `MACHINE_ID_SALT`               | အကြံပြုထားသည်                     | တည်ငြိမ်သော machine identifier တစ်ခုကို ထုတ်လုပ်ပေးသည်                     |
 | `INITIAL_PASSWORD`              | ရွေးချယ်နိုင်သည်                  | ပထမဆုံး deployment ပြုလုပ်ချိန်တွင် မူလ backend password ကို သတ်မှတ်ပေးသည် |
@@ -182,7 +182,7 @@ Fly Secrets အတွက် အောက်ပါ variable များကို
 | Variable               | အကြံပြုထားသော တန်ဖိုး       |
 | ---------------------- | --------------------------- |
 | `DATA_DIR`             | `/data`                     |
-| `NEXT_PUBLIC_BASE_URL` | `https://omniroute.fly.dev` |
+| `NEXT_PUBLIC_BASE_URL` | `https://agentproxy.online` |
 
 မှတ်ချက်များ-
 
@@ -196,10 +196,10 @@ Fly.io deployment တွင် OAuth အခြေပြု provider များ
 1. **`NEXT_PUBLIC_BASE_URL` ကို သင်၏ အများသုံး HTTPS domain အဖြစ် သတ်မှတ်ပါ**
 
    ```powershell
-   flyctl secrets set NEXT_PUBLIC_BASE_URL=https://omniroute.fly.dev -a omniroute
+   flyctl secrets set NEXT_PUBLIC_BASE_URL=https://agentproxy.online -a agentproxy
    ```
 
-   custom domain ကို အသုံးပြုနေပါက သက်ဆိုင်ရာ domain ဖြင့် အစားထိုးပါ (ဥပမာ `https://omniroute.yourdomain.com`)။
+   custom domain ကို အသုံးပြုနေပါက သက်ဆိုင်ရာ domain ဖြင့် အစားထိုးပါ (ဥပမာ `https://agentproxy.example.com`)။
 
 2. **Provider console တွင် callback URL ကို ဖွဲ့စည်းသတ်မှတ်ပါ**
 
@@ -210,7 +210,7 @@ Fly.io deployment တွင် OAuth အခြေပြု provider များ
    ```
 
    ဥပမာ Gemini၊ Antigravity၊ Cursor သို့မဟုတ် GitLab Duo မည်သည့်အရာဖြစ်စေ-
-   - `https://omniroute.fly.dev/callback`
+   - `https://agentproxy.online`
 
    `NEXT_PUBLIC_BASE_URL` သည် provider တွင် မှတ်ပုံတင်ထားသော callback URL နှင့် မကိုက်ညီပါက OAuth လုပ်ငန်းစဉ်သည် browser redirect အဆင့်တွင် မအောင်မြင်ပါ။
 
@@ -223,7 +223,7 @@ Fly.io deployment တွင် OAuth အခြေပြု provider များ
 မှတ်ချက်များ-
 
 - `INITIAL_PASSWORD` မပါဝင်ပါ
-- လက်ရှိ project `omniroute` အတွက် ရည်ရွယ်ထားသည်
+- လက်ရှိ project `agentproxy` အတွက် ရည်ရွယ်ထားသည်
 
 ```powershell
 $apiKeySecret = [Convert]::ToHexString((1..32 | ForEach-Object { Get-Random -Minimum 0 -Maximum 256 })).ToLower()
@@ -237,26 +237,26 @@ flyctl secrets set `
   JWT_SECRET=$jwtSecret `
   MACHINE_ID_SALT=$machineIdSalt `
   STORAGE_ENCRYPTION_KEY=$storageKey `
-  OMNIROUTE_WS_BRIDGE_SECRET=$wsBridgeSecret `
+  AGENTPROXY_WS_BRIDGE_SECRET=$wsBridgeSecret `
   DATA_DIR=/data `
-  NEXT_PUBLIC_BASE_URL=https://omniroute.fly.dev `
-  -a omniroute
+  NEXT_PUBLIC_BASE_URL=https://agentproxy.online `
+  -a agentproxy
 ```
 
 Linux / macOS တွင် `openssl rand -hex 32` ကိုလည်း အသုံးပြုနိုင်သည်-
 
 ```bash
-flyctl secrets set OMNIROUTE_WS_BRIDGE_SECRET=$(openssl rand -hex 32) -a omniroute
+flyctl secrets set AGENTPROXY_WS_BRIDGE_SECRET=$(openssl rand -hex 32) -a agentproxy
 ```
 
 မှတ်ချက်များ-
 
-- production တွင် `OMNIROUTE_WS_BRIDGE_SECRET` သည် မဖြစ်မနေလိုအပ်သည်။ ၎င်းမရှိပါက WebSocket bridge handshake ပျက်ကွက်မည်
+- production တွင် `AGENTPROXY_WS_BRIDGE_SECRET` သည် မဖြစ်မနေလိုအပ်သည်။ ၎င်းမရှိပါက WebSocket bridge handshake ပျက်ကွက်မည်
 
 မူလ password တစ်ခုကိုလည်း သတ်မှတ်လိုပါက-
 
 ```powershell
-flyctl secrets set INITIAL_PASSWORD=your-strong-password -a omniroute
+flyctl secrets set INITIAL_PASSWORD=your-strong-password -a agentproxy
 ```
 
 ---
@@ -264,12 +264,12 @@ flyctl secrets set INITIAL_PASSWORD=your-strong-password -a omniroute
 ## 8. လက်ရှိ Parameters များကို ကြည့်ရှုခြင်း
 
 ```powershell
-flyctl secrets list -a omniroute
+flyctl secrets list -a agentproxy
 ```
 
 Console ရှိ `Secrets` စာမျက်နှာတွင် မျှော်မှန်းထားသည့် variables များ မပေါ်ပါက အောက်ပါတို့ကို စစ်ဆေးပါ-
 
-- သင်သည် `omniroute` application ကို ကြည့်ရှုနေခြင်း ရှိ၊ မရှိ
+- သင်သည် `agentproxy` application ကို ကြည့်ရှုနေခြင်း ရှိ၊ မရှိ
 - `fly.toml` ရှိ `app` value သည် console ရှိ application နှင့် ကိုက်ညီမှု ရှိ၊ မရှိ
 
 ---
@@ -286,7 +286,7 @@ flyctl deploy
 Code ကို မပြောင်းလဲဘဲ parameters များကိုသာ အပ်ဒိတ်လုပ်ရန် လိုအပ်ပါက-
 
 ```powershell
-flyctl secrets set KEY=value -a omniroute
+flyctl secrets set KEY=value -a agentproxy
 ```
 
 Fly သည် machines များကို rolling update အလိုအလျောက် ပြုလုပ်ပေးမည်ဖြစ်သည်။
@@ -361,8 +361,8 @@ git merge-base --is-ancestor v3.4.7 upstream/main
 3. Fork ၏ `fly.toml` ကို ပြန်လည်ရယူပါ
 4. `git push origin main`
 5. `flyctl deploy`
-6. `flyctl status -a omniroute`
-7. `flyctl logs --no-tail -a omniroute`
+6. `flyctl status -a agentproxy`
+7. `flyctl logs --no-tail -a agentproxy`
 
 ဤသည်မှာ လက်ရှိ project ကို `v3.4.7` သို့ အဆင့်မြှင့်တင်ရာတွင် အမှန်တကယ် အသုံးပြုခဲ့သော workflow ဖြစ်သည် (ဤနမူနာသည် ယခင် version တစ်ခုကို ရည်ညွှန်းထားပြီး လက်ရှိ အမှန်တကယ် version သည် `v3.8.0` ဖြစ်သည်)။
 
@@ -373,20 +373,20 @@ git merge-base --is-ancestor v3.4.7 upstream/main
 ### 10.1 အပလီကေးရှင်းအခြေအနေကို စစ်ဆေးခြင်း
 
 ```powershell
-flyctl status -a omniroute
+flyctl status -a agentproxy
 ```
 
 ### 10.2 စတင်လည်ပတ်မှု မှတ်တမ်းများကို ကြည့်ရှုခြင်း
 
 ```powershell
-flyctl logs --no-tail -a omniroute
+flyctl logs --no-tail -a agentproxy
 ```
 
 ### 10.3 ဝဘ်ဆိုက် ဝင်ရောက်အသုံးပြုနိုင်မှုကို အတည်ပြုခြင်း
 
 ```powershell
 try {
-  (Invoke-WebRequest -Uri "https://omniroute.fly.dev" -MaximumRedirection 5 -UseBasicParsing).StatusCode
+  (Invoke-WebRequest -Uri "https://agentproxy.online" -MaximumRedirection 5 -UseBasicParsing).StatusCode
 } catch {
   if ($_.Exception.Response) {
     $_.Exception.Response.StatusCode.value__
@@ -425,14 +425,14 @@ try {
 ပုံမှန်အားဖြင့် အကြောင်းရင်းနှစ်ခုရှိသည်-
 
 - `flyctl secrets set` ကို မလုပ်ဆောင်ရသေးခြင်း
-- မတူညီသော အပလီကေးရှင်းတစ်ခုကို ကြည့်ရှုနေခြင်း (ဥပမာ `omniroute` အစား `oroute`)
+- မတူညီသော အပလီကေးရှင်းတစ်ခုကို ကြည့်ရှုနေခြင်း (ဥပမာ `agentproxy` အစား `oroute`)
 
 ### 12.2 `flyctl deploy` က `app not found` ဟု ဖော်ပြခြင်း
 
 အပလီကေးရှင်းကို ဦးစွာ ဖန်တီးပါ-
 
 ```powershell
-flyctl apps create omniroute
+flyctl apps create agentproxy
 ```
 
 ### 12.3 `fly.toml` ကို Parse လုပ်ရာတွင် မအောင်မြင်ခြင်း
@@ -475,10 +475,10 @@ flyctl apps create omniroute
 
 ```powershell
 flyctl auth whoami
-flyctl status -a omniroute
-flyctl secrets list -a omniroute
+flyctl status -a agentproxy
+flyctl secrets list -a agentproxy
 flyctl deploy
-flyctl logs --no-tail -a omniroute
+flyctl logs --no-tail -a agentproxy
 ```
 
 ပုံမှန် release တစ်ခုအတွက် အဓိက command မှာ အောက်ပါတစ်ခုတည်းဖြစ်သည်-
@@ -490,7 +490,7 @@ flyctl deploy
 ပတ်ဝန်းကျင်အသစ်တစ်ခုတွင် ပထမဆုံးအကြိမ် ဖြန့်ချိရန် အဓိကအဆင့်များမှာ-
 
 1. `flyctl auth login`
-2. `flyctl apps create omniroute`
-3. `flyctl secrets set ... -a omniroute`
+2. `flyctl apps create agentproxy`
+3. `flyctl secrets set ... -a agentproxy`
 4. `flyctl deploy`
-5. `flyctl logs --no-tail -a omniroute`
+5. `flyctl logs --no-tail -a agentproxy`

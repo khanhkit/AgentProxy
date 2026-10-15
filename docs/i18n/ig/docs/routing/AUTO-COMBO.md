@@ -641,7 +641,7 @@ arịrịọ ndị na-esochi (dịka ọmụmaatụ, maka caching, ịga n'ihu n
 import {
   registerStrategy,
   type RouterStrategy,
-} from "@omniroute/open-sse/services/autoCombo/routerStrategy";
+} from "@agentproxy/open-sse/services/autoCombo/routerStrategy";
 
 class MyCustomStrategy implements RouterStrategy {
   readonly name = "my-custom";

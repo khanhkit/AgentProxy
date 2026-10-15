@@ -10,7 +10,7 @@ Akwụkwọ a na-akọwa usoro mbugharị AgentProxy n'ezie na Fly.io, ma na-ekp
 - Ibipụta mmelite koodu ndị na-esote
 - Ọrụ ọhụrụ ndị na-agbaso otu usoro mbugharị ahụ
 
-Ntuziaka a dabere na nhazi a nwalere ma chọpụta na ọ na-arụ ọrụ maka ọrụ dị ugbu a. Aha ngwa ahụ bụ `omniroute`.
+Ntuziaka a dabere na nhazi a nwalere ma chọpụta na ọ na-arụ ọrụ maka ọrụ dị ugbu a. Aha ngwa ahụ bụ `agentproxy`.
 
 ---
 
@@ -20,7 +20,7 @@ Ntuziaka a dabere na nhazi a nwalere ma chọpụta na ọ na-arụ ọrụ maka
 - Usoro mbugote: Mbipụta ozugbo site na `flyctl` mpaghara
 - Ebe ọrụ: Iji `Dockerfile` na `fly.toml` ndị dị ugbu a n'ebe nchekwa koodu
 - Nchekwa data na-adịgide adịgide: Fly Volume etinyere na `/data`
-- URL nnweta: `https://omniroute.fly.dev/`
+- URL nnweta: `https://agentproxy.online`
 
 ---
 
@@ -29,7 +29,7 @@ Ntuziaka a dabere na nhazi a nwalere ma chọpụta na ọ na-arụ ọrụ maka
 Ekwenyela na `fly.toml` dị n'ebe nchekwa koodu ugbu a nwere ihe ndị a dị mkpa:
 
 ```toml
-app = 'omniroute'
+app = 'agentproxy'
 primary_region = 'sin'
 
 [[mounts]]
@@ -51,7 +51,7 @@ primary_region = 'sin'
 
 Nkọwa:
 
-- `app = 'omniroute'` na-ekpebi ngwa Fly mbugote ahụ ga-aga na ya
+- `app = 'agentproxy'` na-ekpebi ngwa Fly mbugote ahụ ga-aga na ya
 - `destination = '/data'` na-ekpebi ndekọ ebe a ga-etinye volume na-adịgide adịgide
 - Ọrụ a ga-edoberịrị `DATA_DIR=/data`, ma ọ bụghị ya, a ga-ede nchekwa data na igodo n'ime ndekọ nwa oge nke container ahụ
 
@@ -98,29 +98,29 @@ cd AgentProxy
 Mepee `fly.toml` ma nyochaa ahịrị na-esonụ:
 
 ```toml
-app = 'omniroute'
+app = 'agentproxy'
 ```
 
 Ọ bụrụ na ị na-ebuga ya na ngwa ọhụrụ nke gị, ị nwere ike ịgbanwe ya gaa n'aha pụrụ iche n'ụwa niile, dịka ọmụmaatụ:
 
 ```toml
-app = 'omniroute-yourname'
+app = 'agentproxy-yourname'
 ```
 
 Rịba ama:
 
 - Gbaa mbọ hụ na ngwa ị na-ahụ na console dabara na uru `app` dị na `fly.toml`
-- Ọ bụrụ na i jiri aha ọzọ na mbụ, dịka `oroute`, agwakọtala ya na `omniroute`
+- Ọ bụrụ na i jiri aha ọzọ na mbụ, dịka `oroute`, agwakọtala ya na `agentproxy`
 
 ### 4.3 Mepụta Ngwa ahụ
 
 Ọ bụrụ na ngwa ahụ adịghị ugbu a:
 
 ```powershell
-flyctl apps create omniroute
+flyctl apps create agentproxy
 ```
 
-Ọ bụrụ na ị gbanwere aha ngwa ahụ, jiri aha ị họọrọ dochie `omniroute`.
+Ọ bụrụ na ị gbanwere aha ngwa ahụ, jiri aha ị họọrọ dochie `agentproxy`.
 
 ### 4.4 Mbugote Mbụ
 
@@ -136,14 +136,14 @@ flyctl deploy
 
 ### 5.1 Paramita Ndị E Kwadoburu
 
-E jirila paramita ndị a mee mbugote n'ezie na ngwa `omniroute` dị ugbu a:
+E jirila paramita ndị a mee mbugote n'ezie na ngwa `agentproxy` dị ugbu a:
 
 - `API_KEY_SECRET`
 - `DATA_DIR`
 - `JWT_SECRET`
 - `MACHINE_ID_SALT`
 - `NEXT_PUBLIC_BASE_URL`
-- `OMNIROUTE_WS_BRIDGE_SECRET` (a chọrọ ya na production — a na-eji ya maka nkwenye njirimara WebSocket bridge)
+- `AGENTPROXY_WS_BRIDGE_SECRET` (a chọrọ ya na production — a na-eji ya maka nkwenye njirimara WebSocket bridge)
 - `STORAGE_ENCRYPTION_KEY`
 
 ### 5.2 Banyere `INITIAL_PASSWORD`
@@ -171,7 +171,7 @@ A na-atụ aro mgbanwe ndị a maka Fly Secrets:
 | ---------------------------- | ------------------------- | --------------------------------------------------- |
 | `API_KEY_SECRET`             | Achọrọ                    | A na-eji ya emepụta ma nyochaa API Key              |
 | `JWT_SECRET`                 | Achọrọ                    | A na-eji ya maka nnọkọ nbanye na ịbịanye aka na JWT |
-| `OMNIROUTE_WS_BRIDGE_SECRET` | Achọrọ na mmepụta         | Nzuzo nkwenye njirimara maka njikọ WebSocket        |
+| `AGENTPROXY_WS_BRIDGE_SECRET` | Achọrọ na mmepụta         | Nzuzo nkwenye njirimara maka njikọ WebSocket        |
 | `STORAGE_ENCRYPTION_KEY`     | A na-atụ aro ya nke ukwuu | Na-ezochi ozi njikọ dị mkpa mgbe echekwara ya       |
 | `MACHINE_ID_SALT`            | A tụrụ aro                | Na-emepụta njirimara igwe na-adịgide adịgide        |
 | `INITIAL_PASSWORD`           | Nhọrọ                     | Na-edobe okwuntughe mbụ nke backend na mbunye mbụ   |
@@ -182,7 +182,7 @@ A na-atụ aro mgbanwe ndị a maka Fly Secrets:
 | Mgbanwe                | Uru A Tụrụ Aro              |
 | ---------------------- | --------------------------- |
 | `DATA_DIR`             | `/data`                     |
-| `NEXT_PUBLIC_BASE_URL` | `https://omniroute.fly.dev` |
+| `NEXT_PUBLIC_BASE_URL` | `https://agentproxy.online` |
 
 Ihe ndetu:
 
@@ -196,10 +196,10 @@ Ihe ndetu:
 1. **Debe `NEXT_PUBLIC_BASE_URL` ka ọ bụrụ ngalaba HTTPS ọha gị**
 
    ```powershell
-   flyctl secrets set NEXT_PUBLIC_BASE_URL=https://omniroute.fly.dev -a omniroute
+   flyctl secrets set NEXT_PUBLIC_BASE_URL=https://agentproxy.online -a agentproxy
    ```
 
-   Ọ bụrụ na ị na-eji ngalaba ahaziri iche, jiri ngalaba kwekọrọ dochie ya (dịka `https://omniroute.yourdomain.com`).
+   Ọ bụrụ na ị na-eji ngalaba ahaziri iche, jiri ngalaba kwekọrọ dochie ya (dịka `https://agentproxy.example.com`).
 
 2. **Hazie URL callback na console nke onye na-enye ọrụ**
 
@@ -210,7 +210,7 @@ Ihe ndetu:
    ```
 
    Dịka ọmụmaatụ, ma ọ bụ Gemini, Antigravity, Cursor, ma ọ bụ GitLab Duo:
-   - `https://omniroute.fly.dev/callback`
+   - `https://agentproxy.online`
 
    Ọ bụrụ na `NEXT_PUBLIC_BASE_URL` adabaghị na URL callback e debanyere aha n'aka onye na-enye ọrụ, usoro OAuth ga-ada na nzọụkwụ ntụgharị ihe nchọgharị.
 
@@ -223,7 +223,7 @@ Iwu ndị a na-emepụta uru enweghị usoro e chekwara nke ọma ma dee paramit
 Ihe ndetu:
 
 - Ọ naghị agụnye `INITIAL_PASSWORD`
-- Ezubere ya maka ihe ndị a na-arụ ugbu a `omniroute`
+- Ezubere ya maka ihe ndị a na-arụ ugbu a `agentproxy`
 
 ```powershell
 $apiKeySecret = [Convert]::ToHexString((1..32 | ForEach-Object { Get-Random -Minimum 0 -Maximum 256 })).ToLower()
@@ -237,26 +237,26 @@ flyctl secrets set `
   JWT_SECRET=$jwtSecret `
   MACHINE_ID_SALT=$machineIdSalt `
   STORAGE_ENCRYPTION_KEY=$storageKey `
-  OMNIROUTE_WS_BRIDGE_SECRET=$wsBridgeSecret `
+  AGENTPROXY_WS_BRIDGE_SECRET=$wsBridgeSecret `
   DATA_DIR=/data `
-  NEXT_PUBLIC_BASE_URL=https://omniroute.fly.dev `
-  -a omniroute
+  NEXT_PUBLIC_BASE_URL=https://agentproxy.online `
+  -a agentproxy
 ```
 
 Na Linux / macOS, ị nwekwara ike iji `openssl rand -hex 32`:
 
 ```bash
-flyctl secrets set OMNIROUTE_WS_BRIDGE_SECRET=$(openssl rand -hex 32) -a omniroute
+flyctl secrets set AGENTPROXY_WS_BRIDGE_SECRET=$(openssl rand -hex 32) -a agentproxy
 ```
 
 Ihe ndetu:
 
-- A chọrọ `OMNIROUTE_WS_BRIDGE_SECRET` na mmepụta; ọ bụrụ na ọ dịghị, nkwanye aka nke njikọ WebSocket ga-emebi
+- A chọrọ `AGENTPROXY_WS_BRIDGE_SECRET` na mmepụta; ọ bụrụ na ọ dịghị, nkwanye aka nke njikọ WebSocket ga-emebi
 
 Ọ bụrụ na ịchọrọ ịtọkwa okwuntughe mbụ:
 
 ```powershell
-flyctl secrets set INITIAL_PASSWORD=your-strong-password -a omniroute
+flyctl secrets set INITIAL_PASSWORD=your-strong-password -a agentproxy
 ```
 
 ---
@@ -264,12 +264,12 @@ flyctl secrets set INITIAL_PASSWORD=your-strong-password -a omniroute
 ## 8. Ịlele Paramita Ndị Dị Ugbu A
 
 ```powershell
-flyctl secrets list -a omniroute
+flyctl secrets list -a agentproxy
 ```
 
 Ọ bụrụ na ibe `Secrets` dị na console egosịghị mgbanwe ndị a tụrụ anya ha, lelee:
 
-- Na ị na-ele ngwa `omniroute`
+- Na ị na-ele ngwa `agentproxy`
 - Na uru `app` dị na `fly.toml` dabara na ngwa dị na console
 
 ---
@@ -286,7 +286,7 @@ flyctl deploy
 Ọ bụrụ naanị na ịchọrọ imelite paramita n’agbanweghị koodu:
 
 ```powershell
-flyctl secrets set KEY=value -a omniroute
+flyctl secrets set KEY=value -a agentproxy
 ```
 
 Fly ga-eme mmelite igwe n’usoro na-akpaghị aka.
@@ -361,8 +361,8 @@ Mgbe emekọrịtachara ya na ebe nchekwa mbụ, soro usoro mwepụta a akwadoro
 3. Weghachite `fly.toml` nke fork ahụ
 4. `git push origin main`
 5. `flyctl deploy`
-6. `flyctl status -a omniroute`
-7. `flyctl logs --no-tail -a omniroute`
+6. `flyctl status -a agentproxy`
+7. `flyctl logs --no-tail -a agentproxy`
 
 Nke a bụ usoro ọrụ e ji mee ihe n'ezie mgbe a na-ebulite ọrụ dị ugbu a gaa na `v3.4.7` (ihe atụ a na-ezo aka na ụdị akụkọ ihe mere eme; ụdị dị ugbu a n'ezie bụ `v3.8.0`).
 
@@ -373,20 +373,20 @@ Nke a bụ usoro ọrụ e ji mee ihe n'ezie mgbe a na-ebulite ọrụ dị ugbu
 ### 10.1 Lelee Ọnọdụ Ngwa
 
 ```powershell
-flyctl status -a omniroute
+flyctl status -a agentproxy
 ```
 
 ### 10.2 Lelee Ndekọ Mmalite
 
 ```powershell
-flyctl logs --no-tail -a omniroute
+flyctl logs --no-tail -a agentproxy
 ```
 
 ### 10.3 Nyochaa na Saịtị Nwere Ike Ịrụ Ọrụ
 
 ```powershell
 try {
-  (Invoke-WebRequest -Uri "https://omniroute.fly.dev" -MaximumRedirection 5 -UseBasicParsing).StatusCode
+  (Invoke-WebRequest -Uri "https://agentproxy.online" -MaximumRedirection 5 -UseBasicParsing).StatusCode
 } catch {
   if ($_.Exception.Response) {
     $_.Exception.Response.StatusCode.value__
@@ -425,14 +425,14 @@ Isi ihe abụọ ndị a dị oke mkpa:
 Ọ na-abụkarị n'ihi otu n'ime ihe abụọ ndị a:
 
 - Ị kabeghị agba `flyctl secrets set`
-- Ị na-ele ngwa dị iche (dịka ọmụmaatụ, `oroute` kama `omniroute`)
+- Ị na-ele ngwa dị iche (dịka ọmụmaatụ, `oroute` kama `agentproxy`)
 
 ### 12.2 `flyctl deploy` Na-akọ `app not found`
 
 Buru ụzọ mepụta ngwa ahụ:
 
 ```powershell
-flyctl apps create omniroute
+flyctl apps create agentproxy
 ```
 
 ### 12.3 Ntụgharị `fly.toml` Dara
@@ -475,10 +475,10 @@ Iwu ndị a bụ ndị a na-ejikarị eme ihe maka mwepụta ndị na-esote:
 
 ```powershell
 flyctl auth whoami
-flyctl status -a omniroute
-flyctl secrets list -a omniroute
+flyctl status -a agentproxy
+flyctl secrets list -a agentproxy
 flyctl deploy
-flyctl logs --no-tail -a omniroute
+flyctl logs --no-tail -a agentproxy
 ```
 
 Maka mwepụta nkịtị, iwu bụ isi bụ naanị:
@@ -490,7 +490,7 @@ flyctl deploy
 Maka mbugharị mbụ na gburugburu ọhụrụ, usoro ndị bụ isi bụ:
 
 1. `flyctl auth login`
-2. `flyctl apps create omniroute`
-3. `flyctl secrets set ... -a omniroute`
+2. `flyctl apps create agentproxy`
+3. `flyctl secrets set ... -a agentproxy`
 4. `flyctl deploy`
-5. `flyctl logs --no-tail -a omniroute`
+5. `flyctl logs --no-tail -a agentproxy`

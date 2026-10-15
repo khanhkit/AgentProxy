@@ -5,8 +5,8 @@ import os from "node:os";
 import path from "node:path";
 import { execSync } from "node:child_process";
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-installer-"));
-const FAKE_BIN_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-fake-bin-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-installer-"));
+const FAKE_BIN_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-fake-bin-"));
 const MOCK_OPENWA_VERSION = "4.76.0";
 
 process.env.DATA_DIR = TEST_DATA_DIR;
@@ -85,7 +85,7 @@ test("install creates package.json structure", async () => {
     name: string;
     private: boolean;
   };
-  assert.equal(parsedHost.name, "omniroute-openwa-host");
+  assert.equal(parsedHost.name, "agentproxy-openwa-host");
   assert.ok(parsedHost.private);
 
   assert.equal(result.installedVersion, MOCK_OPENWA_VERSION);

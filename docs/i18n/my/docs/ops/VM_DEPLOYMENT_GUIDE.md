@@ -89,13 +89,13 @@ ufw enable
 ### 2.1 Configuration directory ကို ဖန်တီးခြင်း
 
 ```bash
-mkdir -p /opt/omniroute
+mkdir -p /opt/agentproxy
 ```
 
 ### 2.2 Environment variables ဖိုင်ကို ဖန်တီးခြင်း
 
 ```bash
-cat > /opt/omniroute/.env << 'EOF'
+cat > /opt/agentproxy/.env << 'EOF'
 # === လုံခြုံရေး ===
 JWT_SECRET=CHANGE-TO-A-UNIQUE-64-CHAR-SECRET-KEY
 INITIAL_PASSWORD=YourSecurePassword123!
@@ -103,7 +103,7 @@ API_KEY_SECRET=REPLACE-WITH-ANOTHER-SECRET-KEY
 STORAGE_ENCRYPTION_KEY=REPLACE-WITH-THIRD-SECRET-KEY
 STORAGE_ENCRYPTION_KEY_VERSION=v1
 MACHINE_ID_SALT=CHANGE-TO-A-UNIQUE-SALT
-OMNIROUTE_WS_BRIDGE_SECRET=REPLACE-WITH-WS-BRIDGE-SECRET  # production တွင် လိုအပ်သည်- Codex Responses WS bridge က အသုံးပြုသည်
+AGENTPROXY_WS_BRIDGE_SECRET=REPLACE-WITH-WS-BRIDGE-SECRET  # production တွင် လိုအပ်သည်- Codex Responses WS bridge က အသုံးပြုသည်
 
 # === အက်ပ် ===
 PORT=20128
@@ -120,11 +120,11 @@ BASE_URL=http://127.0.0.1:20128
 # OAuth callback များ၊ dashboard link များနှင့် ဖန်တီးထားသော public URL များအတွက် အသုံးပြုသည့် browser-facing URL။
 NEXT_PUBLIC_BASE_URL=https://llms.seudominio.com
 # ဖန်တီးထားသော public asset URL များအတွက် ရွေးချယ်အသုံးပြုနိုင်သည့် explicit public origin override။
-# OMNIROUTE_PUBLIC_BASE_URL=https://llms.seudominio.com
+# AGENTPROXY_PUBLIC_BASE_URL=https://llms.seudominio.com
 
 # === Cloud Sync (ရွေးချယ်နိုင်သည်) ===
-# CLOUD_URL=https://cloud.omniroute.online
-# NEXT_PUBLIC_CLOUD_URL=https://cloud.omniroute.online
+# CLOUD_URL=https://agentproxy.online
+# NEXT_PUBLIC_CLOUD_URL=https://agentproxy.online
 EOF
 ```
 
@@ -133,22 +133,22 @@ EOF
 ### 2.3 Container ကို စတင်ခြင်း
 
 ```bash
-docker pull diegosouzapw/omniroute:latest
+docker pull diegosouzapw/agentproxy:latest
 
 docker run -d \
-  --name omniroute \
+  --name agentproxy \
   --restart unless-stopped \
-  --env-file /opt/omniroute/.env \
+  --env-file /opt/agentproxy/.env \
   -p 20128:20128 \
-  -v omniroute-data:/app/data \
-  diegosouzapw/omniroute:latest
+  -v agentproxy-data:/app/data \
+  diegosouzapw/agentproxy:latest
 ```
 
 ### 2.4 လည်ပတ်နေကြောင်း စစ်ဆေးခြင်း
 
 ```bash
-docker ps | grep omniroute
-docker logs omniroute --tail 20
+docker ps | grep agentproxy
+docker logs agentproxy --tail 20
 ```
 
 ၎င်းသည် `[DB] SQLite database ready` နှင့် `listening on port 20128` ကို ပြသသင့်သည်။
@@ -181,7 +181,7 @@ chmod 600 /etc/nginx/ssl/origin.key
 ### 3.2 Nginx သတ်မှတ်ပြင်ဆင်ခြင်း
 
 ```bash
-cat > /etc/nginx/sites-available/omniroute << 'NGINX'
+cat > /etc/nginx/sites-available/agentproxy << 'NGINX'
 # မူလ server — IP မှတစ်ဆင့် တိုက်ရိုက်ဝင်ရောက်မှုကို ပိတ်ဆို့သည်
 server {
     listen 80 default_server;
@@ -241,7 +241,7 @@ Reverse-proxy stream timeout များကို သင့် AgentProxy timeo
 `FETCH_TIMEOUT_MS` / `STREAM_IDLE_TIMEOUT_MS` ကို တိုးမြှင့်ပါက `proxy_read_timeout` / `proxy_send_timeout`
 ကိုလည်း တူညီသော သတ်မှတ်ကန့်သတ်ချက်ထက် မြင့်အောင် တိုးမြှင့်ပါ။
 
-AgentProxy သည် OAuth callback များနှင့် ထုတ်ပေးထားသော အများသုံး link များအတွက် browser မှ အသုံးပြုမည့် စံသတ်မှတ်ထားသော origin အဖြစ် `NEXT_PUBLIC_BASE_URL` ကို အသုံးပြုသည်။ အထောက်အထားစိစစ်ပြီးသော dashboard write များသည် same-origin request များနှင့် session-bound CSRF ကာကွယ်မှုကို အသုံးပြုသောကြောင့် static public base URL မလိုအပ်ပါ။ အထက်ပါ `X-Forwarded-*` header များသည် routing metadata အဖြစ် အသုံးဝင်ဆဲဖြစ်သော်လည်း OAuth သို့မဟုတ် ထုတ်ပေးထားသော browser link များအတွက် လိုအပ်သည့်အခါ အများသုံး URL ကို တိတိကျကျ သတ်မှတ်ခြင်းအား အစားမထိုးနိုင်ပါ။ Client များက AgentProxy ကို တိုက်ရိုက်မဝင်ရောက်နိုင်ဘဲ သင့် proxy က ဝင်လာသော forwarded header များကို ဖယ်ရှားပြီး ပြန်လည်တည်ဆောက်ပေးသည့်အခါမှသာ `OMNIROUTE_TRUST_PROXY` ကို ဖွင့်ပါ။
+AgentProxy သည် OAuth callback များနှင့် ထုတ်ပေးထားသော အများသုံး link များအတွက် browser မှ အသုံးပြုမည့် စံသတ်မှတ်ထားသော origin အဖြစ် `NEXT_PUBLIC_BASE_URL` ကို အသုံးပြုသည်။ အထောက်အထားစိစစ်ပြီးသော dashboard write များသည် same-origin request များနှင့် session-bound CSRF ကာကွယ်မှုကို အသုံးပြုသောကြောင့် static public base URL မလိုအပ်ပါ။ အထက်ပါ `X-Forwarded-*` header များသည် routing metadata အဖြစ် အသုံးဝင်ဆဲဖြစ်သော်လည်း OAuth သို့မဟုတ် ထုတ်ပေးထားသော browser link များအတွက် လိုအပ်သည့်အခါ အများသုံး URL ကို တိတိကျကျ သတ်မှတ်ခြင်းအား အစားမထိုးနိုင်ပါ။ Client များက AgentProxy ကို တိုက်ရိုက်မဝင်ရောက်နိုင်ဘဲ သင့် proxy က ဝင်လာသော forwarded header များကို ဖယ်ရှားပြီး ပြန်လည်တည်ဆောက်ပေးသည့်အခါမှသာ `AGENTPROXY_TRUST_PROXY` ကို ဖွင့်ပါ။
 
 ### 3.3 ဖွင့်ပြီး စမ်းသပ်ခြင်း
 
@@ -250,7 +250,7 @@ AgentProxy သည် OAuth callback များနှင့် ထုတ်ပ�
 rm -f /etc/nginx/sites-enabled/default
 
 # AgentProxy ကို ဖွင့်ပါ
-ln -sf /etc/nginx/sites-available/omniroute /etc/nginx/sites-enabled/omniroute
+ln -sf /etc/nginx/sites-available/agentproxy /etc/nginx/sites-enabled/agentproxy
 
 # စမ်းသပ်ပြီး ပြန်လည် load လုပ်ပါ
 nginx -t && systemctl reload nginx
@@ -294,40 +294,40 @@ curl -sI https://llms.seudominio.com/health
 ### ဗားရှင်းအသစ်သို့ အဆင့်မြှင့်တင်ခြင်း
 
 ```bash
-docker pull diegosouzapw/omniroute:latest
-docker stop omniroute && docker rm omniroute
-docker run -d --name omniroute --restart unless-stopped \
-  --env-file /opt/omniroute/.env \
+docker pull diegosouzapw/agentproxy:latest
+docker stop agentproxy && docker rm agentproxy
+docker run -d --name agentproxy --restart unless-stopped \
+  --env-file /opt/agentproxy/.env \
   -p 20128:20128 \
-  -v omniroute-data:/app/data \
-  diegosouzapw/omniroute:latest
+  -v agentproxy-data:/app/data \
+  diegosouzapw/agentproxy:latest
 ```
 
 ### မှတ်တမ်းများကို ကြည့်ရှုခြင်း
 
 ```bash
-docker logs -f omniroute          # အချိန်နှင့်တစ်ပြေးညီ စီးကြောင်း
-docker logs omniroute --tail 50   # နောက်ဆုံး စာကြောင်း 50
+docker logs -f agentproxy          # အချိန်နှင့်တစ်ပြေးညီ စီးကြောင်း
+docker logs agentproxy --tail 50   # နောက်ဆုံး စာကြောင်း 50
 ```
 
 ### ဒေတာဘေ့စ်ကို ကိုယ်တိုင် အရန်သိမ်းဆည်းခြင်း
 
 ```bash
 # volume မှ ဒေတာကို host သို့ ကူးယူရန်
-docker cp omniroute:/app/data ./backup-$(date +%F)
+docker cp agentproxy:/app/data ./backup-$(date +%F)
 
 # သို့မဟုတ် volume တစ်ခုလုံးကို ချုံ့ရန်
-docker run --rm -v omniroute-data:/data -v $(pwd):/backup \
-  alpine tar czf /backup/omniroute-data-$(date +%F).tar.gz /data
+docker run --rm -v agentproxy-data:/data -v $(pwd):/backup \
+  alpine tar czf /backup/agentproxy-data-$(date +%F).tar.gz /data
 ```
 
 ### အရန်သိမ်းဆည်းမှုမှ ပြန်လည်ရယူခြင်း
 
 ```bash
-docker stop omniroute
-docker run --rm -v omniroute-data:/data -v $(pwd):/backup \
-  alpine sh -c "rm -rf /data/* && tar xzf /backup/omniroute-data-YYYY-MM-DD.tar.gz -C /"
-docker start omniroute
+docker stop agentproxy
+docker run --rm -v agentproxy-data:/data -v $(pwd):/backup \
+  alpine sh -c "rm -rf /data/* && tar xzf /backup/agentproxy-data-YYYY-MM-DD.tar.gz -C /"
+docker start agentproxy
 ```
 
 ---
@@ -396,13 +396,13 @@ VM ကို တိုက်ရိုက်ဖော်ထုတ်ခြင်�
 
 ```bash
 # စက်တွင်း repository ထဲတွင်
-cd omnirouteCloud
+cd agentproxyCloud
 npm install
 npx wrangler login
 npx wrangler deploy
 ```
 
-Repository အတွင်းရှိ Cloudflare Tunnel လမ်းညွှန်ချက်အတွက် [TUNNELS_GUIDE.md](./TUNNELS_GUIDE.md) ကိုလည်း ကြည့်ပါ။ သီးခြား `omnirouteCloud/` worker သည် သီးခြားတွဲဖက် repository တစ်ခုတွင် ရှိသည်။
+Repository အတွင်းရှိ Cloudflare Tunnel လမ်းညွှန်ချက်အတွက် [TUNNELS_GUIDE.md](./TUNNELS_GUIDE.md) ကိုလည်း ကြည့်ပါ။ သီးခြား `agentproxyCloud/` worker သည် သီးခြားတွဲဖက် repository တစ်ခုတွင် ရှိသည်။
 
 ---
 
@@ -419,9 +419,9 @@ Repository အတွင်းရှိ Cloudflare Tunnel လမ်းညွှ�
 
 VPS instance အသေးစားများ (RAM 1 GB သို့မဟုတ် ထို့ထက်နည်းသော) ပေါ်တွင် ဖြန့်ချိအသုံးပြုရန်အတွက်-
 
-- **နောက်ခံဝန်ဆောင်မှုများကို ပိတ်ပါ** — scheduler၊ MCP server နှင့် အချိန်မှန် ထိန်းသိမ်းရေးလုပ်ငန်းများကို ကျော်ရန် `OMNIROUTE_DISABLE_BACKGROUND_SERVICES=1` ဟု သတ်မှတ်ပါ။ `docs/reference/ENVIRONMENT.md` ကို ကြည့်ပါ။
+- **နောက်ခံဝန်ဆောင်မှုများကို ပိတ်ပါ** — scheduler၊ MCP server နှင့် အချိန်မှန် ထိန်းသိမ်းရေးလုပ်ငန်းများကို ကျော်ရန် `AGENTPROXY_DISABLE_BACKGROUND_SERVICES=1` ဟု သတ်မှတ်ပါ။ `docs/reference/ENVIRONMENT.md` ကို ကြည့်ပါ။
 - **SQLite WAL mode ကို အသုံးပြုပါ** — ပုံသေအားဖြင့် ဖွင့်ထားပြီး တစ်ပြိုင်နက်ဖတ်ရှုမှုများအတွင်း အမြင့်ဆုံး memory အသုံးပြုမှုကို လျှော့ချပေးသည်။
-- **V8 heap ကို ကန့်သတ်ပါ** — runtime က VM ထက် ပိုကြီးသော အများဆုံးကန့်သတ်ချက်ကို ချိန်ညှိမသွားစေရန် `OMNIROUTE_MEMORY_MB` (ဥပမာ `512`) ကို သတ်မှတ်ပါ။ `docs/reference/ENVIRONMENT.md` ကို ကြည့်ပါ။
-- **အလေးချိန်မြင့် request လက်ခံမှုသည် heap ကန့်သတ်ချက်နှင့်အညီ အလိုအလျောက် တိုးလျှော့သည်** -- အထက်တွင် `OMNIROUTE_MEMORY_MB` ကို သတ်မှတ်ပြီးသည်နှင့် ingest byte budget (`OMNIROUTE_CHAT_MAX_INFLIGHT_BYTES`) သည် ထိုကန့်သတ်ချက်တစ်ခုတည်းမှ အလိုအလျောက် တွက်ချက်သတ်မှတ်သည်။ ထို့ကြောင့် memory ကန့်သတ်ထားသော VM သည် အပိုချိန်ညှိမှုမလိုဘဲ တစ်ပြိုင်နက် request budget ပိုနည်းစွာ ရရှိပြီး၊ ပိုလျှံသော request များသည် memory အတွက် အပြိုင်အဆိုင် အသုံးပြုမည့်အစား ပြန်လည်ကြိုးစားနိုင်သော `503` နှင့် `Retry-After` ကို ရရှိမည်ဖြစ်သည်။ ၎င်းအပြင် တိကျသော အများဆုံးကန့်သတ်ချက်တစ်ခု လိုအပ်မှသာ ယခင် `OMNIROUTE_CHAT_MAX_HEAVY_IN_FLIGHT` request အရေအတွက်ကန့်သတ်ချက်ကို သတ်မှတ်ပါ။
+- **V8 heap ကို ကန့်သတ်ပါ** — runtime က VM ထက် ပိုကြီးသော အများဆုံးကန့်သတ်ချက်ကို ချိန်ညှိမသွားစေရန် `AGENTPROXY_MEMORY_MB` (ဥပမာ `512`) ကို သတ်မှတ်ပါ။ `docs/reference/ENVIRONMENT.md` ကို ကြည့်ပါ။
+- **အလေးချိန်မြင့် request လက်ခံမှုသည် heap ကန့်သတ်ချက်နှင့်အညီ အလိုအလျောက် တိုးလျှော့သည်** -- အထက်တွင် `AGENTPROXY_MEMORY_MB` ကို သတ်မှတ်ပြီးသည်နှင့် ingest byte budget (`AGENTPROXY_CHAT_MAX_INFLIGHT_BYTES`) သည် ထိုကန့်သတ်ချက်တစ်ခုတည်းမှ အလိုအလျောက် တွက်ချက်သတ်မှတ်သည်။ ထို့ကြောင့် memory ကန့်သတ်ထားသော VM သည် အပိုချိန်ညှိမှုမလိုဘဲ တစ်ပြိုင်နက် request budget ပိုနည်းစွာ ရရှိပြီး၊ ပိုလျှံသော request များသည် memory အတွက် အပြိုင်အဆိုင် အသုံးပြုမည့်အစား ပြန်လည်ကြိုးစားနိုင်သော `503` နှင့် `Retry-After` ကို ရရှိမည်ဖြစ်သည်။ ၎င်းအပြင် တိကျသော အများဆုံးကန့်သတ်ချက်တစ်ခု လိုအပ်မှသာ ယခင် `AGENTPROXY_CHAT_MAX_HEAVY_IN_FLIGHT` request အရေအတွက်ကန့်သတ်ချက်ကို သတ်မှတ်ပါ။
 - **VPS ပေါ်တွင် `next build` ပြုလုပ်ခြင်းကို ရှောင်ကြဉ်ပါ** — local စက်တွင် build ပြုလုပ်ပြီး standalone output (`.next/standalone/`) ကို ဖြန့်ချိပါ။
 - **`top` / `free -m` ဖြင့် စောင့်ကြည့်ပါ** — AgentProxy သည် ပုံမှန်အားဖြင့် 1 GB VM ပေါ်တွင် အလုပ်မလုပ်ဘဲ စောင့်နေချိန်၌ RSS 200-400 MB ခန့် အသုံးပြုသည်။

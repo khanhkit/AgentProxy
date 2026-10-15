@@ -34,7 +34,7 @@ export function getCodexClientVersion(): string {
 }
 
 /**
- * Extract the Codex client version the CALLER actually reported, so OmniRoute
+ * Extract the Codex client version the CALLER actually reported, so AgentProxy
  * forwards it upstream instead of substituting a pinned default. The official
  * CLI sends it in User-Agent, e.g.
  *   codex_cli_rs/0.154.0 (Mac OS 26.6.2; arm64) ...

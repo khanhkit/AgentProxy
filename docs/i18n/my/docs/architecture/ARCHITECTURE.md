@@ -416,7 +416,7 @@ Ruleset ရေးသားခြင်းနှင့် threshold ချိန�
 - Quota cache- `src/domain/quotaCache.ts`
 - Degradation အခြေအနေ- `src/domain/degradation.ts`
 - Configuration audit- `src/domain/configAudit.ts`
-- AgentProxy response metadata builder- `src/domain/omnirouteResponseMeta.ts`
+- AgentProxy response metadata builder- `src/domain/agentproxyesponseMeta.ts`
 - Assessment စနစ်ခွဲ- `src/domain/assessment/` — အချိန်မှန် အကဲဖြတ်သည့် job များ
 
 ### E. Authorization Pipeline
@@ -497,7 +497,7 @@ Stealth playbook အပြည့်အစုံနှင့် လုပ်င�
 
 - အခြေခံ အင်ဖရာ: `src/lib/db/core.ts` (better-sqlite3၊ migrations၊ WAL)
 - DB အသုံးပြုခွင့်: သီးခြား `src/lib/db/*` module များကို တိုက်ရိုက် import လုပ်ပါ (`localDb.ts` barrel အဟောင်းကို ဖယ်ရှားပြီးဖြစ်သည်)
-- ဖိုင်: `${DATA_DIR}/storage.sqlite` (`$XDG_CONFIG_HOME/omniroute/storage.sqlite` ကို သတ်မှတ်ထားလျှင် ၎င်းကို အသုံးပြုမည်၊ မသတ်မှတ်ထားလျှင် `~/.omniroute/storage.sqlite`)
+- ဖိုင်: `${DATA_DIR}/storage.sqlite` (`$XDG_CONFIG_HOME/agentproxy/storage.sqlite` ကို သတ်မှတ်ထားလျှင် ၎င်းကို အသုံးပြုမည်၊ မသတ်မှတ်ထားလျှင် `~/.agentproxy/storage.sqlite`)
 - entity များ (table များ + KV namespace များ): providerConnections, providerNodes, modelAliases, combos, apiKeys, settings, pricing, **customModels**, **proxyConfig**, **ipFilter**, **thinkingBudget**, **systemPrompt**
 
 အသုံးပြုမှုဒေတာ တည်မြဲသိုလှောင်ခြင်း:
@@ -1120,11 +1120,11 @@ Runtime အခြေအနေကို မြင်နိုင်သည့် �
 
 ## သိထားသင့်သော Architecture မှတ်ချက်များ
 
-1. `usageDb` နှင့် `localDb` သည် legacy file migration နှင့်အတူ တူညီသော base directory မူဝါဒ (`DATA_DIR` -> `XDG_CONFIG_HOME/omniroute` -> `~/.omniroute`) ကို မျှဝေအသုံးပြုသည်။
+1. `usageDb` နှင့် `localDb` သည် legacy file migration နှင့်အတူ တူညီသော base directory မူဝါဒ (`DATA_DIR` -> `XDG_CONFIG_HOME/agentproxy` -> `~/.agentproxy`) ကို မျှဝေအသုံးပြုသည်။
 2. `/api/v1/route.ts` သည် semantic ကွဲလွဲမှုကို ရှောင်ရှားရန် `/api/v1/models` က အသုံးပြုသော တစ်စုတစ်စည်းတည်း catalog builder (`src/app/api/v1/models/catalog.ts`) ကိုပင် တာဝန်လွှဲပေးသည်။
 3. ဖွင့်ထားသည့်အခါ request logger သည် header/body အပြည့်အစုံကို ရေးသားသည်၊ ထို့ကြောင့် log directory ကို အရေးကြီးသောဒေတာအဖြစ် သတ်မှတ်ကိုင်တွယ်ပါ။
 4. Cloud လုပ်ဆောင်ပုံသည် မှန်ကန်သော `NEXT_PUBLIC_BASE_URL` နှင့် cloud endpoint သို့ ရောက်ရှိနိုင်မှုအပေါ် မူတည်သည်။
-5. `open-sse/` directory ကို `@omniroute/open-sse` **npm workspace package** အဖြစ် ဖြန့်ချိထားသည်။ Source code သည် ၎င်းကို `@omniroute/open-sse/...` မှတစ်ဆင့် import လုပ်သည် (Next.js `transpilePackages` က resolve လုပ်ပေးသည်)။ ဤစာတမ်းရှိ file path များတွင် တစ်သမတ်တည်းဖြစ်စေရန် directory အမည် `open-sse/` ကို ဆက်လက်အသုံးပြုထားသည်။
+5. `open-sse/` directory ကို `@agentproxy/open-sse` **npm workspace package** အဖြစ် ဖြန့်ချိထားသည်။ Source code သည် ၎င်းကို `@agentproxy/open-sse/...` မှတစ်ဆင့် import လုပ်သည် (Next.js `transpilePackages` က resolve လုပ်ပေးသည်)။ ဤစာတမ်းရှိ file path များတွင် တစ်သမတ်တည်းဖြစ်စေရန် directory အမည် `open-sse/` ကို ဆက်လက်အသုံးပြုထားသည်။
 6. Dashboard ရှိ chart များသည် အသုံးပြုရလွယ်ကူပြီး အပြန်အလှန်တုံ့ပြန်နိုင်သော analytics visualization များ (model အသုံးပြုမှု bar chart များ၊ အောင်မြင်မှုနှုန်းများပါဝင်သော provider ခွဲခြမ်းဇယားများ) အတွက် **Recharts** (SVG အခြေပြု) ကို အသုံးပြုသည်။
 7. E2E test များသည် **Playwright** (`tests/e2e/`) ကို အသုံးပြုပြီး `npm run test:e2e` မှတစ်ဆင့် run သည်။ Unit test များသည် **Node.js test runner** (`tests/unit/`) ကို အသုံးပြုပြီး `npm run test:unit` မှတစ်ဆင့် run သည်။ `src/` အောက်ရှိ source code သည် **TypeScript** (`.ts`/`.tsx`) ဖြစ်ပြီး `open-sse/` workspace သည် JavaScript (`.js`) အဖြစ် ဆက်လက်တည်ရှိသည်။
 8. Settings page ကို tab 7 ခုအဖြစ် စီစဉ်ထားသည်- General, Appearance, AI, Security, Routing, Resilience, Advanced။ Resilience page သည် request queue၊ connection cooldown၊ provider breaker နှင့် wait-for-cooldown အပြုအမူတို့ကိုသာ configure လုပ်သည်။ လက်ရှိ breaker runtime state ကို Health page တွင် ပြသသည်။
@@ -1135,7 +1135,7 @@ Runtime အခြေအနေကို မြင်နိုင်သည့် �
 ## လုပ်ငန်းလည်ပတ်မှု စစ်ဆေးအတည်ပြုချက် စာရင်း
 
 - အရင်းအမြစ်ကုဒ်မှ build ပြုလုပ်ရန်: `npm run build`
-- Docker image တည်ဆောက်ရန်: `docker build -t omniroute .`
+- Docker image တည်ဆောက်ရန်: `docker build -t agentproxy .`
 - ဝန်ဆောင်မှုကို စတင်ပြီး အတည်ပြုရန်:
 - `GET /api/settings`
 - `GET /api/v1/models`

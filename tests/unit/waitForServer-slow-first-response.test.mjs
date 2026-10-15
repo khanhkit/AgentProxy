@@ -1,5 +1,5 @@
 // Regression test for the "⚠ Server did not respond within 60s" false alarm on a
-// server that is actually healthy: `omniroute serve` printed the readiness-timeout
+// server that is actually healthy: `agentproxy serve` printed the readiness-timeout
 // diagnostic while the process went on to serve traffic normally.
 //
 // Cause: every probe of /api/monitoring/health was aborted after a FIXED 2s

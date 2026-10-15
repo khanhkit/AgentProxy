@@ -77,7 +77,7 @@ AgentProxy ភ្ជាប់មកជាមួយ **បញ្ជីរបាំ
 | `pii-masker`       | 10      | ការលាក់បាំង PII មុន និងក្រោយការហៅ (អ៊ីមែល ទូរសព្ទ CPF, CNPJ កាតឥណទាន និង SSN)                                   |
 | `prompt-injection` | 20      | រកឃើញលំនាំនៃការបដិសេធការណែនាំ/ការដណ្តើមតួនាទី/jailbreak/ការលេចធ្លាយ                                             |
 
-របាំងការពារផ្ទាល់ខ្លួនត្រូវបានចុះឈ្មោះតាម `registerGuardrail(new MyGuardrail())`។ គំរូនេះមានលក្ខណៈ fail-open (ករណីលើកលែងមិនដែលរារាំងចរាចរណ៍ទេ)។ អាចបដិសេធប្រើប្រាស់សម្រាប់សំណើនីមួយៗតាម header `x-omniroute-disabled-guardrails`។ → សូមមើល [`docs/security/GUARDRAILS.md`](docs/security/GUARDRAILS.md)។
+របាំងការពារផ្ទាល់ខ្លួនត្រូវបានចុះឈ្មោះតាម `registerGuardrail(new MyGuardrail())`។ គំរូនេះមានលក្ខណៈ fail-open (ករណីលើកលែងមិនដែលរារាំងចរាចរណ៍ទេ)។ អាចបដិសេធប្រើប្រាស់សម្រាប់សំណើនីមួយៗតាម header `x-agentproxy-disabled-guardrails`។ → សូមមើល [`docs/security/GUARDRAILS.md`](docs/security/GUARDRAILS.md)។
 
 ### 🧠 របាំងការពារការចាក់បញ្ចូល Prompt
 
@@ -182,15 +182,15 @@ STORAGE_ENCRYPTION_KEY=$(openssl rand -hex 32)
 
 ```bash
 docker run -d \
-  --name omniroute \
+  --name agentproxy \
   --restart unless-stopped \
   --read-only \
   -p 20128:20128 \
-  -v omniroute-data:/app/data \
+  -v agentproxy-data:/app/data \
   -e JWT_SECRET="$(openssl rand -base64 48)" \
   -e API_KEY_SECRET="$(openssl rand -hex 32)" \
   -e STORAGE_ENCRYPTION_KEY="$(openssl rand -hex 32)" \
-  diegosouzapw/omniroute:latest
+  diegosouzapw/agentproxy:latest
 ```
 
 ---
@@ -224,7 +224,7 @@ docker run -d \
 
 > **កំណត់សម្គាល់អំពីវិសាលភាព៖** `socket.yml` នៅ root របស់ repository កំណត់តែ `projectIgnorePaths` សម្រាប់ការស្កេនក្រោយពេល publish នៅផ្នែក registry របស់ Socket.dev លើ npm artifact ដែលបាន publish ប៉ុណ្ណោះ — វាមិនមែនជាច្រកត្រួតពិនិត្យសម្រាប់ការបញ្ចូល CI/PR ដែលត្រូវបានអនុវត្តជាកំហិតនោះទេ។ គ្មាន workflow ណាមួយនៅក្នុង `.github/workflows` គ្មាន script នៅក្នុង `package.json` និងគ្មាន target នៅក្នុង `Makefile` ដែលហៅប្រើ Socket.dev ទេ។
 
-npm artifact `omniroute` ដែលបាន publish រួមបញ្ចូល build របស់ Next.js ដែលមាន `output: "standalone"`
+npm artifact `agentproxy` ដែលបាន publish រួមបញ្ចូល build របស់ Next.js ដែលមាន `output: "standalone"`
 ដែលមានន័យថា route handler ទាំងអស់ — រួមទាំងមុខងារដែលមានសិទ្ធិខ្ពស់ និងបានចងក្រងជាឯកសារ
 (MITM, ការនាំចូល Zed, Cloud Sync, embedded service supervisor) — ត្រូវបានដាក់បញ្ចូល
 ក្នុង minified chunks នៅ `.next/server/*.js`។ កម្មវិធីស្កេនខ្សែសង្វាក់ផ្គត់ផ្គង់បែប heuristic
@@ -247,7 +247,7 @@ GitHub App ដែលអានឯកសារនោះ មិនមែនដោ�
   ចង្អុលត្រឡប់ទៅឯកសារដដែល។
 
 សម្រាប់អ្នកប្រើប្រាស់ដែល pipeline របស់ពួកគេមិនអាចបន្ធូរបន្ថយ alert បាន៖ សូម build ដោយប្រើ
-`OMNIROUTE_BUILD_PROFILE=minimal npm run build`។ វាជំនួស module រសើបទាំងបួន
+`AGENTPROXY_BUILD_PROFILE=minimal npm run build`។ វាជំនួស module រសើបទាំងបួន
 ដោយ stubs ដែលត្រឡប់ HTTP 503 `feature-disabled` នៅពេល runtime
 ដូច្នេះ code paths ដែលមានសិទ្ធិខ្ពស់មិនមាននៅក្នុង bundle នោះទេ។
 សូមមើល [`docs/security/SOCKET_DEV_FINDINGS.md`](docs/security/SOCKET_DEV_FINDINGS.md)

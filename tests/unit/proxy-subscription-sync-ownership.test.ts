@@ -9,7 +9,7 @@ import http from "node:http";
 // and must never write a registry row it does not own (a manual proxy or another
 // subscription's node sharing the same host/port/username).
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-sub-sync-ownership-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-sub-sync-ownership-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 
 const core = await import("../../src/lib/db/core.ts");

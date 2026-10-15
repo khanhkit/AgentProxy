@@ -20,7 +20,7 @@ AgentProxy pèsè àwọn skripti méjì tí a kọ sínú rẹ̀ fún yíyọ t
 npm run uninstall
 ```
 
-Èyí yóò yọ ohun èlò AgentProxy kúrò ṣùgbọ́n yóò **pa** ibi ìpamọ́ dátà, àwọn àtòpọ̀, àwọn kọ́kọ́rọ́ API, àti àwọn ààtò olùpèsè rẹ mọ́ sínú `~/.omniroute/`. Lo èyí bí o bá pinnu láti tún un fi sílẹ̀ nígbà tó bá yá, tí o sì fẹ́ pa ètò rẹ mọ́.
+Èyí yóò yọ ohun èlò AgentProxy kúrò ṣùgbọ́n yóò **pa** ibi ìpamọ́ dátà, àwọn àtòpọ̀, àwọn kọ́kọ́rọ́ API, àti àwọn ààtò olùpèsè rẹ mọ́ sínú `~/.agentproxy/`. Lo èyí bí o bá pinnu láti tún un fi sílẹ̀ nígbà tó bá yá, tí o sì fẹ́ pa ètò rẹ mọ́.
 
 ### Yíyọ Pátápátá
 
@@ -34,7 +34,7 @@ npm run uninstall:full
 - Àwọn àtòpọ̀ olùpèsè àti àwọn kọ́kọ́rọ́ API
 - Àwọn fáìlì àfẹ́yìntì
 - Àwọn fáìlì àkọsílẹ̀
-- Gbogbo fáìlì inú àkọsílẹ̀ `~/.omniroute/`
+- Gbogbo fáìlì inú àkọsílẹ̀ `~/.agentproxy/`
 
 > ⚠️ **Ìkìlọ̀:** `npm run uninstall:full` kò ṣeé dá padà. Gbogbo àwọn àsopọ̀ olùpèsè rẹ, àwọn àkójọpọ̀, àwọn kọ́kọ́rọ́ API, àti ìtàn lílò rẹ ni a ó parẹ́ títí láé.
 
@@ -46,31 +46,31 @@ npm run uninstall:full
 
 ```bash
 # Yọ package kárí ayé kúrò
-npm uninstall -g omniroute
+npm uninstall -g agentproxy
 
 # (Kì í ṣe dandan) Yọ àkọsílẹ̀ dátà kúrò
-rm -rf ~/.omniroute
+rm -rf ~/.agentproxy
 ```
 
 ### Fífì pnpm Sílẹ̀ Kárí Ayé
 
 ```bash
-pnpm uninstall -g omniroute
-rm -rf ~/.omniroute
+pnpm uninstall -g agentproxy
+rm -rf ~/.agentproxy
 ```
 
 ### Docker
 
 ```bash
 # Dá container dúró kí o sì yọ ọ́ kúrò
-docker stop omniroute
-docker rm omniroute
+docker stop agentproxy
+docker rm agentproxy
 
 # Yọ volume kúrò (ó ń pa gbogbo dátà rẹ́)
-docker volume rm omniroute-data
+docker volume rm agentproxy-data
 
 # (Kì í ṣe dandan) Yọ image náà kúrò
-docker rmi diegosouzapw/omniroute:latest
+docker rmi diegosouzapw/agentproxy:latest
 ```
 
 ### Docker Compose
@@ -93,21 +93,21 @@ docker compose down -v
 **macOS:**
 
 - Fa `AgentProxy.app` láti `/Applications` sínú Trash
-- Yọ dátà kúrò: `rm -rf ~/Library/Application Support/omniroute`
+- Yọ dátà kúrò: `rm -rf ~/Library/Application Support/agentproxy`
 
 **Linux:**
 
 - Yọ fáìlì AppImage kúrò
-- Yọ dátà kúrò: `rm -rf ~/.omniroute`
+- Yọ dátà kúrò: `rm -rf ~/.agentproxy`
 
 ### Fífì Láti Orísun Sílẹ̀ (git clone)
 
 ```bash
 # Yọ àkọsílẹ̀ tí a ṣe clone rẹ̀ kúrò
-rm -rf /path/to/omniroute
+rm -rf /path/to/agentproxy
 
 # (Kì í ṣe dandan) Yọ àkọsílẹ̀ dátà kúrò
-rm -rf ~/.omniroute
+rm -rf ~/.agentproxy
 ```
 
 ---
@@ -118,11 +118,11 @@ AgentProxy máa ń tọ́jú dátà sí àwọn ibi wọ̀nyí nípa àìyípad�
 
 | Pẹpẹ        | Ọ̀nà Àìyípadà                  | Ìyípadà                         |
 | ----------- | ----------------------------- | ------------------------------- |
-| Linux       | `~/.omniroute/`               | àyípadà àyíká `DATA_DIR`        |
-| macOS       | `~/.omniroute/`               | àyípadà àyíká `DATA_DIR`        |
-| Windows     | `%APPDATA%/omniroute/`        | àyípadà àyíká `DATA_DIR`        |
+| Linux       | `~/.agentproxy/`               | àyípadà àyíká `DATA_DIR`        |
+| macOS       | `~/.agentproxy/`               | àyípadà àyíká `DATA_DIR`        |
+| Windows     | `%APPDATA%/agentproxy/`        | àyípadà àyíká `DATA_DIR`        |
 | Docker      | `/app/data/` (volume tí a so) | àyípadà àyíká `DATA_DIR`        |
-| Tó tẹ̀lé XDG | `$XDG_CONFIG_HOME/omniroute/` | àyípadà àyíká `XDG_CONFIG_HOME` |
+| Tó tẹ̀lé XDG | `$XDG_CONFIG_HOME/agentproxy/` | àyípadà àyíká `XDG_CONFIG_HOME` |
 
 ### Àwọn fáìlì inú àkọsílẹ̀ dátà
 
@@ -143,17 +143,17 @@ Lẹ́yìn yíyọ ọ́ kúrò, ṣàyẹ̀wò pé kò sí fáìlì kankan tó 
 
 ```bash
 # Ṣàyẹ̀wò package npm àgbáyé
-npm list -g omniroute 2>/dev/null
+npm list -g agentproxy 2>/dev/null
 
 # Ṣàyẹ̀wò ìtọ́nisọ́nà data
-ls -la ~/.omniroute/ 2>/dev/null
+ls -la ~/.agentproxy/ 2>/dev/null
 
 # Ṣàyẹ̀wò àwọn process tó ń ṣiṣẹ́
-pgrep -f omniroute
+pgrep -f agentproxy
 ```
 
 Tí process èyíkéyìí bá ṣì ń ṣiṣẹ́, dá a dúró:
 
 ```bash
-pkill -f omniroute
+pkill -f agentproxy
 ```

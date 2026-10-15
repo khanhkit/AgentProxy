@@ -18,7 +18,7 @@
 
 | Mo rí èyí                  | Ohun tó túmọ̀ sí                                 | Ohun tí o yẹ kí o ṣe                                                                                             |
 | -------------------------- | ----------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
-| "Kò lè sopọ̀"               | AgentProxy kò ṣiṣẹ́                               | Ṣiṣe `omniroute` tàbí `docker restart omniroute`                                                                 |
+| "Kò lè sopọ̀"               | AgentProxy kò ṣiṣẹ́                               | Ṣiṣe `agentproxy` tàbí `docker restart agentproxy`                                                                 |
 | "Kọ́kọ́rọ́ API kò tọ́"         | Kọ́kọ́rọ́ rẹ kò tọ́ tàbí ó ti parí                  | Ṣe àdàkọ kọ́kọ́rọ́ náà lẹ́ẹ̀kan sí i láti ojúlé olùpèsè                                                               |
 | "Ààlà ìwọ̀n ti kọjá"        | O ń fi àwọn ìbéèrè púpọ̀ jù ránṣẹ́                | Dúró fún ìṣẹ́jú 1, tàbí lo `model: "auto"` fún ìyípadà aládàáṣe sí aṣàyàn ìgbẹ̀yìn                                 |
 | "Ìpín rẹ ti tán"           | O ti lo gbogbo ìpín ọ̀fẹ́/tí o sanwó fún          | So àwọn olùpèsè míì pọ̀, tàbí lo àwọn olùpèsè ọ̀fẹ́ (Kiro, Pollinations)                                            |
@@ -26,7 +26,7 @@
 | "Olùpèsè tí kò tọ́ ni a lò" | `auto` yan olùpèsè mìíràn                       | Èyí jẹ́ ohun tó bójú mu! `auto` ń yan èyí tó dára jù. Fi dandan lo olùpèsè kan pàtó pẹ̀lú `model: "openai/gpt-4o"` |
 | "502 Ẹnubodè Tí Kò Dáa"    | Olùpèsè ti dáwọ́ iṣẹ́ dúró                        | Dúró kí o sì tún gbìyànjú, tàbí lo `model: "auto"` láti yí olùpèsè padà                                          |
 | "401 Kò Ní Àṣẹ"            | Àwọn ẹ̀rí ìdánimọ̀ rẹ kò tọ́                       | Ṣàyẹ̀wò kọ́kọ́rọ́ API rẹ tàbí tún jẹ́rìí ìdánimọ̀ pẹ̀lú OAuth                                                           |
-| "a kò dá omniroute mọ̀"     | Àwọn módùlù node àgbáyé kò sí nínú Windows PATH | Fi ìṣáájú àgbáyé npm rẹ kún Windows PATH. Wá a pẹ̀lú `npm config get prefix`.                                     |
+| "a kò dá agentproxy mọ̀"     | Àwọn módùlù node àgbáyé kò sí nínú Windows PATH | Fi ìṣáájú àgbáyé npm rẹ kún Windows PATH. Wá a pẹ̀lú `npm config get prefix`.                                     |
 | "429 Àwọn Ìbéèrè Púpọ̀ Jù"  | A ti fi ààlà ìwọ̀n lé ọ lórí                     | Dúró fún ìṣẹ́jú 1, tàbí so àwọn olùpèsè míì pọ̀                                                                    |
 
 **Ṣé o ṣì di mọ́lẹ̀?** Wo [àlàyé ìṣàtúnṣe ìṣòro tó kúnrẹ́rẹ́](#detailed-troubleshooting) nísàlẹ̀, tàbí béèrè lórí [Discord](https://discord.gg/U47eFqAXCn).
@@ -50,14 +50,14 @@
 **Àtúnṣe tí a ti fìdí rẹ̀ múlẹ̀ (gẹ́gẹ́ bí àwùjọ ṣe ròyìn, 2026-08-10)**: ṣàtúnṣe àwọn oníyípadà àyíká mẹ́ta kí yíyípadà, ìṣiṣẹ́pọ̀, àti aṣàyàn ìgbẹ̀yìn lè gba ìyípadà lemọ́lemọ́ ti ipele ọ̀fẹ́ dípò kí wọ́n dáwọ́ iṣẹ́ dúró nítorí rẹ̀:
 
 ```bash
-export OMNIROUTE_ROTATE_ON_400=true           # lọ sí módẹ́lì/olùpèsè mìíràn lórí 400/401 (ó fo àwọn módẹ́lì ìrékọjá tó bàjẹ́)
-export OMNIROUTE_CHAT_MAX_HEAVY_IN_FLIGHT=4   # òrùlé gbígba àwọn iṣẹ́ wuwo tó ṣe kedere (a kò ṣètò rẹ̀ ní àìpé: kò sí ààlà iye ìbéèrè, wo àkíyèsí nísàlẹ̀)
-export OMNIROUTE_CHAT_ADMISSION_QUEUE_MS=5000 # ìdúró tó ní ààlà tó gùn sí i fún agbára iṣẹ́ wuwo dípò 503 tí a lè tún gbìyànjú lẹ́sẹ̀kẹsẹ̀
+export AGENTPROXY_ROTATE_ON_400=true           # lọ sí módẹ́lì/olùpèsè mìíràn lórí 400/401 (ó fo àwọn módẹ́lì ìrékọjá tó bàjẹ́)
+export AGENTPROXY_CHAT_MAX_HEAVY_IN_FLIGHT=4   # òrùlé gbígba àwọn iṣẹ́ wuwo tó ṣe kedere (a kò ṣètò rẹ̀ ní àìpé: kò sí ààlà iye ìbéèrè, wo àkíyèsí nísàlẹ̀)
+export AGENTPROXY_CHAT_ADMISSION_QUEUE_MS=5000 # ìdúró tó ní ààlà tó gùn sí i fún agbára iṣẹ́ wuwo dípò 503 tí a lè tún gbìyànjú lẹ́sẹ̀kẹsẹ̀
 ```
 
 Ṣètò àwọn wọ̀nyí nínú àyíká ìlànà AgentProxy (daemon náà, fún àpẹẹrẹ nípasẹ̀ LaunchAgent plist tàbí `systemctl edit`), lẹ́yìn náà tún AgentProxy bẹ̀rẹ̀. Àmì yíyípadà náà ni irinṣẹ́ kan ṣoṣo tó ní ipa tó ga jù: ó ń yí ìkùnà pátápátá padà sí àtúngbìyànjú tí kò hàn sí olùmúlò pẹ̀lú olùpèsè tó ní ìlera nínú àkójọpọ̀ náà.
 
-**Àkíyèsí**: `OMNIROUTE_CHAT_MAX_HEAVY_IN_FLIGHT` ń fi ààlà sí iye àwọn ìbéèrè iṣẹ́ wuwo — tí ó ní àyíká ọ̀rọ̀ gígùn — tó lè ṣiṣẹ́ lẹ́ẹ̀kan náà; ààlà náà jẹ́ ẹnubodè gbígba wọlé, kì í ṣe ohun tó ń fi ààlà ìwọ̀n lé olùpèsè lórí. **Ìmúdójúìwọ̀n #503-fanout:** a kò tún ṣètò oníyípadà yìí ní àìpé mọ́ (ní báyìí ó máa ń ṣiṣẹ́ nìkan nígbà tí a bá ṣètò rẹ̀ ní pàtó, gẹ́gẹ́ bí ó ṣe wà lókè) — dípò bẹ́ẹ̀, ìgbàwọlé iṣẹ́ wuwo ni ìnáwó báìtì tí a yọ jáde ní aládàáṣe (`OMNIROUTE_CHAT_MAX_INFLIGHT_BYTES`) ń darí, èyí tí ń ṣe ìwọ̀n ara rẹ̀ láti inú òrùlé gidi ti ìrántí ẹrọ agbàlejò, nítorí náà ìṣàgbékalẹ̀ tuntun yẹ kí ó rí àwọn ìkọ̀sílẹ̀ `503 chat_admission_busy` tó dín kù gan-an láì ṣètò oníyípadà yìí rárá; ṣíṣètò rẹ̀ ní pàtó níbí ṣì ń ṣiṣẹ́ gan-an gẹ́gẹ́ bí àkọsílẹ̀ ṣe ṣàlàyé. Àwọn ìforígbárí ìnáwó báìtì tí a ṣètò ní pàtó máa ń ní ààlà láàárín 8 MiB–2 GiB. `413 body_exceeds_budget` kì í ṣe ìṣòro onígbà díẹ̀: mú ìnáwó báìtì náà pọ̀ sí i, dín `OMNIROUTE_CHAT_HARD_MAX_BODY_BYTES` kù, tàbí mú òrùlé ìrántí ìlànà náà pọ̀ sí i. Ìtúsílẹ̀ `inflight_bytes_budget` jẹ́ ìdíje fún ohun àmúlò fún ìgbà díẹ̀, ó sì ṣì ṣeé tún gbìyànjú. Fífi ààlà ìwọ̀n lórí olùpèsè kọ̀ọ̀kan (`open-sse/services/rateLimitManager.ts`) ni `RATE_LIMIT_MAX_WAIT_MS`, `RATE_LIMIT_MAX_QUEUE_DEPTH`, àti `RATE_LIMIT_AUTO_ENABLE` ń darí lọ́tọ̀ — wo `.env.example`.
+**Àkíyèsí**: `AGENTPROXY_CHAT_MAX_HEAVY_IN_FLIGHT` ń fi ààlà sí iye àwọn ìbéèrè iṣẹ́ wuwo — tí ó ní àyíká ọ̀rọ̀ gígùn — tó lè ṣiṣẹ́ lẹ́ẹ̀kan náà; ààlà náà jẹ́ ẹnubodè gbígba wọlé, kì í ṣe ohun tó ń fi ààlà ìwọ̀n lé olùpèsè lórí. **Ìmúdójúìwọ̀n #503-fanout:** a kò tún ṣètò oníyípadà yìí ní àìpé mọ́ (ní báyìí ó máa ń ṣiṣẹ́ nìkan nígbà tí a bá ṣètò rẹ̀ ní pàtó, gẹ́gẹ́ bí ó ṣe wà lókè) — dípò bẹ́ẹ̀, ìgbàwọlé iṣẹ́ wuwo ni ìnáwó báìtì tí a yọ jáde ní aládàáṣe (`AGENTPROXY_CHAT_MAX_INFLIGHT_BYTES`) ń darí, èyí tí ń ṣe ìwọ̀n ara rẹ̀ láti inú òrùlé gidi ti ìrántí ẹrọ agbàlejò, nítorí náà ìṣàgbékalẹ̀ tuntun yẹ kí ó rí àwọn ìkọ̀sílẹ̀ `503 chat_admission_busy` tó dín kù gan-an láì ṣètò oníyípadà yìí rárá; ṣíṣètò rẹ̀ ní pàtó níbí ṣì ń ṣiṣẹ́ gan-an gẹ́gẹ́ bí àkọsílẹ̀ ṣe ṣàlàyé. Àwọn ìforígbárí ìnáwó báìtì tí a ṣètò ní pàtó máa ń ní ààlà láàárín 8 MiB–2 GiB. `413 body_exceeds_budget` kì í ṣe ìṣòro onígbà díẹ̀: mú ìnáwó báìtì náà pọ̀ sí i, dín `AGENTPROXY_CHAT_HARD_MAX_BODY_BYTES` kù, tàbí mú òrùlé ìrántí ìlànà náà pọ̀ sí i. Ìtúsílẹ̀ `inflight_bytes_budget` jẹ́ ìdíje fún ohun àmúlò fún ìgbà díẹ̀, ó sì ṣì ṣeé tún gbìyànjú. Fífi ààlà ìwọ̀n lórí olùpèsè kọ̀ọ̀kan (`open-sse/services/rateLimitManager.ts`) ni `RATE_LIMIT_MAX_WAIT_MS`, `RATE_LIMIT_MAX_QUEUE_DEPTH`, àti `RATE_LIMIT_AUTO_ENABLE` ń darí lọ́tọ̀ — wo `.env.example`.
 
 **Bí o ṣe lè jẹ́rìí pé ó ṣiṣẹ́**: ṣiṣẹ́ agent/cron rẹ lẹ́ẹ̀mejì ní kíákíá, kí o sì jẹ́rìí pé àwọn méjèèjì ṣàṣeyọrí. Ṣáájú àtúnṣe náà, ìṣiṣẹ́ kejì sábà máa ń dá àṣìṣe `429`/`401` padà. Lẹ́yìn àtúnṣe náà, a máa tún àwọn ìkùnà (bí ó bá sí) gbìyànjú láìjẹ́ kí o rí i, ìpè náà yóò sì parí. O tún lè lo `curl /monitoring/health` kí o sì ṣàkíyèsí field `rateLimitedUntil` lórí àwọn ìsopọ̀ provider àti `circuitBreakers.providerBreakers[].state` fún àwọn provider tí ọ̀ràn náà kàn — state náà jẹ́ ọ̀kan lára `CLOSED`, `DEGRADED`, `OPEN`, tàbí `HALF_OPEN` (wo `src/shared/utils/circuitBreaker.ts`), provider tí ìkùnà rẹ̀ sì ń bá a lọ yóò yí padà láti `CLOSED → DEGRADED → OPEN` kí fèrèsé àtúntò tó jẹ́ kí ìdánwò kan kọjá (`HALF_OPEN`).
 
@@ -69,12 +69,12 @@ export OMNIROUTE_CHAT_ADMISSION_QUEUE_MS=5000 # ìdúró tó ní ààlà tó gù
 
 ## Àwọn Ìkìlọ̀ npm install (ERESOLVE / peer / deprecated)
 
-Nígbà tí o bá ṣiṣẹ́ `npm install -g omniroute`, o lè rí ọ̀pọ̀lọpọ̀ ìkìlọ̀ bíi `npm warn ERESOLVE`, àwọn ìfitónilétí nípa peer-dependency, àti àwọn ìfiránṣẹ́ `deprecated`. **Àwọn wọ̀nyí jẹ́ ohun tí a retí, wọn kò sì léwu.** Fífìmọ́ rẹ ṣàṣeyọrí bí o bá rí `added <N> packages` nínú àbájáde náà.
+Nígbà tí o bá ṣiṣẹ́ `npm install -g agentproxy`, o lè rí ọ̀pọ̀lọpọ̀ ìkìlọ̀ bíi `npm warn ERESOLVE`, àwọn ìfitónilétí nípa peer-dependency, àti àwọn ìfiránṣẹ́ `deprecated`. **Àwọn wọ̀nyí jẹ́ ohun tí a retí, wọn kò sì léwu.** Fífìmọ́ rẹ ṣàṣeyọrí bí o bá rí `added <N> packages` nínú àbájáde náà.
 
 Láti fi àwọn ìkìlọ̀ nípa ìyanjú peer-dependency pamọ́, lo ọ̀nà fífìmọ́ tí AgentProxy ṣe àtìlẹ́yìn fún:
 
 ```bash
-npm install -g omniroute --legacy-peer-deps
+npm install -g agentproxy --legacy-peer-deps
 ```
 
 `--legacy-peer-deps` máa ń fi `ERESOLVE` àti àwọn ìfitónilétí peer-dependency nìkan pamọ́. Àwọn ìfitónilétí ìgbógbẹ́ (`deprecated`) yóò ṣì hàn nítorí pé wọ́n wá láti inú àwọn package ẹnikẹ́ta tí wọ́n jẹ́ transitive; wọn kò túmọ̀ sí pé fífìmọ́ náà kùnà.
@@ -101,7 +101,7 @@ Fún fífì npm sílẹ̀ ní gbogbo ètò, fi Chromium sílẹ̀ láti inú dir
 AgentProxy kí cache browser náà lè jẹ́ ti fífì Playwright kan náà sílẹ̀:
 
 ```bash
-cd "$(npm root -g)/omniroute"
+cd "$(npm root -g)/agentproxy"
 npx playwright install chromium
 ```
 
@@ -118,10 +118,10 @@ Tún AgentProxy bẹ̀rẹ̀ lẹ́yìn fífìmọ́ náà, lẹ́yìn náà tú
 | Ìwọlé àkọ́kọ́ kò ṣiṣẹ́                                        | Ṣètò `INITIAL_PASSWORD` nínú `.env` (kò sí default tí a kọ sínú code)                                                                                                |
 | Dashboard ṣí ní port tí kò tọ́                              | Ṣètò `PORT=20128` àti `NEXT_PUBLIC_BASE_URL=http://localhost:20128`                                                                                                  |
 | Kò sí log tí a kọ sí disk                                  | Ṣètò `APP_LOG_TO_FILE=true`, kí o sì ṣàyẹ̀wò pé gbigba call log ṣiṣẹ́                                                                                                  |
-| EACCES: a kọ àṣẹ sílẹ̀                                      | Ṣètò `DATA_DIR=/path/to/writable/dir` láti kọjá lórí `~/.omniroute`                                                                                                  |
+| EACCES: a kọ àṣẹ sílẹ̀                                      | Ṣètò `DATA_DIR=/path/to/writable/dir` láti kọjá lórí `~/.agentproxy`                                                                                                  |
 | Strategy routing kò ń fipamọ́                               | Ṣe ìmúdójúìwọ̀n sí release v3.x tuntun jù lọ (àtúnṣe schema Zod fún fífi settings pamọ́ wà nínú àwọn ẹ̀dà àtẹ̀yìnwá)                                                     |
 | Ìwọlé jáwọ́ ṣiṣẹ́ / ojú-ìwé ṣófo                             | Ṣàyẹ̀wò ẹ̀dà Node.js — wo [Ìbámu Node.js](#nodejs-compatibility) nísàlẹ̀                                                                                                |
-| `dlopen` / `slice is not valid mach-o file` (macOS)        | Ṣiṣe `cd $(npm root -g)/omniroute/app && npm rebuild better-sqlite3 && omniroute` — wo [àtúnkọ́ module abinibi macOS](#macos-native-module-rebuild) nísàlẹ̀            |
+| `dlopen` / `slice is not valid mach-o file` (macOS)        | Ṣiṣe `cd $(npm root -g)/agentproxy/app && npm rebuild better-sqlite3 && agentproxy` — wo [àtúnkọ́ module abinibi macOS](#macos-native-module-rebuild) nísàlẹ̀            |
 | Proxy "fetch failed"                                       | Rí i dájú pé a ṣètò config proxy ní ipele tó tọ́ — wo [Àwọn Ìṣòro Proxy](#proxy-issues) nísàlẹ̀                                                                        |
 | Docker `curl: (56) Recv failure: Connection reset by peer` | Ó ṣeé ṣe kí binding port Docker rẹ lọ sí IPv6. Lo `-p 127.0.0.1:20128:20128` láti fipá mú IPv4, tàbí dán an wò pẹ̀lú `curl -4`. Wo [Docker IPv6](#docker-ipv6) nísàlẹ̀ |
 | Antivirus ya `README.md` sọ́tọ̀                              | Ìdánimọ̀ èké — wo [Àwọn ìdánimọ̀ èké antivirus](#antivirus-false-positives) nísàlẹ̀                                                                                     |
@@ -139,7 +139,7 @@ Tún AgentProxy bẹ̀rẹ̀ lẹ́yìn fífìmọ́ náà, lẹ́yìn náà tú
 
 Avast àti AVG ń lo ìlànà ìfojúdìwọ̀n kan tí ó máa ń sàmì sí àwọn fáìlì ọ̀rọ̀-lásán/Markdown tí ó ní ọ̀pọ̀
 ọ̀nà-àsopọ̀ tí ó dà bí ìbéèrè HTTP. `README.md` ti AgentProxy wà nínú package npm (a
-ṣàkọsílẹ̀ rẹ̀ nínú `package.json` → `files`), nítorí náà ó máa ń dé sí `node_modules/omniroute/README.md` nígbà
+ṣàkọsílẹ̀ rẹ̀ nínú `package.json` → `files`), nítorí náà ó máa ń dé sí `node_modules/agentproxy/README.md` nígbà
 fífìmọ́lẹ̀ àgbáyé — ó sì ní nǹkan bí àpẹẹrẹ `http://localhost:20128/...` mẹ́ẹ̀ẹ́dógún (àwọn endpoint
 HTTP/SSE ti MCP, URL `.well-known` ti A2A, àti àwọn àpẹẹrẹ `curl`). Ìpọ̀ àwọn ọ̀nà-àsopọ̀ yẹn
 ti tó láti mú ìlànà ìfojúdìwọ̀n náà ṣiṣẹ́.
@@ -155,7 +155,7 @@ láti inú ààyè àdádó.
 
 1. **Dá àwọn ìfitónilétí náà dúró** — yọ directory ìfìmọ́lẹ̀ náà kúrò nínú àyẹ̀wò ẹ̀rọ ìdènà kókóró rẹ
    (Avast: Settings → Exceptions), nípa ṣíṣe àfikún path `node_modules` àgbáyé rẹ àti/tàbí
-   data dir AgentProxy (`~/.omniroute/`).
+   data dir AgentProxy (`~/.agentproxy/`).
 2. **Jábọ̀ ìkìlọ̀ èké náà** — <https://www.avast.com/false-positive-file-form.php>,
    kí o sì so `README.md` tí a fi sínú ààyè àdádó mọ́ ọn. Èyí ni àtúnṣe tí ó ń ran gbogbo ènìyàn lọ́wọ́, nítorí pé
    ìlànà ìfojúdìwọ̀n olùpèsè náà ló ń hu ìwà àṣejù sí fáìlì ọ̀rọ̀ kan.
@@ -231,8 +231,8 @@ títí tí èyí yóò fi ṣẹlẹ̀, àwọn release tuntun lè tún fa èyí
    nvm use 24
    ```
 2. Ṣàyẹ̀wò ẹ̀yà rẹ: `node --version` gbọ́dọ̀ fi `v24.0.0` tàbí èyí tó tuntun sí i hàn lórí ìlà 24.x LTS
-3. Tún AgentProxy fi sílẹ̀: `npm install -g omniroute`
-4. Tún un bẹ̀rẹ̀: `omniroute`
+3. Tún AgentProxy fi sílẹ̀: `npm install -g agentproxy`
+4. Tún un bẹ̀rẹ̀: `agentproxy`
 
 > **Àwọn ẹ̀yà tó ní ààbò tí a ṣe àtìlẹ́yìn fún:** `>=22.22.2 <23` tàbí `>=24.0.0 <27`. Node.js 24.x LTS (Krypton) àti Node.js 26 ni a ṣe àtìlẹ́yìn fún ní kíkún.
 
@@ -270,7 +270,7 @@ tó sì nílò àkójọpọ̀ abinibi (`node-gyp rebuild`), npm máa ń fò ó 
 
 <a name="macos-native-module-rebuild"></a>
 
-**Ìdí:** Lẹ́yìn `npm install -g omniroute` àgbáyé, ó ṣeé ṣe kí a ti ṣàkójọ fáìlì alakomeji abinibi `better-sqlite3` tó wà nínú àkójọpọ̀ náà fún àkójọpọ̀ ẹ̀rọ tàbí Node.js ABI tó yàtọ̀ sí èyí tí ń ṣiṣẹ́ lórí ẹ̀rọ agbègbè náà. Èyí wọ́pọ̀ lórí macOS (Apple Silicon àti Intel méjèèjì) nígbà tí fáìlì alakomeji tí a kọ́ tẹ́lẹ̀ kò bá àyíká rẹ mu.
+**Ìdí:** Lẹ́yìn `npm install -g agentproxy` àgbáyé, ó ṣeé ṣe kí a ti ṣàkójọ fáìlì alakomeji abinibi `better-sqlite3` tó wà nínú àkójọpọ̀ náà fún àkójọpọ̀ ẹ̀rọ tàbí Node.js ABI tó yàtọ̀ sí èyí tí ń ṣiṣẹ́ lórí ẹ̀rọ agbègbè náà. Èyí wọ́pọ̀ lórí macOS (Apple Silicon àti Intel méjèèjì) nígbà tí fáìlì alakomeji tí a kọ́ tẹ́lẹ̀ kò bá àyíká rẹ mu.
 
 **Àwọn àmì:**
 
@@ -279,15 +279,15 @@ tó sì nílò àkójọpọ̀ abinibi (`node-gyp rebuild`), npm máa ń fò ó 
 - Àpẹẹrẹ kíkún:
 
 ```
-dlopen(/Users/<user>/.nvm/versions/node/v24.14.1/lib/node_modules/omniroute/app/node_modules/better-sqlite3/build/Release/better_sqlite3.node, 0x0001): tried: '...' (slice is not valid mach-o file)
+dlopen(/Users/<user>/.nvm/versions/node/v24.14.1/lib/node_modules/agentproxy/app/node_modules/better-sqlite3/build/Release/better_sqlite3.node, 0x0001): tried: '...' (slice is not valid mach-o file)
 ```
 
 **Àtúnṣe — tún un kọ́ fún àyíká agbègbè rẹ (kò nílò kí o sọ ẹ̀yà Node.js rẹ kalẹ̀):**
 
 ```bash
-cd $(npm root -g)/omniroute/app
+cd $(npm root -g)/agentproxy/app
 npm rebuild better-sqlite3
-omniroute
+agentproxy
 ```
 
 > **Àkíyèsí:** Èyí tún ìsopọ̀ abinibi náà ṣàkójọ̀ gẹ́gẹ́ bí ẹ̀yà Node.js àti àkójọpọ̀ CPU agbègbè rẹ, tí yóò sì yanjú àìbámu fáìlì alakomeji náà. Ibi-àyè àkókò-ṣiṣe tí a ṣe àtìlẹ́yìn fún ní ìfọwọ́sí ni **`>=22.22.2 <23` tàbí `>=24.0.0 <27`** (`SUPPORTED_NODE_RANGE` nínú `src/shared/utils/nodeRuntimeSupport.ts`, tí a mú bá pápá `engines` inú `package.json` mu). Node.js 24.x LTS (Krypton) àti Node.js 26 ni a ṣe àtìlẹ́yìn fún ní kíkún pẹ̀lú `better-sqlite3` v12.x.
@@ -379,7 +379,7 @@ wo [`docs/guides/KIRO_SETUP.md`](./KIRO_SETUP.md).
 ### Àwọn Àṣìṣe Ìmúdójúìwọ̀n Cloud
 
 1. Ṣàyẹ̀wò pé `BASE_URL` tọ́ka sí instance rẹ tí ń ṣiṣẹ́ (fún àpẹẹrẹ, `http://localhost:20128`)
-2. Ṣàyẹ̀wò pé `CLOUD_URL` tọ́ka sí endpoint cloud rẹ (fún àpẹẹrẹ, `https://omniroute.dev`)
+2. Ṣàyẹ̀wò pé `CLOUD_URL` tọ́ka sí endpoint cloud rẹ (fún àpẹẹrẹ, `https://agentproxy.online`)
 3. Jẹ́ kí àwọn iye `NEXT_PUBLIC_*` bá àwọn iye ẹ̀gbẹ́ server mu
 
 ### Cloud `stream=false` Dá 500 Padà
@@ -413,8 +413,8 @@ wo [`docs/guides/KIRO_SETUP.md`](./KIRO_SETUP.md).
 1. **Àyẹ̀wò kíákíá:** Ṣiṣe `curl -4 http://localhost:20128/v1/models`. Tí ó bá ṣiṣẹ́ pẹ̀lú `-4` ṣùgbọ́n tí ó kùnà láìsí i, o ní àìbáramu bind IPv6.
 2. **Àtúnṣe tí ó wà pẹ́:** Ṣe bind sí IPv4 ní kedere nípa lílo `-p 127.0.0.1:20128:20128` nínú command `docker run` rẹ:
    ```bash
-   docker run -d --name omniroute --restart unless-stopped --stop-timeout 40 \
-     -p 127.0.0.1:20128:20128 -v omniroute-data:/app/data diegosouzapw/omniroute:latest
+   docker run -d --name agentproxy --restart unless-stopped --stop-timeout 40 \
+     -p 127.0.0.1:20128:20128 -v agentproxy-data:/app/data diegosouzapw/agentproxy:latest
    ```
    Èyí fi agbára mú bind IPv4, ó sì tún dènà fífi proxy hàn lórí gbogbo interface host.
 
@@ -569,7 +569,7 @@ Nígbà tí ọ̀pọ̀ ìbéèrè tó ń ṣiṣẹ́ ní àkókò kan bá kan 
 - Ojú-ọ̀nà ìparí fún ìparí ìfọ̀rọ̀wérọ̀ dá èsì `503` tí a lè tún gbìyànjú padà, tí kóòdù àṣìṣe rẹ̀ jẹ́
   `chat_admission_busy`.
 - Èsì náà ní `Retry-After`. Láti #12135, iye náà ni a ń yọ láti inú
-  ìlò agbára tí a ṣàkíyèsí — èyí tó tóbi jù láàárín fèrèsé `OMNIROUTE_CHAT_ADMISSION_QUEUE_MS` tí ìbéèrè náà ti
+  ìlò agbára tí a ṣàkíyèsí — èyí tó tóbi jù láàárín fèrèsé `AGENTPROXY_CHAT_ADMISSION_QUEUE_MS` tí ìbéèrè náà ti
   dúró tẹ́lẹ̀ àti àkókò tí a ti di àwọn ìyálò heavyweight lọ́wọ́lọ́wọ́ mú — tí a yíká sókè sí
   ìṣẹ́jú-àáyá odidi, tí a sì fi ààlà 60 sí. Lórí ẹnu-ọ̀nà tí kò ní iṣẹ́, ó pa àwọn ààlà ìsàlẹ̀ àtijọ́ mọ́: ìṣẹ́jú-àáyá 2 lórí
   ọ̀nà tó dá lórí báìtì, àti ìṣẹ́jú-àáyá 1 lórí ọ̀nà tó dá lórí ìgbékalẹ̀ (èyí tí ó tún ní
@@ -602,17 +602,17 @@ Process kọ̀ọ̀kan ń lo olùṣọ́ tó jẹ́ ti process náà láti fi a
 èsì SSE kan.
 
 **#503-fanout:** ṣáájú àtúnṣe yìí, olùṣọ́ náà fi ààlà sí iṣẹ́ ní àkókò kan nípa iye ÌBÉÈRÈ tí kò yí padà
-(`OMNIROUTE_CHAT_MAX_HEAVY_IN_FLIGHT`, àìpéye `1`) láìka ìrántí host sí, nítorí náà ìtànkálẹ̀ coding-agent
+(`AGENTPROXY_CHAT_MAX_HEAVY_IN_FLIGHT`, àìpéye `1`) láìka ìrántí host sí, nítorí náà ìtànkálẹ̀ coding-agent
 (ọ̀pọ̀ subagents/CLIs, àwọn ara ìbéèrè sábà máa ń ju 256 KB lọ) ṣubú sí agbára iṣẹ́ ní àkókò kan
 tó fẹ́rẹ̀ẹ́ jẹ́ ~1, ó sì ń dá 503 padà lábẹ́ ẹrù iṣẹ́ tó jẹ́ ti ìṣe déédéé pátápátá. Olùṣọ́ náà ti ń ṣàtúnṣe ara rẹ̀ báyìí: a ń ṣàkóso rẹ̀
-pẹ̀lú ìnáwó BÁÌTÌ ìgbàwọlé tí a yọ jáde láìfọwọ́ṣe (`OMNIROUTE_CHAT_MAX_INFLIGHT_BYTES`) tí a ṣe ìwọ̀n rẹ̀ láti
+pẹ̀lú ìnáwó BÁÌTÌ ìgbàwọlé tí a yọ jáde láìfọwọ́ṣe (`AGENTPROXY_CHAT_MAX_INFLIGHT_BYTES`) tí a ṣe ìwọ̀n rẹ̀ láti
 ààlà ìrántí gidi ti process náà, ó sì tún ń wo àmì titẹ̀ orísun tó ń ṣiṣẹ́ lọ́wọ́lọ́wọ́ — nítorí náà ó
 máa ń fi ẹrù sílẹ̀ kìkì nígbà tí host bá wà lábẹ́ titẹ̀ ìrántí gidi, kì í ṣe nítorí pé ìbéèrè
-heavyweight tó ju ọ̀kan lọ dé lẹ́ẹ̀kan náà. A ṣì ń tẹ̀lé ààlà iye àtijọ́ (`OMNIROUTE_CHAT_MAX_HEAVY_IN_FLIGHT`),
+heavyweight tó ju ọ̀kan lọ dé lẹ́ẹ̀kan náà. A ṣì ń tẹ̀lé ààlà iye àtijọ́ (`AGENTPROXY_CHAT_MAX_HEAVY_IN_FLIGHT`),
 ṣùgbọ́n kìkì bí o bá ṣètò rẹ̀ ní pàtó.
 
 Nígbà tí agbára bá dí, ìbéèrè heavyweight kan máa kọ́kọ́ dúró fún tó
-`OMNIROUTE_CHAT_ADMISSION_QUEUE_MS` (àìpéye `2000`, `0` máa pa ìdúró náà) kí àyè kan lè ṣí sílẹ̀
+`AGENTPROXY_CHAT_ADMISSION_QUEUE_MS` (àìpéye `2000`, `0` máa pa ìdúró náà) kí àyè kan lè ṣí sílẹ̀
 ṣáájú dídá `503` tí a lè tún gbìyànjú padà. Ìdúró tó ní ààlà náà wà kí àwọn client tí wọ́n ń ṣiṣẹ́ bí agent
 (OpenCode, Claude Code, Cursor), tí wọ́n ń tan àwọn ìbéèrè-kékeré heavyweight jáde ní àkókò kan, lè ṣètò ìkójọpọ̀ náà
 ní ọ̀kọ̀ọ̀kan dípò kí wọ́n lo gbogbo ìnáwó àtúngbìyànjú wọn lórí ìkọ̀sílẹ̀ lẹ́sẹ̀kẹsẹ̀ kí wọ́n sì dá iṣẹ́ dúró láàárín.
@@ -632,7 +632,7 @@ false` àti `maxInflightBytes` tó tóbi túmọ̀ sí pé ìnáwó tí a yọ j
    a kò lè ṣàtúnṣe èyí pẹ̀lú env var gbígbàwọlé; ó nílò RAM púpọ̀ sí i tàbí ẹrù iṣẹ́ tó kéré sí i.
 3. Kìkì bí `/api/monitoring/health` bá fi hàn pé ìnáwó tí a yọ jáde láìfọwọ́ṣe kéré jù fún
    host rẹ ní tòótọ́ (èyí kì í sábà ṣẹlẹ̀ — ó ti ń ṣe ìwọ̀n ara rẹ̀ láti container títí dé bare-metal), ṣàkóso rẹ̀ ní tààrà pẹ̀lú
-   `OMNIROUTE_CHAT_MAX_INFLIGHT_BYTES` dípò pípadà sí ààlà iye ìbéèrè àtijọ́.
+   `AGENTPROXY_CHAT_MAX_INFLIGHT_BYTES` dípò pípadà sí ààlà iye ìbéèrè àtijọ́.
 
 Wo [ìtọ́kasí àyípadà àyíká](../reference/ENVIRONMENT.md#4-security--authentication)
 fún àwọn ètò gbígbàwọlé tó jẹ́ orísun àṣẹ.
@@ -719,7 +719,7 @@ O lè foju kọ abala yìí tí o kò bá ń ṣiṣẹ́ àwọn ìṣàn RAG t
 
 **Àtúnṣe:**
 
-- Ṣiṣe `omniroute providers` láti CLI láti tún ìṣàn OAuth bẹ̀rẹ̀, tàbí
+- Ṣiṣe `agentproxy providers` láti CLI láti tún ìṣàn OAuth bẹ̀rẹ̀, tàbí
 - Tún OAuth ṣiṣẹ́ láti **Dashboard → Àwọn Olùpèsè → Command Code → Tún sopọ̀**
 
 ### ModelScope ń dá àwọn cooldown 429 tó le gan-an padà
@@ -736,19 +736,19 @@ O lè foju kọ abala yìí tí o kò bá ń ṣiṣẹ́ àwọn ìṣàn RAG t
 - Rí i dájú pé o wà lórí v3.8.0 tàbí èyí tó tuntun ju bẹ́ẹ̀ lọ
 - Ṣàyẹ̀wò pé toggle `useUpstream429BreakerHints` ti ṣiṣẹ́ lábẹ́ **Ètò → Ìfaradà**
 
-### OMNIROUTE_WS_BRIDGE_SECRET kò sí ní production
+### AGENTPROXY_WS_BRIDGE_SECRET kò sí ní production
 
 **Àwọn àmì:**
 
 - 401 lórí gbogbo ìbéèrè bridge WebSocket Codex/Responses nígbà tí a bá ń ṣiṣẹ́ lórí host production tó jìnnà
 - Handshake bridge WebSocket dópin lẹ́sẹ̀kẹsẹ̀ lẹ́yìn ìsopọ̀
 
-**Ohun tó fa á:** Env var `OMNIROUTE_WS_BRIDGE_SECRET` kò sí nínú àyíká production.
+**Ohun tó fa á:** Env var `AGENTPROXY_WS_BRIDGE_SECRET` kò sí nínú àyíká production.
 
 **Àtúnṣe:**
 
 1. Ṣẹ̀dá secret aláìlẹ́sẹ̀sẹ̀ kan: `openssl rand -hex 32`
-2. Ṣètò `OMNIROUTE_WS_BRIDGE_SECRET=<random-secret>` nínú env server production (àti nínú client èyíkéyìí tó ń bá bridge náà sọ̀rọ̀)
+2. Ṣètò `AGENTPROXY_WS_BRIDGE_SECRET=<random-secret>` nínú env server production (àti nínú client èyíkéyìí tó ń bá bridge náà sọ̀rọ̀)
 3. Tun AgentProxy bẹ̀rẹ̀
 
 ### Responses API: background mode dín kù sí synchronous
@@ -779,18 +779,18 @@ tí ó ní iṣẹ́ púpọ̀ láti ṣe nígbà ìbẹ̀rẹ̀.
 
 ```bash
 # Nípasẹ̀ env var (yóò wà bẹ́ẹ̀ láàárín àwọn ìbẹ̀rẹ̀):
-export OMNIROUTE_READY_TIMEOUT_MS=180000   # ìṣẹ́jú 3
-omniroute serve
+export AGENTPROXY_READY_TIMEOUT_MS=180000   # ìṣẹ́jú 3
+agentproxy serve
 
 # Nípasẹ̀ àmì CLI (fún ìgbà kan ṣoṣo):
-omniroute serve --ready-timeout 180000
+agentproxy serve --ready-timeout 180000
 ```
 
 Ìwọ̀n àìyípadà jẹ́ 60 000 ms (60 s). Ìkìlọ̀ náà jẹ́ fún ìfitónilétí nìkan; server náà
 yóò máa bá ìbẹ̀rẹ̀ lọ lẹ́yìn-òde, a ó sì lè dé ọ̀dọ̀ rẹ̀ nígbà tí ìbẹ̀rẹ̀ bá parí.
 
 Wo [`docs/reference/ENVIRONMENT.md`](../reference/ENVIRONMENT.md) fún ẹ̀kúnrẹ́rẹ́
-àlàyé nípa `OMNIROUTE_READY_TIMEOUT_MS`.
+àlàyé nípa `AGENTPROXY_READY_TIMEOUT_MS`.
 
 ---
 

@@ -59,7 +59,7 @@ export function isPidRunning(pid) {
   }
 }
 
-// A port that is already owned must be reported, not spawned into. `omniroute
+// A port that is already owned must be reported, not spawned into. `agentproxy
 // serve` used to hand the conflict to the child, which died with EADDRINUSE
 // twice on the supervisor's restart budget and printed three raw Node stack
 // traces without ever saying another instance owned the port. It did that

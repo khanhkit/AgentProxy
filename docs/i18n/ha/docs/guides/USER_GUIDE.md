@@ -189,7 +189,7 @@ Samfura:
 
 #### Kimi K2 ($9/wata tsayayye)
 
-1. Yi rajistar biyan kuɗi: [Moonshot AI](https://platform.kimi.ai?aff=omniroute)
+1. Yi rajistar biyan kuɗi: [Moonshot AI](https://platform.kimi.ai)
 2. Sami maɓallin API → Dashboard → Ƙara Maɓallin API
 
 **Amfani:** `kimi/kimi-k2.5` — **Shawarar Kwararre:** Tsayayyen $9/wata don token miliyan 10 = ainihin farashin $0.90/1M!
@@ -265,7 +265,7 @@ Kuɗi: a halin yanzu an jera shi a matsayin $0; sharuɗɗa da samuwa na iya canz
 ```
 Settings → Models → Advanced:
   OpenAI API Base URL: http://localhost:20128/v1
-  OpenAI API Key: [daga dashboard na omniroute]
+  OpenAI API Key: [daga dashboard na agentproxy]
   Model: cc/claude-opus-4-7
 ```
 
@@ -281,7 +281,7 @@ Gyara `~/.claude/settings.json`:
 {
   "env": {
     "ANTHROPIC_BASE_URL": "http://localhost:20128",
-    "ANTHROPIC_AUTH_TOKEN": "your-omniroute-api-key"
+    "ANTHROPIC_AUTH_TOKEN": "your-agentproxy-api-key"
   }
 }
 ```
@@ -292,7 +292,7 @@ Yi amfani da tushen endpoint mai dacewa da Claude a nan. Kada ka ƙara `/v1` a �
 
 ```bash
 export OPENAI_BASE_URL="http://localhost:20128"
-export OPENAI_API_KEY="your-omniroute-api-key"
+export OPENAI_API_KEY="your-agentproxy-api-key"
 codex "your prompt"
 ```
 
@@ -304,14 +304,14 @@ Gyara `~/.openclaw/openclaw.json`:
 {
   "agents": {
     "defaults": {
-      "model": { "primary": "omniroute/if/kimi-k2.7-code" }
+      "model": { "primary": "agentproxy/if/kimi-k2.7-code" }
     }
   },
   "models": {
     "providers": {
-      "omniroute": {
+      "agentproxy": {
         "baseUrl": "http://localhost:20128/v1",
-        "apiKey": "your-omniroute-api-key",
+        "apiKey": "your-agentproxy-api-key",
         "api": "openai-completions",
         "models": [{ "id": "if/kimi-k2.7-code", "name": "Kimi K2.7 Code" }]
       }
@@ -338,28 +338,28 @@ Samfuri: cc/claude-opus-4-7
 ### Shigarwa ta npm na gaba ɗaya (An Ba da Shawara)
 
 ```bash
-npm install -g omniroute
+npm install -g agentproxy
 
 # Ƙirƙiri kundin daidaitawa
-mkdir -p ~/.omniroute
+mkdir -p ~/.agentproxy
 
 # Ƙirƙiri fayil ɗin .env (duba .env.example)
-cp .env.example ~/.omniroute/.env
+cp .env.example ~/.agentproxy/.env
 
 # Fara uwar garken
-omniroute
+agentproxy
 # Ko tare da port na musamman:
-omniroute --port 3000
+agentproxy --port 3000
 ```
 
-CLI yana loda `.env` kai tsaye daga `~/.omniroute/.env` ko `./.env`.
+CLI yana loda `.env` kai tsaye daga `~/.agentproxy/.env` ko `./.env`.
 
 ### Yanayin tray
 
 Fara AgentProxy a tray na tsarin:
 
 ```bash
-omniroute serve --tray
+agentproxy serve --tray
 ```
 
 Umarnin yana ƙarewa bayan uwar garken da tray sun shirya.
@@ -386,7 +386,7 @@ Waɗannan hanyoyin suna buƙatar mallakar tsari daban-daban.
 Kunna farawa a shigar na gaba zuwa na'urar:
 
 ```bash
-omniroute autostart enable
+agentproxy autostart enable
 ```
 
 Farawa ta atomatik yana amfani da yanayin tray a macOS, Windows, da zaman Linux mai zanen allo. Linux marar zanen allo yana amfani da sabis ɗin mai amfani na systemd da ake da shi.
@@ -394,7 +394,7 @@ Farawa ta atomatik yana amfani da yanayin tray a macOS, Windows, da zaman Linux 
 Kashe farawa yayin shiga:
 
 ```bash
-omniroute autostart disable
+agentproxy autostart disable
 ```
 
 ### Cire Shigarwa
@@ -403,10 +403,10 @@ Idan ba ka ƙara buƙatar AgentProxy ba, muna samar da rubutun umarni biyu masu 
 
 | Umarni                   | Aiki                                                                                          |
 | ------------------------ | --------------------------------------------------------------------------------------------- |
-| `npm run uninstall`      | Yana cire manhajar tsarin amma **yana barin DB da daidaitawarka** a `~/.omniroute`.           |
+| `npm run uninstall`      | Yana cire manhajar tsarin amma **yana barin DB da daidaitawarka** a `~/.agentproxy`.           |
 | `npm run uninstall:full` | Yana cire manhajar KUMA yana **goge duk daidaitawa, maɓallai, da ma'ajin bayanai har abada**. |
 
-> Lura: Don gudanar da waɗannan umarnin, je zuwa babban fayil ɗin aikin AgentProxy (idan ka clone shi) sannan ka gudanar da su. A madadin haka, idan an shigar da shi na gaba ɗaya, za ka iya kawai gudanar da `npm uninstall -g omniroute`.
+> Lura: Don gudanar da waɗannan umarnin, je zuwa babban fayil ɗin aikin AgentProxy (idan ka clone shi) sannan ka gudanar da su. A madadin haka, idan an shigar da shi na gaba ɗaya, za ka iya kawai gudanar da `npm uninstall -g agentproxy`.
 
 ### Turawa zuwa VPS
 
@@ -416,7 +416,7 @@ cd AgentProxy && npm install && npm run build
 
 export JWT_SECRET="your-secure-secret-change-this"
 export INITIAL_PASSWORD="your-password"
-export DATA_DIR="/var/lib/omniroute"
+export DATA_DIR="/var/lib/agentproxy"
 export PORT="20128"
 export HOSTNAME="0.0.0.0"
 export NODE_ENV="production"
@@ -424,7 +424,7 @@ export NEXT_PUBLIC_BASE_URL="http://localhost:20128"
 export API_KEY_SECRET="endpoint-proxy-api-key-secret"
 
 npm run start
-# Ko: pm2 start npm --name omniroute -- start
+# Ko: pm2 start npm --name agentproxy -- start
 ```
 
 ### Turawa da PM2 (Ƙarancin Ƙwaƙwalwa)
@@ -433,10 +433,10 @@ Ga uwar garken da ke da ƙarancin RAM, yi amfani da zaɓin iyakar ƙwaƙwalwa:
 
 ```bash
 # Tare da iyakar 512MB (tsoho)
-pm2 start npm --name omniroute -- start
+pm2 start npm --name agentproxy -- start
 
 # Ko tare da iyakar ƙwaƙwalwa ta musamman
-OMNIROUTE_MEMORY_MB=512 pm2 start npm --name omniroute -- start
+AGENTPROXY_MEMORY_MB=512 pm2 start npm --name agentproxy -- start
 
 # Ko ta amfani da ecosystem.config.js
 pm2 start ecosystem.config.js
@@ -448,12 +448,12 @@ pm2 start ecosystem.config.js
 module.exports = {
   apps: [
     {
-      name: "omniroute",
+      name: "agentproxy",
       script: "npm",
       args: "start",
       env: {
         NODE_ENV: "production",
-        OMNIROUTE_MEMORY_MB: "512",
+        AGENTPROXY_MEMORY_MB: "512",
         JWT_SECRET: "your-secret",
         INITIAL_PASSWORD: "your-password",
       },
@@ -468,10 +468,10 @@ module.exports = {
 
 ```bash
 # Gina image (tsoho = runner-cli tare da codex/claude/droid da aka riga aka shigar)
-docker build -t omniroute:cli .
+docker build -t agentproxy:cli .
 
 # Yanayin ɗaukuwa (an ba da shawara)
-docker run -d --name omniroute -p 20128:20128 --env-file ./.env -v omniroute-data:/app/data omniroute:cli
+docker run -d --name agentproxy -p 20128:20128 --env-file ./.env -v agentproxy-data:/app/data agentproxy:cli
 ```
 
 Don yanayin da aka haɗa da host tare da binaries na CLI, duba sashen Docker a cikin manyan takardu.
@@ -484,8 +484,8 @@ Masu amfani da Void Linux za su iya shirya fakiti da girka AgentProxy kai tsaye 
 <summary><b>Duba samfurin xbps-src</b></summary>
 
 ```bash
-# Fayil ɗin samfur don 'omniroute'
-pkgname=omniroute
+# Fayil ɗin samfur don 'agentproxy'
+pkgname=agentproxy
 version=3.8.0
 revision=1
 hostmakedepends="nodejs python3 make"
@@ -496,8 +496,8 @@ license="MIT"
 homepage="https://github.com/diegosouzapw/AgentProxy"
 distfiles="https://github.com/diegosouzapw/AgentProxy/archive/refs/tags/v${version}.tar.gz"
 checksum=009400afee90a9f32599d8fe734145cfd84098140b7287990183dde45ae2245b
-system_accounts="_omniroute"
-omniroute_homedir="/var/lib/omniroute"
+system_accounts="_agentproxy"
+agentproxy_homedir="/var/lib/agentproxy"
 export NODE_ENV=production
 export npm_config_engine_strict=false
 export npm_config_loglevel=error
@@ -547,26 +547,26 @@ do_check() {
 }
 
 do_install() {
-	vmkdir usr/lib/omniroute/.next
-	vcopy .next/standalone/. usr/lib/omniroute/.next/standalone
+	vmkdir usr/lib/agentproxy/.next
+	vcopy .next/standalone/. usr/lib/agentproxy/.next/standalone
 
 	# Hana ƙugiyar bayan-girkawa cire kundin manhajar Next.js app router marasa komai
 	for _d in \
 		.next/standalone/.next/server/app/dashboard \
 		.next/standalone/.next/server/app/dashboard/settings \
 		.next/standalone/.next/server/app/dashboard/providers; do
-		touch "${DESTDIR}/usr/lib/omniroute/${_d}/.keep"
+		touch "${DESTDIR}/usr/lib/agentproxy/${_d}/.keep"
 	done
 
-	cat > "${WRKDIR}/omniroute" <<'EOF'
+	cat > "${WRKDIR}/agentproxy" <<'EOF'
 #!/bin/sh
 export PORT="${PORT:-20128}"
-export DATA_DIR="${DATA_DIR:-${XDG_DATA_HOME:-${HOME}/.local/share}/omniroute}"
+export DATA_DIR="${DATA_DIR:-${XDG_DATA_HOME:-${HOME}/.local/share}/agentproxy}"
 export APP_LOG_TO_FILE="${APP_LOG_TO_FILE:-false}"
 mkdir -p "${DATA_DIR}"
-exec node /usr/lib/omniroute/.next/standalone/server.js "$@"
+exec node /usr/lib/agentproxy/.next/standalone/server.js "$@"
 EOF
-	vbin "${WRKDIR}/omniroute"
+	vbin "${WRKDIR}/agentproxy"
 }
 
 post_install() {
@@ -580,14 +580,14 @@ post_install() {
 
 | Maɓalli                                 | Tsoho                                | Bayani                                                                                                                                   |
 | --------------------------------------- | ------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------- |
-| `JWT_SECRET`                            | `omniroute-default-secret-change-me` | Sirrin sanya hannu na JWT (**canza shi a yanayin samarwa**)                                                                              |
+| `JWT_SECRET`                            | `agentproxy-default-secret-change-me` | Sirrin sanya hannu na JWT (**canza shi a yanayin samarwa**)                                                                              |
 | `INITIAL_PASSWORD`                      | `CHANGEME`                           | Kalmar sirrin shiga ta farko                                                                                                             |
-| `DATA_DIR`                              | `~/.omniroute`                       | Kundin bayanai (rumbun bayanai, amfani, rajistan ayyuka)                                                                                 |
+| `DATA_DIR`                              | `~/.agentproxy`                       | Kundin bayanai (rumbun bayanai, amfani, rajistan ayyuka)                                                                                 |
 | `PORT`                                  | tsohon ƙimar tsarin                  | Tashar sabis (`20128` a misalai)                                                                                                         |
 | `HOSTNAME`                              | tsohon ƙimar tsarin                  | Mai masaukin ɗaurewa (Docker yana amfani da `0.0.0.0` ta tsohuwa)                                                                        |
 | `NODE_ENV`                              | tsohon ƙimar lokacin aiki            | Saita `production` don turawa                                                                                                            |
 | `NEXT_PUBLIC_BASE_URL`                  | `http://localhost:20128`             | URL na tushe na jama'a da ake nunawa ga dashboard kuma ake bayyanawa ga sabar (yana maye gurbin tsohon `BASE_URL`)                       |
-| `NEXT_PUBLIC_CLOUD_URL`                 | `https://omniroute.dev`              | URL na tushe na maƙurar daidaitawar cloud (yana maye gurbin tsohon `CLOUD_URL`)                                                          |
+| `NEXT_PUBLIC_CLOUD_URL`                 | `https://agentproxy.online`              | URL na tushe na maƙurar daidaitawar cloud (yana maye gurbin tsohon `CLOUD_URL`)                                                          |
 | `API_KEY_SECRET`                        | `endpoint-proxy-api-key-secret`      | Sirrin HMAC don maɓallan API da aka ƙirƙira                                                                                              |
 | `REQUIRE_API_KEY`                       | `false`                              | Tilasta amfani da maɓallin API na Bearer a kan `/v1/*`                                                                                   |
 | `ALLOW_API_KEY_REVEAL`                  | `false`                              | Ba masu amfani da dashboard da aka tantance damar bayyana cikakkun ƙimomin maɓallan API da aka adana idan sun buƙata                     |
@@ -597,7 +597,7 @@ post_install() {
 | `AUTH_COOKIE_SECURE`                    | `false`                              | Tilasta kukin tantancewa na `Secure` (a bayan reverse proxy na HTTPS)                                                                    |
 | `CLOUDFLARED_BIN`                       | ba a saita ba                        | Yi amfani da fayil ɗin binary na `cloudflared` da ke akwai maimakon zazzagewar da ake sarrafawa                                          |
 | `CLOUDFLARED_PROTOCOL`                  | `http2`                              | Hanyar sufuri don Quick Tunnels da ake sarrafawa (`http2`, `quic`, ko `auto`)                                                            |
-| `OMNIROUTE_MEMORY_MB`                   | `512`                                | Iyakar heap na Node.js a MB                                                                                                              |
+| `AGENTPROXY_MEMORY_MB`                   | `512`                                | Iyakar heap na Node.js a MB                                                                                                              |
 | `PROMPT_CACHE_MAX_SIZE`                 | `50`                                 | Matsakaicin adadin shigarwar cache na prompt                                                                                             |
 | `SEMANTIC_CACHE_MAX_SIZE`               | `100`                                | Matsakaicin adadin shigarwar semantic cache                                                                                              |
 
@@ -658,7 +658,7 @@ Don cikakken bayani game da maɓallan muhalli, duba [README](../README.md).
 
 **Sauran masu samarwa masu jituwa** (zaɓaɓɓu): `cohere`, `databricks`, `snowflake`, `together`, `vertex`, `alibaba`, `alibaba-cn`, `bedrock` (ta hanyar `aws-bedrock`), `azure-ai`, `openrouter` (kundin da ake wucewa kai tsaye), `siliconflow`, `hyperbolic`, `huggingface`, `featherless-ai`, `cloudflare-ai`, `scaleway`, `deepinfra`, `vercel-ai-gateway`, `bazaarlink`, `friendliai`, `nous-research`, `reka`, `volcengine`, `ai21`, `gigachat`. Kowanne yana kula da nasa jerin samfura a cikin `providerRegistry.ts`, kuma ana iya daidaita shi kai-tsaye idan mai samarwar ya bayar da maƙurar `/models`.
 
-**Bayani kan ID ɗin samfura:** AgentProxy yana amfani da ID na asali na mai samarwa (`claude-opus-4-8`, `gpt-5.5`, `glm-5.1`, `MiniMax-M2.7`, `kimi-k2.5`, `grok-4.20-0309-reasoning`). Wasu ID sun haɗa da nau'ukan da ke da ɗigo saboda haka API na tushen sama yake buƙatar su. Idan ba a jera wani samfuri a sama ba, gudanar da `omniroute models --search <term>` ko aika buƙata zuwa `GET /api/models/catalog` don tabbatar da samuwarsa.
+**Bayani kan ID ɗin samfura:** AgentProxy yana amfani da ID na asali na mai samarwa (`claude-opus-4-8`, `gpt-5.5`, `glm-5.1`, `MiniMax-M2.7`, `kimi-k2.5`, `grok-4.20-0309-reasoning`). Wasu ID sun haɗa da nau'ukan da ke da ɗigo saboda haka API na tushen sama yake buƙatar su. Idan ba a jera wani samfuri a sama ba, gudanar da `agentproxy models --search <term>` ko aika buƙata zuwa `GET /api/models/catalog` don tabbatar da samuwarsa.
 
 </details>
 
@@ -695,16 +695,16 @@ Don sarƙoƙi na musayar juna ko masu matakai da yawa, kunna kariyar madauwari t
 
 ```bash
 # gateway-a
-OMNIROUTE_INSTANCE_ID=gateway-a
-OMNIROUTE_PEER_URLS=http://gateway-b:20128/v1
-OMNIROUTE_PEER_MAX_HOPS=4
+AGENTPROXY_INSTANCE_ID=gateway-a
+AGENTPROXY_PEER_URLS=http://gateway-b:20128/v1
+AGENTPROXY_PEER_MAX_HOPS=4
 ```
 
 ```bash
 # gateway-b
-OMNIROUTE_INSTANCE_ID=gateway-b
-OMNIROUTE_PEER_URLS=http://gateway-a:20128/v1
-OMNIROUTE_PEER_MAX_HOPS=4
+AGENTPROXY_INSTANCE_ID=gateway-b
+AGENTPROXY_PEER_URLS=http://gateway-a:20128/v1
+AGENTPROXY_PEER_MAX_HOPS=4
 ```
 
 Buƙatun da aka aika zuwa URL na takwara da aka saka a jerin izini a bayyane ne kawai suke karɓar taken
@@ -1096,7 +1096,7 @@ Misali:
 
 ```bash
 curl -X POST http://localhost:20128/v1/chat/completions \
-  -H "Authorization: Bearer $OMNIROUTE_KEY" \
+  -H "Authorization: Bearer $AGENTPROXY_KEY" \
   -H "Content-Type: application/json" \
   -d '{
     "model": "auto/coding",
@@ -1117,7 +1117,7 @@ AgentProxy duka **MCP server** ne (Model Context Protocol) kuma **A2A server** n
 
 - **SSE**: `http://localhost:20128/api/mcp/sse`
 - **Streamable HTTP**: `http://localhost:20128/api/mcp/stream`
-- **stdio**: `omniroute --mcp` (ga IDE plugins da suka fi son stdio)
+- **stdio**: `agentproxy --mcp` (ga IDE plugins da suka fi son stdio)
 
 ### Haɗa Claude Desktop
 
@@ -1126,8 +1126,8 @@ Gyara `~/Library/Application Support/Claude/claude_desktop_config.json` (macOS) 
 ```json
 {
   "mcpServers": {
-    "omniroute": {
-      "command": "omniroute",
+    "agentproxy": {
+      "command": "agentproxy",
       "args": ["--mcp"]
     }
   }
@@ -1203,23 +1203,23 @@ Samar da maɓallin a **Dashboard → API Keys → New Key → Scope: manage**, s
 ```bash
 # Jera providers
 curl http://localhost:20128/api/providers \
-  -H "Authorization: Bearer $OMNIROUTE_MANAGE_KEY"
+  -H "Authorization: Bearer $AGENTPROXY_MANAGE_KEY"
 
 # Ƙara haɗin provider
 curl -X POST http://localhost:20128/api/providers \
-  -H "Authorization: Bearer $OMNIROUTE_MANAGE_KEY" \
+  -H "Authorization: Bearer $AGENTPROXY_MANAGE_KEY" \
   -H "Content-Type: application/json" \
   -d '{ "provider": "openai", "apiKey": "sk-...", "name": "main" }'
 
 # Ƙirƙiri combo
 curl -X POST http://localhost:20128/api/combos \
-  -H "Authorization: Bearer $OMNIROUTE_MANAGE_KEY" \
+  -H "Authorization: Bearer $AGENTPROXY_MANAGE_KEY" \
   -H "Content-Type: application/json" \
   -d '{ "name": "premium", "strategy": "priority", "models": [{ "model": "cc/claude-opus-4-7" }, { "model": "glm/glm-5.1" }] }'
 
 # Jera/ƙirƙiri maɓallan API
-curl http://localhost:20128/api/keys -H "Authorization: Bearer $OMNIROUTE_MANAGE_KEY"
-curl -X POST http://localhost:20128/api/keys -H "Authorization: Bearer $OMNIROUTE_MANAGE_KEY" \
+curl http://localhost:20128/api/keys -H "Authorization: Bearer $AGENTPROXY_MANAGE_KEY"
+curl -X POST http://localhost:20128/api/keys -H "Authorization: Bearer $AGENTPROXY_MANAGE_KEY" \
   -d '{ "name": "ci-bot", "scopes": ["chat"] }'
 ```
 
@@ -1229,32 +1229,32 @@ Duba [API_REFERENCE.md](../reference/API_REFERENCE.md) don cikakken kundin endpo
 
 ## 💻 CLI na Ciki
 
-AgentProxy yana zuwa da CLI na ciki (`omniroute …`) don saiti, binciken matsaloli, da sarrafa lokacin aiki. Wannan **ya bambanta da shafin "CLI Tools" da ke cikin dashboard**, wanda yake saita CLI na wasu kamfanoni (Claude Code, Cursor, Codex, Cline, …) domin su iya sadarwa da AgentProxy.
+AgentProxy yana zuwa da CLI na ciki (`agentproxy …`) don saiti, binciken matsaloli, da sarrafa lokacin aiki. Wannan **ya bambanta da shafin "CLI Tools" da ke cikin dashboard**, wanda yake saita CLI na wasu kamfanoni (Claude Code, Cursor, Codex, Cline, …) domin su iya sadarwa da AgentProxy.
 
 ```bash
-omniroute setup                    # Jagorar saiti mai mu'amala (kalmar sirri, masu samarwa, haɗe-haɗe)
-omniroute setup --non-interactive  # Ya dace da CI
-omniroute doctor                   # Binciken lafiya (kundin bayanai, DB, masu samarwa, tashoshin jiragen ruwa)
-omniroute providers available      # Nuna masu samarwa da ake tallafawa
-omniroute providers list           # Nuna haɗin da aka saita
-omniroute providers test <id>      # Gwada haɗin mai samarwa kai tsaye
-omniroute combos list              # Nuna haɗe-haɗe
-omniroute combos switch <name>     # Saita haɗin tsoho
-omniroute models                   # Nuna samfuran da ake da su (--json, --search)
-omniroute keys add | list | remove # Sarrafa maɓallan API daga terminal
-omniroute backup                   # Ɗauki hoton config + DB
-omniroute restore [<timestamp>]    # Mayar da bayanai daga hoton ajiya
-omniroute health                   # Cikakken bayani kan lafiya (breakers, cache, memory)
-omniroute quota                    # Amfani da ƙayyadadden kaso na mai samarwa
-omniroute mcp status               # Matsayin uwar garken MCP
-omniroute a2a status               # Matsayin uwar garken A2A
-omniroute tunnel list|create|stop  # Tunnels na Cloudflare/Tailscale/ngrok
-omniroute reset-password           # Sake saita kalmar sirrin mai gudanarwa
-omniroute --mcp                    # Fara uwar garken MCP ta stdio
-omniroute --port 3000              # Fara uwar garken a tashar jirgin ruwa ta musamman
+agentproxy setup                    # Jagorar saiti mai mu'amala (kalmar sirri, masu samarwa, haɗe-haɗe)
+agentproxy setup --non-interactive  # Ya dace da CI
+agentproxy doctor                   # Binciken lafiya (kundin bayanai, DB, masu samarwa, tashoshin jiragen ruwa)
+agentproxy providers available      # Nuna masu samarwa da ake tallafawa
+agentproxy providers list           # Nuna haɗin da aka saita
+agentproxy providers test <id>      # Gwada haɗin mai samarwa kai tsaye
+agentproxy combos list              # Nuna haɗe-haɗe
+agentproxy combos switch <name>     # Saita haɗin tsoho
+agentproxy models                   # Nuna samfuran da ake da su (--json, --search)
+agentproxy keys add | list | remove # Sarrafa maɓallan API daga terminal
+agentproxy backup                   # Ɗauki hoton config + DB
+agentproxy restore [<timestamp>]    # Mayar da bayanai daga hoton ajiya
+agentproxy health                   # Cikakken bayani kan lafiya (breakers, cache, memory)
+agentproxy quota                    # Amfani da ƙayyadadden kaso na mai samarwa
+agentproxy mcp status               # Matsayin uwar garken MCP
+agentproxy a2a status               # Matsayin uwar garken A2A
+agentproxy tunnel list|create|stop  # Tunnels na Cloudflare/Tailscale/ngrok
+agentproxy reset-password           # Sake saita kalmar sirrin mai gudanarwa
+agentproxy --mcp                    # Fara uwar garken MCP ta stdio
+agentproxy --port 3000              # Fara uwar garken a tashar jirgin ruwa ta musamman
 ```
 
-Shawara: haɗa `omniroute doctor --json` da kayan aikinka na sa ido domin samun faɗakarwa idan haɗin masu samarwa ba su da lafiya.
+Shawara: haɗa `agentproxy doctor --json` da kayan aikinka na sa ido domin samun faɗakarwa idan haɗin masu samarwa ba su da lafiya.
 
 ---
 
@@ -1303,7 +1303,7 @@ Sakamako → `electron/dist-electron/`
 
 | Sauyi                 | Tsoho   | Bayani                               |
 | --------------------- | ------- | ------------------------------------ |
-| `OMNIROUTE_PORT`      | `20128` | Tashar jirgin ruwa ta uwar garke     |
-| `OMNIROUTE_MEMORY_MB` | `512`   | Iyakar heap na Node.js (64–16384 MB) |
+| `AGENTPROXY_PORT`      | `20128` | Tashar jirgin ruwa ta uwar garke     |
+| `AGENTPROXY_MEMORY_MB` | `512`   | Iyakar heap na Node.js (64–16384 MB) |
 
 📖 Cikakkun takardu: [`electron/README.md`](../../electron/README.md)

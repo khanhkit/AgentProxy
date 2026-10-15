@@ -106,7 +106,7 @@ export function isContributorBuild(env = process.env) {
 
 /** True when standalone output should be packaged (default true; skipped for contributor or fast build). */
 export function shouldBuildStandalone(env = process.env) {
-  return !isContributorBuild(env) && env.OMNIROUTE_SKIP_STANDALONE !== "1";
+  return !isContributorBuild(env) && env.AGENTPROXY_SKIP_STANDALONE !== "1";
 }
 
 /** Replace the build-only instrumentation entrypoint to avoid pulling the startup graph. */

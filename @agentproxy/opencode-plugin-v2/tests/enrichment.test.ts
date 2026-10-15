@@ -47,7 +47,7 @@ function fakeDraft(): { models: Map<string, Record<string, any>>; draft: BetaDra
 }
 
 const baseOpts = {
-  providerId: "omniroute",
+  providerId: "agentproxy",
   baseURL: "https://gw.example.com",
   apiKey: "k",
   timeoutMs: 1000,
@@ -70,7 +70,7 @@ describe("catalog enrichment source", () => {
       enrichmentFetcher: async () => enrichment,
     });
     assert.deepEqual(res, { models: 1, combos: 0, autoCombos: 0 });
-    const m = models.get("omniroute/cc/m1");
+    const m = models.get("agentproxy/cc/m1");
     assert.ok(m);
     assert.equal(m?.name, "Model One");
     assert.equal(m?.cost[0].input, 3);
@@ -93,7 +93,7 @@ describe("catalog enrichment source", () => {
         },
       });
       assert.deepEqual(res, { models: 1, combos: 0, autoCombos: 0 });
-      assert.ok(models.get("omniroute/cc/m1"));
+      assert.ok(models.get("agentproxy/cc/m1"));
     } finally {
       console.warn = origWarn;
     }

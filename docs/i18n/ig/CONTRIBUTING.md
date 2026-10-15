@@ -116,7 +116,7 @@ n'ọnọdụ faịlụ UI dashboard mgbe ọ na-ewu, na-edobe API route handler
 mgbe build gwụsịrị. Jiri `npm run build` maka mgbanwe ndị na-emetụta UI dashboard ma ọ bụ maka
 nkwado release zuru ezu; contributor profile abụghị ihe ga-anọchi release build.
 
-> **Ndetu deploy VPS:** remote image directory `/usr/lib/node_modules/omniroute/app/`
+> **Ndetu deploy VPS:** remote image directory `/usr/lib/node_modules/agentproxy/app/`
 > agbanwebeghị. Deploy skills na-eji rsync ebufe ihe dị n'ime `dist/` banye na ya.
 > Naanị build output path dị n'ime repository ka e bugharịrị (`app/` → `dist/`).
 
@@ -321,7 +321,7 @@ src/                        # TypeScript (.ts / .tsx)
 │   └── validation/         # Schema Zod v4
 └── sse/                    # Pipeline proxy SSE
 
-open-sse/                   # Workspace @omniroute/open-sse
+open-sse/                   # Workspace @agentproxy/open-sse
 ├── executors/              # Modul implementation executor 89
 ├── handlers/               # Handler request 11 (chat, responses, embeddings, images, wdg.)
 ├── mcp-server/             # Server MCP (ngwaọrụ pụrụ iche 110, transport 3, scope 33)

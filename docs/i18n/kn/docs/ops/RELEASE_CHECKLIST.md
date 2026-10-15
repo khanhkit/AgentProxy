@@ -44,7 +44,7 @@ npm run test:e2e           # ಐಚ್ಛಿಕ, ಆದರೆ ಶಿಫಾರಸ
 WS1.3 ಖಾತರಿಯನ್ನು ಉಳಿಸಿಕೊಂಡೇ (ಸೋರಿಕೆಯಾದ ಟೋಕನ್ ಒಂದರಿಂದಲೇ ಪ್ರಕಟಿಸಲು ಸಾಧ್ಯವಿಲ್ಲ — ಇಲ್ಲಿ ಟೋಕನ್ ಇಲ್ಲ)
 v3.8.48 ವರೆಗೆ ಯೋಜನೆಯಲ್ಲಿದ್ದ ಸಂಪೂರ್ಣ ಸ್ವಯಂಚಾಲಿತ ಪ್ರಕ್ರಿಯೆಯನ್ನು ಇದು ಮರುಸ್ಥಾಪಿಸುತ್ತದೆ.
 
-**ಒಂದು ಬಾರಿಯ ಸೆಟಪ್ (ಮಾಲೀಕರು):** npmjs.com → package `omniroute` → Settings → _Trusted
+**ಒಂದು ಬಾರಿಯ ಸೆಟಪ್ (ಮಾಲೀಕರು):** npmjs.com → package `agentproxy` → Settings → _Trusted
 Publisher_ → GitHub: owner `diegosouzapw`, repo `AgentProxy`, workflow `npm-publish.yml`
 (environment: none). ಇದು ಅಸ್ತಿತ್ವದಲ್ಲಿರುವವರೆಗೆ, ಸ್ವಯಂಚಾಲಿತ ಹಂತವು `ENEEDAUTH` ಜೊತೆಗೆ ವಿಫಲವಾಗುತ್ತದೆ:
 `publish_mode=staged` (ಕೆಳಗೆ) ಅಥವಾ `direct` ಬಳಸಿ ಮರು-ಡಿಸ್ಪ್ಯಾಚ್ ಮಾಡಿ.
@@ -58,7 +58,7 @@ npm-publish ವರ್ಕ್ಫ್ಲೋ ಇನ್ನು ಮುಂದೆ ನೇ�
 
 **ವರ್ಕ್ಫ್ಲೋ ಹಸಿರು ಸ್ಥಿತಿಗೆ ಬಂದ ನಂತರ ಮಾಲೀಕರ ಪ್ರಕ್ರಿಯೆ:**
 
-1. `npm stage list omniroute` — stage id ಅನ್ನು ಹುಡುಕಿ (ಇದು ವರ್ಕ್ಫ್ಲೋ ಸಾರಾಂಶದಲ್ಲಿಯೂ ಮುದ್ರಿತವಾಗಿರುತ್ತದೆ).
+1. `npm stage list agentproxy` — stage id ಅನ್ನು ಹುಡುಕಿ (ಇದು ವರ್ಕ್ಫ್ಲೋ ಸಾರಾಂಶದಲ್ಲಿಯೂ ಮುದ್ರಿತವಾಗಿರುತ್ತದೆ).
 2. ಹಂತಗೊಳಿಸಿದ ಬೈಟ್ಗಳನ್ನು ಪರಿಶೀಲಿಸಿ (ಶಿಫಾರಸು ಮಾಡಲಾಗಿದೆ): `npm stage download <id>`, ನಂತರ ಡೌನ್ಲೋಡ್ ಮಾಡಿದ
    tarball ಅನ್ನು ತಾತ್ಕಾಲಿಕ prefix ಗೆ ಇನ್ಸ್ಟಾಲ್ ಮಾಡಿ ಮತ್ತು ಅದನ್ನು ಬೂಟ್ ಮಾಡಿ (`npm run check:pack-boot` CI ಯಲ್ಲಿ
    ಅದೇ pack→install→boot ತೀರ್ಪನ್ನು ಸ್ವಯಂಚಾಲಿತಗೊಳಿಸುತ್ತದೆ).
@@ -69,12 +69,12 @@ npm-publish ವರ್ಕ್ಫ್ಲೋ ಇನ್ನು ಮುಂದೆ ನೇ�
 **ತುರ್ತು ಪರ್ಯಾಯ:** `publish_mode=direct` ಜೊತೆಗೆ `workflow_dispatch` ಹಳೆಯ ತಕ್ಷಣದ
 `npm publish` ಅನ್ನು ಮರುಸ್ಥಾಪಿಸುತ್ತದೆ (ಹಂತಗೊಳಿಸುವಿಕೆಯೇ ತಪ್ಪಾಗಿ ವರ್ತಿಸಿದರೆ ಮಾತ್ರ ಬಳಸಿ; ಕಾರಣವನ್ನು ದಾಖಲಿಸಿ).
 
-**ಒಂದು ಬಾರಿಯ ಗಟ್ಟಿಗೊಳಿಸುವಿಕೆ (ಮಾಲೀಕರು, npmjs.com):** `omniroute` ಗಾಗಿ Trusted Publisher ಅನ್ನು
+**ಒಂದು ಬಾರಿಯ ಗಟ್ಟಿಗೊಳಿಸುವಿಕೆ (ಮಾಲೀಕರು, npmjs.com):** `agentproxy` ಗಾಗಿ Trusted Publisher ಅನ್ನು
 stage-only ಮೋಡ್ನಲ್ಲಿ ಕಾನ್ಫಿಗರ್ ಮಾಡಿ; ಇದರಿಂದ ಸೋರಿಕೆಯಾದ ದೀರ್ಘಾವಧಿಯ ಟೋಕನ್ ಯಾವುದೇ ಸ್ಥಳದಿಂದಲೂ ನೇರವಾಗಿ
 `npm publish` ಮಾಡಲು ಸಾಧ್ಯವಾಗುವುದಿಲ್ಲ — CI ಕೇವಲ ಹಂತಗೊಳಿಸಬಹುದು; ಮಾಲೀಕರ 2FA ಮಾತ್ರ ಬಿಡುಗಡೆ ಮಾಡಬಹುದು.
 
 **ದೋಷಪೂರಿತ ಆರ್ಟಿಫ್ಯಾಕ್ಟ್ ಕಾರ್ಯಸೂಚಿ (ಬದಲಾಗಿಲ್ಲ):** ಡೀಫಾಲ್ಟ್ ತಕ್ಷಣದ ಕ್ರಮವಾಗಿ
-`npm deprecate omniroute@<bad> "<reason> — use <fixed>"` ಬಳಸಿ (ನಿಮಿಷಗಳು, ಹಿಂತಿರುಗಿಸಬಹುದು);
+`npm deprecate agentproxy@<bad> "<reason> — use <fixed>"` ಬಳಸಿ (ನಿಮಿಷಗಳು, ಹಿಂತಿರುಗಿಸಬಹುದು);
 `npm unpublish` ಅನ್ನು 72h/ಅವಲಂಬಿತರಿಲ್ಲದ ವಿಂಡೋದೊಳಗೆ ಮಾತ್ರ ಬಳಸಿ ಮತ್ತು ಎಂದಿಗೂ ಮೊದಲ ಕ್ರಮವಾಗಿ ಬಳಸಬೇಡಿ.
 Docker: ಆವೃತ್ತಿ ಟ್ಯಾಗ್ ಅನ್ನು ಎಂದಿಗೂ ಮರುಬರೆಯಬೇಡಿ — rollback ಎಂದರೆ `latest` ಅನ್ನು ಕೊನೆಯ ಉತ್ತಮ digest ಗೆ ಮರುನಿರ್ದೇಶಿಸುವುದು.
 
@@ -192,7 +192,7 @@ Breaking changes: `BREAKING CHANGE:` footer ಅಥವಾ scopeನ ನಂತರ `
 - [ ] `npm run i18n:check` 0 ಜೊತೆ exit ಆಗುತ್ತದೆ — translation state (`.i18n-state.json`) source docs ಜೊತೆ sync ಆಗಿದೆ (strict modeನಲ್ಲಿ drifted sources ಇಲ್ಲ; ಕೊನೆಯ ಕ್ಷಣದ doc touch-upsಗಾಗಿ warn-mode advisory ಸ್ವೀಕಾರಾರ್ಹ, ಆದರೆ tagging ಮೊದಲು 0 ಆಗಿರಬೇಕು)
 - [ ] `npm run i18n:check-ui-coverage` 0 ಜೊತೆ exit ಆಗುತ್ತದೆ — ಪ್ರತಿಯೊಂದು UI locale 80% coverage floor ಅಥವಾ ಅದಕ್ಕಿಂತ ಮೇಲಿದೆ
 - [ ] `npm run i18n:sync-ui:dry` ಎಲ್ಲಾ 42 localesನಾದ್ಯಂತ 0 missing keys ವರದಿ ಮಾಡುತ್ತದೆ
-- [ ] source English docs ಬದಲಾಗಿದ್ದರೆ, tagging ಮೊದಲು `npm run i18n:run` ಚಲಾಯಿಸಿ (`.env`ನಲ್ಲಿ `OMNIROUTE_TRANSLATION_API_KEY` ಅಗತ್ಯ)
+- [ ] source English docs ಬದಲಾಗಿದ್ದರೆ, tagging ಮೊದಲು `npm run i18n:run` ಚಲಾಯಿಸಿ (`.env`ನಲ್ಲಿ `AGENTPROXY_TRANSLATION_API_KEY` ಅಗತ್ಯ)
 - [ ] Translation contributions ಸಣ್ಣದಾಗಿದ್ದರೆ ಮುಂದಿನ releaseಗೆ ಮುಂದೂಡಬಹುದು (CHANGELOGನಲ್ಲಿ track ಮಾಡಿ)
 
 ### Database Migrations
@@ -201,7 +201,7 @@ Breaking changes: `BREAKING CHANGE:` footer ಅಥವಾ scopeನ ನಂತರ `
   - [ ] ಪ್ರತಿ migration idempotent ಆಗಿದೆ (`CREATE TABLE IF NOT EXISTS`, ಇತ್ಯಾದಿ)
   - [ ] Migrations ಅನ್ನು transactionsನಲ್ಲಿ wrap ಮಾಡಲಾಗಿದೆ
   - [ ] ಸರಿಯಾಗಿ number ಮಾಡಲಾಗಿದೆ (sequenceನಲ್ಲಿ gaps ಇಲ್ಲ)
-- [ ] fresh installನಲ್ಲಿ ಪರೀಕ್ಷಿಸಿ: `~/.omniroute/omniroute.db` ಅಳಿಸಿ ಮತ್ತು `npm run dev` ಚಲಾಯಿಸಿ
+- [ ] fresh installನಲ್ಲಿ ಪರೀಕ್ಷಿಸಿ: `~/.agentproxy/agentproxy.db` ಅಳಿಸಿ ಮತ್ತು `npm run dev` ಚಲಾಯಿಸಿ
 - [ ] existing installನಲ್ಲಿ ಪರೀಕ್ಷಿಸಿ: DB backup ಮಾಡಿ, migration ಚಲಾಯಿಸಿ, schema ಪರಿಶೀಲಿಸಿ
 - [ ] migration tables ಅನ್ನು rewrite ಮಾಡಿದರೆ WAL files (`-wal`, `-shm`) ಅನ್ನು ಸರಿಯಾಗಿ ನಿರ್ವಹಿಸಲಾಗಿದೆ
 
@@ -236,7 +236,7 @@ Repository ಮೂರು ಪ್ರತ್ಯೇಕ output directories ಅನ್ನ
 | `.build/` | Build intermediates — `next build` output (`distDir`)           | ಇಲ್ಲ (gitignored)  |
 | `dist/`   | ವಿತರಿಸಬಹುದಾದ npm bundle — `assembleStandalone` ಮೂಲಕ ಜೋಡಿಸಲಾಗಿದೆ | ಇಲ್ಲ (gitignored)  |
 
-> **Operator ಟಿಪ್ಪಣಿ:** remote VPS image directory `/usr/lib/node_modules/omniroute/app/` ಆಗಿಯೇ ಉಳಿದಿದೆ.
+> **Operator ಟಿಪ್ಪಣಿ:** remote VPS image directory `/usr/lib/node_modules/agentproxy/app/` ಆಗಿಯೇ ಉಳಿದಿದೆ.
 > **Repository ಒಳಗಿನ** build output ಮಾತ್ರ ಸ್ಥಳಾಂತರಗೊಂಡಿದೆ (`app/` → `dist/`). Deploy skills,
 > `dist/` contents ಅನ್ನು remote `app/` dirಗೆ rsync ಮಾಡುತ್ತವೆ — VPS path ಬದಲಾವಣೆಗಳ ಅಗತ್ಯವಿಲ್ಲ.
 
@@ -356,12 +356,12 @@ Radar announcement ಅನ್ನು ಉದ್ದೇಶಪೂರ್ವಕವಾಗ
 
 ಯಾವುದೇ v3.8.x ಬಿಡುಗಡೆಯನ್ನು ರವಾನಿಸುವ ಮೊದಲು, ಈ ಹೆಚ್ಚುವರಿ ಅಂಶಗಳನ್ನು ಪರಿಶೀಲಿಸಿ:
 
-- [ ] `omniroute --tray` macOS ನಲ್ಲಿ ಬೂಟ್ ಆಗುತ್ತದೆ (`~/.omniroute/runtime/` ಗೆ systray2 ಇನ್ಸ್ಟಾಲ್ ಆಗಿದೆ)
-- [ ] `omniroute --tray` Linux ನಲ್ಲಿ ಬೂಟ್ ಆಗುತ್ತದೆ (DISPLAY ಅಗತ್ಯವಿದೆ; ಹೊಂದಿಸದಿದ್ದರೆ ಸಮರ್ಪಕ ದೋಷ)
-- [ ] `omniroute --tray` Windows ನಲ್ಲಿ ಬೂಟ್ ಆಗುತ್ತದೆ (PowerShell NotifyIcon, ಹೆಚ್ಚುವರಿ ಬೈನರಿಗಳಿಲ್ಲ)
-- [ ] `omniroute config tray enable` ಸ್ವಯಂಪ್ರಾರಂಭದ ನಮೂದನ್ನು ರಚಿಸುತ್ತದೆ; ನಿಷ್ಕ್ರಿಯಗೊಳಿಸುವಿಕೆಯು ಅದನ್ನು ತೆಗೆದುಹಾಕುತ್ತದೆ
-- [ ] `npm install -g omniroute@<this-version>` ಗಂಭೀರ ನಿರ್ಗಮನವಿಲ್ಲದೆ postinstall ಅನ್ನು ಚಲಾಯಿಸುತ್ತದೆ
-- [ ] ಅಪ್ಡೇಟ್ ಪಥವು ಐಚ್ಛಿಕ ಅವಲಂಬನೆಗಳನ್ನು ಉಳಿಸಿಕೊಳ್ಳುತ್ತದೆ: `omniroute update --apply` ಮತ್ತು ಸ್ವಯಂ-ಅಪ್ಡೇಟರ್
+- [ ] `agentproxy --tray` macOS ನಲ್ಲಿ ಬೂಟ್ ಆಗುತ್ತದೆ (`~/.agentproxy/runtime/` ಗೆ systray2 ಇನ್ಸ್ಟಾಲ್ ಆಗಿದೆ)
+- [ ] `agentproxy --tray` Linux ನಲ್ಲಿ ಬೂಟ್ ಆಗುತ್ತದೆ (DISPLAY ಅಗತ್ಯವಿದೆ; ಹೊಂದಿಸದಿದ್ದರೆ ಸಮರ್ಪಕ ದೋಷ)
+- [ ] `agentproxy --tray` Windows ನಲ್ಲಿ ಬೂಟ್ ಆಗುತ್ತದೆ (PowerShell NotifyIcon, ಹೆಚ್ಚುವರಿ ಬೈನರಿಗಳಿಲ್ಲ)
+- [ ] `agentproxy config tray enable` ಸ್ವಯಂಪ್ರಾರಂಭದ ನಮೂದನ್ನು ರಚಿಸುತ್ತದೆ; ನಿಷ್ಕ್ರಿಯಗೊಳಿಸುವಿಕೆಯು ಅದನ್ನು ತೆಗೆದುಹಾಕುತ್ತದೆ
+- [ ] `npm install -g agentproxy@<this-version>` ಗಂಭೀರ ನಿರ್ಗಮನವಿಲ್ಲದೆ postinstall ಅನ್ನು ಚಲಾಯಿಸುತ್ತದೆ
+- [ ] ಅಪ್ಡೇಟ್ ಪಥವು ಐಚ್ಛಿಕ ಅವಲಂಬನೆಗಳನ್ನು ಉಳಿಸಿಕೊಳ್ಳುತ್ತದೆ: `agentproxy update --apply` ಮತ್ತು ಸ್ವಯಂ-ಅಪ್ಡೇಟರ್
       `npm install -g … --include=optional` ಅನ್ನು ಚಲಾಯಿಸುತ್ತವೆ, ಆದ್ದರಿಂದ `optionalDependencies` (better-sqlite3,
       keytar, tls-client, ಮತ್ತು llmlingua SLM ಸ್ಟ್ಯಾಕ್: `@atjsh/llmlingua-2@2.0.5`,
       `js-tiktoken`) ಅಪ್ಡೇಟ್ ನಂತರವೂ ಉಳಿಯುತ್ತವೆ. ultra `modelPath` SLM ಟಿಯರ್ಗೆ
@@ -371,13 +371,13 @@ Radar announcement ಅನ್ನು ಉದ್ದೇಶಪೂರ್ವಕವಾಗ
       ಇನ್ಸ್ಟೆನ್ಸ್ ಅನ್ನು ರೆಸಾಲ್ವ್ ಮಾಡುತ್ತದೆ — ಸ್ವತಂತ್ರ ಟ್ರೇಸ್ transformers ಅನ್ನು ಮಾತ್ರ ಬಂಡಲ್ ಮಾಡುತ್ತದೆ, ಡೈನಾಮಿಕ್ ಆಗಿ ಇಂಪೋರ್ಟ್ ಮಾಡಿದ
       ಐಚ್ಛಿಕಗಳನ್ನು ಅಲ್ಲ; ಆದ್ದರಿಂದ ಇದಿಲ್ಲದೆ ವರ್ಕರ್ ರೂಟ್ನ transformers ವಿರುದ್ಧ llmlingua-2 ಅನ್ನು ಲೋಡ್ ಮಾಡುತ್ತದೆ
       ಮತ್ತು SLM ಟಿಯರ್ ಯಾವುದೇ ಸೂಚನೆಯಿಲ್ಲದೆ fail-open ಆಗುತ್ತದೆ.
-- [ ] `.env` ಇಲ್ಲದೆಯೂ `omniroute status` ಕಾರ್ಯನಿರ್ವಹಿಸುತ್ತದೆ (CLI ಟೋಕನ್ ಪಥ, ಲೂಪ್ಬ್ಯಾಕ್ ಮಾತ್ರ)
+- [ ] `.env` ಇಲ್ಲದೆಯೂ `agentproxy status` ಕಾರ್ಯನಿರ್ವಹಿಸುತ್ತದೆ (CLI ಟೋಕನ್ ಪಥ, ಲೂಪ್ಬ್ಯಾಕ್ ಮಾತ್ರ)
 - [ ] `curl http://localhost:20128/api/shutdown` 401 ಅನ್ನು ಹಿಂದಿರುಗಿಸುತ್ತದೆ (ಯಾವಾಗಲೂ-ರಕ್ಷಿತ ರೂಟ್)
 - [ ] `curl -H "host: evil.com" http://localhost:20128/api/mcp/sse` 401 ಅನ್ನು ಹಿಂದಿರುಗಿಸುತ್ತದೆ (ಲೂಪ್ಬ್ಯಾಕ್ ಗಾರ್ಡ್)
 - [ ] ಮೊದಲ ಚಾಲನೆಯಲ್ಲಿ SQLite ರನ್ಟೈಮ್ `bundled` ಗೆ ರೆಸಾಲ್ವ್ ಆಗುತ್ತದೆ (ಬಂಡಲ್ ಮಾಡಿದ ಬೈನರಿ ಪ್ಲಾಟ್ಫಾರ್ಮ್ಗೆ ಮಾನ್ಯವಾಗಿದೆ)
 - [ ] `node_modules/better-sqlite3` ಅಳಿಸಿದಾಗ SQLite ರನ್ಟೈಮ್ `runtime` ಗೆ ಫಾಲ್ಬ್ಯಾಕ್ ಆಗುತ್ತದೆ
 - [ ] ಸ್ಮಾರ್ಟ್ MCP ಫಿಲ್ಟರ್ ನೈಜ `playwright-mcp browser_snapshot` ಔಟ್ಪುಟ್ ಅನ್ನು ಸಂಕುಚಿತಗೊಳಿಸುತ್ತದೆ (≥50% ಕಡಿತ)
-- [ ] ಎಲ್ಲಾ 10 `skills/omniroute*/SKILL.md` ಫೈಲ್ಗಳನ್ನು raw GitHub URL ಮೂಲಕ ಸಾರ್ವಜನಿಕವಾಗಿ ಪಡೆಯಬಹುದು
+- [ ] ಎಲ್ಲಾ 10 `skills/agentproxy*/SKILL.md` ಫೈಲ್ಗಳನ್ನು raw GitHub URL ಮೂಲಕ ಸಾರ್ವಜನಿಕವಾಗಿ ಪಡೆಯಬಹುದು
 - [ ] ಹೊಸ ಸೆಟಪ್ನಲ್ಲಿ ಆನ್ಬೋರ್ಡಿಂಗ್ ವಿಝಾರ್ಡ್ "ಇದು ಹೇಗೆ ಕಾರ್ಯನಿರ್ವಹಿಸುತ್ತದೆ" ಟಿಯರ್ ಪರಿಚಯದ ಹಂತವನ್ನು ತೋರಿಸುತ್ತದೆ
 - [ ] ಹೋಮ್ ಡ್ಯಾಶ್ಬೋರ್ಡ್ನ ಟಿಯರ್ ಕವರೇಜ್ ವಿಜೆಟ್ ಕಾನ್ಫಿಗರ್ ಮಾಡಿದ/ಸಕ್ರಿಯ ಎಣಿಕೆಗಳನ್ನು ತೋರಿಸುತ್ತದೆ
 

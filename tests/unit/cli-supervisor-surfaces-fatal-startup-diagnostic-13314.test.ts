@@ -8,15 +8,15 @@ import { join } from "node:path";
 // fatal `[STARTUP] Fatal: ...` boot diagnostic in-memory and flushes it to
 // the real console only when the child process exits. If the HTTP listener
 // still comes up after a fatal DB-driver-cascade failure was already
-// printed, the operator sees "OmniRoute is running!" with every route
+// printed, the operator sees "AgentProxy is running!" with every route
 // 500ing and zero diagnostic output anywhere. This regression test asserts
 // the fatal line now reaches the real console immediately, not only on
 // exit/crash.
 test("ServerSupervisor surfaces a fatal [STARTUP] Fatal: boot diagnostic to the real console even when the child never exits (default, non --log mode)", async () => {
   const { ServerSupervisor } = await import("../../bin/cli/runtime/processSupervisor.mjs");
-  delete process.env.OMNIROUTE_SHOW_LOG;
+  delete process.env.AGENTPROXY_SHOW_LOG;
 
-  const dir = mkdtempSync(join(tmpdir(), "omniroute-issue13314-"));
+  const dir = mkdtempSync(join(tmpdir(), "agentproxy-issue13314-"));
   const childScript = join(dir, "fake-server.mjs");
   writeFileSync(
     childScript,

@@ -41,7 +41,7 @@ describe("#12563 — npm .cmd shim is runnable via known paths", () => {
   it("marks Claude runnable from an npm-style .cmd shim (not settings fallback)", async () => {
     if (process.platform !== "win32") return;
 
-    const prefixDir = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-12563-npm-"));
+    const prefixDir = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-12563-npm-"));
     const cmdPath = path.join(prefixDir, "claude.cmd");
     fs.writeFileSync(
       cmdPath,

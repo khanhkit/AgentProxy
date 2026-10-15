@@ -114,7 +114,7 @@ arọ́pò fún ìgbà díẹ̀ nígbà ìkọ́, ó pa àwọn olùdarí ọ̀n
 lẹ́yìn ìkọ́ náà. Lo `npm run build` fún àwọn àyípadà tó kan UI dásíbọ́ọ̀dù tàbí fún
 ìfọwọ́sí ìtúsílẹ̀ ní kíkún; àkóónú olùkópa kì í ṣe arọ́pò fún ìkọ́ ìtúsílẹ̀.
 
-> **Àkíyèsí ìmúṣiṣẹ́ VPS:** àpò-ìtọ́sọ́nà àwòrán jíjìn `/usr/lib/node_modules/omniroute/app/`
+> **Àkíyèsí ìmúṣiṣẹ́ VPS:** àpò-ìtọ́sọ́nà àwòrán jíjìn `/usr/lib/node_modules/agentproxy/app/`
 > kò yí padà. Àwọn ọgbọ́n ìmúṣiṣẹ́ ń lo rsync láti da àkóónú `dist/` sínú rẹ̀.
 > Ọ̀nà àbájáde ìkọ́ inú ibi ìpamọ́ kóòdù nìkan ló yí padà (`app/` → `dist/`).
 
@@ -319,7 +319,7 @@ src/                        # TypeScript (.ts / .tsx)
 │   └── validation/         # Àwọn schema Zod v4
 └── sse/                    # Pipeline proxy SSE
 
-open-sse/                   # Workspace @omniroute/open-sse
+open-sse/                   # Workspace @agentproxy/open-sse
 ├── executors/              # Module ìmúlò executor 89
 ├── handlers/               # Olùṣàkóso request 11 (chat, responses, embeddings, images, àti bẹ́ẹ̀ bẹ́ẹ̀ lọ)
 ├── mcp-server/             # Server MCP (irinṣẹ́ aláìlẹ́ẹ̀mejì 110, transport 3, scope 33)

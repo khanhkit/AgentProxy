@@ -435,7 +435,7 @@ ní láti kó ọgbọ́n lockout/budget/fallback jọ fúnra wọn.
 - Cache quota: `src/domain/quotaCache.ts`
 - Ipò ìdínkù agbára: `src/domain/degradation.ts`
 - Àyẹ̀wò ìṣètò: `src/domain/configAudit.ts`
-- Olùkọ́ metadata ìdáhùn AgentProxy: `src/domain/omnirouteResponseMeta.ts`
+- Olùkọ́ metadata ìdáhùn AgentProxy: `src/domain/agentproxyesponseMeta.ts`
 - Ẹ̀ka-ètò àyẹ̀wò: `src/domain/assessment/` — àwọn iṣẹ́ àyẹ̀wò àsìkò
 
 ### E. Ọ̀nà Ìfúnni Láṣẹ
@@ -516,7 +516,7 @@ DB ipò àkọ́kọ́ (SQLite):
 
 - Amáyédẹrùn pàtàkì: `src/lib/db/core.ts` (better-sqlite3, àwọn ìṣíkiri, WAL)
 - Ìráyè sí DB: ṣàgbéwọlé àwọn module `src/lib/db/*` pàtó ní tààrà (a ti yọ barrel `localDb.ts` àtijọ́ kúrò)
-- fáìlì: `${DATA_DIR}/storage.sqlite` (tàbí `$XDG_CONFIG_HOME/omniroute/storage.sqlite` nígbà tí a bá ṣètò rẹ̀, bí kò ṣe bẹ́ẹ̀ `~/.omniroute/storage.sqlite`)
+- fáìlì: `${DATA_DIR}/storage.sqlite` (tàbí `$XDG_CONFIG_HOME/agentproxy/storage.sqlite` nígbà tí a bá ṣètò rẹ̀, bí kò ṣe bẹ́ẹ̀ `~/.agentproxy/storage.sqlite`)
 - àwọn entity (àwọn tábìlì + namespace KV): providerConnections, providerNodes, modelAliases, combos, apiKeys, settings, pricing, **customModels**, **proxyConfig**, **ipFilter**, **thinkingBudget**, **systemPrompt**
 
 Ìtọ́jú dátà ìlò:
@@ -1139,11 +1139,11 @@ A pa olùkọ̀sílẹ̀ ìbéèrè onífáìlì ti àtijọ́ (`open-sse/utils/
 
 ## Àwọn Àkíyèsí Ìṣètò Ẹ̀rọ Tí A Mọ̀
 
-1. `usageDb` àti `localDb` ń pín ìlànà ìtọ́jú ìtọ́kasí ìpìlẹ̀ kan náà (`DATA_DIR` -> `XDG_CONFIG_HOME/omniroute` -> `~/.omniroute`) pẹ̀lú ìṣíkiri àwọn fáìlì àtijọ́.
+1. `usageDb` àti `localDb` ń pín ìlànà ìtọ́jú ìtọ́kasí ìpìlẹ̀ kan náà (`DATA_DIR` -> `XDG_CONFIG_HOME/agentproxy` -> `~/.agentproxy`) pẹ̀lú ìṣíkiri àwọn fáìlì àtijọ́.
 2. `/api/v1/route.ts` ń fi iṣẹ́ lé olùkọ́ kátálọ́ọ̀gù àpapọ̀ kan náà tí `/api/v1/models` (`src/app/api/v1/models/catalog.ts`) ń lò lọ́wọ́ láti yẹra fún ìyapa nínú ìtumọ̀.
 3. Olùkọ àkọsílẹ̀ ìbéèrè máa ń kọ gbogbo header/body nígbà tí a bá mú un ṣiṣẹ́; ka ìtọ́kasí àkọsílẹ̀ sí ibi tó ní àlàyé ìkọ̀kọ̀.
 4. Ìhùwàsí awọsánmà gbára lé `NEXT_PUBLIC_BASE_URL` tó péye àti bí a ṣe lè dé endpoint awọsánmà.
-5. A tẹ ìtọ́kasí `open-sse/` jáde gẹ́gẹ́ bí **npm workspace package** `@omniroute/open-sse`. Kóòdù orísun ń ṣàgbéwọlé rẹ̀ nípasẹ̀ `@omniroute/open-sse/...` (tí Next.js `transpilePackages` ń yanjú). Àwọn ipa ọ̀nà fáìlì nínú ìwé yìí ṣì ń lo orúkọ ìtọ́kasí `open-sse/` fún ìṣọ̀kan.
+5. A tẹ ìtọ́kasí `open-sse/` jáde gẹ́gẹ́ bí **npm workspace package** `@agentproxy/open-sse`. Kóòdù orísun ń ṣàgbéwọlé rẹ̀ nípasẹ̀ `@agentproxy/open-sse/...` (tí Next.js `transpilePackages` ń yanjú). Àwọn ipa ọ̀nà fáìlì nínú ìwé yìí ṣì ń lo orúkọ ìtọ́kasí `open-sse/` fún ìṣọ̀kan.
 6. Àwọn àwòrán ìṣirò nínú dashboard ń lo **Recharts** (tó dá lórí SVG) fún àfihàn ìtúpalẹ̀ dátà tó ṣeé ráyè lò, tí ó sì ń dáhùn sí ìbáṣepọ̀ (àwọn àwòrán ọ̀pá lílo model, àwọn tábìlì pípín olùpèsè pẹ̀lú ìwọ̀n àṣeyọrí).
 7. Àwọn ìdánwò E2E ń lo **Playwright** (`tests/e2e/`), a sì ń ṣiṣẹ́ wọn nípasẹ̀ `npm run test:e2e`. Àwọn ìdánwò unit ń lo **Node.js test runner** (`tests/unit/`), a sì ń ṣiṣẹ́ wọn nípasẹ̀ `npm run test:unit`. Kóòdù orísun lábẹ́ `src/` jẹ́ **TypeScript** (`.ts`/`.tsx`); workspace `open-sse/` ṣì jẹ́ JavaScript (`.js`).
 8. A ṣètò ojú-ewé àtúnṣe sí tabù 7: Gbogbogbò, Ìrísí, AI, Ààbò, Ìtọ́sọ́nà, Ìfaradà, Onípele-gíga. Ojú-ewé Ìfaradà ń ṣètò ìlà ìdúró ìbéèrè, àsìkò ìtutù àsopọ̀, olùdánudúró olùpèsè, àti ìhùwàsí dídúró-de-ìtutù nìkan; ipò àkókò-ìṣiṣẹ́ olùdánudúró lọ́wọ́lọ́wọ́ ni a fihàn lójú-ewé Ìlera.
@@ -1154,7 +1154,7 @@ A pa olùkọ̀sílẹ̀ ìbéèrè onífáìlì ti àtijọ́ (`open-sse/utils/
 ## Àtòjọ Àyẹ̀wò Ìṣiṣẹ́
 
 - Kọ́ láti inú kóòdù orísun: `npm run build`
-- Kọ́ àwòrán Docker: `docker build -t omniroute .`
+- Kọ́ àwòrán Docker: `docker build -t agentproxy .`
 - Bẹ̀rẹ̀ iṣẹ́ náà kí o sì ṣàyẹ̀wò:
 - `GET /api/settings`
 - `GET /api/v1/models`

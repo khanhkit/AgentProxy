@@ -116,7 +116,7 @@ dashboard UI ဖိုင်များကို ယာယီ stub လုပ်
 ပြန်လည်ထားရှိသည်။ Dashboard UI ကို သက်ရောက်သော ပြောင်းလဲမှုများ သို့မဟုတ် release အပြည့်အစုံ
 စစ်ဆေးမှုအတွက် `npm run build` ကို အသုံးပြုပါ။ Contributor profile သည် release build ကို အစားထိုးခြင်းမဟုတ်ပါ။
 
-> **VPS deploy မှတ်ချက်:** remote image directory `/usr/lib/node_modules/omniroute/app/`
+> **VPS deploy မှတ်ချက်:** remote image directory `/usr/lib/node_modules/agentproxy/app/`
 > သည် မပြောင်းလဲပါ။ Deploy skill များသည် `dist/` ၏ အကြောင်းအရာများကို ၎င်းထဲသို့ rsync လုပ်သည်။
 > Repository အတွင်းရှိ build output path သာ ပြောင်းသွားသည် (`app/` → `dist/`)။
 
@@ -322,7 +322,7 @@ src/                        # TypeScript (.ts / .tsx)
 │   └── validation/         # Zod v4 schema များ
 └── sse/                    # SSE proxy pipeline
 
-open-sse/                   # @omniroute/open-sse workspace
+open-sse/                   # @agentproxy/open-sse workspace
 ├── executors/              # Executor implementation module 89 ခု
 ├── handlers/               # Request handler 11 ခု (chat၊ responses၊ embeddings၊ images စသည်)
 ├── mcp-server/             # MCP server (သီးခြား tool 110 ခု၊ transport 3 ခု၊ scope 33 ခု)

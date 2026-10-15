@@ -169,7 +169,7 @@ npm install -g agentproxy
 agentproxy
 ```
 
-> **Skipping native warm-up:** `OMNIROUTE_SKIP_POSTINSTALL=1` skips only the
+> **Skipping native warm-up:** `AGENTPROXY_SKIP_POSTINSTALL=1` skips only the
 > optional native-runtime warm-up in `scripts/postinstall.mjs`. The
 > binary-copy/repair hook in `scripts/build/postinstall.mjs` still runs so the
 > packaged native modules match your platform.

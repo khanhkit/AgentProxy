@@ -37,11 +37,11 @@ tree အတွင်း လမ်းညွှန်ရှာဖွေနို�
 လမ်းကြောင်းအမည်တိုများ (`tsconfig.json`):
 
 - `@/*` → `src/*`
-- `@omniroute/open-sse` → `open-sse/index.ts`
-- `@omniroute/open-sse/*` → `open-sse/*`
+- `@agentproxy/open-sse` → `open-sse/index.ts`
+- `@agentproxy/open-sse/*` → `open-sse/*`
 
 မူလ HTTP port: **`20128`** (API နှင့် dashboard သည် တူညီသော process ကို မျှဝေသည်)။ ဒေတာ
-လမ်းညွှန်သည် `DATA_DIR` env var ဖြစ်ပြီး မူလတန်ဖိုးမှာ `~/.omniroute/` ဖြစ်သည်။
+လမ်းညွှန်သည် `DATA_DIR` env var ဖြစ်ပြီး မူလတန်ဖိုးမှာ `~/.agentproxy/` ဖြစ်သည်။
 
 ---
 
@@ -50,9 +50,9 @@ tree အတွင်း လမ်းညွှန်ရှာဖွေနို�
 ```
 AgentProxy/
 ├── src/                  Next.js အပလီကေးရှင်း (App Router၊ libs၊ domain၊ server၊ shared)
-├── open-sse/             Streaming engine workspace (@omniroute/open-sse)
+├── open-sse/             Streaming engine workspace (@agentproxy/open-sse)
 ├── electron/             Desktop wrapper (Electron 41 main + preload)
-├── bin/                  CLI စတင်ဝင်ရောက်ရာနေရာများ (omniroute၊ reset-password)
+├── bin/                  CLI စတင်ဝင်ရောက်ရာနေရာများ (agentproxy၊ reset-password)
 ├── tests/                Unit၊ integration၊ e2e၊ protocols-e2e၊ translator၊ security၊ fixtures
 ├── scripts/              Build၊ sync၊ check၊ migration နှင့် runtime အကူအညီပေး script များ
 ├── docs/                 အများသုံး စာရွက်စာတမ်းများ (ဤလမ်းညွှန်)
@@ -298,7 +298,7 @@ Data၊ sync၊ OAuth၊ skill၊ memory စသည်တို့ကို ဤ m
 | `runtime/`        | Runtime လုပ်ဆောင်ချက် ရှာဖွေသတ်မှတ်ခြင်း                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
 | `search/`         | `executeWebSearch.ts`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
 | `services/`       | ထည့်သွင်းမြှုပ်နှံထားသော ဝန်ဆောင်မှု framework- `ServiceSupervisor.ts` (လုပ်ဆောင်မှု lock၊ ring buffer နှင့် health checker ပါဝင်သော ယေဘုယျသုံး child-process supervisor)၊ `bootstrap.ts` (process အဆင့် မှတ်ပုံတင်ခြင်းနှင့် အလိုအလျောက်စတင်ခြင်း)၊ `registry.ts` (tool → supervisor map)၊ `apiKey.ts` (AES-256-GCM key store)၊ `modelSync.ts` (အချိန်မှန် model ထပ်တူပြုခြင်း)၊ `ringBuffer.ts` (5 MB circular log buffer)၊ `healthCheck.ts` (HTTP health probe)၊ `types.ts`၊ `embedWsProxy.ts` (WebSocket proxy)၊ `installers/{ninerouter,cliproxy}.ts`။ `docs/frameworks/EMBEDDED-SERVICES.md` ကိုကြည့်ပါ                                                                                                                |
-| `agentSkills/`    | Agent Skills ကတ်တလောက် + generator- `catalog.ts` (getCatalog/getSkillById/filterCatalog/computeCoverage)၊ `generator.ts` (generateAgentSkills → `skills/{id}/SKILL.md` သို့ ရေးသားသည်)၊ `openapiParser.ts` (OpenAPI spec မှ REST endpoint များကို ထုတ်ယူသည်)၊ `cliRegistryParser.ts` (bin/cli-registry မှ CLI subcommand များကို ထုတ်ယူသည်)၊ `schemas.ts` (Zod- AgentSkillSchema, SkillCoverageSchema, ListQuerySchema, GenerateBodySchema)၊ `types.ts` (AgentSkill, SkillCoverage, SkillMarkdown, GeneratorReport)။ REST route များ (`/api/agent-skills/*`)၊ MCP tool များ (`omniroute_agent_skills_*`) နှင့် A2A skill `list-capabilities` တို့က အသုံးပြုသည်။ [AGENT-SKILLS.md](../frameworks/AGENT-SKILLS.md) ကိုကြည့်ပါ။ |
+| `agentSkills/`    | Agent Skills ကတ်တလောက် + generator- `catalog.ts` (getCatalog/getSkillById/filterCatalog/computeCoverage)၊ `generator.ts` (generateAgentSkills → `skills/{id}/SKILL.md` သို့ ရေးသားသည်)၊ `openapiParser.ts` (OpenAPI spec မှ REST endpoint များကို ထုတ်ယူသည်)၊ `cliRegistryParser.ts` (bin/cli-registry မှ CLI subcommand များကို ထုတ်ယူသည်)၊ `schemas.ts` (Zod- AgentSkillSchema, SkillCoverageSchema, ListQuerySchema, GenerateBodySchema)၊ `types.ts` (AgentSkill, SkillCoverage, SkillMarkdown, GeneratorReport)။ REST route များ (`/api/agent-skills/*`)၊ MCP tool များ (`agentproxy_agent_skills_*`) နှင့် A2A skill `list-capabilities` တို့က အသုံးပြုသည်။ [AGENT-SKILLS.md](../frameworks/AGENT-SKILLS.md) ကိုကြည့်ပါ။ |
 | `skills/`         | Skill framework- `registry.ts`, `executor.ts`, `interception.ts`, `injection.ts`, `sandbox.ts`, `custom.ts`, `hybrid.ts`, `builtins.ts`, `a2a.ts`, `providerSettings.ts`, `schemas.ts`, `skillssh.ts`, `types.ts`၊ ထို့အပြင် `builtin/browser.ts`                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
 | `spend/`          | `batchWriter.ts` (write-behind buffer)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
 | `sync/`           | `bundle.ts`, `tokens.ts` (Cloud Sync)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
@@ -384,7 +384,7 @@ I/O မပါဝင်သော သန့်စင်သည့် လုပ်�
 | `degradation.ts`                           | အရည်အသွေးလျှော့ချထားသော mode အကူးအပြောင်းများ                           |
 | `providerExpiration.ts`                    | သက်တမ်းကုန်ဆုံးနေသော account/key ရှာဖွေခြင်း                            |
 | `quotaCache.ts`                            | Cache သိမ်းထားသော quota ဆုံးဖြတ်ချက်များ                                |
-| `responses.ts`, `omnirouteResponseMeta.ts` | Response ပုံသဏ္ဌာန် အထောက်အကူပြုများ                                    |
+| `responses.ts`, `agentproxyesponseMeta.ts` | Response ပုံသဏ္ဌာန် အထောက်အကူပြုများ                                    |
 | `configAudit.ts`                           | Config ပြောင်းလဲမှု audit                                               |
 | `assessment/`                              | Model အကဲဖြတ်ခြင်း (RFC အတိုင်း၊ တစ်စိတ်တစ်ပိုင်း အကောင်အထည်ဖော်ထားသည်) |
 | `types.ts`                                 | အတူတကွမျှဝေသုံးသော domain type များ                                     |
@@ -436,7 +436,7 @@ server/
 
 ## 4. `open-sse/` — Streaming engine workspace
 
-`@omniroute/open-sse` အဖြစ် ထုတ်ဝေထားသည့် သီးခြား npm workspace ဖြစ်သည်။ Request များကို
+`@agentproxy/open-sse` အဖြစ် ထုတ်ဝေထားသည့် သီးခြား npm workspace ဖြစ်သည်။ Request များကို
 လုပ်ဆောင်ခြင်း၊ executor များ၊ translator များ၊ service များ၊ transformer နှင့် MCP server တို့ကို စီမံထားသည်။
 
 ```
@@ -599,7 +599,7 @@ GitHub release feed သို့ညွှန်ထားသည့် `electron-u
 
 ```
 bin/
-├── omniroute.mjs           ပင်မ CLI entry (Node ESM)
+├── agentproxy.mjs           ပင်မ CLI entry (Node ESM)
 ├── reset-password.mjs      CLI မှ management password ကို ပြန်လည်သတ်မှတ်ရန်
 ├── mcp-server.mjs          MCP server launcher (stdio)
 ├── nodeRuntimeSupport.mjs  Node version guard
@@ -622,8 +622,8 @@ bin/
 
 `package.json` → `bin` တွင် binary နှစ်ခုကို အသုံးပြုနိုင်ရန် ဖော်ပြထားသည်-
 
-- `omniroute` → `bin/omniroute.mjs`
-- `omniroute-reset-password` → `bin/reset-password.mjs`
+- `agentproxy` → `bin/agentproxy.mjs`
+- `agentproxy-reset-password` → `bin/reset-password.mjs`
 
 ---
 
@@ -779,7 +779,7 @@ Client တောင်းဆိုမှု
 
 - **Code style**: 2-space indent၊ double quotes၊ စာလုံး 100 အကျယ်၊ semicolon များနှင့်
   `es5` trailing comma များ — `lint-staged` မှတစ်ဆင့် Prettier ဖြင့် မဖြစ်မနေ လိုက်နာစေသည်။
-- **Import များ**: external → internal (`@/`, `@omniroute/open-sse`) → relative။
+- **Import များ**: external → internal (`@/`, `@agentproxy/open-sse`) → relative။
 - **အမည်ပေးပုံ**: File များအတွက် `camelCase` သို့မဟုတ် `kebab-case`၊ component များအတွက် `PascalCase`၊
   constant များအတွက် `UPPER_SNAKE`။
 - **ESLint**: `no-eval`, `no-implied-eval`, `no-new-func` = နေရာတိုင်းတွင် `error`၊

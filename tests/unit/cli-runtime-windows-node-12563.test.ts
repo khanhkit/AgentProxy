@@ -114,7 +114,7 @@ describe("#12563 — Windows npm-global .cmd shim under Program Files\\nodejs", 
   it("puts an existing system Node dir on the lookup PATH ahead of a stripped GUI PATH", () => {
     if (process.platform !== "win32") return;
     setPlatform("win32");
-    const fakeRoot = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-12563-pf-"));
+    const fakeRoot = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-12563-pf-"));
     const fakeNodeDir = path.join(fakeRoot, "nodejs");
     fs.mkdirSync(fakeNodeDir);
 
@@ -136,7 +136,7 @@ describe("#12563 — Windows npm-global .cmd shim under Program Files\\nodejs", 
   it("prepends custom npm prefix and APPDATA\\npm ahead of a stripped GUI PATH", () => {
     if (process.platform !== "win32") return;
     setPlatform("win32");
-    const fakeRoot = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-12563-custom-"));
+    const fakeRoot = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-12563-custom-"));
     const npmPrefix = path.join(fakeRoot, "custom-prefix");
     const appDataNpm = path.join(fakeRoot, "Roaming", "npm");
     fs.mkdirSync(npmPrefix, { recursive: true });

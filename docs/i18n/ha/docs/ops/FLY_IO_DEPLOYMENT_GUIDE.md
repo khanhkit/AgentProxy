@@ -10,7 +10,7 @@ Wannan takarda tana bayyana ainihin tsarin tura AgentProxy zuwa Fly.io, tare da 
 - Wallafa sabbin sauye-sauyen lamba daga baya
 - Sabbin ayyuka masu bin wannan tsarin tura manhaja iri ɗaya
 
-Wannan jagora ya dogara ne kan saitin da aka tabbatar yana aiki ga aikin na yanzu. Sunan manhajar shi ne `omniroute`.
+Wannan jagora ya dogara ne kan saitin da aka tabbatar yana aiki ga aikin na yanzu. Sunan manhajar shi ne `agentproxy`.
 
 ---
 
@@ -20,7 +20,7 @@ Wannan jagora ya dogara ne kan saitin da aka tabbatar yana aiki ga aikin na yanz
 - Hanyar turawa: Wallafawa kai tsaye ta amfani da `flyctl` na cikin gida
 - Muhallin aiki: Amfani da `Dockerfile` da `fly.toml` da suke akwai a ma'ajiyar lambar
 - Dauwamar bayanai: Fly Volume da aka ɗora zuwa `/data`
-- URL na samun dama: `https://omniroute.fly.dev/`
+- URL na samun dama: `https://agentproxy.online`
 
 ---
 
@@ -29,7 +29,7 @@ Wannan jagora ya dogara ne kan saitin da aka tabbatar yana aiki ga aikin na yanz
 An tabbatar cewa `fly.toml` da ke cikin ma'ajiyar lambar yanzu yana ɗauke da muhimman abubuwa masu zuwa:
 
 ```toml
-app = 'omniroute'
+app = 'agentproxy'
 primary_region = 'sin'
 
 [[mounts]]
@@ -51,7 +51,7 @@ primary_region = 'sin'
 
 Bayanan kula:
 
-- `app = 'omniroute'` yana ƙayyade manhajar Fly da za a tura aikin zuwa gare ta
+- `app = 'agentproxy'` yana ƙayyade manhajar Fly da za a tura aikin zuwa gare ta
 - `destination = '/data'` yana ƙayyade kundin ɗora rumbun ajiya mai ɗorewa
 - Dole ne wannan aikin ya saita `DATA_DIR=/data`, in ba haka ba za a rubuta ma'ajiyar bayanai da maɓallan cikin kundin wucin gadi na container
 
@@ -98,29 +98,29 @@ cd AgentProxy
 Buɗe `fly.toml` sannan ka tabbatar da layi mai zuwa:
 
 ```toml
-app = 'omniroute'
+app = 'agentproxy'
 ```
 
 Idan kana turawa zuwa sabuwar manhajarka, za ka iya canza shi zuwa suna na musamman a duniya, misali:
 
 ```toml
-app = 'omniroute-yourname'
+app = 'agentproxy-yourname'
 ```
 
 Lura:
 
 - Tabbatar cewa manhajar da kake gani a console ta yi daidai da ƙimar `app` da ke cikin `fly.toml`
-- Idan a baya ka yi amfani da wani suna daban, kamar `oroute`, kada ka rikita shi da `omniroute`
+- Idan a baya ka yi amfani da wani suna daban, kamar `oroute`, kada ka rikita shi da `agentproxy`
 
 ### 4.3 Ƙirƙiri Manhajar
 
 Idan har yanzu manhajar ba ta wanzu ba:
 
 ```powershell
-flyctl apps create omniroute
+flyctl apps create agentproxy
 ```
 
-Idan ka canza sunan manhajar, maye gurbin `omniroute` da sunan da ka zaɓa.
+Idan ka canza sunan manhajar, maye gurbin `agentproxy` da sunan da ka zaɓa.
 
 ### 4.4 Turawa ta Farko
 
@@ -136,14 +136,14 @@ Wannan aikin yana ba da shawarar saita aƙalla sigogi masu zuwa a Fly.io.
 
 ### 5.1 Sigogin da Aka Tabbatar
 
-An yi amfani da waɗannan sigogi a ainihin turawa a kan manhajar `omniroute` ta yanzu:
+An yi amfani da waɗannan sigogi a ainihin turawa a kan manhajar `agentproxy` ta yanzu:
 
 - `API_KEY_SECRET`
 - `DATA_DIR`
 - `JWT_SECRET`
 - `MACHINE_ID_SALT`
 - `NEXT_PUBLIC_BASE_URL`
-- `OMNIROUTE_WS_BRIDGE_SECRET` (ana buƙatarsa a yanayin samarwa — ana amfani da shi don tantance sahihancin gadar WebSocket)
+- `AGENTPROXY_WS_BRIDGE_SECRET` (ana buƙatarsa a yanayin samarwa — ana amfani da shi don tantance sahihancin gadar WebSocket)
 - `STORAGE_ENCRYPTION_KEY`
 
 ### 5.2 Game da `INITIAL_PASSWORD`
@@ -171,7 +171,7 @@ Ana ba da shawarar amfani da waɗannan canje-canje na Fly Secrets:
 | ---------------------------- | ----------------------- | ----------------------------------------------------------- |
 | `API_KEY_SECRET`             | Wajibi                  | Ana amfani da shi wajen ƙirƙira da tabbatar da API Key      |
 | `JWT_SECRET`                 | Wajibi                  | Ana amfani da shi don zaman shiga da sanya hannu kan JWT    |
-| `OMNIROUTE_WS_BRIDGE_SECRET` | Wajibi a production     | Sirrin tantancewa na gadar WebSocket                        |
+| `AGENTPROXY_WS_BRIDGE_SECRET` | Wajibi a production     | Sirrin tantancewa na gadar WebSocket                        |
 | `STORAGE_ENCRYPTION_KEY`     | Ana ba da shawara sosai | Yana ɓoye muhimman bayanan haɗi yayin da suke a ma'ajiya    |
 | `MACHINE_ID_SALT`            | Ana ba da shawara       | Yana samar da tsayayyen mai gano na'ura                     |
 | `INITIAL_PASSWORD`           | Na zaɓi                 | Yana saita kalmar sirrin backend ta farko a turawa ta farko |
@@ -182,7 +182,7 @@ Ana ba da shawarar amfani da waɗannan canje-canje na Fly Secrets:
 | Canji                  | Ƙimar da Aka Ba da Shawara  |
 | ---------------------- | --------------------------- |
 | `DATA_DIR`             | `/data`                     |
-| `NEXT_PUBLIC_BASE_URL` | `https://omniroute.fly.dev` |
+| `NEXT_PUBLIC_BASE_URL` | `https://agentproxy.online` |
 
 Bayanan kula:
 
@@ -196,10 +196,10 @@ Idan kana buƙatar kunna masu samarwa masu amfani da OAuth (misali Antigravity, 
 1. **Saita `NEXT_PUBLIC_BASE_URL` zuwa yankin HTTPS na jama'a**
 
    ```powershell
-   flyctl secrets set NEXT_PUBLIC_BASE_URL=https://omniroute.fly.dev -a omniroute
+   flyctl secrets set NEXT_PUBLIC_BASE_URL=https://agentproxy.online -a agentproxy
    ```
 
-   Idan kana amfani da yankin da aka keɓance, maye gurbinsa da yankin da ya dace (misali `https://omniroute.yourdomain.com`).
+   Idan kana amfani da yankin da aka keɓance, maye gurbinsa da yankin da ya dace (misali `https://agentproxy.example.com`).
 
 2. **Saita URL na kira-baya a na'ura mai sarrafa mai samarwar**
 
@@ -210,7 +210,7 @@ Idan kana buƙatar kunna masu samarwa masu amfani da OAuth (misali Antigravity, 
    ```
 
    Misali, ko Gemini, Antigravity, Cursor, ko GitLab Duo:
-   - `https://omniroute.fly.dev/callback`
+   - `https://agentproxy.online`
 
    Idan `NEXT_PUBLIC_BASE_URL` bai yi daidai da URL na kira-baya da aka yi rajista tare da mai samarwar ba, tsarin OAuth zai gaza a matakin tura burauza.
 
@@ -223,7 +223,7 @@ Waɗannan umarnai suna samar da ƙimomin bazuwar masu tsaro sannan su rubuta duk
 Bayanan kula:
 
 - Bai haɗa da `INITIAL_PASSWORD` ba
-- An yi niyya don aikin yanzu `omniroute`
+- An yi niyya don aikin yanzu `agentproxy`
 
 ```powershell
 $apiKeySecret = [Convert]::ToHexString((1..32 | ForEach-Object { Get-Random -Minimum 0 -Maximum 256 })).ToLower()
@@ -237,26 +237,26 @@ flyctl secrets set `
   JWT_SECRET=$jwtSecret `
   MACHINE_ID_SALT=$machineIdSalt `
   STORAGE_ENCRYPTION_KEY=$storageKey `
-  OMNIROUTE_WS_BRIDGE_SECRET=$wsBridgeSecret `
+  AGENTPROXY_WS_BRIDGE_SECRET=$wsBridgeSecret `
   DATA_DIR=/data `
-  NEXT_PUBLIC_BASE_URL=https://omniroute.fly.dev `
-  -a omniroute
+  NEXT_PUBLIC_BASE_URL=https://agentproxy.online `
+  -a agentproxy
 ```
 
 A kan Linux / macOS, za ka iya kuma amfani da `openssl rand -hex 32`:
 
 ```bash
-flyctl secrets set OMNIROUTE_WS_BRIDGE_SECRET=$(openssl rand -hex 32) -a omniroute
+flyctl secrets set AGENTPROXY_WS_BRIDGE_SECRET=$(openssl rand -hex 32) -a agentproxy
 ```
 
 Bayanan kula:
 
-- `OMNIROUTE_WS_BRIDGE_SECRET` wajibi ne a production; rashin sa zai hana musayar-gaisuwar gadar WebSocket aiki
+- `AGENTPROXY_WS_BRIDGE_SECRET` wajibi ne a production; rashin sa zai hana musayar-gaisuwar gadar WebSocket aiki
 
 Idan kana kuma son saita kalmar sirri ta farko:
 
 ```powershell
-flyctl secrets set INITIAL_PASSWORD=your-strong-password -a omniroute
+flyctl secrets set INITIAL_PASSWORD=your-strong-password -a agentproxy
 ```
 
 ---
@@ -264,12 +264,12 @@ flyctl secrets set INITIAL_PASSWORD=your-strong-password -a omniroute
 ## 8. Duba Saitunan Yanzu
 
 ```powershell
-flyctl secrets list -a omniroute
+flyctl secrets list -a agentproxy
 ```
 
 Idan shafin `Secrets` da ke cikin na'ura mai sarrafawa bai nuna canje-canjen da ake tsammani ba, duba:
 
-- Cewa kana duba manhajar `omniroute`
+- Cewa kana duba manhajar `agentproxy`
 - Cewa ƙimar `app` da ke cikin `fly.toml` ta yi daidai da manhajar da ke cikin na'ura mai sarrafawa
 
 ---
@@ -286,7 +286,7 @@ flyctl deploy
 Idan kawai kana buƙatar sabunta saituna ba tare da canza lamba ba:
 
 ```powershell
-flyctl secrets set KEY=value -a omniroute
+flyctl secrets set KEY=value -a agentproxy
 ```
 
 Fly zai gudanar da sabuntawar injuna a jere ta atomatik.
@@ -361,8 +361,8 @@ Bayan daidaitawa da ma'ajiyar asali, bi wannan jerin fitarwa da aka ba da shawar
 3. Dawo da `fly.toml` na fork
 4. `git push origin main`
 5. `flyctl deploy`
-6. `flyctl status -a omniroute`
-7. `flyctl logs --no-tail -a omniroute`
+6. `flyctl status -a agentproxy`
+7. `flyctl logs --no-tail -a agentproxy`
 
 Wannan shi ne ainihin tsarin aikin da aka yi amfani da shi lokacin haɓaka aikin yanzu zuwa `v3.4.7` (misalin yana nuni da wata sigar tarihi; ainihin sigar yanzu ita ce `v3.8.0`).
 
@@ -373,20 +373,20 @@ Wannan shi ne ainihin tsarin aikin da aka yi amfani da shi lokacin haɓaka aikin
 ### 10.1 Duba Matsayin Manhaja
 
 ```powershell
-flyctl status -a omniroute
+flyctl status -a agentproxy
 ```
 
 ### 10.2 Duba Rajistan Farawa
 
 ```powershell
-flyctl logs --no-tail -a omniroute
+flyctl logs --no-tail -a agentproxy
 ```
 
 ### 10.3 Tabbatar da Samun Damar Shafin
 
 ```powershell
 try {
-  (Invoke-WebRequest -Uri "https://omniroute.fly.dev" -MaximumRedirection 5 -UseBasicParsing).StatusCode
+  (Invoke-WebRequest -Uri "https://agentproxy.online" -MaximumRedirection 5 -UseBasicParsing).StatusCode
 } catch {
   if ($_.Exception.Response) {
     $_.Exception.Response.StatusCode.value__
@@ -425,14 +425,14 @@ Idan ka ga `/app/data/...` a maimakon haka, an saita `DATA_DIR` ba daidai ba kum
 Yawanci akwai dalilai biyu:
 
 - Har yanzu ba ka gudanar da `flyctl secrets set` ba
-- Kana duba wata manhaja daban (misali `oroute` maimakon `omniroute`)
+- Kana duba wata manhaja daban (misali `oroute` maimakon `agentproxy`)
 
 ### 12.2 `flyctl deploy` Yana Ba da Rahoton `app not found`
 
 Da farko, ƙirƙiri manhajar:
 
 ```powershell
-flyctl apps create omniroute
+flyctl apps create agentproxy
 ```
 
 ### 12.3 Tantancewar `fly.toml` Ta Gagara
@@ -475,10 +475,10 @@ Umarnin da aka fi amfani da su don fitarwa na gaba su ne:
 
 ```powershell
 flyctl auth whoami
-flyctl status -a omniroute
-flyctl secrets list -a omniroute
+flyctl status -a agentproxy
+flyctl secrets list -a agentproxy
 flyctl deploy
-flyctl logs --no-tail -a omniroute
+flyctl logs --no-tail -a agentproxy
 ```
 
 Don fitarwa ta yau da kullum, babban umarnin shi ne kawai:
@@ -490,7 +490,7 @@ flyctl deploy
 Don turawa ta farko a cikin sabon yanayi, muhimman matakan su ne:
 
 1. `flyctl auth login`
-2. `flyctl apps create omniroute`
-3. `flyctl secrets set ... -a omniroute`
+2. `flyctl apps create agentproxy`
+3. `flyctl secrets set ... -a agentproxy`
 4. `flyctl deploy`
-5. `flyctl logs --no-tail -a omniroute`
+5. `flyctl logs --no-tail -a agentproxy`

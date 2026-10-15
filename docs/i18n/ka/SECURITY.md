@@ -77,7 +77,7 @@ AgentProxy-ს მოჰყვება მუშაობისას გან
 | `pii-masker`       | 10         | გამოძახებამდე და გამოძახების შემდეგ PII-ის რედაქტირება (ელფოსტა, ტელეფონი, CPF, CNPJ, საკრედიტო ბარათები, SSN)         |
 | `prompt-injection` | 20         | ჩანაცვლების/როლის მიტაცების/jailbreak-ის/ინფორმაციის გაჟონვის შაბლონების აღმოჩენა                                      |
 
-მორგებული დამცავი მექანიზმების რეგისტრაცია ხდება `registerGuardrail(new MyGuardrail())`-ის მეშვეობით. მოდელი fail-open პრინციპით მუშაობს (გამონაკლისები ტრაფიკს არასოდეს ბლოკავს). ცალკეული მოთხოვნისთვის გამორთვა შესაძლებელია `x-omniroute-disabled-guardrails` სათაურის მეშვეობით. → იხილეთ [`docs/security/GUARDRAILS.md`](docs/security/GUARDRAILS.md).
+მორგებული დამცავი მექანიზმების რეგისტრაცია ხდება `registerGuardrail(new MyGuardrail())`-ის მეშვეობით. მოდელი fail-open პრინციპით მუშაობს (გამონაკლისები ტრაფიკს არასოდეს ბლოკავს). ცალკეული მოთხოვნისთვის გამორთვა შესაძლებელია `x-agentproxy-disabled-guardrails` სათაურის მეშვეობით. → იხილეთ [`docs/security/GUARDRAILS.md`](docs/security/GUARDRAILS.md).
 
 ### 🧠 Prompt Injection-ისგან დაცვა
 
@@ -182,15 +182,15 @@ STORAGE_ENCRYPTION_KEY=$(openssl rand -hex 32)
 
 ```bash
 docker run -d \
-  --name omniroute \
+  --name agentproxy \
   --restart unless-stopped \
   --read-only \
   -p 20128:20128 \
-  -v omniroute-data:/app/data \
+  -v agentproxy-data:/app/data \
   -e JWT_SECRET="$(openssl rand -base64 48)" \
   -e API_KEY_SECRET="$(openssl rand -hex 32)" \
   -e STORAGE_ENCRYPTION_KEY="$(openssl rand -hex 32)" \
-  diegosouzapw/omniroute:latest
+  diegosouzapw/agentproxy:latest
 ```
 
 ---
@@ -224,7 +224,7 @@ docker run -d \
 
 > **მოქმედების სფეროს შენიშვნა:** რეპოზიტორიის ძირში არსებული `socket.yml` მხოლოდ Socket.dev-ის რეესტრის მხარეს, გამოქვეყნების შემდგომ შესრულებული სკანირებისთვის განსაზღვრავს `projectIgnorePaths`-ს გამოქვეყნებულ npm-არტეფაქტზე — ის არ წარმოადგენს CI/PR-ის შერწყმის სავალდებულო ბარიერს. არც ერთი სამუშაო პროცესი `.github/workflows`-ში, არც ერთი `package.json` სკრიპტი და არც ერთი `Makefile` სამიზნე არ იძახებს Socket.dev-ს.
 
-გამოქვეყნებული `omniroute` npm-არტეფაქტი მოიცავს Next.js-ის `output: "standalone"`
+გამოქვეყნებული `agentproxy` npm-არტეფაქტი მოიცავს Next.js-ის `output: "standalone"`
 ანაწყობს, რაც ნიშნავს, რომ ყველა მარშრუტის დამმუშავებელი — მათ შორის დოკუმენტირებული პრივილეგირებული
 ფუნქციები (MITM, Zed-ის იმპორტი, Cloud Sync, ჩაშენებული სერვისების ზედამხედველი) — ხვდება
 `.next/server/*.js` მინიფიცირებულ ნაწილებში. ევრისტიკული მიწოდების ჯაჭვის სკანერები
@@ -247,7 +247,7 @@ GitHub App, რომელიც ამ ფაილს კითხულო�
   იმავე დოკუმენტზე მიუთითებს.
 
 მომხმარებლებისთვის, რომელთა კონვეიერსაც გაფრთხილების მოთხოვნების შერბილება არ შეუძლია: ააგეთ
-`OMNIROUTE_BUILD_PROFILE=minimal npm run build` ბრძანებით. ეს ოთხ
+`AGENTPROXY_BUILD_PROFILE=minimal npm run build` ბრძანებით. ეს ოთხ
 სენსიტიურ მოდულს ჩაანაცვლებს ჩამნაცვლებლებით, რომლებიც შესრულების დროს აბრუნებს HTTP 503
 `feature-disabled`-ს, რის შედეგადაც პრივილეგირებული კოდის გზები ფიზიკურად აღარ იქნება ანაწყობში.
 გამოქვეყნების ინსტრუქციებისთვის იხილეთ [`docs/security/SOCKET_DEV_FINDINGS.md`](docs/security/SOCKET_DEV_FINDINGS.md).

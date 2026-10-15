@@ -18,7 +18,7 @@ AgentProxy ପାଇଁ ସାଧାରଣ ସମସ୍ୟା ଏବଂ ସମ�
 
 | ମୁଁ ଏହା ଦେଖୁଛି                  | ଏହାର ଅର୍ଥ                                                    | କ’ଣ କରିବେ                                                                                                              |
 | ------------------------------- | ------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------- |
-| "ସଂଯୋଗ କରିପାରୁନାହିଁ"            | AgentProxy ଚାଲୁନାହିଁ                                          | `omniroute` ଚଲାନ୍ତୁ କିମ୍ବା `docker restart omniroute` ଚଲାନ୍ତୁ                                                          |
+| "ସଂଯୋଗ କରିପାରୁନାହିଁ"            | AgentProxy ଚାଲୁନାହିଁ                                          | `agentproxy` ଚଲାନ୍ତୁ କିମ୍ବା `docker restart agentproxy` ଚଲାନ୍ତୁ                                                          |
 | "ଅବୈଧ API କୀ"                   | ଆପଣଙ୍କ କୀ ଭୁଲ୍ କିମ୍ବା ମିଆଦ ସମାପ୍ତ ହୋଇଛି                      | ପ୍ରଦାନକାରୀଙ୍କ ୱେବସାଇଟରୁ କୀଟିକୁ ପୁନଃ କପି କରନ୍ତୁ                                                                         |
 | "ହାର ସୀମା ଅତିକ୍ରମ ହୋଇଛି"        | ଆପଣ ଅତ୍ୟଧିକ ଅନୁରୋଧ ପଠାଉଛନ୍ତି                                 | 1 ମିନିଟ୍ ଅପେକ୍ଷା କରନ୍ତୁ, କିମ୍ବା ସ୍ୱୟଂଚାଳିତ ଫଲ୍ବ୍ୟାକ୍ ପାଇଁ `model: "auto"` ବ୍ୟବହାର କରନ୍ତୁ                               |
 | "କୋଟା ଅତିକ୍ରମ ହୋଇଛି"            | ଆପଣ ନିଜର ମାଗଣା/ଦେୟଯୁକ୍ତ କୋଟା ସମ୍ପୂର୍ଣ୍ଣ ବ୍ୟବହାର କରିସାରିଛନ୍ତି | ଅଧିକ ପ୍ରଦାନକାରୀଙ୍କୁ ସଂଯୋଗ କରନ୍ତୁ, କିମ୍ବା ମାଗଣା ପ୍ରଦାନକାରୀ (Kiro, Pollinations) ବ୍ୟବହାର କରନ୍ତୁ                          |
@@ -26,7 +26,7 @@ AgentProxy ପାଇଁ ସାଧାରଣ ସମସ୍ୟା ଏବଂ ସମ�
 | "ଭୁଲ୍ ପ୍ରଦାନକାରୀ ବ୍ୟବହୃତ ହୋଇଛି" | `auto` ଏକ ଭିନ୍ନ ପ୍ରଦାନକାରୀ ବାଛିଛି                            | ଏହା ସ୍ୱାଭାବିକ! `auto` ସର୍ବୋତ୍ତମଟିକୁ ବାଛେ। `model: "openai/gpt-4o"` ସହ ଏକ ନିର୍ଦ୍ଦିଷ୍ଟ ପ୍ରଦାନକାରୀଙ୍କୁ ବାଧ୍ୟତାମୂଳକ କରନ୍ତୁ |
 | "502 ଖରାପ ଗେଟୱେ"                | ପ୍ରଦାନକାରୀ ବନ୍ଦ ଅଛନ୍ତି                                       | ଅପେକ୍ଷା କରି ପୁନଃଚେଷ୍ଟା କରନ୍ତୁ, କିମ୍ବା ପ୍ରଦାନକାରୀ ବଦଳାଇବାକୁ `model: "auto"` ବ୍ୟବହାର କରନ୍ତୁ                              |
 | "401 ଅନଧିକୃତ"                   | ଆପଣଙ୍କ ପ୍ରମାଣପତ୍ର ଭୁଲ୍                                       | ଆପଣଙ୍କ API କୀ ଯାଞ୍ଚ କରନ୍ତୁ କିମ୍ବା OAuth ଦ୍ୱାରା ପୁନଃ ପ୍ରମାଣୀକରଣ କରନ୍ତୁ                                                  |
-| "omniroute ଚିହ୍ନଟ ହେଉନାହିଁ"     | Windows PATHରେ ଗ୍ଲୋବାଲ୍ node ମଡ୍ୟୁଲ୍ ନାହିଁ                   | ଆପଣଙ୍କ npm ଗ୍ଲୋବାଲ୍ ପ୍ରିଫିକ୍ସକୁ Windows PATHରେ ଯୋଡ଼ନ୍ତୁ। `npm config get prefix` ଦ୍ୱାରା ଏହାକୁ ଖୋଜନ୍ତୁ।                 |
+| "agentproxy ଚିହ୍ନଟ ହେଉନାହିଁ"     | Windows PATHରେ ଗ୍ଲୋବାଲ୍ node ମଡ୍ୟୁଲ୍ ନାହିଁ                   | ଆପଣଙ୍କ npm ଗ୍ଲୋବାଲ୍ ପ୍ରିଫିକ୍ସକୁ Windows PATHରେ ଯୋଡ଼ନ୍ତୁ। `npm config get prefix` ଦ୍ୱାରା ଏହାକୁ ଖୋଜନ୍ତୁ।                 |
 | "429 ଅତ୍ୟଧିକ ଅନୁରୋଧ"            | ହାର ସୀମିତ କରାଯାଇଛି                                           | 1 ମିନିଟ୍ ଅପେକ୍ଷା କରନ୍ତୁ, କିମ୍ବା ଅଧିକ ପ୍ରଦାନକାରୀଙ୍କୁ ସଂଯୋଗ କରନ୍ତୁ                                                       |
 
 **ତଥାପି ଅଟକିଛନ୍ତି?** ନିମ୍ନରେ [ବିସ୍ତୃତ ସମସ୍ୟା ସମାଧାନ](#detailed-troubleshooting) ଦେଖନ୍ତୁ, କିମ୍ବା [Discord](https://discord.gg/U47eFqAXCn)ରେ ପଚାରନ୍ତୁ।
@@ -50,14 +50,14 @@ AgentProxy ପାଇଁ ସାଧାରଣ ସମସ୍ୟା ଏବଂ ସମ�
 **ଯାଞ୍ଚିତ ସମାଧାନ (ସମୁଦାୟ ଦ୍ୱାରା ରିପୋର୍ଟ କରାଯାଇଛି, 2026-08-10)**: ତିନୋଟି ପରିବେଶ ଭେରିଏବଲ୍କୁ ଟ୍ୟୁନ୍ କରନ୍ତୁ, ଯାହାଦ୍ୱାରା ରୋଟେସନ୍, ସମକାଳୀନତା ଏବଂ ଫଲ୍ବ୍ୟାକ୍ ମାଗଣା-ସ୍ତରର ଅସ୍ଥିରତାକୁ ସମ୍ଭାଳିପାରିବ, ଏଥିରେ ବିଫଳ ହେବ ନାହିଁ:
 
 ```bash
-export OMNIROUTE_ROTATE_ON_400=true           # 400/401ରେ ଅନ୍ୟ ମଡେଲ୍/ପ୍ରଦାନକାରୀକୁ ଯାଆନ୍ତୁ (ଭଙ୍ଗା ପାସ୍ଥ୍ରୁ ମଡେଲ୍ଗୁଡ଼ିକୁ ଏଡ଼ାଏ)
-export OMNIROUTE_CHAT_MAX_HEAVY_IN_FLIGHT=4   # ସ୍ପଷ୍ଟ ହେଭିୱେଟ୍ ପ୍ରବେଶ ସର୍ବୋଚ୍ଚ ସୀମା (ଡିଫଲ୍ଟ ଭାବେ ସେଟ୍ ହୋଇନାହିଁ: ଅନୁରୋଧ-ଗଣନା ସୀମା ନାହିଁ, ନିମ୍ନର ଟିପ୍ପଣୀ ଦେଖନ୍ତୁ)
-export OMNIROUTE_CHAT_ADMISSION_QUEUE_MS=5000 # ତତ୍କ୍ଷଣାତ୍ ପୁନଃଚେଷ୍ଟାଯୋଗ୍ୟ 503 ପରିବର୍ତ୍ତେ ହେଭିୱେଟ୍ କ୍ଷମତା ପାଇଁ ଦୀର୍ଘତର ସୀମିତ ଅପେକ୍ଷା
+export AGENTPROXY_ROTATE_ON_400=true           # 400/401ରେ ଅନ୍ୟ ମଡେଲ୍/ପ୍ରଦାନକାରୀକୁ ଯାଆନ୍ତୁ (ଭଙ୍ଗା ପାସ୍ଥ୍ରୁ ମଡେଲ୍ଗୁଡ଼ିକୁ ଏଡ଼ାଏ)
+export AGENTPROXY_CHAT_MAX_HEAVY_IN_FLIGHT=4   # ସ୍ପଷ୍ଟ ହେଭିୱେଟ୍ ପ୍ରବେଶ ସର୍ବୋଚ୍ଚ ସୀମା (ଡିଫଲ୍ଟ ଭାବେ ସେଟ୍ ହୋଇନାହିଁ: ଅନୁରୋଧ-ଗଣନା ସୀମା ନାହିଁ, ନିମ୍ନର ଟିପ୍ପଣୀ ଦେଖନ୍ତୁ)
+export AGENTPROXY_CHAT_ADMISSION_QUEUE_MS=5000 # ତତ୍କ୍ଷଣାତ୍ ପୁନଃଚେଷ୍ଟାଯୋଗ୍ୟ 503 ପରିବର୍ତ୍ତେ ହେଭିୱେଟ୍ କ୍ଷମତା ପାଇଁ ଦୀର୍ଘତର ସୀମିତ ଅପେକ୍ଷା
 ```
 
 ଏଗୁଡ଼ିକୁ AgentProxy ପ୍ରକ୍ରିୟା ପରିବେଶରେ (ଡିମନ୍ରେ, ଯଥା LaunchAgent plist କିମ୍ବା `systemctl edit` ମାଧ୍ୟମରେ) ସେଟ୍ କରନ୍ତୁ, ତା’ପରେ AgentProxyକୁ ପୁନଃଚାଳନ କରନ୍ତୁ। ରୋଟେସନ୍ ଫ୍ଲାଗ୍ଟି ସର୍ବାଧିକ ପ୍ରଭାବଶାଳୀ ନିୟନ୍ତ୍ରଣ: ଏହା ଏକ କଠୋର ବିଫଳତାକୁ ପୁଲ୍ର ଏକ ସୁସ୍ଥ ପ୍ରଦାନକାରୀ ବିରୁଦ୍ଧରେ ସ୍ୱଚ୍ଛ ପୁନଃଚେଷ୍ଟାରେ ପରିଣତ କରେ।
 
-**ଟିପ୍ପଣୀ**: `OMNIROUTE_CHAT_MAX_HEAVY_IN_FLIGHT` ଏକାସାଙ୍ଗରେ କେତେଟି ହେଭିୱେଟ୍ — ଦୀର୍ଘ-କଣ୍ଟେକ୍ସ୍ଟ — ଅନୁରୋଧ ଚାଲିବ, ତାହା ସୀମିତ କରେ; ଏହି ସୀମାଟି ଏକ ପ୍ରବେଶ ଗେଟ୍, ପ୍ରଦାନକାରୀ ହାର ସୀମକ ନୁହେଁ। **#503-ଫ୍ୟାନ୍ଆଉଟ୍ ଅଦ୍ୟତନ:** ଏହି ଭେରିଏବଲ୍ ଆଉ ଡିଫଲ୍ଟ ଭାବେ ସେଟ୍ ହୁଏ ନାହିଁ (ଉପରୋକ୍ତ ପରି ସ୍ପଷ୍ଟ ଭାବେ କନଫିଗର୍ କଲେ ମାତ୍ର ଏବେ ଏହା ବାଇଣ୍ଡ ହୁଏ) — ଏହା ବଦଳରେ ହେଭିୱେଟ୍ ପ୍ରବେଶ ଏକ ସ୍ୱୟଂ-ନିର୍ଦ୍ଧାରିତ ବାଇଟ୍ ବଜେଟ୍ (`OMNIROUTE_CHAT_MAX_INFLIGHT_BYTES`) ଦ୍ୱାରା ନିୟନ୍ତ୍ରିତ ହୁଏ, ଯାହା ହୋଷ୍ଟର ବାସ୍ତବ ମେମୋରି ସୀମା ଅନୁଯାୟୀ ନିଜକୁ ସ୍କେଲ୍ କରେ; ତେଣୁ ନୂଆ ଡିପ୍ଲୟମେଣ୍ଟରେ ଏହି ଭେରିଏବଲ୍ ଆଦୌ ସେଟ୍ ନକରି ମଧ୍ୟ ବହୁତ କମ୍ `503 chat_admission_busy` ପ୍ରତ୍ୟାଖ୍ୟାନ ଦେଖାଯିବା ଉଚିତ୍; ଏଠାରେ ଏହାକୁ ସ୍ପଷ୍ଟ ଭାବେ ସେଟ୍ କଲେ ମଧ୍ୟ ଡକ୍ୟୁମେଣ୍ଟେସନ୍ରେ ବର୍ଣ୍ଣିତ ଭଳି ଠିକ୍ କାମ କରେ। ସ୍ପଷ୍ଟ ବାଇଟ୍-ବଜେଟ୍ ଓଭର୍ରାଇଡ୍ଗୁଡ଼ିକ 8 MiB–2 GiB ମଧ୍ୟରେ ସୀମିତ ହୁଏ। ଏକ `413 body_exceeds_budget` ଅସ୍ଥାୟୀ ନୁହେଁ: ସେହି ବାଇଟ୍ ବଜେଟ୍ ବଢ଼ାନ୍ତୁ, `OMNIROUTE_CHAT_HARD_MAX_BODY_BYTES` କମାନ୍ତୁ, କିମ୍ବା ପ୍ରକ୍ରିୟା ମେମୋରି ସୀମା ବଢ଼ାନ୍ତୁ। ଏକ `inflight_bytes_budget` ଶେଡ୍ ଅସ୍ଥାୟୀ ପ୍ରତିଦ୍ୱନ୍ଦ୍ୱିତା ଏବଂ ପୁନଃଚେଷ୍ଟାଯୋଗ୍ୟ ରହେ। ପ୍ରତି-ପ୍ରଦାନକାରୀ ହାର ସୀମିତକରଣ (`open-sse/services/rateLimitManager.ts`) `RATE_LIMIT_MAX_WAIT_MS`, `RATE_LIMIT_MAX_QUEUE_DEPTH`, ଏବଂ `RATE_LIMIT_AUTO_ENABLE` ଦ୍ୱାରା ପୃଥକ ଭାବେ ପରିଚାଳିତ ହୁଏ — `.env.example` ଦେଖନ୍ତୁ।
+**ଟିପ୍ପଣୀ**: `AGENTPROXY_CHAT_MAX_HEAVY_IN_FLIGHT` ଏକାସାଙ୍ଗରେ କେତେଟି ହେଭିୱେଟ୍ — ଦୀର୍ଘ-କଣ୍ଟେକ୍ସ୍ଟ — ଅନୁରୋଧ ଚାଲିବ, ତାହା ସୀମିତ କରେ; ଏହି ସୀମାଟି ଏକ ପ୍ରବେଶ ଗେଟ୍, ପ୍ରଦାନକାରୀ ହାର ସୀମକ ନୁହେଁ। **#503-ଫ୍ୟାନ୍ଆଉଟ୍ ଅଦ୍ୟତନ:** ଏହି ଭେରିଏବଲ୍ ଆଉ ଡିଫଲ୍ଟ ଭାବେ ସେଟ୍ ହୁଏ ନାହିଁ (ଉପରୋକ୍ତ ପରି ସ୍ପଷ୍ଟ ଭାବେ କନଫିଗର୍ କଲେ ମାତ୍ର ଏବେ ଏହା ବାଇଣ୍ଡ ହୁଏ) — ଏହା ବଦଳରେ ହେଭିୱେଟ୍ ପ୍ରବେଶ ଏକ ସ୍ୱୟଂ-ନିର୍ଦ୍ଧାରିତ ବାଇଟ୍ ବଜେଟ୍ (`AGENTPROXY_CHAT_MAX_INFLIGHT_BYTES`) ଦ୍ୱାରା ନିୟନ୍ତ୍ରିତ ହୁଏ, ଯାହା ହୋଷ୍ଟର ବାସ୍ତବ ମେମୋରି ସୀମା ଅନୁଯାୟୀ ନିଜକୁ ସ୍କେଲ୍ କରେ; ତେଣୁ ନୂଆ ଡିପ୍ଲୟମେଣ୍ଟରେ ଏହି ଭେରିଏବଲ୍ ଆଦୌ ସେଟ୍ ନକରି ମଧ୍ୟ ବହୁତ କମ୍ `503 chat_admission_busy` ପ୍ରତ୍ୟାଖ୍ୟାନ ଦେଖାଯିବା ଉଚିତ୍; ଏଠାରେ ଏହାକୁ ସ୍ପଷ୍ଟ ଭାବେ ସେଟ୍ କଲେ ମଧ୍ୟ ଡକ୍ୟୁମେଣ୍ଟେସନ୍ରେ ବର୍ଣ୍ଣିତ ଭଳି ଠିକ୍ କାମ କରେ। ସ୍ପଷ୍ଟ ବାଇଟ୍-ବଜେଟ୍ ଓଭର୍ରାଇଡ୍ଗୁଡ଼ିକ 8 MiB–2 GiB ମଧ୍ୟରେ ସୀମିତ ହୁଏ। ଏକ `413 body_exceeds_budget` ଅସ୍ଥାୟୀ ନୁହେଁ: ସେହି ବାଇଟ୍ ବଜେଟ୍ ବଢ଼ାନ୍ତୁ, `AGENTPROXY_CHAT_HARD_MAX_BODY_BYTES` କମାନ୍ତୁ, କିମ୍ବା ପ୍ରକ୍ରିୟା ମେମୋରି ସୀମା ବଢ଼ାନ୍ତୁ। ଏକ `inflight_bytes_budget` ଶେଡ୍ ଅସ୍ଥାୟୀ ପ୍ରତିଦ୍ୱନ୍ଦ୍ୱିତା ଏବଂ ପୁନଃଚେଷ୍ଟାଯୋଗ୍ୟ ରହେ। ପ୍ରତି-ପ୍ରଦାନକାରୀ ହାର ସୀମିତକରଣ (`open-sse/services/rateLimitManager.ts`) `RATE_LIMIT_MAX_WAIT_MS`, `RATE_LIMIT_MAX_QUEUE_DEPTH`, ଏବଂ `RATE_LIMIT_AUTO_ENABLE` ଦ୍ୱାରା ପୃଥକ ଭାବେ ପରିଚାଳିତ ହୁଏ — `.env.example` ଦେଖନ୍ତୁ।
 
 **ଏହା କାମ କରିଛି କି ନାହିଁ କିପରି ଯାଞ୍ଚ କରିବେ**: ଅତି କମ୍ ସମୟ ବ୍ୟବଧାନରେ ଆପଣଙ୍କ agent/cronକୁ ଦୁଇଥର ଚଲାନ୍ତୁ ଏବଂ ଉଭୟ ସଫଳ ହେଉଛି ବୋଲି ନିଶ୍ଚିତ କରନ୍ତୁ। ସମାଧାନ ପୂର୍ବରୁ, ଦ୍ୱିତୀୟ ରନ୍ ସାଧାରଣତଃ `429`/`401` ତ୍ରୁଟି ଦେଖାଏ। ସମାଧାନ ପରେ, ବିଫଳତାଗୁଡ଼ିକୁ (ଯଦି କିଛି ଥାଏ) ସ୍ୱଚ୍ଛ ଭାବରେ ପୁନଃଚେଷ୍ଟା କରାଯାଏ ଏବଂ କଲ୍ ସମ୍ପୂର୍ଣ୍ଣ ହୁଏ। ଆପଣ `curl /monitoring/health` ମଧ୍ୟ ଚଲାଇପାରିବେ ଏବଂ provider ସଂଯୋଗଗୁଡ଼ିକରେ ଥିବା `rateLimitedUntil` ଫିଲ୍ଡ ଓ ପ୍ରଭାବିତ providerଗୁଡ଼ିକ ପାଇଁ `circuitBreakers.providerBreakers[].state`କୁ ନିରୀକ୍ଷଣ କରିପାରିବେ — stateଟି `CLOSED`, `DEGRADED`, `OPEN`, କିମ୍ବା `HALF_OPEN` ମଧ୍ୟରୁ ଗୋଟିଏ (ଦେଖନ୍ତୁ `src/shared/utils/circuitBreaker.ts`), ଏବଂ ଯେଉଁ provider ବାରମ୍ବାର ବିଫଳ ହୁଏ, reset window ଗୋଟିଏ probeକୁ ଯିବାକୁ ଅନୁମତି ଦେବା ପୂର୍ବରୁ ତାହା `CLOSED → DEGRADED → OPEN`କୁ ବଦଳିଯିବ (`HALF_OPEN`)।
 
@@ -69,12 +69,12 @@ export OMNIROUTE_CHAT_ADMISSION_QUEUE_MS=5000 # ତତ୍କ୍ଷଣାତ୍ �
 
 ## npm install ଚେତାବନୀ (ERESOLVE / peer / deprecated)
 
-ଆପଣ `npm install -g omniroute` ଚଲାଇବାବେଳେ `npm warn ERESOLVE`, peer-dependency ସୂଚନା ଏବଂ `deprecated` ବାର୍ତ୍ତା ପରି ଅନେକ ଚେତାବନୀ ଦେଖିପାରନ୍ତି। **ଏଗୁଡ଼ିକ ଆଶାକରାଯାଇଥିବା ଏବଂ କ୍ଷତିହୀନ।** ଆଉଟପୁଟ୍ରେ `added <N> packages` ଦେଖାଗଲେ ଆପଣଙ୍କ ଇନଷ୍ଟଲେସନ୍ ସଫଳ ହୋଇଛି।
+ଆପଣ `npm install -g agentproxy` ଚଲାଇବାବେଳେ `npm warn ERESOLVE`, peer-dependency ସୂଚନା ଏବଂ `deprecated` ବାର୍ତ୍ତା ପରି ଅନେକ ଚେତାବନୀ ଦେଖିପାରନ୍ତି। **ଏଗୁଡ଼ିକ ଆଶାକରାଯାଇଥିବା ଏବଂ କ୍ଷତିହୀନ।** ଆଉଟପୁଟ୍ରେ `added <N> packages` ଦେଖାଗଲେ ଆପଣଙ୍କ ଇନଷ୍ଟଲେସନ୍ ସଫଳ ହୋଇଛି।
 
 peer-dependency ସମାଧାନ ସମ୍ବନ୍ଧୀୟ ଚେତାବନୀଗୁଡ଼ିକୁ ଲୁଚାଇବା ପାଇଁ AgentProxy ଦ୍ୱାରା ସମର୍ଥିତ ଏହି ଇନଷ୍ଟଲେସନ୍ ପଦ୍ଧତି ବ୍ୟବହାର କରନ୍ତୁ:
 
 ```bash
-npm install -g omniroute --legacy-peer-deps
+npm install -g agentproxy --legacy-peer-deps
 ```
 
 `--legacy-peer-deps` କେବଳ `ERESOLVE` ଏବଂ peer-dependency ସୂଚନାଗୁଡ଼ିକୁ ଲୁଚାଏ। ଅବଚୟ ସୂଚନାଗୁଡ଼ିକ ଦୃଶ୍ୟମାନ ରହେ, କାରଣ ସେଗୁଡ଼ିକ ପରୋକ୍ଷ ତୃତୀୟ-ପକ୍ଷ ପ୍ୟାକେଜ୍ରୁ ଆସେ; ସେଗୁଡ଼ିକ ଇନଷ୍ଟଲେସନ୍ ବିଫଳ ହୋଇଥିବାର ସୂଚନା ଦିଏ ନାହିଁ।
@@ -101,7 +101,7 @@ Playwright ଜାଣିଶୁଣି browser ଡାଉନଲୋଡ୍ଗୁଡ଼
 ଡିରେକ୍ଟୋରୀରୁ Chromium ଇନଷ୍ଟଲ୍ କରନ୍ତୁ, ଯାହାଦ୍ୱାରା browser cache ସେହି Playwright ଇନଷ୍ଟଲେସନ୍ର ହେବ:
 
 ```bash
-cd "$(npm root -g)/omniroute"
+cd "$(npm root -g)/agentproxy"
 npx playwright install chromium
 ```
 
@@ -119,10 +119,10 @@ build target) ବ୍ୟବହାର କରନ୍ତୁ, ଯେଉଁଥିରେ
 | ପ୍ରଥମ login କାମ କରୁନାହିଁ                                   | `.env` ରେ `INITIAL_PASSWORD` ସେଟ୍ କରନ୍ତୁ (କୌଣସି hardcoded default ନାହିଁ)                                                                                                                             |
 | Dashboard ଭୁଲ port ରେ ଖୋଲୁଛି                               | `PORT=20128` ଏବଂ `NEXT_PUBLIC_BASE_URL=http://localhost:20128` ସେଟ୍ କରନ୍ତୁ                                                                                                                           |
 | disk ରେ କୌଣସି log ଲେଖାଯାଉନାହିଁ                             | `APP_LOG_TO_FILE=true` ସେଟ୍ କରନ୍ତୁ ଏବଂ call log capture ସକ୍ଷମ ଅଛି କି ନାହିଁ ଯାଞ୍ଚ କରନ୍ତୁ                                                                                                              |
-| EACCES: ଅନୁମତି ପ୍ରତ୍ୟାଖ୍ୟାନ                                | `~/.omniroute` କୁ override କରିବା ପାଇଁ `DATA_DIR=/path/to/writable/dir` ସେଟ୍ କରନ୍ତୁ                                                                                                                   |
+| EACCES: ଅନୁମତି ପ୍ରତ୍ୟାଖ୍ୟାନ                                | `~/.agentproxy` କୁ override କରିବା ପାଇଁ `DATA_DIR=/path/to/writable/dir` ସେଟ୍ କରନ୍ତୁ                                                                                                                   |
 | Routing strategy ସଞ୍ଚୟ ହେଉନାହିଁ                            | ସର୍ବଶେଷ v3.x release କୁ update କରନ୍ତୁ (settings persistence ପାଇଁ Zod schema fix ପୂର୍ବ ସଂସ୍କରଣଗୁଡ଼ିକରେ ପ୍ରଦାନ କରାଯାଇଥିଲା)                                                                             |
 | Login crash / ଖାଲି page                                    | Node.js version ଯାଞ୍ଚ କରନ୍ତୁ — ନିମ୍ନରେ [Node.js ସୁସଙ୍ଗତତା](#nodejs-compatibility) ଦେଖନ୍ତୁ                                                                                                            |
-| `dlopen` / `slice is not valid mach-o file` (macOS)        | `cd $(npm root -g)/omniroute/app && npm rebuild better-sqlite3 && omniroute` ଚଲାନ୍ତୁ — ନିମ୍ନରେ [macOS native module ପୁନଃନିର୍ମାଣ](#macos-native-module-rebuild) ଦେଖନ୍ତୁ                               |
+| `dlopen` / `slice is not valid mach-o file` (macOS)        | `cd $(npm root -g)/agentproxy/app && npm rebuild better-sqlite3 && agentproxy` ଚଲାନ୍ତୁ — ନିମ୍ନରେ [macOS native module ପୁନଃନିର୍ମାଣ](#macos-native-module-rebuild) ଦେଖନ୍ତୁ                               |
 | Proxy "fetch failed"                                       | proxy config ସଠିକ୍ ସ୍ତରରେ ସେଟ୍ ହୋଇଛି କି ନାହିଁ ନିଶ୍ଚିତ କରନ୍ତୁ — ନିମ୍ନରେ [Proxy ସମସ୍ୟାଗୁଡ଼ିକ](#proxy-issues) ଦେଖନ୍ତୁ                                                                                   |
 | Docker `curl: (56) Recv failure: Connection reset by peer` | ଆପଣଙ୍କ Docker port bind IPv6 ଉପରେ ଲାଗିଥାଇପାରେ। IPv4 ବାଧ୍ୟତାମୂଳକ କରିବାକୁ `-p 127.0.0.1:20128:20128` ବ୍ୟବହାର କରନ୍ତୁ, କିମ୍ବା `curl -4` ସହିତ ପରୀକ୍ଷା କରନ୍ତୁ। ନିମ୍ନରେ [Docker IPv6](#docker-ipv6) ଦେଖନ୍ତୁ |
 | Antivirus `README.md` କୁ quarantine କରୁଛି                  | ଭୁଲ positive — ନିମ୍ନରେ [Antivirus ଭୁଲ positiveଗୁଡ଼ିକ](#antivirus-false-positives) ଦେଖନ୍ତୁ                                                                                                            |
@@ -142,7 +142,7 @@ Avast ଏବଂ AVG ଏକ ହ୍ୟୁରିଷ୍ଟିକ୍ ଚଲାନ୍�
 HTTP ଅନୁରୋଧ ପରି ଦେଖାଯାଉଥିବା ଲିଙ୍କ ଥିବା ସାଧା-ଟେକ୍ସଟ୍/Markdown ଫାଇଲଗୁଡ଼ିକୁ ଫ୍ଲାଗ୍ କରେ।
 AgentProxyର `README.md` npm package ଭିତରେ ଅନ୍ତର୍ଭୁକ୍ତ ହୋଇ ଆସେ (ଏହା
 `package.json` → `files`ରେ ତାଲିକାଭୁକ୍ତ), ତେଣୁ ଏକ global install ସମୟରେ ଏହା
-`node_modules/omniroute/README.md`ରେ ରହେ — ଏବଂ ଏଥିରେ ପ୍ରାୟ 15ଟି
+`node_modules/agentproxy/README.md`ରେ ରହେ — ଏବଂ ଏଥିରେ ପ୍ରାୟ 15ଟି
 `http://localhost:20128/...` ଉଦାହରଣ ଅଛି (MCP HTTP/SSE endpoints, A2A
 `.well-known` URL ଏବଂ `curl` ସ୍ନିପେଟ୍ଗୁଡ଼ିକ)। ଏତେ ଅଧିକ ଲିଙ୍କ ଘନତା
 ହ୍ୟୁରିଷ୍ଟିକ୍କୁ ସକ୍ରିୟ କରିବା ପାଇଁ ଯଥେଷ୍ଟ।
@@ -158,7 +158,7 @@ READMEର endpoints ଟେବୁଲ୍ ବୃଦ୍ଧି ପାଇଛି (MCP H
 
 1. **ବିଜ୍ଞପ୍ତିଗୁଡ଼ିକୁ ବନ୍ଦ କରନ୍ତୁ** — ଆପଣଙ୍କ ଆଣ୍ଟିଭାଇରସ୍ରେ install directoryକୁ ବାଦ ଦିଅନ୍ତୁ
    (Avast: Settings → Exceptions), ନିଜର global `node_modules` path ଏବଂ/କିମ୍ବା
-   AgentProxy data dir (`~/.omniroute/`) ଯୋଡ଼ନ୍ତୁ।
+   AgentProxy data dir (`~/.agentproxy/`) ଯୋଡ଼ନ୍ତୁ।
 2. **ଭୁଲ ପଜିଟିଭ୍ଟି ରିପୋର୍ଟ କରନ୍ତୁ** — <https://www.avast.com/false-positive-file-form.php>,
    କ୍ୱାରେଣ୍ଟାଇନ୍ ହୋଇଥିବା `README.md` ସଂଲଗ୍ନ କରନ୍ତୁ। ଏହି ସମାଧାନ ସମସ୍ତଙ୍କୁ ସାହାଯ୍ୟ କରେ,
    କାରଣ ଏହା ଏକ ଟେକ୍ସଟ୍ ଫାଇଲ୍ ପ୍ରତି ବିକ୍ରେତାଙ୍କ ହ୍ୟୁରିଷ୍ଟିକ୍ର ଅତ୍ୟଧିକ ପ୍ରତିକ୍ରିୟା।
@@ -239,8 +239,8 @@ Kasperskyର `PDM:` prefixର ଅର୍ଥ ହେଉଛି ଏହି ନିଷ�
    nvm use 24
    ```
 2. ଆପଣଙ୍କ ସଂସ୍କରଣ ଯାଞ୍ଚ କରନ୍ତୁ: `node --version` 24.x LTS ଶୃଙ୍ଖଳାରେ `v24.0.0` କିମ୍ବା ତାହାଠାରୁ ନୂତନ ସଂସ୍କରଣ ଦେଖାଇବା ଉଚିତ
-3. AgentProxy ପୁନଃଇନ୍ଷ୍ଟଲ୍ କରନ୍ତୁ: `npm install -g omniroute`
-4. ପୁନଃଚାଳନ କରନ୍ତୁ: `omniroute`
+3. AgentProxy ପୁନଃଇନ୍ଷ୍ଟଲ୍ କରନ୍ତୁ: `npm install -g agentproxy`
+4. ପୁନଃଚାଳନ କରନ୍ତୁ: `agentproxy`
 
 > **ସମର୍ଥିତ ସୁରକ୍ଷିତ ସଂସ୍କରଣଗୁଡ଼ିକ:** `>=22.22.2 <23` କିମ୍ବା `>=24.0.0 <27`। Node.js 24.x LTS (Krypton) ଏବଂ Node.js 26 ସମ୍ପୂର୍ଣ୍ଣ ଭାବେ ସମର୍ଥିତ।
 
@@ -278,7 +278,7 @@ Kasperskyର `PDM:` prefixର ଅର୍ଥ ହେଉଛି ଏହି ନିଷ�
 
 <a name="macos-native-module-rebuild"></a>
 
-**କାରଣ:** ଏକ ଗ୍ଲୋବାଲ୍ `npm install -g omniroute` ପରେ, ପ୍ୟାକେଜ୍ ଭିତରେ ଥିବା `better-sqlite3` ନେଟିଭ୍ ବାଇନାରିଟି ସ୍ଥାନୀୟ ଭାବେ ଚାଲୁଥିବା ଆର୍କିଟେକ୍ଚର୍ କିମ୍ବା Node.js ABI ଠାରୁ ଭିନ୍ନ ଏକ ଆର୍କିଟେକ୍ଚର୍ କିମ୍ବା Node.js ABI ପାଇଁ କମ୍ପାଇଲ୍ ହୋଇଥାଇପାରେ। ପୂର୍ବରୁ ବିଲ୍ଡ ହୋଇଥିବା ବାଇନାରିଟି ଆପଣଙ୍କ ପରିବେଶ ସହିତ ମେଳ ନ ଖାଇଲେ, macOSରେ (Apple Silicon ଏବଂ Intel ଉଭୟରେ) ଏହା ସାଧାରଣତଃ ଘଟେ।
+**କାରଣ:** ଏକ ଗ୍ଲୋବାଲ୍ `npm install -g agentproxy` ପରେ, ପ୍ୟାକେଜ୍ ଭିତରେ ଥିବା `better-sqlite3` ନେଟିଭ୍ ବାଇନାରିଟି ସ୍ଥାନୀୟ ଭାବେ ଚାଲୁଥିବା ଆର୍କିଟେକ୍ଚର୍ କିମ୍ବା Node.js ABI ଠାରୁ ଭିନ୍ନ ଏକ ଆର୍କିଟେକ୍ଚର୍ କିମ୍ବା Node.js ABI ପାଇଁ କମ୍ପାଇଲ୍ ହୋଇଥାଇପାରେ। ପୂର୍ବରୁ ବିଲ୍ଡ ହୋଇଥିବା ବାଇନାରିଟି ଆପଣଙ୍କ ପରିବେଶ ସହିତ ମେଳ ନ ଖାଇଲେ, macOSରେ (Apple Silicon ଏବଂ Intel ଉଭୟରେ) ଏହା ସାଧାରଣତଃ ଘଟେ।
 
 **ଲକ୍ଷଣଗୁଡ଼ିକ:**
 
@@ -287,15 +287,15 @@ Kasperskyର `PDM:` prefixର ଅର୍ଥ ହେଉଛି ଏହି ନିଷ�
 - ସମ୍ପୂର୍ଣ୍ଣ ଉଦାହରଣ:
 
 ```
-dlopen(/Users/<user>/.nvm/versions/node/v24.14.1/lib/node_modules/omniroute/app/node_modules/better-sqlite3/build/Release/better_sqlite3.node, 0x0001): tried: '...' (slice is not valid mach-o file)
+dlopen(/Users/<user>/.nvm/versions/node/v24.14.1/lib/node_modules/agentproxy/app/node_modules/better-sqlite3/build/Release/better_sqlite3.node, 0x0001): tried: '...' (slice is not valid mach-o file)
 ```
 
 **ସମାଧାନ — ଆପଣଙ୍କ ସ୍ଥାନୀୟ ପରିବେଶ ପାଇଁ ପୁନଃବିଲ୍ଡ କରନ୍ତୁ (Node.js ଡାଉନ୍ଗ୍ରେଡ୍ ଆବଶ୍ୟକ ନୁହେଁ):**
 
 ```bash
-cd $(npm root -g)/omniroute/app
+cd $(npm root -g)/agentproxy/app
 npm rebuild better-sqlite3
-omniroute
+agentproxy
 ```
 
 > **ଟିପ୍ପଣୀ:** ଏହା ଆପଣଙ୍କ ସ୍ଥାନୀୟ Node.js ସଂସ୍କରଣ ଏବଂ CPU ଆର୍କିଟେକ୍ଚର୍ ଅନୁଯାୟୀ ନେଟିଭ୍ ବାଇଣ୍ଡିଂକୁ ପୁନଃକମ୍ପାଇଲ୍ କରି ବାଇନାରି ଅମେଳର ସମାଧାନ କରେ। ଆଧିକାରିକ ଭାବରେ ସମର୍ଥିତ ରନ୍ଟାଇମ୍ ପରିସର ହେଉଛି **`>=22.22.2 <23` କିମ୍ବା `>=24.0.0 <27`** (`src/shared/utils/nodeRuntimeSupport.ts`ରେ `SUPPORTED_NODE_RANGE`, `package.json`ର `engines` ଫିଲ୍ଡ ସହିତ ସମନ୍ୱିତ)। Node.js 24.x LTS (Krypton) ଏବଂ Node.js 26, `better-sqlite3` v12.x ସହିତ ସମ୍ପୂର୍ଣ୍ଣ ଭାବେ ସମର୍ଥିତ।
@@ -387,7 +387,7 @@ Isolation ପାଇବାକୁ, Dashboard → Providersରୁ ପୁରୁଣ�
 ### କ୍ଲାଉଡ୍ ସିଙ୍କ୍ ତ୍ରୁଟିଗୁଡ଼ିକ
 
 1. `BASE_URL` ଆପଣଙ୍କ ଚାଲୁଥିବା ଇନ୍ଷ୍ଟାନ୍ସକୁ ସୂଚାଉଛି କି ନାହିଁ ଯାଞ୍ଚ କରନ୍ତୁ (ଉଦାହରଣସ୍ୱରୂପ, `http://localhost:20128`)
-2. `CLOUD_URL` ଆପଣଙ୍କ କ୍ଲାଉଡ୍ ଏଣ୍ଡପଏଣ୍ଟକୁ ସୂଚାଉଛି କି ନାହିଁ ଯାଞ୍ଚ କରନ୍ତୁ (ଉଦାହରଣସ୍ୱରୂପ, `https://omniroute.dev`)
+2. `CLOUD_URL` ଆପଣଙ୍କ କ୍ଲାଉଡ୍ ଏଣ୍ଡପଏଣ୍ଟକୁ ସୂଚାଉଛି କି ନାହିଁ ଯାଞ୍ଚ କରନ୍ତୁ (ଉଦାହରଣସ୍ୱରୂପ, `https://agentproxy.online`)
 3. `NEXT_PUBLIC_*` ମୂଲ୍ୟଗୁଡ଼ିକୁ ସର୍ଭର-ସାଇଡ୍ ମୂଲ୍ୟଗୁଡ଼ିକ ସହିତ ସମନ୍ୱିତ ରଖନ୍ତୁ
 
 ### କ୍ଲାଉଡ୍ରେ `stream=false` 500 ଫେରାଏ
@@ -421,8 +421,8 @@ Isolation ପାଇବାକୁ, Dashboard → Providersରୁ ପୁରୁଣ�
 1. **ଦ୍ରୁତ ନିଦାନ:** `curl -4 http://localhost:20128/v1/models` ଚଲାନ୍ତୁ। ଯଦି ଏହା `-4` ସହିତ କାମ କରେ, କିନ୍ତୁ ଏହା ବିନା ବିଫଳ ହୁଏ, ତେବେ ଆପଣଙ୍କ ପାଖରେ IPv6 ବାଇଣ୍ଡ୍ ଅସମନ୍ୱୟ ଅଛି।
 2. **ସ୍ଥାୟୀ ସମାଧାନ:** ଆପଣଙ୍କ `docker run` କମାଣ୍ଡରେ `-p 127.0.0.1:20128:20128` ବ୍ୟବହାର କରି ସ୍ପଷ୍ଟ ଭାବରେ IPv4 ସହିତ ବାଇଣ୍ଡ୍ କରନ୍ତୁ:
    ```bash
-   docker run -d --name omniroute --restart unless-stopped --stop-timeout 40 \
-     -p 127.0.0.1:20128:20128 -v omniroute-data:/app/data diegosouzapw/omniroute:latest
+   docker run -d --name agentproxy --restart unless-stopped --stop-timeout 40 \
+     -p 127.0.0.1:20128:20128 -v agentproxy-data:/app/data diegosouzapw/agentproxy:latest
    ```
    ଏହା IPv4 ବାଇଣ୍ଡ୍କୁ ବାଧ୍ୟତାମୂଳକ କରେ ଏବଂ ସମସ୍ତ ହୋଷ୍ଟ ଇଣ୍ଟରଫେସ୍ରେ ପ୍ରକ୍ସିକୁ ଉନ୍ମୁକ୍ତ କରିବାରୁ ମଧ୍ୟ ରକ୍ଷା କରେ।
 
@@ -575,7 +575,7 @@ curl http://localhost:20128/api/monitoring/health
 - ଚାଟ୍ କମ୍ପ୍ଲିସନ୍ସ ଏଣ୍ଡପଏଣ୍ଟ ପୁନଃଚେଷ୍ଟାଯୋଗ୍ୟ `503` ପ୍ରତିକ୍ରିୟା ଫେରାଏ, ଯାହାର ତ୍ରୁଟି କୋଡ୍ ହେଉଛି
   `chat_admission_busy`।
 - ପ୍ରତିକ୍ରିୟାରେ `Retry-After` ଅନ୍ତର୍ଭୁକ୍ତ ଥାଏ। #12135 ପରଠାରୁ ଏହାର ମୂଲ୍ୟ ପର୍ଯ୍ୟବେକ୍ଷିତ
-  ଅଧିଭୋଗ ଆଧାରରେ ନିର୍ଣ୍ଣୟ ହୁଏ — ଅନୁରୋଧଟି ପୂର୍ବରୁ ଅପେକ୍ଷା କରିଥିବା `OMNIROUTE_CHAT_ADMISSION_QUEUE_MS` ୱିଣ୍ଡୋ
+  ଅଧିଭୋଗ ଆଧାରରେ ନିର୍ଣ୍ଣୟ ହୁଏ — ଅନୁରୋଧଟି ପୂର୍ବରୁ ଅପେକ୍ଷା କରିଥିବା `AGENTPROXY_CHAT_ADMISSION_QUEUE_MS` ୱିଣ୍ଡୋ
   ଏବଂ ବର୍ତ୍ତମାନର ହେଭିୱେଟ୍ ଲିଜ୍ଗୁଡ଼ିକ ଧରି ରଖାଯାଇଥିବା ସମୟ ମଧ୍ୟରୁ ବଡ଼ଟି — ଯାହାକୁ ପୂର୍ଣ୍ଣ
   ସେକେଣ୍ଡକୁ ରାଉଣ୍ଡ୍ ଅପ୍ କରାଯାଏ ଏବଂ 60 ରେ ସୀମିତ କରାଯାଏ। ନିଷ୍କ୍ରିୟ ଗେଟ୍ରେ ଏହା ଐତିହାସିକ ସର୍ବନିମ୍ନ ସୀମାଗୁଡ଼ିକୁ ରଖେ:
   ବାଇଟ୍-ଆଧାରିତ ପଥରେ 2 ସେକେଣ୍ଡ, ସଂରଚନା-ଆଧାରିତ ପଥରେ 1 ସେକେଣ୍ଡ (ଯେଉଁଥିରେ
@@ -608,17 +608,17 @@ curl http://localhost:20128/api/monitoring/health
 ପ୍ରତିକ୍ରିୟାର ସମଗ୍ର ଜୀବନକାଳ ପର୍ଯ୍ୟନ୍ତ ଧରି ରଖାଯାଏ।
 
 **#503-ଫ୍ୟାନ୍ଆଉଟ୍:** ଏହି ସମାଧାନ ପୂର୍ବରୁ, ହୋଷ୍ଟ ମେମୋରି ନିର୍ବିଶେଷରେ ଗାର୍ଡଟି ଏକ ନିର୍ଦ୍ଧାରିତ ଅନୁରୋଧ ସଂଖ୍ୟାରେ
-(`OMNIROUTE_CHAT_MAX_HEAVY_IN_FLIGHT`, ଡିଫଲ୍ଟ `1`) ସମସାମୟିକତାକୁ ସୀମିତ କରୁଥିଲା, ତେଣୁ କୋଡିଂ-ଏଜେଣ୍ଟ
+(`AGENTPROXY_CHAT_MAX_HEAVY_IN_FLIGHT`, ଡିଫଲ୍ଟ `1`) ସମସାମୟିକତାକୁ ସୀମିତ କରୁଥିଲା, ତେଣୁ କୋଡିଂ-ଏଜେଣ୍ଟ
 ଫ୍ୟାନ୍ଆଉଟ୍ (ଏକାଧିକ ସବ୍ଏଜେଣ୍ଟ/CLI, ବଡିଗୁଡ଼ିକ ନିୟମିତ ଭାବେ > 256 KB) ପ୍ରଭାବୀ
 ସମସାମୟିକତାକୁ ~1 କୁ ହ୍ରାସ କରୁଥିଲା ଏବଂ ସମ୍ପୂର୍ଣ୍ଣ ସାଧାରଣ ଲୋଡ୍ରେ 503 ତ୍ରୁଟି ଦେଉଥିଲା। ଗାର୍ଡଟି ଏବେ ସ୍ୱୟଂ-ସମନ୍ୱୟ କରେ: ଏହା
 ପ୍ରକ୍ରିୟାର ପ୍ରକୃତ ମେମୋରି ସୀମାରୁ ଆକାର ନିର୍ଦ୍ଧାରିତ ଏକ ସ୍ୱୟଂ-ନିର୍ଣ୍ଣିତ ଇନ୍ଜେଷ୍ଟ BYTE ବଜେଟ୍
-(`OMNIROUTE_CHAT_MAX_INFLIGHT_BYTES`) ଦ୍ୱାରା ନିୟନ୍ତ୍ରିତ ହୁଏ, ଏବଂ ଏହା ଏକ ଲାଇଭ୍ ସମ୍ବଳ-ଚାପ ସଙ୍କେତକୁ ମଧ୍ୟ ବିଚାର କରେ — ତେଣୁ ଏହା
+(`AGENTPROXY_CHAT_MAX_INFLIGHT_BYTES`) ଦ୍ୱାରା ନିୟନ୍ତ୍ରିତ ହୁଏ, ଏବଂ ଏହା ଏକ ଲାଇଭ୍ ସମ୍ବଳ-ଚାପ ସଙ୍କେତକୁ ମଧ୍ୟ ବିଚାର କରେ — ତେଣୁ ଏହା
 କେବଳ ହୋଷ୍ଟ ପ୍ରକୃତରେ ମେମୋରି ଚାପରେ ଥିବାବେଳେ ଲୋଡ୍ କମାଏ, କେବଳ ଏକାଥରେ ଏକାଧିକ
-ହେଭି ଅନୁରୋଧ ଆସିଥିବା କାରଣରୁ ନୁହେଁ। ପୁରୁଣା ସଂଖ୍ୟା ସୀମା (`OMNIROUTE_CHAT_MAX_HEAVY_IN_FLIGHT`)କୁ
+ହେଭି ଅନୁରୋଧ ଆସିଥିବା କାରଣରୁ ନୁହେଁ। ପୁରୁଣା ସଂଖ୍ୟା ସୀମା (`AGENTPROXY_CHAT_MAX_HEAVY_IN_FLIGHT`)କୁ
 ଏବେ ମଧ୍ୟ ସମ୍ମାନ କରାଯାଏ, କିନ୍ତୁ କେବଳ ଆପଣ ଏହାକୁ ସ୍ପଷ୍ଟ ଭାବେ ସେଟ୍ କଲେ।
 
 କ୍ଷମତା ବ୍ୟସ୍ତ ଥିବାବେଳେ, ପୁନଃଚେଷ୍ଟାଯୋଗ୍ୟ `503` ଉତ୍ତର ଦେବା ପୂର୍ବରୁ ଏକ ସ୍ଲଟ୍ ଖାଲି ହେବା ପାଇଁ ଏକ ହେଭିୱେଟ୍ ଅନୁରୋଧ ପ୍ରଥମେ
-`OMNIROUTE_CHAT_ADMISSION_QUEUE_MS` (ଡିଫଲ୍ଟ `2000`, `0` ଅପେକ୍ଷାକୁ ଅକ୍ଷମ କରେ) ପର୍ଯ୍ୟନ୍ତ ଅପେକ୍ଷା କରେ।
+`AGENTPROXY_CHAT_ADMISSION_QUEUE_MS` (ଡିଫଲ୍ଟ `2000`, `0` ଅପେକ୍ଷାକୁ ଅକ୍ଷମ କରେ) ପର୍ଯ୍ୟନ୍ତ ଅପେକ୍ଷା କରେ।
 ଏହି ସୀମିତ ଅପେକ୍ଷା ରହିଛି, ଯାହାଦ୍ୱାରା ଏଜେଣ୍ଟ-ଶୈଳୀର କ୍ଲାଏଣ୍ଟଗୁଡ଼ିକ
 (OpenCode, Claude Code, Cursor), ଯେଉଁମାନେ ହେଭି ଉପ-ଅନୁରୋଧଗୁଡ଼ିକୁ ଏକାସାଙ୍ଗରେ ଫ୍ୟାନ୍ଆଉଟ୍ କରନ୍ତି, ତୁରନ୍ତ ପ୍ରତ୍ୟାଖ୍ୟାନରେ ସେମାନଙ୍କର ସମ୍ପୂର୍ଣ୍ଣ ପୁନଃଚେଷ୍ଟା ବଜେଟ୍
 ଶେଷ କରି କାର୍ଯ୍ୟ ମଝିରେ ବନ୍ଦ ହୋଇଯିବା ପରିବର୍ତ୍ତେ ବର୍ଷ୍ଟକୁ କ୍ରମିକ କରନ୍ତି।
@@ -638,7 +638,7 @@ false` ଏବଂ ଏକ ଉଦାର `maxInflightBytes`ର ଅର୍ଥ ହେ�
    ଏହାକୁ କୌଣସି ଆଡ୍ମିସନ୍ env var ଦ୍ୱାରା ସମାଧାନ କରାଯାଇପାରିବ ନାହିଁ, ଏଥିପାଇଁ ଅଧିକ RAM କିମ୍ବା ଏକ ଛୋଟ କାର୍ଯ୍ୟଭାର ଆବଶ୍ୟକ।
 3. କେବଳ `/api/monitoring/health` ଯଦି ଦର୍ଶାଏ ଯେ ସ୍ୱୟଂ-ନିର୍ଣ୍ଣିତ ବଜେଟ୍ ଆପଣଙ୍କ
    ହୋଷ୍ଟ ପାଇଁ ପ୍ରକୃତରେ ଅତ୍ୟଧିକ ଛୋଟ (ବିରଳ — ଏହା ପୂର୍ବରୁ କଣ୍ଟେନର୍ରୁ ବେୟାର୍-ମେଟାଲ୍ ପର୍ଯ୍ୟନ୍ତ ସ୍କେଲ୍ କରେ), ତେବେ ପୁରୁଣା ଅନୁରୋଧ-ସଂଖ୍ୟା ସୀମାକୁ ଫେରିବା ପରିବର୍ତ୍ତେ
-   `OMNIROUTE_CHAT_MAX_INFLIGHT_BYTES` ସହିତ ଏହାକୁ ସିଧାସଳଖ ଓଭର୍ରାଇଡ୍ କରନ୍ତୁ।
+   `AGENTPROXY_CHAT_MAX_INFLIGHT_BYTES` ସହିତ ଏହାକୁ ସିଧାସଳଖ ଓଭର୍ରାଇଡ୍ କରନ୍ତୁ।
 
 ପ୍ରାମାଣିକ ଆଡ୍ମିସନ୍ ସେଟିଂସ୍ ପାଇଁ [ପରିବେଶ-ଚର ସନ୍ଦର୍ଭ](../reference/ENVIRONMENT.md#4-security--authentication)
 ଦେଖନ୍ତୁ।
@@ -725,7 +725,7 @@ v3.8.0 ରିଲିଜ୍ ପାଇଁ ନିର୍ଦ୍ଦିଷ୍ଟ ସମ�
 
 **ସମାଧାନ:**
 
-- OAuth ପ୍ରବାହକୁ ପୁନଃ ଟ୍ରିଗର୍ କରିବା ପାଇଁ CLIରୁ `omniroute providers` ଚଲାନ୍ତୁ, କିମ୍ବା
+- OAuth ପ୍ରବାହକୁ ପୁନଃ ଟ୍ରିଗର୍ କରିବା ପାଇଁ CLIରୁ `agentproxy providers` ଚଲାନ୍ତୁ, କିମ୍ବା
 - **Dashboard → Providers → Command Code → Reconnect**ରୁ OAuth ପୁନଃଚଲାନ୍ତୁ
 
 ### ModelScope ଆକ୍ରାମକ 429 କୁଲ୍ଡାଉନ୍ ଫେରାଏ
@@ -742,19 +742,19 @@ v3.8.0 ରିଲିଜ୍ ପାଇଁ ନିର୍ଦ୍ଦିଷ୍ଟ ସମ�
 - ଆପଣ v3.8.0 କିମ୍ବା ତା'ପର ସଂସ୍କରଣରେ ଅଛନ୍ତି ବୋଲି ସୁନିଶ୍ଚିତ କରନ୍ତୁ
 - **Settings → Resilience** ଅଧୀନରେ `useUpstream429BreakerHints` ଟଗଲ୍ ସକ୍ଷମ ଅଛି ବୋଲି ଯାଞ୍ଚ କରନ୍ତୁ
 
-### ପ୍ରଡକ୍ସନ୍ରେ OMNIROUTE_WS_BRIDGE_SECRET ଅନୁପସ୍ଥିତ
+### ପ୍ରଡକ୍ସନ୍ରେ AGENTPROXY_WS_BRIDGE_SECRET ଅନୁପସ୍ଥିତ
 
 **ଲକ୍ଷଣଗୁଡ଼ିକ:**
 
 - ରିମୋଟ୍ ପ୍ରଡକ୍ସନ୍ ହୋଷ୍ଟରେ ଚାଲିବା ସମୟରେ ପ୍ରତ୍ୟେକ Codex/Responses WebSocket ବ୍ରିଜ୍ ଅନୁରୋଧରେ 401
 - ସଂଯୋଗ ପରେ WebSocket ବ୍ରିଜ୍ ହ୍ୟାଣ୍ଡଶେକ୍ ତୁରନ୍ତ ବନ୍ଦ ହୋଇଯାଏ
 
-**କାରଣ:** ପ୍ରଡକ୍ସନ୍ ପରିବେଶରେ `OMNIROUTE_WS_BRIDGE_SECRET` env var ଅନୁପସ୍ଥିତ।
+**କାରଣ:** ପ୍ରଡକ୍ସନ୍ ପରିବେଶରେ `AGENTPROXY_WS_BRIDGE_SECRET` env var ଅନୁପସ୍ଥିତ।
 
 **ସମାଧାନ:**
 
 1. ଏକ ଯାଦୃଚ୍ଛିକ ସିକ୍ରେଟ୍ ସୃଷ୍ଟି କରନ୍ତୁ: `openssl rand -hex 32`
-2. ପ୍ରଡକ୍ସନ୍ ସର୍ଭର୍ envରେ (ଏବଂ ବ୍ରିଜ୍ ସହ ଯୋଗାଯୋଗ କରୁଥିବା ଯେକୌଣସି କ୍ଲାଏଣ୍ଟରେ) `OMNIROUTE_WS_BRIDGE_SECRET=<random-secret>` ସେଟ୍ କରନ୍ତୁ
+2. ପ୍ରଡକ୍ସନ୍ ସର୍ଭର୍ envରେ (ଏବଂ ବ୍ରିଜ୍ ସହ ଯୋଗାଯୋଗ କରୁଥିବା ଯେକୌଣସି କ୍ଲାଏଣ୍ଟରେ) `AGENTPROXY_WS_BRIDGE_SECRET=<random-secret>` ସେଟ୍ କରନ୍ତୁ
 3. AgentProxy ପୁନଃଚାଳୁ କରନ୍ତୁ
 
 ### Responses API: ପୃଷ୍ଠଭୂମି ମୋଡ୍ ସିଙ୍କ୍ରୋନସ୍କୁ ଅବନମିତ
@@ -785,17 +785,17 @@ Windows (ଆଣ୍ଟିଭାଇରସ୍, ଫାଇଲ୍ସିଷ୍ଟମ୍
 
 ```bash
 # ପରିବେଶ ଭେରିଏବଲ୍ ମାଧ୍ୟମରେ (ପରବର୍ତ୍ତୀ ଷ୍ଟାର୍ଟଗୁଡ଼ିକରେ ମଧ୍ୟ ରହିବ):
-export OMNIROUTE_READY_TIMEOUT_MS=180000   # 3 ମିନିଟ୍
-omniroute serve
+export AGENTPROXY_READY_TIMEOUT_MS=180000   # 3 ମିନିଟ୍
+agentproxy serve
 
 # CLI ଫ୍ଲାଗ୍ ମାଧ୍ୟମରେ (କେବଳ ଥରେ):
-omniroute serve --ready-timeout 180000
+agentproxy serve --ready-timeout 180000
 ```
 
 ଡିଫଲ୍ଟ ମୂଲ୍ୟ ହେଉଛି 60 000 ms (60 s)। ଏହି ସତର୍କବାର୍ତ୍ତା କେବଳ ସୂଚନାମୂଳକ; ସର୍ଭର୍
 ପୃଷ୍ଠଭୂମିରେ ଆରମ୍ଭ ହେବା ଜାରି ରଖେ ଏବଂ ବୁଟ୍ ସମ୍ପୂର୍ଣ୍ଣ ହେବା ପରେ ଏହାକୁ ଆକ୍ସେସ୍ କରାଯାଇପାରିବ।
 
-`OMNIROUTE_READY_TIMEOUT_MS` ବିଷୟରେ ସମ୍ପୂର୍ଣ୍ଣ ବିବରଣୀ ପାଇଁ
+`AGENTPROXY_READY_TIMEOUT_MS` ବିଷୟରେ ସମ୍ପୂର୍ଣ୍ଣ ବିବରଣୀ ପାଇଁ
 [`docs/reference/ENVIRONMENT.md`](../reference/ENVIRONMENT.md) ଦେଖନ୍ତୁ।
 
 ---

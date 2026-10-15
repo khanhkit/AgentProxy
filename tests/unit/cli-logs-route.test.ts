@@ -182,10 +182,10 @@ test("log-streamer derives its default base URL from PORT", async () => {
   const captured: string[] = [];
   const origFetch = globalThis.fetch;
   const origPort = process.env.PORT;
-  const origBaseUrl = process.env.OMNIROUTE_BASE_URL;
+  const origBaseUrl = process.env.AGENTPROXY_BASE_URL;
   const origGenericBaseUrl = process.env.BASE_URL;
   process.env.PORT = "37128";
-  delete process.env.OMNIROUTE_BASE_URL;
+  delete process.env.AGENTPROXY_BASE_URL;
   delete process.env.BASE_URL;
 
   globalThis.fetch = (async (url: string) => {
@@ -208,8 +208,8 @@ test("log-streamer derives its default base URL from PORT", async () => {
     globalThis.fetch = origFetch;
     if (origPort === undefined) delete process.env.PORT;
     else process.env.PORT = origPort;
-    if (origBaseUrl === undefined) delete process.env.OMNIROUTE_BASE_URL;
-    else process.env.OMNIROUTE_BASE_URL = origBaseUrl;
+    if (origBaseUrl === undefined) delete process.env.AGENTPROXY_BASE_URL;
+    else process.env.AGENTPROXY_BASE_URL = origBaseUrl;
     if (origGenericBaseUrl === undefined) delete process.env.BASE_URL;
     else process.env.BASE_URL = origGenericBaseUrl;
   }

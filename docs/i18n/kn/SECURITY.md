@@ -77,7 +77,7 @@ AgentProxy ಆದ್ಯತೆಯ ಪ್ರಕಾರ ಕ್ರಮಗೊಳಿಸ�
 | `pii-masker`       | 10     | ಕರೆಯ ಪೂರ್ವ+ನಂತರದ PII ಪರಿಷ್ಕರಣೆ (ಇಮೇಲ್ಗಳು, ಫೋನ್, CPF, CNPJ, ಕ್ರೆಡಿಟ್ ಕಾರ್ಡ್ಗಳು, SSN)              |
 | `prompt-injection` | 20     | ಅತಿಕ್ರಮಣ/ಪಾತ್ರ-ವಶಪಡಿಸಿಕೊಳ್ಳುವಿಕೆ/ಜೈಲ್ಬ್ರೇಕ್/ಸೋರಿಕೆ ಮಾದರಿಗಳನ್ನು ಪತ್ತೆಮಾಡುತ್ತದೆ                    |
 
-ಕಸ್ಟಮ್ ರಕ್ಷಣಾ ನಿಯಮಗಳು `registerGuardrail(new MyGuardrail())` ಮೂಲಕ ನೋಂದಣಿಯಾಗುತ್ತವೆ. ಈ ಮಾದರಿ ವೈಫಲ್ಯ-ಮುಕ್ತವಾಗಿದೆ (ವಿನಾಯಿತಿಗಳು ಎಂದಿಗೂ ಸಂಚಾರವನ್ನು ನಿರ್ಬಂಧಿಸುವುದಿಲ್ಲ). ಪ್ರತಿ ವಿನಂತಿಗೆ `x-omniroute-disabled-guardrails` ಹೆಡರ್ ಮೂಲಕ ಹೊರಗುಳಿಯುವಿಕೆ ಲಭ್ಯವಿದೆ. → [`docs/security/GUARDRAILS.md`](docs/security/GUARDRAILS.md) ನೋಡಿ.
+ಕಸ್ಟಮ್ ರಕ್ಷಣಾ ನಿಯಮಗಳು `registerGuardrail(new MyGuardrail())` ಮೂಲಕ ನೋಂದಣಿಯಾಗುತ್ತವೆ. ಈ ಮಾದರಿ ವೈಫಲ್ಯ-ಮುಕ್ತವಾಗಿದೆ (ವಿನಾಯಿತಿಗಳು ಎಂದಿಗೂ ಸಂಚಾರವನ್ನು ನಿರ್ಬಂಧಿಸುವುದಿಲ್ಲ). ಪ್ರತಿ ವಿನಂತಿಗೆ `x-agentproxy-disabled-guardrails` ಹೆಡರ್ ಮೂಲಕ ಹೊರಗುಳಿಯುವಿಕೆ ಲಭ್ಯವಿದೆ. → [`docs/security/GUARDRAILS.md`](docs/security/GUARDRAILS.md) ನೋಡಿ.
 
 ### 🧠 ಪ್ರಾಂಪ್ಟ್ ಇಂಜೆಕ್ಷನ್ ರಕ್ಷಣೆ
 
@@ -182,15 +182,15 @@ STORAGE_ENCRYPTION_KEY=$(openssl rand -hex 32)
 
 ```bash
 docker run -d \
-  --name omniroute \
+  --name agentproxy \
   --restart unless-stopped \
   --read-only \
   -p 20128:20128 \
-  -v omniroute-data:/app/data \
+  -v agentproxy-data:/app/data \
   -e JWT_SECRET="$(openssl rand -base64 48)" \
   -e API_KEY_SECRET="$(openssl rand -hex 32)" \
   -e STORAGE_ENCRYPTION_KEY="$(openssl rand -hex 32)" \
-  diegosouzapw/omniroute:latest
+  diegosouzapw/agentproxy:latest
 ```
 
 ---
@@ -224,7 +224,7 @@ docker run -d \
 
 > **ವ್ಯಾಪ್ತಿಯ ಟಿಪ್ಪಣಿ:** ರೆಪೊಸಿಟರಿಯ ಮೂಲದಲ್ಲಿರುವ `socket.yml`, ಪ್ರಕಟಿಸಲಾದ npm ಆರ್ಟಿಫ್ಯಾಕ್ಟ್ನ Socket.dev ರಿಜಿಸ್ಟ್ರಿ-ಬದಿಯ ಪ್ರಕಟಣೋತ್ತರ ಸ್ಕ್ಯಾನ್ಗಾಗಿ `projectIgnorePaths` ಅನ್ನು ಮಾತ್ರ ರೂಪಿಸುತ್ತದೆ — ಇದು ಕಡ್ಡಾಯಗೊಳಿಸಲಾದ CI/PR ವಿಲೀನ ಗೇಟ್ ಅಲ್ಲ. `.github/workflows`ನಲ್ಲಿನ ಯಾವುದೇ ವರ್ಕ್ಫ್ಲೋ, ಯಾವುದೇ `package.json` ಸ್ಕ್ರಿಪ್ಟ್ ಮತ್ತು ಯಾವುದೇ `Makefile` ಟಾರ್ಗೆಟ್ Socket.dev ಅನ್ನು ಆಹ್ವಾನಿಸುವುದಿಲ್ಲ.
 
-ಪ್ರಕಟಿಸಲಾದ `omniroute` npm ಆರ್ಟಿಫ್ಯಾಕ್ಟ್ Next.js `output: "standalone"`
+ಪ್ರಕಟಿಸಲಾದ `agentproxy` npm ಆರ್ಟಿಫ್ಯಾಕ್ಟ್ Next.js `output: "standalone"`
 ಬಿಲ್ಡ್ ಅನ್ನು ಬಂಡಲ್ ಮಾಡುತ್ತದೆ; ಇದರರ್ಥ ದಾಖಲಿತ ವಿಶೇಷಾಧಿಕಾರವುಳ್ಳ
 ವೈಶಿಷ್ಟ್ಯಗಳು (MITM, Zed ಆಮದು, Cloud Sync, ಎಂಬೆಡ್ ಮಾಡಿದ ಸೇವಾ ಮೇಲ್ವಿಚಾರಕ) ಸೇರಿದಂತೆ ಪ್ರತಿಯೊಂದು ರೂಟ್ ಹ್ಯಾಂಡ್ಲರ್
 `.next/server/*.js` ಮಿನಿಫೈಡ್ ಚಂಕ್ಗಳಲ್ಲಿ ಸೇರುತ್ತದೆ. ಹ್ಯೂರಿಸ್ಟಿಕ್ ಪೂರೈಕೆ-ಸರಪಳಿ ಸ್ಕ್ಯಾನರ್ಗಳು
@@ -247,7 +247,7 @@ docker run -d \
   ಅದೇ ಡಾಕ್ಯುಮೆಂಟ್ಗೆ ಉಲ್ಲೇಖಿಸುತ್ತವೆ.
 
 ಪೈಪ್ಲೈನ್ನಲ್ಲಿ ಎಚ್ಚರಿಕೆಯನ್ನು ಸಡಿಲಿಸಲಾಗದ ಬಳಕೆದಾರರು:
-`OMNIROUTE_BUILD_PROFILE=minimal npm run build` ಬಳಸಿ ಬಿಲ್ಡ್ ಮಾಡಿ. ಇದು ನಾಲ್ಕು
+`AGENTPROXY_BUILD_PROFILE=minimal npm run build` ಬಳಸಿ ಬಿಲ್ಡ್ ಮಾಡಿ. ಇದು ನಾಲ್ಕು
 ಸೂಕ್ಷ್ಮ ಮಾಡ್ಯೂಲ್ಗಳನ್ನು ರನ್ಟೈಮ್ನಲ್ಲಿ HTTP 503 `feature-disabled` ಅನ್ನು
 ಹಿಂತಿರುಗಿಸುವ ಸ್ಟಬ್ಗಳಿಂದ ಬದಲಿಸುತ್ತದೆ; ಆದ್ದರಿಂದ ವಿಶೇಷಾಧಿಕಾರವುಳ್ಳ ಕೋಡ್ ಪಥಗಳು ಬಂಡಲ್ನಲ್ಲಿ ಭೌತಿಕವಾಗಿ ಇರುವುದಿಲ್ಲ.
 ಪ್ರಕಟಿಸುವ ವಿಧಾನಕ್ಕಾಗಿ [`docs/security/SOCKET_DEV_FINDINGS.md`](docs/security/SOCKET_DEV_FINDINGS.md)

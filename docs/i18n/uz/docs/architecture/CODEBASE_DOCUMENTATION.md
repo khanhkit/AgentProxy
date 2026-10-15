@@ -35,11 +35,11 @@ Ushbu fayl yangi muhandis kataloglar tuzilmasida yoʻl topishi, bajarilish vaqti
 Yoʻl taxalluslari (`tsconfig.json`):
 
 - `@/*` → `src/*`
-- `@omniroute/open-sse` → `open-sse/index.ts`
-- `@omniroute/open-sse/*` → `open-sse/*`
+- `@agentproxy/open-sse` → `open-sse/index.ts`
+- `@agentproxy/open-sse/*` → `open-sse/*`
 
 Standart HTTP porti: **`20128`** (API va boshqaruv paneli bir xil jarayondan foydalanadi). Maʼlumotlar
-katalogi `DATA_DIR` muhit oʻzgaruvchisi orqali belgilanadi; standart qiymati `~/.omniroute/`.
+katalogi `DATA_DIR` muhit oʻzgaruvchisi orqali belgilanadi; standart qiymati `~/.agentproxy/`.
 
 ---
 
@@ -48,9 +48,9 @@ katalogi `DATA_DIR` muhit oʻzgaruvchisi orqali belgilanadi; standart qiymati `~
 ```
 AgentProxy/
 ├── src/                  Next.js ilovasi (App Router, kutubxonalar, domen, server, umumiy qismlar)
-├── open-sse/             Oqimli uzatish mexanizmi ish maydoni (@omniroute/open-sse)
+├── open-sse/             Oqimli uzatish mexanizmi ish maydoni (@agentproxy/open-sse)
 ├── electron/             Ish stoli qobigʻi (Electron 41 asosiy jarayoni + preload)
-├── bin/                  CLI kirish nuqtalari (omniroute, reset-password)
+├── bin/                  CLI kirish nuqtalari (agentproxy, reset-password)
 ├── tests/                Modul, integratsiya, e2e, protocols-e2e, tarjimon, xavfsizlik testlari va sinov maʼlumotlari
 ├── scripts/              Yigʻish, sinxronlash, tekshirish, migratsiya va bajarilish muhiti yordamchi skriptlari
 ├── docs/                 Ommaviy hujjatlar (ushbu katalog)
@@ -296,7 +296,7 @@ jadval haqiqiy kataloglar va eʼtiborga molik yuqori darajadagi fayllarni guruhl
 | `runtime/`        | Ish vaqti muhiti imkoniyatlarini aniqlash                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
 | `search/`         | `executeWebSearch.ts`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
 | `services/`       | Ichki o‘rnatilgan xizmatlar freymvorki: `ServiceSupervisor.ts` (operatsiya qulfi, halqali bufer va holat tekshiruvchisiga ega universal quyi jarayon nazoratchisi), `bootstrap.ts` (jarayon darajasida ro‘yxatdan o‘tkazish va avtomatik ishga tushirish), `registry.ts` (vosita → nazoratchi xaritasi), `apiKey.ts` (AES-256-GCM kalitlar ombori), `modelSync.ts` (modellarni davriy sinxronlash), `ringBuffer.ts` (5 MB hajmli halqali jurnal buferi), `healthCheck.ts` (HTTP holat tekshiruvi), `types.ts`, `embedWsProxy.ts` (WebSocket proksisi), `installers/{ninerouter,cliproxy}.ts`. `docs/frameworks/EMBEDDED-SERVICES.md` fayliga qarang                                                                                                                    |
-| `agentSkills/`    | Agent ko‘nikmalari katalogi + generatori: `catalog.ts` (getCatalog/getSkillById/filterCatalog/computeCoverage), `generator.ts` (generateAgentSkills → `skills/{id}/SKILL.md` fayliga yozadi), `openapiParser.ts` (OpenAPI spetsifikatsiyasidan REST oxirgi nuqtalarini ajratib oladi), `cliRegistryParser.ts` (bin/cli-registry dan CLI quyi buyruqlarini ajratib oladi), `schemas.ts` (Zod: AgentSkillSchema, SkillCoverageSchema, ListQuerySchema, GenerateBodySchema), `types.ts` (AgentSkill, SkillCoverage, SkillMarkdown, GeneratorReport). REST marshrutlari (`/api/agent-skills/*`), MCP vositalari (`omniroute_agent_skills_*`) va A2A `list-capabilities` ko‘nikmasi tomonidan ishlatiladi. [AGENT-SKILLS.md](../frameworks/AGENT-SKILLS.md) fayliga qarang. |
+| `agentSkills/`    | Agent ko‘nikmalari katalogi + generatori: `catalog.ts` (getCatalog/getSkillById/filterCatalog/computeCoverage), `generator.ts` (generateAgentSkills → `skills/{id}/SKILL.md` fayliga yozadi), `openapiParser.ts` (OpenAPI spetsifikatsiyasidan REST oxirgi nuqtalarini ajratib oladi), `cliRegistryParser.ts` (bin/cli-registry dan CLI quyi buyruqlarini ajratib oladi), `schemas.ts` (Zod: AgentSkillSchema, SkillCoverageSchema, ListQuerySchema, GenerateBodySchema), `types.ts` (AgentSkill, SkillCoverage, SkillMarkdown, GeneratorReport). REST marshrutlari (`/api/agent-skills/*`), MCP vositalari (`agentproxy_agent_skills_*`) va A2A `list-capabilities` ko‘nikmasi tomonidan ishlatiladi. [AGENT-SKILLS.md](../frameworks/AGENT-SKILLS.md) fayliga qarang. |
 | `skills/`         | Ko‘nikmalar freymvorki: `registry.ts`, `executor.ts`, `interception.ts`, `injection.ts`, `sandbox.ts`, `custom.ts`, `hybrid.ts`, `builtins.ts`, `a2a.ts`, `providerSettings.ts`, `schemas.ts`, `skillssh.ts`, `types.ts`, shuningdek, `builtin/browser.ts`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
 | `spend/`          | `batchWriter.ts` (kechiktirib yozish buferi)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
 | `sync/`           | `bundle.ts`, `tokens.ts` (Cloud Sync)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
@@ -382,7 +382,7 @@ Kiritish-chiqarishsiz sof biznes mantiqi. Marshrutlar va ishlov beruvchilar tomo
 | `degradation.ts`                           | Degradatsiyalangan rejimga oʻtishlar                      |
 | `providerExpiration.ts`                    | Muddati tugagan hisob/kalitni aniqlash                    |
 | `quotaCache.ts`                            | Keshlangan kvota qarorlari                                |
-| `responses.ts`, `omnirouteResponseMeta.ts` | Javob shakli yordamchilari                                |
+| `responses.ts`, `agentproxyesponseMeta.ts` | Javob shakli yordamchilari                                |
 | `configAudit.ts`                           | Konfiguratsiya oʻzgarishlari auditi                       |
 | `assessment/`                              | Modelni baholash (RFC boʻyicha, qisman amalga oshirilgan) |
 | `types.ts`                                 | Umumiy domen turlari                                      |
@@ -434,7 +434,7 @@ Aniq vazifalarga yoʻnaltirilgan quyi kataloglarga ajratilgan:
 
 ## 4. `open-sse/` — Striming mexanizmi ish maydoni
 
-`@omniroute/open-sse` nomi bilan eʼlon qilinadigan alohida npm ish maydoni. Soʻrovlarni
+`@agentproxy/open-sse` nomi bilan eʼlon qilinadigan alohida npm ish maydoni. Soʻrovlarni
 qayta ishlash, ijrochilar, tarjimonlar, xizmatlar, transformator va MCP serverini boshqaradi.
 
 ```
@@ -597,7 +597,7 @@ GitHub relizlar tasmasiga yoʻnaltirilgan `electron-updater` orqali amalga oshir
 
 ```
 bin/
-├── omniroute.mjs           Asosiy CLI kirish nuqtasi (Node ESM)
+├── agentproxy.mjs           Asosiy CLI kirish nuqtasi (Node ESM)
 ├── reset-password.mjs      Boshqaruv parolini CLI orqali tiklash
 ├── mcp-server.mjs          MCP serverini ishga tushirgich (stdio)
 ├── nodeRuntimeSupport.mjs  Node versiyasini tekshirish
@@ -620,8 +620,8 @@ bin/
 
 `package.json` → `bin` ichida ikkita bajariladigan fayl taqdim etilgan:
 
-- `omniroute` → `bin/omniroute.mjs`
-- `omniroute-reset-password` → `bin/reset-password.mjs`
+- `agentproxy` → `bin/agentproxy.mjs`
+- `agentproxy-reset-password` → `bin/reset-password.mjs`
 
 ---
 
@@ -777,7 +777,7 @@ Mijoz so‘rovi
 
 - **Kod uslubi**: 2 boʻsh joyli chekinish, qoʻshtirnoqlar, 100 belgilik kenglik, nuqtali vergullar,
   `es5` yakuniy vergullari — `lint-staged` orqali Prettier tomonidan taʼminlanadi.
-- **Importlar**: tashqi → ichki (`@/`, `@omniroute/open-sse`) → nisbiy.
+- **Importlar**: tashqi → ichki (`@/`, `@agentproxy/open-sse`) → nisbiy.
 - **Nomlash**: fayllar `camelCase` yoki `kebab-case`, komponentlar `PascalCase`,
   konstantalar `UPPER_SNAKE`.
 - **ESLint**: `no-eval`, `no-implied-eval`, `no-new-func` = hamma joyda `error`;

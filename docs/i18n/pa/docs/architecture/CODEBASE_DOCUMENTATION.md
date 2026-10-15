@@ -37,11 +37,11 @@
 ਪਾਥ ਉਪਨਾਮ (`tsconfig.json`):
 
 - `@/*` → `src/*`
-- `@omniroute/open-sse` → `open-sse/index.ts`
-- `@omniroute/open-sse/*` → `open-sse/*`
+- `@agentproxy/open-sse` → `open-sse/index.ts`
+- `@agentproxy/open-sse/*` → `open-sse/*`
 
 ਡਿਫਾਲਟ HTTP ਪੋਰਟ: **`20128`** (API ਅਤੇ ਡੈਸ਼ਬੋਰਡ ਇੱਕੋ ਪ੍ਰਕਿਰਿਆ ਸਾਂਝੀ ਕਰਦੇ ਹਨ)। ਡਾਟਾ
-ਡਾਇਰੈਕਟਰੀ `DATA_DIR` env var ਹੈ, ਜਿਸ ਦਾ ਡਿਫਾਲਟ `~/.omniroute/` ਹੈ।
+ਡਾਇਰੈਕਟਰੀ `DATA_DIR` env var ਹੈ, ਜਿਸ ਦਾ ਡਿਫਾਲਟ `~/.agentproxy/` ਹੈ।
 
 ---
 
@@ -50,9 +50,9 @@
 ```
 AgentProxy/
 ├── src/                  Next.js ਐਪਲੀਕੇਸ਼ਨ (App Router, ਲਾਇਬ੍ਰੇਰੀਆਂ, ਡੋਮੇਨ, ਸਰਵਰ, ਸਾਂਝੇ ਹਿੱਸੇ)
-├── open-sse/             ਸਟ੍ਰੀਮਿੰਗ ਇੰਜਣ ਵਰਕਸਪੇਸ (@omniroute/open-sse)
+├── open-sse/             ਸਟ੍ਰੀਮਿੰਗ ਇੰਜਣ ਵਰਕਸਪੇਸ (@agentproxy/open-sse)
 ├── electron/             ਡੈਸਕਟਾਪ ਰੈਪਰ (Electron 41 ਮੁੱਖ + ਪ੍ਰੀਲੋਡ)
-├── bin/                  CLI ਐਂਟਰੀ ਪੁਆਇੰਟ (omniroute, reset-password)
+├── bin/                  CLI ਐਂਟਰੀ ਪੁਆਇੰਟ (agentproxy, reset-password)
 ├── tests/                ਯੂਨਿਟ, ਇੰਟੀਗ੍ਰੇਸ਼ਨ, e2e, protocols-e2e, ਅਨੁਵਾਦਕ, ਸੁਰੱਖਿਆ, ਫਿਕਸਚਰ
 ├── scripts/              ਬਿਲਡ, ਸਿੰਕ, ਜਾਂਚ, ਮਾਈਗ੍ਰੇਸ਼ਨ ਅਤੇ ਰਨਟਾਈਮ ਸਹਾਇਕ ਸਕ੍ਰਿਪਟਾਂ
 ├── docs/                 ਜਨਤਕ ਦਸਤਾਵੇਜ਼ (ਇਹ ਡਾਇਰੈਕਟਰੀ)
@@ -298,7 +298,7 @@ v1/
 | `runtime/`        | ਰਨਟਾਈਮ ਫੀਚਰ ਪਛਾਣ                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
 | `search/`         | `executeWebSearch.ts`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
 | `services/`       | ਐਮਬੈਡ ਕੀਤੀਆਂ ਸੇਵਾਵਾਂ ਦਾ ਫਰੇਮਵਰਕ: `ServiceSupervisor.ts` (ਓਪਰੇਸ਼ਨ ਲੌਕ, ਰਿੰਗ ਬਫਰ ਅਤੇ ਸਿਹਤ ਜਾਂਚਕਰਤਾ ਵਾਲਾ ਆਮ ਚਾਈਲਡ-ਪ੍ਰੋਸੈੱਸ ਸੁਪਰਵਾਈਜ਼ਰ), `bootstrap.ts` (ਪ੍ਰੋਸੈੱਸ-ਪੱਧਰੀ ਰਜਿਸਟ੍ਰੇਸ਼ਨ ਅਤੇ ਆਟੋ-ਸਟਾਰਟ), `registry.ts` (ਟੂਲ → ਸੁਪਰਵਾਈਜ਼ਰ ਮੈਪ), `apiKey.ts` (AES-256-GCM ਕੁੰਜੀ ਸਟੋਰ), `modelSync.ts` (ਆਵਰਤੀ ਮਾਡਲ ਸਿੰਕ), `ringBuffer.ts` (5 MB ਸਰਕੁਲਰ ਲੌਗ ਬਫਰ), `healthCheck.ts` (HTTP ਸਿਹਤ ਜਾਂਚ), `types.ts`, `embedWsProxy.ts` (WebSocket ਪ੍ਰੌਕਸੀ), `installers/{ninerouter,cliproxy}.ts`। `docs/frameworks/EMBEDDED-SERVICES.md` ਵੇਖੋ                                                                                                                                                         |
-| `agentSkills/`    | ਏਜੰਟ ਹੁਨਰ ਕੈਟਾਲਾਗ + ਜਨਰੇਟਰ: `catalog.ts` (getCatalog/getSkillById/filterCatalog/computeCoverage), `generator.ts` (generateAgentSkills → `skills/{id}/SKILL.md` ਲਿਖਦਾ ਹੈ), `openapiParser.ts` (OpenAPI ਵਿਸ਼ੇਸ਼ਤਾ ਤੋਂ REST ਐਂਡਪੌਇੰਟ ਕੱਢਦਾ ਹੈ), `cliRegistryParser.ts` (bin/cli-registry ਤੋਂ CLI ਉਪ-ਕਮਾਂਡਾਂ ਕੱਢਦਾ ਹੈ), `schemas.ts` (Zod: AgentSkillSchema, SkillCoverageSchema, ListQuerySchema, GenerateBodySchema), `types.ts` (AgentSkill, SkillCoverage, SkillMarkdown, GeneratorReport)। REST ਰੂਟਾਂ (`/api/agent-skills/*`), MCP ਟੂਲਾਂ (`omniroute_agent_skills_*`), ਅਤੇ A2A ਹੁਨਰ `list-capabilities` ਵੱਲੋਂ ਵਰਤਿਆ ਜਾਂਦਾ ਹੈ। [AGENT-SKILLS.md](../frameworks/AGENT-SKILLS.md) ਵੇਖੋ। |
+| `agentSkills/`    | ਏਜੰਟ ਹੁਨਰ ਕੈਟਾਲਾਗ + ਜਨਰੇਟਰ: `catalog.ts` (getCatalog/getSkillById/filterCatalog/computeCoverage), `generator.ts` (generateAgentSkills → `skills/{id}/SKILL.md` ਲਿਖਦਾ ਹੈ), `openapiParser.ts` (OpenAPI ਵਿਸ਼ੇਸ਼ਤਾ ਤੋਂ REST ਐਂਡਪੌਇੰਟ ਕੱਢਦਾ ਹੈ), `cliRegistryParser.ts` (bin/cli-registry ਤੋਂ CLI ਉਪ-ਕਮਾਂਡਾਂ ਕੱਢਦਾ ਹੈ), `schemas.ts` (Zod: AgentSkillSchema, SkillCoverageSchema, ListQuerySchema, GenerateBodySchema), `types.ts` (AgentSkill, SkillCoverage, SkillMarkdown, GeneratorReport)। REST ਰੂਟਾਂ (`/api/agent-skills/*`), MCP ਟੂਲਾਂ (`agentproxy_agent_skills_*`), ਅਤੇ A2A ਹੁਨਰ `list-capabilities` ਵੱਲੋਂ ਵਰਤਿਆ ਜਾਂਦਾ ਹੈ। [AGENT-SKILLS.md](../frameworks/AGENT-SKILLS.md) ਵੇਖੋ। |
 | `skills/`         | ਹੁਨਰ ਫਰੇਮਵਰਕ: `registry.ts`, `executor.ts`, `interception.ts`, `injection.ts`, `sandbox.ts`, `custom.ts`, `hybrid.ts`, `builtins.ts`, `a2a.ts`, `providerSettings.ts`, `schemas.ts`, `skillssh.ts`, `types.ts`, ਨਾਲ ਹੀ `builtin/browser.ts`                                                                                                                                                                                                                                                                                                                                                                                                                                           |
 | `spend/`          | `batchWriter.ts` (ਰਾਈਟ-ਬਿਹਾਈਂਡ ਬਫਰ)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
 | `sync/`           | `bundle.ts`, `tokens.ts` (ਕਲਾਉਡ ਸਿੰਕ)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
@@ -384,7 +384,7 @@ v1/
 | `degradation.ts`                           | ਡਿਗਰੇਡਡ-ਮੋਡ ਤਬਦੀਲੀਆਂ                                   |
 | `providerExpiration.ts`                    | ਮਿਆਦ ਪੁੱਗੇ ਖਾਤੇ/ਕੁੰਜੀ ਦੀ ਪਛਾਣ                          |
 | `quotaCache.ts`                            | ਕੈਸ਼ ਕੀਤੇ ਕੋਟਾ ਫ਼ੈਸਲੇ                                  |
-| `responses.ts`, `omnirouteResponseMeta.ts` | ਜਵਾਬ ਦੀ ਬਣਤਰ ਲਈ ਸਹਾਇਕ                                  |
+| `responses.ts`, `agentproxyesponseMeta.ts` | ਜਵਾਬ ਦੀ ਬਣਤਰ ਲਈ ਸਹਾਇਕ                                  |
 | `configAudit.ts`                           | ਕੌਂਫਿਗ ਤਬਦੀਲੀ ਆਡਿਟ                                     |
 | `assessment/`                              | ਮਾਡਲ ਮੁਲਾਂਕਣ (RFC ਅਨੁਸਾਰ, ਅੰਸ਼ਕ ਤੌਰ 'ਤੇ ਲਾਗੂ ਕੀਤਾ ਗਿਆ) |
 | `types.ts`                                 | ਸਾਂਝੀਆਂ ਡੋਮੇਨ ਕਿਸਮਾਂ                                   |
@@ -436,7 +436,7 @@ server/
 
 ## 4. `open-sse/` — ਸਟ੍ਰੀਮਿੰਗ ਇੰਜਣ ਵਰਕਸਪੇਸ
 
-`@omniroute/open-sse` ਵਜੋਂ ਪ੍ਰਕਾਸ਼ਿਤ ਵੱਖਰਾ npm ਵਰਕਸਪੇਸ। ਇਹ ਬੇਨਤੀ
+`@agentproxy/open-sse` ਵਜੋਂ ਪ੍ਰਕਾਸ਼ਿਤ ਵੱਖਰਾ npm ਵਰਕਸਪੇਸ। ਇਹ ਬੇਨਤੀ
 ਪ੍ਰੋਸੈਸਿੰਗ, ਐਗਜ਼ੀਕਿਊਟਰਾਂ, ਅਨੁਵਾਦਕਾਂ, ਸੇਵਾਵਾਂ, ਟ੍ਰਾਂਸਫਾਰਮਰ ਅਤੇ MCP ਸਰਵਰ ਦਾ ਪ੍ਰਬੰਧਨ ਕਰਦਾ ਹੈ।
 
 ```
@@ -599,7 +599,7 @@ GitHub ਰਿਲੀਜ਼ ਫੀਡ ਵੱਲ ਇਸ਼ਾਰਾ ਕਰਦੇ `e
 
 ```
 bin/
-├── omniroute.mjs           ਮੁੱਖ CLI ਐਂਟਰੀ (Node ESM)
+├── agentproxy.mjs           ਮੁੱਖ CLI ਐਂਟਰੀ (Node ESM)
 ├── reset-password.mjs      CLI ਤੋਂ ਪ੍ਰਬੰਧਨ ਪਾਸਵਰਡ ਰੀਸੈੱਟ ਕਰੋ
 ├── mcp-server.mjs          MCP ਸਰਵਰ ਲਾਂਚਰ (stdio)
 ├── nodeRuntimeSupport.mjs  Node ਵਰਜਨ ਗਾਰਡ
@@ -622,8 +622,8 @@ bin/
 
 `package.json` → `bin` ਵਿੱਚ ਦੋ ਬਾਈਨਰੀਆਂ ਉਪਲਬਧ ਕਰਵਾਈਆਂ ਗਈਆਂ ਹਨ:
 
-- `omniroute` → `bin/omniroute.mjs`
-- `omniroute-reset-password` → `bin/reset-password.mjs`
+- `agentproxy` → `bin/agentproxy.mjs`
+- `agentproxy-reset-password` → `bin/reset-password.mjs`
 
 ---
 
@@ -779,7 +779,7 @@ bin/
 
 - **ਕੋਡ ਸ਼ੈਲੀ**: 2-ਸਪੇਸ ਇੰਡੈਂਟ, ਡਬਲ ਕੋਟ, 100 ਅੱਖਰ ਚੌੜਾਈ, ਸੈਮੀਕੋਲਨ,
   `es5` ਟ੍ਰੇਲਿੰਗ ਕਾਮੇ — `lint-staged` ਰਾਹੀਂ Prettier ਦੁਆਰਾ ਲਾਗੂ ਕੀਤੇ ਜਾਂਦੇ ਹਨ।
-- **ਇੰਪੋਰਟ**: ਬਾਹਰੀ → ਅੰਦਰੂਨੀ (`@/`, `@omniroute/open-sse`) → ਰਿਲੇਟਿਵ।
+- **ਇੰਪੋਰਟ**: ਬਾਹਰੀ → ਅੰਦਰੂਨੀ (`@/`, `@agentproxy/open-sse`) → ਰਿਲੇਟਿਵ।
 - **ਨਾਮਕਰਨ**: ਫਾਈਲਾਂ `camelCase` ਜਾਂ `kebab-case`, ਕੰਪੋਨੈਂਟ `PascalCase`,
   ਕਾਂਸਟੈਂਟ `UPPER_SNAKE`।
 - **ESLint**: `no-eval`, `no-implied-eval`, `no-new-func` = ਹਰ ਥਾਂ `error`;

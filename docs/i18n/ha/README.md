@@ -37,14 +37,14 @@
 
 <h3>
 
-⭐ Sanya tauraro ga repo idan OMNIROUTE ya taimaka maka adana kuɗi da sauƙaƙa aikinka.
+⭐ Sanya tauraro ga repo idan AGENTPROXY ya taimaka maka adana kuɗi da sauƙaƙa aikinka.
 
 </h3>
 
 [![Taurari](https://img.shields.io/github/stars/diegosouzapw/AgentProxy?style=social)](https://github.com/diegosouzapw/AgentProxy)
 <a href="https://trendshift.io/repositories/23589" target="_blank"><img src="https://trendshift.io/api/badge/repositories/23589" alt="diegosouzapw%2FAgentProxy | Trendshift" style="width: 250px; height: 55px;" width="250" height="55"/></a>
-[![Matsayin Tarihin Taurari](https://api.star-history.com/badge?repo=diegosouzapw/AgentProxy&theme=dark)](https://www.star-history.com/diegosouzapw/omniroute)
-[![olud.ai](https://olud.ai/badge.php?tool=diegosouzapw-omniroute)](https://olud.ai/project/diegosouzapw-omniroute.html)
+[![Matsayin Tarihin Taurari](https://api.star-history.com/badge?repo=diegosouzapw/AgentProxy&theme=dark)](https://www.star-history.com/#khanhkit/AgentProxy&Date)
+[![olud.ai](https://github.com/khanhkit/AgentProxy)](https://github.com/khanhkit/AgentProxy)
 
 ### 💬 Shiga cikin al'umma
 
@@ -54,12 +54,12 @@
 [![Bi @diegosouzapw a GitHub](https://img.shields.io/github/followers/diegosouzapw?style=for-the-badge&logo=github&logoColor=white&label=Follow%20on%20GitHub&color=181717)](https://github.com/diegosouzapw)
 
 [![Discord](https://img.shields.io/badge/Discord-5865F2?style=for-the-badge&logo=discord&logoColor=white)](https://discord.gg/U47eFqAXCn)
-[![Telegram](https://img.shields.io/badge/Telegram-26A5E4?style=for-the-badge&logo=telegram&logoColor=white)](https://t.me/omnirouteOficial)
+[![Telegram](https://img.shields.io/badge/Telegram-26A5E4?style=for-the-badge&logo=telegram&logoColor=white)](https://github.com/khanhkit/AgentProxy/discussions)
 [![WhatsApp na Duniya](https://img.shields.io/badge/WhatsApp_Global-25D366?style=for-the-badge&logo=whatsapp&logoColor=white)](https://chat.whatsapp.com/FvuCbrpZmQ6I85n2vW5QIC?s=cl&p=a&mlu=4)
 [![WhatsApp na Brazil](https://img.shields.io/badge/WhatsApp_Brasil-25D366?style=for-the-badge&logo=whatsapp&logoColor=white)](https://chat.whatsapp.com/KWgatljAjmbELQory59Oti?s=cl&p=a&mlu=4)
-[![Gidan Yanar Gizo](https://img.shields.io/badge/Website-omniroute.online-blue?logo=google-chrome&logoColor=white)](https://omniroute.online)
+[![Gidan Yanar Gizo](https://img.shields.io/badge/Website-agentproxy.online-blue?logo=google-chrome&logoColor=white)](https://agentproxy.online)
 
-**Tambayoyi, shawarwarin masu samarwa, taswirar ci gaba da tallafi → [Discord](https://discord.gg/U47eFqAXCn) · [Telegram](https://t.me/omnirouteOficial) · WhatsApp [🌍 Na Duniya](https://chat.whatsapp.com/FvuCbrpZmQ6I85n2vW5QIC?s=cl&p=a&mlu=4) / [🇧🇷 Brazil](https://chat.whatsapp.com/KWgatljAjmbELQory59Oti?s=cl&p=a&mlu=4) / [Portal](https://portal.sthub.com.br/communities/groups/st-hub/channels/Omniroute-World-8kRjmK)**
+**Tambayoyi, shawarwarin masu samarwa, taswirar ci gaba da tallafi → [Discord](https://discord.gg/U47eFqAXCn) · [Telegram](https://github.com/khanhkit/AgentProxy/discussions) · WhatsApp [🌍 Na Duniya](https://chat.whatsapp.com/FvuCbrpZmQ6I85n2vW5QIC?s=cl&p=a&mlu=4) / [🇧🇷 Brazil](https://chat.whatsapp.com/KWgatljAjmbELQory59Oti?s=cl&p=a&mlu=4) / [Portal](https://github.com/khanhkit/AgentProxy/discussions)**
 
 <br/>
 
@@ -84,12 +84,12 @@
 
 ## 🧩 Akwai
 
-[![sigar npm](https://img.shields.io/npm/v/omniroute?color=cb3837&logo=npm)](https://www.npmjs.com/package/omniroute)
-![NPM na Wata-wata](https://img.shields.io/npm/dm/omniroute?label=npm/month&color=cb3837&logo=npm)
-[![Docker Hub](https://img.shields.io/docker/v/diegosouzapw/omniroute?label=Docker%20Hub&logo=docker&color=2496ED)](https://hub.docker.com/r/diegosouzapw/omniroute)
+[![sigar npm](https://img.shields.io/npm/v/agentproxy?color=cb3837&logo=npm)](https://www.npmjs.com/package/agentproxy)
+![NPM na Wata-wata](https://img.shields.io/npm/dm/agentproxy?label=npm%2Fmonth&color=cb3837&logo=npm)
+[![Docker Hub](https://img.shields.io/docker/v/khanhkit/agentproxy?label=Docker+Hub&logo=docker&color=2496ED)](https://hub.docker.com/r/khanhkit/agentproxy)
 [![Lasisi: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=flat-square)](LICENSE)
-![Sauke-sauken Docker](https://img.shields.io/docker/pulls/diegosouzapw/omniroute?label=docker%20pulls&logo=docker&color=2496ED)
-![Sauke-sauken Electron](https://img.shields.io/github/downloads/diegosouzapw/omniroute/total?style=flat&label=electron%20downloads&logo=electron&color=47848F)
+![Sauke-sauken Docker](https://img.shields.io/docker/pulls/khanhkit/agentproxy?label=docker+pulls&logo=docker&color=2496ED)
+![Sauke-sauken Electron](https://img.shields.io/github/downloads/khanhkit/agentproxy/total?style=flat&label=electron+downloads&logo=electron&color=47848F)
 
 <table>
   <tr>
@@ -101,8 +101,8 @@
   <tr>
     <td align="right"><b>💡 Koya</b></td>
     <td align="center"><a href="#-the-promise">💥 Alkawarin</a></td>
-    <td align="center"><a href="#-why-omniroute">🤔 Me Ya Sa AgentProxy</a></td>
-    <td align="center"><a href="#-what-sets-omniroute-apart">🏆 Abin da Ya Bambanta Shi</a></td>
+    <td align="center"><a href="#-why-agentproxy">🤔 Me Ya Sa AgentProxy</a></td>
+    <td align="center"><a href="#-what-sets-agentproxy-apart">🏆 Abin da Ya Bambanta Shi</a></td>
   </tr>
   <tr>
     <td align="right"><b>⚙️ Fasaloli</b></td>
@@ -113,18 +113,18 @@
   <tr>
     <td align="right"></td>
     <td align="center"><a href="#%EF%B8%8F-save-1595-tokens--automatically">🗜️ Matsewa</a></td>
-    <td align="center"><a href="#%EF%B8%8F-where-omniroute-runs--anywhere">🖥️ Inda Yake Aiki</a></td>
+    <td align="center"><a href="#%EF%B8%8F-where-agentproxy-runs--anywhere">🖥️ Inda Yake Aiki</a></td>
     <td align="center"><a href="#-private--local-first">🔒 Na Sirri</a></td>
   </tr>
   <tr>
     <td align="right"><b>👀 Duba shi</b></td>
-    <td align="center"><a href="#-omniroute-in-action">🎬 Yadda Yake Aiki</a></td>
+    <td align="center"><a href="#-agentproxy-in-action">🎬 Yadda Yake Aiki</a></td>
     <td align="center"><a href="#-whats-new">✨ Sabbin Abubuwa</a></td>
     <td align="center"><a href="#-compatible-clis--coding-agents">🤖 CLI Masu Jituwa</a></td>
   </tr>
   <tr>
     <td align="right"><b>💚 Tallafawa</b></td>
-    <td align="center"><a href="#-support-omniroute">💚 Tallafawa / Ba da Gudummawa</a></td>
+    <td align="center"><a href="#-support-agentproxy">💚 Tallafawa / Ba da Gudummawa</a></td>
     <td align="center"><a href="#-community--help">💬 Al'umma</a></td>
     <td align="center"><a href="#-sponsors">💖 Masu ɗaukar nauyi</a></td>
   </tr>
@@ -211,7 +211,7 @@
 
 </div>
 
-<img src="./docs/diagrams/works-zero-config.svg" width="100%" alt="Yana aiki nan take da zarar ka girka shi — babu saituna. Matakai uku: 1. Girka — npm i -g omniroute, uwar garken za ta fara aiki a localhost:20128. 2. Nuna wa kayan aikinka http://localhost:20128/v1 — duk wani kayan aiki mai dacewa da OpenAI (Claude Code, Cursor, Cline). 3. Yana ba da amsa — kira samfurin auto don samun amsa nan take, ba tare da maɓallin API, rajista, ko saiti ba. An riga an haɗa mai bayarwa marar maɓalli OpenCode Free cikin haɗin auto, don haka sabon girkawa yana amsawa kai tsaye."/>
+<img src="./docs/diagrams/works-zero-config.svg" width="100%" alt="Yana aiki nan take da zarar ka girka shi — babu saituna. Matakai uku: 1. Girka — npm i -g agentproxy, uwar garken za ta fara aiki a localhost:20128. 2. Nuna wa kayan aikinka http://localhost:20128/v1 — duk wani kayan aiki mai dacewa da OpenAI (Claude Code, Cursor, Cline). 3. Yana ba da amsa — kira samfurin auto don samun amsa nan take, ba tare da maɓallin API, rajista, ko saiti ba. An riga an haɗa mai bayarwa marar maɓalli OpenCode Free cikin haɗin auto, don haka sabon girkawa yana amsawa kai tsaye."/>
 
 ```bash
 # Sabon girkawa, babu bayanan izini — `auto` ya riga yana aiki:
@@ -260,7 +260,7 @@ curl http://localhost:20128/v1/chat/completions \
 </div>
 
 <p align="center">
-  <a href="https://platform.kimi.ai?track_id=track-8197581fdd7d4139a0f562e4a03c3798&aff=omniroute">
+  <a href="https://platform.kimi.ai?track_id=track-8197581fdd7d4139a0f562e4a03c3798">
     <img src="public/sponsors/kimi-k3-banner.png" width="100%" alt="Kimi K3 — Fasahar Basirar Matakin Gaba Mai Buɗewa · sigogi tiriliyan 2.8 · mahallin token miliyan 1"/>
   </a>
 </p>
@@ -270,7 +270,7 @@ curl http://localhost:20128/v1/chat/completions \
 <table>
   <tr>
     <td align="center" width="150">
-      <a href="https://platform.kimi.ai?track_id=track-8197581fdd7d4139a0f562e4a03c3798&aff=omniroute">
+      <a href="https://platform.kimi.ai?track_id=track-8197581fdd7d4139a0f562e4a03c3798">
         <picture>
           <source media="(prefers-color-scheme: dark)" srcset="public/providers/kimi-logomark-dark.svg">
           <img src="public/providers/kimi-logomark-light.svg" width="64" alt="Kimi (Moonshot AI)"/>
@@ -282,12 +282,12 @@ curl http://localhost:20128/v1/chat/completions \
     <td>
       Godiya ga <b>Kimi (Moonshot AI)</b>, Abokinmu na Kafa Buɗaɗɗen Tushe, saboda tallafa wa wannan aikin! Kimi shi ne dakin binciken AI da ya samar da iyalan samfuran K2 da K3 masu buɗaɗɗen nauyi — <b>Kimi K3</b> yana samar da taga mahallin token miliyan 1, hangen nesa na asali da rubuta lamba a matakin gaba kan ɗan ƙaramin kaso na farashin rufaffun samfura, kuma yana aiki kai tsaye tare da Claude Code, Codex da duk kayan aikin rubuta lamba da AgentProxy ke hidimtawa.
       <br/><br/>
-      <b>Abin da tallafin Kimi ke ƙarfafawa:</b> Kiredit na API na Kimi suna ƙarfafa tsarin fitar da sabbin sigogin AgentProxy da AI ke tabbatarwa — matakin <i>tabbatar da haɗewa mai amfani da Kimi K3</i> wanda ke duba kowace buƙatar haɗewa kafin a fitar da ita — tare da bunƙasa fasaloli na yau da kullum. Cikakken tallafin Kimi yana samuwa ta hanyoyi biyu: <a href="https://platform.kimi.ai?track_id=track-8197581fdd7d4139a0f562e4a03c3798&aff=omniroute">Kimi API</a> kai tsaye (<code>kimi-k3</code>) da kuma <a href="https://www.kimi.com/code?aff=omniroute">tsarin rubuta lamba na Kimi Code</a> (OAuth da maɓallin API). AgentProxy kuma shi ne aikin buɗaɗɗen tushe na Brazil na farko a cikin shirin tallafin Kimi. <a href="https://platform.kimi.ai?track_id=track-8197581fdd7d4139a0f562e4a03c3798&aff=omniroute"><b>Sami maɓallin Kimi API tare da ƙarin kiredit 15% →</b></a>
+      <b>Abin da tallafin Kimi ke ƙarfafawa:</b> Kiredit na API na Kimi suna ƙarfafa tsarin fitar da sabbin sigogin AgentProxy da AI ke tabbatarwa — matakin <i>tabbatar da haɗewa mai amfani da Kimi K3</i> wanda ke duba kowace buƙatar haɗewa kafin a fitar da ita — tare da bunƙasa fasaloli na yau da kullum. Cikakken tallafin Kimi yana samuwa ta hanyoyi biyu: <a href="https://platform.kimi.ai?track_id=track-8197581fdd7d4139a0f562e4a03c3798">Kimi API</a> kai tsaye (<code>kimi-k3</code>) da kuma <a href="https://www.kimi.com/code">tsarin rubuta lamba na Kimi Code</a> (OAuth da maɓallin API). AgentProxy kuma shi ne aikin buɗaɗɗen tushe na Brazil na farko a cikin shirin tallafin Kimi. <a href="https://platform.kimi.ai?track_id=track-8197581fdd7d4139a0f562e4a03c3798"><b>Sami maɓallin Kimi API tare da ƙarin kiredit 15% →</b></a>
     </td>
   </tr>
   <tr>
     <td align="center" width="150">
-      <a href="https://cheaperinference.com/?utm_source=omniroute">
+      <a href="https://cheaperinference.com">
         <img src="./public/providers/cli-generic.svg" width="64" alt="Cheaper Inference"/>
       </a>
       <br/><b>Cheaper Inference</b><br/><sub>cheaperinference.com</sub><br/><br/>
@@ -296,12 +296,12 @@ curl http://localhost:20128/v1/chat/completions \
     <td>
       Godiya ga <b>Cheaper Inference</b>, Abokin Buɗaɗɗen Tushe na AgentProxy, saboda tallafa wa wannan aikin! Cheaper Inference wata ƙofa ce da aka jera bisa farashi wadda ke sake sayar da samfuran matakin gaba guda 42 — Claude, GPT-5.x, Gemini, Kimi K3, GLM, DeepSeek, Grok da MiniMax — a bayan maƙura guda ɗaya mai jituwa da OpenAI, tana tura kowace buƙata zuwa mai samarwa mafi arha da ya cancanta ba tare da taɓa cajin fiye da farashin jerin mai ƙera samfurin ba.
       <br/><br/>
-      <b>Cikakken tallafi a cikin AgentProxy:</b> Kammalawar Taɗi, maƙurar asali ta <code>/v1/responses</code>, hangen nesa, kiran kayan aiki da samfuran hoto guda 3 (<code>grok-imagine</code>, <code>nano-banana-pro</code>, <code>nano-banana-2</code>, waɗanda za a iya isa gare su a matsayin <code>cheaperinference/&lt;model&gt;</code>). <a href="https://cheaperinference.com/?utm_source=omniroute"><b>Sami maɓallin API →</b></a>
+      <b>Cikakken tallafi a cikin AgentProxy:</b> Kammalawar Taɗi, maƙurar asali ta <code>/v1/responses</code>, hangen nesa, kiran kayan aiki da samfuran hoto guda 3 (<code>grok-imagine</code>, <code>nano-banana-pro</code>, <code>nano-banana-2</code>, waɗanda za a iya isa gare su a matsayin <code>cheaperinference/&lt;model&gt;</code>). <a href="https://cheaperinference.com"><b>Sami maɓallin API →</b></a>
     </td>
   </tr>
 </table>
 
-<sub>Hanyoyin haɗin da aka yi wa alamar <code>aff=omniroute</code> hanyoyin haɗin abokan hulɗa ne. Suna ɗaukar nauyin aikin ba tare da wani ƙarin kuɗi a kanka ba.</sub>
+<sub>Hanyoyin haɗin da aka yi wa alamar <code>aff=agentproxy</code> hanyoyin haɗin abokan hulɗa ne. Suna ɗaukar nauyin aikin ba tare da wani ƙarin kuɗi a kanka ba.</sub>
 
 <br/>
 
@@ -487,7 +487,7 @@ Dukkan dabaru **19** — gauraya kuma daidaita su a kowane matakin combo:
 
 <img src="./docs/diagrams/comparison-table.svg" width="100%" alt="Abin da ya bambanta AgentProxy — kwatancen fasaloli na wani takamaiman lokaci da 9router, OpenRouter, CLIProxyAPI da LiteLLM a fannoni 13. AgentProxy: masu samarwa 356, matakan kyauta sama da 150 da aka haɗa, dabarun zaɓin hanya 19, matse token mai injuna 12, sabar MCP da aka haɗa mai kayan aiki 110, ƙa'idar wakilan A2A, ma'adanar dindindin, matakan kariya, wakilan gajimare, ɓoye sawun TLS, Desktop/Termux/PWA da harsunan UI na i18n guda 42. AgentProxy na da lasisin MIT kuma ana iya ɗaukar bakuncinsa da kai. Ƙwarewa da alkaluman masu fafatawa na iya canzawa; duba hanyar binciken da aka haɗa."/>
 
-<sub>📊 Cikakkiyar hanyar bincike &amp; bayanin kowane fasali idan aka kwatanta da 9router, OpenRouter, CLIProxyAPI &amp; LiteLLM → [`docs/comparison/OMNIROUTE_VS_ALTERNATIVES.md`](docs/comparison/OMNIROUTE_VS_ALTERNATIVES.md)</sub>
+<sub>📊 Cikakkiyar hanyar bincike &amp; bayanin kowane fasali idan aka kwatanta da 9router, OpenRouter, CLIProxyAPI &amp; LiteLLM → [`docs/comparison/AGENTPROXY_VS_ALTERNATIVES.md`](docs/comparison/AGENTPROXY_VS_ALTERNATIVES.md)</sub>
 
 <br/>
 
@@ -514,7 +514,7 @@ Maɓalli (bazuwar): `5d865059-bc44-483a-962d-43ceb80126eb`
 Kwafi-da-manna na Pix:
 
 ```
-00020101021126580014br.gov.bcb.pix01365d865059-bc44-483a-962d-43ceb80126eb5204000053039865802BR5922OMNIROUTE CONTRIBUICAO6006BRASIL62070503***630475DD
+00020101021126580014br.gov.bcb.pix01365d865059-bc44-483a-962d-43ceb80126eb5204000053039865802BR5922AGENTPROXY CONTRIBUICAO6006BRASIL62070503***630475DD
 ```
 
 <br clear="right"/>
@@ -554,7 +554,7 @@ kowane lokaci.
 
 Radar na zaɓi ne kuma GET-only. Abokin cinikin AgentProxy ba ya loda prompts, zirga-zirga, saitunan masu
 samarwa, bayanan telemetry na amfani, ko yanayin ɓoye sanarwa na cikin gida. Ƙara sani game da cancanta da
-kundin na yanzu a **[radar.omniroute.online/planos](https://radar.omniroute.online/planos)**.
+kundin na yanzu a **[radar.agentproxy.online/planos](https://agentproxy.online)**.
 
 <br/>
 
@@ -572,13 +572,13 @@ kundin na yanzu a **[radar.omniroute.online/planos](https://radar.omniroute.onli
 - **🗜️ Ƙarfafa matse bayanai** — kariyar faɗaɗa da ke kunne ta tsohuwa, fakitin Caveman na DE / FR / JA + Sinanci (wényán), matatun RTK na Gradle & .NET. → [Matse Bayanai](docs/compression/COMPRESSION_ENGINES.md)
 - **💸 Kuɗin farashi-tsayayye na gaskiya** — masu samar da subscription / coding-plan suna nuna **$0** a nazarin kuɗi; kasafin kuɗi, quota & routing suna ci gaba da yin kiyasi. → [Manazartar API](docs/reference/API_REFERENCE.md)
 - **⚖️ Routing na Quota-Share** — raba quota na asusu na bai ɗaya da adalci tsakanin keys da aka haɗa, tare da kiyaye aiki ta yadda ake ba da sassan da ba a amfani da su aro. → [Jagorar Juriya](docs/architecture/RESILIENCE_GUIDE.md)
-- **🤖 Saitin CLI/wakili da umarni ɗaya** — umarnin `setup-*` guda 13 da aka yi rajista; `omniroute run` yana ƙaddamar da CLIs guda 7 (Claude Code, Codex, Aider, Goose, OpenCode, Qwen Code, Gemini CLI); `omniroute configure` yana tallafa wa wurare guda 10 tare da mai zaɓar mai samarwa+model na hulɗa da abubuwan da aka fi so ga kowane mahalli. → [Haɗin CLI](docs/guides/CLI-INTEGRATIONS.md)
+- **🤖 Saitin CLI/wakili da umarni ɗaya** — umarnin `setup-*` guda 13 da aka yi rajista; `agentproxy run` yana ƙaddamar da CLIs guda 7 (Claude Code, Codex, Aider, Goose, OpenCode, Qwen Code, Gemini CLI); `agentproxy configure` yana tallafa wa wurare guda 10 tare da mai zaɓar mai samarwa+model na hulɗa da abubuwan da aka fi so ga kowane mahalli. → [Haɗin CLI](docs/guides/CLI-INTEGRATIONS.md)
 - **🛰️ Yanayin nesa** — sarrafa AgentProxy na nesa ta amfani da tokens masu iyakacin izini (`connect` / `contexts` / `tokens`) + mataimakin OAuth na `antigravity` don girkawa a VPS. → [Yanayin Nesa](docs/guides/REMOTE-MODE.md)
 - **🧭 Auto-routing mafi wayo** — combos na `auto/<category>:<tier>`, **Fusion** (kwamitin model + mai hukunci), routing mai la’akari da aiki, da sauya model / mode / kasafin-USD ga kowace buƙata. → [Auto-Combo](docs/routing/AUTO-COMBO.md)
 - **🗜️ Matse bayanai mai karɓar ƙari** — engines guda 12 da za a iya haɗawa + Compression Studios: LLMLingua-2, Ultra mai matakai biyu, omniglyph, ƙofar amincin bayanai ga kowane mataki, GCF v3.2, editan ja-ka-sake-jera. → [Matse Bayanai](docs/compression/COMPRESSION_ENGINES.md)
 - **🕵️ Buɗe ɓoyayyen MITM a sarari (TPROXY)** — kama CLIs da ke yin watsi da proxy env vars, tare da CA na kowane SNI + mai girka trust-store. → [MITM/TPROXY](docs/security/MITM-TPROXY-DECRYPT.md)
 - **💸 Bayanan auna kuɗi a ko’ina** — headers na kuɗi/amfani na `X-AgentProxy-*` a kowane endpoint, header na tanadin cache-HIT, da iyakokin kashe USD ga kowane key. → [Manazartar API](docs/reference/API_REFERENCE.md)
-- **🧠 Ƙwaƙwalwar da kake sarrafawa** — a kashe take ta tsohuwa, quantization na vector int8 na zaɓi + typed decay, `x-omniroute-no-memory` ga kowace buƙata. → [Ƙwaƙwalwa](docs/frameworks/MEMORY.md)
+- **🧠 Ƙwaƙwalwar da kake sarrafawa** — a kashe take ta tsohuwa, quantization na vector int8 na zaɓi + typed decay, `x-agentproxy-no-memory` ga kowace buƙata. → [Ƙwaƙwalwa](docs/frameworks/MEMORY.md)
 - **🛡️ Tsaro** — kariyar prompt-injection a kowace hanyar LLM (kundin gwajin red-team), shingen rufe bayanan sirri na zaɓi (yana ɓoye API keys/secrets da suka zube a duka alkibloji), binciken yanar gizo na DuckDuckGo na ƙarshe kyauta, da ƙofar shiga ta OIDC ta zaɓi don dashboard (shiga da kalmar sirri koyaushe yana nan). → [Shingayen Kariya](docs/security/GUARDRAILS.md)
 - **🖼️ Sabbin endpoints** — `/v1/ocr` (Mistral OCR) da `/v1/audio/translations` (irin na Whisper) suna kammala fagen kafofin watsa labarai. → [Manazartar API](docs/reference/API_REFERENCE.md)
 - **🎨 Samar da hoto / bidiyo / sauti** — API guda ɗaya don kafofin watsa labarai: xAI Grok Imagine & Novita AI video, ComfyUI, Magnific, Adobe Firefly, Segmind, da masu samar da magana kamar ElevenLabs. → [Manazartar API](docs/reference/API_REFERENCE.md)
@@ -637,7 +637,7 @@ kundin na yanzu a **[radar.omniroute.online/planos](https://radar.omniroute.onli
 <b>＋ yana kuma aiki da</b> · Kiro · Command Code · Antigravity · Windsurf · AMP · <b>duk wani kayan aiki mai dacewa da OpenAI</b>
 </div>
 
-<sub>📖 Saitin kowane kayan aiki ga dukkan kayan aiki 36 (CLI Code 26 + CLI Agents 10) → [`docs/reference/CLI-TOOLS.md`](docs/reference/CLI-TOOLS.md) · 🧩 Plugin na OpenCode → [`@omniroute/opencode-provider`](https://www.npmjs.com/package/@omniroute/opencode-provider)</sub>
+<sub>📖 Saitin kowane kayan aiki ga dukkan kayan aiki 36 (CLI Code 26 + CLI Agents 10) → [`docs/reference/CLI-TOOLS.md`](docs/reference/CLI-TOOLS.md) · 🧩 Plugin na OpenCode → [`@agentproxy/opencode-provider`](https://www.npmjs.com/package/@agentproxy/opencode-provider)</sub>
 
 </div>
 
@@ -647,19 +647,19 @@ kundin na yanzu a **[radar.omniroute.online/planos](https://radar.omniroute.onli
 ana saka bayanan izini ga kowane tsari, Qwen/Gemini kuma suna samun keɓantaccen home na wucin gadi:
 
 ```bash
-omniroute run claude   --model openai/gpt-5.4          # Claude Code
-omniroute run codex    --model glm/glm-5.2             # OpenAI Codex CLI
-omniroute run aider    --model glm/glm-5.2 -- --message "reply OK"
-omniroute run goose    --model glm/glm-5.2
-omniroute run opencode --model glm/glm-5.2 -- run "reply OK"
-omniroute run qwen     --model glm/glm-5.2 -- -p "reply OK"
-omniroute run gemini   --model glm/glm-5.2 -- --skip-trust -p "reply OK"
+agentproxy run claude   --model openai/gpt-5.4          # Claude Code
+agentproxy run codex    --model glm/glm-5.2             # OpenAI Codex CLI
+agentproxy run aider    --model glm/glm-5.2 -- --message "reply OK"
+agentproxy run goose    --model glm/glm-5.2
+agentproxy run opencode --model glm/glm-5.2 -- run "reply OK"
+agentproxy run qwen     --model glm/glm-5.2 -- -p "reply OK"
+agentproxy run gemini   --model glm/glm-5.2 -- --skip-trust -p "reply OK"
 
 # Ko kuma zaɓi mai samarwa+samfuri ta hanyar hulɗa sannan ka rubuta saitunan kayan aikin da kansa:
-omniroute configure codex          # akwai kuma: claude opencode qwen aider goose gemini cline continue kilo
+agentproxy configure codex          # akwai kuma: claude opencode qwen aider goose gemini cline continue kilo
 ```
 
-Kowane umarni yana bin mahallin nesa da ke aiki (`omniroute connect <host>`), `--dry-run`
+Kowane umarni yana bin mahallin nesa da ke aiki (`agentproxy connect <host>`), `--dry-run`
 yana nuna ainihin env/args ba tare da aiwatarwa ba, sannan `--api-key-env NAME` yana hana sirrika
 shiga tarihin shell ɗinka. → [Haɗaɗɗun CLI](docs/guides/CLI-INTEGRATIONS.md)
 
@@ -744,19 +744,19 @@ shiga tarihin shell ɗinka. → [Haɗaɗɗun CLI](docs/guides/CLI-INTEGRATIONS.m
 
 <table>
   <tr><th align="left">Dandali</th><th align="left">Shigarwa</th><th align="left">Muhimman abubuwa</th></tr>
-  <tr><td align="left" nowrap>📦 <b>npm (na duniya baki ɗaya)</b></td><td align="left" nowrap><code>npm install -g omniroute</code></td><td align="left">Umarni ɗaya, kowane OS</td></tr>
-  <tr><td align="left" nowrap>🐳 <b>Docker</b></td><td align="left" nowrap><code>docker run … diegosouzapw/omniroute</code></td><td align="left">Gine-ginen na’ura da yawa <b>AMD64 + ARM64</b></td></tr>
+  <tr><td align="left" nowrap>📦 <b>npm (na duniya baki ɗaya)</b></td><td align="left" nowrap><code>npm install -g agentproxy</code></td><td align="left">Umarni ɗaya, kowane OS</td></tr>
+  <tr><td align="left" nowrap>🐳 <b>Docker</b></td><td align="left" nowrap><code>docker run … diegosouzapw/agentproxy</code></td><td align="left">Gine-ginen na’ura da yawa <b>AMD64 + ARM64</b></td></tr>
   <tr><td align="left" nowrap>🖥️ <b>Kwamfutar tebur (Electron)</b></td><td align="left" nowrap><code>npm run electron:build</code></td><td align="left">Tagar asali + tiren tsarin — <b>Windows / macOS / Linux</b></td></tr>
-  <tr><td align="left" nowrap>🎩 <b>Sandar menu (AgentProxyTray)</b></td><td align="left" nowrap><code>brew install --cask zoispag/tap/omniroute-tray</code></td><td align="left">Yana sa ido kan sabar &amp; yana sabunta ta kai tsaye — <b>macOS</b></td></tr>
+  <tr><td align="left" nowrap>🎩 <b>Sandar menu (AgentProxyTray)</b></td><td align="left" nowrap><code>brew install --cask zoispag/tap/agentproxy-tray</code></td><td align="left">Yana sa ido kan sabar &amp; yana sabunta ta kai tsaye — <b>macOS</b></td></tr>
   <tr><td align="left" nowrap>💪 <b>ARM</b></td><td align="left" nowrap>na asali <code>arm64</code></td><td align="left">Raspberry Pi, sabar ARM, Apple Silicon</td></tr>
-  <tr><td align="left" nowrap>📱 <b>Android (Termux)</b></td><td align="left" nowrap><code>pkg install nodejs && npx -y omniroute</code></td><td align="left">Yana gudana <b>a wayarka</b>, 24/7, ba tare da root ba</td></tr>
+  <tr><td align="left" nowrap>📱 <b>Android (Termux)</b></td><td align="left" nowrap><code>pkg install nodejs && npx -y agentproxy</code></td><td align="left">Yana gudana <b>a wayarka</b>, 24/7, ba tare da root ba</td></tr>
   <tr><td align="left" nowrap>📲 <b>PWA</b></td><td align="left" nowrap>"Ƙara zuwa Fuskar Farko"</td><td align="left">Cikakken allo, ba tare da intanet ba, ana iya shigarwa daga burauza</td></tr>
-  <tr><td align="left" nowrap>🧩 <b>Fulogin OpenCode</b></td><td align="left" nowrap><code>@omniroute/opencode-provider</code></td><td align="left">Haɗawar OpenCode ta asali</td></tr>
+  <tr><td align="left" nowrap>🧩 <b>Fulogin OpenCode</b></td><td align="left" nowrap><code>@agentproxy/opencode-provider</code></td><td align="left">Haɗawar OpenCode ta asali</td></tr>
   <tr><td align="left" nowrap>🤖 <b>VS Code Copilot Chat</b></td><td align="left" nowrap>shigar da ƙarin <b>OmniCopilot</b></td><td align="left">Kowane samfurin AgentProxy a cikin mai zaɓar Copilot Chat na asali — barga &amp; Insiders</td></tr>
   <tr><td align="left" nowrap>🛠️ <b>Daga lambar tushe</b></td><td align="left" nowrap><code>npm install && npm run dev</code></td><td align="left">Yi masa gyare-gyare, ba da gudummawa</td></tr>
 </table>
 
-<sub>📖 [Jagorar Docker](docs/guides/DOCKER_GUIDE.md) · [Kwamfutar tebur](electron/README.md) · [Tiren sandar menu](https://github.com/zoispag/omniroute-tray) · [Termux](docs/guides/TERMUX_GUIDE.md) · [PWA](docs/guides/PWA_GUIDE.md) · [OpenCode](docs/frameworks/OPENCODE.md)</sub>
+<sub>📖 [Jagorar Docker](docs/guides/DOCKER_GUIDE.md) · [Kwamfutar tebur](electron/README.md) · [Tiren sandar menu](https://github.com/zoispag/agentproxy-tray) · [Termux](docs/guides/TERMUX_GUIDE.md) · [PWA](docs/guides/PWA_GUIDE.md) · [OpenCode](docs/frameworks/OPENCODE.md)</sub>
 
 <br/>
 
@@ -795,19 +795,19 @@ Daga cikin editan: buɗe kallon **Extensions**, bincika **"AgentProxy"**, danna 
 
 </div>
 
-> `omniroute serve` ya fi jin daɗi idan yana kunne koyaushe. **[AgentProxyTray](https://github.com/zoispag/omniroute-tray)**
+> `agentproxy serve` ya fi jin daɗi idan yana kunne koyaushe. **[AgentProxyTray](https://github.com/zoispag/agentproxy-tray)**
 > yana mayar da hakan manhajar sandar menu ta macOS da za ka saita ka manta da ita: yana fara sabar, yana tabbatar da ci gaba da aikinta
 > bayan sake kunna na’ura, yana sabunta ta a wurinta, kuma yana sa kasafin token ɗinka na kai-tsaye ya kasance kusa da dannawa ɗaya — **ba a
-> bar tagar terminal a buɗe ba, babu `npm install -g omniroute` da za a riƙa kula da shi.**
+> bar tagar terminal a buɗe ba, babu `npm install -g agentproxy` da za a riƙa kula da shi.**
 
 An gina shi da [Tauri v2](https://v2.tauri.app/) (jigon Rust mai ƙanƙanta ƙwarai), yana zuwa
 da runtime na Node 24 nasa mai sa hannu kuma yana sarrafa shigarwar AgentProxy mallakar manhajar, don haka ba ya taɓa cin karo da
-`node`/`bun` naka na duniya baki ɗaya. Yana **amfani tare da saitunanka da rumbun bayananka na `~/.omniroute/` da suke akwai** — don haka
+`node`/`bun` naka na duniya baki ɗaya. Yana **amfani tare da saitunanka da rumbun bayananka na `~/.agentproxy/` da suke akwai** — don haka
 AgentProxy ɗin da kake gudanarwa tuni ne, kawai yanzu yana sanye da hula. 🎩
 
 <table>
   <tr><th align="left">Abin da yake yi</th><th align="left">Yadda yake yi</th></tr>
-  <tr><td align="left" nowrap>🟢 <b>Yana sa ido kan sabar</b></td><td align="left">Yana ƙaddamar da <code>omniroute serve</code>, yana karɓar misalin da ke gudana tuni maimakon maimaita shi</td></tr>
+  <tr><td align="left" nowrap>🟢 <b>Yana sa ido kan sabar</b></td><td align="left">Yana ƙaddamar da <code>agentproxy serve</code>, yana karɓar misalin da ke gudana tuni maimakon maimaita shi</td></tr>
   <tr><td align="left" nowrap>📊 <b>Amfani na kai-tsaye a kallo ɗaya</b></td><td align="left">Sandunan ƙason masu samarwa, iyakokin zaman Claude/na mako-mako tare da ƙidayar lokacin sake saitawa, rabon kuɗin kwanaki 30</td></tr>
   <tr><td align="left" nowrap>🔄 <b>Yana sabunta kansa a wurinsa</b></td><td align="left">Shigarwa mai matakai, musayar atomic, komawa baya idan an gaza — koyaushe a kan sabuwar fitarwa</td></tr>
   <tr><td align="left" nowrap>🚀 <b>Farawa yayin shiga</b></td><td align="left">Zaɓin ƙaddamarwa yayin shiga; tire kawai, babu alamar dock</td></tr>
@@ -815,12 +815,12 @@ AgentProxy ɗin da kake gudanarwa tuni ne, kawai yanzu yana sanye da hula. 🎩
 </table>
 
 ```sh
-brew install --cask zoispag/tap/omniroute-tray
+brew install --cask zoispag/tap/agentproxy-tray
 ```
 
 <sub>Ka fi son saukewa? Ɗauko sabuwar <code>.dmg</code> daga
-<a href="https://github.com/zoispag/omniroute-tray/releases">Fitowar Sabbin Nau'ikan</a>. Lambar tushe, matsaloli da takardun
-ginawa suna nan a <a href="https://github.com/zoispag/omniroute-tray">zoispag/omniroute-tray</a>.
+<a href="https://github.com/zoispag/agentproxy-tray/releases">Fitowar Sabbin Nau'ikan</a>. Lambar tushe, matsaloli da takardun
+ginawa suna nan a <a href="https://github.com/zoispag/agentproxy-tray">zoispag/agentproxy-tray</a>.
 <br/>💛 Aikin al'umma ne daga <a href="https://github.com/zoispag">@zoispag</a> — ba fitowar AgentProxy ta hukuma ba ce.</sub>
 
 <br/>
@@ -848,10 +848,10 @@ ginawa suna nan a <a href="https://github.com/zoispag/omniroute-tray">zoispag/om
 ### ⌨️ CLI na gaske (ba kawai `start` ba)
 
 ```bash
-omniroute               # gabatar da ƙofar shiga + dashboard (port 20128)
-omniroute chat          # abokin hirar TUI mai mu'amala (slash: /model /combo /skill /memory)
-omniroute setup         # wizard mai jagora don fara amfani
-omniroute doctor        # gano matsalolin providers, ports, native deps
+agentproxy               # gabatar da ƙofar shiga + dashboard (port 20128)
+agentproxy chat          # abokin hirar TUI mai mu'amala (slash: /model /combo /skill /memory)
+agentproxy setup         # wizard mai jagora don fara amfani
+agentproxy doctor        # gano matsalolin providers, ports, native deps
 ```
 
 ### 🛰️ Yanayin nesa — gudanar da CLI a nan, AgentProxy a kan VPS
@@ -860,11 +860,11 @@ AgentProxy yana kan saba? Sarrafa shi daga kwamfutar tafi-da-gidanka da **CLI ir
 da scoped access token; daga nan kowace umarni za ta nufi sabar nesa.
 
 ```bash
-omniroute connect 192.168.0.15            # kalmar sirri → scoped token, an adana shi a matsayin context
-omniroute models list                     # ← yana gudana a kan sabar NESA
-omniroute configure codex                 # ← yana zaɓar model na nesa, yana rubuta Codex profile na cikin gida
-omniroute tokens create --name ci --scope read   # ƙirƙiri tokens masu ƙuntataccen izini don wasu na'urori
-omniroute contexts use default            # ← koma zuwa sabar cikin gida
+agentproxy connect 192.168.0.15            # kalmar sirri → scoped token, an adana shi a matsayin context
+agentproxy models list                     # ← yana gudana a kan sabar NESA
+agentproxy configure codex                 # ← yana zaɓar model na nesa, yana rubuta Codex profile na cikin gida
+agentproxy tokens create --name ci --scope read   # ƙirƙiri tokens masu ƙuntataccen izini don wasu na'urori
+agentproxy contexts use default            # ← koma zuwa sabar cikin gida
 ```
 
 An iyakance izinin tokens zuwa `read` / `write` / `admin`; routes da ke ƙaddamar da processes suna ci gaba da kasancewa na loopback kawai.
@@ -872,7 +872,7 @@ An iyakance izinin tokens zuwa `read` / `write` / `admin`; routes da ke ƙaddama
 
 <div align="left">
 
-<img src="./docs/diagrams/cli-terminal.svg" width="50%" alt="Nunin terminal mai motsi da ke gabatar da AgentProxy CLI — omniroute providers list, omniroute combo list da omniroute health — yana zagayawa a saman jerin umarni 86: providers · oauth · keys · combo · nodes · models · cache · compression · cost · usage · quota · health · resilience · telemetry · logs · audit · mcp · a2a · cloud · memory · skills · eval · tunnel · backup · sync · webhooks · policy · pricing · translator · simulate …"/>
+<img src="./docs/diagrams/cli-terminal.svg" width="50%" alt="Nunin terminal mai motsi da ke gabatar da AgentProxy CLI — agentproxy providers list, agentproxy combo list da agentproxy health — yana zagayawa a saman jerin umarni 86: providers · oauth · keys · combo · nodes · models · cache · compression · cost · usage · quota · health · resilience · telemetry · logs · audit · mcp · a2a · cloud · memory · skills · eval · tunnel · backup · sync · webhooks · policy · pricing · translator · simulate …"/>
 
 </div>
 
@@ -882,18 +882,18 @@ Bayyana AgentProxy ta hanyar **MCP**, **A2A**, **REST API**, **webhooks** ko **C
 
 <table>
   <tr><th align="left">Haɗin mu'amala</th><th align="left">Endpoint / umarni</th><th align="left">Yi amfani da shi don</th></tr>
-  <tr><td align="left" nowrap>🧰 <b>MCP (stdio)</b></td><td align="left" nowrap><code>omniroute --mcp</code></td><td align="left">Haɗawa da Claude Desktop, Cursor, ko kowane MCP client</td></tr>
+  <tr><td align="left" nowrap>🧰 <b>MCP (stdio)</b></td><td align="left" nowrap><code>agentproxy --mcp</code></td><td align="left">Haɗawa da Claude Desktop, Cursor, ko kowane MCP client</td></tr>
   <tr><td align="left" nowrap>🌊 <b>MCP (HTTP)</b></td><td align="left" nowrap><code>/api/mcp/stream</code></td><td align="left">MCP na nesa — <b>kayan aiki 110</b>, scopes 33 (aiwatarwa na zaɓi ne), cikakken tarihin bincike</td></tr>
   <tr><td align="left" nowrap>📡 <b>MCP (SSE)</b></td><td align="left" nowrap><code>/api/mcp/sse</code></td><td align="left">Hanyar jigilar MCP mai gudana kai tsaye</td></tr>
   <tr><td align="left" nowrap>🤝 <b>A2A</b></td><td align="left" nowrap><code>/.well-known/agent.json</code></td><td align="left">Wakili-zuwa-wakili, <b>JSON-RPC 2.0</b> + SSE, ƙwarewa 6</td></tr>
   <tr><td align="left" nowrap>🌐 <b>REST API</b></td><td align="left" nowrap><code>/v1/*</code></td><td align="left">Mai dacewa da OpenAI — hira, embeddings, hotuna, sauti, OCR</td></tr>
   <tr><td align="left" nowrap>🔔 <b>Webhooks</b></td><td align="left" nowrap><code>/api/webhooks</code></td><td align="left">Tura abubuwan da suka faru na buƙata / quota zuwa Slack, Discord, Telegram ko kowane URL</td></tr>
-  <tr><td align="left" nowrap>🛰️ <b>CLI na Nesa</b></td><td align="left" nowrap><code>omniroute connect <host></code></td><td align="left">Sarrafa instance na nesa da scoped access tokens</td></tr>
+  <tr><td align="left" nowrap>🛰️ <b>CLI na Nesa</b></td><td align="left" nowrap><code>agentproxy connect <host></code></td><td align="left">Sarrafa instance na nesa da scoped access tokens</td></tr>
 </table>
 
 ```bash
 # Ba Claude Code cikakken kayan aikin AgentProxy ta hanyar MCP:
-claude mcp add-server omniroute --type http --url http://localhost:20128/api/mcp/stream
+claude mcp add-server agentproxy --type http --url http://localhost:20128/api/mcp/stream
 ```
 
 <sub>📖 [Sabar MCP](docs/frameworks/MCP-SERVER.md) · [Sabar A2A](docs/frameworks/A2A-SERVER.md) · [Ka’idojin Wakilai](docs/frameworks/AGENT_PROTOCOLS_GUIDE.md)</sub>
@@ -983,7 +983,7 @@ Engines 12 da ke sama suna rage abin da ke shiga **ciki**. Ƙarin matakai uku su
   - **Ina da ADHD (aiki da farko)** — fara da mataki na gaba, lissafa matakai da lambobi, bayar da takamaiman mataki na gaba guda ɗaya, ba tare da gabatarwa ba.
   - **Taƙaitaccen CJK (文言)** — salon tsohuwar Sinanci mai matuƙar taƙaitawa (ana iyakance shi ga locale na `zh`).
 - **🎯 Kasafin context mai daidaitawa** _(ma'aunin)_ — maimakon threshold na token guda ɗaya mai kunnawa/kashewa, yana ƙara amfani da engines mafi arha kuma mafi ƙarancin asara gwargwadon buƙata kawai domin **ya dace da context window na model**. Policy: `reserve-output` (na asali, mai la'akari da model) · `percentage` · `absolute`. Mode: `floor` (tabbatar da dacewa) · `replace-autotrigger` (zaɓinka kai tsaye ne zai yi rinjaye) · `off` (threshold na tsohon tsari).
-- **🎛️ Inda ake yanke shawarar compression** _(fifiko, sama → ƙasa)_ — header na kowace buƙata `x-omniroute-compression` › override na routing-combo › named profile mai aiki › adaptive / auto-trigger › default na panel › kashewa. Ana mayar da tsarin da aka yi amfani da shi a cikin response header na `X-AgentProxy-Compression: <mode>; source=<source>`.
+- **🎛️ Inda ake yanke shawarar compression** _(fifiko, sama → ƙasa)_ — header na kowace buƙata `x-agentproxy-compression` › override na routing-combo › named profile mai aiki › adaptive / auto-trigger › default na panel › kashewa. Ana mayar da tsarin da aka yi amfani da shi a cikin response header na `X-AgentProxy-Compression: <mode>; source=<source>`.
 
 Yi auto-trigger ta threshold na token, kunna ma'aunin daidaitawa, tsayar da named profile, saita na lokaci ɗaya ga kowace buƙata, ko sanya pipeline ga kowane routing combo — duk wanda ya dace da aikin. **Eval harness** na offline mai buƙatar amincewa (`npm run eval:compression`) yana auna amincin sakamako da tanadi a kan corpus da aka tsayar kafin ka ɗaukaka canji.
 
@@ -1000,8 +1000,8 @@ Yi auto-trigger ta threshold na token, kunna ma'aunin daidaitawa, tsayar da name
 **1) Girka kuma gudanar**
 
 ```bash
-npm install -g omniroute
-omniroute
+npm install -g agentproxy
+agentproxy
 ```
 
 > 💡 Kana ganin `npm warn ERESOLVE` ko gargaɗin peer-dep? [Ba su da illa](docs/guides/TROUBLESHOOTING.md#npm-install-warnings-eresolve--peer--deprecated).
@@ -1048,39 +1048,39 @@ Yi amfani da waɗannan kawai ga clients da ba za su iya haɗa `Authorization: Be
 **🐳 Docker**
 
 ```bash
-docker run -d --name omniroute --restart unless-stopped --stop-timeout 40 \
-  -p 127.0.0.1:20128:20128 -v omniroute-data:/app/data diegosouzapw/omniroute:latest
+docker run -d --name agentproxy --restart unless-stopped --stop-timeout 40 \
+  -p 127.0.0.1:20128:20128 -v agentproxy-data:/app/data diegosouzapw/agentproxy:latest
 ```
 
-`:latest` yana bin mafi girman tsayayyen SemVer da aka **wallafa**. Ba ya bin git `main`. Saka takamaiman `:X.Y.Z` don GitOps. Duba [Tashoshin Fitarwar Docker](docs/guides/DOCKER_GUIDE.md#release-channels).An saita hoton zuwa **`OMNIROUTE_MEMORY_MB=1024`**. Wannan ya isa ga dashboard da hira marar nauyi. **Wakilan coding** (`POST /v1/responses` daga Claude Code, Codex, Grok, …) suna buƙatar V8 heap mafi girma sosai, in ba haka ba tsarin zai yi `FATAL ERROR` a kusan 12 GiB yayin da dogayen contexts guda biyu suka zo lokaci guda. Saita girman container sama da heap (native buffers suna wajen V8):
+`:latest` yana bin mafi girman tsayayyen SemVer da aka **wallafa**. Ba ya bin git `main`. Saka takamaiman `:X.Y.Z` don GitOps. Duba [Tashoshin Fitarwar Docker](docs/guides/DOCKER_GUIDE.md#release-channels).An saita hoton zuwa **`AGENTPROXY_MEMORY_MB=1024`**. Wannan ya isa ga dashboard da hira marar nauyi. **Wakilan coding** (`POST /v1/responses` daga Claude Code, Codex, Grok, …) suna buƙatar V8 heap mafi girma sosai, in ba haka ba tsarin zai yi `FATAL ERROR` a kusan 12 GiB yayin da dogayen contexts guda biyu suka zo lokaci guda. Saita girman container sama da heap (native buffers suna wajen V8):
 
-| Nauyin aiki                                | Heap (`-e OMNIROUTE_MEMORY_MB`) | Container (`--memory`) |
+| Nauyin aiki                                | Heap (`-e AGENTPROXY_MEMORY_MB`) | Container (`--memory`) |
 | ------------------------------------------ | ------------------------------- | ---------------------- |
 | Dashboard / hira marar nauyi               | `1024` (tsohon saitin hoton)    | ≥2 g                   |
 | Wakilin coding guda ɗaya                   | `8192`                          | ≥10 g                  |
 | Dogayen `/v1/responses` biyu a lokaci guda | `10240`–`12288`                 | ≥12–16 g               |
 
 ```bash
-docker run -d --name omniroute --restart unless-stopped --stop-timeout 40 \
-  -e OMNIROUTE_MEMORY_MB=8192 --memory=10g \
-  -p 127.0.0.1:20128:20128 -v omniroute-data:/app/data diegosouzapw/omniroute:latest
+docker run -d --name agentproxy --restart unless-stopped --stop-timeout 40 \
+  -e AGENTPROXY_MEMORY_MB=8192 --memory=10g \
+  -p 127.0.0.1:20128:20128 -v agentproxy-data:/app/data diegosouzapw/agentproxy:latest
 ```
 
 Cikakken jadawali: [Jagorar Docker — RAM na lokacin aiki](docs/guides/DOCKER_GUIDE.md#runtime-ram-for-coding-agents).
 
-> **Tashar Docker ta kafin fitarwa:** `diegosouzapw/omniroute:next` da
-> `diegosouzapw/omniroute:next-web` suna bin reshen `release/v*` na yanzu wanda ake amfani da shi ta tsoho.
+> **Tashar Docker ta kafin fitarwa:** `diegosouzapw/agentproxy:next` da
+> `diegosouzapw/agentproxy:next-web` suna bin reshen `release/v*` na yanzu wanda ake amfani da shi ta tsoho.
 > Waɗannan tags masu sauyawa an tanade su ne kawai don gwada gyare-gyaren da ba a fitar ba kuma
 > **ba a goyon bayansu don production**. Duba
 > [Tashoshin Fitarwar Docker](docs/guides/DOCKER_GUIDE.md#release-channels).
 
 **🥟 Bun**
 
-Ana goyon bayan daidaitaccen `bun install` da girkawa ta global (`bun install -g omniroute`) ta hanyar gano Bun runtime:
+Ana goyon bayan daidaitaccen `bun install` da girkawa ta global (`bun install -g agentproxy`) ta hanyar gano Bun runtime:
 
 - **Ginannen `bun:sqlite`**: AgentProxy yana amfani da ginannen driver na Bun mai suna `bun:sqlite` lokacin da yake gudana ƙarƙashin Bun, sannan ya koma amfani da `better-sqlite3` a Node.js ko `sql.js`.
-- **Zaɓin Webpack bundler ta atomatik a dev**: Development (`bun run dev`) yana gano Bun ta atomatik kuma ya kashe Turbopack don amfani da Webpack domin hana rashin jituwa da native V8 bindings. Production builds (`bun run build`) suna bin `OMNIROUTE_USE_TURBOPACK` daidai kamar a Node: Turbopack ta tsoho, `OMNIROUTE_USE_TURBOPACK=0` don yin build da Webpack (`Dockerfile.bun` yana samar da shi a matsayin `--build-arg`).
-- **Dockerfile na musamman don Bun**: `Dockerfile.bun` mai matakai da yawa don native Bun production deployments (`docker build -f Dockerfile.bun -t omniroute:bun .`).
+- **Zaɓin Webpack bundler ta atomatik a dev**: Development (`bun run dev`) yana gano Bun ta atomatik kuma ya kashe Turbopack don amfani da Webpack domin hana rashin jituwa da native V8 bindings. Production builds (`bun run build`) suna bin `AGENTPROXY_USE_TURBOPACK` daidai kamar a Node: Turbopack ta tsoho, `AGENTPROXY_USE_TURBOPACK=0` don yin build da Webpack (`Dockerfile.bun` yana samar da shi a matsayin `--build-arg`).
+- **Dockerfile na musamman don Bun**: `Dockerfile.bun` mai matakai da yawa don native Bun production deployments (`docker build -f Dockerfile.bun -t agentproxy:bun .`).
 
 ```bash
 # Girka kuma gudanar da Bun
@@ -1098,13 +1098,13 @@ PORT=20128 npm run dev
 **📦 pnpm**
 
 ```bash
-pnpm add -g omniroute@latest --allow-build=better-sqlite3 --allow-build=@swc/core && omniroute
+pnpm add -g agentproxy@latest --allow-build=better-sqlite3 --allow-build=@swc/core && agentproxy
 ```
 
 **🐧 Arch Linux (AUR)**
 
 ```bash
-yay -S omniroute-bin && systemctl --user enable --now omniroute.service
+yay -S agentproxy-bin && systemctl --user enable --now agentproxy.service
 ```
 
 **🔧 Nix (Flake)**
@@ -1150,7 +1150,7 @@ platform/Node ɗinka, idan kuma babu sai ya koma kai tsaye zuwa pure-JS engine
 Don tsallake native warm-up na bayan girkawa gaba ɗaya (CI, headless, ko na'urori masu jinkiri):
 
 ```bash
-OMNIROUTE_SKIP_POSTINSTALL=1 npm install -g omniroute   # CI=1 shi ma yana tsallake shi
+AGENTPROXY_SKIP_POSTINSTALL=1 npm install -g agentproxy   # CI=1 shi ma yana tsallake shi
 ```
 
 Don girkawa mafi sauri, fi son **pnpm** (content-addressed store + hard links — duba sama).
@@ -1241,15 +1241,15 @@ Ma'aunai na asali a 2026-08-24: **bidiyoyi na musamman 1.029** · **sanannun kal
 | 💼 **LinkedIn** — bi mai kula da aikin              | [linkedin.com/in/diegosouzapw](https://www.linkedin.com/in/diegosouzapw/)                                             |
 | 🐙 **GitHub** — bi don sabbin fitarwa da shawarwari | [@diegosouzapw](https://github.com/diegosouzapw)                                                                      |
 | 💬 **Discord**                                      | [discord.gg/U47eFqAXCn](https://discord.gg/U47eFqAXCn)                                                                |
-| ✈️ **Telegram**                                     | [t.me/omnirouteOficial](https://t.me/omnirouteOficial)                                                                |
+| ✈️ **Telegram**                                     | [t.me/agentproxyOficial](https://github.com/khanhkit/AgentProxy/discussions)                                                                |
 | 🟢 **WhatsApp — 🌍 Na Duniya**                      | [shiga rukunin](https://chat.whatsapp.com/FvuCbrpZmQ6I85n2vW5QIC?s=cl&p=a&mlu=4)                                      |
 | 🟢 **WhatsApp — 🇧🇷 Birazil**                        | [shiga rukunin](https://chat.whatsapp.com/KWgatljAjmbELQory59Oti?s=cl&p=a&mlu=4)                                      |
-| 🌍 **Shafin yanar gizo**                            | [omniroute.online](https://omniroute.online)                                                                          |
-| 🌍 **🌍Al'ummar StHub AgentProxy (kyauta)**          | [tashar sthub](https://portal.sthub.com.br/communities/groups/st-hub/channels/Omniroute-World-8kRjmK)                 |
+| 🌍 **Shafin yanar gizo**                            | [agentproxy.online](https://agentproxy.online)                                                                          |
+| 🌍 **🌍Al'ummar StHub AgentProxy (kyauta)**          | [tashar sthub](https://github.com/khanhkit/AgentProxy/discussions)                 |
 | 📦 **Lambar tushe**                                 | [github.com/diegosouzapw/AgentProxy](https://github.com/diegosouzapw/AgentProxy)                                        |
 | 🐛 **Bayar da rahoton matsala**                     | [buɗe batu](https://github.com/diegosouzapw/AgentProxy/issues) — haɗa sakamakon `npm run system-info`                  |
 | 🤝 **Ba da gudummawa**                              | [CONTRIBUTING.md](CONTRIBUTING.md) · [Tsarin Rassa da Fitarwa](docs/ops/BRANCHING_MODEL.md) · zaɓi `good first issue` |
-| 💚 **Tallafa wa aikin**                             | [Hanyoyin tallafawa ↑](#-support-omniroute) · [Masu Tallafawa na GitHub](https://github.com/sponsors/diegosouzapw)    |
+| 💚 **Tallafa wa aikin**                             | [Hanyoyin tallafawa ↑](#-support-agentproxy) · [Masu Tallafawa na GitHub](https://github.com/sponsors/diegosouzapw)    |
 
 </div>
 
@@ -1280,7 +1280,7 @@ Ma'aunai na asali a 2026-08-24: **bidiyoyi na musamman 1.029** · **sanannun kal
   <tr><td nowrap><b>Gwaji</b></td><td>Mai gudanar da gwajin Node.js + Vitest — <b>sanarwar gwaji marasa canzawa 39,000+</b> a cikin fayilolin gwaji 5,100+ da ake sa ido a kansu (na ɓangare, haɗawa, E2E, tsaro, muhalli)</td></tr>
   <tr><td nowrap><b>Dandamali</b></td><td>Kwamfutar tebur (Electron) · Android (Termux) · PWA (kowace burauza)</td></tr>
   <tr><td nowrap><b>CI/CD</b></td><td>GitHub Actions — wallafa npm ta atomatik + Docker Hub lokacin fitar da siga</td></tr>
-  <tr><td nowrap><b>Hanyoyin Haɗi</b></td><td><a href="https://omniroute.online">Shafin Yanar Gizo</a> · <a href="https://www.npmjs.com/package/omniroute">npm</a> · <a href="https://hub.docker.com/r/diegosouzapw/omniroute">Docker Hub</a></td></tr>
+  <tr><td nowrap><b>Hanyoyin Haɗi</b></td><td><a href="https://agentproxy.online">Shafin Yanar Gizo</a> · <a href="https://www.npmjs.com/package/agentproxy">npm</a> · <a href="https://hub.docker.com/r/khanhkit/agentproxy">Docker Hub</a></td></tr>
 </table>
 
 <div align="center">
@@ -1598,11 +1598,11 @@ gh release create "v${VERSION}" --title "v${VERSION}" --generate-notes
 
 ## 🌍 StarMapper
 
-<a href="https://starmapper.bruniaux.com/diegosouzapw/omniroute">
+<a href="https://starmapper.bruniaux.com">
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="https://starmapper.bruniaux.com/api/map-image/diegosouzapw/omniroute?theme=dark" />
-    <source media="(prefers-color-scheme: light)" srcset="https://starmapper.bruniaux.com/api/map-image/diegosouzapw/omniroute?theme=light" />
-    <img alt="StarMapper" src="https://starmapper.bruniaux.com/api/map-image/diegosouzapw/omniroute" />
+    <source media="(prefers-color-scheme: dark)" srcset="https://starmapper.bruniaux.com" />
+    <source media="(prefers-color-scheme: light)" srcset="https://starmapper.bruniaux.com" />
+    <img alt="StarMapper" src="https://starmapper.bruniaux.com" />
   </picture>
 </a>
 </div>
@@ -1729,9 +1729,9 @@ Lasisin MIT - duba [LICENSE](LICENSE) don ƙarin bayani.
 
 <div align="center">
 
-**[⬆ Koma sama](#-omniroute)** · An gina shi da ❤️ domin al'ummar AI ta buɗaɗɗen tushe.
+**[⬆ Koma sama](#-agentproxy)** · An gina shi da ❤️ domin al'ummar AI ta buɗaɗɗen tushe.
 
-<sub>AgentProxy v3.8.51 · Node ≥22.22.2 · Lasisin MIT · <a href="https://omniroute.online">omniroute.online</a></sub>
+<sub>AgentProxy v3.8.51 · Node ≥22.22.2 · Lasisin MIT · <a href="https://agentproxy.online">agentproxy.online</a></sub>
 
 </div>
 <!-- An kunna Tattaunawar GitHub don tambayoyi da amsoshi na al'umma -->

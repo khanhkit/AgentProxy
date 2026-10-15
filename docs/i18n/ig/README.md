@@ -37,14 +37,14 @@
 
 <h3>
 
-⭐ Nye repo ahụ Star ma ọ bụrụ na OMNIROUTE nyere gị aka ịchekwa ego ma mee ka ọrụ gị dị mfe.
+⭐ Nye repo ahụ Star ma ọ bụrụ na AGENTPROXY nyere gị aka ịchekwa ego ma mee ka ọrụ gị dị mfe.
 
 </h3>
 
 [![Star](https://img.shields.io/github/stars/diegosouzapw/AgentProxy?style=social)](https://github.com/diegosouzapw/AgentProxy)
 <a href="https://trendshift.io/repositories/23589" target="_blank"><img src="https://trendshift.io/api/badge/repositories/23589" alt="diegosouzapw%2FAgentProxy | Trendshift" style="width: 250px; height: 55px;" width="250" height="55"/></a>
-[![Ọkwa Akụkọ Star](https://api.star-history.com/badge?repo=diegosouzapw/AgentProxy&theme=dark)](https://www.star-history.com/diegosouzapw/omniroute)
-[![olud.ai](https://olud.ai/badge.php?tool=diegosouzapw-omniroute)](https://olud.ai/project/diegosouzapw-omniroute.html)
+[![Ọkwa Akụkọ Star](https://api.star-history.com/badge?repo=diegosouzapw/AgentProxy&theme=dark)](https://www.star-history.com/#khanhkit/AgentProxy&Date)
+[![olud.ai](https://github.com/khanhkit/AgentProxy)](https://github.com/khanhkit/AgentProxy)
 
 ### 💬 Soro obodo anyị
 
@@ -54,12 +54,12 @@
 [![Soro @diegosouzapw na GitHub](https://img.shields.io/github/followers/diegosouzapw?style=for-the-badge&logo=github&logoColor=white&label=Follow%20on%20GitHub&color=181717)](https://github.com/diegosouzapw)
 
 [![Discord](https://img.shields.io/badge/Discord-5865F2?style=for-the-badge&logo=discord&logoColor=white)](https://discord.gg/U47eFqAXCn)
-[![Telegram](https://img.shields.io/badge/Telegram-26A5E4?style=for-the-badge&logo=telegram&logoColor=white)](https://t.me/omnirouteOficial)
+[![Telegram](https://img.shields.io/badge/Telegram-26A5E4?style=for-the-badge&logo=telegram&logoColor=white)](https://github.com/khanhkit/AgentProxy/discussions)
 [![WhatsApp Ụwa Niile](https://img.shields.io/badge/WhatsApp_Global-25D366?style=for-the-badge&logo=whatsapp&logoColor=white)](https://chat.whatsapp.com/FvuCbrpZmQ6I85n2vW5QIC?s=cl&p=a&mlu=4)
 [![WhatsApp Brasil](https://img.shields.io/badge/WhatsApp_Brasil-25D366?style=for-the-badge&logo=whatsapp&logoColor=white)](https://chat.whatsapp.com/KWgatljAjmbELQory59Oti?s=cl&p=a&mlu=4)
-[![Weebụsaịtị](https://img.shields.io/badge/Website-omniroute.online-blue?logo=google-chrome&logoColor=white)](https://omniroute.online)
+[![Weebụsaịtị](https://img.shields.io/badge/Website-agentproxy.online-blue?logo=google-chrome&logoColor=white)](https://agentproxy.online)
 
-**Ajụjụ, ndụmọdụ gbasara ndị na-enye ọrụ, roadmap na nkwado → [Discord](https://discord.gg/U47eFqAXCn) · [Telegram](https://t.me/omnirouteOficial) · WhatsApp [🌍 Ụwa Niile](https://chat.whatsapp.com/FvuCbrpZmQ6I85n2vW5QIC?s=cl&p=a&mlu=4) / [🇧🇷 Brasil](https://chat.whatsapp.com/KWgatljAjmbELQory59Oti?s=cl&p=a&mlu=4) / [Portal](https://portal.sthub.com.br/communities/groups/st-hub/channels/Omniroute-World-8kRjmK)**
+**Ajụjụ, ndụmọdụ gbasara ndị na-enye ọrụ, roadmap na nkwado → [Discord](https://discord.gg/U47eFqAXCn) · [Telegram](https://github.com/khanhkit/AgentProxy/discussions) · WhatsApp [🌍 Ụwa Niile](https://chat.whatsapp.com/FvuCbrpZmQ6I85n2vW5QIC?s=cl&p=a&mlu=4) / [🇧🇷 Brasil](https://chat.whatsapp.com/KWgatljAjmbELQory59Oti?s=cl&p=a&mlu=4) / [Portal](https://github.com/khanhkit/AgentProxy/discussions)**
 
 <br/>
 
@@ -84,12 +84,12 @@
 
 ## 🧩 Dị Ugbu a
 
-[![ụdị npm](https://img.shields.io/npm/v/omniroute?color=cb3837&logo=npm)](https://www.npmjs.com/package/omniroute)
-![Nbudata NPM kwa Ọnwa](https://img.shields.io/npm/dm/omniroute?label=npm/month&color=cb3837&logo=npm)
-[![Docker Hub](https://img.shields.io/docker/v/diegosouzapw/omniroute?label=Docker%20Hub&logo=docker&color=2496ED)](https://hub.docker.com/r/diegosouzapw/omniroute)
+[![ụdị npm](https://img.shields.io/npm/v/agentproxy?color=cb3837&logo=npm)](https://www.npmjs.com/package/agentproxy)
+![Nbudata NPM kwa Ọnwa](https://img.shields.io/npm/dm/agentproxy?label=npm%2Fmonth&color=cb3837&logo=npm)
+[![Docker Hub](https://img.shields.io/docker/v/khanhkit/agentproxy?label=Docker+Hub&logo=docker&color=2496ED)](https://hub.docker.com/r/khanhkit/agentproxy)
 [![Ikikere: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=flat-square)](LICENSE)
-![Nbudata Docker](https://img.shields.io/docker/pulls/diegosouzapw/omniroute?label=docker%20pulls&logo=docker&color=2496ED)
-![Nbudata Electron](https://img.shields.io/github/downloads/diegosouzapw/omniroute/total?style=flat&label=electron%20downloads&logo=electron&color=47848F)
+![Nbudata Docker](https://img.shields.io/docker/pulls/khanhkit/agentproxy?label=docker+pulls&logo=docker&color=2496ED)
+![Nbudata Electron](https://img.shields.io/github/downloads/khanhkit/agentproxy/total?style=flat&label=electron+downloads&logo=electron&color=47848F)
 
 <table>
   <tr>
@@ -101,8 +101,8 @@
   <tr>
     <td align="right"><b>💡 Mụta</b></td>
     <td align="center"><a href="#-the-promise">💥 Nkwa Ahụ</a></td>
-    <td align="center"><a href="#-why-omniroute">🤔 Gịnị Mere AgentProxy</a></td>
-    <td align="center"><a href="#-what-sets-omniroute-apart">🏆 Ihe Na-eme Ka Ọ Pụọ Iche</a></td>
+    <td align="center"><a href="#-why-agentproxy">🤔 Gịnị Mere AgentProxy</a></td>
+    <td align="center"><a href="#-what-sets-agentproxy-apart">🏆 Ihe Na-eme Ka Ọ Pụọ Iche</a></td>
   </tr>
   <tr>
     <td align="right"><b>⚙️ Njirimara</b></td>
@@ -113,18 +113,18 @@
   <tr>
     <td align="right"></td>
     <td align="center"><a href="#%EF%B8%8F-save-1595-tokens--automatically">🗜️ Mkpakọ</a></td>
-    <td align="center"><a href="#%EF%B8%8F-where-omniroute-runs--anywhere">🖥️ Ebe Ọ Na-arụ Ọrụ</a></td>
+    <td align="center"><a href="#%EF%B8%8F-where-agentproxy-runs--anywhere">🖥️ Ebe Ọ Na-arụ Ọrụ</a></td>
     <td align="center"><a href="#-private--local-first">🔒 Nzuzo</a></td>
   </tr>
   <tr>
     <td align="right"><b>👀 Lee ya</b></td>
-    <td align="center"><a href="#-omniroute-in-action">🎬 Ka Ọ Na-arụ Ọrụ</a></td>
+    <td align="center"><a href="#-agentproxy-in-action">🎬 Ka Ọ Na-arụ Ọrụ</a></td>
     <td align="center"><a href="#-whats-new">✨ Ihe Dị Ọhụrụ</a></td>
     <td align="center"><a href="#-compatible-clis--coding-agents">🤖 CLI Ndị Dakọtara</a></td>
   </tr>
   <tr>
     <td align="right"><b>💚 Nkwado</b></td>
-    <td align="center"><a href="#-support-omniroute">💚 Kwado / Nye Onyinye</a></td>
+    <td align="center"><a href="#-support-agentproxy">💚 Kwado / Nye Onyinye</a></td>
     <td align="center"><a href="#-community--help">💬 Ogbe Ndị Ọrụ</a></td>
     <td align="center"><a href="#-sponsors">💖 Ndị Nkwado Ego</a></td>
   </tr>
@@ -213,7 +213,7 @@
 
 </div>
 
-<img src="./docs/diagrams/works-zero-config.svg" width="100%" alt="Ọ na-arụ ọrụ ozugbo ị wụnyere ya — enweghị nhazi. Nzọụkwụ atọ: 1. Wụnye — npm i -g omniroute, sava ga-amalite na localhost:20128. 2. Tụọ ngwa gị aka na http://localhost:20128/v1 — ngwa ọ bụla dakọtara na OpenAI (Claude Code, Cursor, Cline). 3. Ọ ga-aza — kpọọ model auto iji nweta nzaghachi ozugbo, na-enweghị igodo API, ndebanye aha, ma ọ bụ nhazi. E jikọtala onye na-eweta ọrụ na-enweghị igodo, OpenCode Free, n'ime ngwakọta auto, ya mere nrụnye ọhụrụ na-aza ozugbo n'enweghị nhazi ọzọ."/>
+<img src="./docs/diagrams/works-zero-config.svg" width="100%" alt="Ọ na-arụ ọrụ ozugbo ị wụnyere ya — enweghị nhazi. Nzọụkwụ atọ: 1. Wụnye — npm i -g agentproxy, sava ga-amalite na localhost:20128. 2. Tụọ ngwa gị aka na http://localhost:20128/v1 — ngwa ọ bụla dakọtara na OpenAI (Claude Code, Cursor, Cline). 3. Ọ ga-aza — kpọọ model auto iji nweta nzaghachi ozugbo, na-enweghị igodo API, ndebanye aha, ma ọ bụ nhazi. E jikọtala onye na-eweta ọrụ na-enweghị igodo, OpenCode Free, n'ime ngwakọta auto, ya mere nrụnye ọhụrụ na-aza ozugbo n'enweghị nhazi ọzọ."/>
 
 ```bash
 # Nrụnye ọhụrụ, enweghị ozi nzere — `auto` na-arụ ọrụ ugbua:
@@ -262,7 +262,7 @@ curl http://localhost:20128/v1/chat/completions \
 </div>
 
 <p align="center">
-  <a href="https://platform.kimi.ai?track_id=track-8197581fdd7d4139a0f562e4a03c3798&aff=omniroute">
+  <a href="https://platform.kimi.ai?track_id=track-8197581fdd7d4139a0f562e4a03c3798">
     <img src="public/sponsors/kimi-k3-banner.png" width="100%" alt="Kimi K3 — Amamihe Ọhụrụ nke Ọkwa Kachasị Elu · paramita 2.8T · ọnọdụ token nde 1"/>
   </a>
 </p>
@@ -272,7 +272,7 @@ curl http://localhost:20128/v1/chat/completions \
 <table>
   <tr>
     <td align="center" width="150">
-      <a href="https://platform.kimi.ai?track_id=track-8197581fdd7d4139a0f562e4a03c3798&aff=omniroute">
+      <a href="https://platform.kimi.ai?track_id=track-8197581fdd7d4139a0f562e4a03c3798">
         <picture>
           <source media="(prefers-color-scheme: dark)" srcset="public/providers/kimi-logomark-dark.svg">
           <img src="public/providers/kimi-logomark-light.svg" width="64" alt="Kimi (Moonshot AI)"/>
@@ -284,12 +284,12 @@ curl http://localhost:20128/v1/chat/completions \
     <td>
       Ekele dịrị <b>Kimi (Moonshot AI)</b>, Enyi Open Source anyị tọrọ ntọala, maka ịkwado ọrụ a! Kimi bụ ụlọ nyocha AI mepụtara ezinụlọ ụdị K2 na K3 nwere arọ mepere emepe — <b>Kimi K3</b> na-enye windo ọnọdụ nwere token nde 1, ikike ịhụ ihe nke ebumpụta ụwa na ide koodu n'ọkwa kachasị elu n'ọnụahịa dị nnọọ ala karịa nke ụdị mechiri emechi, ọ na-arụkwa ọrụ ozugbo na Claude Code, Codex na ngwa ide koodu ọ bụla AgentProxy na-akwado.
       <br/><br/>
-      <b>Ihe nkwado Kimi na-eme ka o kwe omume:</b> kredit API Kimi na-akwado usoro mwepụta AgentProxy nke AI kwadoro — ọkwa <i>nkwado njikọta nke Kimi K3 na-arụ</i>, nke na-enyocha arịrịọ pull ọ bụla tupu ewepụta ya — yana mmepe atụmatụ kwa ụbọchị. A na-ebunye nkwado Kimi nke ọkwa mbụ n'ụzọ abụọ: <a href="https://platform.kimi.ai?track_id=track-8197581fdd7d4139a0f562e4a03c3798&aff=omniroute">Kimi API</a> kpọmkwem (<code>kimi-k3</code>) na <a href="https://www.kimi.com/code?aff=omniroute">atụmatụ ide koodu Kimi Code</a> (OAuth na igodo API). AgentProxy bụkwa ọrụ open-source mbụ nke Brazil nọ na mmemme nkwado Kimi. <a href="https://platform.kimi.ai?track_id=track-8197581fdd7d4139a0f562e4a03c3798&aff=omniroute"><b>Nweta igodo Kimi API yana kredit mgbakwunye 15% →</b></a>
+      <b>Ihe nkwado Kimi na-eme ka o kwe omume:</b> kredit API Kimi na-akwado usoro mwepụta AgentProxy nke AI kwadoro — ọkwa <i>nkwado njikọta nke Kimi K3 na-arụ</i>, nke na-enyocha arịrịọ pull ọ bụla tupu ewepụta ya — yana mmepe atụmatụ kwa ụbọchị. A na-ebunye nkwado Kimi nke ọkwa mbụ n'ụzọ abụọ: <a href="https://platform.kimi.ai?track_id=track-8197581fdd7d4139a0f562e4a03c3798">Kimi API</a> kpọmkwem (<code>kimi-k3</code>) na <a href="https://www.kimi.com/code">atụmatụ ide koodu Kimi Code</a> (OAuth na igodo API). AgentProxy bụkwa ọrụ open-source mbụ nke Brazil nọ na mmemme nkwado Kimi. <a href="https://platform.kimi.ai?track_id=track-8197581fdd7d4139a0f562e4a03c3798"><b>Nweta igodo Kimi API yana kredit mgbakwunye 15% →</b></a>
     </td>
   </tr>
   <tr>
     <td align="center" width="150">
-      <a href="https://cheaperinference.com/?utm_source=omniroute">
+      <a href="https://cheaperinference.com">
         <img src="./public/providers/cli-generic.svg" width="64" alt="Cheaper Inference"/>
       </a>
       <br/><b>Cheaper Inference</b><br/><sub>cheaperinference.com</sub><br/><br/>
@@ -298,12 +298,12 @@ curl http://localhost:20128/v1/chat/completions \
     <td>
       Ekele dịrị <b>Cheaper Inference</b>, Enyi Open Source nke AgentProxy, maka ịkwado ọrụ a! Cheaper Inference bụ ọnụ ụzọ ahaziri dịka ọnụahịa nke na-eregharị ụdị 42 kachasị elu — Claude, GPT-5.x, Gemini, Kimi K3, GLM, DeepSeek, Grok na MiniMax — site n'otu endpoint dakọtara na OpenAI, na-eziga arịrịọ ọ bụla n'aka onye na-enye ọrụ ruru eru nke dị ọnụ ala karịa, n'ebughị ụgwọ karịrị ọnụahịa ndepụta nke onye mepụtara ụdị ahụ.
       <br/><br/>
-      <b>Nkwado ọkwa mbụ na AgentProxy:</b> Chat Completions, endpoint <code>/v1/responses</code> nke ebumpụta ụwa, ikike ịhụ ihe, ịkpọ ngwa ọrụ na ụdị onyonyo 3 (<code>grok-imagine</code>, <code>nano-banana-pro</code>, <code>nano-banana-2</code>, nke enwere ike iru dịka <code>cheaperinference/&lt;model&gt;</code>). <a href="https://cheaperinference.com/?utm_source=omniroute"><b>Nweta igodo API →</b></a>
+      <b>Nkwado ọkwa mbụ na AgentProxy:</b> Chat Completions, endpoint <code>/v1/responses</code> nke ebumpụta ụwa, ikike ịhụ ihe, ịkpọ ngwa ọrụ na ụdị onyonyo 3 (<code>grok-imagine</code>, <code>nano-banana-pro</code>, <code>nano-banana-2</code>, nke enwere ike iru dịka <code>cheaperinference/&lt;model&gt;</code>). <a href="https://cheaperinference.com"><b>Nweta igodo API →</b></a>
     </td>
   </tr>
 </table>
 
-<sub>Njikọ ndị e ji <code>aff=omniroute</code> kaa akara bụ njikọ ndị mmekọ. Ha na-enye ọrụ a ego n'ebughị gị ụgwọ mgbakwunye.</sub>
+<sub>Njikọ ndị e ji <code>aff=agentproxy</code> kaa akara bụ njikọ ndị mmekọ. Ha na-enye ọrụ a ego n'ebughị gị ụgwọ mgbakwunye.</sub>
 
 <br/>
 
@@ -489,7 +489,7 @@ Atụmatụ **19** niile — gwakọta ma dakọtara ha n'ọkwa ngwakọta ọ 
 
 <img src="./docs/diagrams/comparison-table.svg" width="100%" alt="Ihe na-eme ka AgentProxy pụọ iche — ntụnyere atụmatụ nke e mere n'otu oge megide 9router, OpenRouter, CLIProxyAPI na LiteLLM n'ikike 13. AgentProxy: ndị na-enye ọrụ 356, ọkwa efu karịrị 150 e wuru n'ime ya, atụmatụ nhazi ụzọ 19, mkpakọ token nke injin 12, sava MCP e wuru n'ime ya nke nwere ngwá ọrụ 110, protokolụ onye nnọchi anya A2A, ebe nchekwa na-adịgide adịgide, nchedo, ndị nnọchi anya igwe ojii, nzuzo akara mkpịsị aka TLS, Desktop/Termux/PWA na asụsụ mpaghara UI 42. AgentProxy nwere ikikere MIT, a pụkwara ịkwado ya n'onwe gị. Ikike na ọnụọgụ ndị asọmpi nwere ike ịgbanwe; lee usoro nyocha ejikọtara."/>
 
-<sub>📊 Usoro nyocha zuru ezu &amp; nkọwa atụmatụ n'otu n'otu megide 9router, OpenRouter, CLIProxyAPI &amp; LiteLLM → [`docs/comparison/OMNIROUTE_VS_ALTERNATIVES.md`](docs/comparison/OMNIROUTE_VS_ALTERNATIVES.md)</sub>
+<sub>📊 Usoro nyocha zuru ezu &amp; nkọwa atụmatụ n'otu n'otu megide 9router, OpenRouter, CLIProxyAPI &amp; LiteLLM → [`docs/comparison/AGENTPROXY_VS_ALTERNATIVES.md`](docs/comparison/AGENTPROXY_VS_ALTERNATIVES.md)</sub>
 
 <br/>
 
@@ -516,7 +516,7 @@ Igodo (enweghị usoro): `5d865059-bc44-483a-962d-43ceb80126eb`
 Detuo ma mado Pix:
 
 ```
-00020101021126580014br.gov.bcb.pix01365d865059-bc44-483a-962d-43ceb80126eb5204000053039865802BR5922OMNIROUTE CONTRIBUICAO6006BRASIL62070503***630475DD
+00020101021126580014br.gov.bcb.pix01365d865059-bc44-483a-962d-43ceb80126eb5204000053039865802BR5922AGENTPROXY CONTRIBUICAO6006BRASIL62070503***630475DD
 ```
 
 <br clear="right"/>
@@ -556,7 +556,7 @@ n'oge ọ bụla.
 
 Radar bụ nke a na-ahọrọ iji ma na-eji naanị GET. Klient AgentProxy anaghị ebugo prompt, okporo ụzọ, nhazi
 ndị na-eweta ọrụ, telemetry ojiji, ma ọ bụ ọnọdụ mpaghara nke igbochi ọkwa. Mụtakwuo banyere ntozu na
-katalọgụ dị ugbu a na **[radar.omniroute.online/planos](https://radar.omniroute.online/planos)**.
+katalọgụ dị ugbu a na **[radar.agentproxy.online/planos](https://agentproxy.online)**.
 
 <br/>
 
@@ -574,13 +574,13 @@ katalọgụ dị ugbu a na **[radar.omniroute.online/planos](https://radar.omni
 - **🗜️ Ime ka mkpakọ sie ike** — ihe mgbochi inflation nke na-arụ ọrụ na ndabara, ngwugwu Caveman maka DE / FR / JA + Chinese (wényán), na nzacha RTK maka Gradle & .NET. → [Mkpakọ](docs/compression/COMPRESSION_ENGINES.md)
 - **💸 Ọnụahịa flat-rate ziri ezi** — ndị provider subscription / coding-plan na-egosi **$0** na nyocha ọnụahịa; mmefu ego, oke ojiji & routing ka na-aga n’ihu ịtụ atụmatụ. → [Ntụaka API](docs/reference/API_REFERENCE.md)
 - **⚖️ Routing Quota-Share** — kesaa quota nke akaụntụ nkekọrịta n’ụzọ ziri ezi n’etiti pooled keys, ma na-echekwa ọrụ ka e wee gbazinye slices ndị na-adịghị arụ ọrụ. → [Nduzi Nkwụsi Ike](docs/architecture/RESILIENCE_GUIDE.md)
-- **🤖 Ntọlite CLI/agent site n’otu command** — command `setup-*` 13 edebanyere aha; `omniroute run` na-ebido CLI 7 (Claude Code, Codex, Aider, Goose, OpenCode, Qwen Code, Gemini CLI); `omniroute configure` na-akwado targets 10 site na nhọrọ provider+model mmekọrịta yana ọkacha mmasị maka context ọ bụla. → [Njikọta CLI](docs/guides/CLI-INTEGRATIONS.md)
+- **🤖 Ntọlite CLI/agent site n’otu command** — command `setup-*` 13 edebanyere aha; `agentproxy run` na-ebido CLI 7 (Claude Code, Codex, Aider, Goose, OpenCode, Qwen Code, Gemini CLI); `agentproxy configure` na-akwado targets 10 site na nhọrọ provider+model mmekọrịta yana ọkacha mmasị maka context ọ bụla. → [Njikọta CLI](docs/guides/CLI-INTEGRATIONS.md)
 - **🛰️ Ọnọdụ remote** — jiri scoped tokens (`connect` / `contexts` / `tokens`) jikwaa AgentProxy dị anya + enyemaka OAuth `antigravity` maka nrụnye VPS. → [Ọnọdụ Remote](docs/guides/REMOTE-MODE.md)
 - **🧭 Auto-routing ka mara ihe karịa** — combos `auto/<category>:<tier>`, **Fusion** (panel model + onye ikpe), routing maara ụdị ọrụ, na mgbanwe model / mode / USD-budget maka arịrịọ ọ bụla. → [Auto-Combo](docs/routing/AUTO-COMBO.md)
 - **🗜️ Mkpakọ a pụrụ itinye dịka plugin** — engines 12 a pụrụ ijikọta + Compression Studios: LLMLingua-2, Ultra nke ọkwa abụọ, omniglyph, fidelity gate maka nzọụkwụ ọ bụla, GCF v3.2, na editọ ịdọrọ-wee-hazigharịa. → [Mkpakọ](docs/compression/COMPRESSION_ENGINES.md)
 - **🕵️ MITM decrypt doro anya (TPROXY)** — jide CLI ndị na-eleghara proxy env vars anya, site na CA maka SNI ọ bụla + ihe nrụnye trust-store. → [MITM/TPROXY](docs/security/MITM-TPROXY-DECRYPT.md)
 - **💸 Telemetry ọnụahịa n’ebe niile** — headers ọnụahịa/ojiji `X-AgentProxy-*` na endpoint ọ bụla, header ego echekwara site na cache-HIT, na oke mmefu USD maka key ọ bụla. → [Ntụaka API](docs/reference/API_REFERENCE.md)
-- **🧠 Ebe nchekwa ị na-achịkwa** — agbanyụrụ ya na ndabara, int8 vector quantization a na-ahọrọ ịgbanye + typed decay, yana `x-omniroute-no-memory` maka arịrịọ ọ bụla. → [Ebe Nchekwa](docs/frameworks/MEMORY.md)
+- **🧠 Ebe nchekwa ị na-achịkwa** — agbanyụrụ ya na ndabara, int8 vector quantization a na-ahọrọ ịgbanye + typed decay, yana `x-agentproxy-no-memory` maka arịrịọ ọ bụla. → [Ebe Nchekwa](docs/frameworks/MEMORY.md)
 - **🛡️ Nchekwa** — ihe mgbochi prompt-injection n’ụzọ LLM ọ bụla (red-team suite), guardrail nzuzo credential a na-ahọrọ ịgbanye (na-ekpuchi API keys/ihe nzuzo ndị gbapụtara n’akụkụ abụọ), ọchụchọ web DuckDuckGo n’efu dịka nhọrọ ikpeazụ, yana ọnụ ụzọ nbanye OIDC a na-ahọrọ maka dashboard (nbanye site na password na-adị mgbe niile). → [Guardrails](docs/security/GUARDRAILS.md)
 - **🖼️ Endpoints ọhụrụ** — `/v1/ocr` (Mistral OCR) na `/v1/audio/translations` (ụdị Whisper) na-emejupụta akụkụ media ahụ. → [Ntụaka API](docs/reference/API_REFERENCE.md)
 - **🎨 Mmepụta onyonyo / vidiyo / ọdịyo** — otu API maka media: xAI Grok Imagine & Novita AI video, ComfyUI, Magnific, Adobe Firefly, Segmind, na ndị provider okwu dịka ElevenLabs. → [Ntụaka API](docs/reference/API_REFERENCE.md)
@@ -639,7 +639,7 @@ katalọgụ dị ugbu a na **[radar.omniroute.online/planos](https://radar.omni
 <b>＋ ọ na-arụkwa ọrụ na</b> · Kiro · Command Code · Antigravity · Windsurf · AMP · <b>ngwaọrụ ọ bụla dakọtara na OpenAI</b>
 </div>
 
-<sub>📖 Nhazi nke ngwáọrụ ọ bụla maka ngwáọrụ 36 niile (CLI Code 26 + CLI Agents 10) → [`docs/reference/CLI-TOOLS.md`](docs/reference/CLI-TOOLS.md) · 🧩 Ngwa mgbakwunye OpenCode → [`@omniroute/opencode-provider`](https://www.npmjs.com/package/@omniroute/opencode-provider)</sub>
+<sub>📖 Nhazi nke ngwáọrụ ọ bụla maka ngwáọrụ 36 niile (CLI Code 26 + CLI Agents 10) → [`docs/reference/CLI-TOOLS.md`](docs/reference/CLI-TOOLS.md) · 🧩 Ngwa mgbakwunye OpenCode → [`@agentproxy/opencode-provider`](https://www.npmjs.com/package/@agentproxy/opencode-provider)</sub>
 
 </div>
 
@@ -649,19 +649,19 @@ katalọgụ dị ugbu a na **[radar.omniroute.online/planos](https://radar.omni
 a na-etinye nzere maka usoro ọ bụla, Qwen/Gemini na-enwetakwa ebe obibi nwa oge dịpụrụ adịpụ:
 
 ```bash
-omniroute run claude   --model openai/gpt-5.4          # Claude Code
-omniroute run codex    --model glm/glm-5.2             # OpenAI Codex CLI
-omniroute run aider    --model glm/glm-5.2 -- --message "reply OK"
-omniroute run goose    --model glm/glm-5.2
-omniroute run opencode --model glm/glm-5.2 -- run "reply OK"
-omniroute run qwen     --model glm/glm-5.2 -- -p "reply OK"
-omniroute run gemini   --model glm/glm-5.2 -- --skip-trust -p "reply OK"
+agentproxy run claude   --model openai/gpt-5.4          # Claude Code
+agentproxy run codex    --model glm/glm-5.2             # OpenAI Codex CLI
+agentproxy run aider    --model glm/glm-5.2 -- --message "reply OK"
+agentproxy run goose    --model glm/glm-5.2
+agentproxy run opencode --model glm/glm-5.2 -- run "reply OK"
+agentproxy run qwen     --model glm/glm-5.2 -- -p "reply OK"
+agentproxy run gemini   --model glm/glm-5.2 -- --skip-trust -p "reply OK"
 
 # Ma ọ bụ họrọ provider+model n'ụzọ mmekọrịta wee dee nhazi nke ngwáọrụ ahụ:
-omniroute configure codex          # gụnyekwara: claude opencode qwen aider goose gemini cline continue kilo
+agentproxy configure codex          # gụnyekwara: claude opencode qwen aider goose gemini cline continue kilo
 ```
 
-Iwu ọ bụla na-asọpụrụ ọnọdụ remote na-arụ ọrụ (`omniroute connect <host>`), `--dry-run`
+Iwu ọ bụla na-asọpụrụ ọnọdụ remote na-arụ ọrụ (`agentproxy connect <host>`), `--dry-run`
 na-egosi env/args kpọmkwem tupu emee ya, ebe `--api-key-env NAME` na-eme ka ihe nzuzo ghara ịbanye
 n’akụkọ ihe mere eme shell gị. → [Njikọ CLI](docs/guides/CLI-INTEGRATIONS.md)
 
@@ -746,19 +746,19 @@ n’akụkọ ihe mere eme shell gị. → [Njikọ CLI](docs/guides/CLI-INTEGRA
 
 <table>
   <tr><th align="left">Ikpo okwu</th><th align="left">Nrụnye</th><th align="left">Ihe ndị pụtara ìhè</th></tr>
-  <tr><td align="left" nowrap>📦 <b>npm (zuru ụwa ọnụ)</b></td><td align="left" nowrap><code>npm install -g omniroute</code></td><td align="left">Otu iwu, OS ọ bụla</td></tr>
-  <tr><td align="left" nowrap>🐳 <b>Docker</b></td><td align="left" nowrap><code>docker run … diegosouzapw/omniroute</code></td><td align="left">Ọtụtụ ụkpụrụ nhazi <b>AMD64 + ARM64</b></td></tr>
+  <tr><td align="left" nowrap>📦 <b>npm (zuru ụwa ọnụ)</b></td><td align="left" nowrap><code>npm install -g agentproxy</code></td><td align="left">Otu iwu, OS ọ bụla</td></tr>
+  <tr><td align="left" nowrap>🐳 <b>Docker</b></td><td align="left" nowrap><code>docker run … diegosouzapw/agentproxy</code></td><td align="left">Ọtụtụ ụkpụrụ nhazi <b>AMD64 + ARM64</b></td></tr>
   <tr><td align="left" nowrap>🖥️ <b>Desktọpụ (Electron)</b></td><td align="left" nowrap><code>npm run electron:build</code></td><td align="left">Windo nke sistemụ + tray sistemụ — <b>Windows / macOS / Linux</b></td></tr>
-  <tr><td align="left" nowrap>🎩 <b>Ogwe-menu (AgentProxyTray)</b></td><td align="left" nowrap><code>brew install --cask zoispag/tap/omniroute-tray</code></td><td align="left">Na-elekọta &amp; na-emelite sava na-akpaghị aka — <b>macOS</b></td></tr>
+  <tr><td align="left" nowrap>🎩 <b>Ogwe-menu (AgentProxyTray)</b></td><td align="left" nowrap><code>brew install --cask zoispag/tap/agentproxy-tray</code></td><td align="left">Na-elekọta &amp; na-emelite sava na-akpaghị aka — <b>macOS</b></td></tr>
   <tr><td align="left" nowrap>💪 <b>ARM</b></td><td align="left" nowrap><code>arm64</code> nke sistemụ</td><td align="left">Raspberry Pi, sava ARM, Apple Silicon</td></tr>
-  <tr><td align="left" nowrap>📱 <b>Android (Termux)</b></td><td align="left" nowrap><code>pkg install nodejs && npx -y omniroute</code></td><td align="left">Na-arụ ọrụ <b>na ekwentị gị</b>, 24/7, na-enweghị root</td></tr>
+  <tr><td align="left" nowrap>📱 <b>Android (Termux)</b></td><td align="left" nowrap><code>pkg install nodejs && npx -y agentproxy</code></td><td align="left">Na-arụ ọrụ <b>na ekwentị gị</b>, 24/7, na-enweghị root</td></tr>
   <tr><td align="left" nowrap>📲 <b>PWA</b></td><td align="left" nowrap>"Tinye na Ihuenyo Mbụ"</td><td align="left">Ihuenyo zuru ezu, na-enweghị ịntanetị, enwere ike ịwụnye ya site na ihe nchọgharị</td></tr>
-  <tr><td align="left" nowrap>🧩 <b>Ngwa mgbakwunye OpenCode</b></td><td align="left" nowrap><code>@omniroute/opencode-provider</code></td><td align="left">Njikọ OpenCode nke sistemụ</td></tr>
+  <tr><td align="left" nowrap>🧩 <b>Ngwa mgbakwunye OpenCode</b></td><td align="left" nowrap><code>@agentproxy/opencode-provider</code></td><td align="left">Njikọ OpenCode nke sistemụ</td></tr>
   <tr><td align="left" nowrap>🤖 <b>VS Code Copilot Chat</b></td><td align="left" nowrap>wụnye ndọtị <b>OmniCopilot</b></td><td align="left">Ụdị AgentProxy niile n'ime nhọrọ Copilot Chat nke sistemụ — stable &amp; Insiders</td></tr>
   <tr><td align="left" nowrap>🛠️ <b>Site na koodu mmalite</b></td><td align="left" nowrap><code>npm install && npm run dev</code></td><td align="left">Gbanwee ya, nye aka</td></tr>
 </table>
 
-<sub>📖 [Nduzi Docker](docs/guides/DOCKER_GUIDE.md) · [Desktọpụ](electron/README.md) · [Tray ogwe-menu](https://github.com/zoispag/omniroute-tray) · [Termux](docs/guides/TERMUX_GUIDE.md) · [PWA](docs/guides/PWA_GUIDE.md) · [OpenCode](docs/frameworks/OPENCODE.md)</sub>
+<sub>📖 [Nduzi Docker](docs/guides/DOCKER_GUIDE.md) · [Desktọpụ](electron/README.md) · [Tray ogwe-menu](https://github.com/zoispag/agentproxy-tray) · [Termux](docs/guides/TERMUX_GUIDE.md) · [PWA](docs/guides/PWA_GUIDE.md) · [OpenCode](docs/frameworks/OPENCODE.md)</sub>
 
 <br/>
 
@@ -797,19 +797,19 @@ Site n'ime editọ: mepee nlele **Extensions**, chọọ **"AgentProxy"**, pịa
 
 </div>
 
-> `omniroute serve` na-arụ ọrụ kacha mma mgbe ọ na-adị mgbe niile. **[AgentProxyTray](https://github.com/zoispag/omniroute-tray)**
+> `agentproxy serve` na-arụ ọrụ kacha mma mgbe ọ na-adị mgbe niile. **[AgentProxyTray](https://github.com/zoispag/agentproxy-tray)**
 > na-eme ka nke ahụ bụrụ ngwa ogwe-menu macOS ị ga-ahazi otu ugboro ma chefuo ya: ọ na-amalite sava, na-eme ka ọ nọgide na-arụ ọrụ
 > mgbe e mechara reboot, na-emelite ya n'ebe ahụ, ma na-eme ka mmefu token gị ugbu a dị naanị otu pịa nso — **enweghị
-> windo terminal a hapụrụ ka o ghe oghe, enweghị `npm install -g omniroute` a ga na-elekọta.**
+> windo terminal a hapụrụ ka o ghe oghe, enweghị `npm install -g agentproxy` a ga na-elekọta.**
 
 E ji [Tauri v2](https://v2.tauri.app/) wuo ya (isi Rust pere mpe nke ukwuu), ọ na-abịa
 na runtime Node 24 nke ya e binyere aka ma na-ejikwa nrụnye AgentProxy nke ngwa ahụ nwe, ya mere ọ naghị emegide
-`node`/`bun` zuru ụwa ọnụ gị. Ọ **na-ekekọrịta nhazi na nchekwa data `~/.omniroute/` gị dị ugbu a** — ya mere ọ bụ
+`node`/`bun` zuru ụwa ọnụ gị. Ọ **na-ekekọrịta nhazi na nchekwa data `~/.agentproxy/` gị dị ugbu a** — ya mere ọ bụ
 otu AgentProxy ahụ ị na-agba ugbu a, naanị na o yi okpu. 🎩
 
 <table>
   <tr><th align="left">Ihe ọ na-eme</th><th align="left">Otu o si eme ya</th></tr>
-  <tr><td align="left" nowrap>🟢 <b>Na-elekọta sava</b></td><td align="left">Na-amalite <code>omniroute serve</code>, ma na-anabata instance na-arụ ọrụ ugbu a kama ịmepụta nke ọzọ</td></tr>
+  <tr><td align="left" nowrap>🟢 <b>Na-elekọta sava</b></td><td align="left">Na-amalite <code>agentproxy serve</code>, ma na-anabata instance na-arụ ọrụ ugbu a kama ịmepụta nke ọzọ</td></tr>
   <tr><td align="left" nowrap>📊 <b>Ojiji dị ugbu a n'otu nlele</b></td><td align="left">Ogwe oke ndị na-eweta ọrụ, oke session Claude/izu na ngụda oge nrụgharị, nkọwa mmefu ụbọchị 30</td></tr>
   <tr><td align="left" nowrap>🔄 <b>Na-emelite onwe ya n'ebe ahụ</b></td><td align="left">Nrụnye nke e kwadebere n'usoro, mgbanwe atomic, ịlaghachi azụ ma ọ daa — na-adị mgbe niile na mbipụta kachasị ọhụrụ</td></tr>
   <tr><td align="left" nowrap>🚀 <b>Malite mgbe a banyere</b></td><td align="left">Nhọrọ ịmalite mgbe a banyere; naanị tray, enweghị akara ngosi dock</td></tr>
@@ -817,12 +817,12 @@ otu AgentProxy ahụ ị na-agba ugbu a, naanị na o yi okpu. 🎩
 </table>
 
 ```sh
-brew install --cask zoispag/tap/omniroute-tray
+brew install --cask zoispag/tap/agentproxy-tray
 ```
 
 <sub>Ị chọrọ nbudata? Nweta <code>.dmg</code> kachasị ọhụrụ site na
-<a href="https://github.com/zoispag/omniroute-tray/releases">Mwepụta</a>. Koodu mmalite, nsogbu na akwụkwọ
-ntuziaka owuwu dị na <a href="https://github.com/zoispag/omniroute-tray">zoispag/omniroute-tray</a>.
+<a href="https://github.com/zoispag/agentproxy-tray/releases">Mwepụta</a>. Koodu mmalite, nsogbu na akwụkwọ
+ntuziaka owuwu dị na <a href="https://github.com/zoispag/agentproxy-tray">zoispag/agentproxy-tray</a>.
 <br/>💛 Ọrụ obodo nke <a href="https://github.com/zoispag">@zoispag</a> mepụtara — ọ bụghị mwepụta AgentProxy gọọmentị.</sub>
 
 <br/>
@@ -850,10 +850,10 @@ ntuziaka owuwu dị na <a href="https://github.com/zoispag/omniroute-tray">zoisp
 ### ⌨️ Ezigbo CLI (ọ bụghị naanị `start`)
 
 ```bash
-omniroute               # nye gateway + dashboard ọrụ (port 20128)
-omniroute chat          # onye ahịa nkata TUI mmekọrịta (slash: /model /combo /skill /memory)
-omniroute setup         # ọkachamara na-eduzi nhazi oge mbụ
-omniroute doctor        # chọpụta nsogbu ndị na-eweta ọrụ, port, na native deps
+agentproxy               # nye gateway + dashboard ọrụ (port 20128)
+agentproxy chat          # onye ahịa nkata TUI mmekọrịta (slash: /model /combo /skill /memory)
+agentproxy setup         # ọkachamara na-eduzi nhazi oge mbụ
+agentproxy doctor        # chọpụta nsogbu ndị na-eweta ọrụ, port, na native deps
 ```
 
 ### 🛰️ Ọnọdụ remote — mee CLI ebe a, AgentProxy na VPS
@@ -862,11 +862,11 @@ AgentProxy ọ dị na sava? Jiri **otu CLI ahụ** jikwaa ya site na laptọọ
 site na token nnweta nwere oke; iwu ọ bụla ga-emesịa lekwasị anya na remote ahụ.
 
 ```bash
-omniroute connect 192.168.0.15            # paswọọdụ → token nwere oke, echekwara dị ka context
-omniroute models list                     # ← na-arụ ọrụ megide sava REMOTE
-omniroute configure codex                 # ← na-ahọrọ model remote, na-ede profaịlụ Codex mpaghara
-omniroute tokens create --name ci --scope read   # mepụta token nwere oke pere mpe maka igwe ndị ọzọ
-omniroute contexts use default            # ← laghachi na sava mpaghara
+agentproxy connect 192.168.0.15            # paswọọdụ → token nwere oke, echekwara dị ka context
+agentproxy models list                     # ← na-arụ ọrụ megide sava REMOTE
+agentproxy configure codex                 # ← na-ahọrọ model remote, na-ede profaịlụ Codex mpaghara
+agentproxy tokens create --name ci --scope read   # mepụta token nwere oke pere mpe maka igwe ndị ọzọ
+agentproxy contexts use default            # ← laghachi na sava mpaghara
 ```
 
 Token nwere oke `read` / `write` / `admin`; route ndị na-amalite process na-anọ naanị na loopback.
@@ -874,7 +874,7 @@ Token nwere oke `read` / `write` / `admin`; route ndị na-amalite process na-an
 
 <div align="left">
 
-<img src="./docs/diagrams/cli-terminal.svg" width="50%" alt="Ngosipụta terminal na-emegharị ahụ nke na-egosi AgentProxy CLI — omniroute providers list, omniroute combo list na omniroute health — na-agagharị n'elu iwu 86 dị n'ọkwa kachasị elu: providers · oauth · keys · combo · nodes · models · cache · compression · cost · usage · quota · health · resilience · telemetry · logs · audit · mcp · a2a · cloud · memory · skills · eval · tunnel · backup · sync · webhooks · policy · pricing · translator · simulate …"/>
+<img src="./docs/diagrams/cli-terminal.svg" width="50%" alt="Ngosipụta terminal na-emegharị ahụ nke na-egosi AgentProxy CLI — agentproxy providers list, agentproxy combo list na agentproxy health — na-agagharị n'elu iwu 86 dị n'ọkwa kachasị elu: providers · oauth · keys · combo · nodes · models · cache · compression · cost · usage · quota · health · resilience · telemetry · logs · audit · mcp · a2a · cloud · memory · skills · eval · tunnel · backup · sync · webhooks · policy · pricing · translator · simulate …"/>
 
 </div>
 
@@ -884,18 +884,18 @@ Mee ka AgentProxy pụta site na **MCP**, **A2A**, **REST API**, **webhooks** ma
 
 <table>
   <tr><th align="left">Interface</th><th align="left">Endpoint / iwu</th><th align="left">Ihe a ga-eji ya mee</th></tr>
-  <tr><td align="left" nowrap>🧰 <b>MCP (stdio)</b></td><td align="left" nowrap><code>omniroute --mcp</code></td><td align="left">Jikọọ ya na Claude Desktop, Cursor, ma ọ bụ onye ahịa MCP ọ bụla</td></tr>
+  <tr><td align="left" nowrap>🧰 <b>MCP (stdio)</b></td><td align="left" nowrap><code>agentproxy --mcp</code></td><td align="left">Jikọọ ya na Claude Desktop, Cursor, ma ọ bụ onye ahịa MCP ọ bụla</td></tr>
   <tr><td align="left" nowrap>🌊 <b>MCP (HTTP)</b></td><td align="left" nowrap><code>/api/mcp/stream</code></td><td align="left">MCP remote — <b>ngwaọrụ 110</b>, oke 33 (ịmanye ya bụ nke a na-ahọrọ ịgbanye), ndekọ audit zuru ezu</td></tr>
   <tr><td align="left" nowrap>📡 <b>MCP (SSE)</b></td><td align="left" nowrap><code>/api/mcp/sse</code></td><td align="left">Ụzọ mbufe MCP na-asọba</td></tr>
   <tr><td align="left" nowrap>🤝 <b>A2A</b></td><td align="left" nowrap><code>/.well-known/agent.json</code></td><td align="left">Site na agent gaa na agent, <b>JSON-RPC 2.0</b> + SSE, nka 6</td></tr>
   <tr><td align="left" nowrap>🌐 <b>REST API</b></td><td align="left" nowrap><code>/v1/*</code></td><td align="left">Dakọtara na OpenAI — nkata, embeddings, onyonyo, ọdịyo, OCR</td></tr>
   <tr><td align="left" nowrap>🔔 <b>Webhooks</b></td><td align="left" nowrap><code>/api/webhooks</code></td><td align="left">Zipụ arịrịọ / ihe omume quota na Slack, Discord, Telegram ma ọ bụ URL ọ bụla</td></tr>
-  <tr><td align="left" nowrap>🛰️ <b>CLI Remote</b></td><td align="left" nowrap><code>omniroute connect <host></code></td><td align="left">Jiri token nnweta nwere oke jikwaa instance remote</td></tr>
+  <tr><td align="left" nowrap>🛰️ <b>CLI Remote</b></td><td align="left" nowrap><code>agentproxy connect <host></code></td><td align="left">Jiri token nnweta nwere oke jikwaa instance remote</td></tr>
 </table>
 
 ```bash
 # Nye Claude Code ngwaọrụ AgentProxy niile site na MCP:
-claude mcp add-server omniroute --type http --url http://localhost:20128/api/mcp/stream
+claude mcp add-server agentproxy --type http --url http://localhost:20128/api/mcp/stream
 ```
 
 <sub>📖 [Sava MCP](docs/frameworks/MCP-SERVER.md) · [Sava A2A](docs/frameworks/A2A-SERVER.md) · [Protocol Agent](docs/frameworks/AGENT_PROTOCOLS_GUIDE.md)</sub>
@@ -985,7 +985,7 @@ Engines 12 ndị dị n’elu na-ebelata ihe na-abanye **n’ime**. Layers atọ
   - **Enwere m ADHD (mee ihe mbụ)** — malite na ihe a ga-eme ọzọ, tinye nọmba na nzọụkwụ, nye otu nzọụkwụ doro anya a ga-eme ọzọ, enweghị okwu mmeghe.
   - **CJK nkenke (文言)** — ụdị Chinese oge ochie dị nnọọ nkenke (naanị mgbe locale bụ `zh`).
 - **🎯 Mmefu context na-agbanwe onwe ya** _(dial ahụ)_ — kama otu oke token nwere naanị on/off, ọ na-abawanye ojiji engines ndị kachasị ọnụ ala ma na-efunahụghị ozi naanị ruo ebe dị mkpa iji **banye n’ime context window nke model ahụ**. Iwu: `reserve-output` (ndabara, maara model) · `percentage` · `absolute`. Mode: `floor` (mee ka ịbanye bụrụ ihe e ji n’aka) · `replace-autotrigger` (nhọrọ gị kpọmkwem na-emeri) · `off` (oke ochie).
-- **🎛️ Ebe a na-ekpebi mkpakọ** _(usoro ikike, elu → ala)_ — header `x-omniroute-compression` nke arịrịọ ọ bụla › routing-combo override › profaịlụ aha ya na-arụ ọrụ › adaptive / auto-trigger › ndabara panel › off. Atụmatụ etinyere na-alaghachi na header nzaghachi `X-AgentProxy-Compression: <mode>; source=<source>`.
+- **🎛️ Ebe a na-ekpebi mkpakọ** _(usoro ikike, elu → ala)_ — header `x-agentproxy-compression` nke arịrịọ ọ bụla › routing-combo override › profaịlụ aha ya na-arụ ọrụ › adaptive / auto-trigger › ndabara panel › off. Atụmatụ etinyere na-alaghachi na header nzaghachi `X-AgentProxy-Compression: <mode>; source=<source>`.
 
 Mee ka token threshold kpalite ya n’onwe ya, gbanye adaptive dial, kpọgide profaịlụ nwere aha, hazie otu arịrịọ naanị otu ugboro, ma ọ bụ kenye pipeline nye routing combo ọ bụla — họrọ nke dabara na workload ahụ. **Eval harness** offline nke a na-ahọrọ ịgbanye (`npm run eval:compression`) na-enye akara maka ntụkwasị obi ma e jiri ya tụnyere ego echekwara n’elu corpus a kpọgidere tupu i kwalite mgbanwe.
 
@@ -1002,8 +1002,8 @@ Mee ka token threshold kpalite ya n’onwe ya, gbanye adaptive dial, kpọgide p
 **1) Wụnye ma mee ya**
 
 ```bash
-npm install -g omniroute
-omniroute
+npm install -g agentproxy
+agentproxy
 ```
 
 > 💡 Ị na-ahụ `npm warn ERESOLVE` ma ọ bụ ịdọ aka ná ntị peer-dep? [Ha adịghị emerụ ihe](docs/guides/TROUBLESHOOTING.md#npm-install-warnings-eresolve--peer--deprecated).
@@ -1050,39 +1050,39 @@ Jiri ndị a naanị maka clients na-enweghị ike itinye `Authorization: Bearer
 **🐳 Docker**
 
 ```bash
-docker run -d --name omniroute --restart unless-stopped --stop-timeout 40 \
-  -p 127.0.0.1:20128:20128 -v omniroute-data:/app/data diegosouzapw/omniroute:latest
+docker run -d --name agentproxy --restart unless-stopped --stop-timeout 40 \
+  -p 127.0.0.1:20128:20128 -v agentproxy-data:/app/data diegosouzapw/agentproxy:latest
 ```
 
-`:latest` na-agbaso SemVer kwụsiri ike kachasị elu nke **ebipụtara**. Ọ naghị eso git `main`. Tinye `:X.Y.Z` kpọmkwem maka GitOps. Lee [Ọwa Mwepụta Docker](docs/guides/DOCKER_GUIDE.md#release-channels).Image ahụ na-etinye **`OMNIROUTE_MEMORY_MB=1024`** kpọmkwem. Nke ahụ zuru maka dashboard na mkparịta ụka dị mfe. **Ndị nnọchi anya coding** (`POST /v1/responses` sitere na Claude Code, Codex, Grok, …) chọrọ V8 heap buru ibu karịa nke ahụ, ma ọ bụghị ya process ahụ ga-eme `FATAL ERROR` mgbe ọ ruru ihe dị ka 12 GiB n'okpuru long contexts abụọ na-adakọrịta. Hazie container ka ọ karị heap ahụ (native buffers na-anọ n'èzí V8):
+`:latest` na-agbaso SemVer kwụsiri ike kachasị elu nke **ebipụtara**. Ọ naghị eso git `main`. Tinye `:X.Y.Z` kpọmkwem maka GitOps. Lee [Ọwa Mwepụta Docker](docs/guides/DOCKER_GUIDE.md#release-channels).Image ahụ na-etinye **`AGENTPROXY_MEMORY_MB=1024`** kpọmkwem. Nke ahụ zuru maka dashboard na mkparịta ụka dị mfe. **Ndị nnọchi anya coding** (`POST /v1/responses` sitere na Claude Code, Codex, Grok, …) chọrọ V8 heap buru ibu karịa nke ahụ, ma ọ bụghị ya process ahụ ga-eme `FATAL ERROR` mgbe ọ ruru ihe dị ka 12 GiB n'okpuru long contexts abụọ na-adakọrịta. Hazie container ka ọ karị heap ahụ (native buffers na-anọ n'èzí V8):
 
-| Ọrụ                                    | Heap (`-e OMNIROUTE_MEMORY_MB`) | Container (`--memory`) |
+| Ọrụ                                    | Heap (`-e AGENTPROXY_MEMORY_MB`) | Container (`--memory`) |
 | -------------------------------------- | ------------------------------- | ---------------------- |
 | Dashboard / mkparịta ụka dị mfe        | `1024` (ndabara image)          | ≥2 g                   |
 | Otu onye nnọchi anya coding            | `8192`                          | ≥10 g                  |
 | `/v1/responses` ogologo abụọ n'otu oge | `10240`–`12288`                 | ≥12–16 g               |
 
 ```bash
-docker run -d --name omniroute --restart unless-stopped --stop-timeout 40 \
-  -e OMNIROUTE_MEMORY_MB=8192 --memory=10g \
-  -p 127.0.0.1:20128:20128 -v omniroute-data:/app/data diegosouzapw/omniroute:latest
+docker run -d --name agentproxy --restart unless-stopped --stop-timeout 40 \
+  -e AGENTPROXY_MEMORY_MB=8192 --memory=10g \
+  -p 127.0.0.1:20128:20128 -v agentproxy-data:/app/data diegosouzapw/agentproxy:latest
 ```
 
 Tebụl zuru ezu: [Nduzi Docker — RAM oge ọrụ](docs/guides/DOCKER_GUIDE.md#runtime-ram-for-coding-agents).
 
-> **Ọwa Docker tupu mwepụta:** `diegosouzapw/omniroute:next` na
-> `diegosouzapw/omniroute:next-web` na-agbaso branch `release/v*` nke ndabara ugbu a.
+> **Ọwa Docker tupu mwepụta:** `diegosouzapw/agentproxy:next` na
+> `diegosouzapw/agentproxy:next-web` na-agbaso branch `release/v*` nke ndabara ugbu a.
 > Ebum n'uche tags ndị a na-agbanwe agbanwe bụ naanị maka ịnwale ndozi ndị a na-ewepụtabeghị,
 > a **kwadoghịkwa ha maka production**. Lee
 > [Ọwa Mwepụta Docker](docs/guides/DOCKER_GUIDE.md#release-channels).
 
 **🥟 Bun**
 
-A na-akwado `bun install` nkịtị na nrụnye global (`bun install -g omniroute`) site na nchọpụta Bun runtime:
+A na-akwado `bun install` nkịtị na nrụnye global (`bun install -g agentproxy`) site na nchọpụta Bun runtime:
 
 - **`bun:sqlite` e wuru n'ime ya**: AgentProxy na-eji driver `bun:sqlite` e wuru n'ime Bun mgbe ọ na-arụ ọrụ n'okpuru Bun, ma na-alaghachi na `better-sqlite3` na Node.js ma ọ bụ `sql.js`.
-- **Nhọrọ Webpack bundler akpaka na dev**: Development (`bun run dev`) na-achọpụta Bun na akpaka ma gbanyụọ Turbopack iji Webpack dochie ya ka e gbochie enweghị ndakọrịta nke native V8 bindings. Production builds (`bun run build`) na-agbaso `OMNIROUTE_USE_TURBOPACK` kpọmkwem dịka ọ dị na Node: Turbopack na ndabara, `OMNIROUTE_USE_TURBOPACK=0` iji Webpack wuo ya (`Dockerfile.bun` na-eme ka ọ dị dịka `--build-arg`).
-- **Dockerfile pụrụ iche maka Bun**: `Dockerfile.bun` nwere ọtụtụ stages maka native Bun production deployments (`docker build -f Dockerfile.bun -t omniroute:bun .`).
+- **Nhọrọ Webpack bundler akpaka na dev**: Development (`bun run dev`) na-achọpụta Bun na akpaka ma gbanyụọ Turbopack iji Webpack dochie ya ka e gbochie enweghị ndakọrịta nke native V8 bindings. Production builds (`bun run build`) na-agbaso `AGENTPROXY_USE_TURBOPACK` kpọmkwem dịka ọ dị na Node: Turbopack na ndabara, `AGENTPROXY_USE_TURBOPACK=0` iji Webpack wuo ya (`Dockerfile.bun` na-eme ka ọ dị dịka `--build-arg`).
+- **Dockerfile pụrụ iche maka Bun**: `Dockerfile.bun` nwere ọtụtụ stages maka native Bun production deployments (`docker build -f Dockerfile.bun -t agentproxy:bun .`).
 
 ```bash
 # Jiri Bun wụnye ma mee ya
@@ -1100,13 +1100,13 @@ PORT=20128 npm run dev
 **📦 pnpm**
 
 ```bash
-pnpm add -g omniroute@latest --allow-build=better-sqlite3 --allow-build=@swc/core && omniroute
+pnpm add -g agentproxy@latest --allow-build=better-sqlite3 --allow-build=@swc/core && agentproxy
 ```
 
 **🐧 Arch Linux (AUR)**
 
 ```bash
-yay -S omniroute-bin && systemctl --user enable --now omniroute.service
+yay -S agentproxy-bin && systemctl --user enable --now agentproxy.service
 ```
 
 **🔧 Nix (Flake)**
@@ -1152,7 +1152,7 @@ platform/Node gị dị, ma ọ bụghị ya, ọ na-alaghachi n'ụzọ doro an
 Iji mafere native warm-up mgbe nrụnye gasịrị kpamkpam (CI, headless, ma ọ bụ igwe ndị na-adịghị ọsọ):
 
 ```bash
-OMNIROUTE_SKIP_POSTINSTALL=1 npm install -g omniroute   # CI=1 na-emekwa ka a mafere ya
+AGENTPROXY_SKIP_POSTINSTALL=1 npm install -g agentproxy   # CI=1 na-emekwa ka a mafere ya
 ```
 
 Maka nrụnye kachasị ọsọ, họrọ **pnpm** (content-addressed store + hard links — lee n'elu).
@@ -1243,15 +1243,15 @@ Metrik izizi na 2026-08-24: **vidiyo pụrụ iche 1.029** · **nlele amaara 11.
 | 💼 **LinkedIn** — soro onye na-ahụ maka mmezi | [linkedin.com/in/diegosouzapw](https://www.linkedin.com/in/diegosouzapw/)                                          |
 | 🐙 **GitHub** — soro maka mbipụta na ndụmọdụ  | [@diegosouzapw](https://github.com/diegosouzapw)                                                                   |
 | 💬 **Discord**                                | [discord.gg/U47eFqAXCn](https://discord.gg/U47eFqAXCn)                                                             |
-| ✈️ **Telegram**                               | [t.me/omnirouteOficial](https://t.me/omnirouteOficial)                                                             |
+| ✈️ **Telegram**                               | [t.me/agentproxyOficial](https://github.com/khanhkit/AgentProxy/discussions)                                                             |
 | 🟢 **WhatsApp — 🌍 Ụwa niile**                | [sonye n'òtù ahụ](https://chat.whatsapp.com/FvuCbrpZmQ6I85n2vW5QIC?s=cl&p=a&mlu=4)                                 |
 | 🟢 **WhatsApp — 🇧🇷 Brazil**                   | [banye n'òtù ahụ](https://chat.whatsapp.com/KWgatljAjmbELQory59Oti?s=cl&p=a&mlu=4)                                 |
-| 🌍 **Weebụsaịtị**                             | [omniroute.online](https://omniroute.online)                                                                       |
-| 🌍 **🌍Ogbe StHub AgentProxy (n'efu)**         | [pọtụl StHub](https://portal.sthub.com.br/communities/groups/st-hub/channels/Omniroute-World-8kRjmK)               |
+| 🌍 **Weebụsaịtị**                             | [agentproxy.online](https://agentproxy.online)                                                                       |
+| 🌍 **🌍Ogbe StHub AgentProxy (n'efu)**         | [pọtụl StHub](https://github.com/khanhkit/AgentProxy/discussions)               |
 | 📦 **Koodu mmalite**                          | [github.com/diegosouzapw/AgentProxy](https://github.com/diegosouzapw/AgentProxy)                                     |
 | 🐛 **Kọọ ntụpọ**                              | [mepee nsogbu](https://github.com/diegosouzapw/AgentProxy/issues) — tinye nsonaazụ `npm run system-info`            |
 | 🤝 **Nye aka**                                | [CONTRIBUTING.md](CONTRIBUTING.md) · [Ụdị alaka na mbipụta](docs/ops/BRANCHING_MODEL.md) · họrọ `good first issue` |
-| 💚 **Kwado ọrụ a**                            | [Ụzọ iji kwado ↑](#-support-omniroute) · [Ndị nkwado GitHub](https://github.com/sponsors/diegosouzapw)             |
+| 💚 **Kwado ọrụ a**                            | [Ụzọ iji kwado ↑](#-support-agentproxy) · [Ndị nkwado GitHub](https://github.com/sponsors/diegosouzapw)             |
 
 </div>
 
@@ -1282,7 +1282,7 @@ Metrik izizi na 2026-08-24: **vidiyo pụrụ iche 1.029** · **nlele amaara 11.
   <tr><td nowrap><b>Nnwale</b></td><td>Ngwa nnwale Node.js + Vitest — <b>nkwupụta nnwale static 39,000+</b> n'ime faịlụ nnwale 5,100+ a na-enyocha (unit, integration, E2E, nchekwa, ecosystem)</td></tr>
   <tr><td nowrap><b>Platform</b></td><td>Desktọpụ (Electron) · Android (Termux) · PWA (ihe nchọgharị ọ bụla)</td></tr>
   <tr><td nowrap><b>CI/CD</b></td><td>GitHub Actions — ibipụta na npm na-akpaghị aka + Docker Hub mgbe ewepụtara ụdị ọhụrụ</td></tr>
-  <tr><td nowrap><b>Njikọ</b></td><td><a href="https://omniroute.online">Weebụsaịtị</a> · <a href="https://www.npmjs.com/package/omniroute">npm</a> · <a href="https://hub.docker.com/r/diegosouzapw/omniroute">Docker Hub</a></td></tr>
+  <tr><td nowrap><b>Njikọ</b></td><td><a href="https://agentproxy.online">Weebụsaịtị</a> · <a href="https://www.npmjs.com/package/agentproxy">npm</a> · <a href="https://hub.docker.com/r/khanhkit/agentproxy">Docker Hub</a></td></tr>
 </table>
 
 <div align="center">
@@ -1600,11 +1600,11 @@ gh release create "v${VERSION}" --title "v${VERSION}" --generate-notes
 
 ## 🌍 StarMapper
 
-<a href="https://starmapper.bruniaux.com/diegosouzapw/omniroute">
+<a href="https://starmapper.bruniaux.com">
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="https://starmapper.bruniaux.com/api/map-image/diegosouzapw/omniroute?theme=dark" />
-    <source media="(prefers-color-scheme: light)" srcset="https://starmapper.bruniaux.com/api/map-image/diegosouzapw/omniroute?theme=light" />
-    <img alt="StarMapper" src="https://starmapper.bruniaux.com/api/map-image/diegosouzapw/omniroute" />
+    <source media="(prefers-color-scheme: dark)" srcset="https://starmapper.bruniaux.com" />
+    <source media="(prefers-color-scheme: light)" srcset="https://starmapper.bruniaux.com" />
+    <img alt="StarMapper" src="https://starmapper.bruniaux.com" />
   </picture>
 </a>
 </div>
@@ -1731,9 +1731,9 @@ Ikikere MIT - lee [LICENSE](LICENSE) maka nkọwa ndị ọzọ.
 
 <div align="center">
 
-**[⬆ Laghachi n'elu](#-omniroute)** · E ji ❤️ wuo ya maka obodo AI nke sọftụwia oghe.
+**[⬆ Laghachi n'elu](#-agentproxy)** · E ji ❤️ wuo ya maka obodo AI nke sọftụwia oghe.
 
-<sub>AgentProxy v3.8.51 · Node ≥22.22.2 · Ikikere MIT · <a href="https://omniroute.online">omniroute.online</a></sub>
+<sub>AgentProxy v3.8.51 · Node ≥22.22.2 · Ikikere MIT · <a href="https://agentproxy.online">agentproxy.online</a></sub>
 
 </div>
 <!-- Agbanyere Mkparịta ụka GitHub maka ajụjụ na azịza nke obodo -->

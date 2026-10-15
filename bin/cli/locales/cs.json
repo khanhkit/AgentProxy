@@ -1,8 +1,8 @@
 {
   "common": {
     "error": "Chyba: {message}",
-    "serverOffline": "Server OmniRoute je offline. Spusťte: omniroute serve",
-    "authRequired": "Vyžaduje se ověření. Nastavte OMNIROUTE_API_KEY nebo spusťte: omniroute setup",
+    "serverOffline": "Server AgentProxy je offline. Spusťte: agentproxy serve",
+    "authRequired": "Vyžaduje se ověření. Nastavte AGENTPROXY_API_KEY nebo spusťte: agentproxy setup",
     "rateLimited": "Překročen limit požadavků. Zkuste za {seconds}s.",
     "timeout": "Požadavek vypršel po {ms}ms.",
     "success": "Hotovo.",
@@ -15,22 +15,22 @@
     "yesOpt": "Přeskočit potvrzení"
   },
   "program": {
-    "description": "OmniRoute — Chytrý AI router s automatickým přepínáním",
+    "description": "AgentProxy — Chytrý AI router s automatickým přepínáním",
     "version": "Vypsat verzi a skončit",
     "output": "Formát výstupu (table, json, jsonl, csv)",
     "quiet": "Potlačit nepodstatný výstup",
     "no_color": "Zakázat barevný výstup",
     "timeout": "Časový limit HTTP požadavků v milisekundách",
-    "api_key": "API klíč pro server OmniRoute",
-    "base_url": "Základní URL serveru OmniRoute",
+    "api_key": "API klíč pro server AgentProxy",
+    "base_url": "Základní URL serveru AgentProxy",
     "context": "Kontext/profil serveru pro tento příkaz",
-    "lang": "Nastavit jazyk CLI (přepisuje OMNIROUTE_LANG)"
+    "lang": "Nastavit jazyk CLI (přepisuje AGENTPROXY_LANG)"
   },
   "redis": {
-    "description": "Spustit místní Redis kontejner jedním kliknutím (Podman nebo Docker) pro mezipaměť a sledování kvót OmniRoute"
+    "description": "Spustit místní Redis kontejner jedním kliknutím (Podman nebo Docker) pro mezipaměť a sledování kvót AgentProxy"
   },
   "setup": {
-    "title": "Nastavení OmniRoute",
+    "title": "Nastavení AgentProxy",
     "passwordPrompt": "Heslo správce",
     "providerPrompt": "Výchozí poskytovatel (ponechte prázdné pro přeskočení)",
     "done": "Nastavení dokončeno",
@@ -42,22 +42,22 @@
     "loginEnabled": "Přihlášení: povoleno (heslo aktualizováno)",
     "loginDisabled": "Přihlášení: zakázáno",
     "providerInfo": "Poskytovatel: {info}",
-    "opencode": "Nainstalovat a nakonfigurovat přibalený modul @omniroute/opencode-plugin pro OpenCode"
+    "opencode": "Nainstalovat a nakonfigurovat přibalený modul @agentproxy/opencode-plugin pro OpenCode"
   },
   "doctor": {
-    "title": "Diagnostika OmniRoute",
+    "title": "Diagnostika AgentProxy",
     "dbOk": "Databáze: v pořádku ({path})",
-    "dbMissing": "Databáze: neinicializována — spusťte `omniroute setup`",
+    "dbMissing": "Databáze: neinicializována — spusťte `agentproxy setup`",
     "portOk": "Port {port}: dostupný",
     "portConflict": "Port {port}: používá jej jiný proces",
     "encryptionOk": "Šifrovací klíč: nakonfigurován",
-    "encryptionMissing": "Chybí šifrovací klíč — spusťte `omniroute setup`",
+    "encryptionMissing": "Chybí šifrovací klíč — spusťte `agentproxy setup`",
     "allGood": "Všechny kontroly proběhly úspěšně.",
     "warnings": "Počet varování: {count} — viz výše."
   },
   "providers": {
     "title": "Poskytovatelé",
-    "noProviders": "Nejsou nakonfigurováni žádní poskytovatelé. Spusťte: omniroute setup",
+    "noProviders": "Nejsou nakonfigurováni žádní poskytovatelé. Spusťte: agentproxy setup",
     "testing": "Testování poskytovatele {name}...",
     "available": "Počet dostupných poskytovatelů: {count}",
     "connected": "Připojeno",
@@ -86,7 +86,7 @@
       "dryRunOpt": "Vypsat, co by se změnilo, bez provedení zápisu",
       "confirmPrompt": "Nahradit klíč API pro připojení „{name}“ ({id})? [y/N]",
       "dryRunResult": "[dry-run] Proběhla by rotace klíče pro „{name}“ ({id}). Nebyly provedeny žádné změny.",
-      "oauthHint": "Připojení OAuth — spusťte: omniroute oauth {provider}",
+      "oauthHint": "Připojení OAuth — spusťte: agentproxy oauth {provider}",
       "envVarEmpty": "Proměnná prostředí {var} není nastavena nebo je prázdná.",
       "success": "Klíč pro „{name}“ byl rotován. Pro ověření spusťte `providers test {id}`.",
       "testPassed": "Test po rotaci proběhl úspěšně.",
@@ -97,7 +97,7 @@
       "providerOpt": "Filtrovat podle názvu poskytovatele",
       "header": "ID         Poskytovatel   Název                    Stav platnosti Stav testu  Obnovení možné od",
       "noData": "Nejsou k dispozici žádná data o připojeních poskytovatelů.",
-      "requiresServer": "Příkaz providers status vyžaduje spuštěný server OmniRoute."
+      "requiresServer": "Příkaz providers status vyžaduje spuštěný server AgentProxy."
     }
   },
   "keys": {
@@ -105,8 +105,8 @@
     "addDescription": "Přidat nebo aktualizovat klíč API pro poskytovatele",
     "listDescription": "Vypsat všechny nakonfigurované klíče API",
     "removeDescription": "Odebrat klíč API poskytovatele",
-    "regenerateDescription": "Vygenerovat nový klíč API OmniRoute",
-    "revokeDescription": "Zneplatnit klíč API OmniRoute",
+    "regenerateDescription": "Vygenerovat nový klíč API AgentProxy",
+    "revokeDescription": "Zneplatnit klíč API AgentProxy",
     "revealDescription": "Zobrazit nezamaskovanou hodnotu klíče API",
     "usageDescription": "Zobrazit nedávné využití klíče API",
     "usageLimitOpt": "Počet nedávných požadavků",
@@ -157,7 +157,7 @@
     "warning": "⚠ Tato operace vypíše nebo zapíše DEŠIFROVANÉ klíče API a tokeny OAuth v prostém textu. Zajistěte, aby vaše obrazovka, historie shellu i případný výstupní soubor zůstaly soukromé.",
     "confirmHeading": "⚠ VAROVÁNÍ: tato operace exportuje DEŠIFROVANÉ přihlašovací údaje poskytovatele v prostém textu",
     "confirmBody": "Tento příkaz dešifruje a vypíše nebo zapíše apiKey, accessToken, refreshToken a\nidToken pro vybraná připojení. S výstupem zacházejte jako s tajným údajem.",
-    "confirmFooter": "Pro potvrzení spusťte:\n  omniroute auth export --force",
+    "confirmFooter": "Pro potvrzení spusťte:\n  agentproxy auth export --force",
     "missingKey": "Pro export přihlašovacích údajů je vyžadován STORAGE_ENCRYPTION_KEY.",
     "notFound": "Připojení nebylo nalezeno: {id}",
     "invalidFormat": "Neplatný formát: {format}. Použijte json nebo env."
@@ -235,10 +235,10 @@
     "reasoning": "Úroveň intenzity uvažování (low|medium|high)",
     "thinking": "Rozpočet tokenů pro rozšířené uvažování",
     "explain": "Vypsat strom záložních možností a rozsah nákladů do stderr",
-    "noCombo": "Nebyla nalezena žádná odpovídající kombinace. Nakonfigurujte ji pomocí: omniroute combo create"
+    "noCombo": "Nebyla nalezena žádná odpovídající kombinace. Nakonfigurujte ji pomocí: agentproxy combo create"
   },
   "chat": {
-    "description": "Odeslat jednorázovou chatovou výzvu do OmniRoute",
+    "description": "Odeslat jednorázovou chatovou výzvu do AgentProxy",
     "file": "Načíst výzvu ze souboru",
     "stdin": "Načíst výzvu ze standardního vstupu",
     "system": "Systémová výzva",
@@ -251,14 +251,14 @@
     "combo": "Vynutit konkrétní kombinaci podle názvu",
     "responses_api": "Použít /v1/responses namísto /v1/chat/completions",
     "stream": "Streamovat odpověď postupně",
-    "no_history": "Neukládat do ~/.omniroute/cli-history.jsonl",
+    "no_history": "Neukládat do ~/.agentproxy/cli-history.jsonl",
     "error": {
       "empty_prompt": "Chyba: výzva je povinná (poziční argument, --file nebo --stdin)"
     }
   },
   "serve": {
-    "description": "Spustit server OmniRoute (výchozí akce)",
-    "starting": "Spouští se server OmniRoute na portu {port}...",
+    "description": "Spustit server AgentProxy (výchozí akce)",
+    "starting": "Spouští se server AgentProxy na portu {port}...",
     "ready": "Připraveno na adrese http://localhost:{port}",
     "stopping": "Zastavuje se server (PID {pid})...",
     "stopped": "Server byl zastaven.",
@@ -272,12 +272,12 @@
     "tray": "Spustit v systémové liště (pouze pro počítače, volitelné)",
     "no_tray": "Zakázat ikonu v systémové liště",
     "ready_timeout": "Časový limit kontroly připravenosti v ms (také AGENTPROXY_READY_TIMEOUT_MS, výchozí 60000)",
-    "tls_cert": "Cesta k certifikátu TLS (PEM) pro poskytování HTTPS (také OMNIROUTE_TLS_CERT)",
-    "tls_key": "Cesta k privátnímu klíči TLS (PEM) pro poskytování HTTPS (také OMNIROUTE_TLS_KEY)"
+    "tls_cert": "Cesta k certifikátu TLS (PEM) pro poskytování HTTPS (také AGENTPROXY_TLS_CERT)",
+    "tls_key": "Cesta k privátnímu klíči TLS (PEM) pro poskytování HTTPS (také AGENTPROXY_TLS_KEY)"
   },
   "backup": {
     "title": "Záloha",
-    "description": "Vytvořit zálohu dat OmniRoute",
+    "description": "Vytvořit zálohu dat AgentProxy",
     "creating": "Vytváří se záloha...",
     "done": "Záloha byla uložena do {path}",
     "noFiles": "Nejsou k dispozici žádné soubory k zálohování (databáze nebyla inicializována)",
@@ -289,7 +289,7 @@
     "noBackups": "Nebyly nalezeny žádné zálohy.",
     "notFound": "Záloha nebyla nalezena: {name}",
     "confirmRestore": "Přepsat aktuální data zálohou z {ts}?",
-    "createDescription": "Vytvořit zálohu dat OmniRoute",
+    "createDescription": "Vytvořit zálohu dat AgentProxy",
     "nameOpt": "Vlastní název zálohy",
     "cloudOpt": "Nahrát zálohu do cloudového úložiště",
     "encryptOpt": "Zašifrovat zálohu pomocí AES-256-GCM",
@@ -307,14 +307,14 @@
       "statusDescription": "Zobrazit aktuální stav plánu zálohování",
       "cronOpt": "Cron výraz pro plán (výchozí: denně ve 3:00)",
       "enabled": "Automatické zálohování povoleno (cron: {cron}).",
-      "hint": "Plán načítá omniroute serve při spuštění.",
+      "hint": "Plán načítá agentproxy serve při spuštění.",
       "disabled": "Automatické zálohování zakázáno.",
       "notConfigured": "Není nakonfigurován žádný plán zálohování."
     }
   },
   "health": {
     "description": "Zkontrolovat stav serveru a komponent",
-    "noServer": "Server není spuštěn. Spusťte jej pomocí: omniroute serve",
+    "noServer": "Server není spuštěn. Spusťte jej pomocí: agentproxy serve",
     "title": "Stav systému",
     "status": "Stav: {status}",
     "uptime": "Doba provozu: {uptime}",
@@ -323,18 +323,18 @@
   },
   "quota": {
     "description": "Zobrazit využití kvót poskytovatelů",
-    "noServer": "Server není spuštěn. Spusťte jej pomocí: omniroute serve",
+    "noServer": "Server není spuštěn. Spusťte jej pomocí: agentproxy serve",
     "noData": "Nejsou k dispozici žádné informace o kvótách."
   },
   "cache": {
     "description": "Spravovat mezipaměť odpovědí",
-    "noServer": "Server není spuštěn. Spusťte jej pomocí: omniroute serve",
+    "noServer": "Server není spuštěn. Spusťte jej pomocí: agentproxy serve",
     "cleared": "Mezipaměť byla vymazána.",
     "clearFailed": "Mezipaměť se nepodařilo vymazat."
   },
   "test": {
     "description": "Otestovat připojení k poskytovateli",
-    "noServer": "Server není spuštěn. Spusťte jej pomocí: omniroute serve",
+    "noServer": "Server není spuštěn. Spusťte jej pomocí: agentproxy serve",
     "testing": "Testování {provider} / {model}...",
     "passed": "Připojení bylo úspěšné!",
     "failed": "Připojení se nezdařilo: {error}",
@@ -346,7 +346,7 @@
     "saved": "Výsledky byly uloženy do {path}",
     "compareTitle": "Porovnání modelů",
     "compareMinTwo": "Pro --compare jsou vyžadovány alespoň dva modely (oddělené čárkami)",
-    "noProviders": "Nejsou nakonfigurováni žádní poskytovatelé. Přidejte jednoho pomocí: omniroute keys add"
+    "noProviders": "Nejsou nakonfigurováni žádní poskytovatelé. Přidejte jednoho pomocí: agentproxy keys add"
   },
   "update": {
     "checking": "Kontrola aktualizací...",
@@ -360,7 +360,7 @@
     "running": "Server MCP je spuštěn ({transport})",
     "stopped": "Server MCP byl zastaven.",
     "restarted": "Server MCP byl restartován.",
-    "stoppedHint": "Zapněte jej spuštěním `omniroute mcp enable`.",
+    "stoppedHint": "Zapněte jej spuštěním `agentproxy mcp enable`.",
     "enabled": "Server MCP byl povolen.",
     "disabled": "Server MCP byl zakázán.",
     "enable": {
@@ -428,7 +428,7 @@
     }
   },
   "policy": {
-    "description": "Spravovat zásady autorizace OmniRoute",
+    "description": "Spravovat zásady autorizace AgentProxy",
     "list": {
       "description": "Vypsat zásady",
       "kind": "Filtrovat podle druhu (allow|deny|rate-limit|cost-cap)",
@@ -465,7 +465,7 @@
     }
   },
   "compression": {
-    "description": "Nakonfigurovat a zkontrolovat kompresní pipeline OmniRoute",
+    "description": "Nakonfigurovat a zkontrolovat kompresní pipeline AgentProxy",
     "status": {
       "description": "Zobrazit aktuální stav a nastavení komprese"
     },
@@ -519,18 +519,18 @@
     "confirmRotate": "Změnit adresu URL tunelu {type}? (bude vygenerována nová adresa URL)"
   },
   "stop": {
-    "description": "Zastavit server OmniRoute",
+    "description": "Zastavit server AgentProxy",
     "stopping": "Zastavování serveru (PID {pid})...",
     "stopped": "Server zastaven.",
     "notRunning": "Není spuštěn žádný server.",
     "portFallback": "Soubor PID nebyl nalezen, probíhá pokus o zastavení podle portu..."
   },
   "restart": {
-    "description": "Restartovat server OmniRoute",
-    "restarting": "Restartování serveru OmniRoute..."
+    "description": "Restartovat server AgentProxy",
+    "restarting": "Restartování serveru AgentProxy..."
   },
   "dashboard": {
-    "description": "Otevřít řídicí panel OmniRoute v prohlížeči",
+    "description": "Otevřít řídicí panel AgentProxy v prohlížeči",
     "opening": "Otevírání řídicího panelu na adrese {url}",
     "urlOnly": "Vypsat adresu URL řídicího panelu bez otevření prohlížeče",
     "tui": "Otevřít interaktivní řídicí panel TUI (terminálové rozhraní, 7 karet)"
@@ -538,7 +538,7 @@
   "models": {
     "description": "Vypsat dostupné modely (vyžaduje server)",
     "search": "Filtrovat modely podle ID, názvu, poskytovatele nebo popisu",
-    "noServer": "Server není spuštěn. Spusťte ho pomocí: omniroute serve",
+    "noServer": "Server není spuštěn. Spusťte ho pomocí: agentproxy serve",
     "noModels": "Nebyly nalezeny žádné modely."
   },
   "audit": {
@@ -570,7 +570,7 @@
     }
   },
   "skills": {
-    "description": "Spravovat dovednosti OmniRoute (sandbox, builtin, custom, hybrid, skillssh)",
+    "description": "Spravovat dovednosti AgentProxy (sandbox, builtin, custom, hybrid, skillssh)",
     "list": {
       "description": "Vypsat nainstalované dovednosti",
       "type": "Filtrovat podle typu (sandbox|custom|builtin|hybrid|skillssh)",
@@ -643,7 +643,7 @@
     }
   },
   "memory": {
-    "description": "Spravovat konverzační paměť OmniRoute (FTS5 + vector)",
+    "description": "Spravovat konverzační paměť AgentProxy (FTS5 + vector)",
     "search": {
       "description": "Vyhledávat záznamy v paměti pomocí sémantického dotazu",
       "type": "Filtrovat podle typu paměti (user|feedback|project|reference)",
@@ -801,7 +801,7 @@
     }
   },
   "webhooks": {
-    "description": "Spravovat webhooky OmniRoute",
+    "description": "Spravovat webhooky AgentProxy",
     "events": {
       "description": "Vypsat všechny dostupné typy událostí webhooků"
     },
@@ -1079,7 +1079,7 @@
     }
   },
   "openapi": {
-    "description": "Přístup ke specifikaci OmniRoute OpenAPI a její testování",
+    "description": "Přístup ke specifikaci AgentProxy OpenAPI a její testování",
     "dump": {
       "description": "Vypsat specifikaci OpenAPI na standardní výstup nebo do souboru",
       "format": "Výstupní formát: yaml|json (výchozí: yaml)",
@@ -1149,7 +1149,7 @@
     }
   },
   "open": {
-    "description": "Otevřít konkrétní stránku řídicího panelu OmniRoute v prohlížeči",
+    "description": "Otevřít konkrétní stránku řídicího panelu AgentProxy v prohlížeči",
     "url": "Pouze vypsat URL, neotevírat prohlížeč"
   },
   "telemetry": {
@@ -1166,7 +1166,7 @@
     }
   },
   "sync": {
-    "description": "Synchronizovat konfiguraci mezi instancemi OmniRoute",
+    "description": "Synchronizovat konfiguraci mezi instancemi AgentProxy",
     "push": {
       "description": "Odeslat konfiguraci do cloudu nebo vzdálené instance",
       "target": "Cíl (cloud nebo context:name)",
@@ -1222,10 +1222,10 @@
       "listTitle": "Dostupné jazyky",
       "current": "Jazyk: {code} ({name})",
       "saved": "Jazyk byl nastaven na {code} ({name}).",
-      "noCode": "Je vyžadován kód jazyka. Dostupné kódy zobrazíte spuštěním příkazu 'omniroute config lang list'.",
-      "unknown": "Neznámý kód jazyka: {code}. Dostupné kódy zobrazíte spuštěním příkazu 'omniroute config lang list'.",
+      "noCode": "Je vyžadován kód jazyka. Dostupné kódy zobrazíte spuštěním příkazu 'agentproxy config lang list'.",
+      "unknown": "Neznámý kód jazyka: {code}. Dostupné kódy zobrazíte spuštěním příkazu 'agentproxy config lang list'.",
       "alreadySet": "Jazyk je již nastaven na {code}.",
-      "envHint": "Tip: v prostředí můžete také nastavit OMNIROUTE_LANG={code}."
+      "envHint": "Tip: v prostředí můžete také nastavit AGENTPROXY_LANG={code}."
     }
   },
   "completion": {
@@ -1242,7 +1242,7 @@
     "filter": "Filtrovat podle úrovně (error,warn,info) — oddělené čárkami",
     "lines": "Počet řádků k načtení",
     "timeout": "Časový limit připojení v ms",
-    "baseUrl": "Základní URL API OmniRoute",
+    "baseUrl": "Základní URL API AgentProxy",
     "requestId": "Filtrovat podle ID požadavku",
     "apiKey": "Filtrovat podle klíče API",
     "combo": "Filtrovat podle názvu kombinace",
@@ -1258,10 +1258,10 @@
     "description": "Ovládat ikonu v systémové liště",
     "show": "Zobrazit ikonu v systémové liště (pokud server běží s parametrem --tray)",
     "hide": "Skrýt ikonu v systémové liště",
-    "quit": "Ukončit OmniRoute prostřednictvím systémové lišty"
+    "quit": "Ukončit AgentProxy prostřednictvím systémové lišty"
   },
   "autostart": {
-    "description": "Spravovat automatické spouštění OmniRoute při startu systému (Linux: uživatelská služba systemd)",
+    "description": "Spravovat automatické spouštění AgentProxy při startu systému (Linux: uživatelská služba systemd)",
     "enable": "Povolit automatické spouštění při startu systému",
     "disable": "Zakázat automatické spouštění při startu systému",
     "toggle": "Přepnout automatické spouštění při startu systému",
@@ -1283,7 +1283,7 @@
     "resume": "Pokračovat v uložené relaci podle názvu"
   },
   "plugin": {
-    "description": "Spravovat pluginy CLI (omniroute-cmd-*)",
+    "description": "Spravovat pluginy CLI (agentproxy-cmd-*)",
     "list": "Vypsat nainstalované pluginy",
     "install": "Nainstalovat plugin z npm nebo místní cesty",
     "remove": "Odstranit nainstalovaný plugin",
@@ -1293,19 +1293,19 @@
     "scaffold": "Vygenerovat základní strukturu nového pluginu"
   },
   "launch": {
-    "description": "Spustit Claude Code nasměrovaný na OmniRoute (místní nebo vzdálený, s --profile)",
+    "description": "Spustit Claude Code nasměrovaný na AgentProxy (místní nebo vzdálený, s --profile)",
     "token": "Token, který má klient Claude odesílat (ANTHROPIC_AUTH_TOKEN)",
-    "notRunning": "OmniRoute není dostupný na portu {port}. Spusťte jej pomocí 'omniroute serve'.",
+    "notRunning": "AgentProxy není dostupný na portu {port}. Spusťte jej pomocí 'agentproxy serve'.",
     "notFound": "CLI 'claude' nebylo v PATH nalezeno."
   },
   "run": {
-    "description": "Spustit podporovaný cílový nástroj CLI prostřednictvím OmniRoute"
+    "description": "Spustit podporovaný cílový nástroj CLI prostřednictvím AgentProxy"
   },
   "setupClaude": {
-    "description": "Vygenerovat profily Claude Code v ~/.claude/profiles z katalogu modelů OmniRoute"
+    "description": "Vygenerovat profily Claude Code v ~/.claude/profiles z katalogu modelů AgentProxy"
   },
   "connect": {
-    "description": "Připojit se ke vzdálenému serveru OmniRoute a přejít do vzdáleného režimu"
+    "description": "Připojit se ke vzdálenému serveru AgentProxy a přejít do vzdáleného režimu"
   },
   "tokens": {
     "description": "Spravovat přístupové tokeny CLI s omezeným rozsahem (vzdálený režim)"
@@ -1314,10 +1314,10 @@
     "description": "Vybrat poskytovatele a model z aktivního serveru a nakonfigurovat podporované místní CLI"
   },
   "launchCodex": {
-    "description": "Spustit Codex CLI nasměrované na OmniRoute (místní nebo vzdálené VPS)"
+    "description": "Spustit Codex CLI nasměrované na AgentProxy (místní nebo vzdálené VPS)"
   },
   "setupCodex": {
-    "description": "Vygenerovat soubory profilů v ~/.codex z aktuálního katalogu modelů OmniRoute"
+    "description": "Vygenerovat soubory profilů v ~/.codex z aktuálního katalogu modelů AgentProxy"
   },
   "packs": {
     "description": "Spravovat volitelné balíčky běhového prostředí (ML / automatizace prohlížeče)",
@@ -1330,7 +1330,7 @@
     "errUnknown": "neznámý balíček: {name}",
     "errNoIndex": "index balíčků nebyl nalezen; předejte --source <dir> obsahující data balíčku (desktopové balíčky jej obsahují vedle aplikace)",
     "installed": "balíček „{name}“ byl nainstalován a ověřen v {dir}",
-    "restartHint": "restartujte server OmniRoute (nebo desktopovou aplikaci), aby se balíček načetl za běhu",
+    "restartHint": "restartujte server AgentProxy (nebo desktopovou aplikaci), aby se balíček načetl za běhu",
     "removed": "balíček „{name}“ byl odebrán",
     "notInstalled": "balíček „{name}“ nebyl nainstalován",
     "verifyOk": "všechny nainstalované balíčky byly ověřeny",

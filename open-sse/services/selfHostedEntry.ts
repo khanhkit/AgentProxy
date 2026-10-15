@@ -13,9 +13,9 @@
  *    the file/env at runtime and are never logged or persisted (RIC-737 contract).
  *  - Auto-route = header override -> model-prefix match -> deterministic strategy
  *    (`routingStrategies.ts`, M2/RIC-740). Every decision is explainable via the
- *    `x-omniroute-route-decision` response header — no predictive model.
+ *    `x-agentproxy-route-decision` response header — no predictive model.
  *  - The API-key check is a scaffold reserved for the D5 quota-key system: when
- *    `OMNIROUTE_SELF_HOSTED_API_KEY` is unset the route is open (loopback /
+ *    `AGENTPROXY_SELF_HOSTED_API_KEY` is unset the route is open (loopback /
  *    trusted-network deployment), exactly like the existing self-hosted local
  *    providers.
  */
@@ -36,17 +36,17 @@ import {
 } from "./routingStrategies.ts";
 
 /** Env var holding the inline YAML provider config (runtime-only credentials). */
-export const CONFIG_ENV = "OMNIROUTE_SELF_HOSTED_PROVIDERS";
+export const CONFIG_ENV = "AGENTPROXY_SELF_HOSTED_PROVIDERS";
 /** Env var pointing at a YAML file with the provider config. */
-export const CONFIG_FILE_ENV = "OMNIROUTE_SELF_HOSTED_PROVIDERS_FILE";
+export const CONFIG_FILE_ENV = "AGENTPROXY_SELF_HOSTED_PROVIDERS_FILE";
 /** Optional shared API key for the unified entry (D5 reserved). */
-export const API_KEY_ENV = "OMNIROUTE_SELF_HOSTED_API_KEY";
+export const API_KEY_ENV = "AGENTPROXY_SELF_HOSTED_API_KEY";
 /** Provider-selector header recognized by the unified entry. */
-export const PROVIDER_SELECTOR_HEADER = "x-omniroute-provider";
+export const PROVIDER_SELECTOR_HEADER = "x-agentproxy-provider";
 /** Marker header added to responses routed through the unified entry. */
-export const ROUTED_BY_HEADER = "x-omniroute-routed-by";
+export const ROUTED_BY_HEADER = "x-agentproxy-routed-by";
 /** Explainability header carrying the deterministic route decision one-liner. */
-export const ROUTE_DECISION_HEADER = "x-omniroute-route-decision";
+export const ROUTE_DECISION_HEADER = "x-agentproxy-route-decision";
 const ROUTED_BY_VALUE = "self-hosted-openai-compat";
 
 export interface SelfHostedOptions {
@@ -200,7 +200,7 @@ export function splitProviderModel(value: unknown): { provider?: string; model?:
  * Select the provider to route a request to (single-attempt, no fallback).
  *
  * Precedence (deterministic, documented in the README):
- *  1. `x-omniroute-provider` header (exact provider id) — remote client control.
+ *  1. `x-agentproxy-provider` header (exact provider id) — remote client control.
  *  2. `model` prefix match (`provider/model` or `provider::model`).
  *  3. First configured provider (`ProviderRouter.select()` default).
  *

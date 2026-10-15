@@ -44,7 +44,7 @@ npm run test:e2e           # មិនចាំបាច់ ប៉ុន្ត�
 វាស្ដារលំហូរស្វ័យប្រវត្តិពេញលេញដែលគម្រោងធ្លាប់មានរហូតដល់ v3.8.48 ព្រមទាំងរក្សា
 ការធានា WS1.3 (token ដែលបានលេចធ្លាយមិនអាចចេញផ្សាយដោយឯកឯងបានទេ — ព្រោះគ្មាន token)។
 
-**ការដំឡើងតែម្ដង (ម្ចាស់)៖** npmjs.com → package `omniroute` → Settings → _Trusted
+**ការដំឡើងតែម្ដង (ម្ចាស់)៖** npmjs.com → package `agentproxy` → Settings → _Trusted
 Publisher_ → GitHub: owner `diegosouzapw`, repo `AgentProxy`, workflow `npm-publish.yml`
 (environment: none)។ រហូតដល់ការកំណត់នេះមានរួច ជំហានស្វ័យប្រវត្តិនឹងបរាជ័យជាមួយ `ENEEDAUTH`៖
 បញ្ជូនដំណើរការឡើងវិញដោយប្រើ `publish_mode=staged` (ខាងក្រោម) ឬ `direct`។
@@ -58,7 +58,7 @@ registry ហើយ **មិនអាចដំឡើងបាន** រហូត�
 
 **លំហូរសម្រាប់ម្ចាស់ បន្ទាប់ពី workflow ស្ថិតក្នុងស្ថានភាពល្អ៖**
 
-1. `npm stage list omniroute` — ស្វែងរក stage id (វាក៏ត្រូវបានបង្ហាញក្នុងសេចក្ដីសង្ខេបរបស់ workflow ផងដែរ)។
+1. `npm stage list agentproxy` — ស្វែងរក stage id (វាក៏ត្រូវបានបង្ហាញក្នុងសេចក្ដីសង្ខេបរបស់ workflow ផងដែរ)។
 2. ផ្ទៀងផ្ទាត់ bytes ដែលបានរៀបចំជាដំណាក់កាល (ត្រូវបានណែនាំ)៖ `npm stage download <id>` បន្ទាប់មកដំឡើង
    tarball ដែលបានទាញយកទៅក្នុង temp prefix ហើយ boot វា (`npm run check:pack-boot` ធ្វើស្វ័យប្រវត្តិកម្ម
    លើលទ្ធផល pack→install→boot ដូចគ្នានៅក្នុង CI)។
@@ -70,10 +70,10 @@ registry ហើយ **មិនអាចដំឡើងបាន** រហូត�
 `npm publish` ភ្លាមៗបែបចាស់ឡើងវិញ (ប្រើតែក្នុងករណីដែលការរៀបចំជាដំណាក់កាលខ្លួនឯងដំណើរការមិនប្រក្រតីប៉ុណ្ណោះ; កត់ត្រាមូលហេតុ)។
 
 **ការពង្រឹងសុវត្ថិភាពតែម្ដង (ម្ចាស់, npmjs.com)៖** កំណត់រចនាសម្ព័ន្ធ Trusted Publisher សម្រាប់
-`omniroute` ក្នុងរបៀប stage-only ដើម្បីកុំឱ្យ token រយៈពេលវែងដែលបានលេចធ្លាយអាចធ្វើ `npm publish`
+`agentproxy` ក្នុងរបៀប stage-only ដើម្បីកុំឱ្យ token រយៈពេលវែងដែលបានលេចធ្លាយអាចធ្វើ `npm publish`
 ដោយផ្ទាល់ពីកន្លែងណាមួយបាន — CI អាចតែរៀបចំជាដំណាក់កាលប៉ុណ្ណោះ; មានតែ 2FA របស់ម្ចាស់ប៉ុណ្ណោះដែលអាចចេញផ្សាយបាន។
 
-**ផែនការដោះស្រាយ artifact ដែលខូច (មិនផ្លាស់ប្ដូរ)៖** `npm deprecate omniroute@<bad> "<reason> — use <fixed>"`
+**ផែនការដោះស្រាយ artifact ដែលខូច (មិនផ្លាស់ប្ដូរ)៖** `npm deprecate agentproxy@<bad> "<reason> — use <fixed>"`
 ជាវិធានការឆ្លើយតបលំនាំដើម (ចំណាយពេលប៉ុន្មាននាទី និងអាចត្រឡប់វិញបាន); ប្រើ `npm unpublish` តែក្នុងចន្លោះពេល 72h/no-dependents
 ប៉ុណ្ណោះ ហើយមិនត្រូវប្រើជាជំហានដំបូងឡើយ។ Docker៖ កុំសរសេរជាន់លើ version tag ឱ្យសោះ — rollback គឺជា
 ការចង្អុល `latest` ឡើងវិញទៅ digest ល្អចុងក្រោយ។
@@ -192,7 +192,7 @@ Commit ទាំងអស់ដែលត្រូវបញ្ចូលក្ន�
 - [ ] `npm run i18n:check` បញ្ចប់ដោយលេខកូដ 0 — ស្ថានភាពបកប្រែ (`.i18n-state.json`) ត្រូវបានធ្វើសមកាលកម្មជាមួយឯកសារប្រភព (គ្មានប្រភពដែលមិនស៊ីគ្នាក្នុង strict mode; ការជូនដំណឹងក្នុង warn-mode អាចទទួលយកបានសម្រាប់ការកែសម្រួលឯកសារនៅនាទីចុងក្រោយ ប៉ុន្តែគួរតែជា 0 មុនពេលដាក់ស្លាក)
 - [ ] `npm run i18n:check-ui-coverage` បញ្ចប់ដោយលេខកូដ 0 — UI locale ទាំងអស់មានកម្រិតគ្របដណ្តប់ស្មើ ឬលើសកម្រិតអប្បបរមា 80%
 - [ ] `npm run i18n:sync-ui:dry` រាយការណ៍ថាមាន key ដែលបាត់ចំនួន 0 នៅទូទាំង locale ទាំង 42
-- [ ] ប្រសិនបើឯកសារប្រភពជាភាសាអង់គ្លេសបានផ្លាស់ប្តូរ សូមដំណើរការ `npm run i18n:run` (តម្រូវឱ្យមាន `OMNIROUTE_TRANSLATION_API_KEY` ក្នុង `.env`) មុនពេលដាក់ស្លាក
+- [ ] ប្រសិនបើឯកសារប្រភពជាភាសាអង់គ្លេសបានផ្លាស់ប្តូរ សូមដំណើរការ `npm run i18n:run` (តម្រូវឱ្យមាន `AGENTPROXY_TRANSLATION_API_KEY` ក្នុង `.env`) មុនពេលដាក់ស្លាក
 - [ ] ការរួមចំណែកផ្នែកបកប្រែអាចពន្យារទៅកំណែបន្ទាប់បាន ប្រសិនបើជាការផ្លាស់ប្តូរតូចតាច (កត់ត្រាក្នុង CHANGELOG)
 
 ### ការផ្លាស់ប្តូរមូលដ្ឋានទិន្នន័យ
@@ -201,7 +201,7 @@ Commit ទាំងអស់ដែលត្រូវបញ្ចូលក្ន�
   - [ ] ការផ្លាស់ប្តូរនីមួយៗមានលក្ខណៈ idempotent (`CREATE TABLE IF NOT EXISTS` ជាដើម)
   - [ ] ការផ្លាស់ប្តូរត្រូវបានរុំក្នុង transaction
   - [ ] បានដាក់លេខត្រឹមត្រូវ (គ្មានចន្លោះក្នុងលំដាប់)
-- [ ] សាកល្បងលើការដំឡើងថ្មី៖ លុប `~/.omniroute/omniroute.db` ហើយដំណើរការ `npm run dev`
+- [ ] សាកល្បងលើការដំឡើងថ្មី៖ លុប `~/.agentproxy/agentproxy.db` ហើយដំណើរការ `npm run dev`
 - [ ] សាកល្បងលើការដំឡើងដែលមានស្រាប់៖ បម្រុងទុក DB ដំណើរការ migration ហើយផ្ទៀងផ្ទាត់ schema
 - [ ] ឯកសារ WAL (`-wal`, `-shm`) ត្រូវបានគ្រប់គ្រងយ៉ាងត្រឹមត្រូវ ប្រសិនបើ migration សរសេរតារាងឡើងវិញ
 
@@ -236,7 +236,7 @@ repository ប្រើថត output បីផ្សេងគ្នា — ក�
 | `.build/` | ឯកសារកណ្ដាលនៃ build — output របស់ `next build` (`distDir`) | ទេ (gitignored) |
 | `dist/`   | bundle npm ដែលអាចចែកចាយបាន — រៀបចំដោយ `assembleStandalone` | ទេ (gitignored) |
 
-> **កំណត់ចំណាំសម្រាប់ប្រតិបត្តិករ៖** ថត image របស់ VPS ពីចម្ងាយនៅតែជា `/usr/lib/node_modules/omniroute/app/`។
+> **កំណត់ចំណាំសម្រាប់ប្រតិបត្តិករ៖** ថត image របស់ VPS ពីចម្ងាយនៅតែជា `/usr/lib/node_modules/agentproxy/app/`។
 > មានតែ output របស់ build **ក្នុង repository** ប៉ុណ្ណោះដែលបានផ្លាស់ទី (`app/` → `dist/`)។ ជំនាញ deploy ប្រើ rsync
 > ដើម្បីផ្ទេរមាតិកា `dist/` ទៅថត `app/` ពីចម្ងាយ — មិនតម្រូវឱ្យផ្លាស់ប្តូរ path របស់ VPS ទេ។
 
@@ -356,12 +356,12 @@ npm run build:release
 
 មុនពេលចេញផ្សាយកំណែ v3.8.x ណាមួយ សូមផ្ទៀងផ្ទាត់ធាតុបន្ថែមទាំងនេះ៖
 
-- [ ] `omniroute --tray` ចាប់ផ្ដើមនៅលើ macOS (systray2 ត្រូវបានដំឡើងទៅក្នុង `~/.omniroute/runtime/`)
-- [ ] `omniroute --tray` ចាប់ផ្ដើមនៅលើ Linux (ត្រូវការ DISPLAY; បង្ហាញកំហុសដោយសមរម្យ ប្រសិនបើមិនបានកំណត់)
-- [ ] `omniroute --tray` ចាប់ផ្ដើមនៅលើ Windows (PowerShell NotifyIcon ដោយគ្មាន binaries បន្ថែម)
-- [ ] `omniroute config tray enable` បង្កើត autostart entry; disable លុបវាចេញ
-- [ ] `npm install -g omniroute@<this-version>` ដំណើរការ postinstall ដោយមិនចាកចេញដោយសារកំហុសធ្ងន់ធ្ងរ
-- [ ] ផ្លូវធ្វើបច្ចុប្បន្នភាពរក្សាទុក optional deps៖ `omniroute update --apply` និង auto-updater
+- [ ] `agentproxy --tray` ចាប់ផ្ដើមនៅលើ macOS (systray2 ត្រូវបានដំឡើងទៅក្នុង `~/.agentproxy/runtime/`)
+- [ ] `agentproxy --tray` ចាប់ផ្ដើមនៅលើ Linux (ត្រូវការ DISPLAY; បង្ហាញកំហុសដោយសមរម្យ ប្រសិនបើមិនបានកំណត់)
+- [ ] `agentproxy --tray` ចាប់ផ្ដើមនៅលើ Windows (PowerShell NotifyIcon ដោយគ្មាន binaries បន្ថែម)
+- [ ] `agentproxy config tray enable` បង្កើត autostart entry; disable លុបវាចេញ
+- [ ] `npm install -g agentproxy@<this-version>` ដំណើរការ postinstall ដោយមិនចាកចេញដោយសារកំហុសធ្ងន់ធ្ងរ
+- [ ] ផ្លូវធ្វើបច្ចុប្បន្នភាពរក្សាទុក optional deps៖ `agentproxy update --apply` និង auto-updater
       ដំណើរការ `npm install -g … --include=optional` ដើម្បីឱ្យ `optionalDependencies` (better-sqlite3,
       keytar, tls-client និង llmlingua SLM stack៖ `@atjsh/llmlingua-2@2.0.5`,
       `js-tiktoken`) នៅតែមានបន្ទាប់ពីការធ្វើបច្ចុប្បន្នភាព។ កម្រិត SLM ប្រភេទ ultra `modelPath` ក៏ត្រូវការ
@@ -371,13 +371,13 @@ npm run build:release
       តែមួយ — standalone trace bundles រួមបញ្ចូលតែ transformers ប៉ុណ្ណោះ មិនរួមបញ្ចូល optionals ដែលបាន import
       ជាលក្ខណៈ dynamic ទេ ដូច្នេះបើគ្មានចំណុចនេះ worker នឹងផ្ទុក llmlingua-2 ទល់នឹង transformers របស់ root
       ហើយកម្រិត SLM នឹង fail-open ដោយស្ងៀមស្ងាត់។
-- [ ] `omniroute status` ដំណើរការដោយគ្មាន `.env` (ផ្លូវ CLI token សម្រាប់តែ loopback)
+- [ ] `agentproxy status` ដំណើរការដោយគ្មាន `.env` (ផ្លូវ CLI token សម្រាប់តែ loopback)
 - [ ] `curl http://localhost:20128/api/shutdown` ត្រឡប់ 401 (route ដែលតែងតែត្រូវបានការពារ)
 - [ ] `curl -H "host: evil.com" http://localhost:20128/api/mcp/sse` ត្រឡប់ 401 (loopback guard)
 - [ ] SQLite runtime resolve ទៅ `bundled` នៅពេលដំណើរការលើកដំបូង (bundled binary មានសុពលភាពសម្រាប់ platform)
 - [ ] SQLite runtime fallback ទៅ `runtime` នៅពេល `node_modules/better-sqlite3` ត្រូវបានលុប
 - [ ] Smart MCP filter បង្ហាប់ output ពិតប្រាកដរបស់ `playwright-mcp browser_snapshot` (កាត់បន្ថយ ≥50%)
-- [ ] ឯកសារ `skills/omniroute*/SKILL.md` ទាំង 10 អាច fetch ជាសាធារណៈតាមរយៈ raw GitHub URL
+- [ ] ឯកសារ `skills/agentproxy*/SKILL.md` ទាំង 10 អាច fetch ជាសាធារណៈតាមរយៈ raw GitHub URL
 - [ ] Onboarding wizard បង្ហាញជំហានណែនាំតាមកម្រិត "របៀបដែលវាដំណើរការ" នៅពេលរៀបចំថ្មី
 - [ ] Widget គ្របដណ្ដប់តាមកម្រិតនៅលើ Home dashboard បង្ហាញចំនួនដែលបានកំណត់រចនាសម្ព័ន្ធ/សកម្ម
 

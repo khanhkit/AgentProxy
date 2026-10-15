@@ -7,7 +7,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 
-process.env.DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-13601-farreset-"));
+process.env.DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-13601-farreset-"));
 
 const { runQuotaAutoPingTick, createQuotaAutoPingState } =
   await import("../../src/lib/services/quotaAutoPing.ts");

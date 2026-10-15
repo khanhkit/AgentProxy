@@ -13,7 +13,7 @@ import path from "node:path";
 // context check, and are demoted behind the emergency (899k catalog) member -- even though
 // the real request would have fit the primary with 3x headroom.
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-13870-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-13870-"));
 const ORIGINAL_DATA_DIR = process.env.DATA_DIR;
 process.env.DATA_DIR = TEST_DATA_DIR;
 

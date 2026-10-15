@@ -213,7 +213,7 @@ if (shouldProvisionStorageKey(process.argv)) {
   // GHSA-2pg2-xm9r-8544: installs created before the fix have a world-readable .env and a
   // world-traversable data dir. Repair them on every run that touches encrypted storage
   // (best-effort; group bits are kept). Informational commands never reach this block.
-  tightenDataDirSecrets(process.env.DATA_DIR || join(homedir(), ".omniroute"));
+  tightenDataDirSecrets(process.env.DATA_DIR || join(homedir(), ".agentproxy"));
 
   if (!process.env.STORAGE_ENCRYPTION_KEY) {
     // Persist the key into DATA_DIR when set — that's the directory mounted as a volume in

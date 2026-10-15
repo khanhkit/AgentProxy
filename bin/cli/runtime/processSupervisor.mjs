@@ -21,7 +21,7 @@ import {
 
 const CRASH_LOG_LINES = 50;
 
-// #13538: shared path resolver so `omniroute doctor` (bin/cli/commands/doctor.mjs)
+// #13538: shared path resolver so `agentproxy doctor` (bin/cli/commands/doctor.mjs)
 // can surface the same file persistCrashLog() writes, without duplicating the
 // `<DATA_DIR>/server/...` convention from bin/cli/utils/pid.mjs.
 export function getCrashLogPath() {

@@ -37,11 +37,11 @@ láì dá àwọn module tuntun sílẹ̀.
 Àwọn alias ipa-ọ̀nà (`tsconfig.json`):
 
 - `@/*` → `src/*`
-- `@omniroute/open-sse` → `open-sse/index.ts`
-- `@omniroute/open-sse/*` → `open-sse/*`
+- `@agentproxy/open-sse` → `open-sse/index.ts`
+- `@agentproxy/open-sse/*` → `open-sse/*`
 
 Port HTTP àìyípadà: **`20128`** (API àti dashboard ń lo process kan náà). Àkójọ
-data jẹ́ env var `DATA_DIR`, tí iye àìyípadà rẹ̀ jẹ́ `~/.omniroute/`.
+data jẹ́ env var `DATA_DIR`, tí iye àìyípadà rẹ̀ jẹ́ `~/.agentproxy/`.
 
 ---
 
@@ -50,9 +50,9 @@ data jẹ́ env var `DATA_DIR`, tí iye àìyípadà rẹ̀ jẹ́ `~/.omniroute
 ```
 AgentProxy/
 ├── src/                  Ohun èlò Next.js (App Router, libs, domain, server, shared)
-├── open-sse/             Workspace ẹ̀rọ streaming (@omniroute/open-sse)
+├── open-sse/             Workspace ẹ̀rọ streaming (@agentproxy/open-sse)
 ├── electron/             Ohun ìdìpọ̀ ẹ̀rọ orí tábìlì (Electron 41 main + preload)
-├── bin/                  Àwọn ibi ìbẹ̀rẹ̀ CLI (omniroute, reset-password)
+├── bin/                  Àwọn ibi ìbẹ̀rẹ̀ CLI (agentproxy, reset-password)
 ├── tests/                Unit, integration, e2e, protocols-e2e, translator, security, fixtures
 ├── scripts/              Àwọn script ìrànlọ́wọ́ fún ìkọ́, sync, check, migration, àti runtime
 ├── docs/                 Àkọsílẹ̀ gbogbogbò (àkójọ yìí)
@@ -298,7 +298,7 @@ Nígbà gbogbo, ṣàgbéwọlé data, ìṣiṣẹ́pọ̀, OAuth, skill, memor
 | `runtime/`        | Ìṣàwárí ẹ̀ya àsìkò-ṣiṣe                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
 | `search/`         | `executeWebSearch.ts`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
 | `services/`       | Ètò iṣẹ́ àwọn iṣẹ́ àfikún: `ServiceSupervisor.ts` (alábòójútó ìlànà-ọmọ gbogbogbòò tó ní títì iṣẹ́, búfà òrùka, àti olùṣàyẹ̀wò ìlera), `bootstrap.ts` (ìforúkọsílẹ̀ ní ìpele ìlànà àti ìbẹ̀rẹ̀ aládàáṣiṣẹ́), `registry.ts` (maapu irinṣẹ́ → alábòójútó), `apiKey.ts` (ibi ìpamọ́ kọ́kọ́rọ́ AES-256-GCM), `modelSync.ts` (ìṣiṣẹ́pọ̀ awoṣe lẹ́ẹ̀kọ̀ọ̀kan), `ringBuffer.ts` (búfà àkọsílẹ̀ yíyípo 5 MB), `healthCheck.ts` (ìwádìí ìlera HTTP), `types.ts`, `embedWsProxy.ts` (aṣojú WebSocket), `installers/{ninerouter,cliproxy}.ts`. Wo `docs/frameworks/EMBEDDED-SERVICES.md`                                                                                                                                              |
-| `agentSkills/`    | Katalogi + olùpèsè Agent Skills: `catalog.ts` (getCatalog/getSkillById/filterCatalog/computeCoverage), `generator.ts` (generateAgentSkills → kọ `skills/{id}/SKILL.md`), `openapiParser.ts` (ń yọ àwọn endpoint REST jáde láti inú àlàyé OpenAPI), `cliRegistryParser.ts` (ń yọ àwọn àṣẹ abẹ́lẹ̀ CLI jáde láti inú bin/cli-registry), `schemas.ts` (Zod: AgentSkillSchema, SkillCoverageSchema, ListQuerySchema, GenerateBodySchema), `types.ts` (AgentSkill, SkillCoverage, SkillMarkdown, GeneratorReport). Àwọn ipa-ọ̀nà REST (`/api/agent-skills/*`), àwọn irinṣẹ́ MCP (`omniroute_agent_skills_*`), àti ọgbọ́n A2A `list-capabilities` ló ń lò ó. Wo [AGENT-SKILLS.md](../frameworks/AGENT-SKILLS.md). |
+| `agentSkills/`    | Katalogi + olùpèsè Agent Skills: `catalog.ts` (getCatalog/getSkillById/filterCatalog/computeCoverage), `generator.ts` (generateAgentSkills → kọ `skills/{id}/SKILL.md`), `openapiParser.ts` (ń yọ àwọn endpoint REST jáde láti inú àlàyé OpenAPI), `cliRegistryParser.ts` (ń yọ àwọn àṣẹ abẹ́lẹ̀ CLI jáde láti inú bin/cli-registry), `schemas.ts` (Zod: AgentSkillSchema, SkillCoverageSchema, ListQuerySchema, GenerateBodySchema), `types.ts` (AgentSkill, SkillCoverage, SkillMarkdown, GeneratorReport). Àwọn ipa-ọ̀nà REST (`/api/agent-skills/*`), àwọn irinṣẹ́ MCP (`agentproxy_agent_skills_*`), àti ọgbọ́n A2A `list-capabilities` ló ń lò ó. Wo [AGENT-SKILLS.md](../frameworks/AGENT-SKILLS.md). |
 | `skills/`         | Ètò ọgbọ́n: `registry.ts`, `executor.ts`, `interception.ts`, `injection.ts`, `sandbox.ts`, `custom.ts`, `hybrid.ts`, `builtins.ts`, `a2a.ts`, `providerSettings.ts`, `schemas.ts`, `skillssh.ts`, `types.ts`, pẹ̀lú `builtin/browser.ts`                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
 | `spend/`          | `batchWriter.ts` (búfà ìkọ̀wé lẹ́yìn)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
 | `sync/`           | `bundle.ts`, `tokens.ts` (Ìṣiṣẹ́pọ̀ Àwọsánmà)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
@@ -384,7 +384,7 @@ Nígbà gbogbo, ṣàgbéwọlé data, ìṣiṣẹ́pọ̀, OAuth, skill, memor
 | `degradation.ts`                           | Àwọn ìyípadà sí ipò iṣẹ́ tí ó dínkù            |
 | `providerExpiration.ts`                    | Ìṣàwárí account/key tí àkókò rẹ̀ ti parí       |
 | `quotaCache.ts`                            | Àwọn ìpinnu quota tí a fi pamọ́ sínú cache     |
-| `responses.ts`, `omnirouteResponseMeta.ts` | Àwọn olùrànlọ́wọ́ fún ìrísí response            |
+| `responses.ts`, `agentproxyesponseMeta.ts` | Àwọn olùrànlọ́wọ́ fún ìrísí response            |
 | `configAudit.ts`                           | Àyẹ̀wò àyípadà config                          |
 | `assessment/`                              | Àyẹ̀wò model (gẹ́gẹ́ bí RFC, a ṣe apá kan rẹ̀)    |
 | `types.ts`                                 | Àwọn type ẹ̀ka iṣẹ́ tí a ń pín                  |
@@ -436,7 +436,7 @@ A pín in sí àwọn subdirectory tó dojú kọ iṣẹ́ pàtó:
 
 ## 4. `open-sse/` — Ààyè-iṣẹ́ ẹ̀rọ ìṣànwọ́
 
-Ààyè-iṣẹ́ npm ọ̀tọ̀ tí a tẹ̀jáde gẹ́gẹ́ bí `@omniroute/open-sse`. Ó ń ṣàkóso
+Ààyè-iṣẹ́ npm ọ̀tọ̀ tí a tẹ̀jáde gẹ́gẹ́ bí `@agentproxy/open-sse`. Ó ń ṣàkóso
 ìṣiṣẹ́ àwọn ìbéèrè, àwọn olùṣiṣẹ́, àwọn atúmọ̀, àwọn iṣẹ́, olùyípadà, àti olupin MCP.
 
 ```
@@ -599,7 +599,7 @@ electron/
 
 ```
 bin/
-├── omniroute.mjs           Ojú-ọ̀nà ìwọlé CLI àkọ́kọ́ (Node ESM)
+├── agentproxy.mjs           Ojú-ọ̀nà ìwọlé CLI àkọ́kọ́ (Node ESM)
 ├── reset-password.mjs      Ṣàtúnṣe ọ̀rọ̀ aṣínà ìṣàkóso láti CLI
 ├── mcp-server.mjs          Olùfilọ́lẹ̀ server MCP (stdio)
 ├── nodeRuntimeSupport.mjs  Olùṣọ́ ẹ̀yà Node
@@ -622,8 +622,8 @@ bin/
 
 A ṣe àfihàn binary méjì nínú `package.json` → `bin`:
 
-- `omniroute` → `bin/omniroute.mjs`
-- `omniroute-reset-password` → `bin/reset-password.mjs`
+- `agentproxy` → `bin/agentproxy.mjs`
+- `agentproxy-reset-password` → `bin/reset-password.mjs`
 
 ---
 
@@ -779,7 +779,7 @@ Wo [A2A-SERVER.md § Ṣíṣàfikún Ọgbọ́n Tuntun](../frameworks/A2A-SERV
 
 - **Ọ̀nà-kíkọ code**: indent aláyè méjì, double quotes, ìbú character 100, semicolons,
   `es5` trailing commas — Prettier ń mú wọn ṣiṣẹ́ nípasẹ̀ `lint-staged`.
-- **Àwọn import**: ti òde → ti inú (`@/`, `@omniroute/open-sse`) → relative.
+- **Àwọn import**: ti òde → ti inú (`@/`, `@agentproxy/open-sse`) → relative.
 - **Ìsọrúkọ**: àwọn file `camelCase` tàbí `kebab-case`, àwọn component `PascalCase`,
   àwọn constant `UPPER_SNAKE`.
 - **ESLint**: `no-eval`, `no-implied-eval`, `no-new-func` = `error` níbi gbogbo;

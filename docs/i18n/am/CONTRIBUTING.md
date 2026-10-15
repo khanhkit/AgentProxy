@@ -116,7 +116,7 @@ npm run build
 ዋናዎቹን ፋይሎች ወደነበሩበት ይመልሳል። Dashboard UIን ለሚነኩ ለውጦች ወይም ለሙሉ
 release ማረጋገጫ `npm run build`ን ይጠቀሙ፤ የአስተዋጽኦ አድራጊው profile የrelease build ምትክ አይደለም።
 
-> **የVPS deploy ማስታወሻ፦** የሩቅ image ማውጫ `/usr/lib/node_modules/omniroute/app/`
+> **የVPS deploy ማስታወሻ፦** የሩቅ image ማውጫ `/usr/lib/node_modules/agentproxy/app/`
 > አልተለወጠም። የdeploy skills የ`dist/`ን ይዘቶች ወደዚያ rsync ያደርጋሉ።
 > የተለወጠው በrepo ውስጥ ያለው የbuild ውጤት ዱካ ብቻ ነው (`app/` → `dist/`)።
 
@@ -318,7 +318,7 @@ src/                        # TypeScript (.ts / .tsx)
 │   └── validation/         # የZod v4 ንድፎች
 └── sse/                    # የSSE ፕሮክሲ pipeline
 
-open-sse/                   # @omniroute/open-sse workspace
+open-sse/                   # @agentproxy/open-sse workspace
 ├── executors/              # 89 የexecutor ትግበራ ሞጁሎች
 ├── handlers/               # 11 የጥያቄ handlers (ውይይት፣ ምላሾች፣ embeddings፣ ምስሎች፣ ወዘተ)
 ├── mcp-server/             # MCP ሰርቨር (110 ልዩ መሳሪያዎች፣ 3 transports፣ 33 ወሰኖች)

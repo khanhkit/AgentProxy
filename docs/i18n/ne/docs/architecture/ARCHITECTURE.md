@@ -435,7 +435,7 @@ Jules) लाई एकरूप DB-समर्थित कार्य जी
 - कोटा क्यास: `src/domain/quotaCache.ts`
 - क्षयीकरण स्थिति: `src/domain/degradation.ts`
 - कन्फिगरेसन अडिट: `src/domain/configAudit.ts`
-- AgentProxy प्रतिक्रिया मेटाडेटा बिल्डर: `src/domain/omnirouteResponseMeta.ts`
+- AgentProxy प्रतिक्रिया मेटाडेटा बिल्डर: `src/domain/agentproxyesponseMeta.ts`
 - मूल्याङ्कन उपप्रणाली: `src/domain/assessment/` — आवधिक मूल्याङ्कन कार्यहरू
 
 ### E. प्राधिकरण पाइपलाइन
@@ -515,7 +515,7 @@ FSM ट्रान्जिसनहरू Auto Combo को स्कोरि
 
 - मुख्य पूर्वाधार: `src/lib/db/core.ts` (better-sqlite3, माइग्रेसनहरू, WAL)
 - DB पहुँच: निर्दिष्ट `src/lib/db/*` मोड्युलहरू सिधै आयात गर्नुहोस् (पुरानो `localDb.ts` ब्यारेल हटाइएको थियो)
-- फाइल: `${DATA_DIR}/storage.sqlite` (`$XDG_CONFIG_HOME/omniroute/storage.sqlite` सेट गरिएको अवस्थामा, अन्यथा `~/.omniroute/storage.sqlite`)
+- फाइल: `${DATA_DIR}/storage.sqlite` (`$XDG_CONFIG_HOME/agentproxy/storage.sqlite` सेट गरिएको अवस्थामा, अन्यथा `~/.agentproxy/storage.sqlite`)
 - निकायहरू (तालिकाहरू + KV नेमस्पेसहरू): providerConnections, providerNodes, modelAliases, combos, apiKeys, settings, pricing, **customModels**, **proxyConfig**, **ipFilter**, **thinkingBudget**, **systemPrompt**
 
 प्रयोग स्थायित्व:
@@ -1138,11 +1138,11 @@ flowchart LR
 
 ## ज्ञात आर्किटेक्चरल टिप्पणीहरू
 
-1. `usageDb` र `localDb` ले लिगेसी फाइल माइग्रेसनसहित एउटै आधार डाइरेक्टरी नीति (`DATA_DIR` -> `XDG_CONFIG_HOME/omniroute` -> `~/.omniroute`) साझा गर्छन्।
+1. `usageDb` र `localDb` ले लिगेसी फाइल माइग्रेसनसहित एउटै आधार डाइरेक्टरी नीति (`DATA_DIR` -> `XDG_CONFIG_HOME/agentproxy` -> `~/.agentproxy`) साझा गर्छन्।
 2. अर्थगत भिन्नता हुन नदिन `/api/v1/route.ts` ले `/api/v1/models` (`src/app/api/v1/models/catalog.ts`) द्वारा प्रयोग गरिने उही एकीकृत क्याटलग बिल्डरलाई जिम्मेवारी सुम्पन्छ।
 3. अनुरोध लगर सक्षम हुँदा यसले पूर्ण हेडर/बडी लेख्छ; लग डाइरेक्टरीलाई संवेदनशील मान्नुहोस्।
 4. क्लाउडको व्यवहार सही `NEXT_PUBLIC_BASE_URL` र क्लाउड एन्डपोइन्टको पहुँचयोग्यतामा निर्भर हुन्छ।
-5. `open-sse/` डाइरेक्टरीलाई `@omniroute/open-sse` **npm workspace package** का रूपमा प्रकाशित गरिन्छ। स्रोत कोडले यसलाई `@omniroute/open-sse/...` मार्फत आयात गर्छ (Next.js `transpilePackages` द्वारा रिजल्भ गरिन्छ)। एकरूपताका लागि यस कागजातका फाइल पथहरूले अझै पनि `open-sse/` डाइरेक्टरी नाम प्रयोग गर्छन्।
+5. `open-sse/` डाइरेक्टरीलाई `@agentproxy/open-sse` **npm workspace package** का रूपमा प्रकाशित गरिन्छ। स्रोत कोडले यसलाई `@agentproxy/open-sse/...` मार्फत आयात गर्छ (Next.js `transpilePackages` द्वारा रिजल्भ गरिन्छ)। एकरूपताका लागि यस कागजातका फाइल पथहरूले अझै पनि `open-sse/` डाइरेक्टरी नाम प्रयोग गर्छन्।
 6. ड्यासबोर्डका चार्टहरूले पहुँचयोग्य, अन्तरक्रियात्मक एनालिटिक्स दृश्याङ्कनहरू (मोडेल प्रयोगका बार चार्टहरू, सफलता दरसहितका प्रदायक विभाजन तालिकाहरू) का लागि **Recharts** (SVG-आधारित) प्रयोग गर्छन्।
 7. E2E परीक्षणहरूले **Playwright** (`tests/e2e/`) प्रयोग गर्छन् र `npm run test:e2e` मार्फत चलाइन्छन्। एकाइ परीक्षणहरूले **Node.js test runner** (`tests/unit/`) प्रयोग गर्छन् र `npm run test:unit` मार्फत चलाइन्छन्। `src/` अन्तर्गतको स्रोत कोड **TypeScript** (`.ts`/`.tsx`) मा छ; `open-sse/` workspace भने JavaScript (`.js`) मै रहन्छ।
 8. सेटिङ पृष्ठलाई 7 वटा ट्याबमा व्यवस्थित गरिएको छ: सामान्य, रूपरङ, AI, सुरक्षा, राउटिङ, लचिलोपन, उन्नत। लचिलोपन पृष्ठले अनुरोध पङ्क्ति, जडान कुलडाउन, प्रदायक ब्रेकर र कुलडाउनका लागि प्रतीक्षा गर्ने व्यवहार मात्र कन्फिगर गर्छ; लाइभ ब्रेकर रनटाइम अवस्था स्वास्थ्य पृष्ठमा देखाइन्छ।
@@ -1153,7 +1153,7 @@ flowchart LR
 ## सञ्चालन प्रमाणीकरण जाँचसूची
 
 - स्रोतबाट बिल्ड गर्नुहोस्: `npm run build`
-- Docker इमेज बिल्ड गर्नुहोस्: `docker build -t omniroute .`
+- Docker इमेज बिल्ड गर्नुहोस्: `docker build -t agentproxy .`
 - सेवा सुरु गर्नुहोस् र प्रमाणीकरण गर्नुहोस्:
 - `GET /api/settings`
 - `GET /api/v1/models`

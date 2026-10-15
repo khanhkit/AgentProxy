@@ -17,7 +17,7 @@ export type AppliedProxySink = {
    */
   reselectPoolMember?: () => Promise<unknown>;
 };
-const APPLIED_PROXY_CONTEXT_KEY = Symbol.for("omniroute.proxyFetch.applied-context");
+const APPLIED_PROXY_CONTEXT_KEY = Symbol.for("agentproxy.proxyFetch.applied-context");
 type AppliedProxyStore = typeof globalThis & {
   [APPLIED_PROXY_CONTEXT_KEY]?: AsyncLocalStorage<AppliedProxySink>;
 };

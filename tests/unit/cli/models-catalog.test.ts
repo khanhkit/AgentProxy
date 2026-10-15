@@ -17,13 +17,13 @@ async function withCatalog(
   await new Promise<void>((resolve) => server.listen(0, "127.0.0.1", resolve));
   const address = server.address();
   assert.ok(address && typeof address !== "string");
-  const previousUrl = process.env.OMNIROUTE_BASE_URL;
-  process.env.OMNIROUTE_BASE_URL = `http://127.0.0.1:${address.port}`;
+  const previousUrl = process.env.AGENTPROXY_BASE_URL;
+  process.env.AGENTPROXY_BASE_URL = `http://127.0.0.1:${address.port}`;
   try {
     await run(`http://127.0.0.1:${address.port}`, requests);
   } finally {
-    if (previousUrl === undefined) delete process.env.OMNIROUTE_BASE_URL;
-    else process.env.OMNIROUTE_BASE_URL = previousUrl;
+    if (previousUrl === undefined) delete process.env.AGENTPROXY_BASE_URL;
+    else process.env.AGENTPROXY_BASE_URL = previousUrl;
     server.closeAllConnections();
     await new Promise<void>((resolve) => server.close(() => resolve()));
   }
@@ -44,9 +44,9 @@ async function capture(opts: Record<string, unknown>, argv?: string[]) {
     {
       env: {
         ...process.env,
-        OMNIROUTE_CLI_TOKEN: "fixture",
-        OMNIROUTE_API_KEY: "ambient-not-used",
-        OMNIROUTE_BASE_URL: "http://127.0.0.1:1",
+        AGENTPROXY_CLI_TOKEN: "fixture",
+        AGENTPROXY_API_KEY: "ambient-not-used",
+        AGENTPROXY_BASE_URL: "http://127.0.0.1:1",
       },
     }
   );

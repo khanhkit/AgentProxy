@@ -6,21 +6,21 @@
 
 > Marshrutlash, kesh, siqish, xotira, ko‘nikmalar, proksi, pul, Radar va kontekst manbasi operatsiyalarini qamrab oluvchi 110 ta vositaga ega Model Context Protocol serveri.
 >
-> Ishonchli manba: `open-sse/mcp-server/server.ts` faylidagi `countUniqueMcpTools()` funksiyasi **110 ta noyob vosita**ni hisoblaydi: 45 ta kanonik ta’rif (jumladan, oltita CCR hayotiy sikl vositasi, agent ko‘nikmalarining uchligi, `omniroute_radar_catalog` va `omniroute_x_search`), shuningdek, xotira (3), ko‘nikmalar (4), GitHub ko‘nikmalari (3), pul (6), geymifikatsiya (8), plaginlar (8), Notion (6), Obsidian (22), mahalliy korpus (3) va faqat RTK uchun mo‘ljallangan ikkita siqish vositasi.
+> Ishonchli manba: `open-sse/mcp-server/server.ts` faylidagi `countUniqueMcpTools()` funksiyasi **110 ta noyob vosita**ni hisoblaydi: 45 ta kanonik ta’rif (jumladan, oltita CCR hayotiy sikl vositasi, agent ko‘nikmalarining uchligi, `agentproxy_radar_catalog` va `agentproxy_x_search`), shuningdek, xotira (3), ko‘nikmalar (4), GitHub ko‘nikmalari (3), pul (6), geymifikatsiya (8), plaginlar (8), Notion (6), Obsidian (22), mahalliy korpus (3) va faqat RTK uchun mo‘ljallangan ikkita siqish vositasi.
 
 ## Oʻrnatish
 
 AgentProxy MCP ichiga o‘rnatilgan. Uni quyidagicha ishga tushiring:
 
 ```bash
-omniroute --mcp
+agentproxy --mcp
 ```
 
 Yoki open-sse transporti orqali:
 
 ```bash
 # Oqimli HTTP transporti (port 20130)
-omniroute --dev  # MCP /mcp endpointida avtomatik ishga tushadi
+agentproxy --dev  # MCP /mcp endpointida avtomatik ishga tushadi
 ```
 
 Dashboard serveri tomonidan jarayon ichida xizmat ko‘rsatiladigan HTTP transportlari (`sse` / `streamable-http`) sukut bo‘yicha
@@ -28,10 +28,10 @@ o‘chirilgan va avval ularni faqat `/dashboard/mcp` sahifasidan almashtirish mu
 boshlab CLI ham xuddi shu imkoniyatlarga ega:
 
 ```bash
-omniroute mcp status                                  # yoqilgan/onlayn holati, transport, vositalar soni
-omniroute mcp enable [--transport stdio|sse|streamable-http]
-omniroute mcp disable
-omniroute mcp restart                                 # faol sse/streamable-http seanslarini qayta tiklaydi
+agentproxy mcp status                                  # yoqilgan/onlayn holati, transport, vositalar soni
+agentproxy mcp enable [--transport stdio|sse|streamable-http]
+agentproxy mcp disable
+agentproxy mcp restart                                 # faol sse/streamable-http seanslarini qayta tiklaydi
 ```
 
 `mcp enable`/`mcp disable` buyruqlari dashboard `/api/settings` orqali almashtiradigan ayni `mcpEnabled`
@@ -83,61 +83,61 @@ Claude Desktop, Cursor, Cline va mos MCP mijozlarini sozlash uchun [MCP mijozini
 
 | Vosita                          | Ruxsat doiralari      | Tavsif                                                                                                                                                       |
 | :------------------------------ | :-------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `omniroute_get_health`          | `read:health`         | Ishlash vaqti, xotira, avtomatik uzgichlar, tezlik cheklovlari, kesh statistikasi                                                                            |
-| `omniroute_list_combos`         | `read:combos`         | Strategiyalari bilan barcha sozlangan kombinatsiyalar (metrikalar ixtiyoriy)                                                                                 |
-| `omniroute_get_combo_metrics`   | `read:combos`         | Muayyan kombinatsiya uchun unumdorlik metrikalari                                                                                                            |
-| `omniroute_switch_combo`        | `write:combos`        | Kombinatsiyani faollashtirish yoki faolsizlantirish                                                                                                          |
-| `omniroute_create_combo`        | `write:combos`        | Mavjud kombinatsiyalar API’si orqali tekshirilgan kombinatsiya yaratish                                                                                      |
-| `omniroute_check_quota`         | `read:quota`          | Ishlatilgan/jami kvota, qolgan foiz, tiklanish vaqti, token holati                                                                                           |
-| `omniroute_route_request`       | `execute:completions` | AgentProxy marshrutlashi orqali chat yakunlash so‘rovini yuborish                                                                                             |
-| `omniroute_cost_report`         | `read:usage`          | Davr bo‘yicha xarajat hisoboti (seans/kun/hafta/oy)                                                                                                          |
-| `omniroute_list_models_catalog` | `read:models`         | Imkoniyatlari, holati va narxlari bilan to‘liq modellar katalogi                                                                                             |
-| `omniroute_radar_catalog`       | `read:radar`          | Mahalliy imzolangan Radar katalogi; provayder/oila bo‘yicha ixtiyoriy filtrlar                                                                               |
-| `omniroute_tool_search`         | `read:tools`          | Ro‘yxatdan o‘tkazilgan MCP katalogidagi vositalarni topish                                                                                                   |
-| `omniroute_web_search`          | `execute:search`      | Sozlangan qidiruv provayderlari orqali veb-qidiruv. X/Twitter uchun emas.                                                                                    |
-| `omniroute_x_search`            | `execute:search`      | xAI/SuperGrok orqali X’da qidirish yoki Xquik API natijalari uchun `xquik-search`ni tanlash. Tanlangan server qismi uchun hisob ma’lumotlari talab qilinadi. |
-| `omniroute_web_fetch`           | `execute:search`      | Sozlangan kontent olish provayderlari orqali veb-kontentni olish                                                                                             |
+| `agentproxy_get_health`          | `read:health`         | Ishlash vaqti, xotira, avtomatik uzgichlar, tezlik cheklovlari, kesh statistikasi                                                                            |
+| `agentproxy_list_combos`         | `read:combos`         | Strategiyalari bilan barcha sozlangan kombinatsiyalar (metrikalar ixtiyoriy)                                                                                 |
+| `agentproxy_get_combo_metrics`   | `read:combos`         | Muayyan kombinatsiya uchun unumdorlik metrikalari                                                                                                            |
+| `agentproxy_switch_combo`        | `write:combos`        | Kombinatsiyani faollashtirish yoki faolsizlantirish                                                                                                          |
+| `agentproxy_create_combo`        | `write:combos`        | Mavjud kombinatsiyalar API’si orqali tekshirilgan kombinatsiya yaratish                                                                                      |
+| `agentproxy_check_quota`         | `read:quota`          | Ishlatilgan/jami kvota, qolgan foiz, tiklanish vaqti, token holati                                                                                           |
+| `agentproxy_route_request`       | `execute:completions` | AgentProxy marshrutlashi orqali chat yakunlash so‘rovini yuborish                                                                                             |
+| `agentproxy_cost_report`         | `read:usage`          | Davr bo‘yicha xarajat hisoboti (seans/kun/hafta/oy)                                                                                                          |
+| `agentproxy_list_models_catalog` | `read:models`         | Imkoniyatlari, holati va narxlari bilan to‘liq modellar katalogi                                                                                             |
+| `agentproxy_radar_catalog`       | `read:radar`          | Mahalliy imzolangan Radar katalogi; provayder/oila bo‘yicha ixtiyoriy filtrlar                                                                               |
+| `agentproxy_tool_search`         | `read:tools`          | Ro‘yxatdan o‘tkazilgan MCP katalogidagi vositalarni topish                                                                                                   |
+| `agentproxy_web_search`          | `execute:search`      | Sozlangan qidiruv provayderlari orqali veb-qidiruv. X/Twitter uchun emas.                                                                                    |
+| `agentproxy_x_search`            | `execute:search`      | xAI/SuperGrok orqali X’da qidirish yoki Xquik API natijalari uchun `xquik-search`ni tanlash. Tanlangan server qismi uchun hisob ma’lumotlari talab qilinadi. |
+| `agentproxy_web_fetch`           | `execute:search`      | Sozlangan kontent olish provayderlari orqali veb-kontentni olish                                                                                             |
 
 ## Kengaytirilgan vositalar (11) — 2-bosqich
 
 | Vosita                             | Ruxsat doiralari                     | Tavsif                                                                                                                               |
 | :--------------------------------- | :----------------------------------- | :----------------------------------------------------------------------------------------------------------------------------------- |
-| `omniroute_simulate_route`         | `read:health`, `read:combos`         | Zaxira variantlar daraxti bilan marshrutlashni sinov tariqasida simulyatsiya qilish                                                  |
-| `omniroute_set_budget_guard`       | `write:budget`                       | Sifatni pasaytirish/bloklash/ogohlantirish amallariga ega seans budjeti                                                              |
-| `omniroute_set_routing_strategy`   | `write:combos`                       | Combo strategiyasini ishlash vaqtida yangilash (ustuvorlik/vaznlash/avtomatik/va hokazo)                                             |
-| `omniroute_set_resilience_profile` | `write:resilience`                   | `aggressive` / `balanced` / `conservative` barqarorlik sozlamalarini qoʻllash                                                        |
-| `omniroute_test_combo`             | `execute:completions`, `read:combos` | Haqiqiy yuqori oqim chaqiruvi yordamida combodagi har bir provayderni jonli sinovdan oʻtkazish                                       |
-| `omniroute_get_provider_metrics`   | `read:health`                        | p50/p95/p99 kechikishlari va avtomatik uzgich holati bilan har bir provayder boʻyicha metrikalar                                     |
-| `omniroute_best_combo_for_task`    | `read:combos`, `read:health`         | Budjet/kechikish cheklovlarini hisobga olgan holda vazifa turi boʻyicha combo tavsiya qilish                                         |
-| `omniroute_explain_route`          | `read:health`, `read:usage`          | Soʻrov nima uchun muayyan provayderga yoʻnaltirilganini tushuntirish (baholash omillari + zaxira variantlari)                        |
-| `omniroute_get_session_snapshot`   | `read:usage`                         | Seansning toʻliq surati: xarajat, tokenlar, yetakchi modellar/provayderlar, xatolar, budjet nazorati                                 |
-| `omniroute_db_health_check`        | `read:health`, `write:resilience`    | Buzilgan combo havolalari/yetim qatorlar kabi maʼlumotlar bazasi nomuvofiqligini aniqlash (va ixtiyoriy ravishda avtomatik tuzatish) |
-| `omniroute_sync_pricing`           | `pricing:write`                      | Tashqi manbalardan (LiteLLM) narxlash maʼlumotlarini sinxronlash; `dryRun` qoʻllab-quvvatlanadi                                      |
+| `agentproxy_simulate_route`         | `read:health`, `read:combos`         | Zaxira variantlar daraxti bilan marshrutlashni sinov tariqasida simulyatsiya qilish                                                  |
+| `agentproxy_set_budget_guard`       | `write:budget`                       | Sifatni pasaytirish/bloklash/ogohlantirish amallariga ega seans budjeti                                                              |
+| `agentproxy_set_routing_strategy`   | `write:combos`                       | Combo strategiyasini ishlash vaqtida yangilash (ustuvorlik/vaznlash/avtomatik/va hokazo)                                             |
+| `agentproxy_set_resilience_profile` | `write:resilience`                   | `aggressive` / `balanced` / `conservative` barqarorlik sozlamalarini qoʻllash                                                        |
+| `agentproxy_test_combo`             | `execute:completions`, `read:combos` | Haqiqiy yuqori oqim chaqiruvi yordamida combodagi har bir provayderni jonli sinovdan oʻtkazish                                       |
+| `agentproxy_get_provider_metrics`   | `read:health`                        | p50/p95/p99 kechikishlari va avtomatik uzgich holati bilan har bir provayder boʻyicha metrikalar                                     |
+| `agentproxy_best_combo_for_task`    | `read:combos`, `read:health`         | Budjet/kechikish cheklovlarini hisobga olgan holda vazifa turi boʻyicha combo tavsiya qilish                                         |
+| `agentproxy_explain_route`          | `read:health`, `read:usage`          | Soʻrov nima uchun muayyan provayderga yoʻnaltirilganini tushuntirish (baholash omillari + zaxira variantlari)                        |
+| `agentproxy_get_session_snapshot`   | `read:usage`                         | Seansning toʻliq surati: xarajat, tokenlar, yetakchi modellar/provayderlar, xatolar, budjet nazorati                                 |
+| `agentproxy_db_health_check`        | `read:health`, `write:resilience`    | Buzilgan combo havolalari/yetim qatorlar kabi maʼlumotlar bazasi nomuvofiqligini aniqlash (va ixtiyoriy ravishda avtomatik tuzatish) |
+| `agentproxy_sync_pricing`           | `pricing:write`                      | Tashqi manbalardan (LiteLLM) narxlash maʼlumotlarini sinxronlash; `dryRun` qoʻllab-quvvatlanadi                                      |
 
 ## Kesh vositalari (2)
 
 | Vosita                  | Ruxsat doiralari | Tavsif                                                    |
 | :---------------------- | :--------------- | :-------------------------------------------------------- |
-| `omniroute_cache_stats` | `read:cache`     | Semantik kesh, prompt keshi va idempotentlik statistikasi |
-| `omniroute_cache_flush` | `write:cache`    | Keshni global miqyosda yoki imzo/model boʻyicha tozalash  |
+| `agentproxy_cache_stats` | `read:cache`     | Semantik kesh, prompt keshi va idempotentlik statistikasi |
+| `agentproxy_cache_flush` | `write:cache`    | Keshni global miqyosda yoki imzo/model boʻyicha tozalash  |
 
 ## Siqish vositalari (13)
 
 | Vosita                              | Ruxsat doiralari    | Tavsif                                                                                                                                               |
 | :---------------------------------- | :------------------ | :--------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `omniroute_compression_status`      | `read:compression`  | Siqish sozlamalari, tahliliy xulosa va keshni hisobga oluvchi statistika (`analytics.mcpDescriptionCompression` metamaʼlumotlarini oʻz ichiga oladi) |
-| `omniroute_compression_configure`   | `write:compression` | Siqish rejimi, chegara qiymati, maqsadli nisbat, tizim promptini saqlash va MCP tavsiflarini siqishni yoqish/oʻchirishni sozlash                     |
-| `omniroute_set_compression_engine`  | `write:compression` | Faol mexanizmni (off/caveman/rtk/stacked) va Caveman/RTK intensivligini tanlash                                                                      |
-| `omniroute_list_compression_combos` | `read:compression`  | Nomlangan siqish combolari va ularning mexanizm konveyerlarini roʻyxatlash                                                                           |
-| `omniroute_compression_combo_stats` | `read:compression`  | Siqish combosi va mexanizm boʻyicha guruhlangan tahliliy maʼlumotlar                                                                                 |
-| `omniroute_ccr_store`               | `write:compression` | Chaqiruvchi boʻyicha ajratilgan kontentni hajmi cheklangan xotiradagi CCR omborida saqlash hamda marker va `ccr://` havolasini qaytarish             |
-| `omniroute_ccr_retrieve`            | `read:compression`  | CCR kontentini toʻliq yoki boshi, oxiri, satrlari, grep va statistika rejimlarida olish                                                              |
-| `omniroute_ccr_inspect`             | `read:compression`  | Kontentni qaytarmasdan chaqiruvchiga tegishli CCR metamaʼlumotlarini tekshirish                                                                      |
-| `omniroute_ccr_list`                | `read:compression`  | Chaqiruvchiga tegishli CCR bloklarining sahifalangan metamaʼlumotlarini roʻyxatlash                                                                  |
-| `omniroute_ccr_delete`              | `write:compression` | Chaqiruvchiga tegishli CCR blokini oʻchirish                                                                                                         |
-| `omniroute_ccr_stats`               | `read:compression`  | Chaqiruvchi doirasidagi xotira sarfi, hayot sikli hisoblagichlari va ombor cheklovlari haqida hisobot berish                                         |
-| `omniroute_rtk_discover`            | `read:compression`  | Ixtiyoriy ravishda taqdim etilgan RTK chiqish namunalarida takrorlanuvchi shovqinni aniqlash                                                         |
-| `omniroute_rtk_learn`               | `read:compression`  | Ixtiyoriy ravishda taqdim etilgan namunalardan koʻrib chiqish mumkin boʻlgan RTK filtri qoralamasini yaratish                                        |
+| `agentproxy_compression_status`      | `read:compression`  | Siqish sozlamalari, tahliliy xulosa va keshni hisobga oluvchi statistika (`analytics.mcpDescriptionCompression` metamaʼlumotlarini oʻz ichiga oladi) |
+| `agentproxy_compression_configure`   | `write:compression` | Siqish rejimi, chegara qiymati, maqsadli nisbat, tizim promptini saqlash va MCP tavsiflarini siqishni yoqish/oʻchirishni sozlash                     |
+| `agentproxy_set_compression_engine`  | `write:compression` | Faol mexanizmni (off/caveman/rtk/stacked) va Caveman/RTK intensivligini tanlash                                                                      |
+| `agentproxy_list_compression_combos` | `read:compression`  | Nomlangan siqish combolari va ularning mexanizm konveyerlarini roʻyxatlash                                                                           |
+| `agentproxy_compression_combo_stats` | `read:compression`  | Siqish combosi va mexanizm boʻyicha guruhlangan tahliliy maʼlumotlar                                                                                 |
+| `agentproxy_ccr_store`               | `write:compression` | Chaqiruvchi boʻyicha ajratilgan kontentni hajmi cheklangan xotiradagi CCR omborida saqlash hamda marker va `ccr://` havolasini qaytarish             |
+| `agentproxy_ccr_retrieve`            | `read:compression`  | CCR kontentini toʻliq yoki boshi, oxiri, satrlari, grep va statistika rejimlarida olish                                                              |
+| `agentproxy_ccr_inspect`             | `read:compression`  | Kontentni qaytarmasdan chaqiruvchiga tegishli CCR metamaʼlumotlarini tekshirish                                                                      |
+| `agentproxy_ccr_list`                | `read:compression`  | Chaqiruvchiga tegishli CCR bloklarining sahifalangan metamaʼlumotlarini roʻyxatlash                                                                  |
+| `agentproxy_ccr_delete`              | `write:compression` | Chaqiruvchiga tegishli CCR blokini oʻchirish                                                                                                         |
+| `agentproxy_ccr_stats`               | `read:compression`  | Chaqiruvchi doirasidagi xotira sarfi, hayot sikli hisoblagichlari va ombor cheklovlari haqida hisobot berish                                         |
+| `agentproxy_rtk_discover`            | `read:compression`  | Ixtiyoriy ravishda taqdim etilgan RTK chiqish namunalarida takrorlanuvchi shovqinni aniqlash                                                         |
+| `agentproxy_rtk_learn`               | `read:compression`  | Ixtiyoriy ravishda taqdim etilgan namunalardan koʻrib chiqish mumkin boʻlgan RTK filtri qoralamasini yaratish                                        |
 
 CCR yozuvlari faqat xotirada saqlanadi va qayta ishga tushirilganda yoʻqoladi. Har bir blok 2 MiB,
 har bir asosiy subyekt 16 MiB, global ombor esa 64 MiB bilan cheklangan. Yozuvlar uchun standart
@@ -146,7 +146,7 @@ kattaroq bloklardan diapazonli va grep rejimlari orqali foydalanish mumkin. Saql
 roʻyxatlash, tekshirish, oʻchirish va statistika autentifikatsiya qilingan API kalitining asosiy subyekti
 boʻyicha ajratilgan. Audit yozuvlari kontentni emas, faqat xeshlar va hajm metamaʼlumotlarini oʻz ichiga oladi.
 
-`omniroute_compression_status` MCP tavsifi siqilishini
+`agentproxy_compression_status` MCP tavsifi siqilishini
 `analytics.mcpDescriptionCompression` ostida alohida hisobot qiladi. Bu qiymatlar MCP roʻyxatga olinadigan
 tavsiflari (`tools`, `prompts`, `resources` va `resourceTemplates`) uchun metadata hajmi hisob-kitoblaridir; ular provayder foydalanish
 kvitansiyalari emas va `source: "mcp_metadata_estimate"` bilan belgilangan.
@@ -176,9 +176,9 @@ qarang.
 
 | Vosita                      | Ruxsat doiralari | Tavsif                                                                                  |
 | :-------------------------- | :--------------- | :-------------------------------------------------------------------------------------- |
-| `omniroute_oneproxy_fetch`  | `read:proxies`   | 1proxy bozoridan bepul proksilarni olish (protokol/mamlakat/sifat/miqdor filtrlari)     |
-| `omniroute_oneproxy_rotate` | `read:proxies`   | Strategiya bo‘yicha keyingi mavjud proksini olish (`random` / `quality` / `sequential`) |
-| `omniroute_oneproxy_stats`  | `read:proxies`   | Proksi havzasi statistikasi, sinxronlash holati, protokol va mamlakat bo‘yicha taqsimot |
+| `agentproxy_oneproxy_fetch`  | `read:proxies`   | 1proxy bozoridan bepul proksilarni olish (protokol/mamlakat/sifat/miqdor filtrlari)     |
+| `agentproxy_oneproxy_rotate` | `read:proxies`   | Strategiya bo‘yicha keyingi mavjud proksini olish (`random` / `quality` / `sequential`) |
+| `agentproxy_oneproxy_stats`  | `read:proxies`   | Proksi havzasi statistikasi, sinxronlash holati, protokol va mamlakat bo‘yicha taqsimot |
 
 ## Xotira vositalari (3)
 
@@ -186,9 +186,9 @@ qarang.
 
 | Vosita                    | Ruxsat doiralari | Tavsif                                                                                                          |
 | :------------------------ | :--------------- | :-------------------------------------------------------------------------------------------------------------- |
-| `omniroute_memory_search` | `read:memory`    | Token budjeti cheklovini qo‘llagan holda xotiralarni so‘rov / tur / API kaliti bo‘yicha qidirish                |
-| `omniroute_memory_add`    | `write:memory`   | Yangi xotira yozuvini qo‘shish (`factual` / `episodic` / `procedural` / `semantic`)                             |
-| `omniroute_memory_clear`  | `write:memory`   | API kaliti uchun xotiralarni tozalash, ixtiyoriy ravishda tur yoki `olderThan` vaqt tamg‘asi bo‘yicha filtrlash |
+| `agentproxy_memory_search` | `read:memory`    | Token budjeti cheklovini qo‘llagan holda xotiralarni so‘rov / tur / API kaliti bo‘yicha qidirish                |
+| `agentproxy_memory_add`    | `write:memory`   | Yangi xotira yozuvini qo‘shish (`factual` / `episodic` / `procedural` / `semantic`)                             |
+| `agentproxy_memory_clear`  | `write:memory`   | API kaliti uchun xotiralarni tozalash, ixtiyoriy ravishda tur yoki `olderThan` vaqt tamg‘asi bo‘yicha filtrlash |
 
 ## Ko‘nikma vositalari (4)
 
@@ -196,10 +196,10 @@ qarang.
 
 | Vosita                        | Ruxsat doiralari | Tavsif                                                                                                                 |
 | :---------------------------- | :--------------- | :--------------------------------------------------------------------------------------------------------------------- |
-| `omniroute_skills_list`       | `read:skills`    | Ro‘yxatdan o‘tgan ko‘nikmalarni API kaliti, nomi yoki yoqilganlik holati bo‘yicha ixtiyoriy filtrlash bilan ko‘rsatish |
-| `omniroute_skills_enable`     | `write:skills`   | Muayyan ko‘nikmani ID bo‘yicha yoqish yoki o‘chirish                                                                   |
-| `omniroute_skills_execute`    | `execute:skills` | Taqdim etilgan kirish ma’lumotlari bilan ko‘nikmani bajarish va bajarilish yozuvini qaytarish                          |
-| `omniroute_skills_executions` | `read:skills`    | Ko‘nikmalarning so‘nggi bajarilish tarixini ko‘rsatish                                                                 |
+| `agentproxy_skills_list`       | `read:skills`    | Ro‘yxatdan o‘tgan ko‘nikmalarni API kaliti, nomi yoki yoqilganlik holati bo‘yicha ixtiyoriy filtrlash bilan ko‘rsatish |
+| `agentproxy_skills_enable`     | `write:skills`   | Muayyan ko‘nikmani ID bo‘yicha yoqish yoki o‘chirish                                                                   |
+| `agentproxy_skills_execute`    | `execute:skills` | Taqdim etilgan kirish ma’lumotlari bilan ko‘nikmani bajarish va bajarilish yozuvini qaytarish                          |
+| `agentproxy_skills_executions` | `read:skills`    | Ko‘nikmalarning so‘nggi bajarilish tarixini ko‘rsatish                                                                 |
 
 ## Notion kontekst manbasi (6)
 
@@ -235,9 +235,9 @@ curl -X DELETE http://localhost:20128/api/settings/notion
 
 | Vosita                            | Qo‘llanish doiralari | Tavsif                                                                                                                                                                          |
 | :-------------------------------- | :------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `omniroute_agent_skills_list`     | `read:catalog`       | Ixtiyoriy `category` (api\|cli) va `area` filtrlari bilan barcha 45 ta agent ko‘nikmasini ro‘yxatlaydi; metadata + qamrovni qaytaradi                                           |
-| `omniroute_agent_skills_get`      | `read:catalog`       | Kanonik `id` orqali bitta ko‘nikmaning to‘liq metama’lumotlari + SKILL.md tarkibini oladi                                                                                       |
-| `omniroute_agent_skills_coverage` | `read:catalog`       | Qamrov statistikasi: 23 ta API, 21 ta CLI va 1 ta konfiguratsiya ko‘nikmasidan nechtasining fayl tizimida SKILL.md fayllari borligi, katalogdagi jami sonlar bilan taqqoslanadi |
+| `agentproxy_agent_skills_list`     | `read:catalog`       | Ixtiyoriy `category` (api\|cli) va `area` filtrlari bilan barcha 45 ta agent ko‘nikmasini ro‘yxatlaydi; metadata + qamrovni qaytaradi                                           |
+| `agentproxy_agent_skills_get`      | `read:catalog`       | Kanonik `id` orqali bitta ko‘nikmaning to‘liq metama’lumotlari + SKILL.md tarkibini oladi                                                                                       |
+| `agentproxy_agent_skills_coverage` | `read:catalog`       | Qamrov statistikasi: 23 ta API, 21 ta CLI va 1 ta konfiguratsiya ko‘nikmasidan nechtasining fayl tizimida SKILL.md fayllari borligi, katalogdagi jami sonlar bilan taqqoslanadi |
 
 To‘liq katalog va tashqi agentlar undan qanday foydalanishi haqida [AGENT-SKILLS.md](./AGENT-SKILLS.md) fayliga qarang.
 
@@ -302,7 +302,7 @@ API kalitidagi `manage`, MCP vositasidagi `read:compression` va `oma_live_…` k
 | :------------------- | :------------------------------------------------------------------------ | :-------------------------------- | :---------------------------------------------------------------- |
 | API-kalit boshqaruvi | `api_keys.scopes`                                                         | `hasManageScope`                  | Ushbu Bearer kaliti uchun boshqaruv REST                          |
 | API-kalit qo'shimcha | xuddi shu massiv, bitta aniq satr                                         | quyida nomi keltirilgan yordamchi | Faqat shu bitta imkoniyat                                         |
-| MCP vosita doiralari | xuddi shu massiv, aks holda MCP `_meta`, aks holda `OMNIROUTE_MCP_SCOPES` | `scopeMatches`                    | Ushbu vosita, majburlash yoqilganda                               |
+| MCP vosita doiralari | xuddi shu massiv, aks holda MCP `_meta`, aks holda `AGENTPROXY_MCP_SCOPES` | `scopeMatches`                    | Ushbu vosita, majburlash yoqilganda                               |
 | Kirish tokeni        | `oma_live_…`                                                              | `scopeSatisfies`                  | Uning usuli va yo'li shu darajani talab qiladigan boshqaruv yo'li |
 
 Har bir hisobga olish ma'lumotlarini yaratish [Boshqaruv autentifikatsiyasi](../guides/MANAGEMENT-AUTH.md) bo'limida yoritilgan.
@@ -334,7 +334,7 @@ Katalog [MCP vosita doiralari](#mcp-vosita-doiralari) bo'limidagi jadvaldir. `sr
 
 Doiralari `["manage"]` bo'lgan kalit `read:compression` uchun `scopeMatches` dan o'ta olmaydi. Xuddi shu chaqiruv `admin`, `mcp:connect`, `read` va `write` uchun ham muvaffaqiyatsiz tugaydi, agar ular yagona berilgan satrlar bo'lsa. MCP vosita doiralari orasida oxirgi `*` dan tashqari ierarxiya yo'q.
 
-Majburlash `OMNIROUTE_MCP_ENFORCE_SCOPES=true` (sukut bo'yicha `false`) bo'lmasa o'chirilgan bo'ladi. U o'chirilgan bo'lsa, `evaluateToolScopes` chaqiruvga ruxsat beradi va katalogdan o'tadi. U yoqilgan bo'lsa, HTTP Bearer kalitining `api_keys.scopes` ni `authInfo` sifatida ishlatadi ([Har bir kalit uchun HTTP doira bog'lanishi](#per-key-http-scope-binding-7895) ga qarang). Agar kalit doiralari aniqlanmasa, berilgan to'plam MCP `_meta` ga, keyin `OMNIROUTE_MCP_SCOPES` ga o'tadi.
+Majburlash `AGENTPROXY_MCP_ENFORCE_SCOPES=true` (sukut bo'yicha `false`) bo'lmasa o'chirilgan bo'ladi. U o'chirilgan bo'lsa, `evaluateToolScopes` chaqiruvga ruxsat beradi va katalogdan o'tadi. U yoqilgan bo'lsa, HTTP Bearer kalitining `api_keys.scopes` ni `authInfo` sifatida ishlatadi ([Har bir kalit uchun HTTP doira bog'lanishi](#per-key-http-scope-binding-7895) ga qarang). Agar kalit doiralari aniqlanmasa, berilgan to'plam MCP `_meta` ga, keyin `AGENTPROXY_MCP_SCOPES` ga o'tadi.
 
 #### Kirish tokeni doiralari
 
@@ -381,8 +381,8 @@ Doira ijrosi `open-sse/mcp-server/scopeEnforcement.ts` da markazlashtirilgan. Ha
 | `write:skills`        | `skills_enable`                                                                                                                                                                      |
 | `execute:skills`      | `skills_execute`                                                                                                                                                                     |
 | `read:catalog`        | `agent_skills_list`, `agent_skills_get`, `agent_skills_coverage`                                                                                                                     |
-| `read:tools`          | `omniroute_tool_search`                                                                                                                                                              |
-| `read:radar`          | `omniroute_radar_catalog`                                                                                                                                                            |
+| `read:tools`          | `agentproxy_tool_search`                                                                                                                                                              |
+| `read:radar`          | `agentproxy_radar_catalog`                                                                                                                                                            |
 | `read:gamification`   | `gamification_profile`, `gamification_rank`, `gamification_leaderboard`, `gamification_badges`, `gamification_servers`, `gamification_anomalies`                                     |
 | `write:gamification`  | `gamification_invite`, `gamification_transfer`                                                                                                                                       |
 | `read:plugins`        | `plugin_list`, `plugin_executions`                                                                                                                                                   |
@@ -399,7 +399,7 @@ HTTP/SSE MCP transportiga (`/api/mcp/*`) non-loopbackdan kirish `/api/mcp/` LOCA
 
 ### Har bir kalit uchun HTTP doirasini bog'lash (#7895)
 
-HTTP/SSE orqali, `open-sse/mcp-server/httpTransport.ts` endi chaqiruvchining haqiqiy `api_keys.scopes`ini `resolveMcpCallerAuthInfo()` (`open-sse/mcp-server/httpAuthContext.ts`) orqali aniqlaydi va uni MCP SDKning `transport.handleRequest(req, { authInfo })` funksiyasiga uzatadi, shunda har bir vosita chaqiruviga yetib boradigan `extra.authInfo.scopes` Bearer kalitining o'z doiralarini aks ettiradi. `scopeEnforcement.ts`dagi `resolveCallerScopeContext()` allaqachon `authInfo`ni `_meta` va `OMNIROUTE_MCP_SCOPES` muhit zaxirasidan ustun qo'ygan edi — bu faqat birinchi, eng yuqori ustuvor manbani to'ldiradi, bu ilgari HTTP orqali ta'minlanmagan edi. Agar API kaliti aniqlanmasa (sarlavha yo'q, noto'g'ri kalit), `authInfo` `undefined` bo'lib qoladi va aniqlash mavjud `meta`/muhit zanjiriga o'zgarishsiz o'tadi. Bu `OMNIROUTE_MCP_ENFORCE_SCOPES`ning standart qiymatini o'zgartirmaydi — majburlash hali ham aniq yoqilishi kerak; bu o'zgarish faqat har bir kalit yo'lini ustunlikka ega qiladi, u yoqilgandan so'ng. stdio har bir chaqiruvchi uchun identifikatorga ega emas (qarang: `mcpCallerIdentity.ts`) va ta'sirlanmaydi — u `_meta`/muhit zaxira zanjirida qoladi.
+HTTP/SSE orqali, `open-sse/mcp-server/httpTransport.ts` endi chaqiruvchining haqiqiy `api_keys.scopes`ini `resolveMcpCallerAuthInfo()` (`open-sse/mcp-server/httpAuthContext.ts`) orqali aniqlaydi va uni MCP SDKning `transport.handleRequest(req, { authInfo })` funksiyasiga uzatadi, shunda har bir vosita chaqiruviga yetib boradigan `extra.authInfo.scopes` Bearer kalitining o'z doiralarini aks ettiradi. `scopeEnforcement.ts`dagi `resolveCallerScopeContext()` allaqachon `authInfo`ni `_meta` va `AGENTPROXY_MCP_SCOPES` muhit zaxirasidan ustun qo'ygan edi — bu faqat birinchi, eng yuqori ustuvor manbani to'ldiradi, bu ilgari HTTP orqali ta'minlanmagan edi. Agar API kaliti aniqlanmasa (sarlavha yo'q, noto'g'ri kalit), `authInfo` `undefined` bo'lib qoladi va aniqlash mavjud `meta`/muhit zanjiriga o'zgarishsiz o'tadi. Bu `AGENTPROXY_MCP_ENFORCE_SCOPES`ning standart qiymatini o'zgartirmaydi — majburlash hali ham aniq yoqilishi kerak; bu o'zgarish faqat har bir kalit yo'lini ustunlikka ega qiladi, u yoqilgandan so'ng. stdio har bir chaqiruvchi uchun identifikatorga ega emas (qarang: `mcpCallerIdentity.ts`) va ta'sirlanmaydi — u `_meta`/muhit zaxira zanjirida qoladi.
 
 ---
 
@@ -407,17 +407,17 @@ HTTP/SSE orqali, `open-sse/mcp-server/httpTransport.ts` endi chaqiruvchining haq
 
 | O‘zgaruvchi                             | Standart qiymat                 | Maqsad                                                                                                                                                                      |
 | :-------------------------------------- | :------------------------------ | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `OMNIROUTE_BASE_URL`                    | `http://localhost:20128`        | MCP serveri AgentProxy ichki API’lariga murojaat qilganda foydalanadigan asosiy URL                                                                                          |
-| `OMNIROUTE_API_KEY`                     | (bo‘sh)                         | Ichki API chaqiruvlariga `Authorization: Bearer` sifatida uzatiladigan API kaliti                                                                                           |
-| `OMNIROUTE_MCP_ENFORCE_SCOPES`          | `false` (faqat `"true"` yoqadi) | Yoqilganda yetishmayotgan vakolat doiralari vosita chaqiruvlarini rad etadi va audit jurnaliga `scope_denied:<reason>` yozadi                                               |
-| `OMNIROUTE_MCP_SCOPES`                  | (bo‘sh)                         | Standart bo‘yicha «mavjud» deb hisoblanadigan, vergul bilan ajratilgan vakolat doiralari ruxsat ro‘yxati (chaqiruvchi o‘z vakolat doiralarini taqdim etmaganda ishlatiladi) |
-| `OMNIROUTE_MCP_COMPRESS_DESCRIPTIONS`   | (o‘rnatilmagan = yoqilgan)      | `0/false/off/no` qiymatiga o‘rnatilganda ro‘yxatdan o‘tkazish vaqtida MCP tavsiflarini siqishni o‘chiradi                                                                   |
-| `OMNIROUTE_MCP_DESCRIPTION_COMPRESSION` | (o‘rnatilmagan = yoqilgan)      | Yuqoridagi almashtirgich uchun muqobil taxallus                                                                                                                             |
-| `OMNIROUTE_MCP_FETCH_TIMEOUT_MS`        | `10000`                         | Ichki boshqaruv o‘qishlari (holat, barqarorlik, kombinatsiyalar, kvota, foydalanish) uchun bekor qilish vaqti limiti                                                        |
-| `OMNIROUTE_MCP_UPSTREAM_TIMEOUT_MS`     | `60000`                         | Provayderni kutadigan bosqichlar (`route_request`, `web_search`, `web_fetch`) uchun bekor qilish vaqti limiti                                                               |
+| `AGENTPROXY_BASE_URL`                    | `http://localhost:20128`        | MCP serveri AgentProxy ichki API’lariga murojaat qilganda foydalanadigan asosiy URL                                                                                          |
+| `AGENTPROXY_API_KEY`                     | (bo‘sh)                         | Ichki API chaqiruvlariga `Authorization: Bearer` sifatida uzatiladigan API kaliti                                                                                           |
+| `AGENTPROXY_MCP_ENFORCE_SCOPES`          | `false` (faqat `"true"` yoqadi) | Yoqilganda yetishmayotgan vakolat doiralari vosita chaqiruvlarini rad etadi va audit jurnaliga `scope_denied:<reason>` yozadi                                               |
+| `AGENTPROXY_MCP_SCOPES`                  | (bo‘sh)                         | Standart bo‘yicha «mavjud» deb hisoblanadigan, vergul bilan ajratilgan vakolat doiralari ruxsat ro‘yxati (chaqiruvchi o‘z vakolat doiralarini taqdim etmaganda ishlatiladi) |
+| `AGENTPROXY_MCP_COMPRESS_DESCRIPTIONS`   | (o‘rnatilmagan = yoqilgan)      | `0/false/off/no` qiymatiga o‘rnatilganda ro‘yxatdan o‘tkazish vaqtida MCP tavsiflarini siqishni o‘chiradi                                                                   |
+| `AGENTPROXY_MCP_DESCRIPTION_COMPRESSION` | (o‘rnatilmagan = yoqilgan)      | Yuqoridagi almashtirgich uchun muqobil taxallus                                                                                                                             |
+| `AGENTPROXY_MCP_FETCH_TIMEOUT_MS`        | `10000`                         | Ichki boshqaruv o‘qishlari (holat, barqarorlik, kombinatsiyalar, kvota, foydalanish) uchun bekor qilish vaqti limiti                                                        |
+| `AGENTPROXY_MCP_UPSTREAM_TIMEOUT_MS`     | `60000`                         | Provayderni kutadigan bosqichlar (`route_request`, `web_search`, `web_fetch`) uchun bekor qilish vaqti limiti                                                               |
 | `MCP_TOOL_DENY`                         | (o‘rnatilmagan = filtr yo‘q)    | `tools/list` ro‘yxatidan olib tashlanadigan, vergul bilan ajratilgan vosita nomlari (vositalar sonini kamaytirish — quyiga qarang)                                          |
 | `MCP_TOOL_ALLOW`                        | (o‘rnatilmagan = filtr yo‘q)    | Faqat saqlab qolinadigan, vergul bilan ajratilgan vosita nomlari (ruxsat ro‘yxati rejimi — quyiga qarang)                                                                   |
-| `DATA_DIR`                              | `~/.omniroute`                  | Faollik signali fayli `${DATA_DIR}/runtime/mcp-heartbeat.json` manziliga yoziladi                                                                                           |
+| `DATA_DIR`                              | `~/.agentproxy`                  | Faollik signali fayli `${DATA_DIR}/runtime/mcp-heartbeat.json` manziliga yoziladi                                                                                           |
 
 ---
 
@@ -427,8 +427,8 @@ MCP vositalari, ko‘rsatmalari va resurslari reyestrlari mijozlarga taqdim etil
 
 - Siqish Caveman qoidalar to‘plamidan (`getRulesForContext("all", "full")`) foydalangan holda tavsif matniga qo‘llanadi; bunda saqlanadigan bloklar (kod parchalari, chegaralangan bloklar va boshqalar) ajratib olinadi, shu sababli tuzilmaviy tarkib o‘zgartirilmaydi.
 - Har bir joylashtirish uchun `key_value` sozlamalar jadvalidagi `compression.mcpDescriptionCompressionEnabled` qiymati orqali almashtiring (standart: yoqilgan) — foydalanuvchi interfeysida **Tahlil → MCP tavsiflarini siqish** ko‘rinishida taqdim etiladi.
-- Butun jarayon miqyosida `OMNIROUTE_MCP_COMPRESS_DESCRIPTIONS=false` yoki `OMNIROUTE_MCP_DESCRIPTION_COMPRESSION=false` orqali almashtiring.
-- Real vaqt statistikasi `analytics.mcpDescriptionCompression` ostidagi `omniroute_compression_status` orqali taqdim etiladi va haqiqiy provayder foydalanish kvitansiyalaridan farqlash uchun `source: "mcp_metadata_estimate"` tegi bilan belgilanadi.
+- Butun jarayon miqyosida `AGENTPROXY_MCP_COMPRESS_DESCRIPTIONS=false` yoki `AGENTPROXY_MCP_DESCRIPTION_COMPRESSION=false` orqali almashtiring.
+- Real vaqt statistikasi `analytics.mcpDescriptionCompression` ostidagi `agentproxy_compression_status` orqali taqdim etiladi va haqiqiy provayder foydalanish kvitansiyalaridan farqlash uchun `source: "mcp_metadata_estimate"` tegi bilan belgilanadi.
 
 ---
 
@@ -447,10 +447,10 @@ Tavsifni siqish har bir vositaning metamaʼlumotlarini qisqartiradi; **vositalar
 
 ```bash
 # Katalogdan ikkita vositani chiqarib tashlash
-MCP_TOOL_DENY="omniroute_get_health,omniroute_list_combos" omniroute --mcp
+MCP_TOOL_DENY="agentproxy_get_health,agentproxy_list_combos" agentproxy --mcp
 
 # Faqat marshrutlash va kvota vositalarini eʼlon qilish (ruxsat ro‘yxati rejimi)
-MCP_TOOL_ALLOW="omniroute_route_request,omniroute_check_quota" omniroute --mcp
+MCP_TOOL_ALLOW="agentproxy_route_request,agentproxy_check_quota" agentproxy --mcp
 ```
 
 **Filtrlangan vositalar qanday olib tashlanadi:** ro‘yxatdan o‘tkazish har doim muvaffaqiyatli yakunlanadi; profil rad etgan vosita keyin MCP SDK tutqichida `.disable()` qilinadi, shu sababli u `tools/list`da hech qachon ko‘rinmaydi, biroq ulanishlar o‘z holicha qoladi (toza yoqish/o‘chirish, qayta ro‘yxatdan o‘tkazishsiz). Profil tahlilchisi `readMcpToolProfileFromEnv(process.env)` bo‘lib, ikkala o‘zgaruvchi ham bo‘sh bo‘lganda `null` (filtrlash yo‘q) qaytaradi.

@@ -20,7 +20,7 @@ AgentProxy ሙሉ በሙሉ ለማስወገድ ሁለት አብሮገነብ ስ�
 npm run uninstall
 ```
 
-ይህ AgentProxy መተግበሪያን ያስወግዳል፣ ነገር ግን በ`~/.omniroute/` ውስጥ ያሉትን የውሂብ ጎታዎን፣ ውቅሮችዎን፣ API ቁልፎችዎን እና የአቅራቢ ቅንብሮችዎን **ይጠብቃል**። በኋላ እንደገና ለመጫን ካቀዱ እና ውቅርዎን ማቆየት ከፈለጉ ይህን ይጠቀሙ።
+ይህ AgentProxy መተግበሪያን ያስወግዳል፣ ነገር ግን በ`~/.agentproxy/` ውስጥ ያሉትን የውሂብ ጎታዎን፣ ውቅሮችዎን፣ API ቁልፎችዎን እና የአቅራቢ ቅንብሮችዎን **ይጠብቃል**። በኋላ እንደገና ለመጫን ካቀዱ እና ውቅርዎን ማቆየት ከፈለጉ ይህን ይጠቀሙ።
 
 ### ሙሉ በሙሉ ማስወገድ
 
@@ -34,7 +34,7 @@ npm run uninstall:full
 - የአቅራቢ ውቅሮች እና API ቁልፎች
 - የምትኬ ፋይሎች
 - የምዝግብ ማስታወሻ ፋይሎች
-- በ`~/.omniroute/` ማውጫ ውስጥ ያሉ ሁሉም ፋይሎች
+- በ`~/.agentproxy/` ማውጫ ውስጥ ያሉ ሁሉም ፋይሎች
 
 > ⚠️ **ማስጠንቀቂያ፦** `npm run uninstall:full` ከተፈጸመ ወደነበረበት መመለስ አይቻልም። ሁሉም የአቅራቢ ግንኙነቶችዎ፣ ጥምረቶችዎ፣ API ቁልፎችዎ እና የአጠቃቀም ታሪክዎ በቋሚነት ይሰረዛሉ።
 
@@ -46,31 +46,31 @@ npm run uninstall:full
 
 ```bash
 # ዓለም አቀፍ ፓኬጁን ያስወግዱ
-npm uninstall -g omniroute
+npm uninstall -g agentproxy
 
 # (አማራጭ) የውሂብ ማውጫውን ያስወግዱ
-rm -rf ~/.omniroute
+rm -rf ~/.agentproxy
 ```
 
 ### pnpm ዓለም አቀፍ ጭነት
 
 ```bash
-pnpm uninstall -g omniroute
-rm -rf ~/.omniroute
+pnpm uninstall -g agentproxy
+rm -rf ~/.agentproxy
 ```
 
 ### Docker
 
 ```bash
 # ኮንቴይነሩን ያቁሙ እና ያስወግዱ
-docker stop omniroute
-docker rm omniroute
+docker stop agentproxy
+docker rm agentproxy
 
 # ቮልዩሙን ያስወግዱ (ሁሉንም ውሂብ ይሰርዛል)
-docker volume rm omniroute-data
+docker volume rm agentproxy-data
 
 # (አማራጭ) ኢሜጁን ያስወግዱ
-docker rmi diegosouzapw/omniroute:latest
+docker rmi diegosouzapw/agentproxy:latest
 ```
 
 ### Docker Compose
@@ -93,21 +93,21 @@ docker compose down -v
 **macOS:**
 
 - `AgentProxy.app`ን ከ`/Applications` ወደ መጣያ ይጎትቱ
-- ውሂብን ያስወግዱ፦ `rm -rf ~/Library/Application Support/omniroute`
+- ውሂብን ያስወግዱ፦ `rm -rf ~/Library/Application Support/agentproxy`
 
 **Linux:**
 
 - የAppImage ፋይሉን ያስወግዱ
-- ውሂብን ያስወግዱ፦ `rm -rf ~/.omniroute`
+- ውሂብን ያስወግዱ፦ `rm -rf ~/.agentproxy`
 
 ### ከምንጭ ኮድ መጫን (git clone)
 
 ```bash
 # በክሎን የተፈጠረውን ማውጫ ያስወግዱ
-rm -rf /path/to/omniroute
+rm -rf /path/to/agentproxy
 
 # (አማራጭ) የውሂብ ማውጫውን ያስወግዱ
-rm -rf ~/.omniroute
+rm -rf ~/.agentproxy
 ```
 
 ---
@@ -118,11 +118,11 @@ AgentProxy በነባሪነት ውሂብን በሚከተሉት ቦታዎች ያ�
 
 | መድረክ     | ነባሪ ዱካ                        | መተኪያ                          |
 | -------- | ----------------------------- | ----------------------------- |
-| Linux    | `~/.omniroute/`               | `DATA_DIR` የአካባቢ ተለዋዋጭ        |
-| macOS    | `~/.omniroute/`               | `DATA_DIR` የአካባቢ ተለዋዋጭ        |
-| Windows  | `%APPDATA%/omniroute/`        | `DATA_DIR` የአካባቢ ተለዋዋጭ        |
+| Linux    | `~/.agentproxy/`               | `DATA_DIR` የአካባቢ ተለዋዋጭ        |
+| macOS    | `~/.agentproxy/`               | `DATA_DIR` የአካባቢ ተለዋዋጭ        |
+| Windows  | `%APPDATA%/agentproxy/`        | `DATA_DIR` የአካባቢ ተለዋዋጭ        |
 | Docker   | `/app/data/` (የተጫነ ቮልዩም)      | `DATA_DIR` የአካባቢ ተለዋዋጭ        |
-| XDG-ተኳሃኝ | `$XDG_CONFIG_HOME/omniroute/` | `XDG_CONFIG_HOME` የአካባቢ ተለዋዋጭ |
+| XDG-ተኳሃኝ | `$XDG_CONFIG_HOME/agentproxy/` | `XDG_CONFIG_HOME` የአካባቢ ተለዋዋጭ |
 
 ### በውሂብ ማውጫው ውስጥ ያሉ ፋይሎች
 
@@ -143,17 +143,17 @@ AgentProxy በነባሪነት ውሂብን በሚከተሉት ቦታዎች ያ�
 
 ```bash
 # ዓለም አቀፍ npm ፓኬጅ መኖሩን ያረጋግጡ
-npm list -g omniroute 2>/dev/null
+npm list -g agentproxy 2>/dev/null
 
 # የውሂብ ማውጫውን ያረጋግጡ
-ls -la ~/.omniroute/ 2>/dev/null
+ls -la ~/.agentproxy/ 2>/dev/null
 
 # እየሰሩ ያሉ ፕሮሰሶችን ያረጋግጡ
-pgrep -f omniroute
+pgrep -f agentproxy
 ```
 
 ማንኛውም ፕሮሰስ አሁንም እየሰራ ከሆነ፣ ያቁሙት፦
 
 ```bash
-pkill -f omniroute
+pkill -f agentproxy
 ```

@@ -436,7 +436,7 @@ lockout/අයවැය/fallback තර්ක තමන් විසින් �
 - කෝටා cache එක: `src/domain/quotaCache.ts`
 - පරිහානි තත්ත්වය: `src/domain/degradation.ts`
 - වින්යාස විගණනය: `src/domain/configAudit.ts`
-- AgentProxy ප්රතිචාර metadata builder: `src/domain/omnirouteResponseMeta.ts`
+- AgentProxy ප්රතිචාර metadata builder: `src/domain/agentproxyesponseMeta.ts`
 - ඇගයීම් උපපද්ධතිය: `src/domain/assessment/` — කාලානුරූප ඇගයීම් jobs
 
 ### E. අවසර දීමේ Pipeline එක
@@ -517,7 +517,7 @@ FSM සංක්රාන්ති Auto Combo හි ලකුණුකරණය
 
 - මූලික යටිතල පහසුකම්: `src/lib/db/core.ts` (better-sqlite3, migrations, WAL)
 - DB ප්රවේශය: නිශ්චිත `src/lib/db/*` මොඩියුල සෘජුවම import කරන්න (පැරණි `localDb.ts` barrel එක ඉවත් කර ඇත)
-- ගොනුව: `${DATA_DIR}/storage.sqlite` (හෝ සකසා ඇති විට `$XDG_CONFIG_HOME/omniroute/storage.sqlite`, එසේ නොමැති නම් `~/.omniroute/storage.sqlite`)
+- ගොනුව: `${DATA_DIR}/storage.sqlite` (හෝ සකසා ඇති විට `$XDG_CONFIG_HOME/agentproxy/storage.sqlite`, එසේ නොමැති නම් `~/.agentproxy/storage.sqlite`)
 - ඒකක (වගු + KV නාම අවකාශ): providerConnections, providerNodes, modelAliases, combos, apiKeys, settings, pricing, **customModels**, **proxyConfig**, **ipFilter**, **thinkingBudget**, **systemPrompt**
 
 භාවිත ස්ථායීතාව:
@@ -1139,11 +1139,11 @@ flowchart LR
 
 ## දන්නා ගෘහනිර්මාණ සටහන්
 
-1. `usageDb` සහ `localDb`, පැරණි ගොනු සංක්රමණය සමඟ එකම මූලික නාමාවලි ප්රතිපත්තිය (`DATA_DIR` -> `XDG_CONFIG_HOME/omniroute` -> `~/.omniroute`) බෙදා ගනී.
+1. `usageDb` සහ `localDb`, පැරණි ගොනු සංක්රමණය සමඟ එකම මූලික නාමාවලි ප්රතිපත්තිය (`DATA_DIR` -> `XDG_CONFIG_HOME/agentproxy` -> `~/.agentproxy`) බෙදා ගනී.
 2. අර්ථකථනමය වෙනස්වීම් වළක්වා ගැනීම සඳහා `/api/v1/route.ts`, `/api/v1/models` විසින් භාවිත කරන ඒකාබද්ධ නාමාවලි සාදන්නාටම (`src/app/api/v1/models/catalog.ts`) කාර්යය පවරයි.
 3. සබල කර ඇති විට ඉල්ලීම් logger මඟින් සම්පූර්ණ headers/body ලියයි; ලොග් නාමාවලිය සංවේදී ලෙස සලකන්න.
 4. Cloud හැසිරීම නිවැරදි `NEXT_PUBLIC_BASE_URL` සහ cloud අන්ත ලක්ෂ්ය වෙත ළඟා වීමේ හැකියාව මත රඳා පවතී.
-5. `open-sse/` නාමාවලිය `@omniroute/open-sse` **npm workspace පැකේජය** ලෙස ප්රකාශයට පත් කෙරේ. මූලාශ්ර කේතය එය `@omniroute/open-sse/...` හරහා ආයාත කරයි (Next.js `transpilePackages` මඟින් විසඳනු ලැබේ). අනුකූලතාව සඳහා මෙම ලේඛනයේ ගොනු මාර්ග තවමත් `open-sse/` නාමාවලි නාමය භාවිත කරයි.
+5. `open-sse/` නාමාවලිය `@agentproxy/open-sse` **npm workspace පැකේජය** ලෙස ප්රකාශයට පත් කෙරේ. මූලාශ්ර කේතය එය `@agentproxy/open-sse/...` හරහා ආයාත කරයි (Next.js `transpilePackages` මඟින් විසඳනු ලැබේ). අනුකූලතාව සඳහා මෙම ලේඛනයේ ගොනු මාර්ග තවමත් `open-sse/` නාමාවලි නාමය භාවිත කරයි.
 6. උපකරණ පුවරුවේ ප්රස්ථාර, ප්රවේශ විය හැකි අන්තර්ක්රියාකාරී විශ්ලේෂණ දෘශ්යකරණ සඳහා (මාදිලි භාවිත තීරු ප්රස්ථාර, සාර්ථකත්ව අනුපාත සහිත සැපයුම්කරු විස්තරාත්මක වගු) **Recharts** (SVG-පාදක) භාවිත කරයි.
 7. E2E පරීක්ෂණ **Playwright** (`tests/e2e/`) භාවිත කරන අතර `npm run test:e2e` හරහා ධාවනය කෙරේ. ඒකක පරීක්ෂණ **Node.js test runner** (`tests/unit/`) භාවිත කරන අතර `npm run test:unit` හරහා ධාවනය කෙරේ. `src/` යටතේ ඇති මූලාශ්ර කේතය **TypeScript** (`.ts`/`.tsx`) වේ; `open-sse/` workspace එක JavaScript (`.js`) ලෙසම පවතී.
 8. සැකසුම් පිටුව පටිති 7කට සංවිධානය කර ඇත: සාමාන්ය, පෙනුම, AI, ආරක්ෂාව, මාර්ගගත කිරීම, ප්රතිරෝධීතාව සහ උසස්. ප්රතිරෝධීතා පිටුව ඉල්ලීම් පෝලිම, සම්බන්ධතා cooldown, සැපයුම්කරු breaker සහ cooldown අවසන් වන තෙක් රැඳී සිටීමේ හැසිරීම පමණක් වින්යාස කරයි; සජීවී breaker ධාවනකාල තත්ත්වය සෞඛ්ය පිටුවෙහි පෙන්වයි.
@@ -1154,7 +1154,7 @@ flowchart LR
 ## මෙහෙයුම් සත්යාපන පිරික්සුම් ලැයිස්තුව
 
 - මූලාශ්රයෙන් ගොඩනඟන්න: `npm run build`
-- Docker ප්රතිරූපය ගොඩනඟන්න: `docker build -t omniroute .`
+- Docker ප්රතිරූපය ගොඩනඟන්න: `docker build -t agentproxy .`
 - සේවාව ආරම්භ කර පහත දෑ සත්යාපනය කරන්න:
 - `GET /api/settings`
 - `GET /api/v1/models`

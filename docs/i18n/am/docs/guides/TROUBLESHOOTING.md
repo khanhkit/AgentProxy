@@ -18,7 +18,7 @@
 
 | ይህን አያለሁ                      | ትርጉሙ                                    | ምን ማድረግ እንዳለብዎ                                                                          |
 | ----------------------------- | --------------------------------------- | --------------------------------------------------------------------------------------- |
-| "Can't connect"               | AgentProxy እየሰራ አይደለም                    | `omniroute` ወይም `docker restart omniroute` ያስኪዱ                                         |
+| "Can't connect"               | AgentProxy እየሰራ አይደለም                    | `agentproxy` ወይም `docker restart agentproxy` ያስኪዱ                                         |
 | "Invalid API key"             | ቁልፍዎ የተሳሳተ ወይም ጊዜው ያለፈበት ነው             | ቁልፉን ከአቅራቢው ድረ ገጽ እንደገና ይቅዱ                                                             |
 | "Rate limit exceeded"         | በጣም ብዙ ጥያቄዎችን እየላኩ ነው                   | 1 ደቂቃ ይጠብቁ፣ ወይም ለራስ-ሰር ተለዋጭ ምርጫ `model: "auto"`ን ይጠቀሙ                                   |
 | "Quota exceeded"              | ነፃ/የተከፈለበት ኮታዎን ጨርሰዋል                   | ተጨማሪ አቅራቢዎችን ያገናኙ፣ ወይም ነፃ አቅራቢዎችን (Kiro፣ Pollinations) ይጠቀሙ                             |
@@ -26,7 +26,7 @@
 | "Wrong provider used"         | `auto` የተለየ አቅራቢ መርጧል                   | ይህ የተለመደ ነው! `auto` ምርጡን ይመርጣል። `model: "openai/gpt-4o"`ን በመጠቀም የተወሰነ አቅራቢ እንዲጠቀም ያስገድዱ |
 | "502 Bad Gateway"             | አቅራቢው አይሰራም                             | ይጠብቁና እንደገና ይሞክሩ፣ ወይም አቅራቢዎችን ለመቀየር `model: "auto"`ን ይጠቀሙ                               |
 | "401 Unauthorized"            | የመግቢያ ማረጋገጫዎችዎ የተሳሳቱ ናቸው                | የAPI ቁልፍዎን ያረጋግጡ ወይም በOAuth እንደገና ማንነትዎን ያረጋግጡ                                          |
-| "omniroute is not recognized" | በWindows PATH ውስጥ ዓለም አቀፍ node ሞጁሎች የሉም | የnpm ዓለም አቀፍ ቅድመ መንገድዎን ወደ Windows PATH ያክሉ። በ`npm config get prefix` ያግኙት።             |
+| "agentproxy is not recognized" | በWindows PATH ውስጥ ዓለም አቀፍ node ሞጁሎች የሉም | የnpm ዓለም አቀፍ ቅድመ መንገድዎን ወደ Windows PATH ያክሉ። በ`npm config get prefix` ያግኙት።             |
 | "429 Too Many Requests"       | የጥያቄ መጠን ተገድቧል                          | 1 ደቂቃ ይጠብቁ፣ ወይም ተጨማሪ አቅራቢዎችን ያገናኙ                                                       |
 
 **አሁንም ችግሩ አልተፈታም?** ከታች ያለውን [ዝርዝር የችግር መፍቻ](#detailed-troubleshooting) ይመልከቱ፣ ወይም በ[Discord](https://discord.gg/U47eFqAXCn) ላይ ይጠይቁ።
@@ -50,14 +50,14 @@
 **የተረጋገጠ መፍትሔ (በማህበረሰቡ የተዘገበ፣ 2026-08-10)**፦ ሽክርክር፣ ተጓዳኝነት እና ተለዋጭ ምርጫ በነፃው ደረጃ ላይ የሚኖረውን መለዋወጥ በስህተት ከመቋረጥ ይልቅ እንዲቋቋሙት ሦስት የአካባቢ ተለዋዋጮችን ያስተካክሉ፦
 
 ```bash
-export OMNIROUTE_ROTATE_ON_400=true           # በ400/401 ጊዜ ወደ ሌላ ሞዴል/አቅራቢ ይለፉ (የተበላሹ ቀጥታ ማሳለፊያ ሞዴሎችን ይዘላል)
-export OMNIROUTE_CHAT_MAX_HEAVY_IN_FLIGHT=4   # ለከባድ ጥያቄዎች ግልጽ የመግቢያ ከፍተኛ ገደብ (በነባሪ አልተዋቀረም፦ የጥያቄ ብዛት ገደብ የለም፣ ከታች ያለውን ማስታወሻ ይመልከቱ)
-export OMNIROUTE_CHAT_ADMISSION_QUEUE_MS=5000 # ወዲያውኑ እንደገና ሊሞከር የሚችል 503 ከመመለስ ይልቅ ለከባድ ጥያቄዎች አቅም ረዘም ያለ የተገደበ ጥበቃ
+export AGENTPROXY_ROTATE_ON_400=true           # በ400/401 ጊዜ ወደ ሌላ ሞዴል/አቅራቢ ይለፉ (የተበላሹ ቀጥታ ማሳለፊያ ሞዴሎችን ይዘላል)
+export AGENTPROXY_CHAT_MAX_HEAVY_IN_FLIGHT=4   # ለከባድ ጥያቄዎች ግልጽ የመግቢያ ከፍተኛ ገደብ (በነባሪ አልተዋቀረም፦ የጥያቄ ብዛት ገደብ የለም፣ ከታች ያለውን ማስታወሻ ይመልከቱ)
+export AGENTPROXY_CHAT_ADMISSION_QUEUE_MS=5000 # ወዲያውኑ እንደገና ሊሞከር የሚችል 503 ከመመለስ ይልቅ ለከባድ ጥያቄዎች አቅም ረዘም ያለ የተገደበ ጥበቃ
 ```
 
 እነዚህን በAgentProxy ሂደት አካባቢ (daemon፣ ለምሳሌ በLaunchAgent plist ወይም `systemctl edit`) ውስጥ ያዘጋጁ፣ ከዚያ AgentProxyን እንደገና ያስጀምሩ። የሽክርክር ምልክቱ ከፍተኛውን ውጤት የሚያመጣ ነጠላ መቆጣጠሪያ ነው፦ ከባድ ውድቀትን በስብስቡ ውስጥ ካለ ጤናማ አቅራቢ ጋር ወደሚደረግ ግልጽ ዳግም ሙከራ ይቀይረዋል።
 
-**ማስታወሻ**፦ `OMNIROUTE_CHAT_MAX_HEAVY_IN_FLIGHT` በአንድ ጊዜ የሚሰሩ ከባድ — ረጅም-አውድ — ጥያቄዎችን ብዛት ይገድባል፤ ይህ ገደብ የመግቢያ በር እንጂ የአቅራቢ የጥያቄ መጠን ገደብ አይደለም። **#503-fanout ዝማኔ፦** ይህ ተለዋዋጭ ከእንግዲህ በነባሪ አይዋቀርም (አሁን የሚተገበረው ከላይ እንደታየው በግልጽ ሲዋቀር ብቻ ነው) — በምትኩ የከባድ ጥያቄዎች መግቢያ ከአስተናጋጁ ትክክለኛ የማህደረ ትውስታ ጣሪያ አንጻር ራሱን በሚያመጣጥን፣ በራስ-ሰር በሚወሰን የባይት በጀት (`OMNIROUTE_CHAT_MAX_INFLIGHT_BYTES`) ይገደባል። ስለዚህ አዲስ ማሰማራት ይህን ተለዋዋጭ ምንም ሳያዘጋጅ በጣም ያነሱ `503 chat_admission_busy` ውድቅ ማድረጎችን ማየት አለበት፤ እዚህ ላይ በግልጽ ማዋቀሩ አሁንም በሰነዱ እንደተገለጸው በትክክል ይሰራል። ግልጽ የባይት-በጀት መተኪያዎች ከ8 MiB–2 GiB ውስጥ ይገደባሉ። `413 body_exceeds_budget` ጊዜያዊ አይደለም፦ ያንን የባይት በጀት ይጨምሩ፣ `OMNIROUTE_CHAT_HARD_MAX_BODY_BYTES`ን ይቀንሱ፣ ወይም የሂደቱን የማህደረ ትውስታ ጣሪያ ይጨምሩ። የ`inflight_bytes_budget` መቀነስ ጊዜያዊ የሀብት ፉክክር ሲሆን እንደገና መሞከር ይቻላል። የእያንዳንዱ አቅራቢ የጥያቄ መጠን ገደብ (`open-sse/services/rateLimitManager.ts`) በ`RATE_LIMIT_MAX_WAIT_MS`፣ `RATE_LIMIT_MAX_QUEUE_DEPTH` እና `RATE_LIMIT_AUTO_ENABLE` ተለይቶ ይተዳደራል — `.env.example`ን ይመልከቱ።
+**ማስታወሻ**፦ `AGENTPROXY_CHAT_MAX_HEAVY_IN_FLIGHT` በአንድ ጊዜ የሚሰሩ ከባድ — ረጅም-አውድ — ጥያቄዎችን ብዛት ይገድባል፤ ይህ ገደብ የመግቢያ በር እንጂ የአቅራቢ የጥያቄ መጠን ገደብ አይደለም። **#503-fanout ዝማኔ፦** ይህ ተለዋዋጭ ከእንግዲህ በነባሪ አይዋቀርም (አሁን የሚተገበረው ከላይ እንደታየው በግልጽ ሲዋቀር ብቻ ነው) — በምትኩ የከባድ ጥያቄዎች መግቢያ ከአስተናጋጁ ትክክለኛ የማህደረ ትውስታ ጣሪያ አንጻር ራሱን በሚያመጣጥን፣ በራስ-ሰር በሚወሰን የባይት በጀት (`AGENTPROXY_CHAT_MAX_INFLIGHT_BYTES`) ይገደባል። ስለዚህ አዲስ ማሰማራት ይህን ተለዋዋጭ ምንም ሳያዘጋጅ በጣም ያነሱ `503 chat_admission_busy` ውድቅ ማድረጎችን ማየት አለበት፤ እዚህ ላይ በግልጽ ማዋቀሩ አሁንም በሰነዱ እንደተገለጸው በትክክል ይሰራል። ግልጽ የባይት-በጀት መተኪያዎች ከ8 MiB–2 GiB ውስጥ ይገደባሉ። `413 body_exceeds_budget` ጊዜያዊ አይደለም፦ ያንን የባይት በጀት ይጨምሩ፣ `AGENTPROXY_CHAT_HARD_MAX_BODY_BYTES`ን ይቀንሱ፣ ወይም የሂደቱን የማህደረ ትውስታ ጣሪያ ይጨምሩ። የ`inflight_bytes_budget` መቀነስ ጊዜያዊ የሀብት ፉክክር ሲሆን እንደገና መሞከር ይቻላል። የእያንዳንዱ አቅራቢ የጥያቄ መጠን ገደብ (`open-sse/services/rateLimitManager.ts`) በ`RATE_LIMIT_MAX_WAIT_MS`፣ `RATE_LIMIT_MAX_QUEUE_DEPTH` እና `RATE_LIMIT_AUTO_ENABLE` ተለይቶ ይተዳደራል — `.env.example`ን ይመልከቱ።
 
 **መሥራቱን እንዴት ማረጋገጥ እንደሚቻል**፦ agent/cronዎን በፍጥነት በተከታታይ ሁለት ጊዜ ያሂዱና ሁለቱም በተሳካ ሁኔታ መጠናቀቃቸውን ያረጋግጡ። ከማስተካከያው በፊት፣ ሁለተኛው ማስኬድ በተለምዶ `429`/`401` ስህተት ያስከትላል። ከማስተካከያው በኋላ፣ ውድቀቶች (ካሉ) በማይታይ ሁኔታ እንደገና ይሞከራሉ እና ጥሪው ይጠናቀቃል። እንዲሁም `curl /monitoring/health` ማስኬድ እና በአቅራቢ ግንኙነቶች ላይ ያለውን `rateLimitedUntil` መስክ እንዲሁም ለተጎዱት አቅራቢዎች `circuitBreakers.providerBreakers[].state`ን መከታተል ይችላሉ — ሁኔታው `CLOSED`፣ `DEGRADED`፣ `OPEN` ወይም `HALF_OPEN` ከሚሉት አንዱ ነው (`src/shared/utils/circuitBreaker.ts`ን ይመልከቱ)፤ ውድቀቱ የቀጠለበት አቅራቢ፣ ዳግም ማስጀመሪያ ጊዜው የሙከራ ጥሪ (`HALF_OPEN`) እንዲያልፍ ከመፍቀዱ በፊት `CLOSED → DEGRADED → OPEN` በሚል ይቀየራል።
 
@@ -69,12 +69,12 @@ export OMNIROUTE_CHAT_ADMISSION_QUEUE_MS=5000 # ወዲያውኑ እንደገና 
 
 ## የ npm install ማስጠንቀቂያዎች (ERESOLVE / peer / deprecated)
 
-`npm install -g omniroute` ሲያስኬዱ፣ እንደ `npm warn ERESOLVE`፣ የ peer-dependency ማሳወቂያዎች እና `deprecated` መልዕክቶች ያሉ ብዙ ማስጠንቀቂያዎችን ሊያዩ ይችላሉ። **እነዚህ የሚጠበቁ እና ምንም ጉዳት የሌላቸው ናቸው።** በውጤቱ ውስጥ `added <N> packages` ካዩ ጭነቱ በትክክል ተጠናቋል።
+`npm install -g agentproxy` ሲያስኬዱ፣ እንደ `npm warn ERESOLVE`፣ የ peer-dependency ማሳወቂያዎች እና `deprecated` መልዕክቶች ያሉ ብዙ ማስጠንቀቂያዎችን ሊያዩ ይችላሉ። **እነዚህ የሚጠበቁ እና ምንም ጉዳት የሌላቸው ናቸው።** በውጤቱ ውስጥ `added <N> packages` ካዩ ጭነቱ በትክክል ተጠናቋል።
 
 የ peer-dependency መፍታት ማስጠንቀቂያዎችን ለማፈን፣ በ AgentProxy የሚደገፈውን የመጫኛ ቅጽ ይጠቀሙ፦
 
 ```bash
-npm install -g omniroute --legacy-peer-deps
+npm install -g agentproxy --legacy-peer-deps
 ```
 
 `--legacy-peer-deps` የሚያፍነው `ERESOLVE` እና የ peer-dependency ማሳወቂያዎችን ብቻ ነው። የማቋረጥ ማሳወቂያዎች ከተዘዋዋሪ የሶስተኛ ወገን ጥቅሎች ስለሚመጡ እንደታዩ ይቆያሉ፤ ጭነቱ እንዳልተሳካ አያመለክቱም።
@@ -102,7 +102,7 @@ Playwright ሆን ብሎ የአሳሽ ውርዶችን ከ npm ጥቅል
 ውስጥ ይጫኑ፦
 
 ```bash
-cd "$(npm root -g)/omniroute"
+cd "$(npm root -g)/agentproxy"
 npx playwright install chromium
 ```
 
@@ -120,10 +120,10 @@ AgentProxyን ከ Docker image የሚያስኬዱ ከሆነ፣ Chromiumን እ�
 | የመጀመሪያው መግቢያ አይሠራም                                         | `INITIAL_PASSWORD`ን በ`.env` ውስጥ ያዘጋጁ (hardcoded ነባሪ የለም)                                                                                                       |
 | Dashboard በተሳሳተ port ላይ ይከፈታል                              | `PORT=20128` እና `NEXT_PUBLIC_BASE_URL=http://localhost:20128` ያዘጋጁ                                                                                             |
 | ምንም logs ወደ disk አይጻፉም                                     | `APP_LOG_TO_FILE=true` ያዘጋጁ እና የ call log capture መንቃቱን ያረጋግጡ                                                                                                  |
-| EACCES፦ ፈቃድ ተከልክሏል                                         | `~/.omniroute`ን ለመተካት `DATA_DIR=/path/to/writable/dir` ያዘጋጁ                                                                                                    |
+| EACCES፦ ፈቃድ ተከልክሏል                                         | `~/.agentproxy`ን ለመተካት `DATA_DIR=/path/to/writable/dir` ያዘጋጁ                                                                                                    |
 | የ routing strategy አይቀመጥም                                  | ወደ የቅርብ ጊዜው v3.x release ያዘምኑ (ለ settings persistence የ Zod schema ማስተካከያ በቀደሙት ስሪቶች ውስጥ ተለቋል)                                                                 |
 | የመግቢያ ብልሽት / ባዶ ገጽ                                         | የ Node.js ስሪትን ያረጋግጡ — ከታች [የ Node.js ተኳኋኝነት](#nodejs-compatibility)ን ይመልከቱ                                                                                    |
-| `dlopen` / `slice is not valid mach-o file` (macOS)        | `cd $(npm root -g)/omniroute/app && npm rebuild better-sqlite3 && omniroute`ን ያስኪዱ — ከታች [የ macOS native module ዳግም ግንባታ](#macos-native-module-rebuild)ን ይመልከቱ |
+| `dlopen` / `slice is not valid mach-o file` (macOS)        | `cd $(npm root -g)/agentproxy/app && npm rebuild better-sqlite3 && agentproxy`ን ያስኪዱ — ከታች [የ macOS native module ዳግም ግንባታ](#macos-native-module-rebuild)ን ይመልከቱ |
 | የ Proxy "fetch failed"                                     | የ proxy ውቅሩ በትክክለኛው ደረጃ መዘጋጀቱን ያረጋግጡ — ከታች [የ Proxy ችግሮች](#proxy-issues)ን ይመልከቱ                                                                                |
 | Docker `curl: (56) Recv failure: Connection reset by peer` | የ Docker port bindዎ ወደ IPv6 እየሄደ ሊሆን ይችላል። IPv4ን ለማስገደድ `-p 127.0.0.1:20128:20128` ይጠቀሙ፣ ወይም በ`curl -4` ይፈትሹ። ከታች [Docker IPv6](#docker-ipv6)ን ይመልከቱ           |
 | Antivirus፣ `README.md`ን quarantine ያደርጋል                   | የተሳሳተ ማንቂያ — ከታች [የ Antivirus የተሳሳቱ ማንቂያዎች](#antivirus-false-positives)ን ይመልከቱ                                                                                 |
@@ -141,7 +141,7 @@ AgentProxyን ከ Docker image የሚያስኬዱ ከሆነ፣ Chromiumን እ�
 
 Avast እና AVG ብዙ HTTP ጥያቄ የሚመስሉ አገናኞችን የያዙ ተራ-ጽሑፍ/Markdown ፋይሎችን
 የሚጠቁም ሂዩሪስቲክ ያስኬዳሉ። የAgentProxy `README.md` በnpm ጥቅል ውስጥ አብሮ ይቀርባል (`package.json` → `files`
-ውስጥ ተዘርዝሯል)፣ ስለዚህ በዓለም አቀፍ ጭነት ጊዜ `node_modules/omniroute/README.md` ላይ ይቀመጣል —
+ውስጥ ተዘርዝሯል)፣ ስለዚህ በዓለም አቀፍ ጭነት ጊዜ `node_modules/agentproxy/README.md` ላይ ይቀመጣል —
 እንዲሁም ~15 የ`http://localhost:20128/...` ምሳሌዎችን (የMCP HTTP/SSE መዳረሻዎች፣ የA2A
 `.well-known` URL፣ እና የ`curl` ቁርጥራጮች) ይዟል። ይህ የአገናኝ ጥግግት
 ሂዩሪስቲኩን ለማስነሳት በቂ ነው።
@@ -157,7 +157,7 @@ Avast እና AVG ብዙ HTTP ጥያቄ የሚመስሉ አገናኞችን የያ
 
 1. **ማሳወቂያዎቹን ያቁሙ** — የጭነት ማውጫውን ከጸረ-ቫይረስዎ ፍተሻ
    ያግልሉ (Avast፦ Settings → Exceptions)፣ የዓለም አቀፍ `node_modules` ዱካዎን እና/ወይም
-   የAgentProxy ውሂብ ማውጫን (`~/.omniroute/`) ያክሉ።
+   የAgentProxy ውሂብ ማውጫን (`~/.agentproxy/`) ያክሉ።
 2. **የተሳሳተውን ማስጠንቀቂያ ሪፖርት ያድርጉ** — <https://www.avast.com/false-positive-file-form.php>፣
    በማግለያ ያለውን `README.md` በማያያዝ። ችግሩ የአቅራቢው ሂዩሪስቲክ ለጽሑፍ ፋይል
    ከመጠን በላይ ምላሽ መስጠቱ ስለሆነ፣ ይህ ሁሉንም የሚጠቅም መፍትሔ ነው።
@@ -233,8 +233,8 @@ localhost ራስ-የተፈረመ ሰርቲፊኬት ከሚያስከትለው ች
    nvm use 24
    ```
 2. ስሪትዎን ያረጋግጡ፦ `node --version` በ24.x LTS መስመር ላይ `v24.0.0` ወይም ከዚያ አዲስ ስሪት ማሳየት አለበት
-3. AgentProxyን እንደገና ይጫኑ፦ `npm install -g omniroute`
-4. እንደገና ያስጀምሩ፦ `omniroute`
+3. AgentProxyን እንደገና ይጫኑ፦ `npm install -g agentproxy`
+4. እንደገና ያስጀምሩ፦ `agentproxy`
 
 > **የሚደገፉ ደህንነታቸው የተጠበቁ ስሪቶች፦** `>=22.22.2 <23` ወይም `>=24.0.0 <27`። Node.js 24.x LTS (Krypton) እና Node.js 26 ሙሉ በሙሉ ይደገፋሉ።
 
@@ -272,7 +272,7 @@ localhost ራስ-የተፈረመ ሰርቲፊኬት ከሚያስከትለው ች
 
 <a name="macos-native-module-rebuild"></a>
 
-**ምክንያት፦** ዓለም አቀፍ `npm install -g omniroute` ከተከናወነ በኋላ፣ በጥቅሉ ውስጥ ያለው የ`better-sqlite3` ቤተኛ ሁለትዮሽ ፋይል በአካባቢው ከሚሠራው የተለየ የስርዓት አወቃቀር ወይም የNode.js ABI የተጠናቀረ ሊሆን ይችላል። ቀድሞ የተገነባው ሁለትዮሽ ፋይል ከአካባቢዎ ጋር በማይዛመድበት ጊዜ፣ ይህ በmacOS (በApple Silicon እና Intel ላይ) የተለመደ ነው።
+**ምክንያት፦** ዓለም አቀፍ `npm install -g agentproxy` ከተከናወነ በኋላ፣ በጥቅሉ ውስጥ ያለው የ`better-sqlite3` ቤተኛ ሁለትዮሽ ፋይል በአካባቢው ከሚሠራው የተለየ የስርዓት አወቃቀር ወይም የNode.js ABI የተጠናቀረ ሊሆን ይችላል። ቀድሞ የተገነባው ሁለትዮሽ ፋይል ከአካባቢዎ ጋር በማይዛመድበት ጊዜ፣ ይህ በmacOS (በApple Silicon እና Intel ላይ) የተለመደ ነው።
 
 **ምልክቶች፦**
 
@@ -281,15 +281,15 @@ localhost ራስ-የተፈረመ ሰርቲፊኬት ከሚያስከትለው ች
 - ሙሉ ምሳሌ፦
 
 ```
-dlopen(/Users/<user>/.nvm/versions/node/v24.14.1/lib/node_modules/omniroute/app/node_modules/better-sqlite3/build/Release/better_sqlite3.node, 0x0001): tried: '...' (slice is not valid mach-o file)
+dlopen(/Users/<user>/.nvm/versions/node/v24.14.1/lib/node_modules/agentproxy/app/node_modules/better-sqlite3/build/Release/better_sqlite3.node, 0x0001): tried: '...' (slice is not valid mach-o file)
 ```
 
 **መፍትሔ — ለአካባቢያዊ ስርዓትዎ እንደገና ይገንቡ (የNode.js ስሪትን ዝቅ ማድረግ አያስፈልግም)፦**
 
 ```bash
-cd $(npm root -g)/omniroute/app
+cd $(npm root -g)/agentproxy/app
 npm rebuild better-sqlite3
-omniroute
+agentproxy
 ```
 
 > **ማስታወሻ፦** ይህ ቤተኛውን ማያያዣ ከአካባቢያዊ የNode.js ስሪትዎ እና የCPU ስርዓት አወቃቀርዎ ጋር በማጣጣም እንደገና ያጠናቅረዋል፣ በዚህም የሁለትዮሽ ፋይሉን አለመዛመድ ይፈታል። በይፋ የሚደገፈው የማስኬጃ ክልል **`>=22.22.2 <23` ወይም `>=24.0.0 <27`** ነው (`SUPPORTED_NODE_RANGE` በ`src/shared/utils/nodeRuntimeSupport.ts` ውስጥ፣ ከ`package.json` `engines` መስክ ጋር የተጣጣመ)። Node.js 24.x LTS (Krypton) እና Node.js 26 ከ`better-sqlite3` v12.x ጋር ሙሉ በሙሉ ይደገፋሉ።
@@ -381,7 +381,7 @@ registration የላቸውም። እነዚያ ግንኙነቶች የጋራ social
 ### የCloud Sync ስህተቶች
 
 1. `BASE_URL` ወደ እየሰራ ያለው instanceዎ መጠቆሙን ያረጋግጡ (ለምሳሌ፣ `http://localhost:20128`)
-2. `CLOUD_URL` ወደ cloud endpointዎ መጠቆሙን ያረጋግጡ (ለምሳሌ፣ `https://omniroute.dev`)
+2. `CLOUD_URL` ወደ cloud endpointዎ መጠቆሙን ያረጋግጡ (ለምሳሌ፣ `https://agentproxy.online`)
 3. የ`NEXT_PUBLIC_*` እሴቶችን ከserver-side እሴቶች ጋር የተመሳሰሉ አድርገው ያቆዩ
 
 ### የCloud `stream=false` ጥያቄ 500 ይመልሳል
@@ -415,8 +415,8 @@ registration የላቸውም። እነዚያ ግንኙነቶች የጋራ social
 1. **ፈጣን ምርመራ፦** `curl -4 http://localhost:20128/v1/models` ያስኪዱ። ከ`-4` ጋር የሚሰራ ነገር ግን ያለሱ የማይሰራ ከሆነ፣ የIPv6 bind አለመመሳሰል አለዎት።
 2. **ቋሚ መፍትሔ፦** በ`docker run` commandዎ ውስጥ `-p 127.0.0.1:20128:20128` በመጠቀም በግልጽ ወደ IPv4 bind ያድርጉ፦
    ```bash
-   docker run -d --name omniroute --restart unless-stopped --stop-timeout 40 \
-     -p 127.0.0.1:20128:20128 -v omniroute-data:/app/data diegosouzapw/omniroute:latest
+   docker run -d --name agentproxy --restart unless-stopped --stop-timeout 40 \
+     -p 127.0.0.1:20128:20128 -v agentproxy-data:/app/data diegosouzapw/agentproxy:latest
    ```
    ይህ IPv4 bindን ያስገድዳል፣ እንዲሁም proxyውን በሁሉም የhost interfaces ላይ ከማጋለጥ ይቆጠባል።
 
@@ -569,7 +569,7 @@ curl http://localhost:20128/api/monitoring/health
 - የውይይት ማጠናቀቂያዎች መዳረሻ ነጥብ እንደገና ሊሞከር የሚችል `503` ምላሽ ይመልሳል፤ የስህተት ኮዱም
   `chat_admission_busy` ነው።
 - ምላሹ `Retry-After` ያካትታል። ከ#12135 ጀምሮ እሴቱ ከተስተዋለው
-  የአቅም አጠቃቀም ይሰላል — ጥያቄው አስቀድሞ ከጠበቀበት `OMNIROUTE_CHAT_ADMISSION_QUEUE_MS` መስኮት
+  የአቅም አጠቃቀም ይሰላል — ጥያቄው አስቀድሞ ከጠበቀበት `AGENTPROXY_CHAT_ADMISSION_QUEUE_MS` መስኮት
   እና የአሁኖቹ ከባድ ሊዞች ከተያዙበት ጊዜ ከፍ ያለው ተወስዶ — ወደ ሙሉ
   ሰከንድ ከፍ ተደርጎ በ60 ይገደባል። ጌቱ ሥራ ፈት ሲሆን ታሪካዊ ዝቅተኛ ገደቦቹን ይጠብቃል፦ በ
   ባይት-ተኮር መንገድ 2 ሰከንድ፣ በመዋቅር-ተኮር መንገድ 1 ሰከንድ (ይህም
@@ -603,16 +603,16 @@ curl http://localhost:20128/api/monitoring/health
 ምላሽ የሕይወት ዘመን ሙሉ እንደተያዘ ይቆያል።
 
 **#503-መስፋፋት፦** ከዚህ ማስተካከያ በፊት ጠባቂው በአስተናጋጁ ማህደረ ትውስታ ሳይመሠረት የአንድ ጊዜ ጥያቄዎችን በቋሚ የጥያቄ COUNT
-(`OMNIROUTE_CHAT_MAX_HEAVY_IN_FLIGHT`፣ ነባሪ `1`) ይገድብ ነበር፤ በመሆኑም የኮዲንግ ወኪል
+(`AGENTPROXY_CHAT_MAX_HEAVY_IN_FLIGHT`፣ ነባሪ `1`) ይገድብ ነበር፤ በመሆኑም የኮዲንግ ወኪል
 መስፋፋት (በርካታ ንዑስ ወኪሎች/CLIs፣ ብዙ ጊዜ > 256 KB የሆኑ አካላት) ውጤታማውን
 የአንድ ጊዜ ሥራ ብዛት ወደ ~1 ዝቅ ያደርግና ሙሉ በሙሉ በተለመደ ጭነት ላይ 503 ስህተት ያስከትል ነበር። አሁን ጠባቂው ራሱን ያስተካክላል፦ ከ
-ፕሮሰሱ ትክክለኛ የማህደረ ትውስታ ጣሪያ ተሰልቶ በሚወጣ የማስገቢያ BYTE በጀት (`OMNIROUTE_CHAT_MAX_INFLIGHT_BYTES`) ይገደባል፣
+ፕሮሰሱ ትክክለኛ የማህደረ ትውስታ ጣሪያ ተሰልቶ በሚወጣ የማስገቢያ BYTE በጀት (`AGENTPROXY_CHAT_MAX_INFLIGHT_BYTES`) ይገደባል፣
 እንዲሁም የቀጥታ የሀብት-ጫና ምልክትን ያማክራል — ስለዚህ ጭነትን የሚቀንሰው አስተናጋጁ በእውነት በማህደረ ትውስታ ጫና ሥር ሲሆን ብቻ ነው፤ ከአንድ በላይ
-ከባድ ጥያቄዎች በአንድ ጊዜ ስለደረሱ ብቻ አይደለም። አሮጌው የብዛት ገደብ (`OMNIROUTE_CHAT_MAX_HEAVY_IN_FLIGHT`) አሁንም
+ከባድ ጥያቄዎች በአንድ ጊዜ ስለደረሱ ብቻ አይደለም። አሮጌው የብዛት ገደብ (`AGENTPROXY_CHAT_MAX_HEAVY_IN_FLIGHT`) አሁንም
 ይከበራል፣ ግን በግልጽ ካዋቀሩት ብቻ ነው።
 
 አቅሙ በሥራ ላይ ሲሆን፣ አንድ ከባድ ጥያቄ እንደገና ሊሞከር የሚችለውን `503` ከመመለሱ በፊት
-አንድ ቦታ እስኪለቀቅ ድረስ መጀመሪያ እስከ `OMNIROUTE_CHAT_ADMISSION_QUEUE_MS` (ነባሪ `2000`፣ `0` ጥበቃውን ያሰናክላል) ይጠብቃል።
+አንድ ቦታ እስኪለቀቅ ድረስ መጀመሪያ እስከ `AGENTPROXY_CHAT_ADMISSION_QUEUE_MS` (ነባሪ `2000`፣ `0` ጥበቃውን ያሰናክላል) ይጠብቃል።
 ይህ የተገደበ ጥበቃ ያለው፣ ከባድ ንዑስ-ጥያቄዎችን በአንድ ጊዜ የሚያስፋፉ ወኪል-ዓይነት ደንበኞች
 (OpenCode, Claude Code, Cursor) በፈጣን ውድቅ ማድረጎች ሙሉውን የድጋሚ ሙከራ በጀታቸውን አሟጠው በሥራ መካከል ከመቋረጥ ይልቅ የጥያቄዎቹን መጉረፍ
 ተራ በተራ እንዲያስኬዱ ነው።
@@ -632,7 +632,7 @@ false` እና ሰፊ `maxInflightBytes` ማለት በራስ-ሰር የተሰላ�
    ይህ በመግቢያ env var ሊስተካከል አይችልም፤ ተጨማሪ RAM ወይም አነስተኛ የሥራ ጫና ያስፈልገዋል።
 3. `/api/monitoring/health` በራስ-ሰር የተሰላው በጀት ለአስተናጋጅዎ በእውነት በጣም አነስተኛ መሆኑን
    ካሳየ ብቻ (ይህ ብርቅ ነው — ቀድሞውኑ ከኮንቴነር እስከ bare-metal ድረስ ይመጣጠናል)፣ ወደ አሮጌው የጥያቄ-ብዛት ገደብ ከመመለስ ይልቅ
-   በቀጥታ `OMNIROUTE_CHAT_MAX_INFLIGHT_BYTES` በመጠቀም ይቀይሩት።
+   በቀጥታ `AGENTPROXY_CHAT_MAX_INFLIGHT_BYTES` በመጠቀም ይቀይሩት።
 
 ለዋናዎቹ የመግቢያ ቅንብሮች [የአካባቢ-ተለዋዋጭ ማጣቀሻውን](../reference/ENVIRONMENT.md#4-security--authentication)
 ይመልከቱ።
@@ -719,7 +719,7 @@ false` እና ሰፊ `maxInflightBytes` ማለት በራስ-ሰር የተሰላ�
 
 **መፍትሔ፦**
 
-- የOAuth ሂደቱን እንደገና ለማስጀመር ከCLI `omniroute providers`ን ያስኪዱ፣ ወይም
+- የOAuth ሂደቱን እንደገና ለማስጀመር ከCLI `agentproxy providers`ን ያስኪዱ፣ ወይም
 - ከ**Dashboard → Providers → Command Code → Reconnect** OAuthን እንደገና ያስኪዱ
 
 ### ModelScope ከባድ የ429 cooldown-ዎችን ይመልሳል
@@ -736,19 +736,19 @@ false` እና ሰፊ `maxInflightBytes` ማለት በራስ-ሰር የተሰላ�
 - v3.8.0 ወይም ከዚያ በኋላ ባለው version ላይ መሆንዎን ያረጋግጡ
 - በ**Settings → Resilience** ስር ያለው `useUpstream429BreakerHints` toggle እንደነቃ ያረጋግጡ
 
-### OMNIROUTE_WS_BRIDGE_SECRET በproduction ውስጥ የለም
+### AGENTPROXY_WS_BRIDGE_SECRET በproduction ውስጥ የለም
 
 **ምልክቶች፦**
 
 - በርቀት production host ላይ ሲያስኬዱ በእያንዳንዱ Codex/Responses WebSocket bridge ጥያቄ ላይ 401 ይመለሳል
 - የWebSocket bridge handshake ከግንኙነት በኋላ ወዲያውኑ ይዘጋል
 
-**መንስኤ፦** የ`OMNIROUTE_WS_BRIDGE_SECRET` env var ከproduction environment ጠፍቷል።
+**መንስኤ፦** የ`AGENTPROXY_WS_BRIDGE_SECRET` env var ከproduction environment ጠፍቷል።
 
 **መፍትሔ፦**
 
 1. የዘፈቀደ secret ይፍጠሩ፦ `openssl rand -hex 32`
-2. በproduction server env ውስጥ `OMNIROUTE_WS_BRIDGE_SECRET=<random-secret>`ን ያዘጋጁ (እንዲሁም ከbridge-ው ጋር በሚገናኝ ማንኛውም client ውስጥ)
+2. በproduction server env ውስጥ `AGENTPROXY_WS_BRIDGE_SECRET=<random-secret>`ን ያዘጋጁ (እንዲሁም ከbridge-ው ጋር በሚገናኝ ማንኛውም client ውስጥ)
 3. AgentProxyን እንደገና ያስጀምሩ
 
 ### Responses API፦ background mode ወደ synchronous ዝቅ ብሏል
@@ -779,17 +779,17 @@ CLIው `⚠ Server did not respond within 60s` ብሎ ካሳየ፣ ነገር ግ
 
 ```bash
 # በአካባቢ ተለዋዋጭ በኩል (በተደጋጋሚ ማስጀመሮች ላይ ይቆያል)፦
-export OMNIROUTE_READY_TIMEOUT_MS=180000   # 3 ደቂቃዎች
-omniroute serve
+export AGENTPROXY_READY_TIMEOUT_MS=180000   # 3 ደቂቃዎች
+agentproxy serve
 
 # በCLI ጥቆማ በኩል (ለአንድ ጊዜ)፦
-omniroute serve --ready-timeout 180000
+agentproxy serve --ready-timeout 180000
 ```
 
 ነባሪው 60 000 ms (60 s) ነው። ማስጠንቀቂያው ለመረጃ ብቻ ነው፤ አገልጋዩ
 ከበስተጀርባ መነሳቱን ይቀጥላል፣ እና የማስነሳት ሂደቱ ሲጠናቀቅ ተደራሽ ይሆናል።
 
-ስለ `OMNIROUTE_READY_TIMEOUT_MS` ሙሉ ዝርዝሮች [`docs/reference/ENVIRONMENT.md`](../reference/ENVIRONMENT.md)ን
+ስለ `AGENTPROXY_READY_TIMEOUT_MS` ሙሉ ዝርዝሮች [`docs/reference/ENVIRONMENT.md`](../reference/ENVIRONMENT.md)ን
 ይመልከቱ።
 
 ---

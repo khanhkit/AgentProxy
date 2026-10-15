@@ -10,7 +10,7 @@
 - Títẹ̀jáde àwọn ìmúdójúìwọ̀n kóòdù tó tẹ̀lé e
 - Àwọn iṣẹ́ àkànṣe tuntun tó ń tẹ̀lé ìlànà ìmúṣiṣẹ́ kan náà
 
-Ìtọ́sọ́nà yìí dá lórí àtúnṣe tí a ti fìdí rẹ̀ múlẹ̀ pé ó ń ṣiṣẹ́ fún iṣẹ́ àkànṣe tó wà lọ́wọ́lọ́wọ́. Orúkọ ohun elo náà ni `omniroute`.
+Ìtọ́sọ́nà yìí dá lórí àtúnṣe tí a ti fìdí rẹ̀ múlẹ̀ pé ó ń ṣiṣẹ́ fún iṣẹ́ àkànṣe tó wà lọ́wọ́lọ́wọ́. Orúkọ ohun elo náà ni `agentproxy`.
 
 ---
 
@@ -20,7 +20,7 @@
 - Ọ̀nà ìfilọ́lẹ̀: Títẹ̀jáde tààrà láti `flyctl` abẹ́lẹ̀
 - Àyíká ìṣiṣẹ́: Lílo `Dockerfile` àti `fly.toml` tó ti wà nínú ibi ìpamọ́ náà
 - Ìfipamọ́ dátà pípẹ́: Fly Volume tí a so mọ́ `/data`
-- URL ìwọlé: `https://omniroute.fly.dev/`
+- URL ìwọlé: `https://agentproxy.online`
 
 ---
 
@@ -29,7 +29,7 @@
 A ti fìdí rẹ̀ múlẹ̀ pé `fly.toml` inú ibi ìpamọ́ lọ́wọ́lọ́wọ́ ní àwọn ohun pàtàkì wọ̀nyí:
 
 ```toml
-app = 'omniroute'
+app = 'agentproxy'
 primary_region = 'sin'
 
 [[mounts]]
@@ -51,7 +51,7 @@ primary_region = 'sin'
 
 Àwọn àkíyèsí:
 
-- `app = 'omniroute'` ló ń pinnu ohun èlò Fly tí ìfilọ́lẹ̀ náà yóò lọ sí
+- `app = 'agentproxy'` ló ń pinnu ohun èlò Fly tí ìfilọ́lẹ̀ náà yóò lọ sí
 - `destination = '/data'` ló ń pinnu àpótí ìtọ́ka tí a ó so ìpamọ́ pípẹ́ mọ́
 - Iṣẹ́ àkànṣe yìí gbọ́dọ̀ ṣètò `DATA_DIR=/data`, bí bẹ́ẹ̀ kọ́, a ó kọ ibi ìpamọ́ dátà àti àwọn kọ́kọ́rọ́ sínú àpótí ìtọ́ka onígbà díẹ̀ ti container náà
 
@@ -98,29 +98,29 @@ cd AgentProxy
 Ṣí `fly.toml`, kí o sì ṣàyẹ̀wò ìlà tó tẹ̀ lé e:
 
 ```toml
-app = 'omniroute'
+app = 'agentproxy'
 ```
 
 Tí o bá ń ṣe ìfilọ́lẹ̀ sí ohun èlò tuntun tirẹ, o lè yí i padà sí orúkọ tí kò ní àfiwé kárí ayé, fún àpẹẹrẹ:
 
 ```toml
-app = 'omniroute-yourname'
+app = 'agentproxy-yourname'
 ```
 
 Àkíyèsí:
 
 - Rí i dájú pé ohun èlò tí o rí nínú console bá iye `app` inú `fly.toml` mu
-- Tí o bá ti lo orúkọ mìíràn tẹ́lẹ̀, bíi `oroute`, má ṣe dá a rú pọ̀ mọ́ `omniroute`
+- Tí o bá ti lo orúkọ mìíràn tẹ́lẹ̀, bíi `oroute`, má ṣe dá a rú pọ̀ mọ́ `agentproxy`
 
 ### 4.3 Ṣẹ̀dá Ohun Èlò Náà
 
 Tí ohun èlò náà kò bá tíì wà:
 
 ```powershell
-flyctl apps create omniroute
+flyctl apps create agentproxy
 ```
 
-Tí o bá yí orúkọ ohun èlò náà padà, fi orúkọ tí o yàn dípò `omniroute`.
+Tí o bá yí orúkọ ohun èlò náà padà, fi orúkọ tí o yàn dípò `agentproxy`.
 
 ### 4.4 Ìfilọ́lẹ̀ Àkọ́kọ́
 
@@ -136,14 +136,14 @@ Iṣẹ́ àkànṣe yìí dábàá pé kí a ṣètò ó kéré tán àwọn p�
 
 ### 5.1 Àwọn Pàràmítà Tí A Ti Fìdí Múlẹ̀
 
-A ti lo àwọn pàràmítà wọ̀nyí nínú àwọn ìfilọ́lẹ̀ gangan lórí ohun èlò `omniroute` lọ́wọ́lọ́wọ́:
+A ti lo àwọn pàràmítà wọ̀nyí nínú àwọn ìfilọ́lẹ̀ gangan lórí ohun èlò `agentproxy` lọ́wọ́lọ́wọ́:
 
 - `API_KEY_SECRET`
 - `DATA_DIR`
 - `JWT_SECRET`
 - `MACHINE_ID_SALT`
 - `NEXT_PUBLIC_BASE_URL`
-- `OMNIROUTE_WS_BRIDGE_SECRET` (ó pọndandan ní production — a ń lò ó fún ìfàṣẹsí afárá WebSocket)
+- `AGENTPROXY_WS_BRIDGE_SECRET` (ó pọndandan ní production — a ń lò ó fún ìfàṣẹsí afárá WebSocket)
 - `STORAGE_ENCRYPTION_KEY`
 
 ### 5.2 Nípa `INITIAL_PASSWORD`
@@ -171,7 +171,7 @@ Tí o bá fẹ́ ṣètò ọ̀rọ̀ aṣínà backend ní ìbẹ̀rẹ̀ láì
 | ---------------------------- | ------------------------- | --------------------------------------------------- |
 | `API_KEY_SECRET`             | Ó ṣe pàtàkì               | A ń lò ó fún ṣíṣẹ̀dá àti ìfọwọ́sí API Key             |
 | `JWT_SECRET`                 | Ó ṣe pàtàkì               | A ń lò ó fún àwọn sáà ìwọlé àti fífi ìbuwọ́lù sí JWT |
-| `OMNIROUTE_WS_BRIDGE_SECRET` | Ó ṣe pàtàkì ní production | Àṣírí ìfàṣẹsí afárá WebSocket                       |
+| `AGENTPROXY_WS_BRIDGE_SECRET` | Ó ṣe pàtàkì ní production | Àṣírí ìfàṣẹsí afárá WebSocket                       |
 | `STORAGE_ENCRYPTION_KEY`     | A dámọ̀ràn rẹ̀ gidigidi     | Ó ń parọ́rọ́ àlàyé ìsopọ̀ tó ṣe pàtàkì níbi ìpamọ́      |
 | `MACHINE_ID_SALT`            | A dámọ̀ràn rẹ̀              | Ó ń ṣẹ̀dá àmì ìdánimọ̀ ẹ̀rọ tó dúró ṣinṣin             |
 | `INITIAL_PASSWORD`           | Kò pọndandan              | Ó ń ṣètò ọ̀rọ̀ aṣínà backend àkọ́kọ́ ní ìmúṣiṣẹ́ àkọ́kọ́   |
@@ -182,7 +182,7 @@ Tí o bá fẹ́ ṣètò ọ̀rọ̀ aṣínà backend ní ìbẹ̀rẹ̀ láì
 | Àyípadà                | Iye Tí A Dámọ̀ràn            |
 | ---------------------- | --------------------------- |
 | `DATA_DIR`             | `/data`                     |
-| `NEXT_PUBLIC_BASE_URL` | `https://omniroute.fly.dev` |
+| `NEXT_PUBLIC_BASE_URL` | `https://agentproxy.online` |
 
 Àwọn àkíyèsí:
 
@@ -196,10 +196,10 @@ Tí o bá nílò láti mú àwọn olùpèsè tó dá lórí OAuth ṣiṣẹ́ 
 1. **Ṣètò `NEXT_PUBLIC_BASE_URL` sí domain HTTPS gbogbogbò rẹ**
 
    ```powershell
-   flyctl secrets set NEXT_PUBLIC_BASE_URL=https://omniroute.fly.dev -a omniroute
+   flyctl secrets set NEXT_PUBLIC_BASE_URL=https://agentproxy.online -a agentproxy
    ```
 
-   Tí o bá ń lo domain àdáni, fi domain tó bá a mu rópò rẹ̀ (fún àpẹẹrẹ `https://omniroute.yourdomain.com`).
+   Tí o bá ń lo domain àdáni, fi domain tó bá a mu rópò rẹ̀ (fún àpẹẹrẹ `https://agentproxy.example.com`).
 
 2. **Ṣètò URL callback lórí console olùpèsè**
 
@@ -210,7 +210,7 @@ Tí o bá nílò láti mú àwọn olùpèsè tó dá lórí OAuth ṣiṣẹ́ 
    ```
 
    Fún àpẹẹrẹ, láìka bóyá Gemini, Antigravity, Cursor, tàbí GitLab Duo:
-   - `https://omniroute.fly.dev/callback`
+   - `https://agentproxy.online`
 
    Tí `NEXT_PUBLIC_BASE_URL` kò bá URL callback tí a forúkọsílẹ̀ pẹ̀lú olùpèsè mu, ìṣàn OAuth yóò kùnà ní ìgbésẹ̀ àtúndarí browser.
 
@@ -223,7 +223,7 @@ Tí o bá nílò láti mú àwọn olùpèsè tó dá lórí OAuth ṣiṣẹ́ 
 Àwọn àkíyèsí:
 
 - Kò ní `INITIAL_PASSWORD`
-- A pète rẹ̀ fún iṣẹ́ àkànṣe lọ́wọ́lọ́wọ́ `omniroute`
+- A pète rẹ̀ fún iṣẹ́ àkànṣe lọ́wọ́lọ́wọ́ `agentproxy`
 
 ```powershell
 $apiKeySecret = [Convert]::ToHexString((1..32 | ForEach-Object { Get-Random -Minimum 0 -Maximum 256 })).ToLower()
@@ -237,26 +237,26 @@ flyctl secrets set `
   JWT_SECRET=$jwtSecret `
   MACHINE_ID_SALT=$machineIdSalt `
   STORAGE_ENCRYPTION_KEY=$storageKey `
-  OMNIROUTE_WS_BRIDGE_SECRET=$wsBridgeSecret `
+  AGENTPROXY_WS_BRIDGE_SECRET=$wsBridgeSecret `
   DATA_DIR=/data `
-  NEXT_PUBLIC_BASE_URL=https://omniroute.fly.dev `
-  -a omniroute
+  NEXT_PUBLIC_BASE_URL=https://agentproxy.online `
+  -a agentproxy
 ```
 
 Lórí Linux / macOS, o tún lè lo `openssl rand -hex 32`:
 
 ```bash
-flyctl secrets set OMNIROUTE_WS_BRIDGE_SECRET=$(openssl rand -hex 32) -a omniroute
+flyctl secrets set AGENTPROXY_WS_BRIDGE_SECRET=$(openssl rand -hex 32) -a agentproxy
 ```
 
 Àwọn àkíyèsí:
 
-- `OMNIROUTE_WS_BRIDGE_SECRET` ṣe pàtàkì ní production; àìsí rẹ̀ yóò ba ìfọwọ́bọ̀ afárá WebSocket jẹ́
+- `AGENTPROXY_WS_BRIDGE_SECRET` ṣe pàtàkì ní production; àìsí rẹ̀ yóò ba ìfọwọ́bọ̀ afárá WebSocket jẹ́
 
 Tí o bá tún fẹ́ ṣètò ọ̀rọ̀ aṣínà àkọ́kọ́:
 
 ```powershell
-flyctl secrets set INITIAL_PASSWORD=your-strong-password -a omniroute
+flyctl secrets set INITIAL_PASSWORD=your-strong-password -a agentproxy
 ```
 
 ---
@@ -264,12 +264,12 @@ flyctl secrets set INITIAL_PASSWORD=your-strong-password -a omniroute
 ## 8. Wíwo Àwọn Párámítà Lọ́wọ́lọ́wọ́
 
 ```powershell
-flyctl secrets list -a omniroute
+flyctl secrets list -a agentproxy
 ```
 
 Tí ojúewé `Secrets` inú console kò bá fi àwọn variable tí a retí hàn, ṣàyẹ̀wò:
 
-- Pé application `omniroute` ni o ń wò
+- Pé application `agentproxy` ni o ń wò
 - Pé value `app` inú `fly.toml` bá application inú console mu
 
 ---
@@ -286,7 +286,7 @@ flyctl deploy
 Tí o bá nílò láti ṣe ìmúdójúìwọ̀n àwọn párámítà nìkan láì yí code padà:
 
 ```powershell
-flyctl secrets set KEY=value -a omniroute
+flyctl secrets set KEY=value -a agentproxy
 ```
 
 Fly yóò ṣe ìmúdójúìwọ̀n àwọn machine ní ọ̀kọ̀ọ̀kan láìfọwọ́yí.
@@ -361,8 +361,8 @@ Lẹ́yìn mímú pọ̀ pẹ̀lú repository àkọ́kọ́, tẹ̀lé ìtòl�
 3. Mú `fly.toml` ti fork náà padà
 4. `git push origin main`
 5. `flyctl deploy`
-6. `flyctl status -a omniroute`
-7. `flyctl logs --no-tail -a omniroute`
+6. `flyctl status -a agentproxy`
+7. `flyctl logs --no-tail -a agentproxy`
 
 Èyí ni ìṣàn iṣẹ́ gangan tí a lò nígbà tí a ń ṣe ìgbéga project lọ́wọ́lọ́wọ́ sí `v3.4.7` (àpẹẹrẹ náà ń tọ́ka sí version ìtàn; version gangan lọ́wọ́lọ́wọ́ ni `v3.8.0`).
 
@@ -373,20 +373,20 @@ Lẹ́yìn mímú pọ̀ pẹ̀lú repository àkọ́kọ́, tẹ̀lé ìtòl�
 ### 10.1 Ṣàyẹ̀wò Ipò Ìṣàfilọ́lẹ̀
 
 ```powershell
-flyctl status -a omniroute
+flyctl status -a agentproxy
 ```
 
 ### 10.2 Wo Àwọn Àkọsílẹ̀ Ìbẹ̀rẹ̀
 
 ```powershell
-flyctl logs --no-tail -a omniroute
+flyctl logs --no-tail -a agentproxy
 ```
 
 ### 10.3 Ṣàrídájú Wíwọlé sí Ojú-òpó
 
 ```powershell
 try {
-  (Invoke-WebRequest -Uri "https://omniroute.fly.dev" -MaximumRedirection 5 -UseBasicParsing).StatusCode
+  (Invoke-WebRequest -Uri "https://agentproxy.online" -MaximumRedirection 5 -UseBasicParsing).StatusCode
 } catch {
   if ($_.Exception.Response) {
     $_.Exception.Response.StatusCode.value__
@@ -425,14 +425,14 @@ Tí o bá rí `/app/data/...` dípò rẹ̀, a ti ṣètò `DATA_DIR` lọ́nà 
 Ìdí méjì ló sábà máa ń fà á:
 
 - O kò tíì ṣiṣẹ́ `flyctl secrets set`
-- O ń wo ìṣàfilọ́lẹ̀ mìíràn (fún àpẹẹrẹ, `oroute` dípò `omniroute`)
+- O ń wo ìṣàfilọ́lẹ̀ mìíràn (fún àpẹẹrẹ, `oroute` dípò `agentproxy`)
 
 ### 12.2 `flyctl deploy` Ṣe Ìròyìn `app not found`
 
 Kọ́kọ́ ṣẹ̀dá ìṣàfilọ́lẹ̀ náà:
 
 ```powershell
-flyctl apps create omniroute
+flyctl apps create agentproxy
 ```
 
 ### 12.3 Ṣíṣàyẹ̀wò Gírámà `fly.toml` Kùnà
@@ -475,10 +475,10 @@ Má ṣe tún lo àwọn kọ́kọ́rọ́ láti inú iṣẹ́-àkànṣe tẹ
 
 ```powershell
 flyctl auth whoami
-flyctl status -a omniroute
-flyctl secrets list -a omniroute
+flyctl status -a agentproxy
+flyctl secrets list -a agentproxy
 flyctl deploy
-flyctl logs --no-tail -a omniroute
+flyctl logs --no-tail -a agentproxy
 ```
 
 Fún ìtújáde déédéé, àṣẹ pàtàkì náà ni:
@@ -490,7 +490,7 @@ flyctl deploy
 Fún ìmúṣiṣẹ́ àkọ́kọ́ nínú àyíká tuntun, àwọn ìgbésẹ̀ pàtàkì ni:
 
 1. `flyctl auth login`
-2. `flyctl apps create omniroute`
-3. `flyctl secrets set ... -a omniroute`
+2. `flyctl apps create agentproxy`
+3. `flyctl secrets set ... -a agentproxy`
 4. `flyctl deploy`
-5. `flyctl logs --no-tail -a omniroute`
+5. `flyctl logs --no-tail -a agentproxy`

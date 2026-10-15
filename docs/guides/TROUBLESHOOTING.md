@@ -28,7 +28,7 @@ Common problems and solutions for AgentProxy.
 | "Wrong provider used"   | `auto` picked a different provider  | That's normal! `auto` picks the best one. Force a specific provider with `model: "openai/gpt-4o"` |
 | "502 Bad Gateway"       | Provider is down                    | Wait and retry, or use `model: "auto"` to switch providers                                        |
 | "401 Unauthorized"      | Your credentials are wrong          | Check your API key or re-authenticate with OAuth                                                  |
-| "`agentproxy` / `omniroute` is not recognized" | Windows PATH is missing the npm global bin directory | Run `npm config get prefix`, add that global npm prefix/bin directory to Windows PATH, then reopen the terminal |
+| "`agentproxy` / `agentproxy` is not recognized" | Windows PATH is missing the npm global bin directory | Run `npm config get prefix`, add that global npm prefix/bin directory to Windows PATH, then reopen the terminal |
 | "429 Too Many Requests" | Rate limited                        | Wait 1 minute, or connect more providers                                                          |
 
 **Still stuck?** See the [detailed troubleshooting](#detailed-troubleshooting) below, or ask on [Discord](https://discord.gg/U47eFqAXCn).
@@ -776,10 +776,10 @@ with heavy startup workloads.
 ```bash
 # Via env var (persists across starts):
 export AGENTPROXY_READY_TIMEOUT_MS=180000   # 3 minutes
-omniroute serve
+agentproxy serve
 
 # Via CLI flag (one-off):
-omniroute serve --ready-timeout 180000
+agentproxy serve --ready-timeout 180000
 ```
 
 The default is 60 000 ms (60 s). The warning is informational only; the server

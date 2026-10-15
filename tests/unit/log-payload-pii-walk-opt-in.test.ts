@@ -7,7 +7,7 @@ import path from "node:path";
 // protectPayloadForLog runs on every request body several times per request
 // (pending-request tracker, call log). With response PII sanitization off,
 // which is the default, the PII pass must not rebuild the payload at all.
-const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-test-pii-walk-"));
+const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-test-pii-walk-"));
 process.env.DATA_DIR = tmpDir;
 delete process.env.PII_RESPONSE_SANITIZATION;
 delete process.env.PII_RESPONSE_SANITIZATION_MODE;

@@ -55,19 +55,19 @@ test("issue #10713 / #14355: npmInstallRuntime grants better-sqlite3 script perm
 });
 
 test("#14355: an existing runtime package.json without allowScripts is retrofitted on the next install", () => {
-  const fakeBinDir = mkdtempSync(join(tmpdir(), "omniroute-fakenpm-retrofit-"));
+  const fakeBinDir = mkdtempSync(join(tmpdir(), "agentproxy-fakenpm-retrofit-"));
   const npmScript = join(fakeBinDir, "npm");
   writeFileSync(npmScript, `#!/usr/bin/env bash\nexit 0\n`);
   chmodSync(npmScript, 0o755);
 
   const originalPath = process.env.PATH;
   const originalDataDir = process.env.DATA_DIR;
-  const fakeDataDir = mkdtempSync(join(tmpdir(), "omniroute-fakedata-retrofit-"));
+  const fakeDataDir = mkdtempSync(join(tmpdir(), "agentproxy-fakedata-retrofit-"));
   try {
     process.env.PATH = `${fakeBinDir}:${originalPath}`;
     process.env.DATA_DIR = fakeDataDir;
 
-    // Simulate a runtime dir created by an older OmniRoute version, before
+    // Simulate a runtime dir created by an older AgentProxy version, before
     // this fix existed — no allowScripts field at all.
     const runtimeDir = join(fakeDataDir, "runtime");
     mkdirSync(runtimeDir, { recursive: true });
@@ -75,7 +75,7 @@ test("#14355: an existing runtime package.json without allowScripts is retrofitt
     writeFileSync(
       runtimePkgPath,
       JSON.stringify(
-        { name: "omniroute-runtime", version: "1.0.0", private: true },
+        { name: "agentproxy-runtime", version: "1.0.0", private: true },
         null,
         2
       )

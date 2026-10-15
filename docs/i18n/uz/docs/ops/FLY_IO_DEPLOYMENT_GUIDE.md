@@ -10,7 +10,7 @@ Ushbu hujjat AgentProxy’ni Fly.io’ga amalda joylashtirish jarayonini quyidag
 - Keyingi kod yangilanishlarini e’lon qilish
 - Xuddi shu joylashtirish jarayonidan foydalanadigan yangi loyihalar
 
-Ushbu qo‘llanma joriy loyiha uchun tekshirilgan va ishlaydigan konfiguratsiyaga asoslangan. Ilova nomi — `omniroute`.
+Ushbu qo‘llanma joriy loyiha uchun tekshirilgan va ishlaydigan konfiguratsiyaga asoslangan. Ilova nomi — `agentproxy`.
 
 ---
 
@@ -20,7 +20,7 @@ Ushbu qo‘llanma joriy loyiha uchun tekshirilgan va ishlaydigan konfiguratsiyag
 - Joylashtirish usuli: Mahalliy `flyctl` orqali bevosita e’lon qilish
 - Ishlash muhiti: Repozitoriydagi mavjud `Dockerfile` va `fly.toml` fayllaridan foydalanish
 - Ma’lumotlarni doimiy saqlash: `/data` manziliga ulangan Fly Volume
-- Kirish URL manzili: `https://omniroute.fly.dev/`
+- Kirish URL manzili: `https://agentproxy.online`
 
 ---
 
@@ -29,7 +29,7 @@ Ushbu qo‘llanma joriy loyiha uchun tekshirilgan va ishlaydigan konfiguratsiyag
 Joriy repozitoriydagi `fly.toml` quyidagi asosiy bandlarni o‘z ichiga olishi tasdiqlangan:
 
 ```toml
-app = 'omniroute'
+app = 'agentproxy'
 primary_region = 'sin'
 
 [[mounts]]
@@ -51,7 +51,7 @@ primary_region = 'sin'
 
 Izohlar:
 
-- `app = 'omniroute'` joylashtirish qaysi Fly ilovasiga yo‘naltirilishini belgilaydi
+- `app = 'agentproxy'` joylashtirish qaysi Fly ilovasiga yo‘naltirilishini belgilaydi
 - `destination = '/data'` doimiy jild ulanadigan katalogni belgilaydi
 - Ushbu loyihada `DATA_DIR=/data` sozlanishi shart, aks holda ma’lumotlar bazasi va kalitlar konteynerning vaqtinchalik katalogiga yoziladi
 
@@ -98,29 +98,29 @@ cd AgentProxy
 `fly.toml` faylini oching va quyidagi qatorni tekshiring:
 
 ```toml
-app = 'omniroute'
+app = 'agentproxy'
 ```
 
 Agar o‘zingizning yangi ilovangizga joylashtirayotgan bo‘lsangiz, uni global miqyosda noyob nomga o‘zgartirishingiz mumkin, masalan:
 
 ```toml
-app = 'omniroute-yourname'
+app = 'agentproxy-yourname'
 ```
 
 Izoh:
 
 - Konsolda ko‘rinadigan ilova nomi `fly.toml` faylidagi `app` qiymatiga mos kelishiga ishonch hosil qiling
-- Agar avval `oroute` kabi boshqa nomdan foydalangan bo‘lsangiz, uni `omniroute` bilan adashtirmang
+- Agar avval `oroute` kabi boshqa nomdan foydalangan bo‘lsangiz, uni `agentproxy` bilan adashtirmang
 
 ### 4.3 Ilovani yaratish
 
 Agar ilova hali mavjud bo‘lmasa:
 
 ```powershell
-flyctl apps create omniroute
+flyctl apps create agentproxy
 ```
 
-Agar ilova nomini o‘zgartirgan bo‘lsangiz, `omniroute` o‘rniga tanlagan nomingizni kiriting.
+Agar ilova nomini o‘zgartirgan bo‘lsangiz, `agentproxy` o‘rniga tanlagan nomingizni kiriting.
 
 ### 4.4 Birinchi joylashtirish
 
@@ -136,14 +136,14 @@ Ushbu loyiha Fly.io’da kamida quyidagi parametrlarni sozlashni tavsiya qiladi.
 
 ### 5.1 Tekshirilgan parametrlar
 
-Ushbu parametrlar joriy `omniroute` ilovasining amaldagi joylashtirishlarida ishlatilgan:
+Ushbu parametrlar joriy `agentproxy` ilovasining amaldagi joylashtirishlarida ishlatilgan:
 
 - `API_KEY_SECRET`
 - `DATA_DIR`
 - `JWT_SECRET`
 - `MACHINE_ID_SALT`
 - `NEXT_PUBLIC_BASE_URL`
-- `OMNIROUTE_WS_BRIDGE_SECRET` (ishlab chiqarish muhitida majburiy — WebSocket ko‘prigini autentifikatsiya qilish uchun ishlatiladi)
+- `AGENTPROXY_WS_BRIDGE_SECRET` (ishlab chiqarish muhitida majburiy — WebSocket ko‘prigini autentifikatsiya qilish uchun ishlatiladi)
 - `STORAGE_ENCRYPTION_KEY`
 
 ### 5.2 `INITIAL_PASSWORD` haqida
@@ -171,7 +171,7 @@ Fly Secrets uchun quyidagi o‘zgaruvchilar tavsiya etiladi:
 | ----------------------------------- | --------------------------- | ------------------------------------------------------------- |
 | `API_KEY_SECRET`                    | Majburiy                    | API kalitini yaratish va tekshirish uchun ishlatiladi         |
 | `JWT_SECRET`                        | Majburiy                    | Kirish seanslari va JWT imzolash uchun ishlatiladi            |
-| `OMNIROUTE_WS_BRIDGE_SECRET`        | Ishlab chiqarishda majburiy | WebSocket ko‘prigini autentifikatsiya qilish siri             |
+| `AGENTPROXY_WS_BRIDGE_SECRET`        | Ishlab chiqarishda majburiy | WebSocket ko‘prigini autentifikatsiya qilish siri             |
 | `STORAGE_ENCRYPTION_KEY`            | Qat’iy tavsiya etiladi      | Saqlangan maxfiy ulanish ma’lumotlarini shifrlaydi            |
 | `MACHINE_ID_SALT`                   | Tavsiya etiladi             | Barqaror mashina identifikatorini yaratadi                    |
 | `INITIAL_PASSWORD`                  | Ixtiyoriy                   | Birinchi joylashtirishda dastlabki backend parolini o‘rnatadi |
@@ -182,7 +182,7 @@ Fly Secrets uchun quyidagi o‘zgaruvchilar tavsiya etiladi:
 | O‘zgaruvchi            | Tavsiya etilgan qiymat      |
 | ---------------------- | --------------------------- |
 | `DATA_DIR`             | `/data`                     |
-| `NEXT_PUBLIC_BASE_URL` | `https://omniroute.fly.dev` |
+| `NEXT_PUBLIC_BASE_URL` | `https://agentproxy.online` |
 
 Izohlar:
 
@@ -196,10 +196,10 @@ Agar Fly.io joylashtirishida OAuth asosidagi provayderlarni (masalan, Antigravit
 1. **`NEXT_PUBLIC_BASE_URL` qiymatini ommaviy HTTPS domeningizga o‘rnating**
 
    ```powershell
-   flyctl secrets set NEXT_PUBLIC_BASE_URL=https://omniroute.fly.dev -a omniroute
+   flyctl secrets set NEXT_PUBLIC_BASE_URL=https://agentproxy.online -a agentproxy
    ```
 
-   Agar maxsus domendan foydalanayotgan bo‘lsangiz, uni tegishli domen bilan almashtiring (masalan, `https://omniroute.yourdomain.com`).
+   Agar maxsus domendan foydalanayotgan bo‘lsangiz, uni tegishli domen bilan almashtiring (masalan, `https://agentproxy.example.com`).
 
 2. **Provayder konsolida qayta chaqiruv URL manzilini sozlang**
 
@@ -210,7 +210,7 @@ Agar Fly.io joylashtirishida OAuth asosidagi provayderlarni (masalan, Antigravit
    ```
 
    Masalan, Gemini, Antigravity, Cursor yoki GitLab Duo bo‘lishidan qat’i nazar:
-   - `https://omniroute.fly.dev/callback`
+   - `https://agentproxy.online`
 
    Agar `NEXT_PUBLIC_BASE_URL` provayderda ro‘yxatdan o‘tkazilgan qayta chaqiruv URL manziliga mos kelmasa, OAuth jarayoni brauzerni qayta yo‘naltirish bosqichida muvaffaqiyatsiz tugaydi.
 
@@ -223,7 +223,7 @@ Quyidagi buyruqlar xavfsiz tasodifiy qiymatlarni yaratadi va joriy loyiha uchun 
 Izohlar:
 
 - `INITIAL_PASSWORD` kiritilmagan
-- Joriy `omniroute` loyihasi uchun mo‘ljallangan
+- Joriy `agentproxy` loyihasi uchun mo‘ljallangan
 
 ```powershell
 $apiKeySecret = [Convert]::ToHexString((1..32 | ForEach-Object { Get-Random -Minimum 0 -Maximum 256 })).ToLower()
@@ -237,26 +237,26 @@ flyctl secrets set `
   JWT_SECRET=$jwtSecret `
   MACHINE_ID_SALT=$machineIdSalt `
   STORAGE_ENCRYPTION_KEY=$storageKey `
-  OMNIROUTE_WS_BRIDGE_SECRET=$wsBridgeSecret `
+  AGENTPROXY_WS_BRIDGE_SECRET=$wsBridgeSecret `
   DATA_DIR=/data `
-  NEXT_PUBLIC_BASE_URL=https://omniroute.fly.dev `
-  -a omniroute
+  NEXT_PUBLIC_BASE_URL=https://agentproxy.online `
+  -a agentproxy
 ```
 
 Linux / macOS tizimlarida `openssl rand -hex 32` buyrug‘idan ham foydalanishingiz mumkin:
 
 ```bash
-flyctl secrets set OMNIROUTE_WS_BRIDGE_SECRET=$(openssl rand -hex 32) -a omniroute
+flyctl secrets set AGENTPROXY_WS_BRIDGE_SECRET=$(openssl rand -hex 32) -a agentproxy
 ```
 
 Izohlar:
 
-- `OMNIROUTE_WS_BRIDGE_SECRET` ishlab chiqarish muhitida majburiy; uning mavjud emasligi WebSocket ko‘prigi bilan qo‘l siqish jarayonini buzadi
+- `AGENTPROXY_WS_BRIDGE_SECRET` ishlab chiqarish muhitida majburiy; uning mavjud emasligi WebSocket ko‘prigi bilan qo‘l siqish jarayonini buzadi
 
 Agar dastlabki parolni ham o‘rnatmoqchi bo‘lsangiz:
 
 ```powershell
-flyctl secrets set INITIAL_PASSWORD=your-strong-password -a omniroute
+flyctl secrets set INITIAL_PASSWORD=your-strong-password -a agentproxy
 ```
 
 ---
@@ -264,12 +264,12 @@ flyctl secrets set INITIAL_PASSWORD=your-strong-password -a omniroute
 ## 8. Joriy parametrlarni koʻrish
 
 ```powershell
-flyctl secrets list -a omniroute
+flyctl secrets list -a agentproxy
 ```
 
 Agar konsoldagi `Secrets` sahifasida kutilgan oʻzgaruvchilar koʻrinmasa, quyidagilarni tekshiring:
 
-- `omniroute` ilovasini koʻrayotganingizni
+- `agentproxy` ilovasini koʻrayotganingizni
 - `fly.toml` faylidagi `app` qiymati konsoldagi ilovaga mos kelishini
 
 ---
@@ -286,7 +286,7 @@ flyctl deploy
 Agar kodni oʻzgartirmasdan faqat parametrlarni yangilash kerak boʻlsa:
 
 ```powershell
-flyctl secrets set KEY=value -a omniroute
+flyctl secrets set KEY=value -a agentproxy
 ```
 
 Fly mashinalarni avtomatik ravishda bosqichma-bosqich yangilaydi.
@@ -361,8 +361,8 @@ Asl repozitoriy bilan sinxronlashtirilgandan keyin quyidagi tavsiya etilgan reli
 3. Forkning `fly.toml` faylini tiklang
 4. `git push origin main`
 5. `flyctl deploy`
-6. `flyctl status -a omniroute`
-7. `flyctl logs --no-tail -a omniroute`
+6. `flyctl status -a agentproxy`
+7. `flyctl logs --no-tail -a agentproxy`
 
 Bu joriy loyihani `v3.4.7` versiyasiga yangilashda amalda qoʻllangan ish jarayonidir (misol tarixiy versiyaga tegishli; joriy amaldagi versiya — `v3.8.0`).
 
@@ -373,20 +373,20 @@ Bu joriy loyihani `v3.4.7` versiyasiga yangilashda amalda qoʻllangan ish jarayo
 ### 10.1 Ilova holatini tekshirish
 
 ```powershell
-flyctl status -a omniroute
+flyctl status -a agentproxy
 ```
 
 ### 10.2 Ishga tushirish jurnallarini koʻrish
 
 ```powershell
-flyctl logs --no-tail -a omniroute
+flyctl logs --no-tail -a agentproxy
 ```
 
 ### 10.3 Saytga kirish mumkinligini tekshirish
 
 ```powershell
 try {
-  (Invoke-WebRequest -Uri "https://omniroute.fly.dev" -MaximumRedirection 5 -UseBasicParsing).StatusCode
+  (Invoke-WebRequest -Uri "https://agentproxy.online" -MaximumRedirection 5 -UseBasicParsing).StatusCode
 } catch {
   if ($_.Exception.Response) {
     $_.Exception.Response.StatusCode.value__
@@ -425,14 +425,14 @@ Agar uning oʻrniga `/app/data/...` koʻrsatilsa, `DATA_DIR` notoʻgʻri sozlang
 Buning odatda ikkita sababi bor:
 
 - Siz hali `flyctl secrets set` buyrugʻini bajarmagansiz
-- Siz boshqa ilovani koʻryapsiz (masalan, `omniroute` oʻrniga `oroute`)
+- Siz boshqa ilovani koʻryapsiz (masalan, `agentproxy` oʻrniga `oroute`)
 
 ### 12.2 `flyctl deploy` buyrugʻi `app not found` xabarini beradi
 
 Avval ilovani yarating:
 
 ```powershell
-flyctl apps create omniroute
+flyctl apps create agentproxy
 ```
 
 ### 12.3 `fly.toml` faylini tahlil qilish muvaffaqiyatsiz tugaydi
@@ -475,10 +475,10 @@ Keyingi relizlar uchun eng koʻp ishlatiladigan buyruqlar:
 
 ```powershell
 flyctl auth whoami
-flyctl status -a omniroute
-flyctl secrets list -a omniroute
+flyctl status -a agentproxy
+flyctl secrets list -a agentproxy
 flyctl deploy
-flyctl logs --no-tail -a omniroute
+flyctl logs --no-tail -a agentproxy
 ```
 
 Oddiy reliz uchun asosiy buyruq:
@@ -490,7 +490,7 @@ flyctl deploy
 Yangi muhitga birinchi marta joylashtirish uchun asosiy qadamlar:
 
 1. `flyctl auth login`
-2. `flyctl apps create omniroute`
-3. `flyctl secrets set ... -a omniroute`
+2. `flyctl apps create agentproxy`
+3. `flyctl secrets set ... -a agentproxy`
 4. `flyctl deploy`
-5. `flyctl logs --no-tail -a omniroute`
+5. `flyctl logs --no-tail -a agentproxy`

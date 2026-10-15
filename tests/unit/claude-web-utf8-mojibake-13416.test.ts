@@ -157,7 +157,7 @@ describe("Claude Web UTF-8 text preservation (#13416)", () => {
     assert.equal(accumulated, text, "chunk boundary split should not produce mojibake");
   });
 
-  it("byte-level repro: naive per-chunk decode (no TextDecoder stream state) IS the actual mojibake mechanism, and OmniRoute's real pipeline already avoids it independent of the Content-Type header", async () => {
+  it("byte-level repro: naive per-chunk decode (no TextDecoder stream state) IS the actual mojibake mechanism, and AgentProxy's real pipeline already avoids it independent of the Content-Type header", async () => {
     // Isolate the real root cause behind #13416: a multi-byte UTF-8 sequence split
     // across a network chunk boundary. Every Persian/Arabic letter is 2 bytes in UTF-8
     // (0xD8/0xD9 lead byte + 0x80-0xBF continuation byte), so splitting 1 byte into the
@@ -186,7 +186,7 @@ describe("Claude Web UTF-8 text preservation (#13416)", () => {
       "naive per-chunk decode should surface U+FFFD at the split multi-byte sequence"
     );
 
-    // (b) Feed the exact same byte split through OmniRoute's real claude-web pipeline
+    // (b) Feed the exact same byte split through AgentProxy's real claude-web pipeline
     // (decodeSseData's TextDecoder is constructed once and called with { stream: true }
     // across reads — see open-sse/executors/claude-web/stream.ts). This must reconstruct
     // the original text losslessly regardless of the Content-Type header on the response.
@@ -226,8 +226,8 @@ describe("Claude Web UTF-8 text preservation (#13416)", () => {
     assert.equal(
       accumulated,
       text,
-      "OmniRoute's own stream:true decode must reconstruct the split character correctly, " +
-        "proving the reported mojibake is not caused by OmniRoute's chunk-boundary handling"
+      "AgentProxy's own stream:true decode must reconstruct the split character correctly, " +
+        "proving the reported mojibake is not caused by AgentProxy's chunk-boundary handling"
     );
   });
 });

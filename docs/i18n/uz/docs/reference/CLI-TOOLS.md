@@ -51,11 +51,11 @@ vositaning oʻz konfiguratsiyasini kompyuteringizga yozadigan `setup-*`
 buyrugʻini taqdim etadi:
 
 ```bash
-omniroute setup-codex        omniroute setup-claude       omniroute setup-opencode
-omniroute setup-cline        omniroute setup-kilo         omniroute setup-continue
-omniroute setup-cursor       omniroute setup-roo          omniroute setup-crush
-omniroute setup-goose        omniroute setup-qwen         omniroute setup-aider
-omniroute setup-5dive
+agentproxy setup-codex        agentproxy setup-claude       agentproxy setup-opencode
+agentproxy setup-cline        agentproxy setup-kilo         agentproxy setup-continue
+agentproxy setup-cursor       agentproxy setup-roo          agentproxy setup-crush
+agentproxy setup-goose        agentproxy setup-qwen         agentproxy setup-aider
+agentproxy setup-5dive
 ```
 
 Har biri `--remote <url> --api-key <key>` (lokal vositani masofaviy AgentProxy bilan ishlashga sozlash), `--dry-run` (yozmasdan oldindan koʻrish) va `--port` parametrlarini qabul qiladi. Modellarni avtomatik aniqlash imkoniyati boʻlmagan vositalar (Cline, Kilo, Roo, Goose, Aider, Qwen, 5dive)
@@ -64,10 +64,10 @@ Har biri `--remote <url> --api-key <key>` (lokal vositani masofaviy AgentProxy b
 yozish orqali 5dive agentlar flotini sozlaydi, shu sababli `sudo` orqali qayta ishga tushadi
 va oʻzining masofaviy rejimiga ega emas. Toʻgʻri muhit oʻzgaruvchilari kiritilgan holda va umuman
 hech qanday konfiguratsiya yozmasdan CLI’ni ishga tushirish uchun umumiy
-`omniroute run <target>` ishga tushirgichidan foydalaning (claude, codex, aider, goose, opencode, qwen,
+`agentproxy run <target>` ishga tushirgichidan foydalaning (claude, codex, aider, goose, opencode, qwen,
 gemini — maqsadlar va taxalluslar `bin/cli/cli-manifest.mjs` faylidan olinadi); har bir vosita uchun eski
-`omniroute launch` (Claude Code) va `omniroute launch-codex`
-(Codex) ishga tushirgichlari hali ham mavjud. Gemini CLI faqat ishga tushirish uchun moʻljallangan: u `omniroute run`
+`agentproxy launch` (Claude Code) va `agentproxy launch-codex`
+(Codex) ishga tushirgichlari hali ham mavjud. Gemini CLI faqat ishga tushirish uchun moʻljallangan: u `agentproxy run`
 maqsadi hisoblanadi, biroq `setup-*`/`configure` retseptiga ega emas.
 
 > **Toʻliq maʼlumotnoma:** asosiy jadval — har bir buyruq nimani yozishi, barcha parametrlar,
@@ -80,18 +80,18 @@ AgentProxy konteyneri ichida bajarilgan `setup-*` buyrugʻi konteynerning
 oʻz uy katalogiga yozadi; bu katalogni xostdagi hech bir CLI oʻqimaydi va u
 konteyner bilan birga yoʻqoladi. AgentProxy buni aniqlaydi va yozish oʻrniga
 koʻrsatmalar bilan `2` kodi orqali chiqadi. Davom etishning ikkita qoʻllab-quvvatlanadigan usuli mavjud — CLI’ni xostga oʻrnating va
-konteynerga `omniroute connect` orqali ulaning yoki konfiguratsiya kataloglarini bind-mount qiling va
+konteynerga `agentproxy connect` orqali ulaning yoki konfiguratsiya kataloglarini bind-mount qiling va
 `CLI_CONFIG_HOME` qiymatini belgilang (`host` compose profili). Har bir `setup-*` buyrugʻi, shuningdek,
-`omniroute configure` va `omniroute config set`, agar konteynerning oʻz CLI’larini
+`agentproxy configure` va `agentproxy config set`, agar konteynerning oʻz CLI’larini
 sozlashni haqiqatan ham nazarda tutgan boʻlsangiz, `--allow-container-write` parametrini qabul qiladi;
-server uchun `OMNIROUTE_ALLOW_CONTAINER_CONFIG_WRITE=true` xuddi shu vazifani bajaradi. Batafsil:
-[Docker qoʻllanmasi → Xostdagi CLI vositalarini sozlash](../guides/DOCKER_GUIDE.md#configuring-host-cli-tools-when-omniroute-runs-in-docker).
+server uchun `AGENTPROXY_ALLOW_CONTAINER_CONFIG_WRITE=true` xuddi shu vazifani bajaradi. Batafsil:
+[Docker qoʻllanmasi → Xostdagi CLI vositalarini sozlash](../guides/DOCKER_GUIDE.md#configuring-host-cli-tools-when-agentproxy-runs-in-docker).
 
 Boshqaruv panelining **qoʻllash endpointi** (`POST /api/cli-tools/apply`) xuddi shu
 himoyani taʼminlaydi: konteynerda xostdan bind-mount qilinmagan maqsadga yozish soʻrovi
 **`422`** kodi, `containerEphemeralTarget: true`, xavfsiz xato
 matni va — xost retseptiga ega vositalar (claude, codex, opencode, cline,
-kilo, continue) uchun — xostda ishga tushirilishi kerak boʻlgan `hostSetupCommand` (masalan, `omniroute setup-opencode`) bilan
+kilo, continue) uchun — xostda ishga tushirilishi kerak boʻlgan `hostSetupCommand` (masalan, `agentproxy setup-opencode`) bilan
 javob beradi; hech narsa yozilmaydi. `dryRun: true` konteyner
 rejimida ham ishlashda davom etadi va diskka tegmasdan yaratilgan kontent hamda maqsad yoʻlini qaytaradi, shuning uchun
 boshqaruv panelida oldindan koʻrib chiqib, xostda qoʻllashingiz mumkin. Bu xatti-harakat
@@ -126,8 +126,8 @@ e’lon qiluvchi manbaga ega va tafovut testi ularning muvofiqligini saqlaydi:
 | ------------------------ | ----------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------- |
 | **Kataloglangan**        | Boshqaruv paneli katalogida ko‘rsatiladi (nomi, yetkazib beruvchisi, hujjatlari, konfiguratsiya turi) | `src/shared/constants/cliTools.ts` (`CLI_TOOLS`)                     |
 | **Aniqlanadigan**        | Binar fayl/konfiguratsiyani aniqlash, holat tekshiruvlari, konfiguratsiya yo‘llari                    | `src/shared/services/cliRuntime.ts` (`CLI_TOOLS` ish vaqti katalogi) |
-| **Sozlanadigan**         | `omniroute configure <cli>` tomonidan qo‘llab-quvvatlanadi (sozlash retsepti mavjud)                  | `bin/cli/cli-manifest.mjs` (`configure: true`)                       |
-| **Ishga tushiriladigan** | `omniroute run <target>` tomonidan qo‘llab-quvvatlanadi (muhit/argumentlarni kiritish belgilangan)    | `bin/cli/cli-manifest.mjs` (`run: true`)                             |
+| **Sozlanadigan**         | `agentproxy configure <cli>` tomonidan qo‘llab-quvvatlanadi (sozlash retsepti mavjud)                  | `bin/cli/cli-manifest.mjs` (`configure: true`)                       |
+| **Ishga tushiriladigan** | `agentproxy run <target>` tomonidan qo‘llab-quvvatlanadi (muhit/argumentlarni kiritish belgilangan)    | `bin/cli/cli-manifest.mjs` (`run: true`)                             |
 
 `bin/cli/cli-manifest.mjs` CLI buyruqlari interfeyslari uchun kanonik bajariladigan manifestdir:
 `run`, `configure` va shell avtomatik to‘ldirish generatorlarining barchasi maqsadlar
@@ -261,7 +261,7 @@ interface ToolBatchStatus {
 | `POST /api/cli-tools/codewhale-settings`    | CodeWhale (OPENAI_BASE_URL, asosiy + eskirgan `~/.deepseek` sinxronlashuvi) |
 | `POST /api/cli-tools/smelt-settings`        | Smelt                                                                       |
 | `POST /api/cli-tools/pi-settings`           | Pi dasturlash agenti                                                        |
-| `POST /api/cli-tools/grok-build-settings`   | Grok Build (~/.grok/config.toml, `[model.omniroute]`)                       |
+| `POST /api/cli-tools/grok-build-settings`   | Grok Build (~/.grok/config.toml, `[model.agentproxy]`)                       |
 | `POST /api/cli-tools/qwen-settings`         | Qwen Code (`~/.qwen/settings.json` + maxsus `.env` kaliti)                  |
 
 Barcha marshrutlar xato javoblari uchun `sanitizeErrorMessage()` funksiyasidan foydalanadi (Qatʼiy qoida #12).
@@ -356,7 +356,7 @@ npm install -g kilocode
 # Qwen Code
 npm install -g @qwen-code/qwen-code
 
-# Google Gemini CLI (`omniroute run gemini` orqali ishga tushiriladi → /v1beta interfeysi)
+# Google Gemini CLI (`agentproxy run gemini` orqali ishga tushiriladi → /v1beta interfeysi)
 npm install -g @google/gemini-cli
 
 # Aider
@@ -389,12 +389,12 @@ cargo install smelt  # Rust asosida
 ```bash
 # AgentProxy universal soʻnggi nuqtasi
 export OPENAI_BASE_URL="http://localhost:20128/v1"
-export OPENAI_API_KEY="sk-your-omniroute-key"
+export OPENAI_API_KEY="sk-your-agentproxy-key"
 export ANTHROPIC_BASE_URL="http://localhost:20128"
-export ANTHROPIC_AUTH_TOKEN="sk-your-omniroute-key"
+export ANTHROPIC_AUTH_TOKEN="sk-your-agentproxy-key"
 # Gemini CLI GOOGLE_GEMINI_BASE_URL manzilini ILDIZ darajasida oʻqiydi (uning SDKʼsi /v1beta/... qismini oʻzi qoʻshadi)
 export GOOGLE_GEMINI_BASE_URL="http://localhost:20128"
-export GEMINI_API_KEY="sk-your-omniroute-key"
+export GEMINI_API_KEY="sk-your-agentproxy-key"
 ```
 
 > **Masofaviy server** uchun `localhost:20128` qismini server IP manzili yoki domeni bilan almashtiring,
@@ -412,7 +412,7 @@ mkdir -p ~/.claude && cat > ~/.claude/settings.json << EOF
 {
   "env": {
     "ANTHROPIC_BASE_URL": "http://localhost:20128",
-    "ANTHROPIC_AUTH_TOKEN": "sk-your-omniroute-key"
+    "ANTHROPIC_AUTH_TOKEN": "sk-your-agentproxy-key"
   }
 }
 EOF
@@ -428,19 +428,19 @@ Claude Code uchun birlashtirilgan Anthropic shlyuzi ildizidan foydalaning. Bu ye
 
 Zamonaviy Codex (v0.137+) faqat `~/.codex/config.toml` faylini oʻqiydi — eski
 `config.yaml` avvalgi npm CLIʼga tegishli va ogohlantirishsiz eʼtiborsiz qoldiriladi. API
-kaliti fayl ichida emas, balki `OMNIROUTE_API_KEY` muhit oʻzgaruvchisida (`env_key`) saqlanadi:
+kaliti fayl ichida emas, balki `AGENTPROXY_API_KEY` muhit oʻzgaruvchisida (`env_key`) saqlanadi:
 
 ```bash
 mkdir -p ~/.codex && cat > ~/.codex/config.toml << EOF
-model_provider = "omniroute"
+model_provider = "agentproxy"
 
-[model_providers.omniroute]
+[model_providers.agentproxy]
 name                 = "AgentProxy"
 base_url             = "http://localhost:20128/v1"
-env_key              = "OMNIROUTE_API_KEY"
+env_key              = "AGENTPROXY_API_KEY"
 requires_openai_auth = false
 EOF
-export OMNIROUTE_API_KEY="sk-your-omniroute-key"
+export AGENTPROXY_API_KEY="sk-your-agentproxy-key"
 ```
 
 Toʻliq maʼlumotnoma (profillar, `wire_api`, kontekst oynalari): [CODEX-CLI-CONFIGURATION.md](../guides/CODEX-CLI-CONFIGURATION.md).
@@ -456,12 +456,12 @@ mkdir -p ~/.config/opencode && cat > ~/.config/opencode/opencode.json << EOF
 {
   "\$schema": "https://opencode.ai/config.json",
   "provider": {
-    "omniroute": {
+    "agentproxy": {
       "npm": "@ai-sdk/openai-compatible",
       "name": "AgentProxy",
       "options": {
         "baseURL": "http://localhost:20128/v1",
-        "apiKey": "sk-your-omniroute-key"
+        "apiKey": "sk-your-agentproxy-key"
       },
       "models": {
         "claude-sonnet-4-5": { "name": "claude-sonnet-4-5" },
@@ -476,7 +476,7 @@ EOF
 
 **Sinov:** `opencode`
 
-> Fikrlash variantlarini yuborish uchun `opencode run "your prompt" --model omniroute/claude-sonnet-4-5-thinking --variant high`
+> Fikrlash variantlarini yuborish uchun `opencode run "your prompt" --model agentproxy/claude-sonnet-4-5-thinking --variant high`
 > buyrugʻidan foydalaning.
 
 ---
@@ -490,7 +490,7 @@ mkdir -p ~/.cline/data && cat > ~/.cline/data/globalState.json << EOF
 {
   "apiProvider": "openai",
   "openAiBaseUrl": "http://localhost:20128/v1",
-  "openAiApiKey": "sk-your-omniroute-key"
+  "openAiApiKey": "sk-your-agentproxy-key"
 }
 EOF
 ```
@@ -507,7 +507,7 @@ Yoki AgentProxy boshqaruv panelidan foydalaning → **CLI vositalari → Cline �
 **CLI rejimi:**
 
 ```bash
-kilocode --api-base http://localhost:20128/v1 --api-key sk-your-omniroute-key
+kilocode --api-base http://localhost:20128/v1 --api-key sk-your-agentproxy-key
 ```
 
 **VS Code sozlamalari:**
@@ -515,7 +515,7 @@ kilocode --api-base http://localhost:20128/v1 --api-key sk-your-omniroute-key
 ```json
 {
   "kilo-code.openAiBaseUrl": "http://localhost:20128/v1",
-  "kilo-code.apiKey": "sk-your-omniroute-key"
+  "kilo-code.apiKey": "sk-your-agentproxy-key"
 }
 ```
 
@@ -533,7 +533,7 @@ models:
     provider: openai
     model: auto
     apiBase: http://localhost:20128/v1
-    apiKey: sk-your-omniroute-key
+    apiKey: sk-your-agentproxy-key
     default: true
 ```
 
@@ -560,8 +560,8 @@ VS Code Insiders maxsus soʻnggi nuqta modellari uchun sozlanganida va AgentProx
     "name": "AgentProxy Auto",
     "family": "gpt-4",
     "version": "1.0.0",
-    "url": "http://localhost:20128/api/v1/vscode/sk-your-omniroute-key/chat/completions",
-    "modelsUrl": "http://localhost:20128/api/v1/vscode/sk-your-omniroute-key/models",
+    "url": "http://localhost:20128/api/v1/vscode/sk-your-agentproxy-key/chat/completions",
+    "modelsUrl": "http://localhost:20128/api/v1/vscode/sk-your-agentproxy-key/models",
     "requestFormat": "openai-chat-completions",
     "contextWindow": 256000,
     "maxOutputTokens": 32768,
@@ -574,7 +574,7 @@ VS Code Insiders maxsus soʻnggi nuqta modellari uchun sozlanganida va AgentProx
 
 **Eslatmalar:**
 
-- `sk-your-omniroute-key` o‘rniga AgentProxy’da yaratilgan API kalitini kiriting.
+- `sk-your-agentproxy-key` o‘rniga AgentProxy’da yaratilgan API kalitini kiriting.
 - `url` maydoni `/api/v1/vscode/{token}/chat/completions` manziliga yo‘naltirilishi kerak.
 - `modelsUrl` maydoni `/api/v1/vscode/{token}/models` manziliga yo‘naltirilishi kerak.
 - Mijoz maxsus sarlavhalarni qo‘llab-quvvatlasa, odatiy `/v1` + Bearer sarlavhasi usulidan foydalanish afzal.
@@ -600,28 +600,28 @@ kiro-cli status
 
 ## 10. Ichki AgentProxy CLI
 
-`omniroute` bajariluvchi fayli server hayotiy sikli, sozlash, diagnostika va provayderlarni boshqarish uchun buyruqlarni taqdim etadi. Kirish nuqtasi: `bin/omniroute.mjs`.
+`agentproxy` bajariluvchi fayli server hayotiy sikli, sozlash, diagnostika va provayderlarni boshqarish uchun buyruqlarni taqdim etadi. Kirish nuqtasi: `bin/agentproxy.mjs`.
 
 ```bash
-omniroute                              # Serverni ishga tushirish (standart port 20128)
-omniroute setup                        # Interaktiv sozlash ustasi
-omniroute doctor                       # Konfiguratsiya, MB, portlar va bajarilish muhitini tekshirish
-omniroute providers list               # Sozlangan provayder ulanishlari
-omniroute providers test-all           # Barcha faol ulanishlarni sinash
-omniroute reset-password               # Administrator parolini tiklash
-omniroute logs                         # So‘rov jurnallarini oqimda ko‘rsatish
-omniroute health                       # Batafsil holat (uzgichlar, kesh, xotira)
-omniroute --version                    # Versiyani chiqarish
-omniroute --help                       # Barcha buyruqlarni ko‘rsatish
+agentproxy                              # Serverni ishga tushirish (standart port 20128)
+agentproxy setup                        # Interaktiv sozlash ustasi
+agentproxy doctor                       # Konfiguratsiya, MB, portlar va bajarilish muhitini tekshirish
+agentproxy providers list               # Sozlangan provayder ulanishlari
+agentproxy providers test-all           # Barcha faol ulanishlarni sinash
+agentproxy reset-password               # Administrator parolini tiklash
+agentproxy logs                         # So‘rov jurnallarini oqimda ko‘rsatish
+agentproxy health                       # Batafsil holat (uzgichlar, kesh, xotira)
+agentproxy --version                    # Versiyani chiqarish
+agentproxy --help                       # Barcha buyruqlarni ko‘rsatish
 ```
 
 ### Sozlash va ishga tayyorlash
 
 ```bash
-omniroute setup                        # Interaktiv sozlash ustasi
-omniroute setup --non-interactive      # CI/avtomatlashtirish rejimi (muhit o‘zgaruvchilari va bayroqlarni o‘qiydi)
-omniroute setup --password '<value>'   # Administrator parolini bevosita o‘rnatish
-omniroute setup --add-provider \
+agentproxy setup                        # Interaktiv sozlash ustasi
+agentproxy setup --non-interactive      # CI/avtomatlashtirish rejimi (muhit o‘zgaruvchilari va bayroqlarni o‘qiydi)
+agentproxy setup --password '<value>'   # Administrator parolini bevosita o‘rnatish
+agentproxy setup --add-provider \
   --provider openai \
   --api-key '<value>' \
   --test-provider                      # Provayderni bir urinishda qo‘shish va sinash
@@ -631,21 +631,21 @@ Interaktiv bo‘lmagan sozlash uchun tan olinadigan muhit o‘zgaruvchilari:
 
 | O‘zgaruvchi         | Maqsad                                                                        |
 | ------------------- | ----------------------------------------------------------------------------- |
-| `OMNIROUTE_API_KEY` | Provayder API kaliti (Commander `.env()` orqali `--api-key` bilan bog‘langan) |
+| `AGENTPROXY_API_KEY` | Provayder API kaliti (Commander `.env()` orqali `--api-key` bilan bog‘langan) |
 | `DATA_DIR`          | AgentProxy ma’lumotlar katalogini almashtirish                                 |
 
 Boshqa barcha interaktiv bo‘lmagan kirish qiymatlari muhit o‘zgaruvchilari sifatida emas, bayroqlar orqali uzatiladi:
 `--password`, `--provider`, `--provider-name`, `--provider-base-url`, `--default-model`
-(yuqoridagi `omniroute setup` parametrlariga qarang).
+(yuqoridagi `agentproxy setup` parametrlariga qarang).
 
 ### Diagnostika
 
 ```bash
-omniroute doctor                       # Konfiguratsiya, MB, portlar, bajarilish muhiti, xotira va ishlayotganlikni tekshirish
-omniroute doctor --json                # Mashina o‘qiy oladigan JSON
-omniroute doctor --no-liveness         # HTTP holat tekshiruvini o‘tkazib yuborish
-omniroute doctor --host 0.0.0.0        # Ishlayotganlik xostini almashtirish
-omniroute doctor --liveness-url <url>  # Holat yakuniy nuqtasining to‘liq URL manzilini almashtirish
+agentproxy doctor                       # Konfiguratsiya, MB, portlar, bajarilish muhiti, xotira va ishlayotganlikni tekshirish
+agentproxy doctor --json                # Mashina o‘qiy oladigan JSON
+agentproxy doctor --no-liveness         # HTTP holat tekshiruvini o‘tkazib yuborish
+agentproxy doctor --host 0.0.0.0        # Ishlayotganlik xostini almashtirish
+agentproxy doctor --liveness-url <url>  # Holat yakuniy nuqtasining to‘liq URL manzilini almashtirish
 ```
 
 Doctor quyidagi tekshiruvlarni bajaradi: `Config`, `Database`, `Storage/encryption`,
@@ -655,22 +655,22 @@ Doctor quyidagi tekshiruvlarni bajaradi: `Config`, `Database`, `Storage/encrypti
 ### Provayderlarni boshqarish
 
 ```bash
-omniroute providers available                       # AgentProxy provayderlar katalogi
-omniroute providers available --search openai       # Katalogni id/nom/taxallus/toifa bo‘yicha filtrlash
-omniroute providers available --category api-key    # Toifa bo‘yicha filtrlash (api-key, oauth, free, ...)
-omniroute providers available --json                # Mashina o‘qiy oladigan JSON
+agentproxy providers available                       # AgentProxy provayderlar katalogi
+agentproxy providers available --search openai       # Katalogni id/nom/taxallus/toifa bo‘yicha filtrlash
+agentproxy providers available --category api-key    # Toifa bo‘yicha filtrlash (api-key, oauth, free, ...)
+agentproxy providers available --json                # Mashina o‘qiy oladigan JSON
 
-omniroute providers list                            # Sozlangan provayder ulanishlari
-omniroute providers list --json
+agentproxy providers list                            # Sozlangan provayder ulanishlari
+agentproxy providers list --json
 
-omniroute providers test <id|name>                  # Bitta sozlangan ulanishni sinash
-omniroute providers test-all                        # Barcha faol ulanishlarni sinash
-omniroute providers validate                        # Faqat lokal tuzilmaviy tekshiruv
-omniroute providers add <provider> --credential-env PROVIDER_KEY
-omniroute providers import ./providers.json --dry-run --json
-omniroute providers auth <provider>                 # Mavjud OAuth jarayoni
-omniroute providers edit <id|name> --default-model <model>
-omniroute providers remove <id|name> --yes
+agentproxy providers test <id|name>                  # Bitta sozlangan ulanishni sinash
+agentproxy providers test-all                        # Barcha faol ulanishlarni sinash
+agentproxy providers validate                        # Faqat lokal tuzilmaviy tekshiruv
+agentproxy providers add <provider> --credential-env PROVIDER_KEY
+agentproxy providers import ./providers.json --dry-run --json
+agentproxy providers auth <provider>                 # Mavjud OAuth jarayoni
+agentproxy providers edit <id|name> --default-model <model>
+agentproxy providers remove <id|name> --yes
 ```
 
 `providers add/import/auth/edit/remove` avvalo API orqali ishlaydi va shu sababli
@@ -683,19 +683,19 @@ server ishlab turishini talab qilmaydi.
 ### Tiklash va qayta o‘rnatish
 
 ```bash
-omniroute reset-password                # Administrator parolini tiklash (shuningdek: omniroute-reset-password)
-omniroute reset-encrypted-columns       # Shifrlangan hisob ma’lumotlarini tiklash uchun ogohlantirish va sinov rejimini ko‘rsatish
-omniroute reset-encrypted-columns --force  # SQLite ichidagi shifrlangan hisob ma’lumotlarini amalda null qilish
+agentproxy reset-password                # Administrator parolini tiklash (shuningdek: agentproxy-reset-password)
+agentproxy reset-encrypted-columns       # Shifrlangan hisob ma’lumotlarini tiklash uchun ogohlantirish va sinov rejimini ko‘rsatish
+agentproxy reset-encrypted-columns --force  # SQLite ichidagi shifrlangan hisob ma’lumotlarini amalda null qilish
 ```
 
 ### Hisob ma’lumotlarini eksport qilish (⚠ ehtiyotkorlik bilan ishlating)
 
 ```bash
-omniroute auth export                                 # Ogohlantirish va tasdiqlash bosqichini ko‘rsatish — MBga kirilmaydi
-omniroute auth export --force                          # BARCHA ulanishlarning SHIFRDAN YECHILGAN hisob ma’lumotlarini JSON sifatida stdout’ga eksport qilish
-omniroute auth export --force --id <id>                 # Faqat mos keluvchi ulanishni eksport qilish
-omniroute auth export --force --format env               # OMNIROUTE_<PROVIDER>_<FIELD>=<value> qatorlarini chiqarish
-omniroute auth export --force --out creds.json           # Faylga yozish (0600 ruxsatlari bilan yaratiladi)
+agentproxy auth export                                 # Ogohlantirish va tasdiqlash bosqichini ko‘rsatish — MBga kirilmaydi
+agentproxy auth export --force                          # BARCHA ulanishlarning SHIFRDAN YECHILGAN hisob ma’lumotlarini JSON sifatida stdout’ga eksport qilish
+agentproxy auth export --force --id <id>                 # Faqat mos keluvchi ulanishni eksport qilish
+agentproxy auth export --force --format env               # AGENTPROXY_<PROVIDER>_<FIELD>=<value> qatorlarini chiqarish
+agentproxy auth export --force --out creds.json           # Faylga yozish (0600 ruxsatlari bilan yaratiladi)
 ```
 
 `auth export` **faqat lokal** ishlaydi (SQLite bevosita o‘qiladi, HTTP marshruti yo‘q) va ataylab
@@ -710,33 +710,33 @@ to‘xtatish yoki asosiy xatoni oshkor qilish o‘rniga `<field>DecryptFailed: t
 Alohida qayd etilmagan bo‘lsa, ular ishlab turgan AgentProxy serverini talab qiladi:
 
 ```bash
-omniroute status                       # Ishlash holati haqida batafsil maʼlumot
-omniroute logs                         # Soʻrov jurnallarini uzatish (--json, --search, --follow)
-omniroute config list                  # Sozlangan CLI vositalarini koʻrsatish
+agentproxy status                       # Ishlash holati haqida batafsil maʼlumot
+agentproxy logs                         # Soʻrov jurnallarini uzatish (--json, --search, --follow)
+agentproxy config list                  # Sozlangan CLI vositalarini koʻrsatish
 
-omniroute provider list                # Mavjud provayderlarni roʻyxatlash (providers list taxallusi)
-omniroute provider add                 # AgentProxyʼni vositada provayder sifatida roʻyxatdan oʻtkazish
-omniroute keys add | list | remove     # API kalitlarini boshqarish
-omniroute models [provider]            # Modellarni roʻyxatlash (--json, --search)
-omniroute combo list | switch | create | delete
+agentproxy provider list                # Mavjud provayderlarni roʻyxatlash (providers list taxallusi)
+agentproxy provider add                 # AgentProxyʼni vositada provayder sifatida roʻyxatdan oʻtkazish
+agentproxy keys add | list | remove     # API kalitlarini boshqarish
+agentproxy models [provider]            # Modellarni roʻyxatlash (--json, --search)
+agentproxy combo list | switch | create | delete
 
-omniroute backup                       # Konfiguratsiya va DB oniy nusxasini yaratish
-omniroute restore                      # Oldingi oniy nusxadan tiklash
+agentproxy backup                       # Konfiguratsiya va DB oniy nusxasini yaratish
+agentproxy restore                      # Oldingi oniy nusxadan tiklash
 
-omniroute health                       # Batafsil holat (uzgichlar, kesh, xotira)
-omniroute quota                        # Provayder kvotasidan foydalanish
-omniroute cache                        # Kesh holati
-omniroute cache clear                  # Semantik va imzo keshlarini tozalash
+agentproxy health                       # Batafsil holat (uzgichlar, kesh, xotira)
+agentproxy quota                        # Provayder kvotasidan foydalanish
+agentproxy cache                        # Kesh holati
+agentproxy cache clear                  # Semantik va imzo keshlarini tozalash
 
-omniroute mcp status | restart         # MCP serveri holati / qayta ishga tushirish
-omniroute a2a status | card            # A2A serveri holati / agent kartasi
+agentproxy mcp status | restart         # MCP serveri holati / qayta ishga tushirish
+agentproxy a2a status | card            # A2A serveri holati / agent kartasi
 
-omniroute tunnel list | create | stop  # Tunnellarni boshqarish (cloudflare/tailscale/ngrok)
-omniroute env show | get <k> | set <k> <v>  # Muhit oʻzgaruvchilarini tekshirish / sozlash (vaqtincha)
+agentproxy tunnel list | create | stop  # Tunnellarni boshqarish (cloudflare/tailscale/ngrok)
+agentproxy env show | get <k> | set <k> <v>  # Muhit oʻzgaruvchilarini tekshirish / sozlash (vaqtincha)
 
-omniroute test                         # Provayder ulanishining tezkor sinovi
-omniroute update                       # Yangilanishlarni tekshirish
-omniroute completion                   # Qobiq uchun avtomatik toʻldirishni yaratish
+agentproxy test                         # Provayder ulanishining tezkor sinovi
+agentproxy update                       # Yangilanishlarni tekshirish
+agentproxy completion                   # Qobiq uchun avtomatik toʻldirishni yaratish
 ```
 
 ### Umumiy bayroqlar
@@ -784,7 +784,7 @@ Ollama chati: http://localhost:20128/api/v1/vscode/sk-a3ab3c080beaee3a-69f4a4-07
 
 | Xato                                                              | Sabab                                 | Yechim                                                                    |
 | ----------------------------------------------------------------- | ------------------------------------- | ------------------------------------------------------------------------- |
-| `Connection refused`                                              | AgentProxy ishlamayapti                | `omniroute serve`                                                         |
+| `Connection refused`                                              | AgentProxy ishlamayapti                | `agentproxy serve`                                                         |
 | `401 Unauthorized`                                                | API kaliti notoʻgʻri                  | `/dashboard/api-manager` sahifasida tekshiring                            |
 | `No combo configured`                                             | Faol marshrutlash kombinatsiyasi yoʻq | `/dashboard/combos` sahifasida sozlang                                    |
 | CLI "not installed" deb koʻrsatadi                                | Binar fayl PATH ichida emas           | `which <command>` orqali tekshiring                                       |

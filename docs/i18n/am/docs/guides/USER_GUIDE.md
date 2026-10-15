@@ -191,7 +191,7 @@
 
 #### Kimi K2 (በወር ቋሚ $9)
 
-1. ደንበኛ ይሁኑ፦ [Moonshot AI](https://platform.kimi.ai?aff=omniroute)
+1. ደንበኛ ይሁኑ፦ [Moonshot AI](https://platform.kimi.ai)
 2. የAPI ቁልፍ ያግኙ → ዳሽቦርድ → የAPI ቁልፍ አክል
 
 **አጠቃቀም:** `kimi/kimi-k2.5` — **የባለሙያ ምክር:** ለ10M ቶከኖች በወር ቋሚ $9 = ውጤታማ ወጪ $0.90/1M!
@@ -267,7 +267,7 @@
 ```
 ቅንብሮች → ሞዴሎች → የላቀ፦
   OpenAI API መሠረታዊ URL፦ http://localhost:20128/v1
-  OpenAI API ቁልፍ፦ [ከomniroute ዳሽቦርድ]
+  OpenAI API ቁልፍ፦ [ከagentproxy ዳሽቦርድ]
   ሞዴል፦ cc/claude-opus-4-7
 ```
 
@@ -283,7 +283,7 @@
 {
   "env": {
     "ANTHROPIC_BASE_URL": "http://localhost:20128",
-    "ANTHROPIC_AUTH_TOKEN": "your-omniroute-api-key"
+    "ANTHROPIC_AUTH_TOKEN": "your-agentproxy-api-key"
   }
 }
 ```
@@ -294,7 +294,7 @@
 
 ```bash
 export OPENAI_BASE_URL="http://localhost:20128"
-export OPENAI_API_KEY="your-omniroute-api-key"
+export OPENAI_API_KEY="your-agentproxy-api-key"
 codex "your prompt"
 ```
 
@@ -306,14 +306,14 @@ codex "your prompt"
 {
   "agents": {
     "defaults": {
-      "model": { "primary": "omniroute/if/kimi-k2.7-code" }
+      "model": { "primary": "agentproxy/if/kimi-k2.7-code" }
     }
   },
   "models": {
     "providers": {
-      "omniroute": {
+      "agentproxy": {
         "baseUrl": "http://localhost:20128/v1",
-        "apiKey": "your-omniroute-api-key",
+        "apiKey": "your-agentproxy-api-key",
         "api": "openai-completions",
         "models": [{ "id": "if/kimi-k2.7-code", "name": "Kimi K2.7 Code" }]
       }
@@ -340,28 +340,28 @@ API ቁልፍ፦ [ከዳሽቦርድ]
 ### አጠቃላይ npm ጭነት (የሚመከር)
 
 ```bash
-npm install -g omniroute
+npm install -g agentproxy
 
 # የውቅር ማውጫ ይፍጠሩ
-mkdir -p ~/.omniroute
+mkdir -p ~/.agentproxy
 
 # የ.env ፋይል ይፍጠሩ (.env.exampleን ይመልከቱ)
-cp .env.example ~/.omniroute/.env
+cp .env.example ~/.agentproxy/.env
 
 # አገልጋዩን ያስጀምሩ
-omniroute
+agentproxy
 # ወይም ብጁ port በመጠቀም፦
-omniroute --port 3000
+agentproxy --port 3000
 ```
 
-CLIው `.env`ን ከ`~/.omniroute/.env` ወይም `./.env` በራስ-ሰር ይጭናል።
+CLIው `.env`ን ከ`~/.agentproxy/.env` ወይም `./.env` በራስ-ሰር ይጭናል።
 
 ### የማሳወቂያ ሳጥን ሁነታ
 
 AgentProxyን በስርዓቱ የማሳወቂያ ሳጥን ውስጥ ያስጀምሩ፦
 
 ```bash
-omniroute serve --tray
+agentproxy serve --tray
 ```
 
 አገልጋዩና የማሳወቂያ ሳጥኑ ዝግጁ ከሆኑ በኋላ ትዕዛዙ ይጠናቀቃል።
@@ -388,7 +388,7 @@ omniroute serve --tray
 በሚቀጥለው የማሽን መግቢያ ጊዜ ማስጀመርን ያንቁ፦
 
 ```bash
-omniroute autostart enable
+agentproxy autostart enable
 ```
 
 ራስ-ሰር ማስጀመር በmacOS፣ Windows እና ግራፊክሳዊ የLinux ክፍለ-ጊዜዎች ላይ የማሳወቂያ ሳጥን ሁነታን ይጠቀማል። ማሳያ የሌለው Linux ነባሩን የsystemd ተጠቃሚ አገልግሎት ይጠቀማል።
@@ -396,7 +396,7 @@ omniroute autostart enable
 በመግቢያ ጊዜ ማስጀመርን ያሰናክሉ፦
 
 ```bash
-omniroute autostart disable
+agentproxy autostart disable
 ```
 
 ### ማራገፍ
@@ -405,10 +405,10 @@ omniroute autostart disable
 
 | ትዕዛዝ                     | ድርጊት                                                                          |
 | ------------------------ | ----------------------------------------------------------------------------- |
-| `npm run uninstall`      | የስርዓት መተግበሪያውን ያስወግዳል፣ ነገር ግን በ`~/.omniroute` ውስጥ **የውሂብ ጎታዎንና ውቅሮችዎን ያቆያል**። |
+| `npm run uninstall`      | የስርዓት መተግበሪያውን ያስወግዳል፣ ነገር ግን በ`~/.agentproxy` ውስጥ **የውሂብ ጎታዎንና ውቅሮችዎን ያቆያል**። |
 | `npm run uninstall:full` | መተግበሪያውን ያስወግዳል፣ እንዲሁም **ሁሉንም ውቅሮች፣ ቁልፎች እና የውሂብ ጎታዎች እስከመጨረሻው ይሰርዛል**።       |
 
-> ማስታወሻ፦ እነዚህን ትዕዛዞች ለማስኬድ፣ ወደ AgentProxy ፕሮጀክት አቃፊ ይሂዱ (clone ካደረጉት) እና ያስኪዷቸው። እንደ አማራጭ፣ በአጠቃላይ የተጫነ ከሆነ፣ `npm uninstall -g omniroute`ን ብቻ ማስኬድ ይችላሉ።
+> ማስታወሻ፦ እነዚህን ትዕዛዞች ለማስኬድ፣ ወደ AgentProxy ፕሮጀክት አቃፊ ይሂዱ (clone ካደረጉት) እና ያስኪዷቸው። እንደ አማራጭ፣ በአጠቃላይ የተጫነ ከሆነ፣ `npm uninstall -g agentproxy`ን ብቻ ማስኬድ ይችላሉ።
 
 ### በVPS ላይ ማሰማራት
 
@@ -418,7 +418,7 @@ cd AgentProxy && npm install && npm run build
 
 export JWT_SECRET="your-secure-secret-change-this"
 export INITIAL_PASSWORD="your-password"
-export DATA_DIR="/var/lib/omniroute"
+export DATA_DIR="/var/lib/agentproxy"
 export PORT="20128"
 export HOSTNAME="0.0.0.0"
 export NODE_ENV="production"
@@ -426,7 +426,7 @@ export NEXT_PUBLIC_BASE_URL="http://localhost:20128"
 export API_KEY_SECRET="endpoint-proxy-api-key-secret"
 
 npm run start
-# ወይም፦ pm2 start npm --name omniroute -- start
+# ወይም፦ pm2 start npm --name agentproxy -- start
 ```
 
 ### በPM2 ላይ ማሰማራት (ዝቅተኛ ማህደረ ትውስታ)
@@ -435,10 +435,10 @@ npm run start
 
 ```bash
 # በ512MB ገደብ (ነባሪ)
-pm2 start npm --name omniroute -- start
+pm2 start npm --name agentproxy -- start
 
 # ወይም ብጁ የማህደረ ትውስታ ገደብ በመጠቀም
-OMNIROUTE_MEMORY_MB=512 pm2 start npm --name omniroute -- start
+AGENTPROXY_MEMORY_MB=512 pm2 start npm --name agentproxy -- start
 
 # ወይም ecosystem.config.jsን በመጠቀም
 pm2 start ecosystem.config.js
@@ -450,12 +450,12 @@ pm2 start ecosystem.config.js
 module.exports = {
   apps: [
     {
-      name: "omniroute",
+      name: "agentproxy",
       script: "npm",
       args: "start",
       env: {
         NODE_ENV: "production",
-        OMNIROUTE_MEMORY_MB: "512",
+        AGENTPROXY_MEMORY_MB: "512",
         JWT_SECRET: "your-secret",
         INITIAL_PASSWORD: "your-password",
       },
@@ -470,10 +470,10 @@ module.exports = {
 
 ```bash
 # Image ይገንቡ (ነባሪ = codex/claude/droid አስቀድሞ የተጫነበት runner-cli)
-docker build -t omniroute:cli .
+docker build -t agentproxy:cli .
 
 # ተንቀሳቃሽ ሁነታ (የሚመከር)
-docker run -d --name omniroute -p 20128:20128 --env-file ./.env -v omniroute-data:/app/data omniroute:cli
+docker run -d --name agentproxy -p 20128:20128 --env-file ./.env -v agentproxy-data:/app/data agentproxy:cli
 ```
 
 ከCLI binaries ጋር ለhost-የተዋሃደ ሁነታ፣ በዋናዎቹ ሰነዶች ውስጥ ያለውን የDocker ክፍል ይመልከቱ።
@@ -486,8 +486,8 @@ Void Linux ተጠቃሚዎች `xbps-src` የመስቀለኛ-ማጠናቀር ማ�
 <summary><b>የxbps-src አብነትን ይመልከቱ</b></summary>
 
 ```bash
-# የ'omniroute' አብነት ፋይል
-pkgname=omniroute
+# የ'agentproxy' አብነት ፋይል
+pkgname=agentproxy
 version=3.8.0
 revision=1
 hostmakedepends="nodejs python3 make"
@@ -498,8 +498,8 @@ license="MIT"
 homepage="https://github.com/diegosouzapw/AgentProxy"
 distfiles="https://github.com/diegosouzapw/AgentProxy/archive/refs/tags/v${version}.tar.gz"
 checksum=009400afee90a9f32599d8fe734145cfd84098140b7287990183dde45ae2245b
-system_accounts="_omniroute"
-omniroute_homedir="/var/lib/omniroute"
+system_accounts="_agentproxy"
+agentproxy_homedir="/var/lib/agentproxy"
 export NODE_ENV=production
 export npm_config_engine_strict=false
 export npm_config_loglevel=error
@@ -549,26 +549,26 @@ do_check() {
 }
 
 do_install() {
-	vmkdir usr/lib/omniroute/.next
-	vcopy .next/standalone/. usr/lib/omniroute/.next/standalone
+	vmkdir usr/lib/agentproxy/.next
+	vcopy .next/standalone/. usr/lib/agentproxy/.next/standalone
 
 	# ከመጫን በኋላ ባለው hook ባዶ የNext.js መተግበሪያ router ማውጫዎች እንዳይወገዱ ይከላከሉ
 	for _d in \
 		.next/standalone/.next/server/app/dashboard \
 		.next/standalone/.next/server/app/dashboard/settings \
 		.next/standalone/.next/server/app/dashboard/providers; do
-		touch "${DESTDIR}/usr/lib/omniroute/${_d}/.keep"
+		touch "${DESTDIR}/usr/lib/agentproxy/${_d}/.keep"
 	done
 
-	cat > "${WRKDIR}/omniroute" <<'EOF'
+	cat > "${WRKDIR}/agentproxy" <<'EOF'
 #!/bin/sh
 export PORT="${PORT:-20128}"
-export DATA_DIR="${DATA_DIR:-${XDG_DATA_HOME:-${HOME}/.local/share}/omniroute}"
+export DATA_DIR="${DATA_DIR:-${XDG_DATA_HOME:-${HOME}/.local/share}/agentproxy}"
 export APP_LOG_TO_FILE="${APP_LOG_TO_FILE:-false}"
 mkdir -p "${DATA_DIR}"
-exec node /usr/lib/omniroute/.next/standalone/server.js "$@"
+exec node /usr/lib/agentproxy/.next/standalone/server.js "$@"
 EOF
-	vbin "${WRKDIR}/omniroute"
+	vbin "${WRKDIR}/agentproxy"
 }
 
 post_install() {
@@ -582,14 +582,14 @@ post_install() {
 
 | ተለዋዋጭ                                   | ነባሪ                                  | መግለጫ                                                                           |
 | --------------------------------------- | ------------------------------------ | ------------------------------------------------------------------------------ |
-| `JWT_SECRET`                            | `omniroute-default-secret-change-me` | JWT መፈረሚያ ሚስጥር (**በምርት አካባቢ ይቀይሩት**)                                           |
+| `JWT_SECRET`                            | `agentproxy-default-secret-change-me` | JWT መፈረሚያ ሚስጥር (**በምርት አካባቢ ይቀይሩት**)                                           |
 | `INITIAL_PASSWORD`                      | `CHANGEME`                           | የመጀመሪያ መግቢያ የይለፍ ቃል                                                            |
-| `DATA_DIR`                              | `~/.omniroute`                       | የውሂብ ማውጫ (የውሂብ ጎታ፣ አጠቃቀም፣ ምዝግቦች)                                               |
+| `DATA_DIR`                              | `~/.agentproxy`                       | የውሂብ ማውጫ (የውሂብ ጎታ፣ አጠቃቀም፣ ምዝግቦች)                                               |
 | `PORT`                                  | የፍሬምወርኩ ነባሪ                          | የአገልግሎት ወደብ (በምሳሌዎች ውስጥ `20128`)                                               |
 | `HOSTNAME`                              | የፍሬምወርኩ ነባሪ                          | የማስተሳሰሪያ አስተናጋጅ (የDocker ነባሪ `0.0.0.0` ነው)                                     |
 | `NODE_ENV`                              | የአሂድ ጊዜ ነባሪ                          | ለማሰማራት `production` ያዘጋጁ                                                       |
 | `NEXT_PUBLIC_BASE_URL`                  | `http://localhost:20128`             | ለዳሽቦርዱ የሚታይ እና ለአገልጋዩ የሚጋለጥ ይፋዊ መሠረታዊ URL (የቀድሞውን `BASE_URL` ይተካል)             |
-| `NEXT_PUBLIC_CLOUD_URL`                 | `https://omniroute.dev`              | የደመና ማመሳሰያ መጨረሻ ነጥብ መሠረታዊ URL (የቀድሞውን `CLOUD_URL` ይተካል)                        |
+| `NEXT_PUBLIC_CLOUD_URL`                 | `https://agentproxy.online`              | የደመና ማመሳሰያ መጨረሻ ነጥብ መሠረታዊ URL (የቀድሞውን `CLOUD_URL` ይተካል)                        |
 | `API_KEY_SECRET`                        | `endpoint-proxy-api-key-secret`      | ለሚፈጠሩ API ቁልፎች የHMAC ሚስጥር                                                      |
 | `REQUIRE_API_KEY`                       | `false`                              | በ`/v1/*` ላይ የBearer API ቁልፍን ያስገድዱ                                             |
 | `ALLOW_API_KEY_REVEAL`                  | `false`                              | ማንነታቸው የተረጋገጠ የዳሽቦርድ ተጠቃሚዎች ሲጠይቁ ሙሉ የተከማቹ API ቁልፍ እሴቶችን እንዲመለከቱ ይፍቀዱ           |
@@ -599,7 +599,7 @@ post_install() {
 | `AUTH_COOKIE_SECURE`                    | `false`                              | `Secure` የማረጋገጫ ኩኪን ያስገድዱ (ከHTTPS ተገላቢጦሽ ፕሮክሲ በስተጀርባ)                          |
 | `CLOUDFLARED_BIN`                       | አልተዋቀረም                              | በሚተዳደር ማውረድ ፈንታ ነባር `cloudflared` ባይነሪን ይጠቀሙ                                   |
 | `CLOUDFLARED_PROTOCOL`                  | `http2`                              | በሚተዳደሩ Quick Tunnels የሚጠቀመው ማጓጓዣ (`http2`፣ `quic`፣ ወይም `auto`)                 |
-| `OMNIROUTE_MEMORY_MB`                   | `512`                                | የNode.js ሂፕ ገደብ በMB                                                            |
+| `AGENTPROXY_MEMORY_MB`                   | `512`                                | የNode.js ሂፕ ገደብ በMB                                                            |
 | `PROMPT_CACHE_MAX_SIZE`                 | `50`                                 | ከፍተኛው የጥያቄ መሸጎጫ ግቤቶች ብዛት                                                       |
 | `SEMANTIC_CACHE_MAX_SIZE`               | `100`                                | ከፍተኛው የፍቺ መሸጎጫ ግቤቶች ብዛት                                                        |
 
@@ -660,7 +660,7 @@ post_install() {
 
 **ሌሎች ተኳኋኝ አቅራቢዎች** (የተመረጡ)፦ `cohere`, `databricks`, `snowflake`, `together`, `vertex`, `alibaba`, `alibaba-cn`, `bedrock` (በ`aws-bedrock` በኩል), `azure-ai`, `openrouter` (የማለፊያ ካታሎግ), `siliconflow`, `hyperbolic`, `huggingface`, `featherless-ai`, `cloudflare-ai`, `scaleway`, `deepinfra`, `vercel-ai-gateway`, `bazaarlink`, `friendliai`, `nous-research`, `reka`, `volcengine`, `ai21`, `gigachat`። እያንዳንዱ በ`providerRegistry.ts` ውስጥ የራሱን የሞዴል ዝርዝር ይይዛል፣ እና አቅራቢው `/models` የመዳረሻ ነጥብ ሲያቀርብ በራስ-ሰር ሊመሳሰል ይችላል።
 
-**ስለ ሞዴል መለያዎች ማስታወሻ፦** AgentProxy የአቅራቢውን ቤተኛ መለያዎች (`claude-opus-4-8`, `gpt-5.5`, `glm-5.1`, `MiniMax-M2.7`, `kimi-k2.5`, `grok-4.20-0309-reasoning`) ይጠቀማል። የላይኛው ምንጭ API የሚጠብቃቸው በዚህ መልኩ ስለሆነ፣ አንዳንድ መለያዎች ነጥብ ያላቸውን ስሪቶች ያካትታሉ። አንድ ሞዴል ከላይ ካልተዘረዘረ፣ ተገኝነቱን ለማረጋገጥ `omniroute models --search <term>`ን ያሂዱ ወይም `GET /api/models/catalog`ን ይጠቀሙ።
+**ስለ ሞዴል መለያዎች ማስታወሻ፦** AgentProxy የአቅራቢውን ቤተኛ መለያዎች (`claude-opus-4-8`, `gpt-5.5`, `glm-5.1`, `MiniMax-M2.7`, `kimi-k2.5`, `grok-4.20-0309-reasoning`) ይጠቀማል። የላይኛው ምንጭ API የሚጠብቃቸው በዚህ መልኩ ስለሆነ፣ አንዳንድ መለያዎች ነጥብ ያላቸውን ስሪቶች ያካትታሉ። አንድ ሞዴል ከላይ ካልተዘረዘረ፣ ተገኝነቱን ለማረጋገጥ `agentproxy models --search <term>`ን ያሂዱ ወይም `GET /api/models/catalog`ን ይጠቀሙ።
 
 </details>
 
@@ -698,16 +698,16 @@ curl -X POST http://localhost:20128/api/provider-models \
 
 ```bash
 # gateway-a
-OMNIROUTE_INSTANCE_ID=gateway-a
-OMNIROUTE_PEER_URLS=http://gateway-b:20128/v1
-OMNIROUTE_PEER_MAX_HOPS=4
+AGENTPROXY_INSTANCE_ID=gateway-a
+AGENTPROXY_PEER_URLS=http://gateway-b:20128/v1
+AGENTPROXY_PEER_MAX_HOPS=4
 ```
 
 ```bash
 # gateway-b
-OMNIROUTE_INSTANCE_ID=gateway-b
-OMNIROUTE_PEER_URLS=http://gateway-a:20128/v1
-OMNIROUTE_PEER_MAX_HOPS=4
+AGENTPROXY_INSTANCE_ID=gateway-b
+AGENTPROXY_PEER_URLS=http://gateway-a:20128/v1
+AGENTPROXY_PEER_MAX_HOPS=4
 ```
 
 በግልጽ ወደተፈቀደ የአቻ URL የተላኩ ጥያቄዎች ብቻ
@@ -1098,7 +1098,7 @@ AgentProxy በሁሉም የተገናኙ አቅራቢዎች ውስጥ ለእያ�
 
 ```bash
 curl -X POST http://localhost:20128/v1/chat/completions \
-  -H "Authorization: Bearer $OMNIROUTE_KEY" \
+  -H "Authorization: Bearer $AGENTPROXY_KEY" \
   -H "Content-Type: application/json" \
   -d '{
     "model": "auto/coding",
@@ -1119,7 +1119,7 @@ AgentProxy **የMCP አገልጋይ** (Model Context Protocol) እና **የA2A �
 
 - **SSE**፦ `http://localhost:20128/api/mcp/sse`
 - **ሊለቀቅ የሚችል HTTP**፦ `http://localhost:20128/api/mcp/stream`
-- **stdio**፦ `omniroute --mcp` (stdioን ለሚመርጡ የIDE ተሰኪዎች)
+- **stdio**፦ `agentproxy --mcp` (stdioን ለሚመርጡ የIDE ተሰኪዎች)
 
 ### Claude Desktopን ማገናኘት
 
@@ -1128,8 +1128,8 @@ AgentProxy **የMCP አገልጋይ** (Model Context Protocol) እና **የA2A �
 ```json
 {
   "mcpServers": {
-    "omniroute": {
-      "command": "omniroute",
+    "agentproxy": {
+      "command": "agentproxy",
       "args": ["--mcp"]
     }
   }
@@ -1205,23 +1205,23 @@ AgentProxy ረጅም ጊዜ የሚወስዱ ተግባራትን የአካባቢ�
 ```bash
 # አቅራቢዎችን ዘርዝር
 curl http://localhost:20128/api/providers \
-  -H "Authorization: Bearer $OMNIROUTE_MANAGE_KEY"
+  -H "Authorization: Bearer $AGENTPROXY_MANAGE_KEY"
 
 # የአቅራቢ ግንኙነት ጨምር
 curl -X POST http://localhost:20128/api/providers \
-  -H "Authorization: Bearer $OMNIROUTE_MANAGE_KEY" \
+  -H "Authorization: Bearer $AGENTPROXY_MANAGE_KEY" \
   -H "Content-Type: application/json" \
   -d '{ "provider": "openai", "apiKey": "sk-...", "name": "main" }'
 
 # combo ፍጠር
 curl -X POST http://localhost:20128/api/combos \
-  -H "Authorization: Bearer $OMNIROUTE_MANAGE_KEY" \
+  -H "Authorization: Bearer $AGENTPROXY_MANAGE_KEY" \
   -H "Content-Type: application/json" \
   -d '{ "name": "premium", "strategy": "priority", "models": [{ "model": "cc/claude-opus-4-7" }, { "model": "glm/glm-5.1" }] }'
 
 # API ቁልፎችን ዘርዝር/ፍጠር
-curl http://localhost:20128/api/keys -H "Authorization: Bearer $OMNIROUTE_MANAGE_KEY"
-curl -X POST http://localhost:20128/api/keys -H "Authorization: Bearer $OMNIROUTE_MANAGE_KEY" \
+curl http://localhost:20128/api/keys -H "Authorization: Bearer $AGENTPROXY_MANAGE_KEY"
+curl -X POST http://localhost:20128/api/keys -H "Authorization: Bearer $AGENTPROXY_MANAGE_KEY" \
   -d '{ "name": "ci-bot", "scopes": ["chat"] }'
 ```
 
@@ -1231,32 +1231,32 @@ curl -X POST http://localhost:20128/api/keys -H "Authorization: Bearer $OMNIROUT
 
 ## 💻 ውስጣዊ CLI
 
-AgentProxy ለማዋቀር፣ ለምርመራ እና ለሂደት ጊዜ ቁጥጥር የውስጥ CLI (`omniroute …`) ይዞ ይመጣል። ይህ የሶስተኛ ወገን CLIዎችን (Claude Code, Cursor, Codex, Cline, …) ከAgentProxy ጋር እንዲገናኙ ከሚያዋቅረው **በዳሽቦርዱ ውስጥ ካለው "CLI መሣሪያዎች" ገጽ የተለየ ነው**።
+AgentProxy ለማዋቀር፣ ለምርመራ እና ለሂደት ጊዜ ቁጥጥር የውስጥ CLI (`agentproxy …`) ይዞ ይመጣል። ይህ የሶስተኛ ወገን CLIዎችን (Claude Code, Cursor, Codex, Cline, …) ከAgentProxy ጋር እንዲገናኙ ከሚያዋቅረው **በዳሽቦርዱ ውስጥ ካለው "CLI መሣሪያዎች" ገጽ የተለየ ነው**።
 
 ```bash
-omniroute setup                    # መስተጋብራዊ ማዋቀሪያ (የይለፍ ቃል፣ አቅራቢዎች፣ ጥምረቶች)
-omniroute setup --non-interactive  # ለCI ምቹ
-omniroute doctor                   # የጤና ምርመራዎች (የውሂብ ማውጫ፣ DB፣ አቅራቢዎች፣ ወደቦች)
-omniroute providers available      # የሚደገፉ አቅራቢዎችን ዘርዝር
-omniroute providers list           # የተዋቀሩ ግንኙነቶችን ዘርዝር
-omniroute providers test <id>      # የአቅራቢ ግንኙነትን በቀጥታ ፈትሽ
-omniroute combos list              # ጥምረቶችን ዘርዝር
-omniroute combos switch <name>     # ነባሪ ጥምረትን አዘጋጅ
-omniroute models                   # የሚገኙ ሞዴሎችን ዘርዝር (--json, --search)
-omniroute keys add | list | remove # የAPI ቁልፎችን ከተርሚናሉ አስተዳድር
-omniroute backup                   # የውቅር + DB ቅጽበታዊ ቅጂ
-omniroute restore [<timestamp>]    # ከቅጽበታዊ ቅጂ መልስ
-omniroute health                   # ዝርዝር የጤና ሁኔታ (ሰባሪዎች፣ መሸጎጫ፣ ማህደረ ትውስታ)
-omniroute quota                    # የአቅራቢ ኮታ አጠቃቀም
-omniroute mcp status               # የMCP አገልጋይ ሁኔታ
-omniroute a2a status               # የA2A አገልጋይ ሁኔታ
-omniroute tunnel list|create|stop  # Cloudflare/Tailscale/ngrok ዋሻዎች
-omniroute reset-password           # የአስተዳዳሪውን የይለፍ ቃል ዳግም አስጀምር
-omniroute --mcp                    # የMCP አገልጋይን በstdio ላይ አስጀምር
-omniroute --port 3000              # አገልጋዩን በብጁ ወደብ ላይ አስጀምር
+agentproxy setup                    # መስተጋብራዊ ማዋቀሪያ (የይለፍ ቃል፣ አቅራቢዎች፣ ጥምረቶች)
+agentproxy setup --non-interactive  # ለCI ምቹ
+agentproxy doctor                   # የጤና ምርመራዎች (የውሂብ ማውጫ፣ DB፣ አቅራቢዎች፣ ወደቦች)
+agentproxy providers available      # የሚደገፉ አቅራቢዎችን ዘርዝር
+agentproxy providers list           # የተዋቀሩ ግንኙነቶችን ዘርዝር
+agentproxy providers test <id>      # የአቅራቢ ግንኙነትን በቀጥታ ፈትሽ
+agentproxy combos list              # ጥምረቶችን ዘርዝር
+agentproxy combos switch <name>     # ነባሪ ጥምረትን አዘጋጅ
+agentproxy models                   # የሚገኙ ሞዴሎችን ዘርዝር (--json, --search)
+agentproxy keys add | list | remove # የAPI ቁልፎችን ከተርሚናሉ አስተዳድር
+agentproxy backup                   # የውቅር + DB ቅጽበታዊ ቅጂ
+agentproxy restore [<timestamp>]    # ከቅጽበታዊ ቅጂ መልስ
+agentproxy health                   # ዝርዝር የጤና ሁኔታ (ሰባሪዎች፣ መሸጎጫ፣ ማህደረ ትውስታ)
+agentproxy quota                    # የአቅራቢ ኮታ አጠቃቀም
+agentproxy mcp status               # የMCP አገልጋይ ሁኔታ
+agentproxy a2a status               # የA2A አገልጋይ ሁኔታ
+agentproxy tunnel list|create|stop  # Cloudflare/Tailscale/ngrok ዋሻዎች
+agentproxy reset-password           # የአስተዳዳሪውን የይለፍ ቃል ዳግም አስጀምር
+agentproxy --mcp                    # የMCP አገልጋይን በstdio ላይ አስጀምር
+agentproxy --port 3000              # አገልጋዩን በብጁ ወደብ ላይ አስጀምር
 ```
 
-ጠቃሚ ምክር፦ ጤናማ ያልሆኑ የአቅራቢ ግንኙነቶች ሲኖሩ ማንቂያ ለማግኘት `omniroute doctor --json`ን ከክትትል መሣሪያዎ ጋር ያጣምሩ።
+ጠቃሚ ምክር፦ ጤናማ ያልሆኑ የአቅራቢ ግንኙነቶች ሲኖሩ ማንቂያ ለማግኘት `agentproxy doctor --json`ን ከክትትል መሣሪያዎ ጋር ያጣምሩ።
 
 ---
 
@@ -1305,7 +1305,7 @@ npm run build:linux    # Linux (.AppImage)
 
 | ተለዋዋጭ                 | ነባሪ     | መግለጫ                          |
 | --------------------- | ------- | ----------------------------- |
-| `OMNIROUTE_PORT`      | `20128` | የአገልጋይ ወደብ                    |
-| `OMNIROUTE_MEMORY_MB` | `512`   | የNode.js ሂፕ ገደብ (64–16384 MB) |
+| `AGENTPROXY_PORT`      | `20128` | የአገልጋይ ወደብ                    |
+| `AGENTPROXY_MEMORY_MB` | `512`   | የNode.js ሂፕ ገደብ (64–16384 MB) |
 
 📖 ሙሉ ሰነድ፦ [`electron/README.md`](../../electron/README.md)

@@ -116,7 +116,7 @@ dashboard UI filesକୁ stub କରେ, API route handlersକୁ ରଖେ, ଏ
 ପୁନଃସ୍ଥାପନ କରେ। dashboard UIକୁ ପ୍ରଭାବିତ କରୁଥିବା ପରିବର୍ତ୍ତନ କିମ୍ବା ସମ୍ପୂର୍ଣ୍ଣ
 release validation ପାଇଁ `npm run build` ବ୍ୟବହାର କରନ୍ତୁ; contributor profile release buildର ବିକଳ୍ପ ନୁହେଁ।
 
-> **VPS deploy ଟିପ୍ପଣୀ:** remote image directory `/usr/lib/node_modules/omniroute/app/`
+> **VPS deploy ଟିପ୍ପଣୀ:** remote image directory `/usr/lib/node_modules/agentproxy/app/`
 > ଅପରିବର୍ତ୍ତିତ ରହିଛି। deploy skills `dist/`ର ବିଷୟବସ୍ତୁକୁ ଏହା ଭିତରକୁ rsync କରେ।
 > କେବଳ repository ଭିତରେ ଥିବା build output path ପରିବର୍ତ୍ତିତ ହୋଇଛି (`app/` → `dist/`)।
 
@@ -319,7 +319,7 @@ src/                        # TypeScript (.ts / .tsx)
 │   └── validation/         # Zod v4 ସ୍କିମା
 └── sse/                    # SSE ପ୍ରକ୍ସି ପାଇପଲାଇନ୍
 
-open-sse/                   # @omniroute/open-sse ୱର୍କସ୍ପେସ୍
+open-sse/                   # @agentproxy/open-sse ୱର୍କସ୍ପେସ୍
 ├── executors/              # 89ଟି ଏକ୍ଜିକ୍ୟୁଟର୍ କାର୍ଯ୍ୟାନ୍ୱୟନ ମଡ୍ୟୁଲ୍
 ├── handlers/               # 11ଟି ଅନୁରୋଧ ହ୍ୟାଣ୍ଡଲର୍ (ଚାଟ୍, ରେସ୍ପନ୍ସ, ଏମ୍ବେଡିଂ, ଛବି, ଇତ୍ୟାଦି)
 ├── mcp-server/             # MCP ସର୍ଭର୍ (110ଟି ଅନନ୍ୟ ଟୁଲ୍, 3ଟି ଟ୍ରାନ୍ସପୋର୍ଟ୍, 33ଟି ସ୍କୋପ୍)

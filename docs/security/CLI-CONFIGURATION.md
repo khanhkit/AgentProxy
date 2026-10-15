@@ -13,7 +13,7 @@ the server's configured base URL is used.
 For a batch preview, `GET /api/cli-tools/config` accepts an optional `baseUrl`
 query parameter and takes the configuration credential from the canonical
 `x-agentproxy-config-api-key` header. The legacy
-`x-omniroute-config-api-key` header remains accepted as a migration alias.
+`x-agentproxy-config-api-key` header remains accepted as a migration alias.
 Credentials in the query string are rejected. `POST /api/cli-tools/config`
 accepts `toolId`, `baseUrl`, `apiKey`, and optional `model` in its JSON body.
 Responses use `Cache-Control: no-store` on both success and error paths. Preview

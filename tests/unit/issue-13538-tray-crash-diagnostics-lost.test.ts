@@ -36,7 +36,7 @@ const HERE = dirname(fileURLToPath(import.meta.url));
 const CRASHING_SERVER = join(HERE, "fixtures", "issue-13538-crashing-server.mjs");
 
 test("#13538: supervisor give-up path persists a discoverable crash record (currently lost)", async () => {
-  const dataDir = mkdtempSync(join(tmpdir(), "omniroute-13538-"));
+  const dataDir = mkdtempSync(join(tmpdir(), "agentproxy-13538-"));
   const origDataDir = process.env.DATA_DIR;
   process.env.DATA_DIR = dataDir;
 
@@ -73,7 +73,7 @@ test("#13538: supervisor give-up path persists a discoverable crash record (curr
     // Desired behavior: the give-up path leaves a durable, discoverable record
     // of the crash (so a tray worker killed via this path — spawned detached
     // with stdio:"ignore" per bin/cli/tray/detachedTray.mjs buildTrayLaunch()
-    // — is still diagnosable afterward, e.g. by `omniroute doctor`).
+    // — is still diagnosable afterward, e.g. by `agentproxy doctor`).
     const expectedCrashRecord = join(dataDir, "server", "crash.log");
     assert.equal(
       existsSync(expectedCrashRecord),

@@ -27,7 +27,7 @@
  * REAL route handlers with REAL credentials (API keys via `createApiKey`, a dashboard
  * session via a signed `auth_token` cookie). Self-isolating: DATA_DIR points at a
  * fresh temp dir BEFORE any `@/lib/db/*` module loads, so this file never touches
- * ~/.omniroute.
+ * ~/.agentproxy.
  */
 import { describe, it, after } from "node:test";
 import assert from "node:assert";

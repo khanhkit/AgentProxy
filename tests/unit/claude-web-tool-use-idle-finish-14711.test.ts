@@ -5,7 +5,7 @@ import { createClaudeWebResponse } from "../../open-sse/executors/claude-web/str
 
 // Regression test for GitHub issue #14711: after claude.ai emits a `tool_use` block and then
 // keeps the assistant message open (only sending keepalive `ping` events, never
-// `message_stop`), OmniRoute's stream must still end the OpenAI turn with
+// `message_stop`), AgentProxy's stream must still end the OpenAI turn with
 // `finish_reason: "tool_calls"` + `[DONE]` instead of hanging forever waiting for a
 // `message_stop` that claude.ai's custom-tool flow never sends on that stream.
 //

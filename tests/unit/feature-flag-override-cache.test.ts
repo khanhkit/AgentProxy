@@ -8,7 +8,7 @@ import path from "node:path";
 // so getFeatureFlagOverride caches the SELECT. The cache must still reflect
 // every write that goes through this module immediately, and must not survive
 // a reopened database.
-const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-test-flag-cache-"));
+const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-test-flag-cache-"));
 process.env.DATA_DIR = tmpDir;
 
 const core = await import("../../src/lib/db/core.ts");

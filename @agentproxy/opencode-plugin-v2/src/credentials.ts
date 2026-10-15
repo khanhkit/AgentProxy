@@ -21,7 +21,7 @@ export interface ResolvedApiKey {
 }
 
 export const API_KEY_ENV_VAR = "AGENTPROXY_API_KEY";
-export const LEGACY_API_KEY_ENV_VAR = "OMNIROUTE_API_KEY";
+export const LEGACY_API_KEY_ENV_VAR = "AGENTPROXY_API_KEY";
 
 /**
  * `ctx.integration.connection` carries the stored credential. Probing the

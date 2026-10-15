@@ -199,7 +199,7 @@ export const EXTRA_MODULE_ENTRIES = [
     // so the main server bundle is fine — Next's server compiler inlines the
     // small pure-JS package directly into the compiled route chunk instead of
     // leaving it as an external node_modules dependency. bin/cli/settings-
-    // store.mjs (the `omniroute reset-password` / bin/reset-password.mjs
+    // store.mjs (the `agentproxy reset-password` / bin/reset-password.mjs
     // CLI, used to recover a lost dashboard password) is a separate,
     // unbundled entrypoint that does a plain runtime `import bcrypt from
     // "bcryptjs"` and needs the real package physically present in

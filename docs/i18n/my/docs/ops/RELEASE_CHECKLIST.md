@@ -41,7 +41,7 @@ npm run test:e2e           # မဖြစ်မနေမဟုတ်သော်
 2FA ကို ကျော်လွှားသည့် token များကို ရပ်ဆိုင်းနေပြီဖြစ်သောကြောင့် ယခု npm က ခွင့်ပြုထားသည့် ကျော်လွှားနည်းမှာ ယင်းပင်ဖြစ်သည်။
 ၎င်းသည် WS1.3 အာမခံချက်ကို ထိန်းသိမ်းထားစဉ် v3.8.48 အထိ ပရောဂျက်တွင် ရှိခဲ့သည့် အပြည့်အဝ အလိုအလျောက်လုပ်ဆောင်မှုကို ပြန်လည်ရရှိစေသည် (ပေါက်ကြားသွားသော token တစ်ခုတည်းဖြင့် ထုတ်ဝေ၍မရပါ — token လုံးဝမရှိပါ)။
 
-**တစ်ကြိမ်သာ ပြင်ဆင်သတ်မှတ်ခြင်း (ပိုင်ရှင်):** npmjs.com → package `omniroute` → Settings → _Trusted Publisher_ → GitHub: owner `diegosouzapw`, repo `AgentProxy`, workflow `npm-publish.yml`
+**တစ်ကြိမ်သာ ပြင်ဆင်သတ်မှတ်ခြင်း (ပိုင်ရှင်):** npmjs.com → package `agentproxy` → Settings → _Trusted Publisher_ → GitHub: owner `diegosouzapw`, repo `AgentProxy`, workflow `npm-publish.yml`
 (environment: none)။ ၎င်းမရှိသေးသရွေ့ အလိုအလျောက်အဆင့်သည် `ENEEDAUTH` ဖြင့် မအောင်မြင်ပါ-
 `publish_mode=staged` (အောက်တွင်) သို့မဟုတ် `direct` ဖြင့် ပြန်လည် dispatch လုပ်ပါ။
 
@@ -52,16 +52,16 @@ npm-publish workflow သည် တိုက်ရိုက် ထုတ်ဝေ
 
 **Workflow အောင်မြင်ပြီးနောက် ပိုင်ရှင်၏ လုပ်ငန်းစဉ်:**
 
-1. `npm stage list omniroute` — stage id ကို ရှာပါ (workflow အနှစ်ချုပ်တွင်လည်း ဖော်ပြထားသည်)။
+1. `npm stage list agentproxy` — stage id ကို ရှာပါ (workflow အနှစ်ချုပ်တွင်လည်း ဖော်ပြထားသည်)။
 2. staged bytes များကို စစ်ဆေးပါ (အကြံပြုထားသည်)- `npm stage download <id>`၊ ထို့နောက် ဒေါင်းလုဒ်လုပ်ထားသည့် tarball ကို ယာယီ prefix တစ်ခုတွင် ထည့်သွင်းပြီး စတင်ပါ (`npm run check:pack-boot` သည် တူညီသော pack→install→boot စစ်ဆေးဆုံးဖြတ်ချက်ကို CI တွင် အလိုအလျောက်လုပ်ဆောင်ပေးသည်)။
 3. `npm stage approve <id>` — 2FA တောင်းဆိုချက်သည်ပင် ထုတ်ဝေခြင်းဖြစ်သည်။ `npm stage reject <id>` သည် ပယ်ဖျက်သည်။
 4. ထုတ်ဝေပြီးနောက် လုံခြုံရေးပိုက်ကွန်- ထုတ်ဝေပြီးနောက် စစ်ဆေးကိရိယာ (v3.8.49 အစီအစဉ်၏ WS1.4) သည် public registry မှ ထုတ်ဝေထားသည့်ဗားရှင်းကို သန့်ရှင်းသော container တစ်ခုတွင် ထည့်သွင်းပြီး စတင်စစ်ဆေးသည်။
 
 **အရေးပေါ် အရန်နည်းလမ်း:** `publish_mode=direct` ပါသည့် `workflow_dispatch` သည် ယခင်ပုံစံ ချက်ချင်း `npm publish` ကို ပြန်လည်အသုံးပြုစေသည် (staging ကိုယ်တိုင် ချို့ယွင်းမှသာ အသုံးပြုပြီး အကြောင်းရင်းကို မှတ်တမ်းတင်ပါ)။
 
-**တစ်ကြိမ်သာ လုံခြုံရေးမြှင့်တင်ခြင်း (ပိုင်ရှင်၊ npmjs.com):** ပေါက်ကြားသွားသော သက်တမ်းရှည် token တစ်ခုက မည်သည့်နေရာမှမဆို တိုက်ရိုက် `npm publish` မလုပ်နိုင်စေရန် `omniroute` အတွက် Trusted Publisher ကို stage-only mode ဖြင့် သတ်မှတ်ပါ — CI သည် stage သာ လုပ်နိုင်ပြီး ပိုင်ရှင်၏ 2FA ကသာ ဖြန့်ချိနိုင်သည်။
+**တစ်ကြိမ်သာ လုံခြုံရေးမြှင့်တင်ခြင်း (ပိုင်ရှင်၊ npmjs.com):** ပေါက်ကြားသွားသော သက်တမ်းရှည် token တစ်ခုက မည်သည့်နေရာမှမဆို တိုက်ရိုက် `npm publish` မလုပ်နိုင်စေရန် `agentproxy` အတွက် Trusted Publisher ကို stage-only mode ဖြင့် သတ်မှတ်ပါ — CI သည် stage သာ လုပ်နိုင်ပြီး ပိုင်ရှင်၏ 2FA ကသာ ဖြန့်ချိနိုင်သည်။
 
-**ပျက်စီးနေသော artifact အတွက် လုပ်ဆောင်ရန်နည်းလမ်း (မပြောင်းလဲ):** ပုံသေလုပ်ဆောင်ချက်အဖြစ် `npm deprecate omniroute@<bad> "<reason> — use <fixed>"` ကို အသုံးပြုပါ (မိနစ်ပိုင်းအတွင်း လုပ်ဆောင်နိုင်ပြီး ပြန်ပြောင်းနိုင်သည်)။ `npm unpublish` ကို 72h/no-dependents ကာလအတွင်းသာ အသုံးပြုပြီး ပထမဦးဆုံး လုပ်ဆောင်ချက်အဖြစ် ဘယ်တော့မှ မသုံးပါနှင့်။ Docker အတွက် ဗားရှင်း tag တစ်ခုကို ဘယ်တော့မှ ပြန်မရေးပါနှင့် — rollback ဆိုသည်မှာ `latest` ကို နောက်ဆုံး ကောင်းမွန်သည့် digest သို့ ပြန်ညွှန်ခြင်းဖြစ်သည်။
+**ပျက်စီးနေသော artifact အတွက် လုပ်ဆောင်ရန်နည်းလမ်း (မပြောင်းလဲ):** ပုံသေလုပ်ဆောင်ချက်အဖြစ် `npm deprecate agentproxy@<bad> "<reason> — use <fixed>"` ကို အသုံးပြုပါ (မိနစ်ပိုင်းအတွင်း လုပ်ဆောင်နိုင်ပြီး ပြန်ပြောင်းနိုင်သည်)။ `npm unpublish` ကို 72h/no-dependents ကာလအတွင်းသာ အသုံးပြုပြီး ပထမဦးဆုံး လုပ်ဆောင်ချက်အဖြစ် ဘယ်တော့မှ မသုံးပါနှင့်။ Docker အတွက် ဗားရှင်း tag တစ်ခုကို ဘယ်တော့မှ ပြန်မရေးပါနှင့် — rollback ဆိုသည်မှာ `latest` ကို နောက်ဆုံး ကောင်းမွန်သည့် digest သို့ ပြန်ညွှန်ခြင်းဖြစ်သည်။
 
 **Docker Hub `latest` (တည်ငြိမ်သော SemVer ကို ထုတ်ဝေတိုင်း မဖြစ်မနေလိုအပ်သည်):**
 `docker-publish` workflow သည် `X.Y.Z` ကို tag လုပ်ရမည့်အပြင် `should-promote-latest.sh` က ၎င်းသည် အမြင့်ဆုံး တည်ငြိမ်သော SemVer ဖြစ်ကြောင်း သဘောတူသည့်အခါ `:latest` ကိုလည်း **တူညီသော digest** ဖြင့် tag လုပ်ရမည်။
@@ -173,7 +173,7 @@ Breaking change များ: `BREAKING CHANGE:` footer ထည့်ပါ သ�
 - [ ] `npm run i18n:check` သည် 0 ဖြင့် ထွက်သည် — ဘာသာပြန်အခြေအနေ (`.i18n-state.json`) သည် မူရင်း docs များနှင့် sync ဖြစ်နေသည် (strict mode တွင် ကွာဟနေသော source မရှိရပါ; နောက်ဆုံးမိနစ် docs ပြင်ဆင်မှုများအတွက် warn-mode အကြံပေးချက်ကို လက်ခံနိုင်သော်လည်း tag မတပ်မီ 0 ဖြစ်သင့်သည်)
 - [ ] `npm run i18n:check-ui-coverage` သည် 0 ဖြင့် ထွက်သည် — UI locale တိုင်းသည် အနည်းဆုံး 80% coverage သတ်မှတ်ချက်နှင့်အထက် ရှိသည်
 - [ ] `npm run i18n:sync-ui:dry` သည် locale 42 ခုလုံးတွင် ပျောက်ဆုံးနေသော key 0 ခုဟု report လုပ်သည်
-- [ ] မူရင်း English docs များ ပြောင်းလဲခဲ့ပါက tag မတပ်မီ `npm run i18n:run` ကို run ပါ (`.env` ထဲတွင် `OMNIROUTE_TRANSLATION_API_KEY` လိုအပ်သည်)
+- [ ] မူရင်း English docs များ ပြောင်းလဲခဲ့ပါက tag မတပ်မီ `npm run i18n:run` ကို run ပါ (`.env` ထဲတွင် `AGENTPROXY_TRANSLATION_API_KEY` လိုအပ်သည်)
 - [ ] အသေးစားဖြစ်ပါက ဘာသာပြန် contribution များကို နောက် release သို့ ရွှေ့ဆိုင်းနိုင်သည် (CHANGELOG တွင် မှတ်တမ်းတင်ပါ)
 
 ### Database Migration များ
@@ -182,7 +182,7 @@ Breaking change များ: `BREAKING CHANGE:` footer ထည့်ပါ သ�
   - [ ] migration တစ်ခုစီသည် idempotent ဖြစ်သည် (`CREATE TABLE IF NOT EXISTS` စသည်)
   - [ ] migration များကို transaction များဖြင့် wrap လုပ်ထားသည်
   - [ ] နံပါတ်စဉ်များ မှန်ကန်သည် (အစဉ်တွင် လွတ်နေသော နံပါတ်မရှိ)
-- [ ] အသစ် install လုပ်ထားသည့်အခြေအနေတွင် စမ်းသပ်ပါ: `~/.omniroute/omniroute.db` ကို ဖျက်ပြီး `npm run dev` ကို run ပါ
+- [ ] အသစ် install လုပ်ထားသည့်အခြေအနေတွင် စမ်းသပ်ပါ: `~/.agentproxy/agentproxy.db` ကို ဖျက်ပြီး `npm run dev` ကို run ပါ
 - [ ] ရှိပြီးသား install တွင် စမ်းသပ်ပါ: DB ကို backup လုပ်ပါ၊ migration ကို run ပါ၊ schema ကို စစ်ဆေးအတည်ပြုပါ
 - [ ] migration က table များကို ပြန်လည်ရေးသားပါက WAL file များ (`-wal`, `-shm`) ကို မှန်ကန်စွာ ကိုင်တွယ်ထားသည်
 
@@ -217,7 +217,7 @@ Repository သည် သီးခြား output directory သုံးခု�
 | `.build/` | Build အလယ်ဆင့်ဖိုင်များ — `next build` output (`distDir`)             | မလုပ်ထားပါ (gitignore လုပ်ထားသည်) |
 | `dist/`   | ဖြန့်ချိနိုင်သော npm bundle — `assembleStandalone` ဖြင့် စုစည်းထားသည် | မလုပ်ထားပါ (gitignore လုပ်ထားသည်) |
 
-> **Operator မှတ်ချက်:** remote VPS image directory သည် `/usr/lib/node_modules/omniroute/app/` အဖြစ် ဆက်လက်တည်ရှိသည်။
+> **Operator မှတ်ချက်:** remote VPS image directory သည် `/usr/lib/node_modules/agentproxy/app/` အဖြစ် ဆက်လက်တည်ရှိသည်။
 > **Repository အတွင်းရှိ** build output သာ ရွှေ့ထားသည် (`app/` → `dist/`)။ Deploy skill များက
 > `dist/` ထဲရှိ အကြောင်းအရာများကို remote `app/` directory သို့ rsync လုပ်သည် — VPS path ပြောင်းလဲရန် မလိုအပ်ပါ။
 
@@ -337,12 +337,12 @@ Embedded services ပြောင်းလဲမှုများပါဝင�
 
 မည်သည့် v3.8.x release ကိုမဆို ဖြန့်ချိခြင်းမပြုမီ အောက်ပါအပိုအချက်များကို အတည်ပြုပါ-
 
-- [ ] `omniroute --tray` သည် macOS တွင် boot လုပ်ရမည် (systray2 ကို `~/.omniroute/runtime/` ထဲသို့ install လုပ်ထားရမည်)
-- [ ] `omniroute --tray` သည် Linux တွင် boot လုပ်ရမည် (DISPLAY လိုအပ်သည်၊ မသတ်မှတ်ထားပါက သင့်လျော်စွာ error ပြရမည်)
-- [ ] `omniroute --tray` သည် Windows တွင် boot လုပ်ရမည် (PowerShell NotifyIcon ကို အသုံးပြုပြီး အပို binary မလိုအပ်ရ)
-- [ ] `omniroute config tray enable` သည် autostart entry ကို ဖန်တီးရမည်၊ disable လုပ်ပါက ၎င်းကို ဖယ်ရှားရမည်
-- [ ] `npm install -g omniroute@<this-version>` သည် fatal exit မဖြစ်ဘဲ postinstall ကို လုပ်ဆောင်ရမည်
-- [ ] Update လမ်းကြောင်းသည် optional deps များကို ဆက်လက်ထိန်းသိမ်းရမည်- `omniroute update --apply` နှင့် auto-updater တို့သည်
+- [ ] `agentproxy --tray` သည် macOS တွင် boot လုပ်ရမည် (systray2 ကို `~/.agentproxy/runtime/` ထဲသို့ install လုပ်ထားရမည်)
+- [ ] `agentproxy --tray` သည် Linux တွင် boot လုပ်ရမည် (DISPLAY လိုအပ်သည်၊ မသတ်မှတ်ထားပါက သင့်လျော်စွာ error ပြရမည်)
+- [ ] `agentproxy --tray` သည် Windows တွင် boot လုပ်ရမည် (PowerShell NotifyIcon ကို အသုံးပြုပြီး အပို binary မလိုအပ်ရ)
+- [ ] `agentproxy config tray enable` သည် autostart entry ကို ဖန်တီးရမည်၊ disable လုပ်ပါက ၎င်းကို ဖယ်ရှားရမည်
+- [ ] `npm install -g agentproxy@<this-version>` သည် fatal exit မဖြစ်ဘဲ postinstall ကို လုပ်ဆောင်ရမည်
+- [ ] Update လမ်းကြောင်းသည် optional deps များကို ဆက်လက်ထိန်းသိမ်းရမည်- `agentproxy update --apply` နှင့် auto-updater တို့သည်
       `npm install -g … --include=optional` ကို လုပ်ဆောင်ရမည်၊ သို့မှသာ `optionalDependencies` (better-sqlite3,
       keytar, tls-client နှင့် llmlingua SLM stack ဖြစ်သည့် `@atjsh/llmlingua-2@2.0.5`,
       `js-tiktoken`) တို့သည် update ပြီးနောက် ဆက်လက်ရှိနေမည်။ ultra `modelPath` SLM tier အတွက်လည်း
@@ -352,13 +352,13 @@ Embedded services ပြောင်းလဲမှုများပါဝင�
       standalone trace သည် transformers ကိုသာ bundle လုပ်ပြီး dynamically-import လုပ်ထားသော optionals များကို bundle မလုပ်သောကြောင့်
       ဤသို့မလုပ်ပါက worker သည် root ၏ transformers ဖြင့် llmlingua-2 ကို load လုပ်မည်ဖြစ်ပြီး
       SLM tier သည် အသိပေးခြင်းမရှိဘဲ fail-open ဖြစ်သွားမည်။
-- [ ] `omniroute status` သည် `.env` မရှိဘဲ အလုပ်လုပ်ရမည် (CLI token လမ်းကြောင်း၊ loopback သာ)
+- [ ] `agentproxy status` သည် `.env` မရှိဘဲ အလုပ်လုပ်ရမည် (CLI token လမ်းကြောင်း၊ loopback သာ)
 - [ ] `curl http://localhost:20128/api/shutdown` သည် 401 ကို ပြန်ပေးရမည် (အမြဲကာကွယ်ထားသော route)
 - [ ] `curl -H "host: evil.com" http://localhost:20128/api/mcp/sse` သည် 401 ကို ပြန်ပေးရမည် (loopback guard)
 - [ ] SQLite runtime သည် ပထမဆုံး run လုပ်ချိန်တွင် `bundled` သို့ resolve လုပ်ရမည် (bundled binary သည် platform အတွက် မှန်ကန်ရမည်)
 - [ ] `node_modules/better-sqlite3` ကို ဖျက်လိုက်သည့်အခါ SQLite runtime သည် `runtime` သို့ fallback လုပ်ရမည်
 - [ ] Smart MCP filter သည် အမှန်တကယ် `playwright-mcp browser_snapshot` output ကို ချုံ့ပေးရမည် (≥50% လျှော့ချမှု)
-- [ ] `skills/omniroute*/SKILL.md` file 10 ခုစလုံးကို raw GitHub URL မှတစ်ဆင့် အများပြည်သူက ရယူနိုင်ရမည်
+- [ ] `skills/agentproxy*/SKILL.md` file 10 ခုစလုံးကို raw GitHub URL မှတစ်ဆင့် အများပြည်သူက ရယူနိုင်ရမည်
 - [ ] အသစ် setup လုပ်ရာတွင် onboarding wizard သည် "၎င်း အလုပ်လုပ်ပုံ" tier tour အဆင့်ကို ပြသရမည်
 - [ ] Home dashboard ၏ tier coverage widget သည် configured/active အရေအတွက်များကို ပြသရမည်
 

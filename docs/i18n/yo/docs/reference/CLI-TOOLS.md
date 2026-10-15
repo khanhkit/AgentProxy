@@ -50,11 +50,11 @@ kan fún CLI kọ̀ọ̀kan tí a ṣe àtìlẹ́yìn fún, èyí tó ń ka àk
 AgentProxy tó ń ṣiṣẹ́ (ní agbègbè tàbí ní jíjìn), tó sì ń kọ àgbékalẹ̀ irinṣẹ́ náà fúnra rẹ̀ sórí ẹ̀rọ rẹ:
 
 ```bash
-omniroute setup-codex        omniroute setup-claude       omniroute setup-opencode
-omniroute setup-cline        omniroute setup-kilo         omniroute setup-continue
-omniroute setup-cursor       omniroute setup-roo          omniroute setup-crush
-omniroute setup-goose        omniroute setup-qwen         omniroute setup-aider
-omniroute setup-5dive
+agentproxy setup-codex        agentproxy setup-claude       agentproxy setup-opencode
+agentproxy setup-cline        agentproxy setup-kilo         agentproxy setup-continue
+agentproxy setup-cursor       agentproxy setup-roo          agentproxy setup-crush
+agentproxy setup-goose        agentproxy setup-qwen         agentproxy setup-aider
+agentproxy setup-5dive
 ```
 
 Ọ̀kọ̀ọ̀kan gba `--remote <url> --api-key <key>` (ṣètò irinṣẹ́ agbègbè kan láti lo
@@ -65,10 +65,10 @@ tí kò ní ìṣàwárí awoṣe aládàáṣe (Cline, Kilo, Roo, Goose, Aider,
 kíkọ prófáìlì ìfàṣẹsí tí root ni lórí olupin ẹgbẹ́ náà, nítorí náà ó tún ara rẹ̀ ṣiṣẹ́ nípasẹ̀ `sudo`
 kò sì ní ipò jíjìn tirẹ̀. Láti ṣe ìfilọ́lẹ̀ CLI kan pẹ̀lú
 env tó yẹ tí a ti fi sínú rẹ̀ láìkọ àgbékalẹ̀ kankan rárá, lo olùfilọ́lẹ̀ gbogbogbò
-`omniroute run <target>` (claude, codex, aider, goose, opencode, qwen,
+`agentproxy run <target>` (claude, codex, aider, goose, opencode, qwen,
 gemini — àwọn ibi-àfojúsùn àti àwọn orúkọ ìnagijẹ wá láti `bin/cli/cli-manifest.mjs`); àwọn
-olùfilọ́lẹ̀ irinṣẹ́-kọ̀ọ̀kan àtijọ́ `omniroute launch` (Claude Code) àti `omniroute launch-codex`
-(Codex) ṣì wà. Gemini CLI jẹ́ fún ìfilọ́lẹ̀ nìkan: ó jẹ́ ibi-àfojúsùn `omniroute run`
+olùfilọ́lẹ̀ irinṣẹ́-kọ̀ọ̀kan àtijọ́ `agentproxy launch` (Claude Code) àti `agentproxy launch-codex`
+(Codex) ṣì wà. Gemini CLI jẹ́ fún ìfilọ́lẹ̀ nìkan: ó jẹ́ ibi-àfojúsùn `agentproxy run`
 ṣùgbọ́n kò ní ìlànà `setup-*`/`configure`.
 
 > **Ìtọ́kasí kíkún:** tábìlì àkọ́kọ́ — ohun tí àṣẹ kọ̀ọ̀kan ń kọ, gbogbo àsìá,
@@ -81,19 +81,19 @@ olùfilọ́lẹ̀ irinṣẹ́-kọ̀ọ̀kan àtijọ́ `omniroute launch` (Cl
 home ti container náà fúnra rẹ̀, èyí tí kò sí CLI kankan lórí host tó máa kà, tí yóò sì pòórá pẹ̀lú
 container náà. AgentProxy máa ń ṣàwárí èyí, yóò sì jáde pẹ̀lú `2` àti àwọn ìtọ́nisọ́nà dípò
 kíkọ. Ọ̀nà méjì tí a ṣe àtìlẹ́yìn fún láti tẹ̀síwájú ni — fi CLI sori host kí o sì lo
-`omniroute connect` láti sopọ̀ mọ́ container náà, tàbí ṣe bind-mount àwọn àkójọpọ̀ àgbékalẹ̀ kí o sì ṣètò
+`agentproxy connect` láti sopọ̀ mọ́ container náà, tàbí ṣe bind-mount àwọn àkójọpọ̀ àgbékalẹ̀ kí o sì ṣètò
 `CLI_CONFIG_HOME` (prófáìlì compose `host`). Gbogbo àṣẹ `setup-*`, pẹ̀lú
-`omniroute configure` àti `omniroute config set`, gba
+`agentproxy configure` àti `agentproxy config set`, gba
 `--allow-container-write` nígbà tí ṣíṣe àgbékalẹ̀ àwọn CLI ti container náà fúnra rẹ̀ ni ohun tí o
-túmọ̀ sí gan-an; `OMNIROUTE_ALLOW_CONTAINER_CONFIG_WRITE=true` ṣe ohun kan náà fún
+túmọ̀ sí gan-an; `AGENTPROXY_ALLOW_CONTAINER_CONFIG_WRITE=true` ṣe ohun kan náà fún
 olupin náà. Wo
-[Ìtọ́sọ́nà Docker → Ṣíṣe àgbékalẹ̀ àwọn irinṣẹ́ CLI host](../guides/DOCKER_GUIDE.md#configuring-host-cli-tools-when-omniroute-runs-in-docker).
+[Ìtọ́sọ́nà Docker → Ṣíṣe àgbékalẹ̀ àwọn irinṣẹ́ CLI host](../guides/DOCKER_GUIDE.md#configuring-host-cli-tools-when-agentproxy-runs-in-docker).
 
 **Ojú-ọ̀nà ìmúlò** dasibodu náà (`POST /api/cli-tools/apply`) ń fipá mú
 ààbò kan náà: nínú container kan, ìkọ̀wé tí ibi-àfojúsùn rẹ̀ kò jẹ́ bind-mounted láti
 host máa dáhùn pẹ̀lú **`422`** àti `containerEphemeralTarget: true`, ọ̀rọ̀ àṣìṣe
 ààbò náà àti — fún àwọn irinṣẹ́ tó ní ìlànà host (claude, codex, opencode, cline,
-kilo, continue) — `hostSetupCommand` kan (fún àpẹẹrẹ `omniroute setup-opencode`) láti ṣiṣẹ́
+kilo, continue) — `hostSetupCommand` kan (fún àpẹẹrẹ `agentproxy setup-opencode`) láti ṣiṣẹ́
 lórí host dípò rẹ̀; kò sí ohun tí a kọ. `dryRun: true` ṣì ń ṣiṣẹ́ ní ipò container
 ó sì máa ń dá àkóónú tí a ṣẹ̀dá + ọ̀nà ibi-àfojúsùn padà láìfọwọ́ kan disiki, kí
 o lè ṣàgbéyẹ̀wò láti dasibodu kí o sì fi sílò lórí host. Ìhùwàsí yìí jẹ́
@@ -129,8 +129,8 @@ orísun kan tí ń kéde rẹ̀, ìdánwò ìyapa sì ń mú kí wọ́n wà ní
 | ---------------------- | ----------------------------------------------------------------------- | ------------------------------------------------------------------- |
 | **Tí a ṣàkọsílẹ̀**      | Ó farahàn nínú kátálọ́ọ̀gù dashboard (orúkọ, olùpèsè, àkọsílẹ̀, irú ìṣètò) | `src/shared/constants/cliTools.ts` (`CLI_TOOLS`)                    |
 | **Tí a lè ṣàwárí**     | Ṣíṣàwárí fáìlì ìṣiṣẹ́/config, àyẹ̀wò ìlera, àwọn ọ̀nà config               | `src/shared/services/cliRuntime.ts` (kátálọ́ọ̀gù runtime `CLI_TOOLS`) |
-| **Tí a lè ṣètò**       | `omniroute configure <cli>` ṣe àtìlẹ́yìn rẹ̀ (ìlànà ìṣètò wà)             | `bin/cli/cli-manifest.mjs` (`configure: true`)                      |
-| **Tí a lè ṣe ìfilọ́lẹ̀** | `omniroute run <target>` ṣe àtìlẹ́yìn rẹ̀ (a ti ṣàlàyé ìfúnni env/args)   | `bin/cli/cli-manifest.mjs` (`run: true`)                            |
+| **Tí a lè ṣètò**       | `agentproxy configure <cli>` ṣe àtìlẹ́yìn rẹ̀ (ìlànà ìṣètò wà)             | `bin/cli/cli-manifest.mjs` (`configure: true`)                      |
+| **Tí a lè ṣe ìfilọ́lẹ̀** | `agentproxy run <target>` ṣe àtìlẹ́yìn rẹ̀ (a ti ṣàlàyé ìfúnni env/args)   | `bin/cli/cli-manifest.mjs` (`run: true`)                            |
 
 `bin/cli/cli-manifest.mjs` ni manifẹ́ẹ́sì ìṣiṣẹ́ àṣẹ àṣẹ̀wọlé fún àwọn ojú-ọ̀nà àṣẹ CLI:
 `run`, `configure` àti àwọn amújáde ìparí-àṣẹ shell, gbogbo wọn ni wọ́n ti ń gba
@@ -264,7 +264,7 @@ interface ToolBatchStatus {
 | `POST /api/cli-tools/codewhale-settings`    | CodeWhale (OPENAI_BASE_URL, àkọ́kọ́ + ìmúdọ́gba `~/.deepseek` ti àtijọ́) |
 | `POST /api/cli-tools/smelt-settings`        | Smelt                                                                |
 | `POST /api/cli-tools/pi-settings`           | Aṣojú ìkọ̀wé kóòdù Pi                                                 |
-| `POST /api/cli-tools/grok-build-settings`   | Grok Build (~/.grok/config.toml, `[model.omniroute]`)                |
+| `POST /api/cli-tools/grok-build-settings`   | Grok Build (~/.grok/config.toml, `[model.agentproxy]`)                |
 | `POST /api/cli-tools/qwen-settings`         | Qwen Code (`~/.qwen/settings.json` + kọ́kọ́rọ́ `.env` àkànṣe)           |
 
 Gbogbo àwọn ipa-ọ̀nà ń lo `sanitizeErrorMessage()` fún àwọn èsì àṣìṣe (Òfin Líle #12).
@@ -359,7 +359,7 @@ npm install -g kilocode
 # Qwen Code
 npm install -g @qwen-code/qwen-code
 
-# Google Gemini CLI (a lè bẹ̀rẹ̀ rẹ̀ nípasẹ̀ `omniroute run gemini` → ojú-ọ̀nà /v1beta)
+# Google Gemini CLI (a lè bẹ̀rẹ̀ rẹ̀ nípasẹ̀ `agentproxy run gemini` → ojú-ọ̀nà /v1beta)
 npm install -g @google/gemini-cli
 
 # Aider
@@ -392,12 +392,12 @@ cargo install smelt  # Ó dá lórí Rust
 ```bash
 # Ojú-ọ̀nà Àgbáyé AgentProxy
 export OPENAI_BASE_URL="http://localhost:20128/v1"
-export OPENAI_API_KEY="sk-your-omniroute-key"
+export OPENAI_API_KEY="sk-your-agentproxy-key"
 export ANTHROPIC_BASE_URL="http://localhost:20128"
-export ANTHROPIC_AUTH_TOKEN="sk-your-omniroute-key"
+export ANTHROPIC_AUTH_TOKEN="sk-your-agentproxy-key"
 # Gemini CLI ń ka GOOGLE_GEMINI_BASE_URL ní ROOT (SDK rẹ̀ fúnra rẹ̀ ń fi /v1beta/... kún un)
 export GOOGLE_GEMINI_BASE_URL="http://localhost:20128"
-export GEMINI_API_KEY="sk-your-omniroute-key"
+export GEMINI_API_KEY="sk-your-agentproxy-key"
 ```
 
 > Fún **server jíjìnnà**, fi IP tàbí domain server náà rọ́pò `localhost:20128`,
@@ -415,7 +415,7 @@ mkdir -p ~/.claude && cat > ~/.claude/settings.json << EOF
 {
   "env": {
     "ANTHROPIC_BASE_URL": "http://localhost:20128",
-    "ANTHROPIC_AUTH_TOKEN": "sk-your-omniroute-key"
+    "ANTHROPIC_AUTH_TOKEN": "sk-your-agentproxy-key"
   }
 }
 EOF
@@ -431,20 +431,20 @@ Lo gbòǹgbò ẹnu-ọ̀nà Anthropic tí a ṣọ̀kan fún Claude Code. Má �
 
 Codex òde-òní (v0.137+) ń ka `~/.codex/config.toml` nìkan — `config.yaml`
 àtijọ́ jẹ́ ti CLI npm àtijọ́, a sì máa ń kọbi ara sí i láìsọ ohunkóhun. Kọ́kọ́rọ́ API
-wà nínú àyípadà àyíká `OMNIROUTE_API_KEY` (`env_key`), kì í sì í wà
+wà nínú àyípadà àyíká `AGENTPROXY_API_KEY` (`env_key`), kì í sì í wà
 nínú fáìlì náà:
 
 ```bash
 mkdir -p ~/.codex && cat > ~/.codex/config.toml << EOF
-model_provider = "omniroute"
+model_provider = "agentproxy"
 
-[model_providers.omniroute]
+[model_providers.agentproxy]
 name                 = "AgentProxy"
 base_url             = "http://localhost:20128/v1"
-env_key              = "OMNIROUTE_API_KEY"
+env_key              = "AGENTPROXY_API_KEY"
 requires_openai_auth = false
 EOF
-export OMNIROUTE_API_KEY="sk-your-omniroute-key"
+export AGENTPROXY_API_KEY="sk-your-agentproxy-key"
 ```
 
 Ìtọ́kasí ẹ̀kúnrẹ́rẹ́ (àwọn profile, `wire_api`, àwọn window context): [CODEX-CLI-CONFIGURATION.md](../guides/CODEX-CLI-CONFIGURATION.md).
@@ -460,12 +460,12 @@ mkdir -p ~/.config/opencode && cat > ~/.config/opencode/opencode.json << EOF
 {
   "\$schema": "https://opencode.ai/config.json",
   "provider": {
-    "omniroute": {
+    "agentproxy": {
       "npm": "@ai-sdk/openai-compatible",
       "name": "AgentProxy",
       "options": {
         "baseURL": "http://localhost:20128/v1",
-        "apiKey": "sk-your-omniroute-key"
+        "apiKey": "sk-your-agentproxy-key"
       },
       "models": {
         "claude-sonnet-4-5": { "name": "claude-sonnet-4-5" },
@@ -480,7 +480,7 @@ EOF
 
 **Ìdánwò:** `opencode`
 
-> Lo `opencode run "your prompt" --model omniroute/claude-sonnet-4-5-thinking --variant high`
+> Lo `opencode run "your prompt" --model agentproxy/claude-sonnet-4-5-thinking --variant high`
 > láti fi àwọn variant tó ń ronú ránṣẹ́.
 
 ---
@@ -494,7 +494,7 @@ mkdir -p ~/.cline/data && cat > ~/.cline/data/globalState.json << EOF
 {
   "apiProvider": "openai",
   "openAiBaseUrl": "http://localhost:20128/v1",
-  "openAiApiKey": "sk-your-omniroute-key"
+  "openAiApiKey": "sk-your-agentproxy-key"
 }
 EOF
 ```
@@ -511,7 +511,7 @@ Tàbí lo dashboard AgentProxy → **Àwọn Irinṣẹ́ CLI → Cline → Lo �
 **Ìpo CLI:**
 
 ```bash
-kilocode --api-base http://localhost:20128/v1 --api-key sk-your-omniroute-key
+kilocode --api-base http://localhost:20128/v1 --api-key sk-your-agentproxy-key
 ```
 
 **Àwọn ètò VS Code:**
@@ -519,7 +519,7 @@ kilocode --api-base http://localhost:20128/v1 --api-key sk-your-omniroute-key
 ```json
 {
   "kilo-code.openAiBaseUrl": "http://localhost:20128/v1",
-  "kilo-code.apiKey": "sk-your-omniroute-key"
+  "kilo-code.apiKey": "sk-your-agentproxy-key"
 }
 ```
 
@@ -537,7 +537,7 @@ models:
     provider: openai
     model: auto
     apiBase: http://localhost:20128/v1
-    apiKey: sk-your-omniroute-key
+    apiKey: sk-your-agentproxy-key
     default: true
 ```
 
@@ -564,8 +564,8 @@ Lo èyí nígbà tí a bá ti ṣètò VS Code Insiders fún àwọn model endpo
     "name": "AgentProxy Auto",
     "family": "gpt-4",
     "version": "1.0.0",
-    "url": "http://localhost:20128/api/v1/vscode/sk-your-omniroute-key/chat/completions",
-    "modelsUrl": "http://localhost:20128/api/v1/vscode/sk-your-omniroute-key/models",
+    "url": "http://localhost:20128/api/v1/vscode/sk-your-agentproxy-key/chat/completions",
+    "modelsUrl": "http://localhost:20128/api/v1/vscode/sk-your-agentproxy-key/models",
     "requestFormat": "openai-chat-completions",
     "contextWindow": 256000,
     "maxOutputTokens": 32768,
@@ -578,7 +578,7 @@ Lo èyí nígbà tí a bá ti ṣètò VS Code Insiders fún àwọn model endpo
 
 **Àwọn àkíyèsí:**
 
-- Rọ́pò `sk-your-omniroute-key` pẹ̀lú API key tí a ṣẹ̀dá nínú AgentProxy.
+- Rọ́pò `sk-your-agentproxy-key` pẹ̀lú API key tí a ṣẹ̀dá nínú AgentProxy.
 - Field `url` gbọ́dọ̀ tọ́ka sí `/api/v1/vscode/{token}/chat/completions`.
 - Field `modelsUrl` gbọ́dọ̀ tọ́ka sí `/api/v1/vscode/{token}/models`.
 - Yan ìlànà `/v1` déédéé + Bearer header nígbà tí client bá ṣe àtìlẹ́yìn fún custom headers.
@@ -604,28 +604,28 @@ ní abẹ́ `/dashboard/cli-tools → Kiro`.
 
 ## 10. CLI AgentProxy Abẹ́nú
 
-Fáìlì alakomeji `omniroute` ń pèsè àwọn àṣẹ fún ìṣàkóso ìgbésí-ayé olupin, ìṣètò, àyẹ̀wò ìṣòro, àti ìṣàkóso olùpèsè. Ojú-ọ̀nà ìbẹ̀rẹ̀: `bin/omniroute.mjs`.
+Fáìlì alakomeji `agentproxy` ń pèsè àwọn àṣẹ fún ìṣàkóso ìgbésí-ayé olupin, ìṣètò, àyẹ̀wò ìṣòro, àti ìṣàkóso olùpèsè. Ojú-ọ̀nà ìbẹ̀rẹ̀: `bin/agentproxy.mjs`.
 
 ```bash
-omniroute                              # Bẹ̀rẹ̀ olupin (pọ́ọ̀tù àìyípadà 20128)
-omniroute setup                        # Olùrànlọ́wọ́ ìṣètò alábàáṣiṣẹ́pọ̀
-omniroute doctor                       # Ṣàyẹ̀wò àtòpọ̀, DB, àwọn pọ́ọ̀tù, àti àyíká ìṣiṣẹ́
-omniroute providers list               # Àwọn àsopọ̀ olùpèsè tí a ti ṣètò
-omniroute providers test-all           # Dán gbogbo àsopọ̀ tó ń ṣiṣẹ́ wò
-omniroute reset-password               # Tún ọ̀rọ̀ aṣínà alábòójútó ṣe
-omniroute logs                         # Ṣàn àwọn àkọsílẹ̀ ìbéèrè
-omniroute health                       # Ìlera ẹ̀kúnrẹ́rẹ́ (àwọn olùdáwọ́dúró, cache, memory)
-omniroute --version                    # Ṣàfihàn ẹ̀yà
-omniroute --help                       # Ṣàfihàn gbogbo àwọn àṣẹ
+agentproxy                              # Bẹ̀rẹ̀ olupin (pọ́ọ̀tù àìyípadà 20128)
+agentproxy setup                        # Olùrànlọ́wọ́ ìṣètò alábàáṣiṣẹ́pọ̀
+agentproxy doctor                       # Ṣàyẹ̀wò àtòpọ̀, DB, àwọn pọ́ọ̀tù, àti àyíká ìṣiṣẹ́
+agentproxy providers list               # Àwọn àsopọ̀ olùpèsè tí a ti ṣètò
+agentproxy providers test-all           # Dán gbogbo àsopọ̀ tó ń ṣiṣẹ́ wò
+agentproxy reset-password               # Tún ọ̀rọ̀ aṣínà alábòójútó ṣe
+agentproxy logs                         # Ṣàn àwọn àkọsílẹ̀ ìbéèrè
+agentproxy health                       # Ìlera ẹ̀kúnrẹ́rẹ́ (àwọn olùdáwọ́dúró, cache, memory)
+agentproxy --version                    # Ṣàfihàn ẹ̀yà
+agentproxy --help                       # Ṣàfihàn gbogbo àwọn àṣẹ
 ```
 
 ### Ìṣètò & Ìpilẹ̀ṣẹ̀
 
 ```bash
-omniroute setup                        # Olùrànlọ́wọ́ ìṣètò alábàáṣiṣẹ́pọ̀
-omniroute setup --non-interactive      # Ìpo CI/adaṣiṣẹ́ (ń ka àwọn env vars + flags)
-omniroute setup --password '<value>'   # Ṣètò ọ̀rọ̀ aṣínà alábòójútó ní tààrà
-omniroute setup --add-provider \
+agentproxy setup                        # Olùrànlọ́wọ́ ìṣètò alábàáṣiṣẹ́pọ̀
+agentproxy setup --non-interactive      # Ìpo CI/adaṣiṣẹ́ (ń ka àwọn env vars + flags)
+agentproxy setup --password '<value>'   # Ṣètò ọ̀rọ̀ aṣínà alábòójútó ní tààrà
+agentproxy setup --add-provider \
   --provider openai \
   --api-key '<value>' \
   --test-provider                      # Ṣàfikún olùpèsè kan kí o sì dán an wò lẹ́ẹ̀kan náà
@@ -635,21 +635,21 @@ omniroute setup --add-provider \
 
 | Var                 | Ète                                                                   |
 | ------------------- | --------------------------------------------------------------------- |
-| `OMNIROUTE_API_KEY` | Kọ́kọ́rọ́ API olùpèsè (tí a so mọ́ `--api-key` nípasẹ̀ Commander `.env()`) |
+| `AGENTPROXY_API_KEY` | Kọ́kọ́rọ́ API olùpèsè (tí a so mọ́ `--api-key` nípasẹ̀ Commander `.env()`) |
 | `DATA_DIR`          | Ṣàtúnkọ ìtọ́sọ́nà dátà AgentProxy                                        |
 
 Gbogbo àwọn ìwọlé mìíràn tí kì í ṣe alábàáṣiṣẹ́pọ̀ ni a ń fi ránṣẹ́ gẹ́gẹ́ bí flags, kì í ṣe àwọn àyípadà àyíká:
 `--password`, `--provider`, `--provider-name`, `--provider-base-url`, `--default-model`
-(wo àwọn àṣàyàn `omniroute setup` lókè).
+(wo àwọn àṣàyàn `agentproxy setup` lókè).
 
 ### Àyẹ̀wò Ìṣòro
 
 ```bash
-omniroute doctor                       # Ṣàyẹ̀wò àtòpọ̀, DB, àwọn pọ́ọ̀tù, àyíká ìṣiṣẹ́, memory, àti bóyá olupin ń ṣiṣẹ́
-omniroute doctor --json                # JSON tí ẹ̀rọ lè kà
-omniroute doctor --no-liveness         # Foju ìwádìí ìlera HTTP kọjá
-omniroute doctor --host 0.0.0.0        # Ṣàtúnkọ host ìwádìí bóyá olupin ń ṣiṣẹ́
-omniroute doctor --liveness-url <url>  # Ṣàtúnkọ URL kíkún fún health endpoint
+agentproxy doctor                       # Ṣàyẹ̀wò àtòpọ̀, DB, àwọn pọ́ọ̀tù, àyíká ìṣiṣẹ́, memory, àti bóyá olupin ń ṣiṣẹ́
+agentproxy doctor --json                # JSON tí ẹ̀rọ lè kà
+agentproxy doctor --no-liveness         # Foju ìwádìí ìlera HTTP kọjá
+agentproxy doctor --host 0.0.0.0        # Ṣàtúnkọ host ìwádìí bóyá olupin ń ṣiṣẹ́
+agentproxy doctor --liveness-url <url>  # Ṣàtúnkọ URL kíkún fún health endpoint
 ```
 
 Doctor náà ń ṣe àwọn àyẹ̀wò wọ̀nyí: `Config`, `Database`, `Storage/encryption`,
@@ -659,22 +659,22 @@ Doctor náà ń ṣe àwọn àyẹ̀wò wọ̀nyí: `Config`, `Database`, `Stor
 ### Ìṣàkóso Olùpèsè
 
 ```bash
-omniroute providers available                       # Àkójọ àwọn olùpèsè AgentProxy
-omniroute providers available --search openai       # Ṣe àsẹ àkójọ nípa id/orúkọ/alias/ẹ̀ka
-omniroute providers available --category api-key    # Ṣe àsẹ nípa ẹ̀ka (api-key, oauth, free, ...)
-omniroute providers available --json                # JSON tí ẹ̀rọ lè kà
+agentproxy providers available                       # Àkójọ àwọn olùpèsè AgentProxy
+agentproxy providers available --search openai       # Ṣe àsẹ àkójọ nípa id/orúkọ/alias/ẹ̀ka
+agentproxy providers available --category api-key    # Ṣe àsẹ nípa ẹ̀ka (api-key, oauth, free, ...)
+agentproxy providers available --json                # JSON tí ẹ̀rọ lè kà
 
-omniroute providers list                            # Àwọn àsopọ̀ olùpèsè tí a ti ṣètò
-omniroute providers list --json
+agentproxy providers list                            # Àwọn àsopọ̀ olùpèsè tí a ti ṣètò
+agentproxy providers list --json
 
-omniroute providers test <id|name>                  # Dán àsopọ̀ kan tí a ti ṣètò wò
-omniroute providers test-all                        # Dán gbogbo àsopọ̀ tó ń ṣiṣẹ́ wò
-omniroute providers validate                        # Ìfọwọ́sí ìgbékalẹ̀ ti agbègbè nìkan
-omniroute providers add <provider> --credential-env PROVIDER_KEY
-omniroute providers import ./providers.json --dry-run --json
-omniroute providers auth <provider>                 # Ìṣàn OAuth tó ti wà
-omniroute providers edit <id|name> --default-model <model>
-omniroute providers remove <id|name> --yes
+agentproxy providers test <id|name>                  # Dán àsopọ̀ kan tí a ti ṣètò wò
+agentproxy providers test-all                        # Dán gbogbo àsopọ̀ tó ń ṣiṣẹ́ wò
+agentproxy providers validate                        # Ìfọwọ́sí ìgbékalẹ̀ ti agbègbè nìkan
+agentproxy providers add <provider> --credential-env PROVIDER_KEY
+agentproxy providers import ./providers.json --dry-run --json
+agentproxy providers auth <provider>                 # Ìṣàn OAuth tó ti wà
+agentproxy providers edit <id|name> --default-model <model>
+agentproxy providers remove <id|name> --yes
 ```
 
 `providers add/import/auth/edit/remove` ń lo API ní àkọ́kọ́, nítorí náà wọ́n ń ṣiṣẹ́ lòdì sí
@@ -687,19 +687,19 @@ béèrè pé kí olupin máa ṣiṣẹ́.
 ### Ìmúpadàbọ̀sípò & Àtúntò
 
 ```bash
-omniroute reset-password                # Tún ọ̀rọ̀ aṣínà alábòójútó ṣe (bákannáà: omniroute-reset-password)
-omniroute reset-encrypted-columns       # Ṣàfihàn ìkìlọ̀ + dry-run fún àtúntò ẹ̀rí tí a paroko
-omniroute reset-encrypted-columns --force  # Mú àwọn ẹ̀rí tí a paroko di null ní SQLite ní tòótọ́
+agentproxy reset-password                # Tún ọ̀rọ̀ aṣínà alábòójútó ṣe (bákannáà: agentproxy-reset-password)
+agentproxy reset-encrypted-columns       # Ṣàfihàn ìkìlọ̀ + dry-run fún àtúntò ẹ̀rí tí a paroko
+agentproxy reset-encrypted-columns --force  # Mú àwọn ẹ̀rí tí a paroko di null ní SQLite ní tòótọ́
 ```
 
 ### Ìkójáde Ẹ̀rí (⚠ bójú tó pẹ̀lú ìṣọ́ra)
 
 ```bash
-omniroute auth export                                 # Ṣàfihàn ìkìlọ̀ + ìdánilójú — kò sí ìráàyèsí DB
-omniroute auth export --force                          # Kó àwọn ẹ̀rí tí a TI ṢÍ PAROKO fún GBOGBO àsopọ̀ jáde sí stdout gẹ́gẹ́ bí JSON
-omniroute auth export --force --id <id>                 # Kó àsopọ̀ tó báamu nìkan jáde
-omniroute auth export --force --format env               # Ṣàgbéjáde àwọn ìlà OMNIROUTE_<PROVIDER>_<FIELD>=<value>
-omniroute auth export --force --out creds.json           # Kọ sínú fáìlì kan (tí a ṣẹ̀dá pẹ̀lú àwọn àṣẹ 0600)
+agentproxy auth export                                 # Ṣàfihàn ìkìlọ̀ + ìdánilójú — kò sí ìráàyèsí DB
+agentproxy auth export --force                          # Kó àwọn ẹ̀rí tí a TI ṢÍ PAROKO fún GBOGBO àsopọ̀ jáde sí stdout gẹ́gẹ́ bí JSON
+agentproxy auth export --force --id <id>                 # Kó àsopọ̀ tó báamu nìkan jáde
+agentproxy auth export --force --format env               # Ṣàgbéjáde àwọn ìlà AGENTPROXY_<PROVIDER>_<FIELD>=<value>
+agentproxy auth export --force --out creds.json           # Kọ sínú fáìlì kan (tí a ṣẹ̀dá pẹ̀lú àwọn àṣẹ 0600)
 ```
 
 `auth export` jẹ́ ti **agbègbè nìkan** (kíkà SQLite ní tààrà, kò sí ọ̀nà HTTP), ó sì mọ̀ọ́mọ̀ tẹ̀/jẹ́kọ
@@ -714,33 +714,33 @@ Pápá kan tí ṣíṣí paroko rẹ̀ kùnà (kọ́kọ́rọ́ àtijọ́, c
 Àwọn wọ̀nyí rò pé olupin AgentProxy kan ń ṣiṣẹ́, àyàfi bí a bá sọ pé ó yàtọ̀:
 
 ```bash
-omniroute status                       # Ipò àkókò-ṣiṣe tó péye
-omniroute logs                         # Ṣàfihàn àwọn àkọọ́lẹ̀ ìbéèrè lọ́wọ́lọ́wọ́ (--json, --search, --follow)
-omniroute config list                  # Ṣàfihàn àwọn irinṣẹ́ CLI tí a ti ṣètò
+agentproxy status                       # Ipò àkókò-ṣiṣe tó péye
+agentproxy logs                         # Ṣàfihàn àwọn àkọọ́lẹ̀ ìbéèrè lọ́wọ́lọ́wọ́ (--json, --search, --follow)
+agentproxy config list                  # Ṣàfihàn àwọn irinṣẹ́ CLI tí a ti ṣètò
 
-omniroute provider list                # Ṣàkójọ àwọn olupèsè tó wà (orúkọ ìnagijẹ fún providers list)
-omniroute provider add                 # Forúkọsílẹ̀ AgentProxy gẹ́gẹ́ bí olupèsè lórí irinṣẹ́ kan
-omniroute keys add | list | remove     # Ṣàkóso àwọn kọ́kọ́rọ́ API
-omniroute models [provider]            # Ṣàkójọ àwọn àwòṣe (--json, --search)
-omniroute combo list | switch | create | delete
+agentproxy provider list                # Ṣàkójọ àwọn olupèsè tó wà (orúkọ ìnagijẹ fún providers list)
+agentproxy provider add                 # Forúkọsílẹ̀ AgentProxy gẹ́gẹ́ bí olupèsè lórí irinṣẹ́ kan
+agentproxy keys add | list | remove     # Ṣàkóso àwọn kọ́kọ́rọ́ API
+agentproxy models [provider]            # Ṣàkójọ àwọn àwòṣe (--json, --search)
+agentproxy combo list | switch | create | delete
 
-omniroute backup                       # Ya àwòrán-àkókò config + DB
-omniroute restore                      # Mú padà láti inú àwòrán-àkókò tẹ́lẹ̀
+agentproxy backup                       # Ya àwòrán-àkókò config + DB
+agentproxy restore                      # Mú padà láti inú àwòrán-àkókò tẹ́lẹ̀
 
-omniroute health                       # Àlàyé ìlera kíkún (breakers, cache, memory)
-omniroute quota                        # Ìlò ìpín olupèsè
-omniroute cache                        # Ipò cache
-omniroute cache clear                  # Pa semantic + signature caches rẹ́
+agentproxy health                       # Àlàyé ìlera kíkún (breakers, cache, memory)
+agentproxy quota                        # Ìlò ìpín olupèsè
+agentproxy cache                        # Ipò cache
+agentproxy cache clear                  # Pa semantic + signature caches rẹ́
 
-omniroute mcp status | restart         # Ipò olupin MCP / tún bẹ̀rẹ̀
-omniroute a2a status | card            # Ipò olupin A2A / káàdì aṣojú
+agentproxy mcp status | restart         # Ipò olupin MCP / tún bẹ̀rẹ̀
+agentproxy a2a status | card            # Ipò olupin A2A / káàdì aṣojú
 
-omniroute tunnel list | create | stop  # Ṣàkóso àwọn tunnel (cloudflare/tailscale/ngrok)
-omniroute env show | get <k> | set <k> <v>  # Ṣàyẹ̀wò / ṣètò àwọn oníyípadà env (fún ìgbà díẹ̀)
+agentproxy tunnel list | create | stop  # Ṣàkóso àwọn tunnel (cloudflare/tailscale/ngrok)
+agentproxy env show | get <k> | set <k> <v>  # Ṣàyẹ̀wò / ṣètò àwọn oníyípadà env (fún ìgbà díẹ̀)
 
-omniroute test                         # Ìdánwò kíákíá fún ìsopọ̀ olupèsè
-omniroute update                       # Ṣàyẹ̀wò àwọn ìmúdójúìwọ̀n
-omniroute completion                   # Ṣẹ̀dá ìparí-àṣẹ shell
+agentproxy test                         # Ìdánwò kíákíá fún ìsopọ̀ olupèsè
+agentproxy update                       # Ṣàyẹ̀wò àwọn ìmúdójúìwọ̀n
+agentproxy completion                   # Ṣẹ̀dá ìparí-àṣẹ shell
 ```
 
 ### Àwọn àsìá tí a sábà máa ń lò
@@ -788,7 +788,7 @@ omniroute completion                   # Ṣẹ̀dá ìparí-àṣẹ shell
 
 | Àṣìṣe                                             | Ohun Tó Fà Á                        | Àtúnṣe                                              |
 | ------------------------------------------------- | ----------------------------------- | --------------------------------------------------- |
-| `Connection refused`                              | AgentProxy kò ṣiṣẹ́                   | `omniroute serve`                                   |
+| `Connection refused`                              | AgentProxy kò ṣiṣẹ́                   | `agentproxy serve`                                   |
 | `401 Unauthorized`                                | Kọ́kọ́rọ́ API kò tọ̀nà                  | Ṣàyẹ̀wò nínú `/dashboard/api-manager`                |
 | `No combo configured`                             | Kò sí combo ìdarí ipa-ọ̀nà tó ń ṣiṣẹ́ | Ṣètò rẹ̀ nínú `/dashboard/combos`                    |
 | CLI fi "not installed" hàn                        | Binary kò sí nínú PATH              | Ṣàyẹ̀wò `which <command>`                            |

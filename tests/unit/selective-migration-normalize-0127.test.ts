@@ -7,7 +7,7 @@ import { fileURLToPath } from "node:url";
 import {
   normalize9RouterJsonSource,
   normalize9RouterSqliteRows,
-  normalizeOmniRouteSqliteRows,
+  normalizeAgentProxySqliteRows,
 } from "../../src/lib/migration/selectiveNormalize.ts";
 
 const here = path.dirname(fileURLToPath(import.meta.url));
@@ -75,9 +75,9 @@ test("TC-MIG-NORM-017 normalizes pinned 9Router SQLite rows and extracts combo d
   assert.equal(JSON.stringify(settings).includes("outboundProxyUrl"), false);
 });
 
-test("TC-MIG-NORM-018 normalizes pinned OmniRoute SQLite rows into the same entity contract", () => {
-  const rows = readJson("omniroute-v3.8.51-sqlite-rows.json");
-  const entities = normalizeOmniRouteSqliteRows(rows);
+test("TC-MIG-NORM-018 normalizes pinned AgentProxy SQLite rows into the same entity contract", () => {
+  const rows = readJson("agentproxy-v3.8.51-sqlite-rows.json");
+  const entities = normalizeAgentProxySqliteRows(rows);
 
   const connection = entities.find((item) => item.sourceId === "omni-conn-1");
   assert.equal(connection?.disposition, "REQUIRES_REAUTH");
@@ -188,7 +188,7 @@ test("TC-MIG-NORM-049 normalizes 9Router JSON model aliases and pricing override
   );
 });
 
-test("TC-MIG-NORM-050 normalizes 9Router and OmniRoute SQLite KV aliases/pricing equally", () => {
+test("TC-MIG-NORM-050 normalizes 9Router and AgentProxy SQLite KV aliases/pricing equally", () => {
   const nineRouter = normalize9RouterSqliteRows({
     modelAliases: [{ key: "fast", value: JSON.stringify("openai/gpt-example") }],
     pricing: [
@@ -201,7 +201,7 @@ test("TC-MIG-NORM-050 normalizes 9Router and OmniRoute SQLite KV aliases/pricing
     ],
   });
 
-  const omniRoute = normalizeOmniRouteSqliteRows({
+  const omniRoute = normalizeAgentProxySqliteRows({
     modelAliases: [{ key: "fast", value: JSON.stringify("openai/gpt-example") }],
     pricing: [
       {

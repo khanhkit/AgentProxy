@@ -77,7 +77,7 @@ AgentProxy yana zuwa da **rijistar matakan kariya** (`src/lib/guardrails/`) da z
 | `pii-masker`       | 10     | Ɓoye PII kafin+bayan kira (imel, waya, CPF, CNPJ, katunan kuɗi, SSN)                             |
 | `prompt-injection` | 20     | Yana gano tsarin sauya umarni/kwace rawa/jailbreak/fitar da bayanai                              |
 
-Ana rajistar matakan kariya na musamman ta `registerGuardrail(new MyGuardrail())`. Samfurin yana amfani da fail-open (kurakurai ba sa taɓa hana zirga-zirga). Ana iya ƙin amfani da su ga kowace buƙata ta hanyar header na `x-omniroute-disabled-guardrails`. → Duba [`docs/security/GUARDRAILS.md`](docs/security/GUARDRAILS.md).
+Ana rajistar matakan kariya na musamman ta `registerGuardrail(new MyGuardrail())`. Samfurin yana amfani da fail-open (kurakurai ba sa taɓa hana zirga-zirga). Ana iya ƙin amfani da su ga kowace buƙata ta hanyar header na `x-agentproxy-disabled-guardrails`. → Duba [`docs/security/GUARDRAILS.md`](docs/security/GUARDRAILS.md).
 
 ### 🧠 Kariyar Shigar da Umarni
 
@@ -182,15 +182,15 @@ Uwar garken tana ƙin sanannun ƙimomi marasa ƙarfi kamar `changeme`, `secret`,
 
 ```bash
 docker run -d \
-  --name omniroute \
+  --name agentproxy \
   --restart unless-stopped \
   --read-only \
   -p 20128:20128 \
-  -v omniroute-data:/app/data \
+  -v agentproxy-data:/app/data \
   -e JWT_SECRET="$(openssl rand -base64 48)" \
   -e API_KEY_SECRET="$(openssl rand -hex 32)" \
   -e STORAGE_ENCRYPTION_KEY="$(openssl rand -hex 32)" \
-  diegosouzapw/omniroute:latest
+  diegosouzapw/agentproxy:latest
 ```
 
 ---
@@ -224,7 +224,7 @@ Kayan aiki da masu bita suna tilasta waɗannan dokoki:
 
 > **Bayanin iyaka:** `socket.yml` da ke tushen ma’ajiyar yana tsara `projectIgnorePaths` ne kawai don binciken bayan wallafawa na ɓangaren rajista na Socket.dev kan samfurin npm da aka wallafa — ba ƙofar tilasta haɗa CI/PR ba ce. Babu wani workflow a `.github/workflows`, babu script na `package.json`, kuma babu target na `Makefile` da ke kiran Socket.dev.
 
-Samfurin npm na `omniroute` da aka wallafa yana haɗa build ɗin Next.js mai `output: "standalone"`, wanda ke nufin duk wani route handler — har da kebantattun fasaloli masu gata da aka rubuta bayanansu (MITM, shigo da Zed, Cloud Sync, da mai kula da sabis da aka haɗa ciki) — yana ƙarewa a cikin minified chunks na `.next/server/*.js`. Na’urorin binciken sarkar samarwa masu amfani da heuristic sukan daidaita alamu daga waɗannan chunks da sa hannun malware.
+Samfurin npm na `agentproxy` da aka wallafa yana haɗa build ɗin Next.js mai `output: "standalone"`, wanda ke nufin duk wani route handler — har da kebantattun fasaloli masu gata da aka rubuta bayanansu (MITM, shigo da Zed, Cloud Sync, da mai kula da sabis da aka haɗa ciki) — yana ƙarewa a cikin minified chunks na `.next/server/*.js`. Na’urorin binciken sarkar samarwa masu amfani da heuristic sukan daidaita alamu daga waɗannan chunks da sa hannun malware.
 
 Tsarin na’urar binciken da muke amfani da shi yana cikin [`socket.yml`](socket.yml) a tushen
 ma’ajiyar (tsarin Socket.dev GitHub App v2 — duba
@@ -243,7 +243,7 @@ Ga kowane rukunin abin da aka gano, muna adana shaidar mai kula ta musamman ga k
   suna komawa zuwa wannan takardar.
 
 Ga masu amfani waɗanda pipeline ɗinsu ba zai iya sassauta faɗakarwar ba: yi build da
-`OMNIROUTE_BUILD_PROFILE=minimal npm run build`. Wannan yana maye gurbin modules huɗun
+`AGENTPROXY_BUILD_PROFILE=minimal npm run build`. Wannan yana maye gurbin modules huɗun
 masu muhimmanci da stubs waɗanda ke mayar da HTTP 503 `feature-disabled` a
 runtime, ta yadda hanyoyin lambar masu gata ba za su kasance a zahiri cikin bundle ba.
 Duba [`docs/security/SOCKET_DEV_FINDINGS.md`](docs/security/SOCKET_DEV_FINDINGS.md)

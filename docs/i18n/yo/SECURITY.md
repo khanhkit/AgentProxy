@@ -77,7 +77,7 @@ AgentProxy wá pẹ̀lú **ìforúkọsílẹ̀ àwọn ìdènà ààbò** (`src
 | `pii-masker`       | 10   | Ìparẹ́ PII ṣáájú àti lẹ́yìn ìpè (àwọn ímeèlì, fóònù, CPF, CNPJ, káàdì kirẹ́díìtì, SSN)                          |
 | `prompt-injection` | 20   | Ṣàwárí àwọn àpẹẹrẹ ìkópa àṣẹ/gbígba ipa lọ́wọ́/ṣíṣe jailbreak/ìtújáde aṣírí                                    |
 
-Àwọn ìdènà ààbò àdáṣe ń forúkọsílẹ̀ nípasẹ̀ `registerGuardrail(new MyGuardrail())`. Àwòṣe náà jẹ́ fail-open (àwọn àṣìṣe kì í dí ìrìnàjò dúró láé). A lè jáde fún ìbéèrè kọ̀ọ̀kan nípasẹ̀ àkọlé `x-omniroute-disabled-guardrails`. → Wo [`docs/security/GUARDRAILS.md`](docs/security/GUARDRAILS.md).
+Àwọn ìdènà ààbò àdáṣe ń forúkọsílẹ̀ nípasẹ̀ `registerGuardrail(new MyGuardrail())`. Àwòṣe náà jẹ́ fail-open (àwọn àṣìṣe kì í dí ìrìnàjò dúró láé). A lè jáde fún ìbéèrè kọ̀ọ̀kan nípasẹ̀ àkọlé `x-agentproxy-disabled-guardrails`. → Wo [`docs/security/GUARDRAILS.md`](docs/security/GUARDRAILS.md).
 
 ### 🧠 Olùṣọ́ Lòdì Sí Ìfisí Àṣẹ Sínú Ìtọ́sọ́nà
 
@@ -182,15 +182,15 @@ Olupin náà máa ń kọ àwọn iye tí a mọ̀ pé kò lágbára bí `change
 
 ```bash
 docker run -d \
-  --name omniroute \
+  --name agentproxy \
   --restart unless-stopped \
   --read-only \
   -p 20128:20128 \
-  -v omniroute-data:/app/data \
+  -v agentproxy-data:/app/data \
   -e JWT_SECRET="$(openssl rand -base64 48)" \
   -e API_KEY_SECRET="$(openssl rand -hex 32)" \
   -e STORAGE_ENCRYPTION_KEY="$(openssl rand -hex 32)" \
-  diegosouzapw/omniroute:latest
+  diegosouzapw/agentproxy:latest
 ```
 
 ---
@@ -224,7 +224,7 @@ docker run -d \
 
 > **Àkíyèsí ààlà:** `socket.yml` tó wà ní gbòǹgbò ibi ìpamọ́ náà ń ṣètò `projectIgnorePaths` nìkan fún àyẹ̀wò Socket.dev lẹ́yìn ìtẹ̀jáde lórí registry ti artifact npm tí a tẹ̀ jáde — kì í ṣe ìdènà àkópọ̀ CI/PR tí a ń fipá mú lò. Kò sí workflow kankan nínú `.github/workflows`, kò sí script `package.json` kankan, bẹ́ẹ̀ ni kò sí target `Makefile` kankan tó ń pe Socket.dev.
 
-Artifact npm `omniroute` tí a tẹ̀ jáde ní build Next.js `output: "standalone"`
+Artifact npm `agentproxy` tí a tẹ̀ jáde ní build Next.js `output: "standalone"`
 nínú, èyí túmọ̀ sí pé gbogbo route handler — pẹ̀lú àwọn iṣẹ́ ànfàní-gíga
 tí a ṣàkọsílẹ̀ (MITM, ìkó wọlé Zed, Cloud Sync, olùbojútó service tó wà nínú rẹ̀) — máa ń
 parí sínú àwọn chunk `.next/server/*.js` tí a ti dín kù. Àwọn ẹ̀rọ àyẹ̀wò supply-chain tó
@@ -247,7 +247,7 @@ Fún ẹ̀ka àbájáde kọ̀ọ̀kan, a ń tọ́jú ìjẹ́rìí olùtọ́j
   ń tọ́ka padà sí document kan náà.
 
 Fún àwọn olumulo tí pipeline wọn kò lè dín ìkìlọ̀ náà kù: kọ́ build pẹ̀lú
-`OMNIROUTE_BUILD_PROFILE=minimal npm run build`. Èyí rọ́pò àwọn module
+`AGENTPROXY_BUILD_PROFILE=minimal npm run build`. Èyí rọ́pò àwọn module
 mẹ́rin tó ní ìfarabalẹ̀ pẹ̀lú stubs tí ń dá HTTP 503 `feature-disabled` padà ní
 runtime, kí àwọn ipa-ọ̀nà code tó ní ànfàní-gíga má bàa sí nínú bundle náà ní ti ara.
 Wo [`docs/security/SOCKET_DEV_FINDINGS.md`](docs/security/SOCKET_DEV_FINDINGS.md)

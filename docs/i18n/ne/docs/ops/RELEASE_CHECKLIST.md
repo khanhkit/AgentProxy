@@ -44,7 +44,7 @@ npm run test:e2e           # वैकल्पिक तर सिफारि�
 यसले WS1.3 को प्रत्याभूति कायम राख्दै परियोजनामा v3.8.48 सम्म रहेको पूर्ण स्वचालित प्रवाह पुनर्स्थापित गर्छ
 (चुहिएको token ले एक्लै प्रकाशन गर्न सक्दैन — किनकि कुनै token नै हुँदैन)।
 
-**एकपटकको सेटअप (owner):** npmjs.com → package `omniroute` → Settings → _Trusted
+**एकपटकको सेटअप (owner):** npmjs.com → package `agentproxy` → Settings → _Trusted
 Publisher_ → GitHub: owner `diegosouzapw`, repo `AgentProxy`, workflow `npm-publish.yml`
 (environment: none)। यो उपलब्ध नभएसम्म स्वचालित चरण `ENEEDAUTH` सहित असफल हुन्छ:
 `publish_mode=staged` (तल) वा `direct` प्रयोग गरेर पुनः dispatch गर्नुहोस्।
@@ -58,7 +58,7 @@ npm-publish workflow ले अब सीधै प्रकाशन गर्�
 
 **Workflow हरियो भएपछि owner को प्रवाह:**
 
-1. `npm stage list omniroute` — stage id फेला पार्नुहोस् (workflow summary मा पनि प्रिन्ट गरिन्छ)।
+1. `npm stage list agentproxy` — stage id फेला पार्नुहोस् (workflow summary मा पनि प्रिन्ट गरिन्छ)।
 2. Staged bytes प्रमाणित गर्नुहोस् (सिफारिस गरिएको): `npm stage download <id>`, त्यसपछि डाउनलोड गरिएको
    tarball लाई अस्थायी prefix मा install गरेर boot गर्नुहोस् (`npm run check:pack-boot` ले
    CI मा यही pack→install→boot निर्णय स्वचालित गर्छ)।
@@ -69,12 +69,12 @@ npm-publish workflow ले अब सीधै प्रकाशन गर्�
 **आपत्कालीन वैकल्पिक उपाय:** `publish_mode=direct` सहितको `workflow_dispatch` ले
 पुरानो तत्कालीन `npm publish` पुनर्स्थापित गर्छ (staging स्वयंले गलत व्यवहार गरेमा मात्र प्रयोग गर्नुहोस्; कारण अभिलेख गर्नुहोस्)।
 
-**एकपटकको सुदृढीकरण (owner, npmjs.com):** `omniroute` का लागि Trusted Publisher लाई
+**एकपटकको सुदृढीकरण (owner, npmjs.com):** `agentproxy` का लागि Trusted Publisher लाई
 stage-only mode मा कन्फिगर गर्नुहोस्, ताकि चुहिएको लामो अवधिको token ले कहीँबाट पनि सीधै `npm publish`
 गर्न नसकोस् — CI ले stage मात्र गर्न सक्छ; owner को 2FA ले मात्र रिलिज गर्छ।
 
 **बिग्रिएको artifact का लागि playbook (अपरिवर्तित):** पूर्वनिर्धारित प्रतिक्रियाका रूपमा
-`npm deprecate omniroute@<bad> "<reason> — use <fixed>"` प्रयोग गर्नुहोस् (केही मिनेटमै, उल्ट्याउन मिल्ने);
+`npm deprecate agentproxy@<bad> "<reason> — use <fixed>"` प्रयोग गर्नुहोस् (केही मिनेटमै, उल्ट्याउन मिल्ने);
 `npm unpublish` लाई 72h/no-dependents सीमाभित्र मात्र प्रयोग गर्नुहोस् र पहिलो कदमका रूपमा कहिल्यै नचलाउनुहोस्।
 Docker: version tag कहिल्यै पुनर्लेखन नगर्नुहोस् — rollback भनेको `latest` लाई पछिल्लो राम्रो digest तर्फ पुनः देखाउनु हो।
 
@@ -192,7 +192,7 @@ Breaking change हरू: `BREAKING CHANGE:` footer वा scope पछि `!` 
 - [ ] `npm run i18n:check` 0 सहित बन्द हुन्छ — अनुवाद स्थिति (`.i18n-state.json`) स्रोत कागजातहरूसँग समक्रमित छ (strict mode मा कुनै विचलित स्रोत छैनन्; अन्तिम क्षणका कागजात परिमार्जनहरूका लागि warn-mode सल्लाह स्वीकार्य छ, तर tagging गर्नुअघि यो 0 हुनुपर्छ)
 - [ ] `npm run i18n:check-ui-coverage` 0 सहित बन्द हुन्छ — प्रत्येक UI locale 80% coverage न्यूनतम सीमामा वा त्यसभन्दा माथि छ
 - [ ] `npm run i18n:sync-ui:dry` ले सबै 42 locale मा 0 हराएका key रिपोर्ट गर्छ
-- [ ] यदि स्रोत English कागजातहरू परिवर्तन भएका छन् भने, tagging गर्नुअघि `npm run i18n:run` चलाउनुहोस् (`.env` मा `OMNIROUTE_TRANSLATION_API_KEY` आवश्यक हुन्छ)
+- [ ] यदि स्रोत English कागजातहरू परिवर्तन भएका छन् भने, tagging गर्नुअघि `npm run i18n:run` चलाउनुहोस् (`.env` मा `AGENTPROXY_TRANSLATION_API_KEY` आवश्यक हुन्छ)
 - [ ] साना परिवर्तन भएमा अनुवाद योगदानहरू अर्को release सम्म स्थगित गर्न सकिन्छ (CHANGELOG मा ट्र्याक गर्नुहोस्)
 
 ### Database Migration हरू
@@ -201,7 +201,7 @@ Breaking change हरू: `BREAKING CHANGE:` footer वा scope पछि `!` 
   - [ ] प्रत्येक migration idempotent छ (`CREATE TABLE IF NOT EXISTS`, आदि)
   - [ ] Migration हरू transaction भित्र राखिएका छन्
   - [ ] सही रूपमा नम्बर दिइएका छन् (अनुक्रममा कुनै खाली ठाउँ छैन)
-- [ ] नयाँ installation मा परीक्षण गर्नुहोस्: `~/.omniroute/omniroute.db` मेटाउनुहोस् र `npm run dev` चलाउनुहोस्
+- [ ] नयाँ installation मा परीक्षण गर्नुहोस्: `~/.agentproxy/agentproxy.db` मेटाउनुहोस् र `npm run dev` चलाउनुहोस्
 - [ ] विद्यमान installation मा परीक्षण गर्नुहोस्: DB backup गर्नुहोस्, migration चलाउनुहोस्, schema प्रमाणित गर्नुहोस्
 - [ ] migration ले table पुनर्लेखन गरेमा WAL file हरू (`-wal`, `-shm`) सही रूपमा व्यवस्थापन गरिएका छन्
 
@@ -236,7 +236,7 @@ Repository ले तीनवटा भिन्न output directory प्र�
 | `.build/` | Build intermediate हरू — `next build` output (`distDir`)    | होइन (gitignored) |
 | `dist/`   | वितरणयोग्य npm bundle — `assembleStandalone` द्वारा संयोजित | होइन (gitignored) |
 
-> **Operator टिप्पणी:** remote VPS image directory `/usr/lib/node_modules/omniroute/app/` नै रहन्छ।
+> **Operator टिप्पणी:** remote VPS image directory `/usr/lib/node_modules/agentproxy/app/` नै रहन्छ।
 > केवल **in-repo** build output सरेको हो (`app/` → `dist/`)। Deploy skill हरूले
 > `dist/` का सामग्री remote `app/` dir मा rsync गर्छन् — VPS path परिवर्तन गर्न आवश्यक छैन।
 
@@ -356,12 +356,12 @@ Embedded services सम्बन्धी परिवर्तनहरू स
 
 कुनै पनि v3.8.x रिलीज पठाउनुअघि, यी अतिरिक्त बुँदाहरू प्रमाणित गर्नुहोस्:
 
-- [ ] `omniroute --tray` macOS मा बुट हुन्छ (`~/.omniroute/runtime/` मा systray2 इन्स्टल भएको)
-- [ ] `omniroute --tray` Linux मा बुट हुन्छ (DISPLAY आवश्यक हुन्छ; सेट नगरिएको भए शिष्ट त्रुटि)
-- [ ] `omniroute --tray` Windows मा बुट हुन्छ (PowerShell NotifyIcon, कुनै अतिरिक्त बाइनरीहरू छैनन्)
-- [ ] `omniroute config tray enable` ले autostart प्रविष्टि सिर्जना गर्छ; disable ले यसलाई हटाउँछ
-- [ ] `npm install -g omniroute@<this-version>` ले घातक निकासबिना postinstall चलाउँछ
-- [ ] अद्यावधिक पाथले वैकल्पिक निर्भरताहरू कायम राख्छ: `omniroute update --apply` र auto-updater ले
+- [ ] `agentproxy --tray` macOS मा बुट हुन्छ (`~/.agentproxy/runtime/` मा systray2 इन्स्टल भएको)
+- [ ] `agentproxy --tray` Linux मा बुट हुन्छ (DISPLAY आवश्यक हुन्छ; सेट नगरिएको भए शिष्ट त्रुटि)
+- [ ] `agentproxy --tray` Windows मा बुट हुन्छ (PowerShell NotifyIcon, कुनै अतिरिक्त बाइनरीहरू छैनन्)
+- [ ] `agentproxy config tray enable` ले autostart प्रविष्टि सिर्जना गर्छ; disable ले यसलाई हटाउँछ
+- [ ] `npm install -g agentproxy@<this-version>` ले घातक निकासबिना postinstall चलाउँछ
+- [ ] अद्यावधिक पाथले वैकल्पिक निर्भरताहरू कायम राख्छ: `agentproxy update --apply` र auto-updater ले
       `npm install -g … --include=optional` चलाउँछन्, जसले गर्दा `optionalDependencies` (better-sqlite3,
       keytar, tls-client, र llmlingua SLM स्ट्याक: `@atjsh/llmlingua-2@2.0.5`,
       `js-tiktoken`) अद्यावधिकपछि पनि कायम रहन्छन्। ultra `modelPath` SLM टियरलाई tinybert
@@ -371,13 +371,13 @@ Embedded services सम्बन्धी परिवर्तनहरू स
       instance resolve गर्छ — standalone trace ले dynamically-import गरिएका optionals होइन, transformers मात्र bundle गर्छ,
       त्यसैले यसबिना worker ले root को transformers विरुद्ध llmlingua-2 लोड गर्ने थियो
       र SLM टियरले कुनै सूचना नदिई fail-open गर्ने थियो।
-- [ ] `omniroute status` ले `.env` बिना काम गर्छ (CLI token पाथ, loopback मात्र)
+- [ ] `agentproxy status` ले `.env` बिना काम गर्छ (CLI token पाथ, loopback मात्र)
 - [ ] `curl http://localhost:20128/api/shutdown` ले 401 फर्काउँछ (सधैँ-सुरक्षित route)
 - [ ] `curl -H "host: evil.com" http://localhost:20128/api/mcp/sse` ले 401 फर्काउँछ (loopback guard)
 - [ ] पहिलो पटक चलाउँदा SQLite runtime `bundled` मा resolve हुन्छ (प्लेटफर्मका लागि bundled binary मान्य)
 - [ ] `node_modules/better-sqlite3` मेटाउँदा SQLite runtime `runtime` मा fallback हुन्छ
 - [ ] Smart MCP filter ले वास्तविक `playwright-mcp browser_snapshot` आउटपुट compress गर्छ (≥50% कमी)
-- [ ] सबै 10 `skills/omniroute*/SKILL.md` फाइलहरू raw GitHub URL मार्फत सार्वजनिक रूपमा प्राप्त गर्न सकिन्छ
+- [ ] सबै 10 `skills/agentproxy*/SKILL.md` फाइलहरू raw GitHub URL मार्फत सार्वजनिक रूपमा प्राप्त गर्न सकिन्छ
 - [ ] नयाँ सेटअपमा onboarding wizard ले "यसले कसरी काम गर्छ" टियर भ्रमण चरण देखाउँछ
 - [ ] Home dashboard को टियर coverage widget ले कन्फिगर गरिएका/सक्रिय सङ्ख्याहरू देखाउँछ
 

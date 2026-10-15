@@ -7,7 +7,7 @@ import { join } from "node:path";
 import test from "node:test";
 
 test("ecosystem CLI boots the trusted-peer custom server on loopback", async () => {
-  const dir = mkdtempSync(join(tmpdir(), "omniroute-ecosystem-entry-"));
+  const dir = mkdtempSync(join(tmpdir(), "agentproxy-ecosystem-entry-"));
   const probe = createServer();
   await new Promise<void>((resolve) => probe.listen(0, "127.0.0.1", resolve));
   const address = probe.address();

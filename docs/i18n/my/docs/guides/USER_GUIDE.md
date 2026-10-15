@@ -189,7 +189,7 @@ Dashboard → Providers → GitHub ကို ချိတ်ဆက်ပါ
 
 #### Kimi K2 (တစ်လလျှင် ပုံသေ $9)
 
-1. စာရင်းသွင်းရန်: [Moonshot AI](https://platform.kimi.ai?aff=omniroute)
+1. စာရင်းသွင်းရန်: [Moonshot AI](https://platform.kimi.ai)
 2. API key ရယူပါ → Dashboard → Add API Key
 
 **အသုံးပြုရန်:** `kimi/kimi-k2.5` — **အထူးအကြံပြုချက်:** Token 10M အတွက် တစ်လလျှင် ပုံသေ $9 ဖြစ်သောကြောင့် အမှန်တကယ် ကုန်ကျစရိတ်မှာ $0.90/1M ဖြစ်သည်!
@@ -265,7 +265,7 @@ CLI တွင် အသုံးပြုရန်: premium-coding
 ```
 ဆက်တင်များ → မော်ဒယ်များ → အဆင့်မြင့်:
   OpenAI API အခြေခံ URL: http://localhost:20128/v1
-  OpenAI API သော့: [omniroute ဒက်ရှ်ဘုတ်မှ]
+  OpenAI API သော့: [agentproxy ဒက်ရှ်ဘုတ်မှ]
   မော်ဒယ်: cc/claude-opus-4-7
 ```
 
@@ -280,7 +280,7 @@ CLI တွင် အသုံးပြုရန်: premium-coding
 {
   "env": {
     "ANTHROPIC_BASE_URL": "http://localhost:20128",
-    "ANTHROPIC_AUTH_TOKEN": "your-omniroute-api-key"
+    "ANTHROPIC_AUTH_TOKEN": "your-agentproxy-api-key"
   }
 }
 ```
@@ -291,7 +291,7 @@ CLI တွင် အသုံးပြုရန်: premium-coding
 
 ```bash
 export OPENAI_BASE_URL="http://localhost:20128"
-export OPENAI_API_KEY="your-omniroute-api-key"
+export OPENAI_API_KEY="your-agentproxy-api-key"
 codex "your prompt"
 ```
 
@@ -303,14 +303,14 @@ codex "your prompt"
 {
   "agents": {
     "defaults": {
-      "model": { "primary": "omniroute/if/kimi-k2.7-code" }
+      "model": { "primary": "agentproxy/if/kimi-k2.7-code" }
     }
   },
   "models": {
     "providers": {
-      "omniroute": {
+      "agentproxy": {
         "baseUrl": "http://localhost:20128/v1",
-        "apiKey": "your-omniroute-api-key",
+        "apiKey": "your-agentproxy-api-key",
         "api": "openai-completions",
         "models": [{ "id": "if/kimi-k2.7-code", "name": "Kimi K2.7 Code" }]
       }
@@ -337,28 +337,28 @@ API သော့: [ဒက်ရှ်ဘုတ်မှ]
 ### Global npm ထည့်သွင်းခြင်း (အကြံပြုထားသည်)
 
 ```bash
-npm install -g omniroute
+npm install -g agentproxy
 
 # ဖွဲ့စည်းမှုလမ်းညွှန်ကို ဖန်တီးပါ
-mkdir -p ~/.omniroute
+mkdir -p ~/.agentproxy
 
 # .env ဖိုင်ကို ဖန်တီးပါ (.env.example ကို ကြည့်ပါ)
-cp .env.example ~/.omniroute/.env
+cp .env.example ~/.agentproxy/.env
 
 # ဆာဗာကို စတင်ပါ
-omniroute
+agentproxy
 # သို့မဟုတ် စိတ်ကြိုက် port ဖြင့်:
-omniroute --port 3000
+agentproxy --port 3000
 ```
 
-CLI သည် `~/.omniroute/.env` သို့မဟုတ် `./.env` မှ `.env` ကို အလိုအလျောက် ဖွင့်ပေးသည်။
+CLI သည် `~/.agentproxy/.env` သို့မဟုတ် `./.env` မှ `.env` ကို အလိုအလျောက် ဖွင့်ပေးသည်။
 
 ### Tray မုဒ်
 
 AgentProxy ကို စနစ် tray တွင် စတင်ပါ:
 
 ```bash
-omniroute serve --tray
+agentproxy serve --tray
 ```
 
 ဆာဗာနှင့် tray အသင့်ဖြစ်ပြီးနောက် command သည် ပြန်လည်ပြီးဆုံးသည်။
@@ -385,7 +385,7 @@ Tray မုဒ်သည် macOS၊ Windows နှင့် ဂရပ်ဖစ�
 စက်ထဲသို့ နောက်တစ်ကြိမ် login ဝင်သည့်အခါ စတင်ရန် ဖွင့်ပါ:
 
 ```bash
-omniroute autostart enable
+agentproxy autostart enable
 ```
 
 အလိုအလျောက်စတင်မှုသည် macOS၊ Windows နှင့် ဂရပ်ဖစ် Linux session များတွင် tray မုဒ်ကို အသုံးပြုသည်။ မျက်နှာပြင်မဲ့ Linux သည် လက်ရှိ systemd အသုံးပြုသူဝန်ဆောင်မှုကို အသုံးပြုသည်။
@@ -393,7 +393,7 @@ omniroute autostart enable
 Login ဝင်ချိန် စတင်မှုကို ပိတ်ပါ:
 
 ```bash
-omniroute autostart disable
+agentproxy autostart disable
 ```
 
 ### ဖယ်ရှားခြင်း
@@ -402,10 +402,10 @@ AgentProxy ကို မလိုအပ်တော့သည့်အခါ ရ�
 
 | Command                  | လုပ်ဆောင်ချက်                                                                                          |
 | ------------------------ | ------------------------------------------------------------------------------------------------------ |
-| `npm run uninstall`      | စနစ်အက်ပ်ကို ဖယ်ရှားသော်လည်း `~/.omniroute` ရှိ **သင့် DB နှင့် ဖွဲ့စည်းမှုများကို ထိန်းသိမ်းထားသည်**။ |
+| `npm run uninstall`      | စနစ်အက်ပ်ကို ဖယ်ရှားသော်လည်း `~/.agentproxy` ရှိ **သင့် DB နှင့် ဖွဲ့စည်းမှုများကို ထိန်းသိမ်းထားသည်**။ |
 | `npm run uninstall:full` | အက်ပ်ကို ဖယ်ရှားပြီး **ဖွဲ့စည်းမှုများ၊ သော့များနှင့် database အားလုံးကို အပြီးတိုင် ဖျက်ပစ်သည်**။     |
 
-> မှတ်ချက်: ဤ command များကို လုပ်ဆောင်ရန် AgentProxy ပရောဂျက်ဖိုင်တွဲသို့ သွားပြီး (clone ပြုလုပ်ထားပါက) ၎င်းတို့ကို လုပ်ဆောင်ပါ။ သို့မဟုတ် global အဖြစ် ထည့်သွင်းထားပါက `npm uninstall -g omniroute` ကို ရိုးရှင်းစွာ လုပ်ဆောင်နိုင်သည်။
+> မှတ်ချက်: ဤ command များကို လုပ်ဆောင်ရန် AgentProxy ပရောဂျက်ဖိုင်တွဲသို့ သွားပြီး (clone ပြုလုပ်ထားပါက) ၎င်းတို့ကို လုပ်ဆောင်ပါ။ သို့မဟုတ် global အဖြစ် ထည့်သွင်းထားပါက `npm uninstall -g agentproxy` ကို ရိုးရှင်းစွာ လုပ်ဆောင်နိုင်သည်။
 
 ### VPS ဖြန့်ကျက်တပ်ဆင်ခြင်း
 
@@ -415,7 +415,7 @@ cd AgentProxy && npm install && npm run build
 
 export JWT_SECRET="your-secure-secret-change-this"
 export INITIAL_PASSWORD="your-password"
-export DATA_DIR="/var/lib/omniroute"
+export DATA_DIR="/var/lib/agentproxy"
 export PORT="20128"
 export HOSTNAME="0.0.0.0"
 export NODE_ENV="production"
@@ -423,7 +423,7 @@ export NEXT_PUBLIC_BASE_URL="http://localhost:20128"
 export API_KEY_SECRET="endpoint-proxy-api-key-secret"
 
 npm run start
-# သို့မဟုတ်: pm2 start npm --name omniroute -- start
+# သို့မဟုတ်: pm2 start npm --name agentproxy -- start
 ```
 
 ### PM2 ဖြန့်ကျက်တပ်ဆင်ခြင်း (Memory နည်းပါးမှု)
@@ -432,10 +432,10 @@ RAM ကန့်သတ်ထားသော ဆာဗာများအတွက
 
 ```bash
 # 512MB ကန့်သတ်ချက်ဖြင့် (မူလသတ်မှတ်ချက်)
-pm2 start npm --name omniroute -- start
+pm2 start npm --name agentproxy -- start
 
 # သို့မဟုတ် စိတ်ကြိုက် memory ကန့်သတ်ချက်ဖြင့်
-OMNIROUTE_MEMORY_MB=512 pm2 start npm --name omniroute -- start
+AGENTPROXY_MEMORY_MB=512 pm2 start npm --name agentproxy -- start
 
 # သို့မဟုတ် ecosystem.config.js ကို အသုံးပြု၍
 pm2 start ecosystem.config.js
@@ -447,12 +447,12 @@ pm2 start ecosystem.config.js
 module.exports = {
   apps: [
     {
-      name: "omniroute",
+      name: "agentproxy",
       script: "npm",
       args: "start",
       env: {
         NODE_ENV: "production",
-        OMNIROUTE_MEMORY_MB: "512",
+        AGENTPROXY_MEMORY_MB: "512",
         JWT_SECRET: "your-secret",
         INITIAL_PASSWORD: "your-password",
       },
@@ -467,10 +467,10 @@ module.exports = {
 
 ```bash
 # Image တည်ဆောက်ပါ (မူလသတ်မှတ်ချက် = codex/claude/droid ကြိုတင်ထည့်သွင်းထားသော runner-cli)
-docker build -t omniroute:cli .
+docker build -t agentproxy:cli .
 
 # သယ်ဆောင်အသုံးပြုနိုင်သော မုဒ် (အကြံပြုထားသည်)
-docker run -d --name omniroute -p 20128:20128 --env-file ./.env -v omniroute-data:/app/data omniroute:cli
+docker run -d --name agentproxy -p 20128:20128 --env-file ./.env -v agentproxy-data:/app/data agentproxy:cli
 ```
 
 CLI binary များပါဝင်သော host-integrated မုဒ်အတွက် ပင်မစာရွက်စာတမ်းများရှိ Docker ကဏ္ဍကို ကြည့်ပါ။
@@ -483,8 +483,8 @@ Void Linux အသုံးပြုသူများသည် `xbps-src` ဖြ
 <summary><b>xbps-src template ကို ကြည့်ရန်</b></summary>
 
 ```bash
-# 'omniroute' အတွက် template ဖိုင်
-pkgname=omniroute
+# 'agentproxy' အတွက် template ဖိုင်
+pkgname=agentproxy
 version=3.8.0
 revision=1
 hostmakedepends="nodejs python3 make"
@@ -495,8 +495,8 @@ license="MIT"
 homepage="https://github.com/diegosouzapw/AgentProxy"
 distfiles="https://github.com/diegosouzapw/AgentProxy/archive/refs/tags/v${version}.tar.gz"
 checksum=009400afee90a9f32599d8fe734145cfd84098140b7287990183dde45ae2245b
-system_accounts="_omniroute"
-omniroute_homedir="/var/lib/omniroute"
+system_accounts="_agentproxy"
+agentproxy_homedir="/var/lib/agentproxy"
 export NODE_ENV=production
 export npm_config_engine_strict=false
 export npm_config_loglevel=error
@@ -546,26 +546,26 @@ do_check() {
 }
 
 do_install() {
-	vmkdir usr/lib/omniroute/.next
-	vcopy .next/standalone/. usr/lib/omniroute/.next/standalone
+	vmkdir usr/lib/agentproxy/.next
+	vcopy .next/standalone/. usr/lib/agentproxy/.next/standalone
 
 	# ထည့်သွင်းပြီးနောက် hook ကြောင့် အလွတ် Next.js app router လမ်းညွှန်များကို ဖယ်ရှားခြင်းမှ ကာကွယ်ပါ
 	for _d in \
 		.next/standalone/.next/server/app/dashboard \
 		.next/standalone/.next/server/app/dashboard/settings \
 		.next/standalone/.next/server/app/dashboard/providers; do
-		touch "${DESTDIR}/usr/lib/omniroute/${_d}/.keep"
+		touch "${DESTDIR}/usr/lib/agentproxy/${_d}/.keep"
 	done
 
-	cat > "${WRKDIR}/omniroute" <<'EOF'
+	cat > "${WRKDIR}/agentproxy" <<'EOF'
 #!/bin/sh
 export PORT="${PORT:-20128}"
-export DATA_DIR="${DATA_DIR:-${XDG_DATA_HOME:-${HOME}/.local/share}/omniroute}"
+export DATA_DIR="${DATA_DIR:-${XDG_DATA_HOME:-${HOME}/.local/share}/agentproxy}"
 export APP_LOG_TO_FILE="${APP_LOG_TO_FILE:-false}"
 mkdir -p "${DATA_DIR}"
-exec node /usr/lib/omniroute/.next/standalone/server.js "$@"
+exec node /usr/lib/agentproxy/.next/standalone/server.js "$@"
 EOF
-	vbin "${WRKDIR}/omniroute"
+	vbin "${WRKDIR}/agentproxy"
 }
 
 post_install() {
@@ -579,14 +579,14 @@ post_install() {
 
 | Variable                                | Default                              | Description                                                                                                                                                       |
 | --------------------------------------- | ------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `JWT_SECRET`                            | `omniroute-default-secret-change-me` | JWT လက်မှတ်ရေးထိုးခြင်းအတွက် လျှို့ဝှက်ချက် (**ထုတ်လုပ်ရေးပတ်ဝန်းကျင်တွင် ပြောင်းလဲပါ**)                                                                          |
+| `JWT_SECRET`                            | `agentproxy-default-secret-change-me` | JWT လက်မှတ်ရေးထိုးခြင်းအတွက် လျှို့ဝှက်ချက် (**ထုတ်လုပ်ရေးပတ်ဝန်းကျင်တွင် ပြောင်းလဲပါ**)                                                                          |
 | `INITIAL_PASSWORD`                      | `CHANGEME`                           | ပထမဆုံး ဝင်ရောက်အသုံးပြုရန် စကားဝှက်                                                                                                                              |
-| `DATA_DIR`                              | `~/.omniroute`                       | ဒေတာလမ်းညွှန် (ဒေတာဘေ့စ်၊ အသုံးပြုမှု၊ မှတ်တမ်းများ)                                                                                                              |
+| `DATA_DIR`                              | `~/.agentproxy`                       | ဒေတာလမ်းညွှန် (ဒေတာဘေ့စ်၊ အသုံးပြုမှု၊ မှတ်တမ်းများ)                                                                                                              |
 | `PORT`                                  | မူဘောင်၏ မူလသတ်မှတ်ချက်              | ဝန်ဆောင်မှု ပေါ့တ် (`20128` ကို နမူနာများတွင် အသုံးပြုထားသည်)                                                                                                     |
 | `HOSTNAME`                              | မူဘောင်၏ မူလသတ်မှတ်ချက်              | ချိတ်ဆက်မည့် ဟို့စ် (Docker တွင် မူလအတိုင်း `0.0.0.0`)                                                                                                            |
 | `NODE_ENV`                              | လည်ပတ်မှုပတ်ဝန်းကျင်၏ မူလသတ်မှတ်ချက် | ဖြန့်ကျက်အသုံးပြုရန် `production` ဟု သတ်မှတ်ပါ                                                                                                                    |
 | `NEXT_PUBLIC_BASE_URL`                  | `http://localhost:20128`             | ဒက်ရှ်ဘုတ်တွင် ပြသပြီး ဆာဗာသို့လည်း ဖော်ထုတ်ပေးသည့် အများသုံး အခြေခံ URL (အမွေဆက်ခံထားသော `BASE_URL` ကို အစားထိုးသည်)                                             |
-| `NEXT_PUBLIC_CLOUD_URL`                 | `https://omniroute.dev`              | Cloud စင့်ခ် အဆုံးမှတ်၏ အခြေခံ URL (အမွေဆက်ခံထားသော `CLOUD_URL` ကို အစားထိုးသည်)                                                                                  |
+| `NEXT_PUBLIC_CLOUD_URL`                 | `https://agentproxy.online`              | Cloud စင့်ခ် အဆုံးမှတ်၏ အခြေခံ URL (အမွေဆက်ခံထားသော `CLOUD_URL` ကို အစားထိုးသည်)                                                                                  |
 | `API_KEY_SECRET`                        | `endpoint-proxy-api-key-secret`      | ထုတ်လုပ်ထားသော API key များအတွက် HMAC လျှို့ဝှက်ချက်                                                                                                              |
 | `REQUIRE_API_KEY`                       | `false`                              | `/v1/*` တွင် Bearer API key ကို မဖြစ်မနေ အသုံးပြုစေသည်                                                                                                            |
 | `ALLOW_API_KEY_REVEAL`                  | `false`                              | အထောက်အထားစိစစ်ပြီးသော ဒက်ရှ်ဘုတ်အသုံးပြုသူများအား သိမ်းဆည်းထားသည့် API key တန်ဖိုးအပြည့်အစုံကို လိုအပ်ချိန်တွင် ဖော်ပြခွင့်ပြုသည်                                |
@@ -596,7 +596,7 @@ post_install() {
 | `AUTH_COOKIE_SECURE`                    | `false`                              | `Secure` အထောက်အထားစိစစ်ရေး cookie ကို မဖြစ်မနေ အသုံးပြုစေသည် (HTTPS reverse proxy နောက်ကွယ်တွင်)                                                                 |
 | `CLOUDFLARED_BIN`                       | မသတ်မှတ်ထားပါ                        | စီမံထိန်းချုပ်ထားသော ဒေါင်းလုဒ်အစား ရှိပြီးသား `cloudflared` binary ကို အသုံးပြုသည်                                                                               |
 | `CLOUDFLARED_PROTOCOL`                  | `http2`                              | စီမံထိန်းချုပ်ထားသော Quick Tunnels အတွက် ပို့ဆောင်ရေး ပရိုတိုကော (`http2`၊ `quic` သို့မဟုတ် `auto`)                                                               |
-| `OMNIROUTE_MEMORY_MB`                   | `512`                                | Node.js heap ကန့်သတ်ချက်ကို MB ဖြင့် သတ်မှတ်သည်                                                                                                                   |
+| `AGENTPROXY_MEMORY_MB`                   | `512`                                | Node.js heap ကန့်သတ်ချက်ကို MB ဖြင့် သတ်မှတ်သည်                                                                                                                   |
 | `PROMPT_CACHE_MAX_SIZE`                 | `50`                                 | prompt cache ထည့်သွင်းချက် အများဆုံးအရေအတွက်                                                                                                                      |
 | `SEMANTIC_CACHE_MAX_SIZE`               | `100`                                | semantic cache ထည့်သွင်းချက် အများဆုံးအရေအတွက်                                                                                                                    |
 
@@ -657,7 +657,7 @@ post_install() {
 
 **အခြား တွဲဖက်အသုံးပြုနိုင်သော provider များ** (ရွေးချယ်ထားသော): `cohere`, `databricks`, `snowflake`, `together`, `vertex`, `alibaba`, `alibaba-cn`, `bedrock` (`aws-bedrock` မှတစ်ဆင့်), `azure-ai`, `openrouter` (တိုက်ရိုက်ဖြတ်သန်းပေးသော catalog), `siliconflow`, `hyperbolic`, `huggingface`, `featherless-ai`, `cloudflare-ai`, `scaleway`, `deepinfra`, `vercel-ai-gateway`, `bazaarlink`, `friendliai`, `nous-research`, `reka`, `volcengine`, `ai21`, `gigachat`။ တစ်ခုချင်းစီသည် `providerRegistry.ts` တွင် ကိုယ်ပိုင် မော်ဒယ်စာရင်းကို ထိန်းသိမ်းထားပြီး provider က `/models` endpoint ကို ပံ့ပိုးပေးသည့်အခါ အလိုအလျောက် တစ်ပြေးညီဖြစ်အောင် ချိန်ညှိနိုင်ပါသည်။
 
-**မော်ဒယ် ID များနှင့်ပတ်သက်သည့် မှတ်ချက်:** AgentProxy သည် provider မူရင်း ID များ (`claude-opus-4-8`, `gpt-5.5`, `glm-5.1`, `MiniMax-M2.7`, `kimi-k2.5`, `grok-4.20-0309-reasoning`) ကို အသုံးပြုပါသည်။ Upstream API က ထိုပုံစံအတိုင်း လိုအပ်သောကြောင့် အချို့ ID များတွင် အစက်ဖြင့်ရေးထားသော version များ ပါဝင်ပါသည်။ မော်ဒယ်တစ်ခုကို အထက်တွင် စာရင်းမပြုထားပါက ရရှိနိုင်မှုကို အတည်ပြုရန် `omniroute models --search <term>` ကို လုပ်ဆောင်ပါ သို့မဟုတ် `GET /api/models/catalog` ကို ခေါ်ပါ။
+**မော်ဒယ် ID များနှင့်ပတ်သက်သည့် မှတ်ချက်:** AgentProxy သည် provider မူရင်း ID များ (`claude-opus-4-8`, `gpt-5.5`, `glm-5.1`, `MiniMax-M2.7`, `kimi-k2.5`, `grok-4.20-0309-reasoning`) ကို အသုံးပြုပါသည်။ Upstream API က ထိုပုံစံအတိုင်း လိုအပ်သောကြောင့် အချို့ ID များတွင် အစက်ဖြင့်ရေးထားသော version များ ပါဝင်ပါသည်။ မော်ဒယ်တစ်ခုကို အထက်တွင် စာရင်းမပြုထားပါက ရရှိနိုင်မှုကို အတည်ပြုရန် `agentproxy models --search <term>` ကို လုပ်ဆောင်ပါ သို့မဟုတ် `GET /api/models/catalog` ကို ခေါ်ပါ။
 
 </details>
 
@@ -695,16 +695,16 @@ curl -X POST http://localhost:20128/api/provider-models \
 
 ```bash
 # gateway-a
-OMNIROUTE_INSTANCE_ID=gateway-a
-OMNIROUTE_PEER_URLS=http://gateway-b:20128/v1
-OMNIROUTE_PEER_MAX_HOPS=4
+AGENTPROXY_INSTANCE_ID=gateway-a
+AGENTPROXY_PEER_URLS=http://gateway-b:20128/v1
+AGENTPROXY_PEER_MAX_HOPS=4
 ```
 
 ```bash
 # gateway-b
-OMNIROUTE_INSTANCE_ID=gateway-b
-OMNIROUTE_PEER_URLS=http://gateway-a:20128/v1
-OMNIROUTE_PEER_MAX_HOPS=4
+AGENTPROXY_INSTANCE_ID=gateway-b
+AGENTPROXY_PEER_URLS=http://gateway-a:20128/v1
+AGENTPROXY_PEER_MAX_HOPS=4
 ```
 
 အတိအလင်း allowlist လုပ်ထားသော peer URL သို့ ပေးပို့သည့် request များသာ
@@ -1095,7 +1095,7 @@ AgentProxy တွင် ချိတ်ဆက်ထားသော provider အ�
 
 ```bash
 curl -X POST http://localhost:20128/v1/chat/completions \
-  -H "Authorization: Bearer $OMNIROUTE_KEY" \
+  -H "Authorization: Bearer $AGENTPROXY_KEY" \
   -H "Content-Type: application/json" \
   -d '{
     "model": "auto/coding",
@@ -1116,7 +1116,7 @@ AgentProxy သည် **MCP server** (Model Context Protocol) နှင့် **A
 
 - **SSE**: `http://localhost:20128/api/mcp/sse`
 - **Streamable HTTP**: `http://localhost:20128/api/mcp/stream`
-- **stdio**: `omniroute --mcp` (stdio ကို ပိုမိုနှစ်သက်သော IDE plugin များအတွက်)
+- **stdio**: `agentproxy --mcp` (stdio ကို ပိုမိုနှစ်သက်သော IDE plugin များအတွက်)
 
 ### Claude Desktop ကို ချိတ်ဆက်ခြင်း
 
@@ -1125,8 +1125,8 @@ AgentProxy သည် **MCP server** (Model Context Protocol) နှင့် **A
 ```json
 {
   "mcpServers": {
-    "omniroute": {
-      "command": "omniroute",
+    "agentproxy": {
+      "command": "agentproxy",
       "args": ["--mcp"]
     }
   }
@@ -1202,23 +1202,23 @@ AgentProxy သည် cloud coding agent များ (**OpenAI Codex Cloud**, **
 ```bash
 # Provider များကို စာရင်းပြုစုပါ
 curl http://localhost:20128/api/providers \
-  -H "Authorization: Bearer $OMNIROUTE_MANAGE_KEY"
+  -H "Authorization: Bearer $AGENTPROXY_MANAGE_KEY"
 
 # Provider ချိတ်ဆက်မှုတစ်ခု ထည့်ပါ
 curl -X POST http://localhost:20128/api/providers \
-  -H "Authorization: Bearer $OMNIROUTE_MANAGE_KEY" \
+  -H "Authorization: Bearer $AGENTPROXY_MANAGE_KEY" \
   -H "Content-Type: application/json" \
   -d '{ "provider": "openai", "apiKey": "sk-...", "name": "main" }'
 
 # Combo တစ်ခု ဖန်တီးပါ
 curl -X POST http://localhost:20128/api/combos \
-  -H "Authorization: Bearer $OMNIROUTE_MANAGE_KEY" \
+  -H "Authorization: Bearer $AGENTPROXY_MANAGE_KEY" \
   -H "Content-Type: application/json" \
   -d '{ "name": "premium", "strategy": "priority", "models": [{ "model": "cc/claude-opus-4-7" }, { "model": "glm/glm-5.1" }] }'
 
 # API key များကို စာရင်းပြုစုပါ/ဖန်တီးပါ
-curl http://localhost:20128/api/keys -H "Authorization: Bearer $OMNIROUTE_MANAGE_KEY"
-curl -X POST http://localhost:20128/api/keys -H "Authorization: Bearer $OMNIROUTE_MANAGE_KEY" \
+curl http://localhost:20128/api/keys -H "Authorization: Bearer $AGENTPROXY_MANAGE_KEY"
+curl -X POST http://localhost:20128/api/keys -H "Authorization: Bearer $AGENTPROXY_MANAGE_KEY" \
   -d '{ "name": "ci-bot", "scopes": ["chat"] }'
 ```
 
@@ -1228,32 +1228,32 @@ Endpoint catalog အပြည့်အစုံနှင့် request/response 
 
 ## 💻 အတွင်းပိုင်း CLI
 
-AgentProxy တွင် စနစ်ထည့်သွင်းခြင်း၊ ပြဿနာရှာဖွေစစ်ဆေးခြင်းနှင့် လည်ပတ်ချိန်ထိန်းချုပ်ခြင်းတို့အတွက် အတွင်းပိုင်း CLI (`omniroute …`) ပါဝင်သည်။ ၎င်းသည် ပြင်ပအဖွဲ့အစည်း CLI များ (Claude Code, Cursor, Codex, Cline, …) ကို AgentProxy နှင့် ဆက်သွယ်နိုင်စေရန် ပြင်ဆင်သတ်မှတ်ပေးသည့် dashboard ရှိ **"CLI Tools" စာမျက်နှာနှင့် သီးခြားဖြစ်သည်**။
+AgentProxy တွင် စနစ်ထည့်သွင်းခြင်း၊ ပြဿနာရှာဖွေစစ်ဆေးခြင်းနှင့် လည်ပတ်ချိန်ထိန်းချုပ်ခြင်းတို့အတွက် အတွင်းပိုင်း CLI (`agentproxy …`) ပါဝင်သည်။ ၎င်းသည် ပြင်ပအဖွဲ့အစည်း CLI များ (Claude Code, Cursor, Codex, Cline, …) ကို AgentProxy နှင့် ဆက်သွယ်နိုင်စေရန် ပြင်ဆင်သတ်မှတ်ပေးသည့် dashboard ရှိ **"CLI Tools" စာမျက်နှာနှင့် သီးခြားဖြစ်သည်**။
 
 ```bash
-omniroute setup                    # အဆင့်လိုက် တုံ့ပြန်ဆောင်ရွက်နိုင်သည့် wizard (စကားဝှက်၊ provider များ၊ combo များ)
-omniroute setup --non-interactive  # CI အတွက် အဆင်ပြေသည်
-omniroute doctor                   # စနစ်ကျန်းမာရေး စစ်ဆေးခြင်း (data dir၊ DB၊ provider များ၊ port များ)
-omniroute providers available      # ပံ့ပိုးထားသော provider များကို စာရင်းပြုစုရန်
-omniroute providers list           # ပြင်ဆင်သတ်မှတ်ထားသော ချိတ်ဆက်မှုများကို စာရင်းပြုစုရန်
-omniroute providers test <id>      # provider ချိတ်ဆက်မှုကို တိုက်ရိုက်စမ်းသပ်ရန်
-omniroute combos list              # combo များကို စာရင်းပြုစုရန်
-omniroute combos switch <name>     # မူလ combo ကို သတ်မှတ်ရန်
-omniroute models                   # ရရှိနိုင်သော model များကို စာရင်းပြုစုရန် (--json, --search)
-omniroute keys add | list | remove # terminal မှ API key များကို စီမံခန့်ခွဲရန်
-omniroute backup                   # config + DB ကို snapshot ပြုလုပ်ရန်
-omniroute restore [<timestamp>]    # snapshot တစ်ခုမှ ပြန်လည်ရယူရန်
-omniroute health                   # အသေးစိတ်စနစ်ကျန်းမာရေး (breaker များ၊ cache၊ memory)
-omniroute quota                    # provider quota အသုံးပြုမှု
-omniroute mcp status               # MCP server အခြေအနေ
-omniroute a2a status               # A2A server အခြေအနေ
-omniroute tunnel list|create|stop  # Cloudflare/Tailscale/ngrok tunnel များ
-omniroute reset-password           # admin စကားဝှက်ကို ပြန်လည်သတ်မှတ်ရန်
-omniroute --mcp                    # stdio မှတစ်ဆင့် MCP server ကို စတင်ရန်
-omniroute --port 3000              # စိတ်ကြိုက် port ပေါ်တွင် server ကို စတင်ရန်
+agentproxy setup                    # အဆင့်လိုက် တုံ့ပြန်ဆောင်ရွက်နိုင်သည့် wizard (စကားဝှက်၊ provider များ၊ combo များ)
+agentproxy setup --non-interactive  # CI အတွက် အဆင်ပြေသည်
+agentproxy doctor                   # စနစ်ကျန်းမာရေး စစ်ဆေးခြင်း (data dir၊ DB၊ provider များ၊ port များ)
+agentproxy providers available      # ပံ့ပိုးထားသော provider များကို စာရင်းပြုစုရန်
+agentproxy providers list           # ပြင်ဆင်သတ်မှတ်ထားသော ချိတ်ဆက်မှုများကို စာရင်းပြုစုရန်
+agentproxy providers test <id>      # provider ချိတ်ဆက်မှုကို တိုက်ရိုက်စမ်းသပ်ရန်
+agentproxy combos list              # combo များကို စာရင်းပြုစုရန်
+agentproxy combos switch <name>     # မူလ combo ကို သတ်မှတ်ရန်
+agentproxy models                   # ရရှိနိုင်သော model များကို စာရင်းပြုစုရန် (--json, --search)
+agentproxy keys add | list | remove # terminal မှ API key များကို စီမံခန့်ခွဲရန်
+agentproxy backup                   # config + DB ကို snapshot ပြုလုပ်ရန်
+agentproxy restore [<timestamp>]    # snapshot တစ်ခုမှ ပြန်လည်ရယူရန်
+agentproxy health                   # အသေးစိတ်စနစ်ကျန်းမာရေး (breaker များ၊ cache၊ memory)
+agentproxy quota                    # provider quota အသုံးပြုမှု
+agentproxy mcp status               # MCP server အခြေအနေ
+agentproxy a2a status               # A2A server အခြေအနေ
+agentproxy tunnel list|create|stop  # Cloudflare/Tailscale/ngrok tunnel များ
+agentproxy reset-password           # admin စကားဝှက်ကို ပြန်လည်သတ်မှတ်ရန်
+agentproxy --mcp                    # stdio မှတစ်ဆင့် MCP server ကို စတင်ရန်
+agentproxy --port 3000              # စိတ်ကြိုက် port ပေါ်တွင် server ကို စတင်ရန်
 ```
 
-အကြံပြုချက်- ကျန်းမာရေးမကောင်းသော provider ချိတ်ဆက်မှုများအတွက် သတိပေးချက်ရရှိရန် `omniroute doctor --json` ကို သင်၏ monitoring tool နှင့် တွဲဖက်အသုံးပြုပါ။
+အကြံပြုချက်- ကျန်းမာရေးမကောင်းသော provider ချိတ်ဆက်မှုများအတွက် သတိပေးချက်ရရှိရန် `agentproxy doctor --json` ကို သင်၏ monitoring tool နှင့် တွဲဖက်အသုံးပြုပါ။
 
 ---
 
@@ -1302,7 +1302,7 @@ Output → `electron/dist-electron/`
 
 | Variable              | မူလတန်ဖိုး | ဖော်ပြချက်                             |
 | --------------------- | ---------- | -------------------------------------- |
-| `OMNIROUTE_PORT`      | `20128`    | Server port                            |
-| `OMNIROUTE_MEMORY_MB` | `512`      | Node.js heap ကန့်သတ်ချက် (64–16384 MB) |
+| `AGENTPROXY_PORT`      | `20128`    | Server port                            |
+| `AGENTPROXY_MEMORY_MB` | `512`      | Node.js heap ကန့်သတ်ချက် (64–16384 MB) |
 
 📖 စာရွက်စာတမ်းအပြည့်အစုံ- [`electron/README.md`](../../electron/README.md)

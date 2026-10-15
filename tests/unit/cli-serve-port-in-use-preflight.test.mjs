@@ -1,4 +1,4 @@
-// `omniroute serve` against a port another OmniRoute already owns produced a
+// `agentproxy serve` against a port another AgentProxy already owns produced a
 // confusing, self-inflicted mess: it spawned a child that died with
 // EADDRINUSE, retried it twice on the supervisor's restart budget, and printed
 // three identical raw Node stack traces before giving up — never once saying

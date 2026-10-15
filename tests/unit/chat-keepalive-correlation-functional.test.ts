@@ -8,7 +8,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 
-const dataDir = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-chat-keepalive-func-"));
+const dataDir = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-chat-keepalive-func-"));
 process.env.DATA_DIR = dataDir;
 process.env.REQUIRE_API_KEY = "false";
 // The attempt-logging merge sits behind the detailed-logging gate

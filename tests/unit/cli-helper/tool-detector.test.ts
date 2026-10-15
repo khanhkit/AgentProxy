@@ -66,10 +66,10 @@ describe("tool-detector", () => {
       const home = fs.mkdtempSync(path.join(os.tmpdir(), "tool-detector-hermes-port-"));
       const originalHermesHome = process.env.HERMES_HOME;
       const originalPort = process.env.PORT;
-      const originalBaseUrl = process.env.OMNIROUTE_BASE_URL;
+      const originalBaseUrl = process.env.AGENTPROXY_BASE_URL;
       process.env.HERMES_HOME = home;
       process.env.PORT = "37128";
-      delete process.env.OMNIROUTE_BASE_URL;
+      delete process.env.AGENTPROXY_BASE_URL;
       fs.writeFileSync(path.join(home, "config.yaml"), "base_url: http://localhost:37128/v1\n");
 
       try {
@@ -82,8 +82,8 @@ describe("tool-detector", () => {
         else process.env.HERMES_HOME = originalHermesHome;
         if (originalPort === undefined) delete process.env.PORT;
         else process.env.PORT = originalPort;
-        if (originalBaseUrl === undefined) delete process.env.OMNIROUTE_BASE_URL;
-        else process.env.OMNIROUTE_BASE_URL = originalBaseUrl;
+        if (originalBaseUrl === undefined) delete process.env.AGENTPROXY_BASE_URL;
+        else process.env.AGENTPROXY_BASE_URL = originalBaseUrl;
       }
     });
 

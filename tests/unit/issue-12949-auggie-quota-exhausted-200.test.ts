@@ -10,7 +10,7 @@ import path from "node:path";
 
 const { AuggieExecutor } = await import("@agentproxy/open-sse/executors/auggie");
 
-const TMP_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-auggie-quota-test-"));
+const TMP_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-auggie-quota-test-"));
 
 function writeFakeBin(name: string, script: string): string {
   const p = path.join(TMP_DIR, name);

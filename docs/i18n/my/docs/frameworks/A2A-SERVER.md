@@ -30,7 +30,7 @@ Agent Card ၏ `version` အကွက်ကို `process.env.npm_package_versi
 `/a2a` တောင်းဆိုမှုအားလုံးအတွက် `Authorization` header မှတစ်ဆင့် API key တစ်ခု လိုအပ်သည်-
 
 ```
-Authorization: Bearer YOUR_OMNIROUTE_API_KEY
+Authorization: Bearer YOUR_AGENTPROXY_API_KEY
 ```
 
 ဆာဗာတွင် API key သတ်မှတ်ထားခြင်းမရှိပါက စစ်မှန်ကြောင်းအတည်ပြုခြင်းကို ကျော်သွားမည်ဖြစ်သည်။
@@ -187,7 +187,7 @@ JSON-RPC endpoint `/a2a` သည် ပင်မ A2A ဝင်ပေါက်ဖ�
 | `/api/a2a/tasks/[id]`        | GET    | ID ဖြင့် task ကို ရယူရန်                                     | စီမံခန့်ခွဲမှု                                  |
 | `/api/a2a/tasks/[id]/cancel` | POST   | လုပ်ဆောင်နေသော task ကို ပယ်ဖျက်ရန်                           | စီမံခန့်ခွဲမှု                                  |
 | `/.well-known/agent.json`    | GET    | Agent Card (A2A ရှာဖွေဖော်ထုတ်မှု)                           | (အများသုံး၊ 3600s ကြာ cache လုပ်ထားသည်)         |
-| `/api/a2a/tasks`             | POST   | OmniConductor fleet သို့ အဝင် delegation (Conductor PRD RF5) | Bearer နှင့် `OMNIROUTE_API_KEY` + `a2aEnabled` |
+| `/api/a2a/tasks`             | POST   | OmniConductor fleet သို့ အဝင် delegation (Conductor PRD RF5) | Bearer နှင့် `AGENTPROXY_API_KEY` + `a2aEnabled` |
 
 **အဝင် Conductor delegation (`POST /api/a2a/tasks`):** ပြင်ပ A2A agent များသည် AgentProxy မှတစ်ဆင့် coding အလုပ်များကို OmniConductor fleet သို့ လွှဲအပ်သည်။ Body: `{ skill: "conductor" | "conductor-cli-<profile>", messages: [{role, content}], metadata: { conductor: { repo: { url, base_ref? }, mode?, cli?, model? } } }` — Conductor fleet skill များ (Agent Card တွင် ကြေညာထားသည့် skill များ) ကိုသာ လွှဲအပ်နိုင်သည်။ `metadata.conductor.repo.url` ကို မဖြစ်မနေ ထည့်သွင်းရမည် (fleet သည် git repo များပေါ်တွင် အလုပ်လုပ်သည်)။ Route သည် ဆာဗာဘက်ရှိ `CONDUCTOR_ORCHESTRATOR_TOKEN` (`CONDUCTOR_HUB_TOKEN` ကို အရန်အဖြစ် အသုံးပြုသည်) ကို အသုံးပြု၍ hub ၏ `POST /v1/tasks` သို့ ပြောင်းလဲပေးပြီး `201 { conductor_task_id, state: "submitted" }` ကို ပြန်ပေးသည်။ task အခြေအနေများသည် SSE→A2A mirror (RF1) မှတစ်ဆင့် ပြန်လည်စီးဆင်းလာပြီး `GET /api/a2a/tasks?skill=conductor` မှတစ်ဆင့် ကြည့်ရှုနိုင်သည်။
 

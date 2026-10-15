@@ -435,7 +435,7 @@ endpoints የአስተዳደር ማረጋገጫ ይፈልጋሉ።
 - Quota cache፦ `src/domain/quotaCache.ts`
 - የDegradation ሁኔታ፦ `src/domain/degradation.ts`
 - የውቅር audit፦ `src/domain/configAudit.ts`
-- የAgentProxy ምላሽ metadata builder፦ `src/domain/omnirouteResponseMeta.ts`
+- የAgentProxy ምላሽ metadata builder፦ `src/domain/agentproxyesponseMeta.ts`
 - የAssessment ንዑስ ሥርዓት፦ `src/domain/assessment/` — ወቅታዊ የግምገማ jobs
 
 ### E. የፈቃድ አሰጣጥ Pipeline
@@ -516,7 +516,7 @@ model lockout ንብርብሮች ላይ የሚደገፉ ልዩ የመቋቋም �
 
 - መሠረታዊ መዋቅር፦ `src/lib/db/core.ts` (better-sqlite3፣ ማይግሬሽኖች፣ WAL)
 - የDB መዳረሻ፦ የተወሰኑ `src/lib/db/*` ሞጁሎችን በቀጥታ import ያድርጉ (የቀድሞው `localDb.ts` barrel ተወግዷል)
-- ፋይል፦ `${DATA_DIR}/storage.sqlite` (`$XDG_CONFIG_HOME/omniroute/storage.sqlite` ከተዋቀረ፣ ካልሆነ `~/.omniroute/storage.sqlite`)
+- ፋይል፦ `${DATA_DIR}/storage.sqlite` (`$XDG_CONFIG_HOME/agentproxy/storage.sqlite` ከተዋቀረ፣ ካልሆነ `~/.agentproxy/storage.sqlite`)
 - አካላት (ሰንጠረዦች + KV namespaces)፦ providerConnections, providerNodes, modelAliases, combos, apiKeys, settings, pricing, **customModels**, **proxyConfig**, **ipFilter**, **thinkingBudget**, **systemPrompt**
 
 የአጠቃቀም መረጃ ቋሚነት፦
@@ -1138,11 +1138,11 @@ flowchart LR
 
 ## የሚታወቁ የሥነ-ሕንፃ ማስታወሻዎች
 
-1. `usageDb` እና `localDb` ከቀድሞ ፋይል ፍልሰት ጋር ተመሳሳዩን የመሠረት ማውጫ ፖሊሲ (`DATA_DIR` -> `XDG_CONFIG_HOME/omniroute` -> `~/.omniroute`) ይጋራሉ።
+1. `usageDb` እና `localDb` ከቀድሞ ፋይል ፍልሰት ጋር ተመሳሳዩን የመሠረት ማውጫ ፖሊሲ (`DATA_DIR` -> `XDG_CONFIG_HOME/agentproxy` -> `~/.agentproxy`) ይጋራሉ።
 2. `/api/v1/route.ts` የትርጉም ልዩነትን ለማስቀረት `/api/v1/models` ወደሚጠቀመው ተመሳሳይ የተዋሃደ ካታሎግ ገንቢ (`src/app/api/v1/models/catalog.ts`) ውክልና ይሰጣል።
 3. የጥያቄ መዝጋቢው ሲነቃ ሙሉ ራስጌዎችን/ይዘትን ይጽፋል፤ የምዝግብ ማውጫውን እንደ ሚስጥራዊ ይዘት ይቁጠሩት።
 4. የደመና ባህሪ በትክክለኛው `NEXT_PUBLIC_BASE_URL` እና የደመና መጨረሻ ነጥብ ተደራሽነት ላይ ይመረኮዛል።
-5. የ`open-sse/` ማውጫ እንደ `@omniroute/open-sse` **npm workspace package** ታትሟል። የምንጭ ኮዱ በ`@omniroute/open-sse/...` በኩል ያስመጣዋል (በNext.js `transpilePackages` የሚፈታ)። በዚህ ሰነድ ውስጥ ያሉ የፋይል ዱካዎች ለወጥነት አሁንም `open-sse/` የሚለውን የማውጫ ስም ይጠቀማሉ።
+5. የ`open-sse/` ማውጫ እንደ `@agentproxy/open-sse` **npm workspace package** ታትሟል። የምንጭ ኮዱ በ`@agentproxy/open-sse/...` በኩል ያስመጣዋል (በNext.js `transpilePackages` የሚፈታ)። በዚህ ሰነድ ውስጥ ያሉ የፋይል ዱካዎች ለወጥነት አሁንም `open-sse/` የሚለውን የማውጫ ስም ይጠቀማሉ።
 6. በዳሽቦርዱ ውስጥ ያሉ ገበታዎች ተደራሽ እና መስተጋብራዊ የትንታኔ ምስላዊ ማሳያዎችን (የሞዴል አጠቃቀም የአሞሌ ገበታዎች፣ የስኬት መጠኖችን የያዙ የአቅራቢ ክፍፍል ሰንጠረዦች) ለማቅረብ **Recharts**ን (በSVG ላይ የተመሠረተ) ይጠቀማሉ።
 7. የE2E ሙከራዎች **Playwright**ን (`tests/e2e/`) ይጠቀማሉ፣ እና በ`npm run test:e2e` ይከናወናሉ። የአሃድ ሙከራዎች **Node.js test runner**ን (`tests/unit/`) ይጠቀማሉ፣ እና በ`npm run test:unit` ይከናወናሉ። በ`src/` ስር ያለው የምንጭ ኮድ **TypeScript** (`.ts`/`.tsx`) ነው፤ የ`open-sse/` workspace ግን JavaScript (`.js`) ሆኖ ይቆያል።
 8. የቅንብሮች ገጽ በ7 ትሮች ተደራጅቷል፦ አጠቃላይ፣ ገጽታ፣ AI፣ ደህንነት፣ መስመር ማስያዝ፣ የመቋቋም ችሎታ፣ የላቀ። የመቋቋም ችሎታ ገጹ የጥያቄ ወረፋን፣ የግንኙነት ማቀዝቀዣ ጊዜን፣ የአቅራቢ ወረዳ ቆራጭን እና ማቀዝቀዣውን-የመጠበቅ ባህሪን ብቻ ያዋቅራል፤ ቀጥታ የወረዳ ቆራጭ አሂድ-ጊዜ ሁኔታ በጤና ገጹ ላይ ይታያል።
@@ -1153,7 +1153,7 @@ flowchart LR
 ## የክንውን ማረጋገጫ ዝርዝር
 
 - ከምንጭ ኮድ ይገንቡ፦ `npm run build`
-- የDocker ምስል ይገንቡ፦ `docker build -t omniroute .`
+- የDocker ምስል ይገንቡ፦ `docker build -t agentproxy .`
 - አገልግሎቱን ያስጀምሩና ያረጋግጡ፦
 - `GET /api/settings`
 - `GET /api/v1/models`

@@ -141,7 +141,7 @@ type SpawnLike = typeof spawn;
  * Now the password goes only to `sudo -S -v` (validate, runs no command; if sudo does
  * not prompt, the unread line dies with that process), and the command runs as
  * `sudo -n <cmd>` with only its own data on stdin. Returns a single plain step when sudo
- * is stripped (root / no sudo / OMNIROUTE_NO_SUDO), exactly as before.
+ * is stripped (root / no sudo / AGENTPROXY_NO_SUDO), exactly as before.
  */
 export function planSudoSteps(
   command: string,

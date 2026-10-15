@@ -30,7 +30,7 @@ AgentProxy හි හැකියාවන්, කුසලතා සහ සත�
 සියලුම `/a2a` ඉල්ලීම් සඳහා `Authorization` ශීර්ෂකය හරහා API යතුරක් අවශ්ය වේ:
 
 ```
-Authorization: Bearer YOUR_OMNIROUTE_API_KEY
+Authorization: Bearer YOUR_AGENTPROXY_API_KEY
 ```
 
 සේවාදායකයේ API යතුරක් වින්යාස කර නොමැති නම්, සත්යාපනය මඟ හරිනු ලැබේ.
@@ -187,7 +187,7 @@ JSON-RPC අන්ත ලක්ෂ්යය වන `/a2a`, සම්මත A2A �
 | `/api/a2a/tasks/[id]`        | GET   | ID අනුව කාර්යය ලබාගැනීම                               | කළමනාකරණය                                    |
 | `/api/a2a/tasks/[id]/cancel` | POST  | ක්රියාත්මක වන කාර්යය අවලංගු කිරීම                     | කළමනාකරණය                                    |
 | `/.well-known/agent.json`    | GET   | නියෝජිත කාඩ්පත (A2A සොයාගැනීම)                        | (පොදු, තත්පර 3600ක් හැඹිලිගත කර ඇත)          |
-| `/api/a2a/tasks`             | POST  | OmniConductor සමූහය වෙත එන පැවරීම (Conductor PRD RF5) | Bearer හා `OMNIROUTE_API_KEY` + `a2aEnabled` |
+| `/api/a2a/tasks`             | POST  | OmniConductor සමූහය වෙත එන පැවරීම (Conductor PRD RF5) | Bearer හා `AGENTPROXY_API_KEY` + `a2aEnabled` |
 
 **එන Conductor පැවරීම (`POST /api/a2a/tasks`):** බාහිර A2A නියෝජිතයන් AgentProxy හරහා OmniConductor සමූහයට කේතකරණ වැඩ පවරයි. අන්තර්ගතය: `{ skill: "conductor" | "conductor-cli-<profile>", messages: [{role, content}], metadata: { conductor: { repo: { url, base_ref? }, mode?, cli?, model? } } }` — පැවරිය හැක්කේ Conductor සමූහ කුසලතා (Agent Card හි නිවේදනය කර ඇති ඒවා) පමණි; `metadata.conductor.repo.url` අවශ්ය වේ (සමූහය git ගබඩා මත ක්රියා කරයි). මෙම මාර්ගය සේවාදායක-පාර්ශ්වීය `CONDUCTOR_ORCHESTRATOR_TOKEN` (විකල්පය `CONDUCTOR_HUB_TOKEN`) භාවිතයෙන් hub හි `POST /v1/tasks` වෙත පරිවර්තනය වන අතර `201 { conductor_task_id, state: "submitted" }` ආපසු ලබා දෙයි; කාර්ය තත්ත්වයන් SSE→A2A දර්පණය (RF1) හරහා නැවත ගලා එන අතර `GET /api/a2a/tasks?skill=conductor` මඟින් දැකගත හැක.
 

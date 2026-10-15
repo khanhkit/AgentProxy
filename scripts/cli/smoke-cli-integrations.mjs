@@ -22,13 +22,13 @@ import os from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
-export const SMOKE_MARKER = "OMNIROUTE_SMOKE_OK";
+export const SMOKE_MARKER = "AGENTPROXY_SMOKE_OK";
 export const SMOKE_TOKEN = "agentproxy-smoke-sentinel";
 export const DEFAULT_SMOKE_TARGETS = Object.freeze(["aider", "goose", "opencode", "qwen", "codex"]);
 
 const SCRIPT_PATH = fileURLToPath(import.meta.url);
 const REPO_ROOT = path.resolve(path.dirname(SCRIPT_PATH), "../..");
-const CLI_PATH = path.join(REPO_ROOT, "bin", "omniroute.mjs");
+const CLI_PATH = path.join(REPO_ROOT, "bin", "agentproxy.mjs");
 const AIDER_EMPTY_CONFIG = path.join(REPO_ROOT, "tests", "fixtures", "cli", "empty-aider.yml");
 
 function jsonResponse(response, status, body) {
@@ -351,7 +351,7 @@ export function buildSmokeInvocation(target, baseUrl, { inheritIsolatedEnv = fal
     "--model",
     model,
     "--api-key-env",
-    "OMNIROUTE_SMOKE_KEY",
+    "AGENTPROXY_SMOKE_KEY",
     ...(inheritIsolatedEnv ? ["--inherit-env"] : []),
     "--",
     ...targetToolArgs(target),

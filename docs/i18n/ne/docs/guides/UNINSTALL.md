@@ -20,7 +20,7 @@ AgentProxy ले सफा रूपमा हटाउन दुईवटा �
 npm run uninstall
 ```
 
-यसले AgentProxy अनुप्रयोग हटाउँछ तर `~/.omniroute/` मा रहेका तपाईंको डेटाबेस, कन्फिगरेसनहरू, API कुञ्जीहरू र प्रदायक सेटिङहरू **सुरक्षित राख्छ**। तपाईं पछि पुनः इन्स्टल गर्ने योजना बनाउँदै हुनुहुन्छ र आफ्नो सेटअप कायम राख्न चाहनुहुन्छ भने यो प्रयोग गर्नुहोस्।
+यसले AgentProxy अनुप्रयोग हटाउँछ तर `~/.agentproxy/` मा रहेका तपाईंको डेटाबेस, कन्फिगरेसनहरू, API कुञ्जीहरू र प्रदायक सेटिङहरू **सुरक्षित राख्छ**। तपाईं पछि पुनः इन्स्टल गर्ने योजना बनाउँदै हुनुहुन्छ र आफ्नो सेटअप कायम राख्न चाहनुहुन्छ भने यो प्रयोग गर्नुहोस्।
 
 ### पूर्ण रूपमा हटाउनुहोस्
 
@@ -34,7 +34,7 @@ npm run uninstall:full
 - प्रदायक कन्फिगरेसनहरू र API कुञ्जीहरू
 - ब्याकअप फाइलहरू
 - लग फाइलहरू
-- `~/.omniroute/` डाइरेक्टरीभित्रका सबै फाइलहरू
+- `~/.agentproxy/` डाइरेक्टरीभित्रका सबै फाइलहरू
 
 > ⚠️ **चेतावनी:** `npm run uninstall:full` लाई उल्टाउन सकिँदैन। तपाईंका सबै प्रदायक जडानहरू, कम्बोहरू, API कुञ्जीहरू र प्रयोग इतिहास स्थायी रूपमा मेटिनेछन्।
 
@@ -46,31 +46,31 @@ npm run uninstall:full
 
 ```bash
 # ग्लोबल प्याकेज हटाउनुहोस्
-npm uninstall -g omniroute
+npm uninstall -g agentproxy
 
 # (वैकल्पिक) डेटा डाइरेक्टरी हटाउनुहोस्
-rm -rf ~/.omniroute
+rm -rf ~/.agentproxy
 ```
 
 ### pnpm ग्लोबल इन्स्टल
 
 ```bash
-pnpm uninstall -g omniroute
-rm -rf ~/.omniroute
+pnpm uninstall -g agentproxy
+rm -rf ~/.agentproxy
 ```
 
 ### Docker
 
 ```bash
 # कन्टेनर रोक्नुहोस् र हटाउनुहोस्
-docker stop omniroute
-docker rm omniroute
+docker stop agentproxy
+docker rm agentproxy
 
 # भोल्युम हटाउनुहोस् (सम्पूर्ण डेटा मेटाउँछ)
-docker volume rm omniroute-data
+docker volume rm agentproxy-data
 
 # (वैकल्पिक) इमेज हटाउनुहोस्
-docker rmi diegosouzapw/omniroute:latest
+docker rmi diegosouzapw/agentproxy:latest
 ```
 
 ### Docker Compose
@@ -93,21 +93,21 @@ docker compose down -v
 **macOS:**
 
 - `/Applications` बाट `AgentProxy.app` लाई रद्दीटोकरीमा तान्नुहोस्
-- डेटा हटाउनुहोस्: `rm -rf ~/Library/Application Support/omniroute`
+- डेटा हटाउनुहोस्: `rm -rf ~/Library/Application Support/agentproxy`
 
 **Linux:**
 
 - AppImage फाइल हटाउनुहोस्
-- डेटा हटाउनुहोस्: `rm -rf ~/.omniroute`
+- डेटा हटाउनुहोस्: `rm -rf ~/.agentproxy`
 
 ### स्रोतबाट गरिएको इन्स्टल (git clone)
 
 ```bash
 # क्लोन गरिएको डाइरेक्टरी हटाउनुहोस्
-rm -rf /path/to/omniroute
+rm -rf /path/to/agentproxy
 
 # (वैकल्पिक) डेटा डाइरेक्टरी हटाउनुहोस्
-rm -rf ~/.omniroute
+rm -rf ~/.agentproxy
 ```
 
 ---
@@ -118,11 +118,11 @@ rm -rf ~/.omniroute
 
 | प्लेटफर्म  | पूर्वनिर्धारित पथ                    | ओभरराइड                      |
 | ---------- | ------------------------------------ | ---------------------------- |
-| Linux      | `~/.omniroute/`                      | `DATA_DIR` वातावरण चर        |
-| macOS      | `~/.omniroute/`                      | `DATA_DIR` वातावरण चर        |
-| Windows    | `%APPDATA%/omniroute/`               | `DATA_DIR` वातावरण चर        |
+| Linux      | `~/.agentproxy/`                      | `DATA_DIR` वातावरण चर        |
+| macOS      | `~/.agentproxy/`                      | `DATA_DIR` वातावरण चर        |
+| Windows    | `%APPDATA%/agentproxy/`               | `DATA_DIR` वातावरण चर        |
 | Docker     | `/app/data/` (माउन्ट गरिएको भोल्युम) | `DATA_DIR` वातावरण चर        |
-| XDG-अनुरूप | `$XDG_CONFIG_HOME/omniroute/`        | `XDG_CONFIG_HOME` वातावरण चर |
+| XDG-अनुरूप | `$XDG_CONFIG_HOME/agentproxy/`        | `XDG_CONFIG_HOME` वातावरण चर |
 
 ### डेटा डाइरेक्टरीभित्रका फाइलहरू
 
@@ -143,17 +143,17 @@ rm -rf ~/.omniroute
 
 ```bash
 # ग्लोबल npm प्याकेज जाँच गर्नुहोस्
-npm list -g omniroute 2>/dev/null
+npm list -g agentproxy 2>/dev/null
 
 # डेटा डाइरेक्टरी जाँच गर्नुहोस्
-ls -la ~/.omniroute/ 2>/dev/null
+ls -la ~/.agentproxy/ 2>/dev/null
 
 # चलिरहेका प्रोसेसहरू जाँच गर्नुहोस्
-pgrep -f omniroute
+pgrep -f agentproxy
 ```
 
 यदि कुनै प्रोसेस अझै चलिरहेको छ भने, त्यसलाई रोक्नुहोस्:
 
 ```bash
-pkill -f omniroute
+pkill -f agentproxy
 ```

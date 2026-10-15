@@ -116,7 +116,7 @@ dashboard UI ගොනු තාවකාලිකව stub කර, API route han
 ප්රතිසාධනය කරයි. dashboard UI එකට බලපාන වෙනස්කම් සඳහා හෝ සම්පූර්ණ
 නිකුතු වලංගුකරණය සඳහා `npm run build` භාවිත කරන්න; දායක profile එක නිකුතු build එක වෙනුවට භාවිත කළ නොහැක.
 
-> **VPS deploy සටහන:** දුරස්ථ image නාමාවලිය `/usr/lib/node_modules/omniroute/app/`
+> **VPS deploy සටහන:** දුරස්ථ image නාමාවලිය `/usr/lib/node_modules/agentproxy/app/`
 > වෙනස් වී නොමැත. deploy skills මඟින් `dist/` හි අන්තර්ගතය එයට rsync කරයි.
 > repository එක තුළ ඇති build ප්රතිදාන path එක පමණක් වෙනස් විය (`app/` → `dist/`).
 
@@ -321,7 +321,7 @@ src/                        # TypeScript (.ts / .tsx)
 │   └── validation/         # Zod v4 schemas
 └── sse/                    # SSE proxy pipeline
 
-open-sse/                   # @omniroute/open-sse workspace
+open-sse/                   # @agentproxy/open-sse workspace
 ├── executors/              # executor ක්රියාත්මක කිරීමේ modules 89ක්
 ├── handlers/               # request handlers 11ක් (chat, responses, embeddings, images, ආදිය)
 ├── mcp-server/             # MCP server (අනන්ය tools 110ක්, transports 3ක්, scopes 33ක්)

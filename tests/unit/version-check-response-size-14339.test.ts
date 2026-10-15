@@ -6,7 +6,7 @@
  * than that (measured from this box on 2026-09-21, both served without a
  * `Content-Length` so only the in-stream bound can fire):
  *
- *   https://registry.npmjs.org/omniroute/latest                    29,609 bytes
+ *   https://registry.npmjs.org/agentproxy/latest                    29,609 bytes
  *   https://api.github.com/.../releases/latest                    154,002 bytes
  *
  * So both fallbacks cancelled the body mid-read, threw "response is too large",

@@ -13,14 +13,14 @@ ngwaọrụ ahụ n'onwe ya na igwe **gị**. A na-eji environment variable na-e
 n'ebe ọ bụla ngwaọrụ ahụ kwadoro ya. E depụtara n'okpuru iwu ndị na-echekwa faịlụ environment
 nke dị naanị maka ngwaọrụ ahụ.
 
-E nwekwara launcher izugbe — `omniroute run <target>` — nke na-ebido
+E nwekwara launcher izugbe — `agentproxy run <target>` — nke na-ebido
 `claude`, `codex`, `aider`, `goose`, `opencode`, `qwen` ma ọ bụ `gemini` site n'itinye
 env kwesịrị ekwesị, n'edeghị nhazi ọ bụla ma ọlị. Targets na aliases ha
 na-esite na manifest bụ isi `bin/cli/cli-manifest.mjs`
 (`claude-code|cc|anthropic`, `codex-cli|openai-codex|openai`, `goose-cli`,
-`open-code`, `qwen-code`, `gemini-cli`), ebe `omniroute completion` na-enye
+`open-code`, `qwen-code`, `gemini-cli`), ebe `agentproxy completion` na-enye
 otu mkpụrụokwu target ndị ahụ sitere na manifest. Launchers ochie nke e mere maka ngwaọrụ ọ bụla —
-`omniroute launch` (Claude Code) na `omniroute launch-codex` (Codex) — ka dịkwa
+`agentproxy launch` (Claude Code) na `agentproxy launch-codex` (Codex) — ka dịkwa
 maka iji.
 
 Ịtinye provider ọhụrụ dịkwa site n'otu ọnọdụ local/remote ahụ. Iwu ndị a
@@ -28,11 +28,11 @@ na-ebute API ụzọ na-ekewapụ njirimara nkwenye maka njikwa na credentials n
 ha anaghịkwa ebipụta credential na structured output:
 
 ```bash
-omniroute providers add glm --credential-env GLM_API_KEY --name work
-omniroute providers import ./providers.json --dry-run --json
-omniroute providers auth openai
-omniroute providers edit <connection-id> --default-model glm/glm-5.2
-omniroute providers remove <connection-id> --yes
+agentproxy providers add glm --credential-env GLM_API_KEY --name work
+agentproxy providers import ./providers.json --dry-run --json
+agentproxy providers auth openai
+agentproxy providers edit <connection-id> --default-model glm/glm-5.2
+agentproxy providers remove <connection-id> --yes
 ```
 
 Maka scripts, họrọ `--credential-stdin` ma ọ bụ `--credential-env`; a ka debere `--credential`
@@ -53,7 +53,7 @@ nkọwa miri emi nke ngwaọrụ ọ bụla:
 
 ## Tebụl ukwu
 
-Iwu ọ bụla na-erubere **context nọ n'ọrụ** isi (nke e ji `omniroute connect` tọọ, lee
+Iwu ọ bụla na-erubere **context nọ n'ọrụ** isi (nke e ji `agentproxy connect` tọọ, lee
 [Remote Mode](./REMOTE-MODE.md)) ma ọ bụ flag doro anya `--remote <url> --api-key <key>`.
 "Mpaghara megide nke dị anya" n'okpuru pụtara: ọ bụrụ na enweghị flag, ọ na-ezubere `http://localhost:20128`;
 ọ bụrụ na e jiri `--remote` (ma ọ bụ context dị anya nọ n'ọrụ), ọ na-eweta katalọgụ ahụ site na
@@ -61,28 +61,28 @@ server ahụ ma dee nhazi ahụ na mpaghara.
 
 | Iwu                        | Ngwa                          | Ihe ọ na-ede                                                                                                                                                                           | Ọkọlọtọ ndị bụ isi                                                                                                                         | Mpaghara vs tere aka |
 | -------------------------- | ----------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ | -------------------- |
-| `omniroute setup-codex`    | OpenAI Codex CLI              | `~/.codex/<name>.config.toml` — otu profaịlụ maka ụdịdị ederede ọ bụla dakọtara (`codex --profile <name>`)                                                                             | `--remote` `--api-key` `--only` `--dry-run` `--port` `--codex-home`                                                                        | Ha abụọ              |
-| `omniroute setup-claude`   | Claude Code                   | `~/.claude/profiles/<name>/settings.json` — otu profaịlụ maka ụdịdị ọ bụla dakọtara (`CLAUDE_CONFIG_DIR`)                                                                              | `--remote` `--api-key` `--only` `--dry-run` `--port` `--claude-home`                                                                       | Ha abụọ              |
-| `omniroute setup-opencode` | OpenCode (dakọtara na openai) | `~/.config/opencode/opencode.json` — onye na-eweta `omniroute` nwere ụdịdị katalọgụ niile (`opencode -m omniroute/<model>`)                                                            | `--remote` `--api-key` `--only` `--model` `--dry-run` `--port`                                                                             | Ha abụọ              |
-| `omniroute setup-cline`    | Cline                         | `~/.cline/data/{globalState,secrets}.json` (ọnọdụ CLI) + na-ebipụta ntọala ndọtị VS Code                                                                                               | `--remote` `--api-key` `--model` `--yes` `--dry-run` `--port` `--cline-dir`                                                                | Ha abụọ              |
-| `omniroute setup-kilo`     | Kilo Code                     | `~/.local/share/kilo/auth.json` (CLI) + na-ejikọta `kilocode.*` n'ime VS Code `settings.json` ma ọ bụrụ na ọ dị                                                                        | `--remote` `--api-key` `--model` `--yes` `--dry-run` `--port` `--auth-path` `--vscode-settings`                                            | Ha abụọ              |
-| `omniroute setup-continue` | Continue / `cn` CLI           | `~/.continue/config.yaml` — ụdịdị `provider: openai`, igodo site na `${{ secrets.OMNIROUTE_API_KEY }}`                                                                                 | `--remote` `--api-key` `--only` `--dry-run` `--port` `--config-path`                                                                       | Ha abụọ              |
-| `omniroute setup-cursor`   | Cursor                        | Ọ dịghị ihe — na-ebipụta usoro a ga-eme n'ime ngwa ahụ (nhazi Cursor bụ SQLite anaghị ahụ anya)                                                                                        | `--remote` `--api-key` `--only` `--port`                                                                                                   | Ha abụọ              |
-| `omniroute setup-roo`      | Roo Code                      | `~/.omniroute/roo-settings.json` (dọkụmentị mbubata) + na-ahazi `roo-cline.autoImportSettingsPath` ma ọ bụrụ na VS Code `settings.json` dị                                             | `--remote` `--api-key` `--model` `--yes` `--dry-run` `--port` `--import-path` `--vscode-settings`                                          | Ha abụọ              |
-| `omniroute setup-crush`    | Crush                         | `~/.config/crush/crush.json` — onye na-eweta `openai-compat`, igodo site na `$OMNIROUTE_API_KEY`                                                                                       | `--remote` `--api-key` `--only` `--dry-run` `--port` `--config-path`                                                                       | Ha abụọ              |
-| `omniroute setup-goose`    | Goose                         | `~/.config/goose/config.yaml` (`GOOSE_PROVIDER`/`OPENAI_HOST`/`GOOSE_MODEL`) + na-ebipụta usoro env                                                                                    | `--remote` `--api-key` `--model` `--yes` `--dry-run` `--port` `--config-path`                                                              | Ha abụọ              |
-| `omniroute setup-aider`    | Aider                         | `~/.aider.conf.yml` (`openai-api-base` + `model: openai/<id>`) + na-ebipụta usoro env                                                                                                  | `--remote` `--api-key` `--model` `--yes` `--dry-run` `--port` `--config-path`                                                              | Ha abụọ              |
-| `omniroute setup-qwen`     | Qwen Code                     | `~/.qwen/settings.json` — n'usoro V4 `modelProviders.openai` + `OMNIROUTE_API_KEY` n'ime `~/.qwen/.env`                                                                                | `--remote` `--api-key` `--model` `--yes` `--dry-run` `--port` `--config-path` `--env-path`                                                 | Ha abụọ              |
-| `omniroute setup-5dive`    | 5dive (ìgwè ndị nnọchi anya)  | Ọ dịghị ihe n'okpuru `$HOME` — na-ede **profaịlụ auth** 5dive (`/var/lib/5dive/auth-profiles/<name>/`) site na `5dive agent auth set`; naanị root, na-arụ ọrụ na igwe nnabata ìgwè ahụ | `--remote` `--api-key` `--model` `--auth-profile` `--agent` `--byo-provider` `--fivedive-bin` `--no-sudo` `--yes` `--dry-run` `--port`     | Ha abụọ              |
-| `omniroute run <target>`   | Mmalite oge ọrụ (izugbe)      | Ọ dịghị ihe — na-amalite `claude`/`codex`/`aider`/`goose`/`opencode`/`qwen`/`gemini` site na env na args kwesịrị ekwesị; Qwen na Gemini na-eji ebe obibi nwa oge kewapụrụ iche         | `--remote` `--base-url` `--context` `--provider` `--model` `--api-key` `--api-key-env` `--dry-run` `--json` `--port` `--profile` `--token` | Ha abụọ              |
-| `omniroute launch`         | Claude Code                   | Ọ dịghị ihe — na-amalite `claude` ma tinye `ANTHROPIC_BASE_URL`/`ANTHROPIC_AUTH_TOKEN`                                                                                                 | `--remote` `--api-key` `--token` `--profile` `--port`                                                                                      | Ha abụọ              |
-| `omniroute launch-codex`   | OpenAI Codex CLI              | Ọ dịghị ihe — na-amalite `codex` ma tinye onye na-eweta `omniroute` site na ọkọlọtọ `-c`                                                                                               | `--remote` `--api-key` `--profile` (`-p`) `--port`                                                                                         | Ha abụọ              |
+| `agentproxy setup-codex`    | OpenAI Codex CLI              | `~/.codex/<name>.config.toml` — otu profaịlụ maka ụdịdị ederede ọ bụla dakọtara (`codex --profile <name>`)                                                                             | `--remote` `--api-key` `--only` `--dry-run` `--port` `--codex-home`                                                                        | Ha abụọ              |
+| `agentproxy setup-claude`   | Claude Code                   | `~/.claude/profiles/<name>/settings.json` — otu profaịlụ maka ụdịdị ọ bụla dakọtara (`CLAUDE_CONFIG_DIR`)                                                                              | `--remote` `--api-key` `--only` `--dry-run` `--port` `--claude-home`                                                                       | Ha abụọ              |
+| `agentproxy setup-opencode` | OpenCode (dakọtara na openai) | `~/.config/opencode/opencode.json` — onye na-eweta `agentproxy` nwere ụdịdị katalọgụ niile (`opencode -m agentproxy/<model>`)                                                            | `--remote` `--api-key` `--only` `--model` `--dry-run` `--port`                                                                             | Ha abụọ              |
+| `agentproxy setup-cline`    | Cline                         | `~/.cline/data/{globalState,secrets}.json` (ọnọdụ CLI) + na-ebipụta ntọala ndọtị VS Code                                                                                               | `--remote` `--api-key` `--model` `--yes` `--dry-run` `--port` `--cline-dir`                                                                | Ha abụọ              |
+| `agentproxy setup-kilo`     | Kilo Code                     | `~/.local/share/kilo/auth.json` (CLI) + na-ejikọta `kilocode.*` n'ime VS Code `settings.json` ma ọ bụrụ na ọ dị                                                                        | `--remote` `--api-key` `--model` `--yes` `--dry-run` `--port` `--auth-path` `--vscode-settings`                                            | Ha abụọ              |
+| `agentproxy setup-continue` | Continue / `cn` CLI           | `~/.continue/config.yaml` — ụdịdị `provider: openai`, igodo site na `${{ secrets.AGENTPROXY_API_KEY }}`                                                                                 | `--remote` `--api-key` `--only` `--dry-run` `--port` `--config-path`                                                                       | Ha abụọ              |
+| `agentproxy setup-cursor`   | Cursor                        | Ọ dịghị ihe — na-ebipụta usoro a ga-eme n'ime ngwa ahụ (nhazi Cursor bụ SQLite anaghị ahụ anya)                                                                                        | `--remote` `--api-key` `--only` `--port`                                                                                                   | Ha abụọ              |
+| `agentproxy setup-roo`      | Roo Code                      | `~/.agentproxy/roo-settings.json` (dọkụmentị mbubata) + na-ahazi `roo-cline.autoImportSettingsPath` ma ọ bụrụ na VS Code `settings.json` dị                                             | `--remote` `--api-key` `--model` `--yes` `--dry-run` `--port` `--import-path` `--vscode-settings`                                          | Ha abụọ              |
+| `agentproxy setup-crush`    | Crush                         | `~/.config/crush/crush.json` — onye na-eweta `openai-compat`, igodo site na `$AGENTPROXY_API_KEY`                                                                                       | `--remote` `--api-key` `--only` `--dry-run` `--port` `--config-path`                                                                       | Ha abụọ              |
+| `agentproxy setup-goose`    | Goose                         | `~/.config/goose/config.yaml` (`GOOSE_PROVIDER`/`OPENAI_HOST`/`GOOSE_MODEL`) + na-ebipụta usoro env                                                                                    | `--remote` `--api-key` `--model` `--yes` `--dry-run` `--port` `--config-path`                                                              | Ha abụọ              |
+| `agentproxy setup-aider`    | Aider                         | `~/.aider.conf.yml` (`openai-api-base` + `model: openai/<id>`) + na-ebipụta usoro env                                                                                                  | `--remote` `--api-key` `--model` `--yes` `--dry-run` `--port` `--config-path`                                                              | Ha abụọ              |
+| `agentproxy setup-qwen`     | Qwen Code                     | `~/.qwen/settings.json` — n'usoro V4 `modelProviders.openai` + `AGENTPROXY_API_KEY` n'ime `~/.qwen/.env`                                                                                | `--remote` `--api-key` `--model` `--yes` `--dry-run` `--port` `--config-path` `--env-path`                                                 | Ha abụọ              |
+| `agentproxy setup-5dive`    | 5dive (ìgwè ndị nnọchi anya)  | Ọ dịghị ihe n'okpuru `$HOME` — na-ede **profaịlụ auth** 5dive (`/var/lib/5dive/auth-profiles/<name>/`) site na `5dive agent auth set`; naanị root, na-arụ ọrụ na igwe nnabata ìgwè ahụ | `--remote` `--api-key` `--model` `--auth-profile` `--agent` `--byo-provider` `--fivedive-bin` `--no-sudo` `--yes` `--dry-run` `--port`     | Ha abụọ              |
+| `agentproxy run <target>`   | Mmalite oge ọrụ (izugbe)      | Ọ dịghị ihe — na-amalite `claude`/`codex`/`aider`/`goose`/`opencode`/`qwen`/`gemini` site na env na args kwesịrị ekwesị; Qwen na Gemini na-eji ebe obibi nwa oge kewapụrụ iche         | `--remote` `--base-url` `--context` `--provider` `--model` `--api-key` `--api-key-env` `--dry-run` `--json` `--port` `--profile` `--token` | Ha abụọ              |
+| `agentproxy launch`         | Claude Code                   | Ọ dịghị ihe — na-amalite `claude` ma tinye `ANTHROPIC_BASE_URL`/`ANTHROPIC_AUTH_TOKEN`                                                                                                 | `--remote` `--api-key` `--token` `--profile` `--port`                                                                                      | Ha abụọ              |
+| `agentproxy launch-codex`   | OpenAI Codex CLI              | Ọ dịghị ihe — na-amalite `codex` ma tinye onye na-eweta `agentproxy` site na ọkọlọtọ `-c`                                                                                               | `--remote` `--api-key` `--profile` (`-p`) `--port`                                                                                         | Ha abụọ              |
 
 Ndetu gbasara flags (enyochara na source iwu ahụ):
 
 - `--remote <url>` — si na AgentProxy dị anya weta katalọgụ ahụ (ọ na-akagbu `--port`
   na context na-arụ ọrụ). `--api-key <key>` na-enye credential maka
-  sava ahụ (ndabara ya bụ env var `OMNIROUTE_API_KEY`, ma ọ bụ token nke context na-arụ ọrụ).
+  sava ahụ (ndabara ya bụ env var `AGENTPROXY_API_KEY`, ma ọ bụ token nke context na-arụ ọrụ).
 - `--only <patterns>` — substrings ndị e ji rikoma kewaa; debe naanị model ID ndị dabara
   (dịka `--only glm,kimi`). Ọ dị na `setup-codex`, `setup-claude`,
   `setup-opencode`, `setup-continue`, `setup-cursor`, `setup-crush`.
@@ -93,17 +93,17 @@ Ndetu gbasara flags (enyochara na source iwu ahụ):
   nchọpụta model na-akpaghị aka: Cline, Kilo, Roo, Goose, Qwen, Aider, 5dive. Ngwaọrụ ndị ahụ
   na-anabatakwa `--yes` maka arụmọrụ na-enweghị mmekọrịta (nke ga-achọkwa `--model`).
   `setup-opencode` na-eji `--model` edobe model ndabara nke top-level.
-- `--model <id>` na `omniroute run` na-agbaso njikọ nke target ọ bụla dị na manifest
+- `--model <id>` na `agentproxy run` na-agbaso njikọ nke target ọ bụla dị na manifest
   (`bin/cli/cli-manifest.mjs`): **aider** na-enweta `--model openai/<id>` ma
-  **opencode** na-enweta `--model omniroute/<id>` (a na-agbakwunye prefix naanị mgbe id
+  **opencode** na-enweta `--model agentproxy/<id>` (a na-agbakwunye prefix naanị mgbe id
   ahụ na-ebughị ya); **qwen** na **gemini** na-enweta id ahụ otu ọ dị;
   **claude** na-enweta ya site na `ANTHROPIC_MODEL`, **goose** site na `GOOSE_MODEL`, ma
-  **codex** site na args `-c model_providers.omniroute.*`. **Qwen bụ naanị run
-  target nke chọrọ `--model` n'ike** — `omniroute run qwen` na-enweghị ya na-apụ
+  **codex** site na args `-c model_providers.agentproxy.*`. **Qwen bụ naanị run
+  target nke chọrọ `--model` n'ike** — `agentproxy run qwen` na-enweghị ya na-apụ
   na `2` yana njehie doro anya.
 - `--port <port>` — port AgentProxy mpaghara (ndabara `20128`, a na-eleghara ya anya mgbe edobere
   `--remote`). Ọ dị na `setup-*` niile na launcher abụọ ahụ.
-- Koodu ọpụpụ `omniroute run`: a na-ebufe koodu ọpụpụ nke child CLI ahụ
+- Koodu ọpụpụ `agentproxy run`: a na-ebufe koodu ọpụpụ nke child CLI ahụ
   otu ọ dị; `2` = arụmụka na-ezighi ezi (target anaghị akwado, `--model` achọrọ
   adịghị, container guard); `127` = binary nke target ahụ adịghị na `PATH`;
   `130`/`143`/`129` mgbe `SIGINT`/`SIGTERM`/`SIGHUP` kwụsịrị mmalite ahụ;
@@ -116,9 +116,9 @@ Setup recipes na-ejikwa interactive picker ahụ:
 
 ```bash
 # Họrọ na katalọgụ model mpaghara ma ọ bụ nke dị anya na-arụ ọrụ, wee hazie target ahụ.
-omniroute configure claude
-omniroute configure opencode --provider glm
-omniroute configure qwen --model qwen/qwen3.8-max-preview --yes
+agentproxy configure claude
+agentproxy configure opencode --provider glm
+agentproxy configure qwen --model qwen/qwen3.8-max-preview --yes
 ```
 
 Ugbu a, `configure` na-enyefe ọrụ n'aka recipes ndị a nwalere maka `codex`, `claude`,
@@ -128,17 +128,17 @@ MITM, na naanị ntuziaka ka na-eji usoro `setup-*`/aka akọwapụtara nke ọm
 egosi ha dịka targets enwere ike ịmalite.
 
 > `setup-opencode` bụ njikọ OpenCode **openai-compatible dị fechaa**.
-> E nwekwara njikọ plugin bara ụba karịa — `omniroute setup opencode` — nke
-> na-etinye `@omniroute/opencode-plugin`. Ha bụ iwu dị iche iche; tebụl
+> E nwekwara njikọ plugin bara ụba karịa — `agentproxy setup opencode` — nke
+> na-etinye `@agentproxy/opencode-plugin`. Ha bụ iwu dị iche iche; tebụl
 > dị n'elu na-akọwa `setup-opencode`.
 >
 > Plugin ahụ dị na packages abụọ, otu maka major OpenCode ọ bụla, n'ihi na loaders abụọ ahụ
 > na-atụ anya entrypoints dị iche:
-> `@omniroute/opencode-plugin` maka OpenCode v1 na
-> `@omniroute/opencode-plugin-v2` maka OpenCode v2. Package v2 ahụ dị ọhụrụ
+> `@agentproxy/opencode-plugin` maka OpenCode v1 na
+> `@agentproxy/opencode-plugin-v2` maka OpenCode v2. Package v2 ahụ dị ọhụrụ
 > (`0.1.0`) ma na-agbaso host contract nke ka na-agbanwe, ya mere ọ na-agụ
 > nhazi OpenCode tinyere na draft katalọgụ kama iche na ọ bụ otu nhazi akọwapụtara.
-> Wụnye ya site n'ịgbakwunye ndenye `plugins` na `opencode.json`; `omniroute setup opencode`
+> Wụnye ya site n'ịgbakwunye ndenye `plugins` na `opencode.json`; `agentproxy setup opencode`
 > ka na-etinye package v1. Options na usoro e si achọ credential dị na
 > README nke package ahụ.
 
@@ -150,42 +150,42 @@ Mgbe AgentProxy na-agba na `localhost:20128`, naanị mee iwu nhazi maka ngwaọ
 
 ```bash
 # Codex: dee profaịlụ maka ụdịdị ọ bụla dakọtara n'ime ~/.codex/
-omniroute setup-codex
+agentproxy setup-codex
 codex --profile glm52            # jiri profaịlụ emepụtara
 
 # Claude Code: dee profaịlụ nke ụdịdị ọ bụla, wee malite otu
-omniroute setup-claude
-omniroute launch --profile glm52
+agentproxy setup-claude
+agentproxy launch --profile glm52
 
 # OpenCode: dee onye na-eweta dakọtara na openai nke nwere ụdịdị katalọgụ niile
-omniroute setup-opencode
-export OMNIROUTE_API_KEY=sk-...  # a na-ezo aka na ya site na {env:OMNIROUTE_API_KEY}, ọ dịghị mgbe a na-edebe ya na diski
-opencode -m omniroute/glm/glm-5.2 "..."
+agentproxy setup-opencode
+export AGENTPROXY_API_KEY=sk-...  # a na-ezo aka na ya site na {env:AGENTPROXY_API_KEY}, ọ dịghị mgbe a na-edebe ya na diski
+opencode -m agentproxy/glm/glm-5.2 "..."
 
 # Ngwaọrụ ndị na-enweghị nchọpụta akpaaka chọrọ ka e kwupụta ụdịdị kpọmkwem:
-omniroute setup-aider --model glm/glm-5.2
-omniroute setup-qwen --model qwen/qwen3.8-max-preview
+agentproxy setup-aider --model glm/glm-5.2
+agentproxy setup-qwen --model qwen/qwen3.8-max-preview
 
 # Lelee tupu oge eruo n'edeghị ihe ọ bụla:
-omniroute setup-continue --dry-run
+agentproxy setup-continue --dry-run
 ```
 
 Malite ya n'edeghị nhazi ọ bụla ma ọlị (naanị ntinye env):
 
 ```bash
-omniroute launch                 # Claude Code → AgentProxy mpaghara
-omniroute launch-codex           # Codex CLI → AgentProxy mpaghara
-omniroute launch-codex --profile glm52
-omniroute run claude --model openai/gpt-5.4
-omniroute run codex --model openai/gpt-5.4 --dry-run --json
-omniroute run aider --model glm/glm-5.2 -- --message "reply OK"
-omniroute run goose --model glm/glm-5.2
-omniroute run opencode --model glm/glm-5.2 -- run "reply OK"
-omniroute run qwen --model glm/glm-5.2 -- -p "reply OK"
-omniroute run gemini --model glm/glm-5.2 -- --skip-trust -p "reply OK"
+agentproxy launch                 # Claude Code → AgentProxy mpaghara
+agentproxy launch-codex           # Codex CLI → AgentProxy mpaghara
+agentproxy launch-codex --profile glm52
+agentproxy run claude --model openai/gpt-5.4
+agentproxy run codex --model openai/gpt-5.4 --dry-run --json
+agentproxy run aider --model glm/glm-5.2 -- --message "reply OK"
+agentproxy run goose --model glm/glm-5.2
+agentproxy run opencode --model glm/glm-5.2 -- run "reply OK"
+agentproxy run qwen --model glm/glm-5.2 -- -p "reply OK"
+agentproxy run gemini --model glm/glm-5.2 -- --skip-trust -p "reply OK"
 
 # Ụzọ iwu akọwapụtara kpọmkwem: nyefee ihe ọ bụla na-abịa mgbe --
-omniroute run claude -- --print-system-prompt "review this diff"
+agentproxy run claude -- --print-system-prompt "review this diff"
 ```
 
 ---
@@ -196,25 +196,25 @@ Jiri `--remote` + `--api-key` tụọ iwu nhazi ọ bụla aka na AgentProxy d�
 
 ```bash
 # OpenCode megide VPS dị tere aka, debe naanị ụdịdị glm/kimi
-omniroute setup-opencode --remote http://192.168.0.15:20128 --api-key oma_live_xxx \
+agentproxy setup-opencode --remote http://192.168.0.15:20128 --api-key oma_live_xxx \
   --only glm,kimi
-opencode -m omniroute/glm/glm-5.2 "..."   # buru ụzọ mee export OMNIROUTE_API_KEY
+opencode -m agentproxy/glm/glm-5.2 "..."   # buru ụzọ mee export AGENTPROXY_API_KEY
 
 # Profaịlụ Codex sitere na katalọgụ dị tere aka
-omniroute setup-codex --remote http://192.168.0.15:20128 --api-key oma_live_xxx
+agentproxy setup-codex --remote http://192.168.0.15:20128 --api-key oma_live_xxx
 
 # Malite CLI ozugbo megide nke dị tere aka
-omniroute launch       --remote http://192.168.0.15:20128 --api-key oma_live_xxx
-omniroute launch-codex --remote http://192.168.0.15:20128 --api-key oma_live_xxx
+agentproxy launch       --remote http://192.168.0.15:20128 --api-key oma_live_xxx
+agentproxy launch-codex --remote http://192.168.0.15:20128 --api-key oma_live_xxx
 ```
 
 Kama ịna-enyefe `--remote`/`--api-key` oge ọ bụla, banye otu ugboro ma kwe ka **ọnọdụ na-arụ ọrụ** nye ha na-akpaghị aka:
 
 ```bash
-omniroute connect 192.168.0.15        # na-emepụta token nwere oke ikike, na-echekwa ọnọdụ ahụ
-omniroute setup-codex                 # ← ugbu a na-eji katalọgụ dị tere aka
-omniroute setup-opencode              # ← otu ihe ahụ
-omniroute launch                      # ← Claude Code megide nke dị tere aka
+agentproxy connect 192.168.0.15        # na-emepụta token nwere oke ikike, na-echekwa ọnọdụ ahụ
+agentproxy setup-codex                 # ← ugbu a na-eji katalọgụ dị tere aka
+agentproxy setup-opencode              # ← otu ihe ahụ
+agentproxy launch                      # ← Claude Code megide nke dị tere aka
 ```
 
 Lee [Ọnọdụ Tere Aka](./REMOTE-MODE.md) maka ọnọdụ, oke ikike, na njikwa token.
@@ -223,11 +223,11 @@ Lee [Ọnọdụ Tere Aka](./REMOTE-MODE.md) maka ọnọdụ, oke ikike, na nji
 
 ## Ìgwè ndị nnọchi anya 5dive
 
-[5dive](https://5dive.ai) na-agba ìgwè ndị nnọchi anya ide koodu na-arụ ogologo oge, nke ọ bụla bụ unit systemd n'okpuru onye ọrụ Unix nke ya. Ọ bụghị CLI ide koodu n'onwe ya, ya mere ọ dịghị ihe `omniroute run` ga-amalite — `5dive` bụ ebe ezubere maka **nhazi-naanị**.
+[5dive](https://5dive.ai) na-agba ìgwè ndị nnọchi anya ide koodu na-arụ ogologo oge, nke ọ bụla bụ unit systemd n'okpuru onye ọrụ Unix nke ya. Ọ bụghị CLI ide koodu n'onwe ya, ya mere ọ dịghị ihe `agentproxy run` ga-amalite — `5dive` bụ ebe ezubere maka **nhazi-naanị**.
 
 ```bash
-omniroute configure 5dive --model failover-demo --yes
-omniroute setup-5dive --model failover-demo --auth-profile omniroute --agent worker1
+agentproxy configure 5dive --model failover-demo --yes
+agentproxy setup-5dive --model failover-demo --auth-profile agentproxy --agent worker1
 ```
 
 Ụdị abụọ ahụ na-ede otu **profaịlụ nkwenye** 5dive, ma oche `claude` ọ bụla e jikọrọ na profaịlụ ahụ ga-ekwurịta okwu na AgentProxy. Ihe atọ metụtara ebe ezubere a kpọmkwem:
@@ -256,7 +256,7 @@ ngwaọrụ ya na-atụ anya ya (enyochara nke a na koodu isi nke iwu ahụ):
 | `setup-aider` (`OPENAI_API_BASE`)                                          | mgbọrọgwụ       | Mba — LiteLLM na-agbakwunye `/v1/chat/completions` |
 | `setup-kilo`, `setup-roo`, `setup-continue`, `setup-crush`, `setup-cursor` | nwere `/v1`     | Ee                                                 |
 | `setup-claude` (`ANTHROPIC_BASE_URL`), `launch`                            | mgbọrọgwụ       | Mba — Claude Code na-agbakwunye `/v1/messages`     |
-| `setup-codex`, `launch-codex` (`model_providers.omniroute.base_url`)       | nwere `/v1`     | Ee                                                 |
+| `setup-codex`, `launch-codex` (`model_providers.agentproxy.base_url`)       | nwere `/v1`     | Ee                                                 |
 | `setup-qwen` (`modelProviders.openai[].baseUrl`)                           | nwere `/v1`     | Ee                                                 |
 | `run gemini` (`GOOGLE_GEMINI_BASE_URL`)                                    | mgbọrọgwụ       | Mba — SDK na-agbakwunye `/v1beta/models/…`         |
 | `setup-5dive` (`ANTHROPIC_BASE_URL` na profaịlụ nkwenye)                   | mgbọrọgwụ       | Mba — Claude Code na-agbakwunye `/v1/messages`     |
@@ -265,36 +265,36 @@ ngwaọrụ ya na-atụ anya ya (enyochara nke a na koodu isi nke iwu ahụ):
 
 ## Idobe native deps mgbe a na-emelite: `--include=optional`
 
-Mgbe ị ji `omniroute update` emelite (mgbe ị kwadoro ya, ma ọ bụ jiri `--apply`),
+Mgbe ị ji `agentproxy update` emelite (mgbe ị kwadoro ya, ma ọ bụ jiri `--apply`),
 AgentProxy na-eji `--include=optional` arụnyere n'ime ya mee nrụnye ahụ:
 
 ```bash
-npm install -g omniroute@latest --include=optional
+npm install -g agentproxy@latest --include=optional
 ```
 
-Nke a abụghị ọkọlọtọ ị na-enye `omniroute update` — onye na-emelite ya na-etinye ya
+Nke a abụghị ọkọlọtọ ị na-enye `agentproxy update` — onye na-emelite ya na-etinye ya
 mgbe niile. Ọ na-eme ka o doo anya na `optionalDependencies` (`better-sqlite3`, `keytar`,
 `tls-client`, nchịkọta LLMLingua SLM) ga-adịgide mgbe emelitechara ya ọbụna ma ọ bụrụ na nhazi npm gị
 nwere `omit=optional`, nke gaara ewepụ native SQLite
 driver na njikọ OS-keyring na-enweghị ọkwa. Iji hụ iwu ahụ kpọmkwem tupu etinye ya n'ọrụ:
 
 ```bash
-omniroute update --dry-run
-# [NWALE NA-ENWEGHỊ MMEJU] Ọ ga-agba: npm install -g omniroute@latest --include=optional
+agentproxy update --dry-run
+# [NWALE NA-ENWEGHỊ MMEJU] Ọ ga-agba: npm install -g agentproxy@latest --include=optional
 ```
 
-Ọkọlọtọ `omniroute update` ndị ọzọ (enyochara na koodu isi): `--check` (jiri exit 1 pụọ ma ọ bụrụ na
+Ọkọlọtọ `agentproxy update` ndị ọzọ (enyochara na koodu isi): `--check` (jiri exit 1 pụọ ma ọ bụrụ na
 ọ bụ nke ochie), `--apply` (wụnye n'ajụghị nkwenye), `--changelog`, `--no-backup`,
 `--yes`.
 
 ---
 
-## Google Gemini CLI site na `omniroute run gemini`
+## Google Gemini CLI site na `agentproxy run gemini`
 
 E nyochara nkwekọrịta a megide `@google/gemini-cli` 0.50.0: CLI na-asọpụrụ
 `GOOGLE_GEMINI_BASE_URL` ma na-eziga `POST /v1beta/models/<model>:generateContent`
 (yana `:streamGenerateContent?alt=sse`) na ya — nke dabara kpọmkwem na ihu Gemini
-nke AgentProxy (`/v1beta`). `omniroute run gemini` na-ahazi nke ahụ na-akpaghị aka:
+nke AgentProxy (`/v1beta`). `agentproxy run gemini` na-ahazi nke ahụ na-akpaghị aka:
 
 - `GOOGLE_GEMINI_BASE_URL` → Base URL AgentProxy na-arụ ọrụ ugbu a (mgbọrọgwụ, enweghị `/v1`);
 - `GEMINI_API_KEY` → nzere AgentProxy e kpebiri iji (nhọrọ/env/context);
@@ -309,7 +309,7 @@ nke AgentProxy (`/v1beta`). `omniroute run gemini` na-ahazi nke ahụ na-akpagh�
 - ntinye `--model <id>` sitere na `--provider`/`--model`.
 
 ```bash
-omniroute run gemini --model glm/glm-5.2 -- --skip-trust -p "hello"
+agentproxy run gemini --model glm/glm-5.2 -- --skip-trust -p "hello"
 ```
 
 Nchedo workspace-trust nke Gemini ka na-arụ ọrụ na ọnọdụ headless — nye
@@ -333,21 +333,21 @@ auth / upstream / config kama iji naanị boolean:
 
 ```bash
 RUN_CLI_SMOKE=1 \
-OMNIROUTE_SMOKE_BASE_URL="http://localhost:20128" \
-OMNIROUTE_SMOKE_MODEL="<provider/model>" \
-OMNIROUTE_SMOKE_API_KEY_ENV="OMNIROUTE_API_KEY" \
+AGENTPROXY_SMOKE_BASE_URL="http://localhost:20128" \
+AGENTPROXY_SMOKE_MODEL="<provider/model>" \
+AGENTPROXY_SMOKE_API_KEY_ENV="AGENTPROXY_API_KEY" \
 node --import tsx/esm --test tests/integration/upstream-cli-smoke.int.test.ts
 ```
 
-Nhọrọ: `OMNIROUTE_SMOKE_TARGETS="codex,opencode,qwen"` na-amachi nnwale ahụ;
-`OMNIROUTE_SMOKE_TIMEOUT_MS` na-edochi oke oge 120s maka ebumnuche ọ bụla.
+Nhọrọ: `AGENTPROXY_SMOKE_TARGETS="codex,opencode,qwen"` na-amachi nnwale ahụ;
+`AGENTPROXY_SMOKE_TIMEOUT_MS` na-edochi oke oge 120s maka ebumnuche ọ bụla.
 
 ---
 
 ## Hụkwa
 
 - [Nhazi Claude Code](./CLAUDE-CODE-CONFIGURATION.md) — ntuziaka Claude Code nke sara mbara karị
-- [Nhazi Codex CLI](./CODEX-CLI-CONFIGURATION.md) — nhazi ntọala `[model_providers.omniroute]` a na-eme naanị otu ugboro
+- [Nhazi Codex CLI](./CODEX-CLI-CONFIGURATION.md) — nhazi ntọala `[model_providers.agentproxy]` a na-eme naanị otu ugboro
 - [Ọnọdụ Ime Ime](./REMOTE-MODE.md) — contexts, token nnweta nwere oke, na ịchịkwa sava dị anya
 - [Ntụaka Ngwaọrụ CLI](../reference/CLI-TOOLS.md) — katalọgụ zuru ezu nke ngwaọrụ akwadoro + ibe dashboard
 - [Ntuziaka Nwụnye](./SETUP_GUIDE.md) — ụzọ nrụnye na nduzi mmalite mbụ

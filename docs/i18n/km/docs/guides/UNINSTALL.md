@@ -20,7 +20,7 @@ AgentProxy ផ្តល់ស្គ្រីបភ្ជាប់មកជាម
 npm run uninstall
 ```
 
-វាលុបកម្មវិធី AgentProxy ប៉ុន្តែ **រក្សាទុក** មូលដ្ឋានទិន្នន័យ ការកំណត់រចនាសម្ព័ន្ធ API keys និងការកំណត់របស់អ្នកផ្តល់សេវា នៅក្នុង `~/.omniroute/`។ ប្រើជម្រើសនេះ ប្រសិនបើអ្នកមានគម្រោងដំឡើងឡើងវិញនៅពេលក្រោយ និងចង់រក្សាការរៀបចំរបស់អ្នក។
+វាលុបកម្មវិធី AgentProxy ប៉ុន្តែ **រក្សាទុក** មូលដ្ឋានទិន្នន័យ ការកំណត់រចនាសម្ព័ន្ធ API keys និងការកំណត់របស់អ្នកផ្តល់សេវា នៅក្នុង `~/.agentproxy/`។ ប្រើជម្រើសនេះ ប្រសិនបើអ្នកមានគម្រោងដំឡើងឡើងវិញនៅពេលក្រោយ និងចង់រក្សាការរៀបចំរបស់អ្នក។
 
 ### ការលុបចេញទាំងស្រុង
 
@@ -34,7 +34,7 @@ npm run uninstall:full
 - ការកំណត់រចនាសម្ព័ន្ធរបស់អ្នកផ្តល់សេវា និង API keys
 - ឯកសារបម្រុងទុក
 - ឯកសារកំណត់ហេតុ
-- ឯកសារទាំងអស់នៅក្នុងថត `~/.omniroute/`
+- ឯកសារទាំងអស់នៅក្នុងថត `~/.agentproxy/`
 
 > ⚠️ **ការព្រមាន៖** `npm run uninstall:full` មិនអាចត្រឡប់ក្រោយបានទេ។ ការតភ្ជាប់អ្នកផ្តល់សេវា combos, API keys និងប្រវត្តិការប្រើប្រាស់ទាំងអស់របស់អ្នក នឹងត្រូវលុបជាអចិន្ត្រៃយ៍។
 
@@ -46,31 +46,31 @@ npm run uninstall:full
 
 ```bash
 # លុប package សកល
-npm uninstall -g omniroute
+npm uninstall -g agentproxy
 
 # (ជាជម្រើស) លុបថតទិន្នន័យ
-rm -rf ~/.omniroute
+rm -rf ~/.agentproxy
 ```
 
 ### ការដំឡើង pnpm ជាសកល
 
 ```bash
-pnpm uninstall -g omniroute
-rm -rf ~/.omniroute
+pnpm uninstall -g agentproxy
+rm -rf ~/.agentproxy
 ```
 
 ### Docker
 
 ```bash
 # បញ្ឈប់ និងលុប container
-docker stop omniroute
-docker rm omniroute
+docker stop agentproxy
+docker rm agentproxy
 
 # លុប volume (លុបទិន្នន័យទាំងអស់)
-docker volume rm omniroute-data
+docker volume rm agentproxy-data
 
 # (ជាជម្រើស) លុប image
-docker rmi diegosouzapw/omniroute:latest
+docker rmi diegosouzapw/agentproxy:latest
 ```
 
 ### Docker Compose
@@ -93,21 +93,21 @@ docker compose down -v
 **macOS៖**
 
 - អូស `AgentProxy.app` ពី `/Applications` ទៅធុងសំរាម
-- លុបទិន្នន័យ៖ `rm -rf ~/Library/Application Support/omniroute`
+- លុបទិន្នន័យ៖ `rm -rf ~/Library/Application Support/agentproxy`
 
 **Linux៖**
 
 - លុបឯកសារ AppImage
-- លុបទិន្នន័យ៖ `rm -rf ~/.omniroute`
+- លុបទិន្នន័យ៖ `rm -rf ~/.agentproxy`
 
 ### ការដំឡើងពីកូដប្រភព (git clone)
 
 ```bash
 # លុបថតដែលបាន clone
-rm -rf /path/to/omniroute
+rm -rf /path/to/agentproxy
 
 # (ជាជម្រើស) លុបថតទិន្នន័យ
-rm -rf ~/.omniroute
+rm -rf ~/.agentproxy
 ```
 
 ---
@@ -118,11 +118,11 @@ rm -rf ~/.omniroute
 
 | វេទិកា        | ផ្លូវលំនាំដើម                      | ការកំណត់ជំនួស                  |
 | ------------- | ---------------------------------- | ------------------------------ |
-| Linux         | `~/.omniroute/`                    | អថេរបរិស្ថាន `DATA_DIR`        |
-| macOS         | `~/.omniroute/`                    | អថេរបរិស្ថាន `DATA_DIR`        |
-| Windows       | `%APPDATA%/omniroute/`             | អថេរបរិស្ថាន `DATA_DIR`        |
+| Linux         | `~/.agentproxy/`                    | អថេរបរិស្ថាន `DATA_DIR`        |
+| macOS         | `~/.agentproxy/`                    | អថេរបរិស្ថាន `DATA_DIR`        |
+| Windows       | `%APPDATA%/agentproxy/`             | អថេរបរិស្ថាន `DATA_DIR`        |
 | Docker        | `/app/data/` (volume ដែលបាន mount) | អថេរបរិស្ថាន `DATA_DIR`        |
-| អនុលោមតាម XDG | `$XDG_CONFIG_HOME/omniroute/`      | អថេរបរិស្ថាន `XDG_CONFIG_HOME` |
+| អនុលោមតាម XDG | `$XDG_CONFIG_HOME/agentproxy/`      | អថេរបរិស្ថាន `XDG_CONFIG_HOME` |
 
 ### ឯកសារនៅក្នុងថតទិន្នន័យ
 
@@ -143,17 +143,17 @@ rm -rf ~/.omniroute
 
 ```bash
 # ពិនិត្យមើលកញ្ចប់ npm សកល
-npm list -g omniroute 2>/dev/null
+npm list -g agentproxy 2>/dev/null
 
 # ពិនិត្យមើលថតទិន្នន័យ
-ls -la ~/.omniroute/ 2>/dev/null
+ls -la ~/.agentproxy/ 2>/dev/null
 
 # ពិនិត្យមើលដំណើរការដែលកំពុងដំណើរការ
-pgrep -f omniroute
+pgrep -f agentproxy
 ```
 
 ប្រសិនបើមានដំណើរការណាមួយនៅតែកំពុងដំណើរការ សូមបញ្ឈប់វា៖
 
 ```bash
-pkill -f omniroute
+pkill -f agentproxy
 ```

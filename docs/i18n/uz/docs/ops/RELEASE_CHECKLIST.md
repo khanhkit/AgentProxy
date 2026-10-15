@@ -45,7 +45,7 @@ qisqa muddatli npm hisob maʼlumotiga almashtiradi — repozitoriy sirlarida uzo
 u WS1.3 kafolatini saqlagan holda loyiha v3.8.48 gacha ega bo‘lgan to‘liq avtomatik jarayonni tiklaydi
 (sizdirilgan tokenning o‘zi nashr qila olmaydi — tokenning o‘zi mavjud emas).
 
-**Bir martalik sozlash (egasi):** npmjs.com → `omniroute` paketi → Settings → _Trusted
+**Bir martalik sozlash (egasi):** npmjs.com → `agentproxy` paketi → Settings → _Trusted
 Publisher_ → GitHub: egasi `diegosouzapw`, repozitoriy `AgentProxy`, ish jarayoni `npm-publish.yml`
 (muhit: yo‘q). Bu sozlama yaratilmaguncha avtomatik qadam `ENEEDAUTH` bilan muvaffaqiyatsiz tugaydi:
 `publish_mode=staged` (quyida) yoki `direct` bilan qayta ishga tushiring.
@@ -59,7 +59,7 @@ isbotdan oldin emas, undan KEYINGI bosqichga ko‘chirildi.
 
 **Ish jarayoni yashil holatga o‘tgandan keyingi egasi bajaradigan jarayon:**
 
-1. `npm stage list omniroute` — bosqich identifikatorini toping (u ish jarayoni xulosasida ham ko‘rsatiladi).
+1. `npm stage list agentproxy` — bosqich identifikatorini toping (u ish jarayoni xulosasida ham ko‘rsatiladi).
 2. Bosqichlangan baytlarni tekshiring (tavsiya etiladi): `npm stage download <id>`, so‘ng yuklab olingan
    tarball’ni vaqtinchalik prefiksga o‘rnating va ishga tushiring (`npm run check:pack-boot` CI ichida
    xuddi shu paketlash→o‘rnatish→ishga tushirish xulosasini avtomatlashtiradi).
@@ -71,12 +71,12 @@ isbotdan oldin emas, undan KEYINGI bosqichga ko‘chirildi.
 darhol bajariladigan `npm publish` jarayonini tiklaydi (faqat bosqichlashning o‘zi noto‘g‘ri ishlasa foydalaning;
 sababini qayd eting).
 
-**Bir martalik mustahkamlash (egasi, npmjs.com):** `omniroute` uchun Trusted Publisher’ni
+**Bir martalik mustahkamlash (egasi, npmjs.com):** `agentproxy` uchun Trusted Publisher’ni
 faqat bosqichlash rejimida sozlang, shunda sizdirilgan uzoq muddatli token hech qayerdan
 to‘g‘ridan-to‘g‘ri `npm publish` bajara olmaydi — CI faqat bosqichlay oladi; relizni faqat egasining 2FA’i chiqaradi.
 
 **Buzilgan artefakt bo‘yicha yo‘riqnoma (o‘zgarmagan):** standart tezkor chora sifatida
-`npm deprecate omniroute@<bad> "<reason> — use <fixed>"` dan foydalaning (bir necha daqiqa oladi,
+`npm deprecate agentproxy@<bad> "<reason> — use <fixed>"` dan foydalaning (bir necha daqiqa oladi,
 qaytarish mumkin); `npm unpublish` dan faqat 72 soat/hech qanday bog‘liq paket yo‘q oynasi ichida foydalaning
 va uni hech qachon birinchi chora sifatida qo‘llamang. Docker: versiya tegini hech qachon qayta yozmang —
 ortga qaytarish `latest` ni oxirgi yaxshi dayjestga qayta yo‘naltirishdan iborat.
@@ -195,7 +195,7 @@ Orqaga mos kelmaydigan oʻzgarishlar: `BREAKING CHANGE:` footer’ini yoki scope
 - [ ] `npm run i18n:check` 0 kodi bilan yakunlanadi — tarjima holati (`.i18n-state.json`) manba hujjatlari bilan sinxronlangan (qatʼiy rejimda tafovutli manbalar yoʻq; oxirgi daqiqadagi hujjat tuzatishlari uchun ogohlantirish rejimidagi tavsiyalarga ruxsat etiladi, ammo teg qoʻyishdan oldin natija 0 boʻlishi kerak)
 - [ ] `npm run i18n:check-ui-coverage` 0 kodi bilan yakunlanadi — har bir UI lokali 80% qamrov chegarasiga yetgan yoki undan yuqori
 - [ ] `npm run i18n:sync-ui:dry` barcha 42 lokal boʻyicha 0 ta yetishmayotgan kalit haqida xabar beradi
-- [ ] Agar ingliz tilidagi manba hujjatlari oʻzgargan boʻlsa, teg qoʻyishdan oldin `npm run i18n:run` buyrugʻini ishga tushiring (`.env` ichida `OMNIROUTE_TRANSLATION_API_KEY` boʻlishi talab qilinadi)
+- [ ] Agar ingliz tilidagi manba hujjatlari oʻzgargan boʻlsa, teg qoʻyishdan oldin `npm run i18n:run` buyrugʻini ishga tushiring (`.env` ichida `AGENTPROXY_TRANSLATION_API_KEY` boʻlishi talab qilinadi)
 - [ ] Kichik tarjima hissalarini keyingi relizgacha kechiktirish mumkin (CHANGELOG ichida kuzatib boring)
 
 ### Maʼlumotlar bazasi migratsiyalari
@@ -204,7 +204,7 @@ Orqaga mos kelmaydigan oʻzgarishlar: `BREAKING CHANGE:` footer’ini yoki scope
   - [ ] Har bir migratsiya idempotent (`CREATE TABLE IF NOT EXISTS` va hokazo)
   - [ ] Migratsiyalar tranzaksiyalarga oʻralgan
   - [ ] Toʻgʻri raqamlangan (ketma-ketlikda boʻshliqlar yoʻq)
-- [ ] Yangi oʻrnatishda sinang: `~/.omniroute/omniroute.db` faylini oʻchirib, `npm run dev` buyrugʻini ishga tushiring
+- [ ] Yangi oʻrnatishda sinang: `~/.agentproxy/agentproxy.db` faylini oʻchirib, `npm run dev` buyrugʻini ishga tushiring
 - [ ] Mavjud oʻrnatishda sinang: maʼlumotlar bazasining zaxira nusxasini yarating, migratsiyani ishga tushiring va sxemani tekshiring
 - [ ] Agar migratsiya jadvallarni qayta yozsa, WAL fayllari (`-wal`, `-shm`) toʻgʻri boshqarilgan
 
@@ -239,7 +239,7 @@ Repozitoriy uchta alohida chiqish katalogidan foydalanadi — ularni hech qachon
 | `.build/` | Build oraliq fayllari — `next build` chiqishi (`distDir`)           | Yoʻq (gitignored) |
 | `dist/`   | Tarqatiladigan npm toʻplami — `assembleStandalone` orqali yigʻiladi | Yoʻq (gitignored) |
 
-> **Operator eslatmasi:** masofaviy VPS tasvir katalogi `/usr/lib/node_modules/omniroute/app/` boʻlib qoladi.
+> **Operator eslatmasi:** masofaviy VPS tasvir katalogi `/usr/lib/node_modules/agentproxy/app/` boʻlib qoladi.
 > Faqat **repozitoriy ichidagi** build chiqishi koʻchirildi (`app/` → `dist/`). Deploy koʻnikmalari
 > `dist/` tarkibini masofaviy `app/` katalogiga rsync orqali nusxalaydi — VPS yoʻllarini oʻzgartirish talab qilinmaydi.
 
@@ -359,12 +359,12 @@ Oʻrnatilgan xizmatlarga oid oʻzgarishlarni oʻz ichiga olgan har qanday relizn
 
 Har qanday v3.8.x relizini chiqarishdan oldin quyidagi qoʻshimcha bandlarni tekshiring:
 
-- [ ] `omniroute --tray` macOS tizimida ishga tushadi (systray2 `~/.omniroute/runtime/` ichiga oʻrnatilgan)
-- [ ] `omniroute --tray` Linux tizimida ishga tushadi (DISPLAY talab qilinadi; oʻrnatilmagan boʻlsa, xato toʻgʻri qayta ishlanadi)
-- [ ] `omniroute --tray` Windows tizimida ishga tushadi (PowerShell NotifyIcon, qoʻshimcha ikkilik fayllarsiz)
-- [ ] `omniroute config tray enable` avtomatik ishga tushirish yozuvini yaratadi; oʻchirish uni olib tashlaydi
-- [ ] `npm install -g omniroute@<this-version>` postinstall jarayonini halokatli chiqishsiz bajaradi
-- [ ] Yangilash yoʻli ixtiyoriy bogʻliqliklarni saqlab qoladi: `omniroute update --apply` va avtomatik yangilagich
+- [ ] `agentproxy --tray` macOS tizimida ishga tushadi (systray2 `~/.agentproxy/runtime/` ichiga oʻrnatilgan)
+- [ ] `agentproxy --tray` Linux tizimida ishga tushadi (DISPLAY talab qilinadi; oʻrnatilmagan boʻlsa, xato toʻgʻri qayta ishlanadi)
+- [ ] `agentproxy --tray` Windows tizimida ishga tushadi (PowerShell NotifyIcon, qoʻshimcha ikkilik fayllarsiz)
+- [ ] `agentproxy config tray enable` avtomatik ishga tushirish yozuvini yaratadi; oʻchirish uni olib tashlaydi
+- [ ] `npm install -g agentproxy@<this-version>` postinstall jarayonini halokatli chiqishsiz bajaradi
+- [ ] Yangilash yoʻli ixtiyoriy bogʻliqliklarni saqlab qoladi: `agentproxy update --apply` va avtomatik yangilagich
       `npm install -g … --include=optional` buyrugʻini ishga tushiradi, shunda `optionalDependencies` (better-sqlite3,
       keytar, tls-client va llmlingua SLM steki: `@atjsh/llmlingua-2@2.0.5`,
       `js-tiktoken`) yangilanishdan keyin ham saqlanib qoladi. Ultra `modelPath` SLM darajasi uchun
@@ -374,13 +374,13 @@ Har qanday v3.8.x relizini chiqarishdan oldin quyidagi qoʻshimcha bandlarni tek
       nusxasini aniqlaydi — mustaqil trace faqat transformers paketini toʻplamga kiritadi, dinamik import qilinadigan
       ixtiyoriy bogʻliqliklarni emas; busiz worker llmlingua-2 ni ildizdagi transformers bilan yuklaydi
       va SLM darajasi xatoni bildirmasdan fail-open holatiga oʻtadi.
-- [ ] `omniroute status` `.env` faylisiz ishlaydi (CLI token yoʻli, faqat loopback)
+- [ ] `agentproxy status` `.env` faylisiz ishlaydi (CLI token yoʻli, faqat loopback)
 - [ ] `curl http://localhost:20128/api/shutdown` 401 qaytaradi (har doim himoyalangan marshrut)
 - [ ] `curl -H "host: evil.com" http://localhost:20128/api/mcp/sse` 401 qaytaradi (loopback himoyasi)
 - [ ] SQLite runtime birinchi ishga tushirishda `bundled` sifatida aniqlanadi (toʻplamdagi ikkilik fayl platforma uchun yaroqli)
 - [ ] `node_modules/better-sqlite3` oʻchirilganda SQLite runtime `runtime` variantiga qaytadi
 - [ ] Smart MCP filtri haqiqiy `playwright-mcp browser_snapshot` chiqishini siqadi (≥50% kamayish)
-- [ ] Barcha 10 ta `skills/omniroute*/SKILL.md` faylini raw GitHub URL orqali ommaviy tarzda olish mumkin
+- [ ] Barcha 10 ta `skills/agentproxy*/SKILL.md` faylini raw GitHub URL orqali ommaviy tarzda olish mumkin
 - [ ] Boshlangʻich sozlash ustasi yangi sozlamada "U qanday ishlaydi" darajalar bilan tanishtirish bosqichini koʻrsatadi
 - [ ] Bosh sahifa boshqaruv panelidagi darajalar qamrovi vidjeti sozlangan/faol miqdorlarni koʻrsatadi
 

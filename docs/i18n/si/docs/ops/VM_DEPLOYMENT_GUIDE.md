@@ -89,13 +89,13 @@ ufw enable
 ### 2.1 වින්යාස නාමාවලිය සාදන්න
 
 ```bash
-mkdir -p /opt/omniroute
+mkdir -p /opt/agentproxy
 ```
 
 ### 2.2 පරිසර විචල්ය ගොනුව සාදන්න
 
 ```bash
-cat > /opt/omniroute/.env << 'EOF'
+cat > /opt/agentproxy/.env << 'EOF'
 # === ආරක්ෂාව ===
 JWT_SECRET=CHANGE-TO-A-UNIQUE-64-CHAR-SECRET-KEY
 INITIAL_PASSWORD=YourSecurePassword123!
@@ -103,7 +103,7 @@ API_KEY_SECRET=REPLACE-WITH-ANOTHER-SECRET-KEY
 STORAGE_ENCRYPTION_KEY=REPLACE-WITH-THIRD-SECRET-KEY
 STORAGE_ENCRYPTION_KEY_VERSION=v1
 MACHINE_ID_SALT=CHANGE-TO-A-UNIQUE-SALT
-OMNIROUTE_WS_BRIDGE_SECRET=REPLACE-WITH-WS-BRIDGE-SECRET  # නිෂ්පාදන පරිසරයේ අවශ්යයි: Codex Responses WS bridge විසින් භාවිත කෙරේ
+AGENTPROXY_WS_BRIDGE_SECRET=REPLACE-WITH-WS-BRIDGE-SECRET  # නිෂ්පාදන පරිසරයේ අවශ්යයි: Codex Responses WS bridge විසින් භාවිත කෙරේ
 
 # === යෙදුම ===
 PORT=20128
@@ -120,11 +120,11 @@ BASE_URL=http://127.0.0.1:20128
 # OAuth callbacks, dashboard සබැඳි සහ ජනනය කළ පොදු URLs සඳහා භාවිත කරන browser-facing URL එක.
 NEXT_PUBLIC_BASE_URL=https://llms.seudominio.com
 # ජනනය කළ පොදු asset URLs සඳහා විකල්ප පැහැදිලි public origin override එක.
-# OMNIROUTE_PUBLIC_BASE_URL=https://llms.seudominio.com
+# AGENTPROXY_PUBLIC_BASE_URL=https://llms.seudominio.com
 
 # === Cloud Sync (විකල්ප) ===
-# CLOUD_URL=https://cloud.omniroute.online
-# NEXT_PUBLIC_CLOUD_URL=https://cloud.omniroute.online
+# CLOUD_URL=https://agentproxy.online
+# NEXT_PUBLIC_CLOUD_URL=https://agentproxy.online
 EOF
 ```
 
@@ -133,22 +133,22 @@ EOF
 ### 2.3 Container එක ආරම්භ කරන්න
 
 ```bash
-docker pull diegosouzapw/omniroute:latest
+docker pull diegosouzapw/agentproxy:latest
 
 docker run -d \
-  --name omniroute \
+  --name agentproxy \
   --restart unless-stopped \
-  --env-file /opt/omniroute/.env \
+  --env-file /opt/agentproxy/.env \
   -p 20128:20128 \
-  -v omniroute-data:/app/data \
-  diegosouzapw/omniroute:latest
+  -v agentproxy-data:/app/data \
+  diegosouzapw/agentproxy:latest
 ```
 
 ### 2.4 එය ක්රියාත්මක වන බව තහවුරු කරන්න
 
 ```bash
-docker ps | grep omniroute
-docker logs omniroute --tail 20
+docker ps | grep agentproxy
+docker logs agentproxy --tail 20
 ```
 
 එහි `[DB] SQLite database ready` සහ `listening on port 20128` පෙන්විය යුතුය.
@@ -181,7 +181,7 @@ chmod 600 /etc/nginx/ssl/origin.key
 ### 3.2 Nginx වින්යාසය
 
 ```bash
-cat > /etc/nginx/sites-available/omniroute << 'NGINX'
+cat > /etc/nginx/sites-available/agentproxy << 'NGINX'
 # පෙරනිමි සේවාදායකය — IP හරහා සෘජු ප්රවේශය අවහිර කරයි
 server {
     listen 80 default_server;
@@ -241,7 +241,7 @@ NGINX
 `FETCH_TIMEOUT_MS` / `STREAM_IDLE_TIMEOUT_MS` වැඩි කරන්නේ නම්, `proxy_read_timeout` / `proxy_send_timeout`
 එම සීමාවට වඩා ඉහළ අගයකට වැඩි කරන්න.
 
-OAuth ඇමතුම්-ආපසු සහ ජනනය කරන ලද පොදු සබැඳි සඳහා, බ්රවුසරයට පෙනෙන කැනොනිකල් මූලය ලෙස AgentProxy විසින් `NEXT_PUBLIC_BASE_URL` භාවිත කරයි. සත්යාපිත උපකරණ පුවරු ලිවීම් එකම මූලයෙන් කෙරෙන ඉල්ලීම් සහ සැසියට බැඳුණු CSRF ආරක්ෂාව භාවිත කරන බැවින්, ඒවාට ස්ථිතික පොදු මූල URL එකක් අවශ්ය නොවේ. ඉහත `X-Forwarded-*` ශීර්ෂ තවමත් ප්රයෝජනවත් මාර්ගගත කිරීමේ පාරදත්ත වන නමුත්, OAuth හෝ ජනනය කළ බ්රවුසර සබැඳිවලට එය අවශ්ය වන විට පැහැදිලි පොදු URL එක සැකසීම සඳහා ඒවා ආදේශකයක් නොවේ. AgentProxy වෙත සේවාලාභීන්ට සෘජුව ළඟා විය නොහැකි නම් සහ ඔබගේ ප්රොක්සිය පැමිණෙන යොමු කළ ශීර්ෂ ඉවත් කර/නැවත ගොඩනඟන්නේ නම් පමණක් `OMNIROUTE_TRUST_PROXY` සබල කරන්න.
+OAuth ඇමතුම්-ආපසු සහ ජනනය කරන ලද පොදු සබැඳි සඳහා, බ්රවුසරයට පෙනෙන කැනොනිකල් මූලය ලෙස AgentProxy විසින් `NEXT_PUBLIC_BASE_URL` භාවිත කරයි. සත්යාපිත උපකරණ පුවරු ලිවීම් එකම මූලයෙන් කෙරෙන ඉල්ලීම් සහ සැසියට බැඳුණු CSRF ආරක්ෂාව භාවිත කරන බැවින්, ඒවාට ස්ථිතික පොදු මූල URL එකක් අවශ්ය නොවේ. ඉහත `X-Forwarded-*` ශීර්ෂ තවමත් ප්රයෝජනවත් මාර්ගගත කිරීමේ පාරදත්ත වන නමුත්, OAuth හෝ ජනනය කළ බ්රවුසර සබැඳිවලට එය අවශ්ය වන විට පැහැදිලි පොදු URL එක සැකසීම සඳහා ඒවා ආදේශකයක් නොවේ. AgentProxy වෙත සේවාලාභීන්ට සෘජුව ළඟා විය නොහැකි නම් සහ ඔබගේ ප්රොක්සිය පැමිණෙන යොමු කළ ශීර්ෂ ඉවත් කර/නැවත ගොඩනඟන්නේ නම් පමණක් `AGENTPROXY_TRUST_PROXY` සබල කරන්න.
 
 ### 3.3 සබල කර පරීක්ෂා කරන්න
 
@@ -250,7 +250,7 @@ OAuth ඇමතුම්-ආපසු සහ ජනනය කරන ලද ප�
 rm -f /etc/nginx/sites-enabled/default
 
 # AgentProxy සබල කරන්න
-ln -sf /etc/nginx/sites-available/omniroute /etc/nginx/sites-enabled/omniroute
+ln -sf /etc/nginx/sites-available/agentproxy /etc/nginx/sites-enabled/agentproxy
 
 # පරීක්ෂා කර නැවත පූරණය කරන්න
 nginx -t && systemctl reload nginx
@@ -294,40 +294,40 @@ curl -sI https://llms.seudominio.com/health
 ### නව අනුවාදයකට උත්ශ්රේණි කරන්න
 
 ```bash
-docker pull diegosouzapw/omniroute:latest
-docker stop omniroute && docker rm omniroute
-docker run -d --name omniroute --restart unless-stopped \
-  --env-file /opt/omniroute/.env \
+docker pull diegosouzapw/agentproxy:latest
+docker stop agentproxy && docker rm agentproxy
+docker run -d --name agentproxy --restart unless-stopped \
+  --env-file /opt/agentproxy/.env \
   -p 20128:20128 \
-  -v omniroute-data:/app/data \
-  diegosouzapw/omniroute:latest
+  -v agentproxy-data:/app/data \
+  diegosouzapw/agentproxy:latest
 ```
 
 ### ලොග් බලන්න
 
 ```bash
-docker logs -f omniroute          # තත්ය කාලීන ප්රවාහය
-docker logs omniroute --tail 50   # අවසන් පේළි 50
+docker logs -f agentproxy          # තත්ය කාලීන ප්රවාහය
+docker logs agentproxy --tail 50   # අවසන් පේළි 50
 ```
 
 ### අතින් දත්ත සමුදා උපස්ථයක් සාදන්න
 
 ```bash
 # වෙළුමේ ඇති දත්ත සත්කාරකයට පිටපත් කරන්න
-docker cp omniroute:/app/data ./backup-$(date +%F)
+docker cp agentproxy:/app/data ./backup-$(date +%F)
 
 # නැතහොත් සම්පූර්ණ වෙළුම සම්පීඩනය කරන්න
-docker run --rm -v omniroute-data:/data -v $(pwd):/backup \
-  alpine tar czf /backup/omniroute-data-$(date +%F).tar.gz /data
+docker run --rm -v agentproxy-data:/data -v $(pwd):/backup \
+  alpine tar czf /backup/agentproxy-data-$(date +%F).tar.gz /data
 ```
 
 ### උපස්ථයකින් ප්රතිසාධනය කරන්න
 
 ```bash
-docker stop omniroute
-docker run --rm -v omniroute-data:/data -v $(pwd):/backup \
-  alpine sh -c "rm -rf /data/* && tar xzf /backup/omniroute-data-YYYY-MM-DD.tar.gz -C /"
-docker start omniroute
+docker stop agentproxy
+docker run --rm -v agentproxy-data:/data -v $(pwd):/backup \
+  alpine sh -c "rm -rf /data/* && tar xzf /backup/agentproxy-data-YYYY-MM-DD.tar.gz -C /"
+docker start agentproxy
 ```
 
 ---
@@ -396,13 +396,13 @@ VM එක සෘජුව නිරාවරණය නොකර Cloudflare Worke
 
 ```bash
 # දේශීය ගබඩාව තුළ
-cd omnirouteCloud
+cd agentproxyCloud
 npm install
 npx wrangler login
 npx wrangler deploy
 ```
 
-ගබඩාව තුළ ඇති Cloudflare Tunnel මාර්ගෝපදේශය සඳහා [TUNNELS_GUIDE.md](./TUNNELS_GUIDE.md) ද බලන්න. ස්වාධීන `omnirouteCloud/` worker එක වෙනම සහායක ගබඩාවක පවතී.
+ගබඩාව තුළ ඇති Cloudflare Tunnel මාර්ගෝපදේශය සඳහා [TUNNELS_GUIDE.md](./TUNNELS_GUIDE.md) ද බලන්න. ස්වාධීන `agentproxyCloud/` worker එක වෙනම සහායක ගබඩාවක පවතී.
 
 ---
 
@@ -419,9 +419,9 @@ npx wrangler deploy
 
 කුඩා VPS අවස්ථා (1 GB RAM හෝ ඊට අඩු) මත යෙදවීම් සඳහා:
 
-- **පසුබිම් සේවා අක්රිය කරන්න** — scheduler, MCP server සහ වාරික නඩත්තු කාර්යයන් මඟ හැරීමට `OMNIROUTE_DISABLE_BACKGROUND_SERVICES=1` ලෙස සකසන්න. `docs/reference/ENVIRONMENT.md` බලන්න.
+- **පසුබිම් සේවා අක්රිය කරන්න** — scheduler, MCP server සහ වාරික නඩත්තු කාර්යයන් මඟ හැරීමට `AGENTPROXY_DISABLE_BACKGROUND_SERVICES=1` ලෙස සකසන්න. `docs/reference/ENVIRONMENT.md` බලන්න.
 - **SQLite WAL ප්රකාරය භාවිත කරන්න** — මෙය පෙරනිමියෙන් සක්රිය කර ඇති අතර, සමගාමී කියවීම් අතරතුර උපරිම මතක භාවිතය අඩු කරයි.
-- **V8 heap එක සීමා කරන්න** — runtime එක VM එකට වඩා විශාල උපරිම සීමාවක් ක්රමාංකනය නොකරන ලෙස `OMNIROUTE_MEMORY_MB` (උදා. `512`) සකසන්න. `docs/reference/ENVIRONMENT.md` බලන්න.
-- **බර වැඩ ඇතුළත් කරගැනීම heap සීමාව අනුව ස්වයංක්රීයව පරිමාණය වේ** -- ඉහත `OMNIROUTE_MEMORY_MB` සැකසූ පසු, ingest byte අයවැය (`OMNIROUTE_CHAT_MAX_INFLIGHT_BYTES`) එම උපරිම සීමාවෙන්ම ව්යුත්පන්න වේ. එබැවින්, මතකය සීමිත VM එකකට අමතර සුසර කිරීමකින් තොරවම කුඩා සමගාමී ඉල්ලීම් අයවැයක් ලැබේ; අතිරික්ත ඉල්ලීම් මතකය සඳහා තරග කිරීම වෙනුවට `Retry-After` සමඟ නැවත උත්සාහ කළ හැකි `503` ප්රතිචාරයක් ලබයි. ඊට අමතරව ඉල්ලීම් සංඛ්යාවට දැඩි උපරිම සීමාවක් අවශ්ය නම් පමණක් පැරණි `OMNIROUTE_CHAT_MAX_HEAVY_IN_FLIGHT` සීමාව සකසන්න.
+- **V8 heap එක සීමා කරන්න** — runtime එක VM එකට වඩා විශාල උපරිම සීමාවක් ක්රමාංකනය නොකරන ලෙස `AGENTPROXY_MEMORY_MB` (උදා. `512`) සකසන්න. `docs/reference/ENVIRONMENT.md` බලන්න.
+- **බර වැඩ ඇතුළත් කරගැනීම heap සීමාව අනුව ස්වයංක්රීයව පරිමාණය වේ** -- ඉහත `AGENTPROXY_MEMORY_MB` සැකසූ පසු, ingest byte අයවැය (`AGENTPROXY_CHAT_MAX_INFLIGHT_BYTES`) එම උපරිම සීමාවෙන්ම ව්යුත්පන්න වේ. එබැවින්, මතකය සීමිත VM එකකට අමතර සුසර කිරීමකින් තොරවම කුඩා සමගාමී ඉල්ලීම් අයවැයක් ලැබේ; අතිරික්ත ඉල්ලීම් මතකය සඳහා තරග කිරීම වෙනුවට `Retry-After` සමඟ නැවත උත්සාහ කළ හැකි `503` ප්රතිචාරයක් ලබයි. ඊට අමතරව ඉල්ලීම් සංඛ්යාවට දැඩි උපරිම සීමාවක් අවශ්ය නම් පමණක් පැරණි `AGENTPROXY_CHAT_MAX_HEAVY_IN_FLIGHT` සීමාව සකසන්න.
 - **VPS එක මත `next build` ක්රියාත්මක කිරීමෙන් වළකින්න** — දේශීයව build කර standalone ප්රතිදානය (`.next/standalone/`) යොදවන්න.
 - **`top` / `free -m` සමඟ නිරීක්ෂණය කරන්න** — 1 GB VM එකක් මත අක්රියව පවතින විට AgentProxy සාමාන්යයෙන් 200-400 MB RSS භාවිත කරයි.

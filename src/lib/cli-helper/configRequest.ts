@@ -3,7 +3,7 @@ import { z } from "zod";
 import { buildErrorBody } from "@agentproxy/open-sse/utils/error.ts";
 
 export const CONFIG_API_KEY_HEADER = "x-agentproxy-config-api-key";
-export const LEGACY_CONFIG_API_KEY_HEADER = "x-omniroute-config-api-key";
+export const LEGACY_CONFIG_API_KEY_HEADER = "x-agentproxy-config-api-key";
 
 const baseUrlSchema = z.string().refine((value) => {
   try {
@@ -30,7 +30,7 @@ export function defaultConfigBaseUrl(): string {
   return process.env.AGENTPROXY_BASE_URL || process.env.BASE_URL || `http://localhost:${port}/v1`;
 }
 
-/** Canonical AgentProxy header first; legacy OmniRoute header remains a migration alias. */
+/** Canonical AgentProxy header first; legacy AgentProxy header remains a migration alias. */
 export function readConfigApiKey(request: Request): string | null {
   const canonical = request.headers.get(CONFIG_API_KEY_HEADER)?.trim();
   if (canonical) return canonical;

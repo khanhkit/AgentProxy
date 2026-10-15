@@ -44,7 +44,7 @@ id-token ਦੀ ਅਦਲਾ-ਬਦਲੀ ਕਰਦੀ ਹੈ — ਰਿਪੋ�
 ਇਹ WS1.3 ਦੀ ਗਾਰੰਟੀ ਕਾਇਮ ਰੱਖਦਿਆਂ ਪ੍ਰੋਜੈਕਟ ਵਿੱਚ v3.8.48 ਤੱਕ ਮੌਜੂਦ ਪੂਰੀ ਤਰ੍ਹਾਂ ਆਟੋਮੈਟਿਕ ਪ੍ਰਵਾਹ ਨੂੰ
 ਬਹਾਲ ਕਰਦਾ ਹੈ (ਲੀਕ ਹੋਇਆ ਟੋਕਨ ਇਕੱਲਾ ਪਬਲਿਸ਼ ਨਹੀਂ ਕਰ ਸਕਦਾ — ਕਿਉਂਕਿ ਕੋਈ ਟੋਕਨ ਹੈ ਹੀ ਨਹੀਂ)।
 
-**ਇੱਕ-ਵਾਰ ਦੀ ਸੈਟਅੱਪ (ਮਾਲਕ):** npmjs.com → ਪੈਕੇਜ `omniroute` → Settings → _Trusted
+**ਇੱਕ-ਵਾਰ ਦੀ ਸੈਟਅੱਪ (ਮਾਲਕ):** npmjs.com → ਪੈਕੇਜ `agentproxy` → Settings → _Trusted
 Publisher_ → GitHub: ਮਾਲਕ `diegosouzapw`, ਰੈਪੋ `AgentProxy`, ਵਰਕਫ਼ਲੋ `npm-publish.yml`
 (ਇਨਵਾਇਰਨਮੈਂਟ: ਕੋਈ ਨਹੀਂ)। ਜਦੋਂ ਤੱਕ ਇਹ ਮੌਜੂਦ ਨਹੀਂ ਹੁੰਦਾ, ਆਟੋਮੈਟਿਕ ਕਦਮ `ENEEDAUTH` ਨਾਲ ਅਸਫਲ ਹੁੰਦਾ ਹੈ:
 `publish_mode=staged` (ਹੇਠਾਂ) ਜਾਂ `direct` ਨਾਲ ਦੁਬਾਰਾ ਡਿਸਪੈਚ ਕਰੋ।
@@ -58,7 +58,7 @@ npm-publish ਵਰਕਫ਼ਲੋ ਹੁਣ ਸਿੱਧੇ ਤੌਰ 'ਤੇ �
 
 **ਵਰਕਫ਼ਲੋ ਦੇ ਗ੍ਰੀਨ ਹੋਣ ਤੋਂ ਬਾਅਦ ਮਾਲਕ ਦਾ ਪ੍ਰਵਾਹ:**
 
-1. `npm stage list omniroute` — ਸਟੇਜ id ਲੱਭੋ (ਇਹ ਵਰਕਫ਼ਲੋ ਸੰਖੇਪ ਵਿੱਚ ਵੀ ਦਿਖਾਈ ਜਾਂਦੀ ਹੈ)।
+1. `npm stage list agentproxy` — ਸਟੇਜ id ਲੱਭੋ (ਇਹ ਵਰਕਫ਼ਲੋ ਸੰਖੇਪ ਵਿੱਚ ਵੀ ਦਿਖਾਈ ਜਾਂਦੀ ਹੈ)।
 2. ਸਟੇਜ ਕੀਤੀਆਂ ਬਾਈਟਾਂ ਦੀ ਪੁਸ਼ਟੀ ਕਰੋ (ਸਿਫ਼ਾਰਸ਼ੀ): `npm stage download <id>`, ਫਿਰ ਡਾਊਨਲੋਡ ਕੀਤੇ
    tarball ਨੂੰ ਇੱਕ ਅਸਥਾਈ prefix ਵਿੱਚ ਇੰਸਟਾਲ ਕਰਕੇ ਬੂਟ ਕਰੋ (`npm run check:pack-boot` CI ਵਿੱਚ
    ਇਸੇ pack→install→boot ਫ਼ੈਸਲੇ ਨੂੰ ਆਟੋਮੈਟਿਕ ਕਰਦਾ ਹੈ)।
@@ -69,12 +69,12 @@ npm-publish ਵਰਕਫ਼ਲੋ ਹੁਣ ਸਿੱਧੇ ਤੌਰ 'ਤੇ �
 **ਐਮਰਜੈਂਸੀ ਫਾਲਬੈਕ:** `publish_mode=direct` ਨਾਲ `workflow_dispatch` ਪੁਰਾਣੇ ਤਤਕਾਲ
 `npm publish` ਨੂੰ ਬਹਾਲ ਕਰਦਾ ਹੈ (ਸਿਰਫ਼ ਉਦੋਂ ਵਰਤੋ ਜੇ ਸਟੇਜਿੰਗ ਖੁਦ ਠੀਕ ਤਰ੍ਹਾਂ ਕੰਮ ਨਾ ਕਰੇ; ਕਾਰਨ ਦਰਜ ਕਰੋ)।
 
-**ਇੱਕ-ਵਾਰ ਦੀ ਹਾਰਡਨਿੰਗ (ਮਾਲਕ, npmjs.com):** `omniroute` ਲਈ Trusted Publisher ਨੂੰ
+**ਇੱਕ-ਵਾਰ ਦੀ ਹਾਰਡਨਿੰਗ (ਮਾਲਕ, npmjs.com):** `agentproxy` ਲਈ Trusted Publisher ਨੂੰ
 ਸਿਰਫ਼-ਸਟੇਜ ਮੋਡ ਵਿੱਚ ਕੌਂਫ਼ਿਗਰ ਕਰੋ, ਤਾਂ ਜੋ ਲੀਕ ਹੋਇਆ ਲੰਬੇ ਸਮੇਂ ਤੱਕ ਵੈਧ ਟੋਕਨ ਕਿਤੋਂ ਵੀ ਸਿੱਧਾ
 `npm publish` ਨਾ ਕਰ ਸਕੇ — CI ਸਿਰਫ਼ ਸਟੇਜ ਕਰ ਸਕਦੀ ਹੈ; ਕੇਵਲ ਮਾਲਕ ਦਾ 2FA ਹੀ ਰਿਲੀਜ਼ ਕਰਦਾ ਹੈ।
 
 **ਖ਼ਰਾਬ ਆਰਟੀਫੈਕਟ ਲਈ ਕਾਰਜ-ਵਿਧੀ (ਬਿਨਾਂ ਬਦਲਾਅ):** ਡਿਫੌਲਟ ਤੁਰੰਤ ਕਾਰਵਾਈ ਵਜੋਂ
-`npm deprecate omniroute@<bad> "<reason> — use <fixed>"` (ਮਿੰਟਾਂ ਵਿੱਚ, ਵਾਪਸ ਬਦਲਣ ਯੋਗ);
+`npm deprecate agentproxy@<bad> "<reason> — use <fixed>"` (ਮਿੰਟਾਂ ਵਿੱਚ, ਵਾਪਸ ਬਦਲਣ ਯੋਗ);
 `npm unpublish` ਸਿਰਫ਼ 72h/ਕੋਈ-ਨਿਰਭਰਤਾ-ਨਹੀਂ ਵਿੰਡੋ ਦੇ ਅੰਦਰ, ਅਤੇ ਕਦੇ ਵੀ ਪਹਿਲੇ ਕਦਮ ਵਜੋਂ ਨਹੀਂ।
 Docker: ਕਿਸੇ ਵਰਜਨ ਟੈਗ ਨੂੰ ਕਦੇ ਦੁਬਾਰਾ ਨਾ ਲਿਖੋ — ਰੋਲਬੈਕ ਦਾ ਮਤਲਬ `latest` ਨੂੰ ਆਖਰੀ ਚੰਗੇ digest
 ਵੱਲ ਮੁੜ ਇਸ਼ਾਰਾ ਕਰਨਾ ਹੈ।
@@ -193,7 +193,7 @@ Breaking changes: `BREAKING CHANGE:` footer ਜਾਂ scope ਤੋਂ ਬਾਅ�
 - [ ] `npm run i18n:check` 0 ਨਾਲ ਬੰਦ ਹੁੰਦਾ ਹੈ — ਅਨੁਵਾਦ ਸਥਿਤੀ (`.i18n-state.json`) ਸਰੋਤ ਦਸਤਾਵੇਜ਼ਾਂ ਨਾਲ ਸਮਕਾਲੀ ਹੈ (ਸਖ਼ਤ ਮੋਡ ਵਿੱਚ ਕੋਈ ਅਸੰਗਤ ਸਰੋਤ ਨਹੀਂ; ਆਖ਼ਰੀ ਪਲ ਦੇ ਦਸਤਾਵੇਜ਼ੀ ਸੁਧਾਰਾਂ ਲਈ ਚੇਤਾਵਨੀ-ਮੋਡ ਦੀ ਸਲਾਹ ਸਵੀਕਾਰਯੋਗ ਹੈ, ਪਰ ਟੈਗ ਕਰਨ ਤੋਂ ਪਹਿਲਾਂ ਇਹ 0 ਹੋਣੀ ਚਾਹੀਦੀ ਹੈ)
 - [ ] `npm run i18n:check-ui-coverage` 0 ਨਾਲ ਬੰਦ ਹੁੰਦਾ ਹੈ — ਹਰੇਕ UI ਲੋਕੇਲ 80% ਕਵਰੇਜ ਦੀ ਘੱਟੋ-ਘੱਟ ਹੱਦ 'ਤੇ ਜਾਂ ਉਸ ਤੋਂ ਉੱਪਰ ਹੈ
 - [ ] `npm run i18n:sync-ui:dry` ਸਾਰੇ 42 ਲੋਕੇਲਾਂ ਵਿੱਚ 0 ਗੁੰਮ ਕੁੰਜੀਆਂ ਦੀ ਰਿਪੋਰਟ ਕਰਦਾ ਹੈ
-- [ ] ਜੇ ਸਰੋਤ ਅੰਗਰੇਜ਼ੀ ਦਸਤਾਵੇਜ਼ ਬਦਲੇ ਹਨ, ਤਾਂ ਟੈਗ ਕਰਨ ਤੋਂ ਪਹਿਲਾਂ `npm run i18n:run` ਚਲਾਓ (`.env` ਵਿੱਚ `OMNIROUTE_TRANSLATION_API_KEY` ਲੋੜੀਂਦੀ ਹੈ)
+- [ ] ਜੇ ਸਰੋਤ ਅੰਗਰੇਜ਼ੀ ਦਸਤਾਵੇਜ਼ ਬਦਲੇ ਹਨ, ਤਾਂ ਟੈਗ ਕਰਨ ਤੋਂ ਪਹਿਲਾਂ `npm run i18n:run` ਚਲਾਓ (`.env` ਵਿੱਚ `AGENTPROXY_TRANSLATION_API_KEY` ਲੋੜੀਂਦੀ ਹੈ)
 - [ ] ਜੇ ਅਨੁਵਾਦ ਯੋਗਦਾਨ ਮਾਮੂਲੀ ਹਨ, ਤਾਂ ਉਨ੍ਹਾਂ ਨੂੰ ਅਗਲੀ ਰਿਲੀਜ਼ ਤੱਕ ਮੁਲਤਵੀ ਕੀਤਾ ਜਾ ਸਕਦਾ ਹੈ (CHANGELOG ਵਿੱਚ ਟਰੈਕ ਕਰੋ)
 
 ### ਡਾਟਾਬੇਸ ਮਾਈਗ੍ਰੇਸ਼ਨਾਂ
@@ -202,7 +202,7 @@ Breaking changes: `BREAKING CHANGE:` footer ਜਾਂ scope ਤੋਂ ਬਾਅ�
   - [ ] ਹਰੇਕ ਮਾਈਗ੍ਰੇਸ਼ਨ ਆਈਡੈਂਪੋਟੈਂਟ ਹੈ (`CREATE TABLE IF NOT EXISTS`, ਆਦਿ)
   - [ ] ਮਾਈਗ੍ਰੇਸ਼ਨਾਂ ਨੂੰ ਟ੍ਰਾਂਜ਼ੈਕਸ਼ਨਾਂ ਵਿੱਚ ਲਪੇਟਿਆ ਗਿਆ ਹੈ
   - [ ] ਸਹੀ ਢੰਗ ਨਾਲ ਨੰਬਰ ਦਿੱਤੇ ਗਏ ਹਨ (ਕ੍ਰਮ ਵਿੱਚ ਕੋਈ ਖਾਲੀ ਥਾਂ ਨਹੀਂ)
-- [ ] ਨਵੀਂ ਇੰਸਟਾਲੇਸ਼ਨ 'ਤੇ ਟੈਸਟ ਕਰੋ: `~/.omniroute/omniroute.db` ਮਿਟਾਓ ਅਤੇ `npm run dev` ਚਲਾਓ
+- [ ] ਨਵੀਂ ਇੰਸਟਾਲੇਸ਼ਨ 'ਤੇ ਟੈਸਟ ਕਰੋ: `~/.agentproxy/agentproxy.db` ਮਿਟਾਓ ਅਤੇ `npm run dev` ਚਲਾਓ
 - [ ] ਮੌਜੂਦਾ ਇੰਸਟਾਲੇਸ਼ਨ 'ਤੇ ਟੈਸਟ ਕਰੋ: DB ਦਾ ਬੈਕਅੱਪ ਲਓ, ਮਾਈਗ੍ਰੇਸ਼ਨ ਚਲਾਓ, ਸਕੀਮਾ ਦੀ ਪੁਸ਼ਟੀ ਕਰੋ
 - [ ] ਜੇ ਮਾਈਗ੍ਰੇਸ਼ਨ ਟੇਬਲਾਂ ਨੂੰ ਮੁੜ ਲਿਖਦੀ ਹੈ, ਤਾਂ WAL ਫ਼ਾਈਲਾਂ (`-wal`, `-shm`) ਨੂੰ ਸਹੀ ਢੰਗ ਨਾਲ ਸੰਭਾਲਿਆ ਗਿਆ ਹੈ
 
@@ -237,7 +237,7 @@ Breaking changes: `BREAKING CHANGE:` footer ਜਾਂ scope ਤੋਂ ਬਾਅ�
 | `.build/` | ਬਿਲਡ ਦੀਆਂ ਵਿਚਕਾਰਲੀਆਂ ਫ਼ਾਈਲਾਂ — `next build` ਆਉਟਪੁੱਟ (`distDir`) | ਨਹੀਂ (gitignored)   |
 | `dist/`   | ਵੰਡਣਯੋਗ npm ਬੰਡਲ — `assembleStandalone` ਦੁਆਰਾ ਅਸੈਂਬਲ ਕੀਤਾ       | ਨਹੀਂ (gitignored)   |
 
-> **ਓਪਰੇਟਰ ਨੋਟ:** ਰਿਮੋਟ VPS ਇਮੇਜ ਡਾਇਰੈਕਟਰੀ `/usr/lib/node_modules/omniroute/app/` ਹੀ ਰਹਿੰਦੀ ਹੈ।
+> **ਓਪਰੇਟਰ ਨੋਟ:** ਰਿਮੋਟ VPS ਇਮੇਜ ਡਾਇਰੈਕਟਰੀ `/usr/lib/node_modules/agentproxy/app/` ਹੀ ਰਹਿੰਦੀ ਹੈ।
 > ਸਿਰਫ਼ **ਰਿਪੋਜ਼ਿਟਰੀ ਅੰਦਰਲੀ** ਬਿਲਡ ਆਉਟਪੁੱਟ ਬਦਲੀ ਹੈ (`app/` → `dist/`)। ਡਿਪਲੋਇ ਸਕਿੱਲਾਂ `dist/`
 > ਦੀ ਸਮੱਗਰੀ ਨੂੰ ਰਿਮੋਟ `app/` ਡਾਇਰੈਕਟਰੀ ਵਿੱਚ rsync ਕਰਦੀਆਂ ਹਨ — VPS ਪਾਥ ਵਿੱਚ ਕਿਸੇ ਤਬਦੀਲੀ ਦੀ ਲੋੜ ਨਹੀਂ ਹੈ।
 
@@ -357,12 +357,12 @@ Radar ਘੋਸ਼ਣਾ ਨੂੰ ਜਾਣ-ਬੁੱਝ ਕੇ `active: false`
 
 ਕੋਈ ਵੀ v3.8.x ਰਿਲੀਜ਼ ਜਾਰੀ ਕਰਨ ਤੋਂ ਪਹਿਲਾਂ, ਇਨ੍ਹਾਂ ਵਾਧੂ ਆਈਟਮਾਂ ਦੀ ਪੁਸ਼ਟੀ ਕਰੋ:
 
-- [ ] `omniroute --tray` macOS ਉੱਤੇ ਬੂਟ ਹੁੰਦਾ ਹੈ (systray2 ਨੂੰ `~/.omniroute/runtime/` ਵਿੱਚ ਇੰਸਟਾਲ ਕੀਤਾ ਗਿਆ ਹੈ)
-- [ ] `omniroute --tray` Linux ਉੱਤੇ ਬੂਟ ਹੁੰਦਾ ਹੈ (DISPLAY ਦੀ ਲੋੜ ਹੈ; ਸੈੱਟ ਨਾ ਹੋਣ 'ਤੇ ਸੁਚੱਜੀ ਗਲਤੀ)
-- [ ] `omniroute --tray` Windows ਉੱਤੇ ਬੂਟ ਹੁੰਦਾ ਹੈ (PowerShell NotifyIcon, ਕੋਈ ਵਾਧੂ ਬਾਈਨਰੀ ਨਹੀਂ)
-- [ ] `omniroute config tray enable` ਆਟੋਸਟਾਰਟ ਐਂਟਰੀ ਬਣਾਉਂਦਾ ਹੈ; disable ਇਸਨੂੰ ਹਟਾਉਂਦਾ ਹੈ
-- [ ] `npm install -g omniroute@<this-version>` ਘਾਤਕ ਐਗਜ਼ਿਟ ਤੋਂ ਬਿਨਾਂ postinstall ਚਲਾਉਂਦਾ ਹੈ
-- [ ] ਅੱਪਡੇਟ ਪਾਥ ਵਿਕਲਪਿਕ ਡਿਪੈਂਡੈਂਸੀਆਂ ਨੂੰ ਕਾਇਮ ਰੱਖਦਾ ਹੈ: `omniroute update --apply` ਅਤੇ ਆਟੋ-ਅੱਪਡੇਟਰ
+- [ ] `agentproxy --tray` macOS ਉੱਤੇ ਬੂਟ ਹੁੰਦਾ ਹੈ (systray2 ਨੂੰ `~/.agentproxy/runtime/` ਵਿੱਚ ਇੰਸਟਾਲ ਕੀਤਾ ਗਿਆ ਹੈ)
+- [ ] `agentproxy --tray` Linux ਉੱਤੇ ਬੂਟ ਹੁੰਦਾ ਹੈ (DISPLAY ਦੀ ਲੋੜ ਹੈ; ਸੈੱਟ ਨਾ ਹੋਣ 'ਤੇ ਸੁਚੱਜੀ ਗਲਤੀ)
+- [ ] `agentproxy --tray` Windows ਉੱਤੇ ਬੂਟ ਹੁੰਦਾ ਹੈ (PowerShell NotifyIcon, ਕੋਈ ਵਾਧੂ ਬਾਈਨਰੀ ਨਹੀਂ)
+- [ ] `agentproxy config tray enable` ਆਟੋਸਟਾਰਟ ਐਂਟਰੀ ਬਣਾਉਂਦਾ ਹੈ; disable ਇਸਨੂੰ ਹਟਾਉਂਦਾ ਹੈ
+- [ ] `npm install -g agentproxy@<this-version>` ਘਾਤਕ ਐਗਜ਼ਿਟ ਤੋਂ ਬਿਨਾਂ postinstall ਚਲਾਉਂਦਾ ਹੈ
+- [ ] ਅੱਪਡੇਟ ਪਾਥ ਵਿਕਲਪਿਕ ਡਿਪੈਂਡੈਂਸੀਆਂ ਨੂੰ ਕਾਇਮ ਰੱਖਦਾ ਹੈ: `agentproxy update --apply` ਅਤੇ ਆਟੋ-ਅੱਪਡੇਟਰ
       `npm install -g … --include=optional` ਚਲਾਉਂਦੇ ਹਨ, ਤਾਂ ਜੋ `optionalDependencies` (better-sqlite3,
       keytar, tls-client, ਅਤੇ llmlingua SLM ਸਟੈਕ: `@atjsh/llmlingua-2@2.0.5`,
       `js-tiktoken`) ਅੱਪਡੇਟ ਤੋਂ ਬਾਅਦ ਵੀ ਬਚੇ ਰਹਿਣ। ਅਲਟਰਾ `modelPath` SLM ਟੀਅਰ ਨੂੰ tinybert
@@ -372,13 +372,13 @@ Radar ਘੋਸ਼ਣਾ ਨੂੰ ਜਾਣ-ਬੁੱਝ ਕੇ `active: false`
       — ਸਟੈਂਡਅਲੋਨ ਟ੍ਰੇਸ ਸਿਰਫ਼ transformers ਨੂੰ ਬੰਡਲ ਕਰਦਾ ਹੈ, ਡਾਇਨਾਮਿਕ ਤੌਰ 'ਤੇ ਇੰਪੋਰਟ ਕੀਤੀਆਂ
       ਵਿਕਲਪਿਕ ਡਿਪੈਂਡੈਂਸੀਆਂ ਨੂੰ ਨਹੀਂ, ਇਸ ਲਈ ਇਸ ਤੋਂ ਬਿਨਾਂ ਵਰਕਰ llmlingua-2 ਨੂੰ ਰੂਟ ਦੇ transformers ਨਾਲ ਲੋਡ ਕਰੇਗਾ
       ਅਤੇ SLM ਟੀਅਰ ਚੁੱਪਚਾਪ fail-open ਹੋ ਜਾਵੇਗਾ।
-- [ ] `omniroute status` ਬਿਨਾਂ `.env` ਦੇ ਕੰਮ ਕਰਦਾ ਹੈ (CLI ਟੋਕਨ ਪਾਥ, ਸਿਰਫ਼ ਲੂਪਬੈਕ)
+- [ ] `agentproxy status` ਬਿਨਾਂ `.env` ਦੇ ਕੰਮ ਕਰਦਾ ਹੈ (CLI ਟੋਕਨ ਪਾਥ, ਸਿਰਫ਼ ਲੂਪਬੈਕ)
 - [ ] `curl http://localhost:20128/api/shutdown` 401 ਵਾਪਸ ਕਰਦਾ ਹੈ (ਹਮੇਸ਼ਾ-ਸੁਰੱਖਿਅਤ ਰੂਟ)
 - [ ] `curl -H "host: evil.com" http://localhost:20128/api/mcp/sse` 401 ਵਾਪਸ ਕਰਦਾ ਹੈ (ਲੂਪਬੈਕ ਗਾਰਡ)
 - [ ] ਪਹਿਲੀ ਵਾਰ ਚਲਾਉਣ 'ਤੇ SQLite ਰਨਟਾਈਮ `bundled` ਵਜੋਂ ਰਿਜ਼ਾਲਵ ਹੁੰਦਾ ਹੈ (ਬੰਡਲ ਕੀਤੀ ਬਾਈਨਰੀ ਪਲੇਟਫਾਰਮ ਲਈ ਵੈਧ ਹੈ)
 - [ ] `node_modules/better-sqlite3` ਮਿਟਾਏ ਜਾਣ 'ਤੇ SQLite ਰਨਟਾਈਮ `runtime` ਉੱਤੇ ਫਾਲਬੈਕ ਕਰਦਾ ਹੈ
 - [ ] ਸਮਾਰਟ MCP ਫਿਲਟਰ ਅਸਲ `playwright-mcp browser_snapshot` ਆਉਟਪੁੱਟ ਨੂੰ ਸੰਕੁਚਿਤ ਕਰਦਾ ਹੈ (≥50% ਕਮੀ)
-- [ ] ਸਾਰੀਆਂ 10 `skills/omniroute*/SKILL.md` ਫ਼ਾਈਲਾਂ raw GitHub URL ਰਾਹੀਂ ਜਨਤਕ ਤੌਰ 'ਤੇ ਪ੍ਰਾਪਤ ਕੀਤੀਆਂ ਜਾ ਸਕਦੀਆਂ ਹਨ
+- [ ] ਸਾਰੀਆਂ 10 `skills/agentproxy*/SKILL.md` ਫ਼ਾਈਲਾਂ raw GitHub URL ਰਾਹੀਂ ਜਨਤਕ ਤੌਰ 'ਤੇ ਪ੍ਰਾਪਤ ਕੀਤੀਆਂ ਜਾ ਸਕਦੀਆਂ ਹਨ
 - [ ] ਨਵੇਂ ਸੈੱਟਅੱਪ 'ਤੇ ਆਨਬੋਰਡਿੰਗ ਵਿਜ਼ਾਰਡ "ਇਹ ਕਿਵੇਂ ਕੰਮ ਕਰਦਾ ਹੈ" ਟੀਅਰ ਟੂਰ ਪੜਾਅ ਦਿਖਾਉਂਦਾ ਹੈ
 - [ ] ਹੋਮ ਡੈਸ਼ਬੋਰਡ ਦਾ ਟੀਅਰ ਕਵਰੇਜ ਵਿਜੈੱਟ ਕਨਫਿਗਰ ਕੀਤੀਆਂ/ਸਰਗਰਮ ਗਿਣਤੀਆਂ ਦਿਖਾਉਂਦਾ ਹੈ
 

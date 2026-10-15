@@ -10,7 +10,7 @@
  *     dns_enabled/setup_completed reset, and `otherAgentsStillActive` computed
  *     from the OTHER agents' state (not this one).
  *
- * DNS/system-trust mutation is disabled via OMNIROUTE_SKIP_DNS_WRITE — the
+ * DNS/system-trust mutation is disabled via AGENTPROXY_SKIP_DNS_WRITE — the
  * suite must never touch the real hosts file (tests/_setup/isolateDataDir.ts
  * sets this globally too; set explicitly here so this file is self-contained
  * when run directly, matching tests/unit/db-agent-bridge-state.test.ts).
@@ -21,9 +21,9 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 
-process.env.OMNIROUTE_SKIP_DNS_WRITE = "1";
+process.env.AGENTPROXY_SKIP_DNS_WRITE = "1";
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-agent-bridge-reset-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-agent-bridge-reset-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 
 const core = await import("../../src/lib/db/core.ts");
@@ -126,7 +126,7 @@ test("POST .../[id]/reset: clears mappings, resets dns_enabled/setup_completed f
   assert.equal(body.dns_enabled, false);
   assert.equal(body.mappingsCleared, true);
   assert.equal(body.restartRequired, true);
-  // OMNIROUTE_SKIP_DNS_WRITE keeps the route from touching /etc/hosts, but `verified`
+  // AGENTPROXY_SKIP_DNS_WRITE keeps the route from touching /etc/hosts, but `verified`
   // still reads the machine's real hosts file. A box that already carries the agent's
   // spoof entries (e.g. a CI host where the MITM once ran) legitimately reports false,
   // so assert the route's wiring against the same probe instead of a fixed value.

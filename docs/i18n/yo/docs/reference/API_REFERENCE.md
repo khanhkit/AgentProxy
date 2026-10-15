@@ -64,7 +64,7 @@ Content-Type: application/json
 | Header                   | Ìtọ́sọ́nà | Àpèjúwe                                                                                                                                                                                                                        |
 | ------------------------ | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | `X-AgentProxy-No-Cache`   | Ìbéèrè  | Ṣètò sí `true` láti forí káṣe kọjá                                                                                                                                                                                             |
-| `x-omniroute-no-memory`  | Ìbéèrè  | Ṣètò sí `true` láti foju ìrántí + fífi àwọn ọgbọ́n sínú fún ìbéèrè yìí (ó dà bí no-cache; ó yẹra fún àfikún token/ìnáwó fún ìpè kọ̀ọ̀kan)                                                                                         |
+| `x-agentproxy-no-memory`  | Ìbéèrè  | Ṣètò sí `true` láti foju ìrántí + fífi àwọn ọgbọ́n sínú fún ìbéèrè yìí (ó dà bí no-cache; ó yẹra fún àfikún token/ìnáwó fún ìpè kọ̀ọ̀kan)                                                                                         |
 | `X-AgentProxy-Progress`   | Ìbéèrè  | Ṣètò sí `true` fún àwọn ìṣẹ̀lẹ̀ ìlọsíwájú                                                                                                                                                                                        |
 | `X-Session-Id`           | Ìbéèrè  | Kọ́kọ́rọ́ ìgbà ìjókòó dídì fún ìbámu ìgbà ìjókòó ìta                                                                                                                                                                              |
 | `x_session_id`           | Ìbéèrè  | A tún gba ẹ̀yà underscore (HTTP tààrà)                                                                                                                                                                                          |
@@ -159,7 +159,7 @@ Olùníṣe gangan, ìran, asopọ tí ó wà ní ìṣiṣẹ́, àti kókó AP
 
 Ìdáhùn yí túmọ̀ sí pé àtòjọ tí ó yẹ tí ó wà ní ìpamọ́ kò ṣófo, àti pé gbogbo olùdíje tí ó wà láìsí iṣẹ́ ni àdéhùn ìyaloṣiṣẹ́ àjèjì tí ó wà ní ìṣiṣẹ́ ti di mú. Àwọn àwòṣe/olùpèsè tí kò ní atilẹyin, àìbámu ìlànà, ìtura, ìpín, ìlera, àti àwọn àṣìṣe ìyẹwò mìíràn tí ó wà ní ìpamọ́ ń pa àwọn ìdáhùn AgentProxy wọn tí ó wà tẹ́lẹ̀ mọ́.
 
-### `x-omniroute-compression`
+### `x-agentproxy-compression`
 
 Ìyípadà ìfúnpọ̀ fún ìbéèrè kọ̀ọ̀kan. Ìṣáájú tí ó ga jù lọ — ó borí ìyípadà ìdarí-ìsopọ̀, àwòrán tí ó wà ní ìṣiṣẹ́, ìṣiṣẹ́-ara-ẹni, àti àwọn àwòrán Default. Àwọn ìwúlò:
 
@@ -397,10 +397,10 @@ tí ó ń tọ́ka sí id àkọ́kọ́.
 
 ### Àwọn ẹ̀yà módelì tí kò ní ìrònú
 
-Fún àwọn módelì Claude tó lè ronú, `/v1/models` tún ń polówó ẹ̀yà **tí kò ní ìrònú** tí id rẹ̀ bẹ̀rẹ̀ pẹ̀lú `claude-3-omniroute-no-thinking/`:
+Fún àwọn módelì Claude tó lè ronú, `/v1/models` tún ń polówó ẹ̀yà **tí kò ní ìrònú** tí id rẹ̀ bẹ̀rẹ̀ pẹ̀lú `claude-3-agentproxy-no-thinking/`:
 
 ```
-claude-3-omniroute-no-thinking/<provider>/<model>
+claude-3-agentproxy-no-thinking/<provider>/<model>
 ```
 
 Yíyan id yìí (fún àpẹẹrẹ, nínú ètò Claude Code kan tí ó máa ń so búlọ́ọ̀kù `thinking` mọ́ ọn ní gbogbo ìgbà) máa ń yanjú padà sí `<provider>/<model>` gidi pẹ̀lú dídènà ìfèrò — `thinking:{type:"disabled"}` lórí ipa ọ̀nà `/v1/messages`, tàbí yíyọ àwọn pápá `reasoning`/`reasoning_effort` kúrò lórí ipa ọ̀nà `/v1/chat/completions`. Ẹ̀yà náà ni a ń tò sí àtòjọ fún àwọn módelì ìdílé Claude tí ó ṣe àtìlẹ́yìn fún ìrònú **tí wọ́n sì** tẹ̀lé `disabled` nìkan (nítorí náà, fún àpẹẹrẹ, àwọn módelì adaptive-only tí ó kọ `disabled` sílẹ̀ ni a yọ kúrò). Àwọn olùṣàkóso lè fi ipá tan ẹ̀yà náà tàbí pa á fún módelì kọ̀ọ̀kan nípasẹ̀ `ModelSpec.noThinkingAlias`.
@@ -486,7 +486,7 @@ POST /v1/music/generations  { "model": "suno/v3.5",   "prompt": "..." }
 > loopback (`localhost`, `127.0.0.1`, `172.16.0.0/12`) máa ń yẹ ní gbogbo ìgbà. Àwọn node lórí host mìíràn
 > — ẹ̀rọ inú LAN tàbí Tailscale peer — máa ń yẹ kìkì nígbà tí olùṣàkóso bá tan àsíá ẹ̀yà
 > `RERANK_REMOTE_PROVIDER_NODES` **àti** tí URL ìpìlẹ̀ node náà bá kọjá ìlànà URL olùpèsè tí ń jáde
-> (`OMNIROUTE_ALLOW_LOCAL_PROVIDER_URLS` / `OMNIROUTE_ALLOW_PRIVATE_PROVIDER_URLS`);
+> (`AGENTPROXY_ALLOW_LOCAL_PROVIDER_URLS` / `AGENTPROXY_ALLOW_PRIVATE_PROVIDER_URLS`);
 > a kì í darí sí àwọn host metadata cloud láé. Ìgbésẹ̀ àtúntò ti engine ìrántí ń pe ipa-ọ̀nà yìí nípasẹ̀
 > loopback, nítorí náà òfin kan náà ló ń ṣàkóso `rerankProviderModel` nínú àwọn ààtò Memory.
 >
@@ -609,8 +609,8 @@ GET /v1/ws?handshake=1
 
 ```bash
 # Host:port kan náà bí API HTTP (àtìlẹ́yìn 20128); ṣe ìgbéga connection náà:
-wscat -c "ws://localhost:20128/v1/responses?api_key=<OMNIROUTE_API_KEY>"
-# (tàbí: -H "Authorization: Bearer <OMNIROUTE_API_KEY>")
+wscat -c "ws://localhost:20128/v1/responses?api_key=<AGENTPROXY_API_KEY>"
+# (tàbí: -H "Authorization: Bearer <AGENTPROXY_API_KEY>")
 
 # Frame àkọ́kọ́ GBỌ́DỌ̀ jẹ́ response.create:
 { "type": "response.create", "model": "gpt-5.5", "input": [ { "role": "user", "content": "hi" } ] }
@@ -646,18 +646,18 @@ fífọwọ́ kan config tó ti wà):
 
 ```toml
 model = "gpt-5.5"                 # id lásán — KÌ Í ṢE "codex/gpt-5.5"
-model_provider = "omniroute"
+model_provider = "agentproxy"
 
-[model_providers.omniroute]
+[model_providers.agentproxy]
 name = "AgentProxy (WS)"
 base_url = "http://localhost:20128/v1"   # má ṣe fi slash sí ẹ̀yìn; a ń yọ URL WS jáde láti inú rẹ̀ (lo https/wss ní production)
 wire_api = "responses"                    # iye kan ṣoṣo tí a ṣe àtìlẹ́yìn fún láti Feb 2026
 supports_websockets = true                # ń mú transport Responses-over-WS ṣiṣẹ́
-env_key = "OMNIROUTE_API_KEY"             # ń tọ́jú kọ́kọ́rọ́ API AgentProxy (Bearer)
+env_key = "AGENTPROXY_API_KEY"             # ń tọ́jú kọ́kọ́rọ́ API AgentProxy (Bearer)
 ```
 
 ```bash
-export OMNIROUTE_API_KEY=sk-...           # kọ́kọ́rọ́ API AgentProxy kan (kọ́kọ́rọ́ èyíkéyìí bí REQUIRE_API_KEY=false)
+export AGENTPROXY_API_KEY=sk-...           # kọ́kọ́rọ́ API AgentProxy kan (kọ́kọ́rọ́ èyíkéyìí bí REQUIRE_API_KEY=false)
 codex exec "Responda apenas: PONG"
 ```
 
@@ -1019,7 +1019,7 @@ Content-Type: application/json
 {
   "success": true,
   "repaired": ["CLAUDE_CODE_OAUTH_CLIENT_ID", "CLAUDE_CODE_OAUTH_CLIENT_SECRET"],
-  "backupPath": "/home/user/.omniroute/backups/env-repair-2026-04-11.bak"
+  "backupPath": "/home/user/.agentproxy/backups/env-repair-2026-04-11.bak"
 }
 ```
 
@@ -1393,7 +1393,7 @@ AgentProxy ń pèsè ojú-ọ̀nà A2A (Agent-to-Agent) JSON-RPC 2.0 pẹ̀lú �
 
 ```bash
 POST /a2a
-Authorization: Bearer your-api-key   # àṣàyàn ni àyàfi tí a bá ṣètò OMNIROUTE_API_KEY
+Authorization: Bearer your-api-key   # àṣàyàn ni àyàfi tí a bá ṣètò AGENTPROXY_API_KEY
 Content-Type: application/json
 
 {
@@ -1436,7 +1436,7 @@ GET /.well-known/agent.json
 | GET  | `/api/a2a/tasks/[id]`        | Gba iṣẹ́ kan                                                                                                          |
 | POST | `/api/a2a/tasks/[id]/cancel` | Fagilé iṣẹ́ kan                                                                                                       |
 
-**Ìfàṣẹsí:** àwọn olùrànlọ́wọ́ REST ń ṣiṣẹ́ láìsí ìfàṣẹsí ìṣàkóso (dásíbọ́ọ̀du lè kà wọ́n); ojú-ọ̀nà JSON-RPC `/a2a` ń lo Bearer `OMNIROUTE_API_KEY` tí a bá ti ṣètò rẹ̀.
+**Ìfàṣẹsí:** àwọn olùrànlọ́wọ́ REST ń ṣiṣẹ́ láìsí ìfàṣẹsí ìṣàkóso (dásíbọ́ọ̀du lè kà wọ́n); ojú-ọ̀nà JSON-RPC `/a2a` ń lo Bearer `AGENTPROXY_API_KEY` tí a bá ti ṣètò rẹ̀.
 
 ---
 
@@ -1753,7 +1753,7 @@ Wo [Ètò Ìlànà Plugins](../frameworks/PLUGIN_SDK.md) fún gbogbo àlàyé.
 
 ## Guardrails
 
-Ṣàyẹ̀wò àwọn guardrail ní àsìkò ìṣiṣẹ́ (ìṣàwárí PII, ìṣàwárí prompt injection, vision bridging). Àwọn guardrail máa ń ṣiṣẹ́ lórí gbogbo ìbéèrè; yíyọ ara ẹni kúrò fún ìpè kọ̀ọ̀kan jẹ́ nípasẹ̀ request header `x-omniroute-disabled-guardrails` — kò sí ojú-ọ̀nà enable/disable tí a fi pamọ́.
+Ṣàyẹ̀wò àwọn guardrail ní àsìkò ìṣiṣẹ́ (ìṣàwárí PII, ìṣàwárí prompt injection, vision bridging). Àwọn guardrail máa ń ṣiṣẹ́ lórí gbogbo ìbéèrè; yíyọ ara ẹni kúrò fún ìpè kọ̀ọ̀kan jẹ́ nípasẹ̀ request header `x-agentproxy-disabled-guardrails` — kò sí ojú-ọ̀nà enable/disable tí a fi pamọ́.
 
 | Ọ̀nà  | Path                   | Àlàyé                                                                                         |
 | ---- | ---------------------- | --------------------------------------------------------------------------------------------- |

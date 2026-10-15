@@ -116,7 +116,7 @@ UI របស់ dashboard ជាបណ្តោះអាសន្ន ខណៈ�
 បន្ទាប់ពីការបង្កើត។ សូមប្រើ `npm run build` សម្រាប់ការផ្លាស់ប្តូរដែលប៉ះពាល់ដល់ UI របស់ dashboard ឬសម្រាប់
 ការផ្ទៀងផ្ទាត់ release ពេញលេញ។ ប្រូហ្វាល់សម្រាប់អ្នកចូលរួមចំណែកមិនមែនជាការជំនួសការបង្កើតសម្រាប់ release ទេ។
 
-> **កំណត់សម្គាល់អំពីការដាក់ពង្រាយលើ VPS:** ថត image នៅម៉ាស៊ីនពីចម្ងាយ `/usr/lib/node_modules/omniroute/app/`
+> **កំណត់សម្គាល់អំពីការដាក់ពង្រាយលើ VPS:** ថត image នៅម៉ាស៊ីនពីចម្ងាយ `/usr/lib/node_modules/agentproxy/app/`
 > មិនមានការផ្លាស់ប្តូរទេ។ ជំនាញ deploy ប្រើ rsync ដើម្បីធ្វើសមកាលកម្មមាតិកានៃ `dist/` ទៅក្នុងថតនោះ។
 > មានតែផ្លូវលទ្ធផលនៃការបង្កើតនៅក្នុង repository ប៉ុណ្ណោះដែលបានផ្លាស់ប្តូរ (`app/` → `dist/`)។
 
@@ -321,7 +321,7 @@ src/                        # TypeScript (.ts / .tsx)
 │   └── validation/         # schema របស់ Zod v4
 └── sse/                    # pipeline proxy របស់ SSE
 
-open-sse/                   # workspace របស់ @omniroute/open-sse
+open-sse/                   # workspace របស់ @agentproxy/open-sse
 ├── executors/              # module អនុវត្ត executor ចំនួន 89
 ├── handlers/               # request handler ចំនួន 11 (chat, responses, embeddings, images ជាដើម)
 ├── mcp-server/             # server MCP (tool ដាច់ដោយឡែកចំនួន 110, transport ចំនួន 3, scope ចំនួន 33)

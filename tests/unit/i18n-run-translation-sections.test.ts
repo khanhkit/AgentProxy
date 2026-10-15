@@ -104,10 +104,10 @@ test("extractMirrorBody strips the heading, the language bar and the separator",
 // must look past it, or the mirror gets the file name as its title and the
 // front matter (plus a second heading) translated into its body.
 const withFrontMatter =
-  '---\ntitle: "OmniRoute — Uninstall Guide"\nversion: 3.8.40\n---\n\n# OmniRoute — Uninstall Guide\n\nThis guide covers removal.\n';
+  '---\ntitle: "AgentProxy — Uninstall Guide"\nversion: 3.8.40\n---\n\n# AgentProxy — Uninstall Guide\n\nThis guide covers removal.\n';
 
 test("extractTopHeading reads the H1 behind a YAML front-matter block", () => {
-  assert.equal(extractTopHeading(withFrontMatter), "OmniRoute — Uninstall Guide");
+  assert.equal(extractTopHeading(withFrontMatter), "AgentProxy — Uninstall Guide");
   assert.equal(extractTopHeading("# Plain\n\nbody\n"), "Plain");
   assert.equal(extractTopHeading("no heading\n"), null);
 });

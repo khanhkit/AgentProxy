@@ -24,7 +24,7 @@ test("non-streaming: Claude text block with inline <think> leaks into OpenAI mes
   const openai = translateNonStreamingResponse(
     claudeResponseFromM3,
     FORMATS.CLAUDE, // targetFormat = upstream/provider wire format (minimax-cn speaks Claude Messages)
-    FORMATS.OPENAI // sourceFormat = what the client (OmniRoute caller) wants back
+    FORMATS.OPENAI // sourceFormat = what the client (AgentProxy caller) wants back
   ) as { choices: Array<{ message: { content?: string; reasoning_content?: string } }> };
 
   const message = openai.choices[0].message;
