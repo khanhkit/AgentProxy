@@ -10,10 +10,12 @@ import { hasManageScope } from "@/shared/constants/managementScopes";
 
 export type ApiKeyState = "none" | "unresolved" | "invalid" | "valid";
 
+type ApiKeyScopeMetadata = { id: string; scopes?: string[] };
+
 export interface ApiKeyRequestScope {
   apiKey: string | null;
   apiKeyId: string | null;
-  apiKeyMetadata: Awaited<ReturnType<typeof getApiKeyMetadata>>;
+  apiKeyMetadata: ApiKeyScopeMetadata | null;
   keyState: ApiKeyState;
   rejection: Response | null;
   isSessionAuth: boolean;
