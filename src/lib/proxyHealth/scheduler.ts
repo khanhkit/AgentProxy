@@ -501,13 +501,26 @@ export function __recoveryLedgerSizeForTesting(): number {
   return recoveryLedger.size;
 }
 
+let sweepInFlight = false;
+
+function launchSweep(): void {
+  if (sweepInFlight) return;
+  const task = trackLifecycleBackgroundTask("proxy-health-sweep", async () => {
+    sweepInFlight = true;
+    try {
+      await sweep();
+    } finally {
+      sweepInFlight = false;
+    }
+  });
+  void task?.catch((err) => {
+    console.error(`${LOG_PREFIX} Sweep error:`, err);
+  });
+}
+
 function scheduleSweep(): void {
   const interval = getIntervalMs();
-  globalThis.__proxyHealthInterval = setInterval(() => {
-    void trackLifecycleBackgroundTask("proxy-health-sweep", () => sweep())?.catch((err) => {
-      console.error(`${LOG_PREFIX} Sweep error:`, err);
-    });
-  }, interval);
+  globalThis.__proxyHealthInterval = setInterval(launchSweep, interval);
 }
 
 function getRecoveryIntervalMs(): number {
@@ -518,9 +531,11 @@ function getRecoveryIntervalMs(): number {
 function scheduleRecoveryPass(): void {
   const interval = getRecoveryIntervalMs();
   globalThis.__proxyHealthRecoveryInterval = setInterval(() => {
-    void trackLifecycleBackgroundTask("proxy-health-recovery", () => runRecoveryPass())?.catch((err) => {
-      console.error(`${LOG_PREFIX} Recovery error:`, err);
-    });
+    void trackLifecycleBackgroundTask("proxy-health-recovery", () => runRecoveryPass())?.catch(
+      (err) => {
+        console.error(`${LOG_PREFIX} Recovery error:`, err);
+      }
+    );
   }, interval);
 }
 
@@ -531,7 +546,7 @@ export function initProxyHealthCheck(): void {
   globalThis.__proxyHealthStartupTimer = setTimeout(() => {
     globalThis.__proxyHealthStartupTimer = undefined;
     console.log(`${LOG_PREFIX} Starting proxy health scheduler (interval: ${getIntervalMs()}ms)`);
-    void trackLifecycleBackgroundTask("proxy-health-sweep", () => sweep())?.catch(() => {});
+    launchSweep();
     scheduleSweep();
     // The recovery pass runs on its own timer, off by default. The gate
     // lives inside runRecoveryPass, so the timer is cheap when disabled.

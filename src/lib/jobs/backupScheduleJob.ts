@@ -117,7 +117,7 @@ export function startBackupScheduleJob() {
   }
 
   const run = () => {
-    void trackLifecycleBackgroundTask("backup-schedule", runBackupScheduleTick()).catch((error) => {
+    void trackLifecycleBackgroundTask("backup-schedule", runBackupScheduleTick)?.catch((error) => {
       console.error("[BackupSchedule] Tick failed:", error);
     });
   };

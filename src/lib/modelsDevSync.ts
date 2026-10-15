@@ -678,10 +678,14 @@ export function startPeriodicSync(intervalMs?: number): void {
 
     const controller = new AbortController();
     activeSyncAbortController = controller;
-    const promise = trackLifecycleBackgroundTask(
-      "models-dev-sync",
+    const tracked = trackLifecycleBackgroundTask("models-dev-sync", () =>
       syncModelsDev({ signal: controller.signal })
-    ).finally(() => {
+    );
+    if (!tracked) {
+      if (activeSyncAbortController === controller) activeSyncAbortController = null;
+      return Promise.resolve(createAbortedSyncResult(false));
+    }
+    const promise = tracked.finally(() => {
       if (activeSyncAbortController === controller) {
         activeSyncAbortController = null;
       }

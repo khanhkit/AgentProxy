@@ -236,7 +236,7 @@ function armTimer(): void {
         armTimer();
         return;
       }
-      void trackLifecycleBackgroundTask("db-vacuum", runNow()).catch((err) => {
+      void trackLifecycleBackgroundTask("db-vacuum", () => runNow())?.catch((err) => {
         currentState.lastError = err instanceof Error ? err.message : String(err);
       });
     },

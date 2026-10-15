@@ -612,8 +612,8 @@ function startPeriodicSync(intervalMs?: number): void {
   console.log(`[ARENA_ELO_SYNC] Starting periodic sync every ${interval / 1000}s`);
 
   // Initial sync (non-blocking)
-  trackLifecycleBackgroundTask("arena-elo-sync", syncArenaElo())
-    .then((result) => {
+  trackLifecycleBackgroundTask("arena-elo-sync", () => syncArenaElo())
+    ?.then((result) => {
       if (result.success) {
         console.log(
           `[ARENA_ELO_SYNC] Initial sync complete: ${result.modelCount} model intelligence entries`
@@ -628,8 +628,8 @@ function startPeriodicSync(intervalMs?: number): void {
     });
 
   syncTimer = setInterval(() => {
-    trackLifecycleBackgroundTask("arena-elo-sync", syncArenaElo())
-      .then((result) => {
+    trackLifecycleBackgroundTask("arena-elo-sync", () => syncArenaElo())
+      ?.then((result) => {
         if (result.success) {
           console.log(`[ARENA_ELO_SYNC] Periodic sync complete: ${result.modelCount} entries`);
         }

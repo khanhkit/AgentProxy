@@ -982,12 +982,14 @@ export function startCleanupScheduler(): void {
   if (_cleanupSchedulerTimer || startupTimer) return;
 
   const launchPass = (phase: "startup" | "periodic") =>
-    trackLifecycleBackgroundTask("db-cleanup", runScheduledCleanupPass(phase)).catch((err) => {
-      console.error(
-        `[Cleanup] ${phase === "startup" ? "Startup" : "Periodic"} cleanup failed:`,
-        err
-      );
-    });
+    trackLifecycleBackgroundTask("db-cleanup", () => runScheduledCleanupPass(phase))?.catch(
+      (err) => {
+        console.error(
+          `[Cleanup] ${phase === "startup" ? "Startup" : "Periodic"} cleanup failed:`,
+          err
+        );
+      }
+    );
 
   startupTimer = setTimeout(() => {
     startupTimer = null;

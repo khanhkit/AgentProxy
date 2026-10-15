@@ -38,10 +38,11 @@ export function cleanupPidFile(service) {
   } catch {}
 }
 
-export function killAllSubprocesses() {
+export function killAllSubprocesses({ excludePids = [] } = {}) {
+  const excluded = new Set(excludePids);
   for (const service of SERVICES) {
     const pid = readPidFile(service);
-    if (!pid) continue;
+    if (!pid || excluded.has(pid)) continue;
     try {
       process.kill(pid, "SIGTERM");
     } catch {}

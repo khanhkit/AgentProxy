@@ -274,7 +274,7 @@ export function initGracefulShutdown(): void {
   }
 
   const shutdown = (signal: string) => {
-    void globalThis.__agentproxyRequestShutdown?.(signal).then((report) => {
+    void Promise.resolve(globalThis.__agentproxyRequestShutdown?.(signal)).then((report) => {
       // Give sql.js/Emscripten one macrotask to settle libuv async teardown.
       const clean = !report || report.clean !== false;
       setTimeout(() => process.exit(clean ? 0 : 1), 0);

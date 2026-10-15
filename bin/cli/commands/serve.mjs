@@ -32,7 +32,10 @@ import {
 } from "../../../scripts/build/runtime-env.mjs";
 import { resolveTlsOptions } from "../../../scripts/dev/tls-options.mjs";
 import { startDetachedTray, validateTrayOptions } from "../tray/detachedTray.mjs";
-import { resolveShutdownEscalationTimeoutMs } from "../../../src/shared/platform/windowsProcess.ts";
+import {
+  resolveShutdownEscalationTimeoutMs,
+  stopProcessGracefully,
+} from "../../../src/shared/platform/windowsProcess.ts";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const _pkg = JSON.parse(readFileSync(join(__dirname, "..", "..", "..", "package.json"), "utf8"));
@@ -444,11 +447,11 @@ function runWithoutRecovery(serverJs, env, memoryLimit, dashboardPort, apiPort, 
   const shutdown = () => {
     console.log("\n\x1b[33m⏹ Shutting down AgentProxy...\x1b[0m");
     cleanupPidFile("server");
-    server.kill("SIGTERM");
-    setTimeout(() => {
-      server.kill("SIGKILL");
-      process.exit(0);
-    }, resolveShutdownEscalationTimeoutMs(env));
+    if (!server.pid) return;
+    void stopProcessGracefully({
+      pid: server.pid,
+      timeoutMs: resolveShutdownEscalationTimeoutMs(env),
+    });
   };
 
   process.on("SIGINT", shutdown);

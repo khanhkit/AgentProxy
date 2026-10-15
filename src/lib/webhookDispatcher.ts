@@ -18,7 +18,7 @@ export interface WebhookPayload {
 }
 
 interface WebhookLifecycleState {
-  pending: Set<Promise<void>>;
+  pending: Set<Promise<{ failed: number }>>;
   accepting: boolean;
   started: number;
   completed: number;
@@ -253,12 +253,13 @@ export function notifyWebhookEvent(event: WebhookEvent, data: Record<string, any
   // lifecycle coordinator can drain delivery + DB-record work before DB close.
   const state = getWebhookLifecycleState();
   if (!state.accepting) return;
-  const delivery = dispatchEvent(event, data);
+  const delivery = dispatchEventDetailed(event, data);
   state.started += 1;
   state.pending.add(delivery);
   void delivery.then(
-    () => {
+    (result) => {
       state.completed += 1;
+      state.failed += result.failed;
       state.pending.delete(delivery);
     },
     () => {
@@ -275,6 +276,13 @@ export function notifyWebhookEvent(event: WebhookEvent, data: Record<string, any
  * custom uses HMAC-signed deliverWebhook.
  */
 export async function dispatchEvent(event: WebhookEvent, data: Record<string, any>): Promise<void> {
+  await dispatchEventDetailed(event, data);
+}
+
+async function dispatchEventDetailed(
+  event: WebhookEvent,
+  data: Record<string, any>
+): Promise<{ failed: number }> {
   const { getEnabledWebhooks, recordWebhookDelivery, disableWebhooksWithHighFailures } =
     await import("./db/webhooks");
   const { insertDelivery } = await import("./db/webhookDeliveries");
@@ -342,6 +350,12 @@ export async function dispatchEvent(event: WebhookEvent, data: Record<string, an
       return { webhookId: wh.id, ...result };
     });
 
-  await Promise.allSettled(deliveries);
+  const settled = await Promise.allSettled(deliveries);
+  const failed = settled.reduce(
+    (count, result) =>
+      count + (result.status === "rejected" || result.value.success === false ? 1 : 0),
+    0
+  );
   disableWebhooksWithHighFailures(10);
+  return { failed };
 }

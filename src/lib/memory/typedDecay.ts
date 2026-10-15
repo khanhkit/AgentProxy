@@ -229,11 +229,11 @@ export function startMemoryDecaySweep(intervalMs?: number): void {
   if (!interval || interval <= 0) return;
 
   const tick = () => {
-    void trackLifecycleBackgroundTask("memory-decay-sweep", sweepDecayedMemories({ config })).catch(
-      () => {
-        // Swallow — the sweep is advisory hygiene; the next tick retries.
-      }
-    );
+    void trackLifecycleBackgroundTask("memory-decay-sweep", () =>
+      sweepDecayedMemories({ config })
+    )?.catch(() => {
+      // Swallow — the sweep is advisory hygiene; the next tick retries.
+    });
   };
 
   startupTimer = setTimeout(() => {

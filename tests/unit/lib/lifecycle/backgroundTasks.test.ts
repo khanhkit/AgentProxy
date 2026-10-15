@@ -15,7 +15,7 @@ test("tracked background work remains drainable through settlement", async () =>
   const pending = new Promise<void>((resolve) => {
     release = resolve;
   });
-  const tracked = trackLifecycleBackgroundTask("db-writer", pending);
+  const tracked = trackLifecycleBackgroundTask("db-writer", () => pending);
   assert.equal(__getLifecycleBackgroundTaskCountForTests(), 1);
 
   let drained = false;
@@ -33,7 +33,7 @@ test("tracked background work remains drainable through settlement", async () =>
 
 test("a rejected background task does not make lifecycle drain reject", async () => {
   __resetLifecycleBackgroundTasksForTests();
-  const tracked = trackLifecycleBackgroundTask("rejected", Promise.reject(new Error("boom")));
+  const tracked = trackLifecycleBackgroundTask("rejected", () => Promise.reject(new Error("boom")));
   await assert.rejects(tracked, /boom/);
   await drainLifecycleBackgroundTasks();
   assert.equal(__getLifecycleBackgroundTaskCountForTests(), 0);

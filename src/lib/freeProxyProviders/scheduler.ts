@@ -121,20 +121,17 @@ export function initFreeProxyAutoSync(): void {
   globalThis.__freeProxyAutoSyncEnabled = true;
   console.log(`${LOG_PREFIX} Starting scheduler (interval: ${intervalMs}ms)`);
 
-  void trackLifecycleBackgroundTask(
-    "free-proxy-sync-bootstrap",
-    (async () => {
-      const initialDelayMs = await computeInitialDelayMs(intervalMs);
+  void trackLifecycleBackgroundTask("free-proxy-sync-bootstrap", async () => {
+    const initialDelayMs = await computeInitialDelayMs(intervalMs);
+    if (!globalThis.__freeProxyAutoSyncEnabled) return;
+    globalThis.__freeProxyAutoSyncStartupTimer = setTimeout(() => {
+      globalThis.__freeProxyAutoSyncStartupTimer = undefined;
       if (!globalThis.__freeProxyAutoSyncEnabled) return;
-      globalThis.__freeProxyAutoSyncStartupTimer = setTimeout(() => {
-        globalThis.__freeProxyAutoSyncStartupTimer = undefined;
-        if (!globalThis.__freeProxyAutoSyncEnabled) return;
-        void trackLifecycleBackgroundTask("free-proxy-sync", () => runCycle());
-        scheduleInterval(intervalMs);
-      }, initialDelayMs);
-      globalThis.__freeProxyAutoSyncStartupTimer.unref?.();
-    })()
-  ).catch((error) => {
+      void trackLifecycleBackgroundTask("free-proxy-sync", () => runCycle());
+      scheduleInterval(intervalMs);
+    }, initialDelayMs);
+    globalThis.__freeProxyAutoSyncStartupTimer.unref?.();
+  })?.catch((error) => {
     globalThis.__freeProxyAutoSyncEnabled = false;
     console.error(`${LOG_PREFIX} Scheduler bootstrap failed:`, error);
   });

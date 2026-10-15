@@ -77,3 +77,19 @@ test("webhook drain closes notification admission before it reports empty", asyn
   assert.equal(after.started, 0, "notifications arriving after drain begins must not be admitted");
   assert.equal(after.pending, 0);
 });
+
+test("webhook lifecycle stats count fulfilled dispatches containing failed deliveries", async () => {
+  dispatcher.__resetWebhookLifecycleForTests();
+  const originalFetch = global.fetch;
+  global.fetch = (async () => new Response(null, { status: 400 })) as typeof fetch;
+  try {
+    dispatcher.notifyWebhookEvent("request.completed", { requestId: "req-failed-delivery" });
+    const stats = await dispatcher.drainPendingWebhookDeliveries();
+    assert.equal(stats.pending, 0);
+    assert.equal(stats.started, 1);
+    assert.equal(stats.completed, 1);
+    assert.ok(stats.failed >= 1, "a 4xx delivery failure must be reflected in lifecycle stats");
+  } finally {
+    global.fetch = originalFetch;
+  }
+});

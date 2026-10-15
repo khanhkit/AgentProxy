@@ -18,6 +18,7 @@
  */
 
 import { trackLifecycleBackgroundTask } from "@/lib/lifecycle/backgroundTasks";
+import { isDraining } from "@/lib/shutdownState";
 import { WebSocketServer, WebSocket } from "ws";
 import { createServer, type IncomingMessage, type ServerResponse } from "http";
 import { createHash, randomUUID } from "crypto";
@@ -608,6 +609,9 @@ export async function startLiveDashboardServer(
   host = DEFAULT_HOST
 ): Promise<import("http").Server> {
   await liveWsClosePromise;
+  if (isDraining()) {
+    throw new Error("[LiveWS] Server startup rejected during lifecycle drain");
+  }
   // Safety net: a client aborting a connection can emit `Error: aborted`/
   // ECONNRESET on the request stream; without this the single missed listener
   // becomes an uncaughtException that kills the server. Benign aborts are
@@ -873,12 +877,9 @@ export function isLiveWsEnabled(): boolean {
 if (!isBuildOrTest() && isLiveWsEnabled()) {
   const port = parseInt(process.env.LIVE_WS_PORT || String(DEFAULT_PORT), 10);
   const host = process.env.LIVE_WS_HOST || DEFAULT_HOST;
-  void trackLifecycleBackgroundTask("live-ws-startup", startLiveDashboardServer(port, host)).catch(
-    (err) => {
-      console.error(
-        "[LiveWS] Failed to start: %s",
-        err instanceof Error ? err.message : String(err)
-      );
-    }
-  );
+  void trackLifecycleBackgroundTask("live-ws-startup", () =>
+    startLiveDashboardServer(port, host)
+  )?.catch((err) => {
+    console.error("[LiveWS] Failed to start: %s", err instanceof Error ? err.message : String(err));
+  });
 }

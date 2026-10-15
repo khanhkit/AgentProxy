@@ -38,18 +38,46 @@ test("main-runtime durable background schedulers register active work with lifec
 
 test("shutdown-sensitive scheduler callbacks defer work until lifecycle admission", () => {
   const cases: Array<[string, RegExp]> = [
-    ["src/domain/quotaCache.ts", /trackLifecycleBackgroundTask\("quota-cache-refresh",\s*\(\) => backgroundRefreshTick\(\)\)/],
-    ["src/lib/credentialHealth/scheduler.ts", /trackLifecycleBackgroundTask\("credential-health-sweep",\s*\(\) => sweep\(\)\)/],
-    ["src/lib/freeProxyProviders/scheduler.ts", /trackLifecycleBackgroundTask\("free-proxy-sync",\s*\(\) => runCycle\(\)\)/],
-    ["src/lib/proxyHealth/scheduler.ts", /trackLifecycleBackgroundTask\("proxy-health-sweep",\s*\(\) => sweep\(\)\)/],
-    ["src/lib/proxyHealth/scheduler.ts", /trackLifecycleBackgroundTask\("proxy-health-recovery",\s*\(\) => runRecoveryPass\(\)\)/],
-    ["src/lib/quota/connectionRecovery.ts", /trackLifecycleBackgroundTask\([\s\S]*?"connection-recovery"[\s\S]*?\(\) => runConnectionRecoveryTick/],
-    ["src/lib/radar/scheduler.ts", /trackLifecycleBackgroundTask\("radar-sync",\s*\(\) => radarSchedulerTick\(deps\)\)/],
-    ["src/lib/services/quotaAutoPing.ts", /trackLifecycleBackgroundTask\([\s\S]*?"quota-auto-ping"[\s\S]*?\(\) => runQuotaAutoPingTick/],
+    [
+      "src/domain/quotaCache.ts",
+      /trackLifecycleBackgroundTask\("quota-cache-refresh",\s*\(\) => backgroundRefreshTick\(\)\)/,
+    ],
+    [
+      "src/lib/credentialHealth/scheduler.ts",
+      /trackLifecycleBackgroundTask\("credential-health-sweep",\s*\(\) => sweep\(\)\)/,
+    ],
+    [
+      "src/lib/freeProxyProviders/scheduler.ts",
+      /trackLifecycleBackgroundTask\("free-proxy-sync",\s*\(\) => runCycle\(\)\)/,
+    ],
+    [
+      "src/lib/proxyHealth/scheduler.ts",
+      /trackLifecycleBackgroundTask\("proxy-health-sweep",\s*async \(\) =>[\s\S]*?await sweep\(\)/,
+    ],
+    [
+      "src/lib/proxyHealth/scheduler.ts",
+      /trackLifecycleBackgroundTask\("proxy-health-recovery",\s*\(\) => runRecoveryPass\(\)\)/,
+    ],
+    [
+      "src/lib/quota/connectionRecovery.ts",
+      /trackLifecycleBackgroundTask\([\s\S]*?"connection-recovery"[\s\S]*?\(\) => runConnectionRecoveryTick/,
+    ],
+    [
+      "src/lib/radar/scheduler.ts",
+      /trackLifecycleBackgroundTask\("radar-sync",\s*async \(\) =>[\s\S]*?radarSchedulerTick\(deps\)/,
+    ],
+    [
+      "src/lib/services/quotaAutoPing.ts",
+      /trackLifecycleBackgroundTask\([\s\S]*?"quota-auto-ping"[\s\S]*?\(\) => runQuotaAutoPingTick/,
+    ],
   ];
 
   for (const [path, pattern] of cases) {
-    assert.match(source(path), pattern, `${path} must defer scheduler work until lifecycle admission`);
+    assert.match(
+      source(path),
+      pattern,
+      `${path} must defer scheduler work until lifecycle admission`
+    );
   }
 });
 
@@ -57,10 +85,7 @@ test("periodic sync schedulers keep at most one sync in flight", () => {
   const arena = source("src/lib/arenaEloSync.ts");
   assert.match(arena, /if \(syncInProgress\)/);
 
-  for (const path of [
-    "src/lib/pricingSync.ts",
-    "src/lib/catalog/openrouterProviderStats.ts",
-  ]) {
+  for (const path of ["src/lib/pricingSync.ts", "src/lib/catalog/openrouterProviderStats.ts"]) {
     const body = source(path);
     assert.match(body, /let syncInFlight = false/);
     assert.match(body, /if \(syncInFlight\) return null;/);
@@ -187,7 +212,7 @@ test("scheduler lifecycle error paths stay observable and drains cannot resurrec
   const freeProxy = source("src/lib/freeProxyProviders/scheduler.ts");
   assert.match(
     freeProxy,
-    /trackLifecycleBackgroundTask\([\s\S]*?"free-proxy-sync-bootstrap"[\s\S]*?\)\.catch/
+    /trackLifecycleBackgroundTask\([\s\S]*?"free-proxy-sync-bootstrap"[\s\S]*?\)\?\.catch/
   );
 
   const graceful = source("src/lib/gracefulShutdown.ts");
@@ -203,12 +228,19 @@ test("runtime config hot reload closes admission before drain", () => {
   assert.match(hotReload, /stopRuntimeConfigHotReload[\s\S]*?reloadStopped\s*=\s*true/);
 });
 
-test("rate-limit shutdown continues limiter cleanup when persistence fails", () => {
+test("rate-limit shutdown drains limiters before final persistence and still propagates persistence failure", () => {
   const manager = source("open-sse/services/rateLimitManager.ts");
-  assert.match(manager, /let\s+persistenceError/);
-  assert.match(manager, /catch\s*\(error\)[\s\S]*?persistenceError\s*=\s*error[\s\S]*?const stops/);
+  const shutdown = manager.slice(
+    manager.indexOf("export function shutdownRateLimitManager"),
+    manager.indexOf("globalThis.__agentproxyShutdownRateLimit")
+  );
+  const stops = shutdown.indexOf("const stops");
+  const persistence = shutdown.indexOf("persistLearnedLimitsNow");
+  assert.ok(stops >= 0 && persistence > stops, "limiter drain must precede final persistence");
+  assert.match(shutdown, /let\s+persistenceError/);
+  assert.match(shutdown, /catch\s*\(error\)[\s\S]*?persistenceError\s*=\s*error/);
   assert.match(
-    manager,
+    shutdown,
     /limiters\.clear\(\)[\s\S]*?if\s*\(persistenceError\)\s*throw\s+persistenceError/
   );
 });

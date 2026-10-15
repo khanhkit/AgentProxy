@@ -68,6 +68,7 @@ export interface RadarSchedulerDeps {
 }
 
 let timer: ReturnType<typeof setInterval> | null = null;
+let tickInFlight = false;
 
 /**
  * Best-effort referrals sync, gated on its own (shorter) staleness window.
@@ -147,12 +148,19 @@ export function ensureRadarSyncScheduler(deps: RadarSchedulerDeps = {}): boolean
   if (timer) return false;
 
   const tick = () => {
-    void trackLifecycleBackgroundTask("radar-sync", () => radarSchedulerTick(deps))?.catch(
-      (err: unknown) => {
-        const msg = err instanceof Error ? err.message : String(err);
-        console.warn("[RADAR_SYNC] Scheduled sync tick failed (non-fatal):", msg);
+    if (tickInFlight) return;
+    const task = trackLifecycleBackgroundTask("radar-sync", async () => {
+      tickInFlight = true;
+      try {
+        return await radarSchedulerTick(deps);
+      } finally {
+        tickInFlight = false;
       }
-    );
+    });
+    void task?.catch((err: unknown) => {
+      const msg = err instanceof Error ? err.message : String(err);
+      console.warn("[RADAR_SYNC] Scheduled sync tick failed (non-fatal):", msg);
+    });
   };
 
   timer = (deps.setIntervalFn ?? setInterval)(tick, RADAR_SCHEDULER_TICK_MS);

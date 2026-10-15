@@ -351,10 +351,22 @@ export function shutdownRateLimitManager(): Promise<void> {
   if (shutdownPromise) return shutdownPromise;
   shutdownPromise = (async () => {
     stopRateLimitWatchdog();
-    let persistenceError: unknown;
+    const needsFinalPersistence = persistTimer !== null;
     if (persistTimer) {
       clearTimeout(persistTimer);
       persistTimer = null;
+    }
+
+    // Stop queue admission/drain first. Final settings persistence can involve
+    // slow storage and must not consume the lifecycle budget while limiters are
+    // still active.
+    const stops = Array.from(limiters.values(), (limiter) =>
+      trackAsyncOperation(Promise.resolve(limiter.stop({ dropWaitingJobs: false })))
+    );
+    if (stops.length > 0) await Promise.allSettled(stops);
+
+    let persistenceError: unknown;
+    if (needsFinalPersistence) {
       try {
         await trackAsyncOperation(persistLearnedLimitsNow());
       } catch (error) {
@@ -362,10 +374,6 @@ export function shutdownRateLimitManager(): Promise<void> {
         errorRateLimit("[RATE-LIMIT] Failed to persist learned limits during shutdown:", error);
       }
     }
-    const stops = Array.from(limiters.values(), (limiter) =>
-      trackAsyncOperation(Promise.resolve(limiter.stop({ dropWaitingJobs: false })))
-    );
-    if (stops.length > 0) await Promise.allSettled(stops);
     if (pendingAsyncOperations.size > 0)
       await Promise.allSettled(Array.from(pendingAsyncOperations));
     limiters.clear();

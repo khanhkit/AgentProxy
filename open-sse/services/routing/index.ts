@@ -115,13 +115,18 @@ export function routingOtelStats(): { buffered: number; dropped: number } | null
 }
 
 export async function shutdownRoutingObservability(): Promise<void> {
-  initialized = false;
-  if (!otelSink) return;
+  if (!otelSink) {
+    initialized = false;
+    return;
+  }
   const sink = otelSink;
   otelSink = null;
   unregisterOtelSink?.();
   unregisterOtelSink = null;
+  // Keep initialized=true while the old sink drains so concurrent emit/init
+  // calls cannot install a replacement sink during shutdown.
   await sink.stop();
+  initialized = false;
 }
 
 function listRoutingSinkNames(): string[] {
