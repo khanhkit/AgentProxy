@@ -265,7 +265,7 @@ export class ServerSupervisor {
       });
       // Clean up siblings, but never SIGTERM the same server PID while its
       // platform-aware graceful stop is in flight.
-      killAllSubprocesses({ excludePids: [childPid] });
+      killAllSubprocesses({ excludePids: [childPid, process.pid] });
       return;
     }
     killAllSubprocesses();

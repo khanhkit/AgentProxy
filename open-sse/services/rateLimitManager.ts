@@ -352,19 +352,13 @@ export function shutdownRateLimitManager(): Promise<void> {
   shutdownPromise = (async () => {
     stopRateLimitWatchdog();
     const needsFinalPersistence = persistTimer !== null;
-    if (persistTimer) {
-      clearTimeout(persistTimer);
-      persistTimer = null;
-    }
-
-    // Stop queue admission/drain first. Final settings persistence can involve
-    // slow storage and must not consume the lifecycle budget while limiters are
-    // still active.
+    if (persistTimer) clearTimeout(persistTimer);
+    persistTimer = null;
+    // Final persistence can block; drain limiter queues before starting it.
     const stops = Array.from(limiters.values(), (limiter) =>
       trackAsyncOperation(Promise.resolve(limiter.stop({ dropWaitingJobs: false })))
     );
     if (stops.length > 0) await Promise.allSettled(stops);
-
     let persistenceError: unknown;
     if (needsFinalPersistence) {
       try {

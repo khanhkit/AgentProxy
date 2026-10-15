@@ -21,7 +21,11 @@ test("supervisor broad cleanup excludes the child already undergoing graceful st
   const supervisor = source("bin/cli/runtime/processSupervisor.mjs");
   const pid = source("bin/cli/utils/pid.mjs");
   assert.match(pid, /killAllSubprocesses\([^)]*excludePids/);
-  assert.match(supervisor, /killAllSubprocesses\(\{\s*excludePids:\s*\[childPid\]/);
+  assert.match(
+    supervisor,
+    /killAllSubprocesses\(\{\s*excludePids:\s*\[childPid, process\.pid\]/,
+    "supervisor cleanup must exclude both the gracefully-stopping child and itself"
+  );
 });
 
 test("rate-limit shutdown stops limiters before final persistence can block", () => {
