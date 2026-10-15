@@ -39,15 +39,27 @@ listed below.
 
 ## Combined verification — Gen10/S1
 
-Fresh pre-integration evidence on the AP-ISS-0197 worktree:
+Pre-integration verification on the AP-ISS-0197 worktree:
 
-- Focused 15-file AP-ISS-0197 regression set: **91/91 PASS**.
+- Focused AP-ISS-0197 regression set: **91/91 PASS**.
 - `npm run typecheck:core`: PASS.
 - `npm run check:open-sse-typecheck`: PASS.
 - `npm run check:route-guard-membership`: PASS.
 - `npm run check:public-creds`: PASS.
-- `npm run test:security`: **7/7 PASS**.
-- Changed-file ESLint: **37 files PASS** using the repository suppression bank plus `--pass-on-unpruned-suppressions`.
+- `npm run test:security`: PASS.
+- Changed-file ESLint: PASS using the repository suppression bank plus `--pass-on-unpruned-suppressions`.
 - Repository-wide `npm run lint`: blocked only by pre-existing unused suppression-count hygiene; a prune check on the only two changed suppressed files (`apiV1.ts`, `gemini.ts`) leaves their suppression entries unchanged.
-- `npm run check:secrets`: documented environment skip because `gitleaks` is unavailable.
-- Full `npm test`: still running under its original bounded execution at the time this ledger update was written; terminal outcome is recorded in final task evidence rather than fabricated here.
+- `npm run check:secrets`: environment SKIP because `gitleaks` is unavailable.
+- Bounded full `npm test` was not treated as green: at the ~30-minute boundary Node reported **10,973 tests / 6,012 pass / 0 fail / 4,959 cancelled / 2 skipped**. The outer wrapper did not persist `FULL_TEST_RC`; therefore no exit code is fabricated and this run is recorded as incomplete timeout evidence, not a test failure or pass.
+
+Protected-main integration and exact-head verification:
+
+- Fetched protected `origin/main` at `166b4cbb52595005522d2aed5d47282a0942918e` and merged it without conflict.
+- The sole overlapping file, `open-sse/services/cache/embeddingClient.ts`, preserves both AP-ISS-0195 SSRF/cooldown hardening and AP-ISS-0197 embedding-dimension propagation.
+- Post-merge head `315e10e4924293b3a6c7787bd62695948573c9ce`: conservative focused superset **97/97 PASS**, including `tests/unit/embedding-client-ssrf-0195.test.ts` and the chat route-shape gate.
+- Post-merge `npm run test:security`: **23/23 PASS**.
+- Post-merge core and Open-SSE typechecks: PASS; Open-SSE reports `openSseTypecheckErrors=0`.
+- Post-merge route-guard membership and public-credential checks: PASS.
+- Post-merge scoped ESLint over AP-ISS-0197 changed TypeScript files: PASS with the repository suppression bank.
+- Post-merge `git diff --check`: PASS.
+- Hosted PR/check evidence is recorded in the canonical KitControl terminal handoff after publication; this issue is not DONE until that evidence is green/terminal.
