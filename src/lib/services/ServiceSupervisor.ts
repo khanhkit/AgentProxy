@@ -61,6 +61,16 @@ export class ServiceSupervisor extends EventEmitter {
     this.buffer = new RingBuffer(config.logsBufferBytes);
     this.checker = new HealthChecker(config.healthUrl, config.healthIntervalMs, (h) => {
       this.health = h;
+      if (
+        h === "healthy" &&
+        this.state === "starting" &&
+        this.config.healthFailureDuringStartup === "tolerate"
+      ) {
+        this.lastError = null;
+        this.setState("running");
+        void setToolStatus(this.config.tool, "running", this.pid ?? undefined);
+        return;
+      }
       this.emit("stateChange", this.getStatus());
       // A service that fails FAILURE_THRESHOLD consecutive health probes will
       // not recover by itself. Stop the poller and surface an explicit error
@@ -223,7 +233,17 @@ export class ServiceSupervisor extends EventEmitter {
         return this.getStatus();
       }
 
-      this.setState("running");
+      // Interactive services such as OpenWA may legitimately remain unreachable
+      // while waiting for a QR pairing. Keep them in "starting" until a later
+      // healthy probe promotes them through the HealthChecker callback above.
+      if (
+        this.config.healthFailureDuringStartup === "tolerate" &&
+        this.checker.getHealth() !== "healthy"
+      ) {
+        return this.getStatus();
+      }
+
+      if (this.state !== "running") this.setState("running");
       await setToolStatus(this.config.tool, "running", this.pid ?? undefined);
 
       return this.getStatus();
