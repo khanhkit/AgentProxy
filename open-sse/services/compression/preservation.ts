@@ -123,16 +123,16 @@ export function extractPreservedBlocks(
       kind: "system_instruction",
     },
   ];
-  // Custom regions keep their historical precedence, but fenced code is opaque so a
-  // user regex cannot fragment a fence before the whole block is preserved.
-  for (const { pattern, kind } of compileUserPatterns(options.preservePatterns)) {
-    result = replacePatternOutsideFences(result, pattern, kind, addBlock);
+  // System instruction envelopes are security-sensitive atomic regions: preserve
+  // them before user patterns so a custom match cannot fragment the delimiters.
+  for (const { pattern, kind } of systemPatterns) {
+    result = replacePattern(result, pattern, kind, addBlock);
   }
 
-  for (const { pattern, kind } of systemPatterns) {
-    // System instruction envelopes are themselves opaque and may legitimately
-    // contain fenced code, so preserve the whole envelope before fence extraction.
-    result = replacePattern(result, pattern, kind, addBlock);
+  // Fenced code is also opaque so a user regex cannot span across a fence and
+  // absorb surrounding prose. System envelopes above are already tombstoned.
+  for (const { pattern, kind } of compileUserPatterns(options.preservePatterns)) {
+    result = replacePatternOutsideFences(result, pattern, kind, addBlock);
   }
 
   result = extractFencedCodeBlocks(result, (content) => addBlock(content, "fenced_code"));

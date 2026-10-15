@@ -78,6 +78,29 @@ test("AP-ISS-0196 review: credentialed provider rejects a custom transport that 
   assert.equal(calls, 0);
 });
 
+test("AP-ISS-0196 review: unauthenticated provider also rejects an unpinned custom transport", async () => {
+  const config = parseProviderConfig(`providers:
+  - id: unpinned-custom
+    kind: openai
+    baseUrl: http://127.0.0.1:8899
+    model: test-model
+`);
+  const router = new ProviderRouter(config);
+  let calls = 0;
+  await assert.rejects(
+    router.complete(
+      { messages: [{ role: "user", content: "hi" }] },
+      "unpinned-custom",
+      async () => {
+        calls++;
+        return Response.json({ ok: true });
+      }
+    ),
+    /custom transport.*DNS pin|DNS pin.*custom transport/i
+  );
+  assert.equal(calls, 0);
+});
+
 test("AP-ISS-0196: Anthropic adapter translates OpenAI system messages before dispatch", async () => {
   const config = parseProviderConfig(`providers:
   - id: anthropic
@@ -87,20 +110,24 @@ test("AP-ISS-0196: Anthropic adapter translates OpenAI system messages before di
 `);
   const router = new ProviderRouter(config);
   let captured: Record<string, unknown> | null = null;
-  await router.complete(
-    {
-      messages: [
-        { role: "system", content: "keep this policy" },
-        { role: "user", content: "hello" },
-      ],
-      max_tokens: 64,
-    },
-    "anthropic",
-    async (_url, init) => {
-      captured = JSON.parse(String(init?.body ?? "{}"));
-      return new Response('{"content":[]}', { status: 200 });
-    }
-  );
+  setSafeOutboundPinnedFetchTestOverride(() => async (_url, init) => {
+    captured = JSON.parse(String(init?.body ?? "{}"));
+    return new Response('{"content":[]}', { status: 200 });
+  });
+  try {
+    await router.complete(
+      {
+        messages: [
+          { role: "system", content: "keep this policy" },
+          { role: "user", content: "hello" },
+        ],
+        max_tokens: 64,
+      },
+      "anthropic"
+    );
+  } finally {
+    setSafeOutboundPinnedFetchTestOverride(undefined);
+  }
   assert.ok(captured);
   const messages = captured.messages as Array<{ role?: string }>;
   assert.ok(Array.isArray(messages));
@@ -136,10 +163,8 @@ test("AP-ISS-0196 review: Anthropic adapter normalizes non-stream success to Ope
     model: claude-sonnet-4-5
 `);
   const router = new ProviderRouter(config);
-  const response = await router.complete(
-    { messages: [{ role: "user", content: "hello" }], stream: false },
-    "anthropic-response",
-    async () =>
+  setSafeOutboundPinnedFetchTestOverride(
+    () => async () =>
       Response.json({
         id: "msg_1",
         type: "message",
@@ -150,6 +175,15 @@ test("AP-ISS-0196 review: Anthropic adapter normalizes non-stream success to Ope
         usage: { input_tokens: 3, output_tokens: 2 },
       })
   );
+  let response: Response;
+  try {
+    response = await router.complete(
+      { messages: [{ role: "user", content: "hello" }], stream: false },
+      "anthropic-response"
+    );
+  } finally {
+    setSafeOutboundPinnedFetchTestOverride(undefined);
+  }
   const body = await response.json();
   assert.equal(body.object, "chat.completion");
   assert.equal(body.choices?.[0]?.message?.content, "hello back");
@@ -170,10 +204,8 @@ test("AP-ISS-0196 review: Anthropic adapter normalizes streaming success to Open
     'event: message_delta\ndata: {"type":"message_delta","delta":{"stop_reason":"end_turn"},"usage":{"output_tokens":1}}\n\n',
     'event: message_stop\ndata: {"type":"message_stop"}\n\n',
   ].join("");
-  const response = await router.complete(
-    { messages: [{ role: "user", content: "hello" }], stream: true },
-    "anthropic-stream",
-    async () =>
+  setSafeOutboundPinnedFetchTestOverride(
+    () => async () =>
       new Response(anthropicSse, {
         status: 200,
         headers: {
@@ -183,6 +215,15 @@ test("AP-ISS-0196 review: Anthropic adapter normalizes streaming success to Open
         },
       })
   );
+  let response: Response;
+  try {
+    response = await router.complete(
+      { messages: [{ role: "user", content: "hello" }], stream: true },
+      "anthropic-stream"
+    );
+  } finally {
+    setSafeOutboundPinnedFetchTestOverride(undefined);
+  }
   assert.equal(
     response.headers.get("content-encoding"),
     null,

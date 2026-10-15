@@ -30,7 +30,7 @@ export function capSettingsWithinBudget(args: {
   } = args;
   const settings = requestCapSettings(cap);
   settings.minTime = Math.max(globalMinTimeMs, connectionMinTimeMs ?? 0, settings.minTime);
-  if (queueBudgetMs === 0 || settings.minTime <= queueBudgetMs) return settings;
+  if (queueBudgetMs <= 0 || settings.minTime <= queueBudgetMs) return settings;
   warn(
     `[RATE-LIMIT] ${provider}:${connectionId.slice(0, 8)} — ignoring ${source} cap of ${cap.requests} request(s) per ${Math.ceil(cap.windowMs / 1000)}s: ${settings.minTime}ms between requests exceeds the ${queueBudgetMs}ms queue budget (raise the request queue maxWaitMs to honour it)`
   );

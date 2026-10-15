@@ -60,3 +60,20 @@ test("AP-ISS-0196: unlimited queue wait accepts a valid learned request cap", ()
   assert.equal(settings.minTime, 12_000);
   assert.deepEqual(warnings, []);
 });
+
+test("AP-ISS-0196 review: negative queue wait also disables the learned-cap budget", () => {
+  const warnings: string[] = [];
+  const settings = capSettingsWithinBudget({
+    provider: "openai",
+    connectionId: "conn-negative-unlimited-cap",
+    cap: { requests: 5, windowMs: 60_000 },
+    source: "learned",
+    globalMinTimeMs: 0,
+    queueBudgetMs: -1,
+    warn: (message) => warnings.push(message),
+  });
+
+  assert.ok(settings, "non-positive maxWaitMs disables the queue wait deadline");
+  assert.equal(settings.minTime, 12_000);
+  assert.deepEqual(warnings, []);
+});

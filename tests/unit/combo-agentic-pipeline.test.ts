@@ -36,6 +36,18 @@ test("agentic detector recognizes trailing tool results across supported request
     true
   );
   assert.equal(
+    hasTrailingToolResult({
+      messages: [{ role: "user", content: [{ type: "custom_tool_call_output", call_id: "c2" }] }],
+    }),
+    true
+  );
+  assert.equal(
+    hasTrailingToolResult({
+      messages: [{ role: "user", content: [{ type: "local_shell_call_output", call_id: "s1" }] }],
+    }),
+    true
+  );
+  assert.equal(
     hasTrailingToolResult({ input: [{ type: "function_call_output", call_id: "c1" }] }),
     true
   );
@@ -65,6 +77,16 @@ test("agentic detector counts completed rounds for bounded sequential loops in e
       messages: [
         { role: "tool", content: "one" },
         { role: "user", content: [{ type: "tool_result", tool_use_id: "two" }] },
+      ],
+    }),
+    2
+  );
+  assert.equal(
+    countToolResultTurns({
+      messages: [
+        { role: "user", content: "run tools" },
+        { role: "user", content: [{ type: "custom_tool_call_output", call_id: "custom" }] },
+        { role: "user", content: [{ type: "local_shell_call_output", call_id: "shell" }] },
       ],
     }),
     2

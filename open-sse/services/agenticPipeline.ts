@@ -36,6 +36,13 @@ type RouteDecision = {
 
 const ROUTE_RE = /^\s*AGENTPROXY_ROUTE:\s*(TOOLS|FINAL)\b\s*([\s\S]*)$/i;
 const DEFAULT_MAX_TOOL_ROUNDS = 8;
+const TOOL_RESULT_CONTENT_TYPES = new Set([
+  "tool_result",
+  "function_call_output",
+  "custom_tool_call_output",
+  "computer_call_output",
+  "local_shell_call_output",
+]);
 
 function stepModel(step: PipelineStep): string {
   return "target" in step ? step.target.modelStr : step.model;
@@ -73,12 +80,7 @@ export function hasTrailingToolResult(body: Body): boolean {
   if (messages?.length) {
     const last = asRecord(messages[messages.length - 1]);
     if (last?.role === "tool") return true;
-    if (
-      contentHasType(
-        last?.content,
-        new Set(["tool_result", "function_call_output", "computer_call_output"])
-      )
-    ) {
+    if (contentHasType(last?.content, TOOL_RESULT_CONTENT_TYPES)) {
       return true;
     }
   }
@@ -97,7 +99,7 @@ export function hasTrailingToolResult(body: Body): boolean {
     ) {
       return true;
     }
-    if (contentHasType(last?.content, new Set(["tool_result", "function_call_output"]))) {
+    if (contentHasType(last?.content, TOOL_RESULT_CONTENT_TYPES)) {
       return true;
     }
   }
@@ -153,17 +155,16 @@ export function countToolResultTurns(body: Body): number {
 
   const messages = Array.isArray(body.messages) ? body.messages : [];
   let boundary = 0;
-  const toolResultTypes = new Set(["tool_result", "function_call_output"]);
   for (let index = messages.length - 1; index >= 0; index--) {
     const record = asRecord(messages[index]);
-    if (record?.role === "user" && !contentHasType(record.content, toolResultTypes)) {
+    if (record?.role === "user" && !contentHasType(record.content, TOOL_RESULT_CONTENT_TYPES)) {
       boundary = index + 1;
       break;
     }
   }
   return messages.slice(boundary).filter((message) => {
     const record = asRecord(message);
-    return record?.role === "tool" || contentHasType(record?.content, toolResultTypes);
+    return record?.role === "tool" || contentHasType(record?.content, TOOL_RESULT_CONTENT_TYPES);
   }).length;
 }
 

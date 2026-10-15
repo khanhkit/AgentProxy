@@ -46,9 +46,9 @@ function providerFetch(
   fetchImpl: typeof fetch
 ): Promise<Response> {
   const configuredGuard = getProviderOutboundGuard();
-  if (config.apiKey && fetchImpl !== fetch) {
+  if (fetchImpl !== fetch) {
     return Promise.reject(
-      new Error("Credentialed provider requests cannot use a custom transport without DNS pinning")
+      new Error("Provider requests cannot use a custom transport without DNS pinning")
     );
   }
   return safeOutboundFetch(url, {

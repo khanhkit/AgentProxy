@@ -16,6 +16,7 @@ export const MODEL_ACCESS_DENIED_PATTERNS = [
   /\bunknown\s+provider\s+for\s+model\b/i,
   /\b(?:access|permission)\b[\s\S]{0,30}?\bdenied\b[\s\S]{0,60}?\bmodel\b/i,
   /\b(?:do(?:es)?\s+not|don't|doesn't)\s+have\s+(?:access|permission)\b[\s\S]{0,60}?\bmodel\b/i,
+  /\bmodel\b[\s\S]{0,60}?\b(?:do(?:es)?\s+not|don't|doesn't)\s+have\s+(?:access|permission)\b/i,
   /\bpermission\s+to\s+access\b[\s\S]{0,40}?\bmodel\b[\s\S]{0,40}?\bdenied\b/i,
   /\bmodel\b[\s\S]{0,60}?\b(?:access|permission)\b[\s\S]{0,30}?\bdenied\b/i,
 ];
