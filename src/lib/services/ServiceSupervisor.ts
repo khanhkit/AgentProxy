@@ -243,7 +243,8 @@ export class ServiceSupervisor extends EventEmitter {
         return this.getStatus();
       }
 
-      if (this.state !== "running") this.setState("running");
+      const stateAfterHealthWait = this.getStatus().state;
+      if (stateAfterHealthWait !== "running") this.setState("running");
       await setToolStatus(this.config.tool, "running", this.pid ?? undefined);
 
       return this.getStatus();
