@@ -522,6 +522,59 @@ test("tryPinnedModelDispatch: fails over on a 200 that fails the quality check",
   );
 });
 
+test("tryPinnedModelDispatch: client abort stops pinned quality routing with 499", async () => {
+  const ctx = pinCtx();
+  const controller = new AbortController();
+  controller.abort(new Error("client gone"));
+  await seedHealthyPinProvider();
+  const res = await tryPinnedModelDispatch({
+    body: { ...ctx.body, stream: true },
+    combo: ctx.combo,
+    pinnedModel: `${HEALTHY_PROVIDER}/live`,
+    allCombos: [],
+    config: ctx.config,
+    clientRequestedStream: true,
+    handleSingleModelWithTimeout: async () =>
+      new Response(new ReadableStream({ start(controller) { controller.close(); } }), {
+        status: 200,
+        headers: { "content-type": "text/event-stream" },
+      }),
+    log: ctx.log,
+    signal: controller.signal,
+  });
+  assert.equal(res?.status, 499);
+});
+
+test("tryPinnedModelDispatch: tiny-budget reasoning probe preserves truncated pinned 200", async () => {
+  await createProviderConnection({
+    provider: "zhipu",
+    authType: "api-key",
+    name: `zhipu-probe-${Date.now()}`,
+    isActive: true,
+    apiKey: "sk-test-zhipu-probe",
+  });
+  invalidateDbCache();
+  const ctx = pinCtx();
+  const truncated = new Response(
+    JSON.stringify({
+      choices: [{ message: { content: null, reasoning_content: "thinking" }, finish_reason: "length" }],
+      usage: { completion_tokens: 1, reasoning_tokens: 1 },
+    }),
+    { status: 200, headers: { "content-type": "application/json" } }
+  );
+  const res = await tryPinnedModelDispatch({
+    body: { ...ctx.body, max_tokens: 1 },
+    combo: ctx.combo,
+    pinnedModel: "zhipu/glm-5.2",
+    allCombos: [],
+    config: ctx.config,
+    clientRequestedStream: false,
+    handleSingleModelWithTimeout: async () => truncated,
+    log: ctx.log,
+  });
+  assert.equal(res, truncated);
+});
+
 test("tryPinnedModelDispatch: falls through when the pinned dispatch throws", async () => {
   const ctx = pinCtx();
   const { res } = await dispatchHealthyPin(ctx, async () => {

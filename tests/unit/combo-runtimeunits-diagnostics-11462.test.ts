@@ -86,3 +86,60 @@ test(
     assert.equal(body.diagnostics?.terminalReason, "max_attempts_exceeded");
   }
 );
+
+test("runtime-unit client abort cancels the discarded original quality response", async () => {
+  const abort = new AbortController();
+  let cancelled = false;
+  const unit: ResolvedComboUnit = {
+    kind: "model",
+    stepId: "abort-step",
+    executionKey: "abort-unit",
+    modelStr: "openai/abort-unit",
+    provider: "openai",
+    providerId: null,
+    connectionId: null,
+    weight: 1,
+    label: null,
+  };
+  const nesting: ComboNestingContext = {
+    depth: 0,
+    maxDepth: 5,
+    visitedComboNames: [],
+    rootComboName: "abort-runtime-unit",
+    attemptBudget: { count: 0, limit: 10 },
+  };
+  const result = await executeRuntimeUnitCombo({
+    body: { stream: true, messages: [{ role: "user", content: "hi" }] },
+    combo: { name: "abort-runtime-unit", strategy: "pipeline" },
+    strategy: "pipeline",
+    units: [unit],
+    handleSingleModel: async () => {
+      const response = new Response(
+        new ReadableStream<Uint8Array>({
+          pull() {
+            return new Promise<void>(() => {});
+          },
+          cancel() {
+            cancelled = true;
+          },
+        }),
+        { status: 200, headers: { "content-type": "text/event-stream" } }
+      );
+      queueMicrotask(() => abort.abort(new Error("client gone")));
+      return response;
+    },
+    log: noopLog() as never,
+    config: { maxRetries: 0 },
+    allCombos: [],
+    signal: abort.signal,
+    nesting,
+    baseOptions: {} as never,
+    runCombo: async () => failResponse(),
+  });
+
+  assert.equal(result.response.status, 499);
+  for (let i = 0; i < 20 && !cancelled; i += 1) {
+    await new Promise((resolve) => setTimeout(resolve, 5));
+  }
+  assert.equal(cancelled, true, "discarded runtime-unit upstream body must be cancelled");
+});

@@ -863,6 +863,7 @@ export {
   setLKGP,
   clearAllLKGP,
   clearLKGP,
+  clearLKGPIfMatch,
   deleteLKGPByComboName,
   deleteLKGPRowsByComboName,
   deleteLKGPByConnectionIds,

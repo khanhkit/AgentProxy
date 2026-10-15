@@ -17,27 +17,6 @@ export function remainderIsHomogeneous(
   return orderedTargets.slice(index + 1).every((nextInPool) => nextInPool.modelStr === modelStr);
 }
 
-/** Retry same target only for retryable pre-content stream failures. */
-export function handlePreContentStreamRetry(
-  quality: ResponseQualityResult,
-  retry: number,
-  deps: {
-    maxRetries: number;
-    signal?: { aborted?: boolean } | null;
-    log: { info: (tag: string, msg: string) => void };
-  },
-  modelStr: string
-): boolean {
-  if (!quality.upstreamFailure?.retryable || retry >= deps.maxRetries || deps.signal?.aborted) {
-    return false;
-  }
-  deps.log.info(
-    "COMBO",
-    `Retrying ${modelStr} after pre-content streaming upstream error (attempt ${retry + 2}/${deps.maxRetries + 1})`
-  );
-  return true;
-}
-
 export function qualityValidationFailure(quality: ResponseQualityResult): {
   ok: false;
   response: Response;

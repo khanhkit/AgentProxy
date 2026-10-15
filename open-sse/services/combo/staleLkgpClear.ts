@@ -26,12 +26,14 @@ export function clearStaleLKGP(
     if (!failed?.provider) {
       promises.push(clear(comboName, comboKey));
     } else {
-      const getLKGP = settings?.getLKGP ?? (await import("@/lib/db/settings")).getLKGP;
-      const pin = await getLKGP(comboName, comboKey);
+      const dbSettings = settings ?? (await import("@/lib/db/settings"));
+      const pin = await dbSettings.getLKGP(comboName, comboKey);
       const namesFailedTarget =
         pin?.provider === failed.provider &&
         (!pin?.connectionId || !failed.connectionId || pin.connectionId === failed.connectionId);
-      if (namesFailedTarget) promises.push(clear(comboName, comboKey));
+      if (namesFailedTarget && pin) {
+        promises.push(dbSettings.clearLKGPIfMatch(comboName, comboKey, pin).then(() => undefined));
+      }
     }
 
     await Promise.all(promises);

@@ -1,4 +1,9 @@
+import { sanitizeErrorMessage } from "../../utils/errorSanitization.ts";
 import { emit } from "../../../src/lib/events/eventBus";
+
+export function sanitizeRoundRobinFailureError(error: unknown): string {
+  return sanitizeErrorMessage(error).slice(0, 500) || "Upstream request failed";
+}
 
 export interface RRDashboardEvents {
   attempt(): void;
@@ -15,14 +20,26 @@ export function createRRDashboardEvents(
   return {
     attempt() {
       emit("combo.target.attempt", {
-        comboName, targetIndex, provider, model, timestamp: Date.now(), strategy: "round-robin",
+        comboName,
+        targetIndex,
+        provider,
+        model,
+        timestamp: Date.now(),
+        strategy: "round-robin",
       });
     },
     succeeded(latencyMs) {
       emit("combo.target.succeeded", { comboName, targetIndex, provider, model, latencyMs });
     },
     failed(error, latencyMs) {
-      emit("combo.target.failed", { comboName, targetIndex, provider, model, error, latencyMs });
+      emit("combo.target.failed", {
+        comboName,
+        targetIndex,
+        provider,
+        model,
+        error: sanitizeRoundRobinFailureError(error),
+        latencyMs,
+      });
     },
   };
 }

@@ -8,6 +8,7 @@
 import { errorResponse, errorResponseWithComboDiagnostics } from "../../utils/error.ts";
 import type { ComboDiagnostics } from "../../utils/error.ts";
 import { recordComboRequest } from "../comboMetrics.ts";
+import { isTinyBudgetReasoningProbe } from "../reasoningTokenBuffer.ts";
 import { resolveDelayMs, requestScopedReplayKey } from "./comboPredicates.ts";
 import { qualityValidationFailure } from "./executeTargetClassify.ts";
 import { isRuntimeUnitAtConcurrencyCap } from "./runtimeUnitCapacity.ts";
@@ -330,9 +331,19 @@ export async function executeRuntimeUnitCombo(args: {
           clientRequestedStream,
           args.log,
           args.config.responseValidation as ResponseValidationConfig | undefined,
-          args.signal
+          args.signal,
+          {
+            tinyBudgetCapabilityProbe: isTinyBudgetReasoningProbe({
+              model: unit.modelStr,
+              body: args.body,
+            }),
+          }
         );
         releaseQualityClone(unitClone, response, quality);
+        if (quality.clientAborted) {
+          releaseRejectedQualityResponse(unitClone, response);
+          return { response: errorResponse(499, "Client disconnected"), unit };
+        }
         if (quality.valid) {
           recordComboRequest(args.combo.name, unit.modelStr, {
             success: true,
@@ -348,6 +359,10 @@ export async function executeRuntimeUnitCombo(args: {
         if (quality.upstreamFailure?.requestScoped)
           rejectedModelKeys.add(requestScopedReplayKey(unit.modelStr));
         lastResponse = qualityValidationFailure(quality).response;
+        if (qualityRetryable) {
+          await observeFailure(lastResponse, unit);
+          return { response: finalFailure(lastResponse), unit };
+        }
       }
       if (lastResponse) {
         const quotaExhausted = await observeFailure(lastResponse, unit);
