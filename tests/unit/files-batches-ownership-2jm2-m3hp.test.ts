@@ -182,12 +182,12 @@ function assertInvalidKey401(res: Response, body: ErrorBody, label: string) {
 }
 
 describe("canAccessOwnedRecord — the shared 3-way ownership rule", () => {
-  it("a dashboard session without a key may act on any record; a mixed key remains scoped", () => {
+  it("a dashboard session may act on any record even when an incidental key id is present", () => {
     assert.strictEqual(
       canAccessOwnedRecord({ isSessionAuth: true, apiKeyId: null }, "key-1"),
       true
     );
-    assert.strictEqual(canAccessOwnedRecord({ isSessionAuth: true, apiKeyId: "k" }, "key-1"), false);
+    assert.strictEqual(canAccessOwnedRecord({ isSessionAuth: true, apiKeyId: "k" }, "key-1"), true);
     assert.strictEqual(canAccessOwnedRecord({ isSessionAuth: true, apiKeyId: null }, null), true);
     assert.strictEqual(
       canAccessOwnedRecord({ isSessionAuth: true, apiKeyId: null }, undefined),
@@ -234,9 +234,9 @@ describe("GET /api/v1/files + GET /api/v1/batches — caller scope (GHSA-m3hp-hq
     assert.strictEqual(batches.body.data, undefined, "no batch rows in a 401 body");
   });
 
-  it("(b) an invalid/rotated bearer → 401 on both lists — even alongside a session cookie", async () => {
+  it("(b) an invalid/rotated bearer fails closed key-only but is incidental to a valid dashboard session", async () => {
     const keyA = await createApiKey("m3hp-b-key", "machine-m3hp-b", []);
-    seedBatch(keyA.id, "m3hp-b-victim");
+    const seeded = seedBatch(keyA.id, "m3hp-b-victim");
     const bogus = { Authorization: "Bearer sk-omni-this-key-was-rotated-away-m3hp" };
 
     const files = await listFilesVia(bogus);
@@ -246,9 +246,20 @@ describe("GET /api/v1/files + GET /api/v1/batches — caller scope (GHSA-m3hp-hq
 
     const withSession = { ...bogus, cookie: await sessionCookie() };
     const files2 = await listFilesVia(withSession);
-    assertInvalidKey401(files2.res, files2.body, "GET /v1/files + session cookie");
+    assert.strictEqual(files2.res.status, 200, "dashboard session remains instance authority");
+    assert.strictEqual(files2.body.object, "list");
+    assert.ok(Array.isArray(files2.body.data));
+    assert.ok(files2.body.data!.some((file) => file.id === seeded.file.id));
+
     const batches2 = await listBatchesVia(withSession);
-    assertInvalidKey401(batches2.res, batches2.body, "GET /v1/batches + session cookie");
+    assert.strictEqual(
+      batches2.res.status,
+      200,
+      "dashboard session ignores incidental stale bearer"
+    );
+    assert.strictEqual(batches2.body.object, "list");
+    assert.ok(Array.isArray(batches2.body.data));
+    assert.ok(batches2.body.data!.some((batch) => batch.id === seeded.batch.id));
   });
 
   it("(c) key A lists only A's rows — B's and null-owner rows never appear", async () => {
@@ -301,7 +312,7 @@ describe("GET /api/v1/files + GET /api/v1/batches — caller scope (GHSA-m3hp-hq
     }
   });
 
-  it("(e) a request carrying BOTH a session cookie and key A stays scoped to key A (the key wins)", async () => {
+  it("(e) a request carrying BOTH a dashboard session and key A remains instance-wide", async () => {
     const keyA = await createApiKey("m3hp-e-key-a", "machine-m3hp-ea", []);
     const keyB = await createApiKey("m3hp-e-key-b", "machine-m3hp-eb", []);
     const own = seedBatch(keyA.id, "m3hp-e-own");
@@ -313,15 +324,15 @@ describe("GET /api/v1/files + GET /api/v1/batches — caller scope (GHSA-m3hp-hq
     assert.strictEqual(files.res.status, 200);
     const fileIds = new Set(files.body.data!.map((f) => f.id));
     assert.ok(fileIds.has(own.file.id));
-    assert.ok(!fileIds.has(other.file.id), "a session cookie never widens a key's file list");
-    assert.ok(!fileIds.has(unowned.file.id));
+    assert.ok(fileIds.has(other.file.id), "dashboard session sees key B's file");
+    assert.ok(fileIds.has(unowned.file.id), "dashboard session sees the unowned file");
 
     const batches = await listBatchesVia(headers);
     assert.strictEqual(batches.res.status, 200);
     const batchIds = new Set(batches.body.data!.map((b) => b.id));
     assert.ok(batchIds.has(own.batch.id));
-    assert.ok(!batchIds.has(other.batch.id), "a session cookie never widens a key's batch list");
-    assert.ok(!batchIds.has(unowned.batch.id));
+    assert.ok(batchIds.has(other.batch.id), "dashboard session sees key B's batch");
+    assert.ok(batchIds.has(unowned.batch.id), "dashboard session sees the unowned batch");
   });
 });
 

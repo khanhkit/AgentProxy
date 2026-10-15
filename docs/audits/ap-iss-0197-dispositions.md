@@ -50,7 +50,7 @@ Pre-integration verification on the AP-ISS-0197 worktree:
 - Changed-file ESLint: PASS using the repository suppression bank plus `--pass-on-unpruned-suppressions`.
 - Repository-wide `npm run lint`: blocked only by pre-existing unused suppression-count hygiene; a prune check on the only two changed suppressed files (`apiV1.ts`, `gemini.ts`) leaves their suppression entries unchanged.
 - `npm run check:secrets`: environment SKIP because `gitleaks` is unavailable.
-- Bounded full `npm test` was not treated as green: at the ~30-minute boundary Node reported **10,973 tests / 6,012 pass / 0 fail / 4,959 cancelled / 2 skipped**. The outer wrapper did not persist `FULL_TEST_RC`; therefore no exit code is fabricated and this run is recorded as incomplete timeout evidence, not a test failure or pass.
+- Bounded full `npm test` was not treated as green: at the ~30-minute boundary Node reported **10,973 tests / 6,012 pass / 0 fail / 4,959 cancelled / 2 skipped**. The outer wrapper did not persist its terminal return-code marker; therefore no exit code is fabricated and this run is recorded as incomplete timeout evidence, not a test failure or pass.
 
 Protected-main integration and exact-head verification:
 
