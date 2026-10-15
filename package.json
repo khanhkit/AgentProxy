@@ -115,7 +115,6 @@
     "build:backend": "cross-env AGENTPROXY_BUILD_BACKEND_ONLY=1 node scripts/build/build-next-isolated.mjs",
     "build:contributor": "cross-env AGENTPROXY_BUILD_PROFILE=contributor AGENTPROXY_USE_TURBOPACK=0 node scripts/build/build-next-isolated.mjs",
     "build:cli": "node --import tsx scripts/build/prepublish.ts",
-    "agentproxy:verify": "node scripts/check/agentproxy-verify.mjs",
     "build:release": "rm -rf .build dist && AGENTPROXY_BUILD_SHA=$(git rev-parse --short HEAD) npm run build && npm run build:cli && node scripts/build/write-build-sha.mjs",
     "build:native:tproxy": "cd src/mitm/tproxy/native && node-gyp rebuild",
     "start": "node scripts/dev/run-next.mjs start",

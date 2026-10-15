@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
 import test from "node:test";
 
 import { findIdentityViolations } from "../../../scripts/check/check-agentproxy-identity.mjs";
@@ -59,4 +60,12 @@ test("AP-ISS-0171 identity guard treats changelogs as active product docs", () =
     () => Buffer.from(oldScope)
   );
   assert.equal(attributionViolations.length, 1);
+});
+
+test("AP-ISS-0171 package scripts expose one canonical verification command", () => {
+  const packageJson = readFileSync("package.json", "utf8");
+  const canonicalVerifyKey = JSON.stringify("agentproxy:verify");
+  const occurrences = packageJson.split(canonicalVerifyKey).length - 1;
+
+  assert.equal(occurrences, 1, "identity cleanup must not collapse a legacy alias into a duplicate key");
 });
