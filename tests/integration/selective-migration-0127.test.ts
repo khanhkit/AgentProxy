@@ -99,7 +99,7 @@ test("TC-MIG-INT-046 pinned 9Router JSON fixture applies selected items with rea
 
 test("TC-MIG-INT-047 pinned AgentProxy fixture supports partial selection through existing target identity", async () => {
   const entities = normalizeAgentProxySqliteRows(
-    fixture("agentproxy-v3.8.51-sqlite-rows.json")
+    fixture("legacy-v3.8.51-sqlite-rows.json")
   );
   const target = normalizeTargetEntities({
     providerConnections: [

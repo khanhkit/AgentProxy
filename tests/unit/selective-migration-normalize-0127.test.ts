@@ -76,7 +76,7 @@ test("TC-MIG-NORM-017 normalizes pinned 9Router SQLite rows and extracts combo d
 });
 
 test("TC-MIG-NORM-018 normalizes pinned AgentProxy SQLite rows into the same entity contract", () => {
-  const rows = readJson("agentproxy-v3.8.51-sqlite-rows.json");
+  const rows = readJson("legacy-v3.8.51-sqlite-rows.json");
   const entities = normalizeAgentProxySqliteRows(rows);
 
   const connection = entities.find((item) => item.sourceId === "omni-conn-1");
