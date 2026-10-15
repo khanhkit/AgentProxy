@@ -43,6 +43,7 @@ import { mergeAbortSignals } from "@agentproxy/open-sse/executors/base.ts";
 import { resolveRequestAutoControls } from "@agentproxy/open-sse/services/autoCombo/requestControls.ts";
 import { isVerifiedNativeCodexRequest } from "@agentproxy/open-sse/config/codexIdentity.ts";
 import { resolveCompressionSettings } from "@agentproxy/open-sse/handlers/chatCore/compressionSettings.ts";
+import { estimateTokens } from "@agentproxy/open-sse/services/contextManager.ts";
 import type { CompressionExclusions } from "@agentproxy/open-sse/services/compression/exclusions.ts";
 import { resolveComboConfig } from "@agentproxy/open-sse/services/comboConfig.ts";
 import { comboPinAllowlist } from "@/lib/combos/steps.ts";
@@ -690,7 +691,10 @@ async function handleChatImplementation(
 
   // Pipeline: API key policy enforcement (model restrictions + budget limits)
   telemetry.startPhase("policy");
-  const policy = await enforceApiKeyPolicy(request, modelStr, DEFER_METERED_BUDGET);
+  const policy = await enforceApiKeyPolicy(request, modelStr, {
+    ...DEFER_METERED_BUDGET,
+    keyQuotaEstimatedTokens: estimateTokens(body),
+  });
   if (policy.rejection) {
     log.warn(
       "POLICY",
@@ -699,6 +703,9 @@ async function handleChatImplementation(
     return policy.rejection;
   }
   const apiKeyInfo = policy.apiKeyInfo;
+  if (apiKeyInfo && policy.keyQuotaReservation) {
+    apiKeyInfo.keyQuotaReservation = policy.keyQuotaReservation;
+  }
   let managedLease: ManagedLeaseDispatchContext | null = null;
   if (isExclusiveLeaseManagedKey(apiKeyInfo)) {
     try {

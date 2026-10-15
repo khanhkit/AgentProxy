@@ -6,12 +6,9 @@ export async function resolveApiKey(
   apiKey?: string | null
 ): Promise<string> {
   if (apiKeyId) {
-    try {
-      const recovered = await recoverApiKeyById(apiKeyId);
-      if (recovered) return recovered;
-    } catch {
-      /* fall through */
-    }
+    const recovered = await recoverApiKeyById(apiKeyId);
+    if (recovered) return recovered;
+    throw new Error("Selected API key not found");
   }
   return apiKey || "sk_agentproxy";
 }

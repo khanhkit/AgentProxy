@@ -106,8 +106,9 @@ export type McpAuditTimelineEntry = {
 };
 
 export function sqliteTimestampToIso(raw: string): string {
-  if (raw.includes("T")) return raw.endsWith("Z") ? raw : `${raw}Z`;
-  return `${raw.trim().replace(" ", "T")}Z`;
+  const value = raw.trim().replace(" ", "T");
+  if (/[zZ]$|[+-]\d{2}:?\d{2}$/.test(value)) return value;
+  return `${value}Z`;
 }
 
 export function mapMcpAuditEntry(
@@ -163,13 +164,7 @@ export function timelineFetchUrls(
 }
 
 export function uniqueApiKeyOptions(logs: TimelineLog[]): string[] {
-  return [
-    ...new Set(
-      logs
-        .map((row) => row.apiKeyId || row.apiKeyName)
-        .filter((value): value is string => typeof value === "string" && value.length > 0)
-    ),
-  ].sort();
+  return uniqueApiKeyIds(logs).sort();
 }
 
 export function uniqueApiKeyIds(logs: TimelineLog[]): string[] {
@@ -238,7 +233,8 @@ function asMcpEntries(value: unknown): McpAuditTimelineEntry[] {
       Boolean(entry) &&
       typeof entry === "object" &&
       typeof (entry as McpAuditTimelineEntry).id === "number" &&
-      typeof (entry as McpAuditTimelineEntry).toolName === "string"
+      typeof (entry as McpAuditTimelineEntry).toolName === "string" &&
+      typeof (entry as McpAuditTimelineEntry).createdAt === "string"
   );
 }
 

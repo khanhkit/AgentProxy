@@ -124,6 +124,7 @@ const globalState = globalThis as typeof globalThis & {
 };
 
 let schedulerTimer: NodeJS.Timeout | null = null;
+let startupTimer: NodeJS.Timeout | null = null;
 let phaseTimer: NodeJS.Timeout | null = null;
 let isRunning = false;
 let internalAuthToken: string | null = null;
@@ -309,7 +310,7 @@ export function startModelSyncScheduler(
   apiBaseUrl = getModelSyncInternalBaseUrl(),
   intervalMs = DEFAULT_INTERVAL_MS
 ): void {
-  if (schedulerTimer || phaseTimer) {
+  if (schedulerTimer || startupTimer || phaseTimer) {
     console.log("[ModelSync] Scheduler already running — skipping start");
     return;
   }
@@ -326,11 +327,11 @@ export function startModelSyncScheduler(
   );
 
   // Serve traffic first; cleanup's first pass is +30s, so stay past that window.
-  const startupDelay = setTimeout(
-    () => runSyncCycle(trustedApiBaseUrl),
-    MODEL_SYNC_STARTUP_DELAY_MS
-  );
-  startupDelay.unref?.();
+  startupTimer = setTimeout(() => {
+    startupTimer = null;
+    return runSyncCycle(trustedApiBaseUrl);
+  }, MODEL_SYNC_STARTUP_DELAY_MS);
+  startupTimer.unref?.();
 
   // Codex-only: revalidate catalog only on first-start or app upgrade (not every boot).
   void import("./codexCatalogRevalidation")
@@ -355,6 +356,11 @@ export function startModelSyncScheduler(
  * Stop the model sync scheduler.
  */
 export function stopModelSyncScheduler(): void {
+  if (startupTimer) {
+    clearTimeout(startupTimer);
+    startupTimer = null;
+    console.log("[ModelSync] Scheduler stopped");
+  }
   if (phaseTimer) {
     clearTimeout(phaseTimer);
     phaseTimer = null;

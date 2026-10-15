@@ -62,7 +62,7 @@ test("plan: the password goes only to `sudo -S -v`, the command gets only its da
     { command: "sudo", args: ["-n", "tee", "-a", HOSTS], stdin: DATA },
   ]);
   assert.ok(!steps[1].stdin.includes(PASSWORD), "the elevated command never sees the password");
-  assert.deepEqual(fallback?.args, ["-S", "tee", "-a", HOSTS]);
+  assert.equal(fallback, null, "an executed command must never be replayed with password stdin");
 });
 
 test("plan: without sudo (root / no sudo / OMNIROUTE_NO_SUDO) there is one plain step, no password", () => {
@@ -88,16 +88,19 @@ test("no-prompt sudo: the hosts writer receives the entries and never the passwo
   assert.ok(calls.every((c) => c.args.includes("-v") || !c.stdin.includes(PASSWORD)));
 });
 
-test("timestamp_timeout=0: `sudo -n` refuses, the fallback lets sudo consume the password", async () => {
+test("timestamp_timeout=0: `sudo -n` refusal fails closed without replaying the command", async () => {
   const { calls, spawnImpl } = fakeSpawn((call) =>
     call.args[0] === "-n" ? { code: 1, stderr: "sudo: a password is required\n" } : { code: 0 }
   );
-  await execFileWithPassword("sudo", ["-S", "tee", "-a", HOSTS], PASSWORD, DATA, {
-    spawnImpl,
-    sudoOverrides: NON_ROOT_WITH_SUDO,
-  });
-  assert.equal(calls.length, 3);
-  assert.deepEqual(calls[2].args, ["-S", "tee", "-a", HOSTS]);
+  await assert.rejects(
+    execFileWithPassword("sudo", ["-S", "tee", "-a", HOSTS], PASSWORD, DATA, {
+      spawnImpl,
+      sudoOverrides: NON_ROOT_WITH_SUDO,
+    }),
+    /Command failed/
+  );
+  assert.equal(calls.length, 2, "the elevated command must run at most once");
+  assert.ok(calls.every((call) => call.args.includes("-v") || !call.stdin.includes(PASSWORD)));
 });
 
 test("a wrong password stops at validation and never runs the command", async () => {

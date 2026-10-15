@@ -401,6 +401,23 @@ test("modelSyncScheduler starts once, honors env interval and syncs only active 
   }
 });
 
+test("modelSyncScheduler stop cancels the pending startup cycle", async () => {
+  const timers = installTimerStubs();
+  try {
+    const scheduler = await loadScheduler("stop-startup-delay");
+    scheduler.startModelSyncScheduler("http://127.0.0.1:5555", 10_000);
+    assert.equal(timers.timeouts.length, 2);
+    scheduler.stopModelSyncScheduler();
+    assert.equal(timers.timeouts[0].cleared, true, "startup delay must be cancelled on stop");
+    assert.equal(timers.timeouts[1].cleared, true, "phase timer must be cancelled on stop");
+    // Let the fire-and-forget Codex revalidation import settle while this test's
+    // timer stubs are still installed so it cannot leak work into the next test.
+    await flushModelSyncMicrotasks();
+  } finally {
+    timers.restore();
+  }
+});
+
 test("modelSyncScheduler skips empty cycles and tolerates failing sync requests", async () => {
   const timers = installTimerStubs();
   const originalFetch = globalThis.fetch;

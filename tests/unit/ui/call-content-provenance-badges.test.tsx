@@ -3,8 +3,13 @@ import React, { act } from "react";
 import { createRoot, type Root } from "react-dom/client";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
+const intlState = vi.hoisted(() => ({ namespace: "" }));
+
 vi.mock("next-intl", () => ({
-  useTranslations: () => (key: string) => key,
+  useTranslations: (namespace: string) => {
+    intlState.namespace = namespace;
+    return (key: string) => key;
+  },
 }));
 
 const { CallContentProvenanceBadges } =
@@ -36,6 +41,11 @@ const shown = () =>
   );
 
 describe("CallContentProvenanceBadges", () => {
+  it("uses the locale namespace that actually owns the provenance labels", async () => {
+    await render({ hasContent: 0, usageProvenance: "reported" });
+    expect(intlState.namespace).toBe("requestLogger.columns");
+  });
+
   it("tells an empty reply apart from a reply whose metering never arrived", async () => {
     await render({ hasContent: 0, usageProvenance: "reported" });
     expect(shown()).toEqual(["content-provenance-contentEmpty"]);

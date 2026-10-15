@@ -17,6 +17,15 @@ test("quota visibility controls are limited to providers with quota support", ()
   assert.equal(supportsProviderQuota("openai"), false);
 });
 
+test("openai-compatible quota support rejects a whitespace-only endpoint URL", () => {
+  assert.equal(
+    supportsProviderQuota("openai-compatible-chat-test", {
+      providerSpecificData: { quotaEndpoint: { url: "   ", quotas: { monthly: "limit" } } },
+    }),
+    false
+  );
+});
+
 test("supportsProviderQuota is true for moonshot-native shaped connection", () => {
   assert.equal(
     supportsProviderQuota("openai-compatible-chat-e2971611-bc02-4c37-8fc5-39b8e3906fdf", {

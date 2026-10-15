@@ -198,6 +198,52 @@ test("key quota: tpm counter blocks when token window consumed", () => {
   assert.equal(verdict.dimension, "tpm");
 });
 
+test("key quota: atomic reservation prevents concurrent RPM overshoot", () => {
+  keyQuotaDb.upsertKeyQuotaLimits("key-1", { rpmLimit: 1 });
+  const now = Date.parse("2026-09-14T12:00:00.000Z");
+  const deps = { now: () => now, monthTotalUsd: 0 };
+
+  const first = keyQuotaDomain.reserveKeyQuotaForRequest("key-1", 0, deps);
+  assert.equal(first.allowed, true);
+  assert.ok(first.reservation);
+
+  const second = keyQuotaDomain.reserveKeyQuotaForRequest("key-1", 0, deps);
+  assert.equal(second.allowed, false);
+  assert.equal(second.dimension, "rpm");
+});
+
+test("key quota: atomic reservation accounts for estimated TPM before dispatch", () => {
+  keyQuotaDb.upsertKeyQuotaLimits("key-1", { tpmLimit: 100 });
+  const now = Date.parse("2026-09-14T12:00:00.000Z");
+  const deps = { now: () => now, monthTotalUsd: 0 };
+
+  const first = keyQuotaDomain.reserveKeyQuotaForRequest("key-1", 80, deps);
+  assert.equal(first.allowed, true);
+  assert.equal(first.reservation?.tokens, 80);
+
+  const second = keyQuotaDomain.reserveKeyQuotaForRequest("key-1", 30, deps);
+  assert.equal(second.allowed, false);
+  assert.equal(second.dimension, "tpm");
+});
+
+test("key quota: successful completion reconciles estimated TPM to actual without double-counting RPM", () => {
+  keyQuotaDb.upsertKeyQuotaLimits("key-1", { tpmLimit: 100, rpmLimit: 5 });
+  const now = Date.parse("2026-09-14T12:00:00.000Z");
+  const deps = { now: () => now, monthTotalUsd: 0 };
+
+  const reserved = keyQuotaDomain.reserveKeyQuotaForRequest("key-1", 80, deps);
+  assert.equal(reserved.allowed, true);
+  assert.ok(reserved.reservation);
+  keyQuotaDomain.recordKeyQuotaUsage("key-1", 20, {
+    ...deps,
+    reservation: reserved.reservation,
+  });
+
+  const status = keyQuotaDb.getKeyQuotaStatus("key-1", deps);
+  assert.equal(status.counters.tpmUsed, 20);
+  assert.equal(status.counters.rpmUsed, 1);
+});
+
 test("key quota: monthly amount blocks when ledger month total reaches cap", () => {
   keyQuotaDb.upsertKeyQuotaLimits("key-1", { monthlyAmountUsd: 5 });
   // Seed the ledger with $5 spent in the current month.

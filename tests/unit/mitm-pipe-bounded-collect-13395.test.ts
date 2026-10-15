@@ -81,6 +81,15 @@ test("bounded collector retains at most the cap but counts the true total", () =
   assert.equal(sink.truncated, true);
 });
 
+test("bounded collector enforces the cap in UTF-8 bytes without splitting a code point", () => {
+  const sink = createBoundedCollector(5);
+  sink.push("ééé"); // 6 bytes, 3 UTF-16 code units
+  assert.equal(sink.text, "éé");
+  assert.equal(Buffer.byteLength(sink.text), 4);
+  assert.equal(sink.totalBytes, 6);
+  assert.equal(sink.truncated, true);
+});
+
 test("bounded collector passes small transcripts through untouched", () => {
   const sink = createBoundedCollector(100);
   sink.push("hello");
@@ -91,6 +100,24 @@ test("bounded collector passes small transcripts through untouched", () => {
 
 test("default collect ceiling is 1 MiB", () => {
   assert.equal(MITM_PIPE_MAX_COLLECT_BYTES, 1 * 1024 * 1024);
+});
+
+test("pipeSSE preserves split UTF-8 code points for inspector callbacks", async () => {
+  const h = new ExposedHandler();
+  const { res } = trackingRes();
+  const bytes = Buffer.from("A🙂B");
+  const stream = new ReadableStream<Uint8Array>({
+    start(controller) {
+      controller.enqueue(bytes.subarray(0, 3));
+      controller.enqueue(bytes.subarray(3, 5));
+      controller.enqueue(bytes.subarray(5));
+      controller.close();
+    },
+  });
+  const sink = createBoundedCollector(100);
+  await h.pipe(new Response(stream, { status: 200 }), res, (chunk) => sink.push(chunk.toString()));
+  assert.equal(sink.text, "A🙂B");
+  assert.equal(sink.totalBytes, bytes.length);
 });
 
 test("pipeSSE delivers every chunk when the downstream stays open", async () => {

@@ -71,7 +71,9 @@ export function classifyCodexDiscoveryModel(
   }
 ): CodexDiscoveryCompatibilityResult {
   if (isCodexDiscoveryModelExcluded(model)) return { status: "retired", reason: "denylisted" };
-  if (typeof model.visibility === "string" && model.visibility.toLowerCase() === "hide") {
+  const visibility =
+    typeof model.visibility === "string" ? model.visibility.toLowerCase() : undefined;
+  if (visibility === "hide") {
     return { status: "incompatible", reason: "hidden" };
   }
   if (model.supportedInApi === false)
@@ -85,7 +87,7 @@ export function classifyCodexDiscoveryModel(
   }
 
   if (source === "github" && mode === "safe") {
-    if (model.visibility !== "list") {
+    if (visibility !== "list") {
       return { status: "candidate", reason: "missing-explicit-list-visibility" };
     }
     if (model.supportedInApi !== true) {

@@ -15,6 +15,7 @@ import {
   mergeApiKeyOptions,
   rememberApiKeysFromPoll,
   nextTimelineLogs,
+  sqliteTimestampToIso,
   type TimelineLog,
 } from "../../src/shared/components/RequestTimeline.utils.ts";
 
@@ -42,6 +43,11 @@ const SAMPLE_ENTRY = {
   errorCode: null,
   createdAt: "2026-09-17 04:05:50",
 };
+
+test("sqliteTimestampToIso preserves explicit timezone offsets and marks bare SQLite timestamps UTC", () => {
+  assert.equal(sqliteTimestampToIso("2026-09-17T04:05:50+07:00"), "2026-09-17T04:05:50+07:00");
+  assert.equal(sqliteTimestampToIso("2026-09-17 04:05:50"), "2026-09-17T04:05:50Z");
+});
 
 test("mapMcpAuditEntry prefixes the id and marks the row as mcp", () => {
   const row = mapMcpAuditEntry(SAMPLE_ENTRY, (tool) =>
@@ -112,6 +118,16 @@ test("uniqueApiKeyOptions prefers apiKeyId over apiKeyName", () => {
   assert.deepEqual(keys, ["id-1"]);
 });
 
+test("uniqueApiKeyOptions never exposes a display name as a filter value", () => {
+  const keys = uniqueApiKeyOptions([
+    {
+      ...llmLog("name-only", null),
+      apiKeyName: "display-name",
+    },
+  ]);
+  assert.deepEqual(keys, []);
+});
+
 test("uniqueApiKeyOptions skips empty keys (same as the logs grid)", () => {
   const keys = uniqueApiKeyOptions([
     llmLog("a", "key-llm"),
@@ -171,6 +187,22 @@ test("loadTimelineLogs marks llmOk false when the LLM fetch fails", async () => 
   });
   assert.equal(result.llmOk, false);
   assert.equal(result.mcpOk, true);
+});
+
+test("loadTimelineLogs ignores malformed MCP rows instead of marking the MCP poll failed", async () => {
+  const llm = [llmLog("c1")];
+  const result = await loadTimelineLogs(async (url) => {
+    if (url.includes("/api/mcp/audit")) {
+      return {
+        ok: true,
+        json: async () => ({ entries: [{ id: 99, toolName: "broken", success: true }], total: 1 }),
+      };
+    }
+    return { ok: true, json: async () => llm };
+  });
+  assert.equal(result.llmOk, true);
+  assert.equal(result.mcpOk, true);
+  assert.deepEqual(result.logs.map((row) => row.id), ["c1"]);
 });
 
 test("loadTimelineLogs maps MCP entries from { entries }", async () => {

@@ -41,3 +41,9 @@ test("#13555 keeps the mature ReasoningRoutingRules implementation as the editor
   assert.match(rules, /rule\.scope !== "apiKey" \|\| rule\.apiKeyId !== apiKeyId/);
   assert.match(rules, /const dirty = JSON\.stringify\(form\) !== baseline/);
 });
+
+test("ReasoningRoutingRules resynchronizes editor state when the parent-selected key changes", () => {
+  const rules = read("src/shared/components/ReasoningRoutingRules.tsx");
+  assert.match(rules, /<ReasoningRoutingRulesEditor key=\{initialSelectedApiKeyId\}/);
+  assert.match(rules, /emptyRule\(initialSelectedApiKeyId\)/);
+});

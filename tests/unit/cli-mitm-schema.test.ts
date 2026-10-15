@@ -63,6 +63,13 @@ test("cliMitmStartSchema accepts null keyId", () => {
 
 // Regression test: null apiKey + unresolvable keyId must yield the sentinel 'sk_agentproxy',
 // which the route guard must reject with a 400 rather than letting it pass to startMitm.
+test("resolveApiKey fails closed when an explicitly selected keyId no longer resolves", async () => {
+  await assert.rejects(
+    resolveApiKey("missing-selected-key-id", "sk-different-explicit-key"),
+    /Selected API key not found/
+  );
+});
+
 test("resolveApiKey returns sentinel when apiKey is null and keyId is null", async () => {
   const result = await resolveApiKey(null, null);
   assert.equal(

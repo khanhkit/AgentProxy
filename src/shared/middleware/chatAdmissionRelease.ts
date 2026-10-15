@@ -108,9 +108,13 @@ export async function releaseChatAdmissionAfterHandler(
   try {
     const response = await responsePromise;
     detachAbortListener();
-    // The lease was already released by the pending-phase abort listener above;
-    // skip the redundant stream-wrapping work in releaseChatAdmissionWhenDone.
-    if (abortedWhilePending) return response;
+    // The lease was already released by the pending-phase abort listener above.
+    // The caller is gone too, so cancel the eventual response body rather than
+    // leaving its upstream stream running with nobody consuming it.
+    if (abortedWhilePending) {
+      await response.body?.cancel().catch(() => undefined);
+      return response;
+    }
     return releaseChatAdmissionWhenDone(response, lease, options);
   } catch (error) {
     detachAbortListener();

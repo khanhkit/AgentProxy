@@ -50,6 +50,31 @@ test("a request that aborts while the handler is still pending must release the 
   await released;
 });
 
+test("an abort while the handler is pending cancels the eventual response body", async () => {
+  const controller = new ChatAdmissionController(1);
+  const lease = controller.tryAcquireHeavy();
+  assert.ok(lease);
+
+  const abort = new AbortController();
+  let resolveHandler!: (value: Response) => void;
+  const handlerPromise = new Promise<Response>((resolve) => {
+    resolveHandler = resolve;
+  });
+  const released = releaseChatAdmissionAfterHandler(handlerPromise, lease, { signal: abort.signal });
+
+  abort.abort();
+  let cancelled = false;
+  const body = new ReadableStream<Uint8Array>({
+    cancel() {
+      cancelled = true;
+    },
+  });
+  resolveHandler(new Response(body, { status: 200 }));
+
+  await released;
+  assert.equal(cancelled, true, "an abandoned response body must not keep upstream work alive");
+});
+
 test("a handler that resolves normally without aborting releases exactly once and detaches its abort listener", async () => {
   const controller = new ChatAdmissionController(1);
   const lease = controller.tryAcquireHeavy();

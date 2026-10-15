@@ -46,6 +46,11 @@ test("isRecoverableUpstreamTimeoutError does not overlap with isClientAbortError
   assert.equal(isRecoverableUpstreamTimeoutError(abortErr), false);
 });
 
+test("client-abort classification does not swallow a generic bare cancelled reason", () => {
+  assert.equal(isClientAbortError("cancelled"), false);
+  assert.equal(shouldSwallowUncaught("cancelled", "unhandledRejection"), false);
+});
+
 test("shouldSwallowUncaught swallows DIRECT_RESPONSE_START_TIMEOUT for uncaughtException and unhandledRejection origins", () => {
   const err = Object.assign(new Error("timeout"), { code: "DIRECT_RESPONSE_START_TIMEOUT" });
   assert.equal(shouldSwallowUncaught(err, "uncaughtException"), true);
@@ -112,6 +117,11 @@ test("isUpstreamNetworkError recognizes fetch failures and proxy unreachable", (
 
   const undiciSocket = Object.assign(new Error("other side closed"), { code: "UND_ERR_SOCKET" });
   assert.equal(isUpstreamNetworkError(undiciSocket), true);
+});
+
+test("isUpstreamNetworkError requires a network provenance code for TypeError fetch failed", () => {
+  assert.equal(isUpstreamNetworkError(new TypeError("fetch failed")), false);
+  assert.equal(shouldSwallowUncaught(new TypeError("fetch failed"), "unhandledRejection"), false);
 });
 
 test("isUpstreamNetworkError rejects genuine errors", () => {

@@ -166,12 +166,10 @@ export function planSudoSteps(
 ` },
       { command: "sudo", args: ["-n", ...commandArgs], stdin: stdinAfterPassword || "" },
     ],
-    fallback: {
-      command: "sudo",
-      args: ["-S", ...commandArgs],
-      stdin: `${password}
-${stdinAfterPassword}`,
-    },
+    // Never replay a real command after it has started. Matching command stderr
+    // cannot prove sudo itself refused before side effects, and replay would mix
+    // password + command data on one stdin (GHSA-cqwr-7mqw-chr9).
+    fallback: null,
   };
 }
 
@@ -215,8 +213,6 @@ function runStep(
   });
 }
 
-const SUDO_PASSWORD_REQUIRED = /a password is required/i;
-
 export async function execFileWithPassword(
   command: string,
   args: string[],
@@ -235,7 +231,7 @@ export async function execFileWithPassword(
   // containers succeed for any command that does not actually require root
   // (everything but writing to /etc/hosts or the system trust store).
   const spawnImpl = deps.spawnImpl ?? spawn;
-  const { steps, fallback } = planSudoSteps(
+  const { steps } = planSudoSteps(
     command,
     args,
     password,
@@ -244,23 +240,13 @@ export async function execFileWithPassword(
   );
 
   let stdout = "";
-  for (let i = 0; i < steps.length; i++) {
-    const result = await runStep(steps[i], spawnImpl);
-    const canFallBack = i === steps.length - 1 && fallback !== null;
-    if (canFallBack && needsSudoPasswordFallback(result)) {
-      return runStepOrThrow(fallback, spawnImpl);
-    }
-    stdout = stepOutputOrThrow(result);
+  for (const step of steps) {
+    stdout = stepOutputOrThrow(await runStep(step, spawnImpl));
   }
   return stdout;
 }
 
 type StepResult = Awaited<ReturnType<typeof runStep>>;
-
-/** `sudo -n` refused because this host never keeps a credential (`timestamp_timeout=0`). */
-function needsSudoPasswordFallback(result: StepResult): boolean {
-  return !result.error && result.code !== 0 && SUDO_PASSWORD_REQUIRED.test(result.stderr);
-}
 
 function stepOutputOrThrow(result: StepResult): string {
   if (result.error) {
@@ -270,10 +256,6 @@ function stepOutputOrThrow(result: StepResult): string {
     throw new Error(`Command failed with code ${result.code}\n${result.stderr}`);
   }
   return result.stdout;
-}
-
-async function runStepOrThrow(step: SudoStep, spawnImpl: SpawnLike): Promise<string> {
-  return stepOutputOrThrow(await runStep(step, spawnImpl));
 }
 
 export function quotePowerShell(value: string): string {
