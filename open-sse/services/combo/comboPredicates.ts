@@ -133,6 +133,20 @@ export const MAX_GLOBAL_ATTEMPTS_HARD_CAP = 200;
 // same bad payload through every target and every whole-set retry.
 export const IDENTICAL_MODEL_ERROR_STREAK = 3;
 
+function normalizeModelErrorForStreak(error: string): string {
+  return String(error || "")
+    .toLowerCase()
+    .replace(/\brequest[ _-]?id\s*[:=]\s*(?:req[_-]?)?[a-z0-9._:-]+/gi, "request_id=<id>")
+    .replace(/\breq_[a-z0-9._:-]+/gi, "<request_id>")
+    .replace(
+      /\bretry\s+(?:after|in)\s+\d+(?:\.\d+)?\s*(?:ms|s|sec|secs|seconds?)?\b/gi,
+      "retry <delay>"
+    )
+    .replace(/\bmodel\s*(?:[:=]\s*)?["'`]([^"'`]+)["'`]/gi, "model <model>")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
 export function hasIdenticalModelErrorStreak(
   comboErrors: ReadonlyArray<ComboErrorEntry>,
   streak: number = IDENTICAL_MODEL_ERROR_STREAK
@@ -141,9 +155,12 @@ export function hasIdenticalModelErrorStreak(
   const tail = comboErrors.slice(-streak);
   const [first, ...rest] = tail;
   if (first.kind !== "model") return false;
+  const normalizedFirstError = normalizeModelErrorForStreak(first.error);
   return rest.every(
     (entry) =>
-      entry.kind === first.kind && entry.status === first.status && entry.error === first.error
+      entry.kind === first.kind &&
+      entry.status === first.status &&
+      normalizeModelErrorForStreak(entry.error) === normalizedFirstError
   );
 }
 

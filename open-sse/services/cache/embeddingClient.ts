@@ -1,3 +1,9 @@
+import {
+  parseAndValidateNonMetadataUrl,
+  parseAndValidatePublicUrl,
+} from "../../../src/shared/network/outboundUrlGuard.ts";
+import { getProviderValidationGuard } from "../../../src/shared/network/outboundUrlGuardPolicy.ts";
+
 /**
  * Semantic Cache Embedding Client
  *
@@ -94,6 +100,8 @@ export function normalizeConversationForEmbedding(
 
   return lines.join("\n").trim();
 }
+const embeddingGeneratorCooldownUntil = new WeakMap<EmbeddingGenerator, Map<string, number>>();
+const embeddingGeneratorTimedOutInFlight = new WeakMap<EmbeddingGenerator, Map<string, symbol>>();
 
 /**
  * Executes embedding generation with fail-open timeout guard.
@@ -107,14 +115,43 @@ export async function generateEmbeddingWithTimeout(
     timeoutMs?: number;
   }
 ): Promise<EmbeddingResult | null> {
+  const now = Date.now();
+  const cooldownKey = JSON.stringify([options?.provider ?? "", options?.model ?? ""]);
+  if (embeddingGeneratorTimedOutInFlight.get(generator)?.has(cooldownKey)) return null;
+  const generatorCooldowns = embeddingGeneratorCooldownUntil.get(generator);
+  const cooldownUntil = generatorCooldowns?.get(cooldownKey) ?? 0;
+  if (cooldownUntil > now) return null;
+  if (cooldownUntil && generatorCooldowns) {
+    generatorCooldowns.delete(cooldownKey);
+    if (generatorCooldowns.size === 0) embeddingGeneratorCooldownUntil.delete(generator);
+  }
   if (!text || text.length === 0) return null;
 
   const timeoutMs = options?.timeoutMs ?? 3000;
   const controller = new AbortController();
   let timer: NodeJS.Timeout | undefined;
+  let generatorPromise: Promise<EmbeddingResult | null> | undefined;
+  let quarantineToken: symbol | undefined;
+  const clearTimedOutInFlight = () => {
+    if (!quarantineToken) return;
+    const inFlight = embeddingGeneratorTimedOutInFlight.get(generator);
+    if (inFlight?.get(cooldownKey) !== quarantineToken) return;
+    inFlight.delete(cooldownKey);
+    if (inFlight.size === 0) embeddingGeneratorTimedOutInFlight.delete(generator);
+  };
 
   const timeoutPromise = new Promise<null>((resolve) => {
     timer = setTimeout(() => {
+      const cooldowns = embeddingGeneratorCooldownUntil.get(generator) ?? new Map<string, number>();
+      cooldowns.set(cooldownKey, Date.now() + timeoutMs);
+      embeddingGeneratorCooldownUntil.set(generator, cooldowns);
+      if (generatorPromise) {
+        quarantineToken = Symbol(cooldownKey);
+        const inFlight = embeddingGeneratorTimedOutInFlight.get(generator) ?? new Map<string, symbol>();
+        inFlight.set(cooldownKey, quarantineToken);
+        embeddingGeneratorTimedOutInFlight.set(generator, inFlight);
+        setTimeout(clearTimedOutInFlight, timeoutMs);
+      }
       controller.abort();
       console.warn(`[CACHE] Embedding generation timed out after ${timeoutMs}ms`);
       resolve(null);
@@ -122,13 +159,17 @@ export async function generateEmbeddingWithTimeout(
   });
 
   try {
-    const generatorPromise = generator(text, {
-      model: options?.model,
-      provider: options?.provider,
-      signal: controller.signal,
-    });
+    generatorPromise = Promise.resolve(
+      generator(text, {
+        model: options?.model,
+        provider: options?.provider,
+        signal: controller.signal,
+      })
+    );
+    const currentPromise = generatorPromise;
+    void currentPromise.then(clearTimedOutInFlight, clearTimedOutInFlight);
 
-    const res = await Promise.race([generatorPromise, timeoutPromise]);
+    const res = await Promise.race([currentPromise, timeoutPromise]);
     return res;
   } catch (err) {
     const isTimeout = controller.signal.aborted;
@@ -161,18 +202,6 @@ export function createDefaultEmbeddingGenerator(config: {
     const provider = options?.provider || config.embeddingProvider || "openai";
 
     let targetUrl = config.embeddingBaseUrl;
-    if (targetUrl) {
-      targetUrl = targetUrl.trim();
-      if (!targetUrl.endsWith("/embeddings")) {
-        if (!targetUrl.endsWith("/v1")) {
-          targetUrl = `${targetUrl.replace(/\/+$/, "")}/v1/embeddings`;
-        } else {
-          targetUrl = `${targetUrl.replace(/\/+$/, "")}/embeddings`;
-        }
-      }
-    }
-    const apiKey = config.embeddingApiKey;
-
     if (!targetUrl) {
       if (provider === "lemonade") {
         targetUrl = "http://localhost:13305/v1/embeddings";
@@ -180,8 +209,27 @@ export function createDefaultEmbeddingGenerator(config: {
         targetUrl = "http://localhost:11434/v1/embeddings";
       }
     }
+    if (!targetUrl) return null;
 
-    if (!targetUrl) {
+    targetUrl = targetUrl.trim();
+    if (!targetUrl.endsWith("/embeddings")) {
+      if (!targetUrl.endsWith("/v1")) {
+        targetUrl = `${targetUrl.replace(/\/+$/, "")}/v1/embeddings`;
+      } else {
+        targetUrl = `${targetUrl.replace(/\/+$/, "")}/embeddings`;
+      }
+    }
+    const apiKey = config.embeddingApiKey;
+
+    try {
+      const guard = getProviderValidationGuard();
+      targetUrl = (
+        guard === "public-only"
+          ? parseAndValidatePublicUrl(targetUrl)
+          : parseAndValidateNonMetadataUrl(targetUrl)
+      ).toString();
+    } catch {
+      console.warn("[CACHE] Blocked invalid or unsafe embedding endpoint");
       return null;
     }
 

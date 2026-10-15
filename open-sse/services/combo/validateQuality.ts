@@ -16,7 +16,10 @@ import { sanitizeErrorMessage } from "../../utils/errorSanitization.ts";
 import { normalizeStreamFailurePayload } from "../../utils/streamErrorFormat.ts";
 import { evaluateResponseValidation, type ResponseValidationConfig } from "./responseValidation.ts";
 import { getReasoningTokens } from "../../../src/lib/usage/tokenAccounting.ts";
-import { REASONING_BUFFER_MIN_TRIGGER } from "../reasoningTokenBuffer.ts";
+import {
+  isTinyBudgetReasoningProbe,
+  REASONING_BUFFER_MIN_TRIGGER,
+} from "../reasoningTokenBuffer.ts";
 import type { ComboRetryAfter } from "./types.ts";
 
 /**
@@ -281,11 +284,21 @@ export interface StreamingUpstreamFailure {
   retryable: boolean;
 }
 
+export function qualityValidationContext(
+  model: string,
+  body: unknown
+): {
+  tinyBudgetCapabilityProbe: boolean;
+} {
+  return { tinyBudgetCapabilityProbe: isTinyBudgetReasoningProbe({ model, body }) };
+}
+
 export interface ResponseQualityResult {
   valid: boolean;
   reason?: string;
   clonedResponse?: Response;
   upstreamFailure?: StreamingUpstreamFailure;
+  clientAborted?: boolean;
 }
 
 function classifyStreamingUpstreamFailure(parsed: unknown): StreamingUpstreamFailure | null {
@@ -343,7 +356,8 @@ export async function validateResponseQuality(
   isStreaming: boolean,
   log: { warn?: (...args: unknown[]) => void },
   responseValidation?: ResponseValidationConfig | null,
-  signal?: AbortSignal | null
+  signal?: AbortSignal | null,
+  context?: { tinyBudgetCapabilityProbe?: boolean }
 ): Promise<ResponseQualityResult> {
   // Issue #3685: For Claude SSE streaming responses, use a BOUNDED PEEK to
   // detect the empty-content-block pattern (content_filter stop_reason with
@@ -577,7 +591,7 @@ export async function validateResponseQuality(
         if (next === null) {
           // Same as the error path: never await cancel() on a tee branch.
           reader.cancel(signal?.reason).catch(() => {});
-          return { valid: true };
+          return { valid: false, reason: "client aborted", clientAborted: true };
         }
         const { done, value } = next;
 
@@ -925,7 +939,8 @@ export async function validateResponseQuality(
       // model -- exempt it into the #10281 truncated-200 treatment (pass the
       // original 200 through unmodified) instead of a genuine quality
       // failure, so the caller never records a model-lockout for a probe.
-      if (isTinyBudgetTruncation(completionTokens)) return { valid: true };
+      if (context?.tinyBudgetCapabilityProbe === true && isTinyBudgetTruncation(completionTokens))
+        return { valid: true };
       return {
         valid: false,
         reason: `reasoning truncated at token limit (finish_reason: ${finishReason}) — no content output`,
@@ -936,7 +951,8 @@ export async function validateResponseQuality(
       // If reasoning consumed 90%+ of completion tokens, the model ran out of
       // budget before producing any content output.
       if (completionTokens > 0 && reasoningTokens >= completionTokens * 0.9) {
-        if (isTinyBudgetTruncation(completionTokens)) return { valid: true };
+        if (context?.tinyBudgetCapabilityProbe === true && isTinyBudgetTruncation(completionTokens))
+          return { valid: true };
         return {
           valid: false,
           reason: `reasoning consumed ${reasoningTokens}/${completionTokens} tokens — no content output`,
