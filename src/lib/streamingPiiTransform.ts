@@ -3,6 +3,7 @@ import { sanitizePII } from "./piiSanitizer";
 
 export interface PiiTransformOptions {
   windowSize?: number;
+  featureFlagOverrides?: Readonly<Record<string, string>>;
 }
 
 export function createPiiSseTransform(options?: PiiTransformOptions): TransformStream {
@@ -43,11 +44,15 @@ export function createPiiSseTransform(options?: PiiTransformOptions): TransformS
       return text;
     }
     if (isSnapshot) {
-      return sanitizePII(text).text;
+      return sanitizePII(text, false, options?.featureFlagOverrides).text;
     }
     const buffers = getBuffers(index);
     buffers[field] += text;
-    const { text: sanitized, endMatchIndex } = sanitizePII(buffers[field], !isStopSignal);
+    const { text: sanitized, endMatchIndex } = sanitizePII(
+      buffers[field],
+      !isStopSignal,
+      options?.featureFlagOverrides
+    );
     let emitLength = isStopSignal ? sanitized.length : Math.max(0, sanitized.length - W);
 
     // Cap emitLength at the start of any PII that touched the end of the buffer
@@ -75,7 +80,7 @@ export function createPiiSseTransform(options?: PiiTransformOptions): TransformS
       for (const key of Object.keys(buffers)) {
         const field = key as FieldCategory;
         if (buffers[field]) {
-          buffers[field] = sanitizePII(buffers[field]).text;
+          buffers[field] = sanitizePII(buffers[field], false, options?.featureFlagOverrides).text;
         }
       }
     }

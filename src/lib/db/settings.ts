@@ -20,6 +20,7 @@ import { requestBodyLimitMbFromEnv } from "@/shared/constants/bodySize";
 import { DEFAULT_RESPONSES_PREVIOUS_RESPONSE_ID_MODE } from "@/shared/constants/responsesPreviousResponseId";
 import { decodeUserinfo } from "@/shared/utils/decodeUserinfo";
 import { type JsonRecord, toRecord } from "./settings/shared";
+import { advanceSettingsRevision, readSettingsRevisionFromDb } from "./settingsRevision";
 import { resolveNoAuthSharedProviderProxy } from "./settings/noAuthProxyFallback";
 
 type ProxyValue = JsonRecord | string | null;
@@ -100,8 +101,11 @@ function withFamilyDefault(value: ProxyValue): ProxyValue {
 
 // ──────────────── Settings ────────────────
 
-/** Internal key_value row — not exposed as a user-facing settings field. */
-export const SETTINGS_REVISION_KEY = "_settingsRevision";
+export { SETTINGS_REVISION_KEY } from "./settingsRevision";
+
+export async function getSettingsRevision(): Promise<number> {
+  return readSettingsRevisionFromDb(getDbInstance());
+}
 
 export class SettingsRevisionConflictError extends Error {
   readonly code = "SETTINGS_REVISION_CONFLICT" as const;
@@ -112,21 +116,22 @@ export class SettingsRevisionConflictError extends Error {
   }
 }
 
-function readSettingsRevision(db: ReturnType<typeof getDbInstance>): number {
-  const row = db
-    .prepare("SELECT value FROM key_value WHERE namespace = 'settings' AND key = ?")
-    .get(SETTINGS_REVISION_KEY) as { value?: string } | undefined;
-  if (!row?.value) return 0;
-  try {
-    const parsed = JSON.parse(row.value) as unknown;
-    return typeof parsed === "number" && Number.isInteger(parsed) && parsed >= 0 ? parsed : 0;
-  } catch {
-    return 0;
-  }
-}
+export class RuntimeSettingsActivationError extends Error {
+  readonly code = "RUNTIME_SETTINGS_ACTIVATION_FAILED" as const;
 
-export async function getSettingsRevision(): Promise<number> {
-  return readSettingsRevision(getDbInstance());
+  constructor(
+    public readonly desiredRevision: number,
+    public readonly activeRevision: number | null,
+    cause: unknown
+  ) {
+    const message = cause instanceof Error ? cause.message : String(cause);
+    super(
+      `Settings revision ${desiredRevision} persisted but runtime activation failed ` +
+        `(active=${activeRevision ?? "none"}): ${message.slice(0, 300)}`,
+      { cause }
+    );
+    this.name = "RuntimeSettingsActivationError";
+  }
 }
 
 /**
@@ -148,9 +153,7 @@ function applySessionAffinityLegacyFallback(settings: Record<string, unknown>): 
   }
 }
 
-export async function getSettings() {
-  const db = getDbInstance();
-  const rows = db.prepare("SELECT key, value FROM key_value WHERE namespace = 'settings'").all();
+function materializeSettings(rows: unknown[]): Record<string, unknown> {
   const settings: Record<string, unknown> = {
     cloudEnabled: true,
     tailscaleEnabled: false,
@@ -296,25 +299,75 @@ export async function getSettings() {
   }
   applySessionAffinityLegacyFallback(settings);
 
-  // Auto-complete onboarding for pre-configured deployments (Docker/VM)
-  // If INITIAL_PASSWORD is set via env, this is a headless deploy — skip the wizard
-  if (!settings.setupComplete && process.env.INITIAL_PASSWORD) {
-    settings.setupComplete = true;
-    settings.requireLogin = true;
-    db.prepare(
-      "INSERT OR REPLACE INTO key_value (namespace, key, value) VALUES ('settings', 'setupComplete', 'true')"
-    ).run();
-    db.prepare(
-      "INSERT OR REPLACE INTO key_value (namespace, key, value) VALUES ('settings', 'requireLogin', 'true')"
-    ).run();
-  }
-
   return settings;
+}
+
+export interface SettingsCandidate {
+  revision: number;
+  settings: Record<string, unknown>;
+  featureFlagOverrides: Record<string, string>;
+}
+
+function readSettingsRows(db: ReturnType<typeof getDbInstance>): unknown[] {
+  return db.prepare("SELECT key, value FROM key_value WHERE namespace = 'settings'").all();
+}
+
+function readFeatureFlagOverrides(db: ReturnType<typeof getDbInstance>): Record<string, string> {
+  const rows = db
+    .prepare("SELECT key, value FROM key_value WHERE namespace = 'feature_flags'")
+    .all() as Array<{ key: string; value: string }>;
+  return Object.fromEntries(rows.map((row) => [row.key, row.value]));
+}
+
+export async function getSettings() {
+  return materializeSettings(readSettingsRows(getDbInstance()));
+}
+
+export async function getSettingsCandidate(): Promise<SettingsCandidate> {
+  const db = getDbInstance();
+  const readCandidate = db.transaction((): SettingsCandidate => ({
+    revision: readSettingsRevisionFromDb(db),
+    settings: materializeSettings(readSettingsRows(db)),
+    featureFlagOverrides: readFeatureFlagOverrides(db),
+  }));
+  return readCandidate();
+}
+
+export async function ensureInitialSettingsBootstrap(): Promise<{
+  changed: boolean;
+  candidate: SettingsCandidate;
+}> {
+  const db = getDbInstance();
+  let changed = false;
+  const bootstrap = db.transaction(() => {
+    const settings = materializeSettings(readSettingsRows(db));
+    if (settings.setupComplete || !process.env.INITIAL_PASSWORD) return;
+
+    const insert = db.prepare(
+      "INSERT OR REPLACE INTO key_value (namespace, key, value) VALUES ('settings', ?, ?)"
+    );
+    insert.run("setupComplete", JSON.stringify(true));
+    insert.run("requireLogin", JSON.stringify(true));
+    advanceSettingsRevision(db);
+    changed = true;
+  });
+  bootstrap();
+
+  if (changed) {
+    backupDbFile("pre-write");
+    invalidateDbCache("settings");
+  }
+  return { changed, candidate: await getSettingsCandidate() };
+}
+
+export interface UpdateSettingsOptions {
+  expectedRevision?: number;
+  transactionMutator?: (db: ReturnType<typeof getDbInstance>, nextRevision: number) => void;
 }
 
 export async function updateSettings(
   updates: Record<string, unknown>,
-  options?: { expectedRevision?: number }
+  options?: UpdateSettingsOptions
 ) {
   // Detect first-time setup completion before we overwrite settings.
   let setupJustCompleted = false;
@@ -332,19 +385,31 @@ export async function updateSettings(
     "INSERT OR REPLACE INTO key_value (namespace, key, value) VALUES ('settings', ?, ?)"
   );
   const tx = db.transaction(() => {
-    const currentRevision = readSettingsRevision(db);
+    const currentRevision = readSettingsRevisionFromDb(db);
     if (options?.expectedRevision !== undefined && options.expectedRevision !== currentRevision) {
       throw new SettingsRevisionConflictError(currentRevision);
     }
+
+    const currentSettings = materializeSettings(readSettingsRows(db));
+    let settingsChanged = false;
     for (const [key, value] of Object.entries(updates)) {
+      if (JSON.stringify(currentSettings[key]) === JSON.stringify(value)) continue;
       const toStore = key === "oidcClientSecret" ? encrypt(value as string) : value;
       insert.run(key, JSON.stringify(toStore));
+      settingsChanged = true;
     }
-    insert.run(SETTINGS_REVISION_KEY, JSON.stringify(currentRevision + 1));
+
+    if (!settingsChanged && !options?.transactionMutator) return false;
+    const nextRevision = currentRevision + 1;
+    options?.transactionMutator?.(db, nextRevision);
+    advanceSettingsRevision(db, currentRevision);
+    return true;
   });
-  tx();
-  backupDbFile("pre-write");
-  invalidateDbCache("settings"); // Bust the read cache immediately
+  const changed = tx();
+  if (changed) {
+    backupDbFile("pre-write");
+    invalidateDbCache("settings"); // Bust the read cache immediately
+  }
 
   // Bust proxy resolution cache when proxy toggle settings change
   const PROXY_TOGGLE_KEYS = ["proxyEnabled", "perKeyProxyEnabled"];
@@ -352,16 +417,16 @@ export async function updateSettings(
     bumpProxyConfigGeneration();
   }
 
-  const nextSettings = await getSettings();
+  const candidate = await getSettingsCandidate();
+  const nextSettings = candidate.settings;
 
   try {
-    const { applyRuntimeSettings } = await import("@/lib/config/runtimeSettings");
-    await applyRuntimeSettings(nextSettings, { source: "settings:update" });
+    const { applyRuntimeSettingsCandidate } = await import("@/lib/config/runtimeSettings");
+    await applyRuntimeSettingsCandidate(candidate, { source: "settings:update" });
   } catch (error) {
-    console.warn(
-      "[HOT_RELOAD] Failed to apply runtime settings after update:",
-      error instanceof Error ? error.message : error
-    );
+    const { getRuntimeConfigStatus } = await import("@/lib/config/runtimeConfigAuthority");
+    const status = getRuntimeConfigStatus();
+    throw new RuntimeSettingsActivationError(candidate.revision, status.activeRevision, error);
   }
 
   // Onboarding / setup finished → one-shot Codex catalog revalidation (init case).

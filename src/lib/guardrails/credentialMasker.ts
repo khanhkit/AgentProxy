@@ -122,6 +122,17 @@ function redactResponse(
   const r = walkValue(response, detections);
   return { modified: r.modified, response: r.value };
 }
+async function resolveCredentialMaskerSettings(
+  context: GuardrailContext
+): Promise<Record<string, unknown>> {
+  if (context.runtimeSettings) return context.runtimeSettings;
+  try {
+    return await getSettings();
+  } catch {
+    return { credentialRedactionEnabled: true };
+  }
+}
+
 export class CredentialMaskerGuardrail extends BaseGuardrail {
   constructor(options: { enabled?: boolean; priority?: number } = {}) {
     super("credential-masker", { enabled: options.enabled, priority: options.priority ?? 95 });
@@ -129,9 +140,9 @@ export class CredentialMaskerGuardrail extends BaseGuardrail {
 
   async preCall(
     payload: unknown,
-    _context: GuardrailContext
+    context: GuardrailContext = {}
   ): Promise<GuardrailResult<unknown> | void> {
-    const _s = await getSettings();
+    const _s = await resolveCredentialMaskerSettings(context);
     if (!(
       _s.credentialRedactionEnabled === true || process.env.CREDENTIAL_REDACTION_ENABLED === "true"
     ))
@@ -148,9 +159,9 @@ export class CredentialMaskerGuardrail extends BaseGuardrail {
 
   async postCall(
     response: unknown,
-    _context: GuardrailContext
+    context: GuardrailContext = {}
   ): Promise<GuardrailResult<unknown> | void> {
-    const _s = await getSettings();
+    const _s = await resolveCredentialMaskerSettings(context);
     if (!(
       _s.credentialRedactionEnabled === true || process.env.CREDENTIAL_REDACTION_ENABLED === "true"
     ))

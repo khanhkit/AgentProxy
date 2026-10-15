@@ -52,11 +52,13 @@ export class AudioBridgeGuardrail extends BaseGuardrail {
     }
 
     const getSettings = this.deps.getSettings ?? defaultGetSettings;
-    let persisted: Record<string, unknown> = {};
-    try {
-      persisted = await getSettings();
-    } catch {
-      // Database settings are optional during early boot; defaults remain safe.
+    let persisted: Readonly<Record<string, unknown>> = context.runtimeSettings ?? {};
+    if (!context.runtimeSettings) {
+      try {
+        persisted = await getSettings();
+      } catch {
+        // Database settings are optional during early boot; defaults remain safe.
+      }
     }
     const runtime = resolveAudioBridgeRuntimeSettings(persisted);
     if (!runtime.enabled) return { block: false };

@@ -1,3 +1,5 @@
+import { isDeepStrictEqual } from "node:util";
+
 import { BaseGuardrail, type GuardrailContext, type GuardrailResult } from "./base";
 import { processPII } from "@/shared/utils/inputSanitizer";
 import { sanitizePII, sanitizePIIResponse } from "@/lib/piiSanitizer";
@@ -11,10 +13,10 @@ type PiiDetection = {
 
 type JsonRecord = Record<string, unknown>;
 
-function isRequestPiiMaskingEnabled() {
+function isRequestPiiMaskingEnabled(overrides?: Readonly<Record<string, string>>) {
   // Request PII redaction is controlled by PII_REDACTION_ENABLED feature flag (DB > env > default).
   // INPUT_SANITIZER_MODE only governs prompt-injection policy (warn/block/log).
-  return isFeatureFlagEnabled("PII_REDACTION_ENABLED");
+  return isFeatureFlagEnabled("PII_REDACTION_ENABLED", overrides);
 }
 
 function sanitizeStringValue(text: string, redact: boolean) {
@@ -82,7 +84,10 @@ function applyToContentValue(
   return { modified: false, value };
 }
 
-function cloneAndMaskRequestPayload(payload: unknown) {
+function cloneAndMaskRequestPayload(
+  payload: unknown,
+  overrides?: Readonly<Record<string, string>>
+) {
   if (!payload || typeof payload !== "object" || Array.isArray(payload)) {
     return { detections: [] as PiiDetection[], modified: false, payload };
   }
@@ -92,7 +97,7 @@ function cloneAndMaskRequestPayload(payload: unknown) {
   // the DB override chain. The top level is copied shallowly and every branch
   // below rebuilds the containers it touches, so the caller's body is never
   // mutated without paying for a JSON round trip of the whole request up front.
-  const redact = isRequestPiiMaskingEnabled();
+  const redact = isRequestPiiMaskingEnabled(overrides);
   const clonedPayload: JsonRecord = { ...(payload as JsonRecord) };
   const detections: PiiDetection[] = [];
   let modified = false;
@@ -162,11 +167,11 @@ function cloneAndMaskRequestPayload(payload: unknown) {
   };
 }
 
-function maskResponsesOutput(response: JsonRecord) {
+function maskResponsesOutput(response: JsonRecord, overrides?: Readonly<Record<string, string>>) {
   let modified = false;
 
   if (typeof response.output_text === "string") {
-    const result = sanitizePII(response.output_text);
+    const result = sanitizePII(response.output_text, false, overrides);
     if (result.redacted) {
       response.output_text = result.text;
       modified = true;
@@ -182,7 +187,7 @@ function maskResponsesOutput(response: JsonRecord) {
           if (!part || typeof part !== "object") return part;
           const nextPart = { ...(part as JsonRecord) };
           if (typeof nextPart.text === "string") {
-            const result = sanitizePII(nextPart.text);
+            const result = sanitizePII(nextPart.text, false, overrides);
             if (result.redacted) {
               nextPart.text = result.text;
               modified = true;
@@ -206,8 +211,11 @@ export class PIIMaskerGuardrail extends BaseGuardrail {
     });
   }
 
-  async preCall(payload: unknown, _context: GuardrailContext): Promise<GuardrailResult<unknown>> {
-    const result = cloneAndMaskRequestPayload(payload);
+  async preCall(
+    payload: unknown,
+    context: GuardrailContext = {}
+  ): Promise<GuardrailResult<unknown>> {
+    const result = cloneAndMaskRequestPayload(payload, context.runtimeFeatureFlagOverrides);
     if (!result.modified) {
       return {
         block: false,
@@ -222,24 +230,35 @@ export class PIIMaskerGuardrail extends BaseGuardrail {
     };
   }
 
-  async postCall(response: unknown, _context: GuardrailContext): Promise<GuardrailResult<unknown>> {
+  async postCall(
+    response: unknown,
+    context: GuardrailContext = {}
+  ): Promise<GuardrailResult<unknown>> {
     if (!response || typeof response !== "object" || Array.isArray(response)) {
       return { block: false };
     }
 
-    const clonedResponse = JSON.parse(JSON.stringify(response)) as JsonRecord;
-    const before = JSON.stringify(clonedResponse);
-    const sanitized = sanitizePIIResponse(clonedResponse) as JsonRecord;
-    const modifiedResponsesShape = maskResponsesOutput(sanitized);
-    const after = JSON.stringify(sanitized);
-    const modified = before !== after || modifiedResponsesShape;
+    try {
+      const clonedResponse = structuredClone(response) as JsonRecord;
+      const sanitized = sanitizePIIResponse(
+        clonedResponse,
+        context.runtimeFeatureFlagOverrides
+      ) as JsonRecord;
+      const modifiedResponsesShape = maskResponsesOutput(
+        sanitized,
+        context.runtimeFeatureFlagOverrides
+      );
+      const modified = !isDeepStrictEqual(response, sanitized) || modifiedResponsesShape;
 
-    if (!modified) return { block: false };
+      if (!modified) return { block: false };
 
-    return {
-      block: false,
-      meta: { redacted: true },
-      modifiedResponse: sanitized,
-    };
+      return {
+        block: false,
+        meta: { redacted: true },
+        modifiedResponse: sanitized,
+      };
+    } catch {
+      return { block: true, message: "Unable to sanitize provider response" };
+    }
   }
 }

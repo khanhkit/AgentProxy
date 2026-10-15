@@ -13,6 +13,7 @@ import { getDbInstance } from "./core";
 import { invalidateDbCache } from "./readCache";
 import { invalidateReasoningRoutingRuleCache } from "./reasoningRoutingRules";
 import { routingConfigRepositories } from "./repositories/routingConfigRepositories";
+import { writeSettingsValueWithRevision } from "./settingsRevision";
 
 const repository = routingConfigRepositories.combos;
 
@@ -86,9 +87,7 @@ export async function deleteComboByName(name: string): Promise<boolean> {
 }
 
 export function setActiveCombo(name: string, db = getDbInstance()): void {
-  db.prepare(
-    "INSERT OR REPLACE INTO key_value (namespace, key, value) VALUES ('settings', 'activeCombo', ?)"
-  ).run(JSON.stringify(name));
+  writeSettingsValueWithRevision(db, "activeCombo", name);
 }
 
 /**

@@ -25,13 +25,28 @@ function stripComments(src: string): string {
   return src.replace(/\/\*[\s\S]*?\*\//g, "").replace(/^\s*\/\/.*$/gm, "");
 }
 
-test("#5312 RC-A: the production boot path (instrumentation-node) hydrates Thinking-Budget", () => {
+test("startup persists INITIAL_PASSWORD onboarding before runtime candidate hydration", () => {
+  const code = stripComments(readFileSync(BOOT_PATH, "utf8"));
+  const bootstrapIndex = code.indexOf("await ensureInitialSettingsBootstrap()");
+  const candidateIndex = code.indexOf("await getSettingsCandidate()");
+
+  assert.ok(
+    bootstrapIndex >= 0,
+    "instrumentation-node.ts must run the explicit INITIAL_PASSWORD bootstrap transaction"
+  );
+  assert.ok(
+    candidateIndex > bootstrapIndex,
+    "startup must persist onboarding state before reading the runtime settings candidate"
+  );
+});
+
+test("#5312 RC-A: production boot activates the revisioned runtime candidate without one-off hydrators", () => {
   const code = stripComments(readFileSync(BOOT_PATH, "utf8"));
   assert.match(
     code,
-    /hydrateThinkingBudgetConfig\s*\(\s*settings\s*\)/,
-    "instrumentation-node.ts must call hydrateThinkingBudgetConfig(settings) at startup; " +
-      "wiring it only into the unused server-init.ts reverts the operator's Thinking-Budget " +
-      "mode to passthrough on every restart (#5312 fix A was non-functional in production)."
+    /applyRuntimeSettingsCandidate\s*\(\s*candidate\s*,/,
+    "instrumentation-node.ts must activate the same revisioned runtime candidate used by live updates"
   );
+  assert.doesNotMatch(code, /hydrateThinkingBudgetConfig\s*\(/);
+  assert.doesNotMatch(code, /hydrateTaskRoutingConfig\s*\(/);
 });

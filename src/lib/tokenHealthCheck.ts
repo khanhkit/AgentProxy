@@ -374,10 +374,10 @@ function getHealthCheckSkipProviders(): Set<string> {
   );
 }
 
-// ── Logging helper ───────────────────────────────────────────────────────────
 let cachedHideLogs: boolean | null = null;
 let cacheTimestamp = 0;
 let pendingHideLogs: Promise<boolean> | null = null;
+let hideLogsCacheGeneration = 0;
 const CACHE_TTL = 30_000; // Cache settings for 30 seconds
 
 export async function shouldHideLogs(): Promise<boolean> {
@@ -391,31 +391,32 @@ export async function shouldHideLogs(): Promise<boolean> {
 
   const now = Date.now();
 
-  // Return cached value if valid
-  if (cachedHideLogs !== null && now - cacheTimestamp < CACHE_TTL) {
-    return cachedHideLogs;
-  }
+  if (cachedHideLogs !== null && now - cacheTimestamp < CACHE_TTL) return cachedHideLogs;
+  if (pendingHideLogs !== null) return pendingHideLogs;
 
-  // Return pending promise if a query is already in progress (request coalescing)
-  if (pendingHideLogs !== null) {
-    return pendingHideLogs;
-  }
-
-  // Create new promise for DB query
-  pendingHideLogs = (async () => {
+  const generation = hideLogsCacheGeneration;
+  const query = (async () => {
     try {
       const settings = await getSettings();
-      cachedHideLogs = settings.hideHealthCheckLogs === true;
-      cacheTimestamp = now;
-      return cachedHideLogs;
+      const resolved = settings.hideHealthCheckLogs === true;
+      if (generation === hideLogsCacheGeneration) {
+        cachedHideLogs = resolved;
+        cacheTimestamp = now;
+        return resolved;
+      }
+      return cachedHideLogs ?? resolved;
     } catch {
+      if (generation !== hideLogsCacheGeneration && cachedHideLogs !== null) {
+        return cachedHideLogs;
+      }
       return false;
     } finally {
-      pendingHideLogs = null;
+      if (pendingHideLogs === query) pendingHideLogs = null;
     }
   })();
+  pendingHideLogs = query;
 
-  return pendingHideLogs;
+  return query;
 }
 
 function log(message: string, ...args: any[]) {
@@ -436,15 +437,12 @@ function logError(message: string, ...args: any[]) {
   });
 }
 
-/**
- * Clear the cached hideLogs setting (call when settings are updated).
- */
-export function clearHealthCheckLogCache() {
-  cachedHideLogs = null;
-  cacheTimestamp = 0;
+export function clearHealthCheckLogCache(value: boolean | null = null) {
+  hideLogsCacheGeneration++;
+  pendingHideLogs = null;
+  cachedHideLogs = value;
+  cacheTimestamp = value === null ? 0 : Date.now();
 }
-
-// ── Singleton guard (globalThis survives HMR re-evaluation) ─────────────────
 
 declare global {
   var __agentproxyTokenHC:

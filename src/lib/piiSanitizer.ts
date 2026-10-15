@@ -15,17 +15,18 @@
 
 import { isFeatureFlagEnabled, resolveFeatureFlag } from "@/shared/utils/featureFlags";
 
-const isEnabled = () => isFeatureFlagEnabled("PII_RESPONSE_SANITIZATION");
+const isEnabled = (overrides?: Readonly<Record<string, string>>) =>
+  isFeatureFlagEnabled("PII_RESPONSE_SANITIZATION", overrides);
 
 /** Whether response PII sanitization is switched on (DB override > env > default). */
-export function isPiiSanitizationEnabled(): boolean {
-  return isEnabled();
+export function isPiiSanitizationEnabled(overrides?: Readonly<Record<string, string>>): boolean {
+  return isEnabled(overrides);
 }
 const VALID_MODES = ["redact", "warn", "block", "off"] as const;
 type PiiMode = (typeof VALID_MODES)[number];
 
-const getMode = (): PiiMode => {
-  const value = resolveFeatureFlag("PII_RESPONSE_SANITIZATION_MODE");
+const getMode = (overrides?: Readonly<Record<string, string>>): PiiMode => {
+  const value = resolveFeatureFlag("PII_RESPONSE_SANITIZATION_MODE", overrides);
   if (value === "" || value === undefined || value === null) return "redact";
   if (String(value) === "false") return "off";
   if ((VALID_MODES as readonly any[]).includes(value)) return value as PiiMode;
@@ -131,12 +132,16 @@ export interface SanitizeResult {
 /**
  * Scan and optionally redact PII from LLM response text.
  */
-export function sanitizePII(text: string, isStreaming = false): SanitizeResult {
-  if (!isEnabled() || !text || typeof text !== "string") {
+export function sanitizePII(
+  text: string,
+  isStreaming = false,
+  overrides?: Readonly<Record<string, string>>
+): SanitizeResult {
+  if (!isEnabled(overrides) || !text || typeof text !== "string") {
     return { text, detections: [], redacted: false };
   }
 
-  const mode = getMode();
+  const mode = getMode(overrides);
   const detections: SanitizeResult["detections"] = [];
 
   // Build a map of clean character index to original character index.
@@ -293,18 +298,25 @@ export function sanitizePII(text: string, isStreaming = false): SanitizeResult {
 /**
  * Sanitize a streaming chunk (text content only).
  */
-export function sanitizePIIChunk(chunk: string, isStopSignal = false): string {
-  if (!isEnabled()) return chunk;
+export function sanitizePIIChunk(
+  chunk: string,
+  isStopSignal = false,
+  overrides?: Readonly<Record<string, string>>
+): string {
+  if (!isEnabled(overrides)) return chunk;
   // If it's a stop signal, we are flushing the final chunk, so we shouldn't treat it as a partial streaming buffer (force redaction)
-  const { text } = sanitizePII(chunk, !isStopSignal);
+  const { text } = sanitizePII(chunk, !isStopSignal, overrides);
   return text;
 }
 
 /**
  * Sanitize PII in a full response object (OpenAI-compatible format).
  */
-export function sanitizePIIResponse(response: any): any {
-  if (!isEnabled() || !response) return response;
+export function sanitizePIIResponse(
+  response: any,
+  overrides?: Readonly<Record<string, string>>
+): any {
+  if (!isEnabled(overrides) || !response) return response;
 
   try {
     const visited = new WeakSet();
@@ -315,7 +327,7 @@ export function sanitizePIIResponse(response: any): any {
       }
       if (!obj) return obj;
       if (typeof obj === "string") {
-        return sanitizePII(obj).text;
+        return sanitizePII(obj, false, overrides).text;
       }
       if (typeof obj === "object") {
         if (visited.has(obj)) {
@@ -361,7 +373,7 @@ export function sanitizePIIResponse(response: any): any {
     // Fail secure — try raw string sanitization instead of failing open
     try {
       const serialized = JSON.stringify(response);
-      const { text: sanitized } = sanitizePII(serialized);
+      const { text: sanitized } = sanitizePII(serialized, false, overrides);
       return JSON.parse(sanitized);
     } catch (fallbackErr) {
       // Suppress err.message — never surface upstream error detail to the client

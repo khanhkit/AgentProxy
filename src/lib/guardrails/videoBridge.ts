@@ -156,11 +156,13 @@ export class VideoBridgeGuardrail extends BaseGuardrail {
     if (!model) return { block: false };
 
     const getSettings = this.deps.getSettings ?? defaultGetSettings;
-    let persisted: Record<string, unknown> = {};
-    try {
-      persisted = await getSettings();
-    } catch {
-      // Early boot can run before the settings database is ready; defaults are safe.
+    let persisted: Readonly<Record<string, unknown>> = context.runtimeSettings ?? {};
+    if (!context.runtimeSettings) {
+      try {
+        persisted = await getSettings();
+      } catch {
+        // Early boot can run before the settings database is ready; defaults are safe.
+      }
     }
     const runtime = resolveVideoBridgeRuntimeSettings(persisted);
     if (!runtime.enabled) return { block: false };

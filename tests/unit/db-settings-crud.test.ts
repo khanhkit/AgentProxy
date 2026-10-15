@@ -84,15 +84,18 @@ test("getSettings exposes defaults and updateSettings persists typed values", as
   assert.equal(await settingsDb.isCloudEnabled(), true);
 });
 
-test("INITIAL_PASSWORD marks onboarding as complete on first read", async () => {
+test("INITIAL_PASSWORD bootstrap persists onboarding only through the named transaction", async () => {
   process.env.INITIAL_PASSWORD = "bootstrap-secret";
 
-  const settings = await settingsDb.getSettings();
+  const before = await settingsDb.getSettings();
+  assert.notEqual(before.setupComplete, true);
+
+  const bootstrap = await settingsDb.ensureInitialSettingsBootstrap();
   const stored = await settingsDb.getSettings();
 
-  assert.equal(settings.setupComplete, true);
-  assert.equal(settings.requireLogin, true);
+  assert.equal(bootstrap.changed, true);
   assert.equal(stored.setupComplete, true);
+  assert.equal(stored.requireLogin, true);
 });
 
 test("pricing layers merge synced, models.dev and user overrides", async () => {

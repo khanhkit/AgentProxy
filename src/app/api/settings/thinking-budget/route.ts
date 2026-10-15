@@ -1,10 +1,6 @@
 import { NextResponse } from "next/server";
-import { getSettings, updateSettings } from "@/lib/db/settings";
-import {
-  setThinkingBudgetConfig,
-  getThinkingBudgetConfig,
-  ThinkingMode,
-} from "@agentproxy/open-sse/services/thinkingBudget.ts";
+import { updateSettings } from "@/lib/db/settings";
+import { getThinkingBudgetConfig } from "@agentproxy/open-sse/services/thinkingBudget.ts";
 import { updateThinkingBudgetSchema } from "@/shared/validation/schemas";
 import { isValidationFailure, validateBody } from "@/shared/validation/helpers";
 import { requireManagementAuth } from "@/lib/api/requireManagementAuth";
@@ -46,10 +42,8 @@ export async function PUT(request: Request) {
     }
     const body = validation.data;
 
-    // Apply config in-memory
-    setThinkingBudgetConfig(body);
-
-    // Persist to settings DB
+    // Persist first. updateSettings activates the committed revision atomically,
+    // so a durable-write failure cannot leave memory ahead of SQLite.
     await updateSettings({ thinkingBudget: body });
 
     return NextResponse.json(getThinkingBudgetConfig());

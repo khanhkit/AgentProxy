@@ -166,6 +166,11 @@ export function setBufferTokensCache(value: number): void {
   _cacheTimestamp = Date.now();
 }
 
+export function setRuntimeBufferTokensCache(value: number | null): void {
+  _cachedBuffer = typeof value === "number" && value >= 0 ? value : DEFAULT_BUFFER_TOKENS;
+  _cacheTimestamp = Date.now();
+}
+
 // Get HH:MM:SS timestamp
 function getTimeString() {
   return new Date().toLocaleTimeString("en-US", {

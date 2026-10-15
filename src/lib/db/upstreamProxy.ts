@@ -1,5 +1,7 @@
 /** Upstream proxy config persistence for upstream_proxy_config table. */
 import { getDbInstance } from "./core";
+
+type UpstreamProxyDb = ReturnType<typeof getDbInstance>;
 import {
   isCloudMetadataHost,
   isPrivateHost as isPrivateNetworkHost,
@@ -130,7 +132,7 @@ export async function getUpstreamProxyConfig(providerId: string) {
   return rowToConfig(toRecord(row));
 }
 
-export async function upsertUpstreamProxyConfig(data: {
+export interface UpstreamProxyConfigWrite {
   providerId: string;
   mode?: string;
   cliproxyapiModelMapping?: Record<string, unknown> | null;
@@ -139,8 +141,12 @@ export async function upsertUpstreamProxyConfig(data: {
   enabled?: boolean;
   family?: string;
   fallbackBackend?: FallbackBackend;
-}) {
-  const db = getDbInstance();
+}
+
+export function upsertUpstreamProxyConfigWithDb(
+  db: UpstreamProxyDb,
+  data: UpstreamProxyConfigWrite
+): void {
   const mode = data.mode ?? "native";
   const cliproxyapiModelMapping =
     data.cliproxyapiModelMapping !== undefined
@@ -175,8 +181,35 @@ export async function upsertUpstreamProxyConfig(data: {
     family,
     fallbackBackend
   );
+}
 
+export async function upsertUpstreamProxyConfig(data: UpstreamProxyConfigWrite) {
+  upsertUpstreamProxyConfigWithDb(getDbInstance(), data);
   return getUpstreamProxyConfig(data.providerId);
+}
+
+export function getActiveUpstreamProxyProviderIdsWithDb(db: UpstreamProxyDb): string[] {
+  return (
+    db
+      .prepare("SELECT DISTINCT provider FROM provider_connections WHERE is_active = 1")
+      .all() as Array<{ provider: string }>
+  ).map(({ provider }) => provider);
+}
+
+export function deleteInactiveProviderProxyConfigsWithDb(db: UpstreamProxyDb): void {
+  db.prepare(
+    `DELETE FROM upstream_proxy_config
+     WHERE provider_id NOT IN ('cliproxyapi', '9router')
+       AND EXISTS (
+         SELECT 1 FROM provider_connections
+         WHERE provider_connections.provider = upstream_proxy_config.provider_id
+       )
+       AND NOT EXISTS (
+         SELECT 1 FROM provider_connections
+         WHERE provider_connections.provider = upstream_proxy_config.provider_id
+           AND provider_connections.is_active = 1
+       )`
+  ).run();
 }
 
 export async function updateUpstreamProxyConfig(

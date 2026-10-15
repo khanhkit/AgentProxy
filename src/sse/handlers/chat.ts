@@ -81,6 +81,7 @@ import {
 } from "@/lib/db/sessionAccountAffinity";
 import { dispatchChatWithAffinityEviction } from "./chatDispatch";
 import { getCachedSettings, getCombosCacheVersion } from "@/lib/db/readCache";
+import { getActiveRuntimeConfigSnapshot } from "@/lib/config/runtimeConfigAuthority";
 import { comboCheckProvider, ghComboGate } from "./chat/githubLiveCatalogFilter.ts";
 import { comboTargetPassesKeyModelPolicy } from "./chat/comboTargetKeyPolicy.ts";
 import { getCombos } from "@/lib/db/combos";
@@ -726,20 +727,17 @@ async function handleChatImplementation(
   // Client<->AgentProxy traffic shrinks to the new delta; AgentProxy<->
   // provider traffic is unchanged. See src/lib/db/responsesContinuationStore.ts.
   //
-  // Skipped entirely when the operator has set responsesPreviousResponseIdMode
-  // to "preserve": that mode is the explicit, connection-independent contract
-  // for "never touch previous_response_id, let the upstream resolve it
-  // natively" (see applyResponsesPreviousResponseIdPolicy in chatCore.ts,
-  // which enforces it per-target once a connection is selected). Codex's own
-  // executor relies on an untouched previous_response_id to delegate history
-  // resolution upstream (stripOrphanedCodexFunctionCallOutputs in codex.ts);
-  // reconstructing and deleting the field here would make that downstream
-  // "preserve" enforcement a no-op since the field would already be gone.
-  const settingsForContinuation = await getCachedSettings().catch(
-    () => ({}) as Record<string, unknown>
-  );
+  // "preserve" delegates previous_response_id resolution to the selected upstream.
+  // In particular Codex needs the untouched id; reconstructing here would make the
+  // per-target preserve policy in chatCore.ts a no-op.
+  const runtimeConfigSnapshot = getActiveRuntimeConfigSnapshot();
+  const pinnedRuntimeSettings =
+    runtimeConfigSnapshot?.settings ??
+    (await getCachedSettings().catch(() => ({}) as Record<string, unknown>));
+  const pinnedRuntimeFeatureFlagOverrides = runtimeConfigSnapshot?.featureFlagOverrides;
+  const pinnedRuntimeSettingsRevision = runtimeConfigSnapshot?.revision;
   const previousResponseIdMode = normalizeResponsesPreviousResponseIdMode(
-    (settingsForContinuation as { responsesPreviousResponseIdMode?: unknown })
+    (pinnedRuntimeSettings as { responsesPreviousResponseIdMode?: unknown })
       .responsesPreviousResponseIdMode
   );
   if (
@@ -754,10 +752,8 @@ async function handleChatImplementation(
       ? resolvePreviousResponseState(previousResponseId, apiKeyInfo?.id ?? null)
       : null;
     if (!stored) {
-      // Matches OpenAI's own `previous_response_not_found` contract (missing
-      // or expired server-side state) so a client with the matching retry
-      // behavior -- resend the full request, same turn -- recovers exactly
-      // as it would against the real OpenAI backend.
+      // Match OpenAI's missing/expired continuation contract so clients can recover by
+      // resending the full request for the same turn.
       return new Response(
         JSON.stringify({
           error: {
@@ -773,7 +769,8 @@ async function handleChatImplementation(
       ? (body as { input: unknown[] }).input
       : [];
     body = { ...body, input: [...stored.input, ...stored.output, ...deltaInput] };
-    delete (body as { previous_response_id?: unknown }).previous_response_id; (body as Record<string, unknown>)._agentproxyPreviousResponseResumed = true;
+    delete (body as { previous_response_id?: unknown }).previous_response_id;
+    (body as Record<string, unknown>)._agentproxyPreviousResponseResumed = true;
   }
 
   const admissionRejection = await admissionContext.acquire(apiKeyInfo?.id, request, body);
@@ -781,12 +778,8 @@ async function handleChatImplementation(
   clientRawRequest = chatAdmission.resolveClientRawAfterAdmission(clientRawRequest, () =>
     deferredClientRawBody.withClientBody((clientBody) => buildClientRawRequest(request, clientBody))
   );
-  // Sibling of clientRawRequest.body, not a replacement: .body stays the raw
-  // pre-reconstruction client bytes (see captureDeferredClientRawBody), while
-  // this is the `input` actually dispatched with -- after the
-  // previous_response_id reconstruction above ran, when it applies. A future
-  // continuation lookup against THIS response must resolve from this field,
-  // not the raw one. See the logClientRawRequest doc comment in requestLogger.ts.
+  // Keep raw client bytes in .body and the reconstructed dispatched input separately;
+  // future continuation state must use the effective input, not the raw delta.
   if (clientRawRequest && Array.isArray((body as { input?: unknown }).input)) {
     (clientRawRequest as { effectiveInput?: unknown }).effectiveInput = (
       body as { input: unknown[] }
@@ -807,6 +800,9 @@ async function handleChatImplementation(
     log,
     method: request.method,
     model: modelStr,
+    runtimeSettings: pinnedRuntimeSettings,
+    runtimeFeatureFlagOverrides: pinnedRuntimeFeatureFlagOverrides,
+    runtimeSettingsRevision: pinnedRuntimeSettingsRevision,
     signal: request.signal,
     stream: body?.stream === true,
   });
@@ -945,7 +941,7 @@ async function handleChatImplementation(
   // Settings are read only when a web-search tool is present; the override lands before
   // auto/combo resolution and the layer-1 fallback so the target's own handling applies.
   if (hasNativeWebSearchTool(body)) {
-    const wsSettings = await getCachedSettings().catch(() => ({}) as Record<string, unknown>);
+    const wsSettings = pinnedRuntimeSettings;
     const wsRoute = resolveWebSearchRouteOverride(resolvedModelStr, body, wsSettings);
     if (wsRoute.wasRouted) {
       log.info(
@@ -1005,10 +1001,8 @@ async function handleChatImplementation(
       if (filtered instanceof Response) return filtered;
       combo = filtered;
     }
-    const [settings, allCombos] = await Promise.all([
-      getCachedSettings().catch(() => ({})),
-      getCombosCachedForChat(),
-    ]);
+    const settings = pinnedRuntimeSettings;
+    const allCombos = await getCombosCachedForChat();
     if (managedLease && isManagedComboUnsupported(combo, settings, allCombos))
       return managedComboRejection();
     log.info(
@@ -1190,7 +1184,9 @@ async function handleChatImplementation(
               comboPreselectedCredentials.delete(key);
               return credentials;
             })(),
-            cachedSettings: settings,
+            cachedSettings: pinnedRuntimeSettings,
+            runtimeFeatureFlagOverrides: pinnedRuntimeFeatureFlagOverrides,
+            runtimeSettingsRevision: pinnedRuntimeSettingsRevision,
             providerId: target?.providerId ?? (target as any)?.provider ?? null,
             correlationId: reqId,
             conversationId,
@@ -1365,6 +1361,9 @@ async function handleChatImplementation(
       correlationId: reqId,
       conversationId,
       routingComboId,
+      cachedSettings: pinnedRuntimeSettings,
+      runtimeFeatureFlagOverrides: pinnedRuntimeFeatureFlagOverrides,
+      runtimeSettingsRevision: pinnedRuntimeSettingsRevision,
       reasoningDecision,
       reasoningIntent,
       reasoningRequestTags: requestRoutingTags.tags,
@@ -1407,7 +1406,9 @@ async function handleSingleModelChat(
     skipUpstreamRetry?: boolean;
     allowRateLimitedConnection?: boolean;
     preselectedCredentials?: any;
-    cachedSettings?: any;
+    cachedSettings?: Readonly<Record<string, unknown>>;
+    runtimeFeatureFlagOverrides?: Readonly<Record<string, string>>;
+    runtimeSettingsRevision?: number;
     providerId?: string | null;
     correlationId?: string | null;
     conversationId?: string | null;
@@ -1420,12 +1421,7 @@ async function handleSingleModelChat(
     managedLease?: ManagedLeaseDispatchContext | null;
     /** #12150 P1b: video-bridge log/Memory shadow — undefined on every non-video request. */
     videoBridgeLog?: VideoBridgeLog;
-    /**
-     * Per-target abort signal from combo.ts's targetTimeoutRunner
-     * (comboTargetTimeoutMs) — see the #7360 follow-up comment at the
-     * handleSingleModel call site above for why this must be merged into
-     * the signal used for the actual dispatch, not left unused.
-     */
+    /** Per-target timeout signal; merge it into the actual dispatch signal (#7360). */
     modelAbortSignal?: AbortSignal | null;
   } = {},
   comboStrategy: string | null = null,
@@ -1818,27 +1814,20 @@ async function handleSingleModelChat(
       const releaseOAuthSession = credentials.releaseOAuthSession ?? (() => {});
       const leaseId: string | undefined = credentials.routing?.leaseId;
       if (agy.on) agy.attempted.add(credentials.connectionId);
-      // #10348: redact the account prefix by default. Gated on the narrow
-      // AUTH_LOG_INCLUDE_ACCOUNT_ID flag (default off) rather than the broad
-      // `debugMode` setting — `debugMode` is a general dashboard-visibility
-      // toggle unrelated to log privacy (its own default has changed
-      // independently for unrelated reasons, see #10312/#10372), so deriving
-      // redaction from it would make log leakage depend on an unrelated
-      // setting. resolveFeatureFlag() reads straight from SQLite on every
-      // call (no stale cache to invalidate) and fails safe (redacted) if the
-      // lookup throws.
+      // #10348: account ids are redacted unless the narrow AUTH_LOG_INCLUDE_ACCOUNT_ID
+      // flag is enabled; failures stay fail-safe (redacted), independent of debugMode.
       let includeAccountId = false;
       try {
-        includeAccountId = isFeatureFlagEnabled("AUTH_LOG_INCLUDE_ACCOUNT_ID");
+        includeAccountId = isFeatureFlagEnabled(
+          "AUTH_LOG_INCLUDE_ACCOUNT_ID",
+          runtimeOptions.runtimeFeatureFlagOverrides
+        );
       } catch {
         includeAccountId = false;
       }
       log.info("AUTH", `Using ${provider} account: ${includeAccountId ? accountId : "***"}...`);
-      // #474: when the request used a bare model name (no "/" — e.g. an alias
-      // that resolved to "auto") and the selected connection declares a
-      // defaultModel, resolve the bare name to that real model ID before the
-      // upstream call so the provider receives a concrete model rather than the
-      // placeholder. A "/"-qualified model name is always left untouched.
+      // #474: resolve bare aliases to the connection default before dispatch; preserve
+      // already-qualified model names unchanged.
       let effectiveModel =
         resolveBareModelToConnectionDefault(modelStr, model, credentials.defaultModel) ?? model;
       let requestBody =
@@ -1983,6 +1972,8 @@ async function handleSingleModelChat(
             modelTargetFormat: targetFormat,
             providerProfile,
             cachedSettings: runtimeOptions.cachedSettings,
+            runtimeFeatureFlagOverrides: runtimeOptions.runtimeFeatureFlagOverrides,
+            runtimeSettingsRevision: runtimeOptions.runtimeSettingsRevision,
             skipUpstreamRetry: runtimeOptions.skipUpstreamRetry ?? false,
             correlationId: runtimeOptions?.correlationId ?? null,
             conversationId: runtimeOptions?.conversationId ?? null,
@@ -2025,7 +2016,9 @@ async function handleSingleModelChat(
 
       // 5. Log proxy + translation events (fire-and-forget; never blocks the response)
       // #5217: reflect the proxy the executor actually applied (per-account rotation).
-      const rotationAttributionOn = isRotationAttributionEnabled();
+      const rotationAttributionOn = isRotationAttributionEnabled(
+        runtimeOptions.runtimeFeatureFlagOverrides
+      );
       void safeLogEvents({
         result,
         proxyInfo: mergeAppliedProxySink(proxyInfo, appliedProxySink),

@@ -1,12 +1,16 @@
 import { NextResponse } from "next/server";
+import { sanitizeErrorMessage } from "@agentproxy/open-sse/utils/error";
 import { z } from "zod";
 import {
   getSettings,
   getSettingsRevision,
   updateSettings,
   SettingsRevisionConflictError,
+  RuntimeSettingsActivationError,
+  type UpdateSettingsOptions,
 } from "@/lib/db/settings";
 import { getRuntimePorts } from "@/lib/runtime/ports";
+import { getRuntimeConfigStatus } from "@/lib/config/runtimeConfigAuthority";
 import { updateSettingsSchema } from "@/shared/validation/settingsSchemas";
 import { isValidationFailure, validateBody } from "@/shared/validation/helpers";
 import { getConsistentMachineId } from "@/shared/utils/machineId";
@@ -14,11 +18,12 @@ import { isFeatureFlagEnabled } from "@/shared/utils/featureFlags";
 import { resolveModelLockoutSettings } from "@/lib/resilience/modelLockoutSettings";
 import {
   validateProxyUrl,
-  upsertUpstreamProxyConfig,
+  upsertUpstreamProxyConfigWithDb,
+  getActiveUpstreamProxyProviderIdsWithDb,
+  deleteInactiveProviderProxyConfigsWithDb,
   getUpstreamProxyConfig,
 } from "@/lib/db/upstreamProxy";
-import { getProviderConnections } from "@/lib/db/providers";
-import { clearCliproxyapiUrlCache } from "@agentproxy/open-sse/executors/cliproxyapi.ts";
+import { clearCliproxyapiRuntimeCache } from "@/lib/services/cliproxyapiRuntime";
 import {
   ensurePersistentManagementPasswordHash,
   getStoredManagementPassword,
@@ -66,6 +71,27 @@ function settingsResponseHeaders(settingsRevision: number): Record<string, strin
   return {
     ...SETTINGS_RESPONSE_HEADERS,
     ETag: String(settingsRevision),
+  };
+}
+
+function publicRuntimeConfigStatus() {
+  const status = getRuntimeConfigStatus();
+  const lastError = status.lastError
+    ? {
+        revision: status.lastError.revision,
+        message:
+          status.state === "reconcile_pending"
+            ? "Runtime configuration reconcile pending"
+            : "Runtime configuration activation failed",
+      }
+    : null;
+  return {
+    desiredRevision: status.desiredRevision,
+    activeRevision: status.activeRevision,
+    state: status.state,
+    restartRequiredKeys: status.restartRequiredKeys,
+    reconcileRevision: status.reconcileRevision,
+    lastError,
   };
 }
 
@@ -260,6 +286,7 @@ export async function GET(request: Request) {
       {
         ...safeSettings,
         settingsRevision,
+        runtimeConfigStatus: publicRuntimeConfigStatus(),
         hasPassword: hasManagementPasswordConfigured(settings),
         runtimePorts,
         apiPort: runtimePorts.apiPort,
@@ -344,6 +371,19 @@ export async function PATCH(request: Request) {
       body.modelLockout = resolveModelLockoutSettings({
         modelLockout: body.modelLockout as Record<string, unknown>,
       }) as typeof body.modelLockout;
+    }
+
+    // Validate secondary-store inputs before any durable settings mutation.
+    const cpaUrl = body.cliproxyapi_url;
+    if (typeof cpaUrl === "string") {
+      const urlValidation = validateProxyUrl(cpaUrl);
+      if (urlValidation.valid === false) {
+        emitSettingsFailureAudit(request, actor, "CLIPROXY_URL_INVALID", attemptedKeys);
+        return NextResponse.json(
+          { error: `Invalid CLIProxyAPI URL: ${urlValidation.error}` },
+          { status: 400 }
+        );
+      }
     }
 
     if (body.oidcEnabled === true) {
@@ -461,11 +501,48 @@ export async function PATCH(request: Request) {
     delete body.currentPassword;
     delete body.expectedRevision;
 
-    // Snapshot BEFORE the write so the success row can record a real diff.
+    // Snapshot BEFORE the write so the success row can record a real diff and
+    // derived secondary rows use the same pre-mutation settings state.
     const beforeSnapshot = (await getSettings()) as Record<string, unknown>;
+    const cpaFallback = body.cliproxyapi_fallback_enabled;
+    const cpaModelMapping = body.cliproxyapi_model_mapping;
+    const touchesUpstreamProxy =
+      cpaFallback !== undefined || cpaUrl !== undefined || cpaModelMapping !== undefined;
+    let transactionMutator: UpdateSettingsOptions["transactionMutator"];
+
+    if (touchesUpstreamProxy) {
+      // Resolve provider membership inside the same SQLite transaction that writes
+      // settings + derived proxy rows. A provider may be activated/deactivated after
+      // request validation, so an earlier async snapshot is not authoritative here.
+      const enabled = cpaFallback ?? beforeSnapshot.cliproxyapi_fallback_enabled;
+      const mode = enabled ? "fallback" : "native";
+      const EMBEDDED_SERVICE_IDS = new Set(["cliproxyapi", "9router"]);
+      const rowData = {
+        mode,
+        enabled: !!enabled,
+        ...(cpaModelMapping !== undefined ? { cliproxyapiModelMapping: cpaModelMapping } : {}),
+      };
+
+      transactionMutator = (db) => {
+        deleteInactiveProviderProxyConfigsWithDb(db);
+
+        const activeProviderIds = [
+          ...new Set(
+            getActiveUpstreamProxyProviderIdsWithDb(db).filter(
+              (id) => !EMBEDDED_SERVICE_IDS.has(id)
+            )
+          ),
+        ];
+        for (const providerId of activeProviderIds) {
+          upsertUpstreamProxyConfigWithDb(db, { providerId, ...rowData });
+        }
+        upsertUpstreamProxyConfigWithDb(db, { providerId: "cliproxyapi", ...rowData });
+      };
+    }
+
     let settings: Awaited<ReturnType<typeof getSettings>>;
     try {
-      settings = await updateSettings(body, { expectedRevision });
+      settings = await updateSettings(body, { expectedRevision, transactionMutator });
     } catch (error) {
       if (error instanceof SettingsRevisionConflictError) {
         emitSettingsFailureAudit(request, actor, "SETTINGS_REVISION_CONFLICT", attemptedKeys);
@@ -480,65 +557,36 @@ export async function PATCH(request: Request) {
           { status: 409, headers: settingsResponseHeaders(error.currentRevision) }
         );
       }
+      if (error instanceof RuntimeSettingsActivationError) {
+        emitSettingsFailureAudit(request, actor, error.code, attemptedKeys);
+        return NextResponse.json(
+          {
+            error: {
+              code: error.code,
+              message: sanitizeErrorMessage(error.message),
+              desiredRevision: error.desiredRevision,
+              activeRevision: error.activeRevision,
+              runtimeConfigStatus: publicRuntimeConfigStatus(),
+            },
+          },
+          { status: 500, headers: settingsResponseHeaders(error.desiredRevision) }
+        );
+      }
       throw error;
     }
 
-    // Sync CLIProxyAPI settings to upstream_proxy_config table
-    const cpaUrl = rawBody.cliproxyapi_url as string | undefined;
-    const cpaFallback = rawBody.cliproxyapi_fallback_enabled as boolean | undefined;
-    if (cpaUrl && typeof cpaUrl === "string") {
-      const urlValidation = validateProxyUrl(cpaUrl);
-      if (urlValidation.valid === false) {
-        emitSettingsFailureAudit(request, actor, "CLIPROXY_URL_INVALID", attemptedKeys);
-        return NextResponse.json(
-          { error: `Invalid CLIProxyAPI URL: ${urlValidation.error}` },
-          { status: 400 }
+    if (typeof cpaUrl === "string") {
+      // Durable settings + derived proxy rows have already committed and activated.
+      // Cache invalidation is secondary and must not turn a successful mutation into
+      // a retryable HTTP failure after commit.
+      try {
+        await clearCliproxyapiRuntimeCache();
+      } catch (error) {
+        console.warn(
+          "[CLIPROXYAPI] Cache invalidation failed after committed settings update:",
+          sanitizeErrorMessage(error instanceof Error ? error.message : String(error))
         );
       }
-      // Invalidate the executor's URL cache so it picks up the new URL immediately
-      clearCliproxyapiUrlCache();
-    }
-
-    const cpaModelMapping = rawBody.cliproxyapi_model_mapping as Record<string, string> | undefined;
-
-    if (cpaFallback !== undefined || cpaUrl !== undefined || cpaModelMapping !== undefined) {
-      const enabled =
-        cpaFallback ?? (settings as Record<string, unknown>).cliproxyapi_fallback_enabled;
-      const mode = enabled ? "fallback" : "native";
-
-      // Get all distinct active provider IDs so each one gets its own
-      // upstream_proxy_config row. chatCore reads per-provider config
-      // (e.g. getUpstreamProxyConfig("anthropic")), not a single global row.
-      // Embedded service IDs are not real routing targets and must be skipped.
-      const EMBEDDED_SERVICE_IDS = new Set(["cliproxyapi", "9router"]);
-      const activeConnections = await getProviderConnections({ isActive: true });
-      const activeProviderIds = [
-        ...new Set(
-          activeConnections
-            .map((c: Record<string, unknown>) => c.provider as string)
-            .filter((id: string) => !EMBEDDED_SERVICE_IDS.has(id))
-        ),
-      ];
-
-      for (const providerId of activeProviderIds) {
-        await upsertUpstreamProxyConfig({
-          providerId,
-          mode,
-          enabled: !!enabled,
-          ...(cpaModelMapping !== undefined ? { cliproxyapiModelMapping: cpaModelMapping } : {}),
-        });
-      }
-
-      // Update the "cliproxyapi" sentinel row used by GET /api/settings to
-      // retrieve cliproxyapi_model_mapping. This row is NOT used for routing
-      // (chatCore reads per-real-provider rows above); it exists solely as
-      // storage for the global model-mapping blob.
-      await upsertUpstreamProxyConfig({
-        providerId: "cliproxyapi",
-        mode,
-        enabled: !!enabled,
-        ...(cpaModelMapping !== undefined ? { cliproxyapiModelMapping: cpaModelMapping } : {}),
-      });
     }
 
     // Audit success — diff of changed keys only. Idempotent PATCH (no diff)
@@ -572,7 +620,7 @@ export async function PATCH(request: Request) {
     } = settings;
     const settingsRevision = await getSettingsRevision();
     const response = NextResponse.json(
-      { ...safeSettings, settingsRevision },
+      { ...safeSettings, settingsRevision, runtimeConfigStatus: publicRuntimeConfigStatus() },
       { headers: settingsResponseHeaders(settingsRevision) }
     );
     const secret = getDashboardJwtSecret();

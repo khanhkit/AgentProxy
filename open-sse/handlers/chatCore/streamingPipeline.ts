@@ -69,6 +69,7 @@ export function assembleStreamingPipeline(
     clientResponseFormat: Parameters<typeof defaultShape>[0];
     echoModel: string | null | undefined;
     responseHeaders: Record<string, string>;
+    runtimeFeatureFlagOverrides?: Readonly<Record<string, string>>;
     /** See pipeWithDisconnect's own doc comment — the post-handoff "stream is
      * open but never produced real output" watchdog. Threaded from the same
      * adaptive streamReadinessPolicy.timeoutMs already computed for this
@@ -94,8 +95,12 @@ export function assembleStreamingPipeline(
   );
   if (typeof args.createPiiTransform === "function") {
     piiStream = piiStream.pipeThrough((args.createPiiTransform as () => TransformStream)());
-  } else if (deps.isFeatureFlagEnabled("PII_RESPONSE_SANITIZATION")) {
-    piiStream = piiStream.pipeThrough(deps.createPiiSseTransform());
+  } else if (
+    deps.isFeatureFlagEnabled("PII_RESPONSE_SANITIZATION", args.runtimeFeatureFlagOverrides)
+  ) {
+    piiStream = piiStream.pipeThrough(
+      deps.createPiiSseTransform({ featureFlagOverrides: args.runtimeFeatureFlagOverrides })
+    );
   }
 
   if (progressEnabled) {

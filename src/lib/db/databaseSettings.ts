@@ -6,6 +6,7 @@ import { backupDbFile } from "./backup";
 import { DATA_DIR, SQLITE_FILE, applyDatabaseOptimizationSettings, getDbInstance } from "./core";
 import { invalidateDbCache } from "./readCache";
 import { getDatabaseStats } from "./stats";
+import { writeSettingsValueWithRevision } from "./settingsRevision";
 import { getState as getVacuumSchedulerState, refreshVacuumScheduler } from "./vacuumScheduler";
 
 const DATABASE_SETTINGS_NAMESPACE = "databaseSettings";
@@ -295,10 +296,6 @@ export function updateDatabaseSettings(
   const insert = db.prepare(
     "INSERT OR REPLACE INTO key_value (namespace, key, value) VALUES (?, ?, ?)"
   );
-  const settingsInsert = db.prepare(
-    "INSERT OR REPLACE INTO key_value (namespace, key, value) VALUES ('settings', ?, ?)"
-  );
-
   const requestedLogs = updates.logs as Partial<UserDatabaseSettings["logs"]> | undefined;
   const pipelineEnabled = requestedLogs?.callLogPipelineEnabled;
   const detailedEnabled = requestedLogs?.detailedLogsEnabled;
@@ -308,16 +305,12 @@ export function updateDatabaseSettings(
       const sectionValues = nextSettings[section] as Record<string, unknown>;
 
       for (const [key, value] of Object.entries(sectionValues)) {
-        insert.run(
-          DATABASE_SETTINGS_NAMESPACE,
-          `${section}.${key}`,
-          JSON.stringify(value ?? null)
-        );
+        insert.run(DATABASE_SETTINGS_NAMESPACE, `${section}.${key}`, JSON.stringify(value ?? null));
       }
     }
 
     if (pipelineEnabled !== undefined) {
-      settingsInsert.run("call_log_pipeline_enabled", JSON.stringify(Boolean(pipelineEnabled)));
+      writeSettingsValueWithRevision(db, "call_log_pipeline_enabled", Boolean(pipelineEnabled));
     }
   });
   tx();

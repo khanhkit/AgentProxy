@@ -20,6 +20,10 @@ export async function getCacheControlSettings(): Promise<CacheControlMode> {
   return cachedSettings;
 }
 
+export function setCacheControlSettingsCache(value: CacheControlMode) {
+  cachedSettings = value;
+}
+
 export function invalidateCacheControlSettingsCache() {
   cachedSettings = null;
 }

@@ -30,6 +30,7 @@ import {
   upsertProxy,
 } from "../db/proxies";
 import { bumpProxyConfigGeneration } from "../db/settings";
+import { writeSettingsValueWithRevision } from "../db/settingsRevision";
 import { isSubscriptionDue } from "./due";
 import {
   isLocalCoreEndpointAllowed,
@@ -948,10 +949,9 @@ async function recomputeProxyEnabled(): Promise<void> {
 }
 
 async function setProxyEnabledFlag(value: boolean): Promise<void> {
-  const db = getDbInstance();
-  db.prepare(
-    "INSERT OR REPLACE INTO key_value (namespace, key, value) VALUES ('settings', 'proxyEnabled', ?)"
-  ).run(JSON.stringify(value));
+  writeSettingsValueWithRevision(getDbInstance(), "proxyEnabled", value);
+  // Preserve the existing generation invalidation even when the durable setting
+  // is already equal: subscription binding state may still have changed.
   bumpProxyConfigGeneration();
 }
 

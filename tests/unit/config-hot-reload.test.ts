@@ -11,8 +11,14 @@ process.env.AGENTPROXY_CONFIG_HOT_RELOAD_MS = "100";
 const core = await import("../../src/lib/db/core.ts");
 const settingsDb = await import("../../src/lib/db/settings.ts");
 const { getDbInstance } = core;
+const { advanceSettingsRevision } = await import("../../src/lib/db/settingsRevision.ts");
 const runtimeSettings = await import("../../src/lib/config/runtimeSettings.ts");
-const { applyRuntimeSettings, resetRuntimeSettingsStateForTests } = runtimeSettings;
+const {
+  applyRuntimeSettings,
+  applyRuntimeSettingsCandidate,
+  resetRuntimeSettingsStateForTests,
+  setRuntimeSettingsFaultInjectorForTests,
+} = runtimeSettings;
 const { startRuntimeConfigHotReload, stopRuntimeConfigHotReloadForTests } =
   await import("../../src/lib/config/hotReload.ts");
 const { getCliCompatProviders } = await import("../../open-sse/config/cliFingerprints.ts");
@@ -31,6 +37,11 @@ const { getPayloadRulesConfig, resetPayloadRulesConfigForTests } =
 const { getCacheControlSettings, invalidateCacheControlSettingsCache } =
   await import("../../src/lib/cacheControlSettings.ts");
 const { getSyncStatus, stopPeriodicSync } = await import("../../src/lib/modelsDevSync.ts");
+const { getRuntimeConfigStatus } = await import("../../src/lib/config/runtimeConfigAuthority.ts");
+const { getThinkingBudgetConfig, setThinkingBudgetConfig, DEFAULT_THINKING_CONFIG } =
+  await import("../../open-sse/services/thinkingBudget.ts");
+const { getTaskRoutingConfig, setTaskRoutingConfig, getDefaultTaskModelMap } =
+  await import("../../open-sse/services/taskAwareRouter.ts");
 
 async function resetStorage() {
   stopRuntimeConfigHotReloadForTests();
@@ -129,6 +140,90 @@ test("updateSettings applies runtime settings incrementally without restart", as
   assert.equal(getGeminiThoughtSignatureMode(), "enabled");
 });
 
+test("updateSettings activates thinking budget and task routing through the same revision", async () => {
+  setThinkingBudgetConfig(DEFAULT_THINKING_CONFIG);
+  setTaskRoutingConfig({
+    enabled: false,
+    detectionEnabled: true,
+    taskModelMap: getDefaultTaskModelMap(),
+    patternOverrides: undefined,
+  });
+
+  await settingsDb.updateSettings({
+    thinkingBudget: { mode: "custom", customBudget: 4096, effortLevel: "low" },
+    taskRouting: JSON.stringify({
+      enabled: true,
+      detectionEnabled: false,
+      taskModelMap: { ...getDefaultTaskModelMap(), coding: "auto/coding" },
+    }),
+  });
+
+  assert.equal(getThinkingBudgetConfig().mode, "custom");
+  assert.equal(getThinkingBudgetConfig().customBudget, 4096);
+  assert.equal(getTaskRoutingConfig().enabled, true);
+  assert.equal(getTaskRoutingConfig().detectionEnabled, false);
+  assert.equal(getTaskRoutingConfig().taskModelMap.coding, "auto/coding");
+});
+
+test("updateSettings surfaces desired-vs-active revision when atomic activation fails", async () => {
+  const baseline = await settingsDb.getSettingsCandidate();
+  await applyRuntimeSettingsCandidate(baseline, { force: true, source: "test:baseline" });
+
+  setRuntimeSettingsFaultInjectorForTests((section) => {
+    if (section === "modelAliases") throw new Error("injected activation failure");
+  });
+
+  try {
+    await assert.rejects(
+      settingsDb.updateSettings({ modelAliases: { broken: "openai/gpt-4o-mini" } }),
+      (error: unknown) => {
+        assert.ok(error instanceof settingsDb.RuntimeSettingsActivationError);
+        assert.equal(error.desiredRevision, baseline.revision + 1);
+        assert.equal(error.activeRevision, baseline.revision);
+        assert.match(error.message, /persisted but runtime activation failed/);
+        return true;
+      }
+    );
+  } finally {
+    setRuntimeSettingsFaultInjectorForTests(null);
+  }
+
+  const desired = await settingsDb.getSettingsCandidate();
+  assert.equal(desired.revision, baseline.revision + 1);
+  assert.deepEqual(desired.settings.modelAliases, { broken: "openai/gpt-4o-mini" });
+});
+
+test("failed activation cannot leak newly persisted payload rules through DB fallback", async () => {
+  const baseline = await settingsDb.getSettingsCandidate();
+  assert.equal(baseline.settings.payloadRules, undefined);
+  await applyRuntimeSettingsCandidate(baseline, { force: true, source: "test:payload-baseline" });
+  assert.equal((await getPayloadRulesConfig()).override.length, 0);
+
+  setRuntimeSettingsFaultInjectorForTests((section) => {
+    if (section === "authzBypass") throw new Error("injected post-payload activation failure");
+  });
+
+  try {
+    await assert.rejects(
+      settingsDb.updateSettings({
+        payloadRules: {
+          override: [{ models: [{ name: "gpt-*" }], params: { temperature: 0.77 } }],
+        },
+        localOnlyManageScopeBypassEnabled: false,
+      }),
+      settingsDb.RuntimeSettingsActivationError
+    );
+  } finally {
+    setRuntimeSettingsFaultInjectorForTests(null);
+  }
+
+  assert.equal(
+    (await getPayloadRulesConfig()).override.length,
+    0,
+    "active runtime must keep the pre-failure file/default payload rules instead of reading desired DB state"
+  );
+});
+
 test("MODELS_DEV_SYNC_ENABLED=0 blocks a live settings update from starting the sync timer", async () => {
   const previousEnvFlag = process.env.MODELS_DEV_SYNC_ENABLED;
   const previousBackgroundTasks = process.env.AGENTPROXY_ENABLE_RUNTIME_BACKGROUND_TASKS;
@@ -173,20 +268,23 @@ test("MODELS_DEV_SYNC_ENABLED=0 blocks a live settings update from starting the 
   }
 });
 
-test("hot-reload watcher picks up external sqlite changes via polling fallback", async () => {
-  await applyRuntimeSettings(await settingsDb.getSettings(), {
+test("hot-reload watcher picks up external revisioned sqlite changes via polling fallback", async () => {
+  await applyRuntimeSettingsCandidate(await settingsDb.getSettingsCandidate(), {
     force: true,
     source: "test:startup",
   });
   startRuntimeConfigHotReload({ pollIntervalMs: 100 });
 
   const db = getDbInstance();
-  db.prepare(
-    "INSERT OR REPLACE INTO key_value (namespace, key, value) VALUES ('settings', 'cliCompatProviders', ?)"
-  ).run(JSON.stringify(["github", "openai"]));
-  db.prepare(
-    "INSERT OR REPLACE INTO key_value (namespace, key, value) VALUES ('settings', 'antigravitySignatureCacheMode', ?)"
-  ).run(JSON.stringify("bypass-strict"));
+  db.transaction(() => {
+    db.prepare(
+      "INSERT OR REPLACE INTO key_value (namespace, key, value) VALUES ('settings', 'cliCompatProviders', ?)"
+    ).run(JSON.stringify(["github", "openai"]));
+    db.prepare(
+      "INSERT OR REPLACE INTO key_value (namespace, key, value) VALUES ('settings', 'antigravitySignatureCacheMode', ?)"
+    ).run(JSON.stringify("bypass-strict"));
+    advanceSettingsRevision(db);
+  })();
 
   await waitFor(
     () =>
@@ -194,4 +292,23 @@ test("hot-reload watcher picks up external sqlite changes via polling fallback",
       !getCliCompatProviders().includes("openai") &&
       getGeminiThoughtSignatureMode() === "bypass-strict"
   );
+});
+
+test("hot-reload observes feature-flag revision without hot-applying RESTART_REQUIRED flags", async () => {
+  const baseline = await settingsDb.getSettingsCandidate();
+  baseline.featureFlagOverrides.ENABLE_TLS_FINGERPRINT = "false";
+  await applyRuntimeSettingsCandidate(baseline, { force: true, source: "test:startup" });
+  startRuntimeConfigHotReload({ pollIntervalMs: 100 });
+
+  const db = getDbInstance();
+  db.transaction(() => {
+    db.prepare(
+      "INSERT OR REPLACE INTO key_value (namespace, key, value) VALUES ('feature_flags', ?, ?)"
+    ).run("ENABLE_TLS_FINGERPRINT", "true");
+    advanceSettingsRevision(db);
+  })();
+
+  await waitFor(() => getRuntimeConfigStatus().desiredRevision === baseline.revision + 1);
+  assert.equal(getRuntimeConfigStatus().activeRevision, baseline.revision);
+  assert.deepEqual(getRuntimeConfigStatus().restartRequiredKeys, ["ENABLE_TLS_FINGERPRINT"]);
 });
