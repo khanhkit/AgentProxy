@@ -140,9 +140,7 @@ function normalizeRuntimeStep(
     // to a subset of the provider's connections. This is the second writer of
     // `allowedConnectionIds` (tag routing is the first); both feed the existing
     // credential-selection filter in auth.ts.
-    ...(allowedConnectionIds && allowedConnectionIds.length > 0
-      ? { allowedConnectionIds }
-      : {}),
+    ...(allowedConnectionIds && allowedConnectionIds.length > 0 ? { allowedConnectionIds } : {}),
     weight,
     label,
     // `prompt` is a per-step pipeline input and only exists on a model step —
@@ -782,8 +780,8 @@ export function filterTargetsByRequestCompatibility(
     );
     const preferredTier = [
       ...overrideVerifiedCompatible,
-      ...overrideTrustedRejects,
       ...catalogOnlyCompatible,
+      ...overrideTrustedRejects,
     ];
     if (preferredTier.length > 0) {
       const preferredSet = new Set(preferredTier);

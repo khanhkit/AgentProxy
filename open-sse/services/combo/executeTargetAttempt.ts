@@ -73,7 +73,7 @@ import { pinNativeCodexTurn } from "./nativeCodexTurnPin.ts";
 import { recordComboDecision } from "./decisionTrace.ts";
 import { recordProviderCooldown } from "../providerCooldownTracker.ts";
 import {
-  validateResponseQuality,
+  validateResponseQuality, qualityValidationContext,
   releaseQualityClone,
   releaseRejectedQualityResponse,
 } from "./validateQuality.ts";
@@ -84,7 +84,6 @@ import {
 import { classifyComboOutcome, redactConnectionLabel } from "./comboErrorAggregation.ts";
 import { readConnectionForCooldownGate } from "./executeTargetGates.ts";
 import {
-  handlePreContentStreamRetry,
   qualityValidationFailure,
   remainderIsHomogeneous,
   shouldAbortOnInputBoundFailure,
@@ -373,7 +372,6 @@ export async function executeTargetAttempt(opts: {
       failoverBeforeRetry: deps.config.failoverBeforeRetry,
     });
 
-    // Success — validate response quality before returning
     if (result.ok) {
       const selectedConnectionId =
         result.headers?.get("X-AgentProxy-Selected-Connection-Id") ||
@@ -381,9 +379,6 @@ export async function executeTargetAttempt(opts: {
         undefined;
       const effectiveConnectionId = selectedConnectionId || target.connectionId || "";
 
-      // Clone BEFORE quality check — validateResponseQuality reads the body
-      // via getReader() which locks the stream. The clone's body is consumed
-      // by the quality check; the original stays unlocked for piping.
       let qualityClone: Response;
       try {
         qualityClone = result.clone();
@@ -394,18 +389,21 @@ export async function executeTargetAttempt(opts: {
         qualityClone,
         deps.clientRequestedStream,
         deps.log,
-        deps.config.responseValidation as ResponseValidationConfig | null | undefined
+        deps.config.responseValidation as ResponseValidationConfig | null | undefined,
+        deps.signal,
+        qualityValidationContext(modelStr, attemptBody)
       );
       releaseQualityClone(qualityClone, result, quality);
+      if (quality.clientAborted) {
+        releaseRejectedQualityResponse(qualityClone, result);
+        return { ok: false, response: errorResponse(499, "Client disconnected") };
+      }
       if (!quality.valid) {
         releaseRejectedQualityResponse(qualityClone, result);
         deps.log.warn(
           "COMBO",
           `Model ${modelStr} returned 200 but failed quality check: ${quality.reason}`
         );
-        // #6692: a quality-rejected 200 never marks the connection row
-        // unhealthy, so the sticky pin's lazy headroom recheck would never
-        // catch it either — release it here, on the failing response.
         deps.releaseStickyPinOnFailure(deps.sticky.messageHash, effectiveConnectionId);
         recordComboRequest(deps.combo.name, modelStr, {
           success: false,
@@ -455,7 +453,9 @@ export async function executeTargetAttempt(opts: {
           latencyMs: Date.now() - deps.startTime,
         });
         state.observeFailure(false, target.executionKey);
-        if (handlePreContentStreamRetry(quality, retry, deps, modelStr)) continue;
+        if (quality.upstreamFailure?.retryable) {
+          return qualityValidationFailure(quality);
+        }
         return protectedPriorityTarget ? qualityValidationFailure(quality) : null;
       }
       if (Boolean(deps.clientManagedResponsesContext) && effectiveConnectionId) {

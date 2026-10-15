@@ -98,3 +98,159 @@ test("default writer clears both persisted pins in the real DB, no warning", asy
   assert.equal(await getLKGP("combo-db", "ek-db"), null);
   assert.deepEqual(warnings, []);
 });
+
+test("failed-target clear uses compare-delete instead of the unsafe generic writer", async () => {
+  const settings = await import("../../../src/lib/db/settings.ts");
+  const comboName = "combo-race-path";
+  const modelId = "combo-race-path-id";
+  await settings.setLKGP(comboName, modelId, "openai", "conn-old");
+  let genericClearCalls = 0;
+
+  await clearStaleLKGP(
+    comboName,
+    null,
+    modelId,
+    null,
+    "COMBO",
+    async () => {
+      genericClearCalls += 1;
+    },
+    { provider: "openai", connectionId: "conn-old" }
+  );
+
+  assert.equal(genericClearCalls, 0);
+  assert.equal(await settings.getLKGP(comboName, modelId), null);
+});
+
+test("atomic LKGP compare-delete preserves a newer replacement pin", async () => {
+  const settings = await import("../../../src/lib/db/settings.ts");
+  const comboName = "combo-cas";
+  const modelId = "combo-cas-id";
+  await settings.setLKGP(comboName, modelId, "openai", "conn-old");
+  const observed = await settings.getLKGP(comboName, modelId);
+  assert.ok(observed);
+
+  await settings.setLKGP(comboName, modelId, "anthropic", "conn-new");
+  const deleted = await settings.clearLKGPIfMatch(comboName, modelId, observed);
+
+  assert.equal(deleted, false);
+  assert.deepEqual(await settings.getLKGP(comboName, modelId), {
+    provider: "anthropic",
+    connectionId: "conn-new",
+  });
+});
+
+test("atomic LKGP compare-delete accepts legacy semantic encodings without deleting replacements", async () => {
+  const settings = await import("../../../src/lib/db/settings.ts");
+  const db = dbCore.getDbInstance();
+
+  db.prepare("INSERT OR REPLACE INTO key_value (namespace, key, value) VALUES ('lkgp', ?, ?)")
+    .run("combo-legacy:model-a", JSON.stringify("openai"));
+  const legacyObserved = await settings.getLKGP("combo-legacy", "model-a");
+  assert.deepEqual(legacyObserved, { provider: "openai" });
+  assert.equal(await settings.clearLKGPIfMatch("combo-legacy", "model-a", legacyObserved!), true);
+  assert.equal(await settings.getLKGP("combo-legacy", "model-a"), null);
+
+  db.prepare("INSERT OR REPLACE INTO key_value (namespace, key, value) VALUES ('lkgp', ?, ?)")
+    .run("combo-legacy:model-b", JSON.stringify({ connectionId: "conn-1", provider: "openai" }));
+  const reorderedObserved = await settings.getLKGP("combo-legacy", "model-b");
+  assert.deepEqual(reorderedObserved, { connectionId: "conn-1", provider: "openai" });
+  assert.equal(await settings.clearLKGPIfMatch("combo-legacy", "model-b", reorderedObserved!), true);
+  assert.equal(await settings.getLKGP("combo-legacy", "model-b"), null);
+
+  db.prepare("INSERT OR REPLACE INTO key_value (namespace, key, value) VALUES ('lkgp', ?, ?)")
+    .run("combo-legacy:model-number", JSON.stringify(123));
+  assert.deepEqual(await settings.getLKGP("combo-legacy", "model-number"), { provider: "123" });
+
+  db.prepare("INSERT OR REPLACE INTO key_value (namespace, key, value) VALUES ('lkgp', ?, ?)")
+    .run("combo-legacy:model-boolean", JSON.stringify(true));
+  assert.deepEqual(await settings.getLKGP("combo-legacy", "model-boolean"), { provider: "true" });
+});
+
+test("malformed structured LKGP rows fail closed instead of entering provider routing", async () => {
+  const settings = await import("../../../src/lib/db/settings.ts");
+  const db = dbCore.getDbInstance();
+  const rows: Array<[string, unknown]> = [
+    ["numeric-provider", { provider: 123 }],
+    ["null-provider", { provider: null }],
+    ["empty-provider", { provider: "" }],
+    ["numeric-connection", { provider: "openai", connectionId: 123 }],
+  ];
+
+  for (const [modelId, value] of rows) {
+    db.prepare("INSERT OR REPLACE INTO key_value (namespace, key, value) VALUES ('lkgp', ?, ?)")
+      .run(`combo-malformed:${modelId}`, JSON.stringify(value));
+    assert.equal(await settings.getLKGP("combo-malformed", modelId), null, modelId);
+  }
+});
+
+test("LKGP invalidation fences an in-flight read from repopulating a deleted pin", async () => {
+  const settings = await import("../../../src/lib/db/settings.ts");
+  const cache = await import("../../../src/lib/db/readCache.ts");
+  const comboName = "combo-read-race";
+  const modelId = "model-race";
+  const key = `${comboName}:${modelId}`;
+
+  await settings.setLKGP(comboName, modelId, "openai", "conn-old");
+  cache.invalidateCachedLKGP(key);
+
+  const db = dbCore.getDbInstance();
+  const originalPrepare = db.prepare.bind(db);
+  let intercepted = false;
+  db.prepare = ((sql: string) => {
+    const statement = originalPrepare(sql);
+    if (!intercepted && sql.includes("SELECT value FROM key_value WHERE namespace = 'lkgp'")) {
+      return {
+        get: (...args: unknown[]) => {
+          const row = statement.get(...args);
+          intercepted = true;
+          db.prepare = originalPrepare;
+          originalPrepare("DELETE FROM key_value WHERE namespace = 'lkgp' AND key = ?").run(key);
+          cache.invalidateCachedLKGP(key);
+          return row;
+        },
+      };
+    }
+    return statement;
+  }) as typeof db.prepare;
+
+  try {
+    assert.deepEqual(await cache.getCachedLKGP(comboName, modelId), {
+      provider: "openai",
+      connectionId: "conn-old",
+    });
+  } finally {
+    db.prepare = originalPrepare;
+  }
+
+  assert.equal(intercepted, true);
+  assert.equal(await settings.getLKGP(comboName, modelId), null);
+  assert.equal(await cache.getCachedLKGP(comboName, modelId), null);
+});
+
+test("LKGP idle invalidations do not allocate persistent per-key generation state", async () => {
+  const cache = await import("../../../src/lib/db/readCache.ts");
+  const originalSet = Map.prototype.set;
+  const allocatedKeys = new Set<string>();
+  const prefix = "lkgp:combo-version-bounded-";
+
+  Map.prototype.set = function (key, value) {
+    if (typeof key === "string" && key.startsWith(prefix)) allocatedKeys.add(key);
+    return originalSet.call(this, key, value);
+  };
+
+  try {
+    for (let index = 0; index < 64; index += 1) {
+      cache.invalidateCachedLKGP(`combo-version-bounded-${index}:model`);
+    }
+  } finally {
+    Map.prototype.set = originalSet;
+    cache.invalidateCachedLKGP();
+  }
+
+  assert.equal(
+    allocatedKeys.size,
+    0,
+    "invalidating idle LKGP keys must not create retained per-key generation entries"
+  );
+});

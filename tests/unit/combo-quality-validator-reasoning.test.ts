@@ -260,7 +260,11 @@ test("client-audit-2026-09-01: finish_reason:stop + empty content + reasoning �
     usage: { completion_tokens: 4096, reasoning_tokens: 3800 },
   });
   const out = await validateResponseQuality(res, false, silentLog);
-  assert.equal(out.valid, false, "finish_reason:stop doesn't short-circuit — ratio (>90%) still applies");
+  assert.equal(
+    out.valid,
+    false,
+    "finish_reason:stop doesn't short-circuit — ratio (>90%) still applies"
+  );
   assert.match(out.reason ?? "", /reasoning consumed/i);
 });
 
@@ -281,4 +285,30 @@ test("#3587 edge: completion_tokens=0 → safe (no division by zero)", async () 
   });
   const out = await validateResponseQuality(res, false, silentLog);
   assert.equal(out.valid, true, "should be valid: can't divide by zero");
+});
+
+test("tiny reasoning truncation is only exempt when caller identifies a capability probe", async () => {
+  const makeTiny = () =>
+    makeResponse({
+      choices: [
+        {
+          message: { content: null, reasoning_content: "thinking" },
+          finish_reason: "length",
+        },
+      ],
+      usage: { completion_tokens: 1, reasoning_tokens: 1 },
+    });
+
+  const userRequest = await validateResponseQuality(makeTiny(), false, silentLog);
+  assert.equal(userRequest.valid, false);
+
+  const capabilityProbe = await validateResponseQuality(
+    makeTiny(),
+    false,
+    silentLog,
+    undefined,
+    undefined,
+    { tinyBudgetCapabilityProbe: true }
+  );
+  assert.equal(capabilityProbe.valid, true);
 });

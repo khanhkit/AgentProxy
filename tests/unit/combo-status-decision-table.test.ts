@@ -52,6 +52,24 @@ const ROWS: Array<{
     errorText: "This model's maximum context length exceeded",
     decision: "advance",
   },
+  {
+    id: "unrelated-context-word",
+    status: 400,
+    errorText: "Provider context cache is temporarily unavailable",
+    decision: "advance",
+  },
+  {
+    id: "unrelated-prompt-word",
+    status: 400,
+    errorText: "Prompt caching is unavailable on this endpoint",
+    decision: "advance",
+  },
+  {
+    id: "explicit-invalid-context-shape",
+    status: 400,
+    errorText: "Invalid context format in request body",
+    decision: "stop",
+  },
 ];
 
 for (const row of ROWS) {

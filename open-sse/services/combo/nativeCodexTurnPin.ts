@@ -88,7 +88,7 @@ export function pinNativeCodexTurn(args: {
   const existing = pins.get(key);
   const modelChanged = Boolean(
     existing &&
-      (existing.modelStr !== args.target.modelStr || existing.provider !== args.target.provider)
+    (existing.modelStr !== args.target.modelStr || existing.provider !== args.target.provider)
   );
   if (modelChanged && (!args.autoResume || existing!.autoResumes >= MAX_AUTORESUMES_PER_TURN)) {
     throw new Error("Native Codex turn target changed after output was emitted");
@@ -295,6 +295,8 @@ export function hasUnresolvedToolCalls(body: Record<string, unknown>): boolean {
 
   const callCounts = new Map<string, number>();
   const outputCounts = new Map<string, number>();
+  const legacyCallCounts = new Map<string, number>();
+  const legacyOutputCounts = new Map<string, number>();
 
   const processPart = (part: unknown): boolean => {
     if (!part || typeof part !== "object") return true;
@@ -334,10 +336,15 @@ export function hasUnresolvedToolCalls(body: Record<string, unknown>): boolean {
     const role = typeof rec.role === "string" ? rec.role : "";
 
     if (rec.function_call && typeof rec.function_call === "object" && role === "assistant") {
-      return true;
+      const legacy = rec.function_call as Record<string, unknown>;
+      const name = typeof legacy.name === "string" ? legacy.name.trim() : "";
+      if (!name) return true;
+      legacyCallCounts.set(name, (legacyCallCounts.get(name) ?? 0) + 1);
     }
     if (role === "function") {
-      return true;
+      const name = typeof rec.name === "string" ? rec.name.trim() : "";
+      if (!name) return true;
+      legacyOutputCounts.set(name, (legacyOutputCounts.get(name) ?? 0) + 1);
     }
 
     if (!processPart(rec)) return true;
@@ -373,6 +380,11 @@ export function hasUnresolvedToolCalls(body: Record<string, unknown>): boolean {
         if (!processPart(part)) return true;
       }
     }
+  }
+
+  if (legacyCallCounts.size !== legacyOutputCounts.size) return true;
+  for (const [name, count] of legacyCallCounts) {
+    if (legacyOutputCounts.get(name) !== count) return true;
   }
 
   if (callCounts.size === 0 && outputCounts.size === 0) return false;
@@ -586,8 +598,7 @@ export interface CanAutoResumeNativeCodexTurnOptions {
 }
 
 export type AutoResumeDecision =
-  | { eligible: true; selectedTarget: ResolvedComboTarget }
-  | { eligible: false; reason: string };
+  { eligible: true; selectedTarget: ResolvedComboTarget } | { eligible: false; reason: string };
 
 export async function canAutoResumeNativeCodexTurn(
   options: CanAutoResumeNativeCodexTurnOptions
