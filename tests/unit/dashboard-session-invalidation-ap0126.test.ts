@@ -157,6 +157,37 @@ test("signing out revokes that session only", async () => {
   assert.ok(await verifyDashboardSessionToken(otherDevice));
 });
 
+test("concurrent sign-outs preserve both session revocations", async () => {
+  const sessions = [
+    await mintDashboardSessionToken(secret),
+    await mintDashboardSessionToken(secret),
+  ];
+  const stores = sessions.map((token) => ({
+    get: (name: string) => (name === DASHBOARD_SESSION_COOKIE ? { value: token } : undefined),
+    delete: () => {},
+  }));
+  let index = 0;
+  const original = logoutRoute.logoutRouteInternals.getCookieStore;
+  logoutRoute.logoutRouteInternals.getCookieStore = (async () =>
+    stores[index++]) as typeof original;
+  try {
+    const responses = await Promise.all(
+      sessions.map(() =>
+        logoutRoute.POST(new Request("http://localhost/api/auth/logout", { method: "POST" }))
+      )
+    );
+    assert.deepEqual(
+      responses.map((response) => response.status),
+      [200, 200]
+    );
+  } finally {
+    logoutRoute.logoutRouteInternals.getCookieStore = original;
+  }
+
+  assert.equal(await verifyDashboardSessionToken(sessions[0]), null);
+  assert.equal(await verifyDashboardSessionToken(sessions[1]), null);
+});
+
 test("signing out with an invalid or missing cookie still clears it and revokes nothing", async () => {
   const deleted: string[] = [];
   const original = logoutRoute.logoutRouteInternals.getCookieStore;

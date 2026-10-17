@@ -40,7 +40,9 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
   // on scope.apiKeyId let that transport skip the endpoint allowlist,
   // schedule, usage cap, rate limit and key quota entirely (round-2 PoC
   // against e543b64). A keyless caller (session/anonymous) is a no-op here.
-  const policy = await enforceApiKeyPolicy(request, null);
+  const policy = scope.isSessionAuth
+    ? { apiKeyInfo: null, rejection: null }
+    : await enforceApiKeyPolicy(request, null);
   if (policy.rejection) return policy.rejection;
 
   const { id } = await params;
@@ -56,7 +58,17 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
   // ANY batch — the old inline check 404'd every dashboard cancel of a
   // key-owned batch (#13683) — a key cancels its own, and a null-owner batch
   // is denied to a foreign key and to an anonymous caller (GHSA-2jm2-mpx8-6523).
-  if (!batch || !canAccessOwnedRecord({ ...scope, apiKeyId: effectiveApiKeyId }, batch.apiKeyId)) {
+  if (
+    !batch ||
+    !canAccessOwnedRecord(
+      {
+        ...scope,
+        apiKeyId: effectiveApiKeyId,
+        apiKeyMetadata: scope.apiKeyMetadata ?? policy.apiKeyInfo,
+      },
+      batch.apiKeyId
+    )
+  ) {
     return NextResponse.json(
       { error: { message: "Batch not found", type: "invalid_request_error" } },
       { status: 404, headers: CORS_HEADERS }

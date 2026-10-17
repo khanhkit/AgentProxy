@@ -7,10 +7,14 @@ import {
 } from "@/lib/services/installers/openwa";
 import { createErrorResponse } from "@/lib/api/errorResponse";
 import { sanitizeErrorMessage } from "@agentproxy/open-sse/utils/error";
+import { requireManagementAuth } from "@/lib/api/requireManagementAuth";
 
 const TOOL = "openwa";
 
-export async function GET(): Promise<Response> {
+export async function GET(request: Request): Promise<Response> {
+  const authError = await requireManagementAuth(request, { alwaysRequireAuth: true });
+  if (authError) return authError;
+
   try {
     const sup = getSupervisor(TOOL);
     const row = await getServiceRow(TOOL);

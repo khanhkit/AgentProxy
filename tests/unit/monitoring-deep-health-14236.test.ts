@@ -83,6 +83,31 @@ test("deep probe posts one-token non-streaming body and optional bearer token", 
   assert.deepEqual(JSON.parse(String(seenInit?.body)), { max_tokens: 1, stream: false });
 });
 
+test("deep probe blocks private/link-local targets before fetch and disables redirects", async () => {
+  let calls = 0;
+  const blocked = await probeDeepHealth("http://169.254.169.254/latest/meta-data", {
+    token: "must-not-leak",
+    fetcher: (async () => {
+      calls += 1;
+      return new Response(null, { status: 200 });
+    }) as typeof fetch,
+  });
+  assert.equal(calls, 0);
+  assert.equal(blocked.ok, false);
+  assert.equal(blocked.status, null);
+
+  let seenRedirect: RequestRedirect | undefined;
+  const publicVerdict = await probeDeepHealth("https://health.example/v1/chat/completions", {
+    token: "deep-secret",
+    fetcher: (async (_url: string | URL | Request, init?: RequestInit) => {
+      seenRedirect = init?.redirect;
+      return new Response(null, { status: 302, headers: { location: "https://other.example/" } });
+    }) as typeof fetch,
+  });
+  assert.equal(seenRedirect, "manual");
+  assert.equal(publicVerdict.status, 302);
+});
+
 test("deep probe timeout and network failure return fail-open verdicts", async () => {
   const timeout = await probeDeepHealth("http://health.example/v1/chat/completions", {
     timeoutMs: 20,
@@ -154,4 +179,20 @@ test("authenticated opted-in caller receives cached deep verdict without changin
   assert.deepEqual(firstBody.deepHealth, seeded);
   assert.deepEqual(secondBody.deepHealth, seeded);
   assert.equal(secondBody.status, firstBody.status);
+});
+
+test("expired deep-health verdict is omitted instead of served stale", async () => {
+  process.env.DEEP_HEALTH_CHECK_ENABLED = "1";
+  delete process.env.DEEP_HEALTH_CHECK_URL;
+  route.__test_seedDeepHealthVerdict(
+    { ok: false, failover: true, status: 503, latencyMs: 12, at: "stale" },
+    -1
+  );
+
+  const request = (await makeManagementSessionRequest(
+    "http://localhost/api/monitoring/health?deep=1"
+  )) as unknown as NextRequest;
+  const response = await route.GET(request as never);
+  const body = (await response.json()) as Record<string, unknown>;
+  assert.equal("deepHealth" in body, false);
 });

@@ -70,6 +70,18 @@ test("cache-config route resolves and modelCatalogCacheTtlMs round-trips", async
     assert.equal(getBody.modelCatalogCacheTtlMs, 4242, "modelCatalogCacheTtlMs must round-trip");
   });
 
+  await t.test("GET never returns the stored embedding API key", async () => {
+    const putResponse = await cacheConfigRoute.PUT(
+      makeJsonRequest("PUT", { semanticCacheEmbeddingApiKey: "stored-embedding-secret" }) as never
+    );
+    assert.equal(putResponse.status, 200);
+
+    const getResponse = await cacheConfigRoute.GET(makeJsonRequest("GET") as never);
+    const getBody = await getResponse.json();
+    assert.equal("semanticCacheEmbeddingApiKey" in getBody, false);
+    assert.equal(JSON.stringify(getBody).includes("stored-embedding-secret"), false);
+  });
+
   await t.test("PUT persists idempotencyWindowMs via the flat settings module", async () => {
     const putResponse = await cacheConfigRoute.PUT(
       makeJsonRequest("PUT", { idempotencyWindowMs: 9000 }) as never

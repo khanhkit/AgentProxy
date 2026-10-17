@@ -10,10 +10,12 @@ import { hasManageScope } from "@/shared/constants/managementScopes";
 
 export type ApiKeyState = "none" | "unresolved" | "invalid" | "valid";
 
+type ApiKeyScopeMetadata = { id: string; scopes?: string[] };
+
 export interface ApiKeyRequestScope {
   apiKey: string | null;
   apiKeyId: string | null;
-  apiKeyMetadata: Awaited<ReturnType<typeof getApiKeyMetadata>>;
+  apiKeyMetadata: ApiKeyScopeMetadata | null;
   keyState: ApiKeyState;
   rejection: Response | null;
   isSessionAuth: boolean;
@@ -21,6 +23,17 @@ export interface ApiKeyRequestScope {
 
 export async function getApiKeyRequestScope(request: Request): Promise<ApiKeyRequestScope> {
   const isSessionAuth = await isDashboardSessionAuthenticated(request);
+  if (isSessionAuth) {
+    return {
+      apiKey: null,
+      apiKeyId: null,
+      apiKeyMetadata: null,
+      keyState: "none",
+      rejection: null,
+      isSessionAuth: true,
+    };
+  }
+
   const apiKey = extractApiKey(request);
   if (!apiKey) {
     return {
@@ -66,7 +79,7 @@ export async function getPolicyAwareApiKeyRequestScope(
   request: Request
 ): Promise<ApiKeyRequestScope> {
   const scope = await getApiKeyRequestScope(request);
-  if (scope.rejection) return scope;
+  if (scope.rejection || scope.isSessionAuth) return scope;
 
   if (scope.apiKey && !scope.apiKeyId) {
     return { ...scope, rejection: unauthorized("Invalid API key") };
@@ -78,6 +91,7 @@ export async function getPolicyAwareApiKeyRequestScope(
   return {
     ...scope,
     apiKeyId: scope.apiKeyId ?? policy.apiKeyInfo?.id ?? null,
+    apiKeyMetadata: scope.apiKeyMetadata ?? policy.apiKeyInfo ?? null,
   };
 }
 
@@ -88,9 +102,9 @@ export function canAccessOwnedRecord(
   scope: OwnershipScope,
   recordApiKeyId: string | null | undefined
 ): boolean {
+  if (scope.isSessionAuth) return true;
   if (hasManageScope(scope.apiKeyMetadata?.scopes ?? [])) return true;
   if (scope.apiKeyId) return recordApiKeyId === scope.apiKeyId;
-  if (scope.isSessionAuth) return true;
   return recordApiKeyId === ANONYMOUS_OWNER_ID;
 }
 
@@ -98,9 +112,9 @@ export function resolveEffectiveApiKeyId(
   scope: Pick<ApiKeyRequestScope, "apiKeyId" | "isSessionAuth">,
   policyApiKeyInfo: { id: string } | null
 ): string | null {
+  if (scope.isSessionAuth) return null;
   if (scope.apiKeyId) return scope.apiKeyId;
   if (policyApiKeyInfo?.id) return policyApiKeyInfo.id;
-  if (scope.isSessionAuth) return null;
   return ANONYMOUS_OWNER_ID;
 }
 
@@ -110,6 +124,9 @@ export type OwnedListScope =
   | { mode: "rejected"; response: Response };
 
 export function resolveListScope(scope: ApiKeyRequestScope): OwnedListScope {
+  if (scope.isSessionAuth) {
+    return { mode: "instance" };
+  }
   if (scope.apiKey && !scope.apiKeyId) {
     return { mode: "rejected", response: unauthorized("Invalid API key") };
   }
@@ -118,9 +135,6 @@ export function resolveListScope(scope: ApiKeyRequestScope): OwnedListScope {
   }
   if (scope.apiKeyId) {
     return { mode: "api_key", apiKeyId: scope.apiKeyId };
-  }
-  if (scope.isSessionAuth) {
-    return { mode: "instance" };
   }
   return { mode: "rejected", response: unauthorized("Authentication required") };
 }

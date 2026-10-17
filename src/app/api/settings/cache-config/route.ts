@@ -47,7 +47,6 @@ const CACHE_CONFIG_KEYS = [
   "semanticCacheEmbeddingModel",
   "semanticCacheEmbeddingDimension",
   "semanticCacheEmbeddingBaseUrl",
-  "semanticCacheEmbeddingApiKey",
   "semanticCacheRedisUrl",
   "semanticCacheRedisPrefix",
   "semanticCacheRequireZeroTemp",

@@ -12,13 +12,10 @@
  *       hasManageScope(scope.apiKeyMetadata?.scopes ?? []) in both, same as
  *       the isSessionAuth branch.
  *
- *   (B) item 4/LEDGER-19 — canAccessOwnedRecord() returned true the moment
- *       isSessionAuth was true, BEFORE checking the apiKeyId override the
- *       caller passed in — so a request carrying both a dashboard session
- *       cookie and a foreign tenant's API key was authorized against that
- *       tenant's file, even though the resulting batch/record is attributed
- *       to the KEY, not the session. Fixed by checking the apiKeyId override
- *       first; a pure session caller (no override) is still unrestricted.
+ *   (B) AP-ISS-0197 supersedes the earlier LEDGER-19 precedence: an
+ *       authenticated dashboard session is instance-operator authority even
+ *       when an incidental API-key header is also present. Key-only callers
+ *       remain owner-scoped.
  *
  *   (C) item 5/LEDGER-20/21 — listBatches()/listFiles() resolved the `after`
  *       cursor via getBatch()/getFile(), which apply NO owner filter, so a
@@ -106,8 +103,8 @@ describe("#14481 (A) manage-scope key gets instance-wide access on /v1/files and
   });
 });
 
-describe("#14481 (B) session+key precedence — the apiKeyId override is checked before isSessionAuth", () => {
-  it("DENIES a session+foreign-key request access to a file it does not own", () => {
+describe("AP-ISS-0197 session+key precedence — dashboard session remains instance authority", () => {
+  it("ALLOWS a session+incidental-key request access to another key-owned file", () => {
     const scope: ApiKeyRequestScope = {
       apiKey: "tenant-a-key-value",
       apiKeyId: "tenant-a-key-id",
@@ -116,7 +113,7 @@ describe("#14481 (B) session+key precedence — the apiKeyId override is checked
       rejection: null,
       isSessionAuth: true,
     };
-    assert.strictEqual(canAccessOwnedRecord(scope, "tenant-b-key-id"), false);
+    assert.strictEqual(canAccessOwnedRecord(scope, "tenant-b-key-id"), true);
   });
 
   it("still ALLOWS a session+key request access to that key's OWN file", () => {

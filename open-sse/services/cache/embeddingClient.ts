@@ -192,6 +192,7 @@ export function createDefaultEmbeddingGenerator(config: {
   embeddingModel?: string;
   embeddingBaseUrl?: string;
   embeddingApiKey?: string;
+  embeddingDimension?: number;
 }): EmbeddingGenerator {
   return async (
     text: string,
@@ -247,6 +248,7 @@ export function createDefaultEmbeddingGenerator(config: {
         body: JSON.stringify({
           model,
           input: text,
+          ...(config.embeddingDimension ? { dimensions: config.embeddingDimension } : {}),
         }),
         signal: options?.signal,
       });
