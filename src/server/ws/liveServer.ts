@@ -168,7 +168,7 @@ async function isLiveWsAuthRequired(request: import("http").IncomingMessage): Pr
     const { getSettings } = await import("@/lib/db/settings");
     const settings = await getSettings();
 
-    if (settings.requireLogin === false) return false;
+    if (settings.requireLogin === false) return !isLocalWsPeer(request);
 
     const hasPassword = typeof settings.password === "string" && settings.password.length > 0;
     const hasOidc =

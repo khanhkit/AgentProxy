@@ -103,7 +103,10 @@ export const kimiCoding = {
     try {
       data = JSON.parse(text);
     } catch {
-      data = { error: "invalid_response", error_description: text };
+      data = {
+        error: "invalid_response",
+        error_description: "Unexpected response from OAuth provider",
+      };
     }
 
     return {

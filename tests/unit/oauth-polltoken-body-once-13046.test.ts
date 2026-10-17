@@ -24,7 +24,8 @@ for (const [name, provider, config] of [
       const result = await provider.pollToken(config, "device-code");
       assert.equal(result.ok, false);
       assert.equal(result.data.error, "invalid_response");
-      assert.match(result.data.error_description, /502 Bad Gateway/);
+      assert.equal(result.data.error_description, "Unexpected response from OAuth provider");
+      assert.equal(result.data.error_description.includes("502 Bad Gateway"), false);
     });
   });
 

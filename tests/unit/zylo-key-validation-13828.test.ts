@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 import { createServer, type Server } from "node:http";
 
 import { validateProviderApiKey } from "../../src/lib/providers/validation.ts";
+import { resolveZyloChatUrl } from "../../src/lib/providers/validation/zylo.ts";
 
 let server: Server;
 let baseUrl = "";
@@ -84,4 +85,18 @@ test("the zylo alias uses the same authenticated validation probe", async () => 
     providerSpecificData: { baseUrl },
   });
   assert.equal(result.valid, false);
+});
+
+test("explicit Zylo chat endpoint path is preserved verbatim", () => {
+  assert.equal(
+    resolveZyloChatUrl("https://gateway.example.test/custom/chat/completions"),
+    "https://gateway.example.test/custom/chat/completions"
+  );
+});
+
+test("Zylo does not heuristically strip a custom models path", () => {
+  assert.equal(
+    resolveZyloChatUrl("https://gateway.example.test/custom/models"),
+    "https://gateway.example.test/custom/models/v1/chat/completions"
+  );
 });

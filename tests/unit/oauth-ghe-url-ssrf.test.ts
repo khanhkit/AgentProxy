@@ -19,11 +19,9 @@ process.env.API_KEY_SECRET = "ghe-ssrf-test-api-key-secret-0123456789";
 
 const core = await import("../../src/lib/db/core.ts");
 const apiKeys = await import("../../src/lib/db/apiKeys.ts");
-const managementKey = await apiKeys.createApiKey(
-  "ghe-ssrf-test",
-  "ghe-ssrf-test-machine",
-  ["manage"]
-);
+const managementKey = await apiKeys.createApiKey("ghe-ssrf-test", "ghe-ssrf-test-machine", [
+  "manage",
+]);
 const route = await import("../../src/app/api/oauth/[provider]/[action]/route.ts");
 
 const METADATA_URL = "http://169.254.169.254/latest/meta-data/iam/security-credentials/role";
@@ -109,7 +107,9 @@ async function deviceCode(gheUrl: string) {
   const url =
     "http://localhost/api/oauth/ghe-copilot/device-code" + `?gheUrl=${encodeURIComponent(gheUrl)}`;
   return route.GET(
-    new Request(url, { headers: { authorization: `Bearer ${managementKey.key}` } }) as unknown as NextRequest,
+    new Request(url, {
+      headers: { authorization: `Bearer ${managementKey.key}` },
+    }) as unknown as NextRequest,
     { params: Promise.resolve({ provider: "ghe-copilot", action: "device-code" }) }
   );
 }
@@ -271,4 +271,27 @@ test("ghe-copilot post-login lookups do not follow a redirect from the GHE host"
   assert.equal(text.includes(METADATA_SECRET), false);
   assert.equal(res.status, 200);
   assert.equal(JSON.parse(text).success, true);
+});
+
+test("ghe-copilot successful non-JSON optional enrichment does not fail login", async () => {
+  const tokenUrl = "https://ghe.example.test/login/oauth/access_token";
+  globalThis.fetch = (async (input: RequestInfo | URL) => {
+    const url = String(input instanceof Request ? input.url : input);
+    requestedUrls.push(url);
+    if (url === tokenUrl) {
+      return new Response(JSON.stringify({ access_token: "gho_test", expires_in: 3600 }), {
+        status: 200,
+        headers: { "content-type": "application/json" },
+      });
+    }
+    return new Response("<html>enterprise proxy page</html>", {
+      status: 200,
+      headers: { "content-type": "text/html" },
+    });
+  }) as typeof fetch;
+
+  const res = await poll("https://ghe.example.test");
+  const body = await res.json();
+  assert.equal(res.status, 200);
+  assert.equal(body.success, true);
 });

@@ -11,7 +11,7 @@ const source = fs.readFileSync(
 test("Devin HTTP auth rejection can fall back to the CLI executor auth path", () => {
   assert.match(source, /import \{ spawn \} from "child_process"/);
   assert.match(source, /async function validateDevinCliKeyFallback/);
-  assert.match(source, /CLI_DEVIN_BIN/);
+  assert.doesNotMatch(source, /process\.env\.CLI_DEVIN_BIN/);
   assert.match(source, /WINDSURF_API_KEY: String\(apiKey \|\| ""\)/);
   assert.match(source, /\["acp", "--agent-type", "summarizer"\]/);
 });

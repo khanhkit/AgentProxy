@@ -25,10 +25,12 @@ import { backupDbFile } from "../db/backup";
 import {
   addProxiesToScopePool,
   bumpProxyRegistryGeneration,
+  createProxy,
   deleteProxyById,
   updateProxy,
   upsertProxy,
 } from "../db/proxies";
+import type { ProxyPayload } from "../db/proxies/types";
 import { bumpProxyConfigGeneration } from "../db/settings";
 import { isSubscriptionDue } from "./due";
 import {
@@ -464,9 +466,39 @@ async function fetchSubscriptionContent(url: string): Promise<string> {
   });
 }
 
+/**
+ * Subscription identity includes protocol type. Bulk import intentionally uses
+ * host+port+username identity, but two local-core protocols on the same socket
+ * are distinct subscription pool members and must not overwrite each other.
+ */
+async function upsertSubscriptionProxy(payload: ProxyPayload) {
+  const db = getDbInstance();
+  const type = String(payload.type || "")
+    .trim()
+    .toLowerCase();
+  const host = String(payload.host || "").trim();
+  const port = Number(payload.port);
+  const username = String(payload.username || "").trim();
+  const existing = db
+    .prepare(
+      "SELECT id, subscription_id FROM proxy_registry WHERE LOWER(type) = ? AND host = ? AND port = ? AND COALESCE(username, '') = ? LIMIT 1"
+    )
+    .get(type, host, port, username) as
+    { id?: string; subscription_id?: string | null } | undefined;
+
+  if (existing?.id) {
+    if ((existing.subscription_id ?? null) !== (payload.subscriptionId ?? null)) {
+      return { proxy: null, action: "skipped" as const };
+    }
+    return { proxy: await updateProxy(existing.id, payload), action: "updated" as const };
+  }
+
+  return { proxy: await createProxy(payload), action: "created" as const };
+}
+
 /** Keep only rows this subscription owns; heal transient validation errors, not operator disables. */
 async function keepOwnedSyncedRow(
-  upserted: Awaited<ReturnType<typeof upsertProxy>>,
+  upserted: Awaited<ReturnType<typeof upsertSubscriptionProxy>>,
   keptIds: string[]
 ): Promise<void> {
   if (upserted.action === "skipped" || !upserted.proxy?.id) return;
@@ -621,7 +653,6 @@ async function syncSubscriptionUnsafe(id: string): Promise<SyncResult> {
         // rule below (https→443, else 8080) — not the probe default.
         const invalid: string[] = [];
         const unreachable: string[] = [];
-        const collisions: string[] = [];
         const seenKeys = new Set<string>();
         const validEntries: Array<{
           entry: string;
@@ -662,18 +693,6 @@ async function syncSubscriptionUnsafe(id: string): Promise<SyncResult> {
           }
           const key = `${coreType}://${coreUrl.hostname.toLowerCase()}:${port}:${username}`;
           if (seenKeys.has(key)) continue;
-          const ownerKey = `://${coreUrl.hostname.toLowerCase()}:${port}:${username}`;
-          let collided = false;
-          for (const seen of seenKeys) {
-            if (seen.endsWith(ownerKey)) {
-              collided = true;
-              break;
-            }
-          }
-          if (collided) {
-            collisions.push(redactCoreEntryForDetail(entry));
-            continue;
-          }
           seenKeys.add(key);
           const probeUrl = buildProbeUrl(coreUrl, coreType, port);
           validEntries.push({
@@ -698,24 +717,23 @@ async function syncSubscriptionUnsafe(id: string): Promise<SyncResult> {
         probeVerdicts.forEach((reachable, i) => {
           if (!reachable) unreachable.push(redactCoreEntryForDetail(validEntries[i].entry));
         });
-        for (const valid of validEntries) {
+        for (let i = 0; i < validEntries.length; i++) {
+          const valid = validEntries[i];
+          if (!probeVerdicts[i]) continue;
           try {
-            const upserted = await upsertProxy(
-              {
-                name:
-                  validEntries.length > 1
-                    ? `${sub.name} (local core :${valid.port}/${valid.coreType})`
-                    : `${sub.name} (local core)`,
-                type: valid.coreType,
-                host: valid.coreUrl.hostname,
-                port: valid.port,
-                username: valid.username,
-                password: valid.password,
-                source: "subscription",
-                subscriptionId: id,
-              },
-              { claimOwnership: false }
-            );
+            const upserted = await upsertSubscriptionProxy({
+              name:
+                validEntries.length > 1
+                  ? `${sub.name} (local core :${valid.port}/${valid.coreType})`
+                  : `${sub.name} (local core)`,
+              type: valid.coreType,
+              host: valid.coreUrl.hostname,
+              port: valid.port,
+              username: valid.username,
+              password: valid.password,
+              source: "subscription",
+              subscriptionId: id,
+            });
             await keepOwnedSyncedRow(upserted, keptIds);
           } catch {
             invalid.push(redactCoreEntryForDetail(valid.entry));
@@ -724,7 +742,6 @@ async function syncSubscriptionUnsafe(id: string): Promise<SyncResult> {
         const parts: string[] = [];
         if (invalid.length > 0) parts.push(`invalid: ${invalid.join("; ")}`);
         if (unreachable.length > 0) parts.push(`unreachable: ${unreachable.join("; ")}`);
-        if (collisions.length > 0) parts.push(`key-collision: ${collisions.join("; ")}`);
         if (parts.length > 0) {
           warning = subscriptionErrorCode("LOCAL_CORE_ENDPOINT_INVALID", parts.join(" | "));
         }

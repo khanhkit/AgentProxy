@@ -430,7 +430,7 @@ export async function validateProxyPool(deps?: {
     const probe = await resolveEgressIp(url, { force: true });
     const alive = !!probe.ip && !probe.error;
     const previous = (p.status ?? "").toLowerCase();
-    if (previous === "inactive" || previous === "dead") {
+    if (previous === "inactive" || (previous === "dead" && !alive)) {
       report.push({
         proxyId: p.id,
         host: p.host,

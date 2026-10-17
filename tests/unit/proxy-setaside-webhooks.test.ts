@@ -83,6 +83,14 @@ test("masking: scheme and port stay clear, user and host masked, null key silent
       "https://u***@ho***le:8080"
     );
     assert.equal(bridge.maskEgressKey("http://host.example:8080"), "http://ho***le:8080");
+    assert.equal(
+      bridge.maskEgressKey("http://user@2001:db8::1234:8080"),
+      "http://u***@20***34:8080"
+    );
+    assert.equal(
+      bridge.maskEgressKey("http://user@[2001:db8::1234]:8080"),
+      "http://u***@[20***34]:8080"
+    );
     const masked = bridge.maskEgressKey(KEY);
     assert.ok(!masked.includes("user@host.example"), "no full credentials in masked key");
     const periodMs = memory.noteProxyRefusal(null, "ip_quota_429", 3_000_000);

@@ -75,7 +75,7 @@ function pickFields(source: any, strings: readonly string[], numbers: readonly s
 async function optionalJson(url: string, init: RequestInit) {
   try {
     const response = await gheFetch(url, init);
-    return response.ok ? await response.json() : {};
+    return response.ok ? await response.json().catch(() => ({})) : {};
   } catch (error) {
     if (error instanceof SafeOutboundFetchError) return {};
     throw error;

@@ -101,7 +101,6 @@ export function parseCliProxyAuthRecord(raw: unknown, now: number = 0): ParsedCl
       expiresAt: minted ? null : resolveCliProxyExpiry(record, now),
       projectId: null,
       providerSpecificData: {
-        dcaToken: dcaToken ?? undefined,
         baseUrl: asString(record.base_url) ?? undefined,
         email: asString(record.email) ?? undefined,
         name: asString(record.name) ?? undefined,

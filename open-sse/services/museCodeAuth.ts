@@ -1,8 +1,5 @@
-import {
-  MUSE_CODE_MINT_URL,
-  museCodeHeaders,
-  normalizeMuseBaseUrl,
-} from "../config/museCode.ts";
+import { MUSE_CODE_MINT_URL, museCodeHeaders, normalizeMuseBaseUrl } from "../config/museCode.ts";
+import { safeOutboundFetch } from "@/shared/network/safeOutboundFetch";
 
 export type MuseMintedKey = {
   apiKey: string;
@@ -29,13 +26,17 @@ export async function mintMuseApiKey(
   if (!token) {
     throw new Error("Muse Code mint requires a device access token.");
   }
-  const response = await fetch(mintUrl, {
+  const response = await safeOutboundFetch(mintUrl, {
     method: "POST",
     headers: museCodeHeaders({
       Authorization: `Bearer ${token}`,
       "Content-Type": "application/json",
     }),
     body: JSON.stringify({ dca_token: token }),
+    guard: "public-only",
+    pinDns: true,
+    allowRedirect: false,
+    retry: false,
   });
   const text = await response.text();
   if (!response.ok) {

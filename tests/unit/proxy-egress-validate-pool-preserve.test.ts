@@ -34,7 +34,7 @@ test.afterEach(() => {
   clearEgressCache();
 });
 
-test("validateProxyPool rewrites active/error but preserves inactive/dead", async () => {
+test("validateProxyPool preserves manual inactive but recovers a live health-dead proxy", async () => {
   clearEgressCache();
   _setEgressProbeForTests(liveOrDeadProbe);
 
@@ -90,9 +90,9 @@ test("validateProxyPool rewrites active/error but preserves inactive/dead", asyn
     {
       previous: "dead",
       live: true,
-      expectWrite: null,
-      expectNewStatus: "dead",
-      expectPreserved: true,
+      expectWrite: "active",
+      expectNewStatus: "active",
+      expectPreserved: false,
     },
     {
       previous: "dead",
@@ -159,7 +159,7 @@ test("validateProxyPool rewrites active/error but preserves inactive/dead", asyn
   }
 });
 
-test("validateProxyPool on a mixed pool leaves operator/health statuses intact", async () => {
+test("validateProxyPool leaves manual inactive intact and recovers live health-dead", async () => {
   clearEgressCache();
   _setEgressProbeForTests(liveOrDeadProbe);
 
@@ -185,14 +185,14 @@ test("validateProxyPool on a mixed pool leaves operator/health statuses intact",
   assert.equal(byId.get("pool-inactive")?.preserved, true);
   assert.equal(byId.get("pool-inactive")?.alive, true);
   assert.equal(byId.get("pool-inactive")?.egressIp, LIVE_IP);
-  assert.equal(byId.get("pool-dead")?.newStatus, "dead");
-  assert.equal(byId.get("pool-dead")?.preserved, true);
+  assert.equal(byId.get("pool-dead")?.newStatus, "active");
+  assert.equal(byId.get("pool-dead")?.preserved, false);
   assert.equal(byId.get("pool-dead")?.alive, true);
   assert.equal(byId.get("pool-dead")?.egressIp, LIVE_IP);
 
   assert.deepEqual(
     calls.map((c) => c.id).sort(),
-    ["pool-active", "pool-error"],
-    "only rewritable rows are persisted"
+    ["pool-active", "pool-dead", "pool-error"],
+    "active/error plus recovered health-dead rows are persisted"
   );
 });

@@ -121,3 +121,83 @@ test("default path: sweep-observed 429 is re-tested and recovered, no injected p
     if (created) await proxiesDb.deleteProxyById(created.id, { force: true });
   }
 });
+
+test("inconclusive recovery keeps the sweep-owned 429 ledger entry for a later retry", async () => {
+  const port = await freePort();
+  const created = await proxiesDb.createProxy({
+    name: `recovery-inconclusive ${port}`,
+    type: "http",
+    host: "127.0.0.1",
+    port,
+  });
+  const relay = await startRelay(port);
+  try {
+    await scheduler.forceProxyHealthSweep();
+    assert.equal(scheduler.__recoveryLedgerSizeForTesting(), 1);
+    const result = await scheduler.runRecoveryPass(
+      async () => "inconclusive",
+      undefined,
+      { maxCandidates: 10, durationMs: 60_000, concurrency: 2 },
+      process.env
+    );
+    assert.equal(result.recovered, 0);
+    assert.equal(result.refused, 0);
+    assert.equal(scheduler.__recoveryLedgerSizeForTesting(), 1);
+  } finally {
+    relay.closeAllConnections();
+    await new Promise<void>((resolve) => relay.close(() => resolve()));
+    if (created) await proxiesDb.deleteProxyById(created.id, { force: true });
+  }
+});
+
+test("failed recovery rotates the oldest candidate so newer entries are not starved", async () => {
+  const firstPort = await freePort();
+  const first = await proxiesDb.createProxy({
+    name: `recovery-fairness-first ${firstPort}`,
+    type: "http",
+    host: "127.0.0.1",
+    port: firstPort,
+  });
+  const firstRelay = await startRelay(firstPort);
+
+  let second: Awaited<ReturnType<typeof proxiesDb.createProxy>> | null = null;
+  let secondRelay: http.Server | null = null;
+  try {
+    await scheduler.forceProxyHealthSweep();
+    assert.equal(scheduler.__recoveryLedgerSizeForTesting(), 1);
+    await new Promise((resolve) => setTimeout(resolve, 5));
+
+    const secondPort = await freePort();
+    second = await proxiesDb.createProxy({
+      name: `recovery-fairness-second ${secondPort}`,
+      type: "http",
+      host: "127.0.0.1",
+      port: secondPort,
+    });
+    secondRelay = await startRelay(secondPort);
+    await scheduler.forceProxyHealthSweep();
+    assert.equal(scheduler.__recoveryLedgerSizeForTesting(), 2);
+
+    const seen: string[] = [];
+    const limits = { maxCandidates: 1, durationMs: 60_000, concurrency: 1 };
+    const probe = async (key: string) => {
+      seen.push(key);
+      return "fail" as const;
+    };
+    await scheduler.runRecoveryPass(probe, undefined, limits, process.env);
+    await new Promise((resolve) => setTimeout(resolve, 5));
+    await scheduler.runRecoveryPass(probe, undefined, limits, process.env);
+
+    assert.equal(seen.length, 2);
+    assert.notEqual(seen[0], seen[1]);
+  } finally {
+    firstRelay.closeAllConnections();
+    await new Promise<void>((resolve) => firstRelay.close(() => resolve()));
+    if (secondRelay) {
+      secondRelay.closeAllConnections();
+      await new Promise<void>((resolve) => secondRelay?.close(() => resolve()));
+    }
+    if (first) await proxiesDb.deleteProxyById(first.id, { force: true });
+    if (second) await proxiesDb.deleteProxyById(second.id, { force: true });
+  }
+});

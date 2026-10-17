@@ -206,7 +206,7 @@ test("gate-rejected entry creates no row but warns with a redacted detail", asyn
   }
 });
 
-test("unreachable entry still creates its row and is listed as unreachable", async () => {
+test("unreachable entry is diagnosed but never added to the routable registry", async () => {
   reset();
   const open = await startTcpServer();
   const shut = await closedPort();
@@ -219,7 +219,8 @@ test("unreachable entry still creates its row and is listed as unreachable", asy
     );
     const result = await sub.syncSubscription("s1");
     assert.equal(result.status, "ok");
-    assert.equal(rowsForSub("s1").length, 2);
+    assert.equal(rowsForSub("s1").length, 1);
+    assert.equal(rowsForSub("s1")[0].port, open.port);
     const parsed = detailOf("s1");
     assert.equal(parsed?.code, "LOCAL_CORE_ENDPOINT_INVALID");
     assert.ok(parsed?.detail?.includes("unreachable:"), `detail: ${parsed?.detail}`);
@@ -230,31 +231,18 @@ test("unreachable entry still creates its row and is listed as unreachable", asy
   }
 });
 
-test("re-sync of an unreachable entry keeps the row id and its assignments", async () => {
+test("re-sync of an unreachable entry keeps it non-routable", async () => {
   reset();
   const shut = await closedPort();
   const feed = await startFeedServer(NEEDS_CORE_FEED);
   try {
     insertSubscription("s1", feed.url, `socks5://127.0.0.1:${shut}`);
-    await sub.syncSubscription("s1");
-    const before = rowsForSub("s1");
-    assert.equal(before.length, 1);
-    const pooled = core
-      .getDbInstance()
-      .prepare("SELECT COUNT(*) AS n FROM proxy_assignments WHERE proxy_id = ?")
-      .get(before[0].id) as { n: number };
-    assert.equal(pooled.n, 1);
-
-    await sub.syncSubscription("s1");
-
-    const after = rowsForSub("s1");
-    assert.equal(after.length, 1);
-    assert.equal(after[0].id, before[0].id);
-    const pooled2 = core
-      .getDbInstance()
-      .prepare("SELECT COUNT(*) AS n FROM proxy_assignments WHERE proxy_id = ?")
-      .get(before[0].id) as { n: number };
-    assert.equal(pooled2.n, 1);
+    const first = await sub.syncSubscription("s1");
+    assert.equal(first.boundProxies, 0);
+    assert.equal(rowsForSub("s1").length, 0);
+    const second = await sub.syncSubscription("s1");
+    assert.equal(second.boundProxies, 0);
+    assert.equal(rowsForSub("s1").length, 0);
   } finally {
     await feed.close();
   }
@@ -290,7 +278,7 @@ test("removing an entry from the field deletes its row on re-sync", async () => 
   }
 });
 
-test("scheme collision on one key creates one row and an exact key-collision prefix", async () => {
+test("different proxy schemes on the same host/port/user are distinct identities", async () => {
   reset();
   const tcp = await startTcpServer();
   const feed = await startFeedServer(NEEDS_CORE_FEED);
@@ -301,10 +289,9 @@ test("scheme collision on one key creates one row and an exact key-collision pre
       `http://127.0.0.1:${tcp.port}\nsocks5://127.0.0.1:${tcp.port}`
     );
     await sub.syncSubscription("s1");
-    assert.equal(rowsForSub("s1").length, 1);
+    assert.equal(rowsForSub("s1").length, 2);
     const parsed = detailOf("s1");
-    assert.equal(parsed?.code, "LOCAL_CORE_ENDPOINT_INVALID");
-    assert.ok(parsed?.detail?.includes("key-collision:"), `detail: ${parsed?.detail}`);
+    assert.equal(parsed?.detail?.includes("key-collision:") ?? false, false);
   } finally {
     await feed.close();
     await tcp.close();
@@ -337,8 +324,9 @@ test("combined feed lists all three motifs joined in order", async () => {
     const iInvalid = detail.indexOf("invalid:");
     const iUnreachable = detail.indexOf("unreachable:");
     const iCollision = detail.indexOf("key-collision:");
-    assert.ok(iInvalid >= 0 && iUnreachable >= 0 && iCollision >= 0, `detail: ${detail}`);
-    assert.ok(iInvalid < iUnreachable && iUnreachable < iCollision, `detail: ${detail}`);
+    assert.ok(iInvalid >= 0 && iUnreachable >= 0, `detail: ${detail}`);
+    assert.equal(iCollision, -1, `different schemes must not collide: ${detail}`);
+    assert.ok(iInvalid < iUnreachable, `detail: ${detail}`);
     assert.ok(detail.includes(" | "), `detail: ${detail}`);
   } finally {
     await feed.close();

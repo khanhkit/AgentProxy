@@ -150,6 +150,45 @@ describe("LiveWS authorizeConnection — requireLogin=false bypass (#14256)", ()
     }
   });
 
+  test("requireLogin=false does not open LiveWS through a proxy/tunnel hop", async () => {
+    resetDbInstance();
+    fs.rmSync(TEST_DATA_DIR, { recursive: true, force: true });
+    fs.mkdirSync(TEST_DATA_DIR, { recursive: true });
+    await updateSettings({ requireLogin: false });
+
+    const port = await getFreePort("127.0.0.1");
+    const server = await startLiveDashboardServer(port, "127.0.0.1");
+    try {
+      const msg = await connectAndWait(port, {
+        "x-forwarded-for": "203.0.113.7",
+        "x-forwarded-proto": "https",
+      });
+      assert.equal(msg.type, "error");
+      assert.equal(msg.code, "UNAUTHORIZED");
+    } finally {
+      await new Promise<void>((r) => server.close(() => r()));
+    }
+  });
+
+  test("spoofing a loopback X-Forwarded-For cannot open requireLogin=false", async () => {
+    resetDbInstance();
+    fs.rmSync(TEST_DATA_DIR, { recursive: true, force: true });
+    fs.mkdirSync(TEST_DATA_DIR, { recursive: true });
+    await updateSettings({ requireLogin: false });
+
+    const port = await getFreePort("127.0.0.1");
+    const server = await startLiveDashboardServer(port, "127.0.0.1");
+    try {
+      const msg = await connectAndWait(port, {
+        "x-forwarded-for": "127.0.0.1",
+      });
+      assert.equal(msg.type, "error");
+      assert.equal(msg.code, "UNAUTHORIZED");
+    } finally {
+      await new Promise<void>((r) => server.close(() => r()));
+    }
+  });
+
   test("anonymous connection is rejected when requireLogin=true and no credentials", async () => {
     // Reset the DB with a password set, so auth IS required.
     resetDbInstance();

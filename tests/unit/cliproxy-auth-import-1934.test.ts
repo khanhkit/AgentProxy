@@ -39,6 +39,16 @@ test("parseCliProxyAuthRecord maps a claude (anthropic) auth file", () => {
   });
 });
 
+test("Muse CLI import keeps DCA only in refresh-token storage", () => {
+  const parsed = parseCliProxyAuthRecord(
+    { type: "meta", dca_token: "dca:durable", api_key: "LLM|minted", email: "m@e.test" },
+    T0
+  );
+  assert.equal(parsed?.refreshToken, "dca:durable");
+  assert.equal(parsed?.accessToken, "LLM|minted");
+  assert.equal(parsed?.providerSpecificData?.dcaToken, undefined);
+});
+
 test("parseCliProxyAuthRecord skips discontinued gemini records", () => {
   const parsed = parseCliProxyAuthRecord(
     { type: "gemini", access_token: "at", project_id: "proj-9" },

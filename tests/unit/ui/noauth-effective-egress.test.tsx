@@ -38,7 +38,7 @@ function fp(n: number): string {
   return `fp${String(n).padStart(2, "0")}deadbeefcafe`;
 }
 
-const CTX = { provider: PROVIDER_ID };
+const CTX = { provider: PROVIDER_ID, connectionId: "conn-1" };
 
 // ── Pure resolver ────────────────────────────────────────────────────────────
 
@@ -81,8 +81,21 @@ describe("getEffectiveEgress", () => {
     expect(egress?.proxy).toBeUndefined();
   });
 
-  it("no rows at any level is direct", () => {
-    expect(getEffectiveEgress(null, CTX, [], [])?.kind).toBe("direct");
+  it("an unresolved connection id cannot affirm provider/global/direct egress", () => {
+    expect(
+      getEffectiveEgress(
+        null,
+        { provider: PROVIDER_ID, connectionId: undefined },
+        [poolItem("a", "10.0.0.1")],
+        [assignment("provider", PROVIDER_ID, "a")]
+      )
+    ).toBeNull();
+    expect(
+      getEffectiveEgress(null, { provider: PROVIDER_ID, connectionId: undefined }, [], [])
+    ).toBeNull();
+    expect(
+      getEffectiveEgress(null, { provider: PROVIDER_ID, proxyEnabled: false }, [], [])?.kind
+    ).toBe("direct");
   });
 
   it("rows without a live member are pool-empty, never direct", () => {
@@ -374,5 +387,18 @@ describe("NoAuthAccountCard effective egress", () => {
     await waitForCondition(() => el.textContent?.includes("Proxy for Account 1") ?? false);
     const emptyOption = el.querySelector("select option[value='']");
     expect(emptyOption?.textContent).toBe("No own proxy (inherits connection)");
+  });
+});
+
+describe("NoAuthAccountCard assignment refresh failure", () => {
+  it("clears assignment knowledge on both non-OK and thrown refresh failures", async () => {
+    const source = await import("node:fs/promises").then((fs) =>
+      fs.readFile("src/shared/components/NoAuthAccountCard.tsx", "utf8")
+    );
+    const start = source.indexOf("const fetchAssignments = useCallback");
+    const end = source.indexOf("useEffect(() =>", start);
+    const block = source.slice(start, end);
+    expect(block).toMatch(/if \(!res\.ok\)[\s\S]*setAssignments\(null\)/);
+    expect(block).toMatch(/catch \(err\)[\s\S]*setAssignments\(null\)/);
   });
 });

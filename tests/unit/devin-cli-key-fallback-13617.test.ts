@@ -22,13 +22,13 @@ async function withHttpStatus<T>(status: number, fn: () => Promise<T>): Promise<
   }
 }
 
-test("CLI-format Devin key survives HTTP 401 when the real CLI probe accepts it", async () => {
+test("HTTP 401 never sends the candidate key to a CLI_DEVIN_BIN override", async () => {
   const result = await withHttpStatus(401, () =>
     validateDevinCloudAgentProvider({ apiKey: "apk_user_valid_cli_key" })
   );
-  assert.equal(result.valid, true);
-  assert.equal(result.error, null);
-  assert.match(result.warning ?? "", /validated via Devin CLI/i);
+  assert.equal(result.valid, false);
+  assert.equal(result.error, "Invalid API key");
+  assert.equal(result.warning, undefined);
 });
 
 test("HTTP auth rejection stays invalid when CLI probe rejects the key", async () => {

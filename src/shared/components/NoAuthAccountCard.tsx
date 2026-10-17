@@ -268,7 +268,7 @@ export function getEffectiveEgress(
   assignments: EffectiveEgressAssignment[] | null
 ): EffectiveEgress | null {
   if (ctx.proxyEnabled === false) return { kind: "direct" };
-  if (assignments === null) return null;
+  if (!ctx.connectionId || assignments === null) return null;
   const accountRows = selectScopeRows(assignments, ["account", "key"], ctx.connectionId);
   const accountEgress = resolveLevelEgress(accountRows, "account", savedProxies);
   if (accountEgress && accountEgress.kind !== "pool-empty") return accountEgress;
@@ -358,18 +358,21 @@ export default function NoAuthAccountCard({
   const fetchAssignments = useCallback(async () => {
     try {
       const res = await fetch("/api/settings/proxies/assignments");
-      if (res.ok) {
-        const data = await res.json();
-        const items = Array.isArray(data?.items) ? data.items : data;
-        setAssignments(
-          (Array.isArray(items) ? items : []).map((row: any) => ({
-            scope: String(row?.scope ?? ""),
-            scopeId: typeof row?.scopeId === "string" ? row.scopeId : null,
-            proxyId: typeof row?.proxyId === "string" ? row.proxyId : "",
-          }))
-        );
+      if (!res.ok) {
+        setAssignments(null);
+        return;
       }
+      const data = await res.json();
+      const items = Array.isArray(data?.items) ? data.items : data;
+      setAssignments(
+        (Array.isArray(items) ? items : []).map((row: any) => ({
+          scope: String(row?.scope ?? ""),
+          scopeId: typeof row?.scopeId === "string" ? row.scopeId : null,
+          proxyId: typeof row?.proxyId === "string" ? row.proxyId : "",
+        }))
+      );
     } catch (err) {
+      setAssignments(null);
       console.error("Failed to fetch proxy assignments:", err);
     }
   }, []);

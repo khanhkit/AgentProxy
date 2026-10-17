@@ -14,13 +14,12 @@ export async function refreshMuseCodeToken(
   log: RefreshLogger,
   proxyConfig: unknown = null
 ) {
+  const dcaFromRefresh = isMuseDcaToken(refreshToken) ? refreshToken.trim() : "";
   const dcaFromData =
     typeof providerSpecificData?.dcaToken === "string" ? providerSpecificData.dcaToken.trim() : "";
-  const dcaToken = isMuseDcaToken(dcaFromData)
-    ? dcaFromData
-    : isMuseDcaToken(refreshToken)
-      ? refreshToken.trim()
-      : "";
+  // Prefer the dedicated refresh-token field. The metadata fallback migrates
+  // existing connections created before the DCA storage hardening below.
+  const dcaToken = dcaFromRefresh || (isMuseDcaToken(dcaFromData) ? dcaFromData : "");
   if (!dcaToken) {
     log?.warn?.("TOKEN_REFRESH", "Muse Code refresh missing dca token");
     return null;
@@ -30,15 +29,14 @@ export async function refreshMuseCodeToken(
     const minted = await runWithProxyContext(proxyConfig, () =>
       mintMuseApiKey(dcaToken, MUSE_CODE_MINT_URL)
     );
+    const { dcaToken: _legacyDcaToken, ...safeProviderData } =
+      providerSpecificData && typeof providerSpecificData === "object" ? providerSpecificData : {};
     return {
       accessToken: minted.apiKey,
       refreshToken: dcaToken,
       expiresIn: undefined,
       providerSpecificData: {
-        ...(providerSpecificData && typeof providerSpecificData === "object"
-          ? providerSpecificData
-          : {}),
-        dcaToken,
+        ...safeProviderData,
         baseUrl: minted.baseUrl,
         email: minted.email,
         name: minted.name,

@@ -4,11 +4,9 @@ import {
   isMuseDcaToken,
   museCodeHeaders,
 } from "@agentproxy/open-sse/config/museCode.ts";
-import {
-  mintMuseApiKey,
-  type MuseMintedKey,
-} from "@agentproxy/open-sse/services/museCodeAuth.ts";
+import { mintMuseApiKey, type MuseMintedKey } from "@agentproxy/open-sse/services/museCodeAuth.ts";
 import { MUSE_CODE_CONFIG } from "../constants/oauth";
+import { safeOutboundFetch } from "@/shared/network/safeOutboundFetch";
 
 function requiredText(value: unknown, field: string): string {
   if (typeof value !== "string" || !value.trim()) {
@@ -17,11 +15,21 @@ function requiredText(value: unknown, field: string): string {
   return value.trim();
 }
 
+function museFetch(url: string, init: RequestInit) {
+  return safeOutboundFetch(url, {
+    ...init,
+    guard: "public-only",
+    pinDns: true,
+    allowRedirect: false,
+    retry: false,
+  });
+}
+
 async function postForm(
   url: string,
   params: Record<string, string>
 ): Promise<{ ok: boolean; status: number; data: Record<string, unknown> }> {
-  const response = await fetch(url, {
+  const response = await museFetch(url, {
     method: "POST",
     headers: museCodeHeaders({ "Content-Type": "application/x-www-form-urlencoded" }),
     body: new URLSearchParams(params),
@@ -54,14 +62,10 @@ export const museCode = {
       user_code: requiredText(data.user_code, "user_code"),
       verification_uri: typeof data.verification_uri === "string" ? data.verification_uri : "",
       verification_uri_complete:
-        typeof data.verification_uri_complete === "string"
-          ? data.verification_uri_complete
-          : "",
+        typeof data.verification_uri_complete === "string" ? data.verification_uri_complete : "",
       expires_in: expiresIn,
       interval:
-        Number.isFinite(interval) && interval > 0
-          ? interval
-          : MUSE_CODE_DEFAULT_POLL_INTERVAL_SEC,
+        Number.isFinite(interval) && interval > 0 ? interval : MUSE_CODE_DEFAULT_POLL_INTERVAL_SEC,
     };
   },
   pollToken: async (config, deviceCode: string) => {
@@ -117,7 +121,6 @@ export const museCode = {
       email: minted?.email,
       displayName: minted?.name,
       providerSpecificData: {
-        dcaToken,
         authKind: "oauth",
         baseUrl: minted?.baseUrl,
         email: minted?.email,
