@@ -26,6 +26,7 @@ import { errorResponse, buildErrorBody, parseUpstreamError } from "../utils/erro
 import { stripSensitiveResponseHeaders } from "../utils/upstreamResponseHeaders.ts";
 import type { ChatRequest, ProviderConfig } from "./providerAdapters.ts";
 import { ProviderRouter } from "./providerAdapters.ts";
+import { isResponseStatusRetryable } from "./transientBackendRetry.ts";
 import {
   STRATEGY_ENV,
   STRATEGY_FILE_ENV,
@@ -62,10 +63,11 @@ export interface SelfHostedOptions {
 export interface SelfHostedRuntime {
   router: ProviderRouter;
   engine: DeterministicRoutingEngine;
+  hasProviderCredentials: boolean;
 }
 
 let cachedRuntime: SelfHostedRuntime | null = null;
-let cachedRuntimeSignature = "";
+let cachedRuntimeSources: SelfHostedSources | null = null;
 let failedConfigLoad: string | null = null;
 
 interface SelfHostedSources {
@@ -100,15 +102,13 @@ async function resolveSelfHostedSources(
   return { providersFile, providersSource, strategySource };
 }
 
-/** Content signature used to skip re-parsing when nothing has changed. */
-function signatureFor(sources: SelfHostedSources): string {
-  return [
-    sources.providersFile ?? "",
-    sources.providersSource.length,
-    sources.providersSource.slice(0, 64),
-    sources.strategySource.length,
-    sources.strategySource.slice(0, 64),
-  ].join(":");
+/** Exact source equality used to skip re-parsing when nothing has changed. */
+function sameSources(left: SelfHostedSources, right: SelfHostedSources): boolean {
+  return (
+    left.providersFile === right.providersFile &&
+    left.providersSource === right.providersSource &&
+    left.strategySource === right.strategySource
+  );
 }
 
 /** Parse providers + strategy and build the router/engine pair. May throw. */
@@ -117,11 +117,23 @@ function buildSelfHostedRuntime(sources: SelfHostedSources): SelfHostedRuntime {
   // An explicit strategy env/file overrides the inline `strategy:` block per-key.
   let strategy: StrategyConfig = parsed.strategy;
   if (sources.strategySource.trim()) {
-    strategy = { ...strategy, ...parseStrategyConfig(yaml.load(sources.strategySource)) };
+    const rawOverride = yaml.load(sources.strategySource);
+    const parsedOverride = parseStrategyConfig(rawOverride);
+    const explicitKeys = new Set(
+      rawOverride && typeof rawOverride === "object" && !Array.isArray(rawOverride)
+        ? Object.keys(rawOverride as Record<string, unknown>)
+        : []
+    );
+    strategy = { ...strategy };
+    for (const key of explicitKeys) {
+      const typedKey = key as keyof StrategyConfig;
+      strategy[typedKey] = parsedOverride[typedKey] as never;
+    }
   }
   return {
     router: new ProviderRouter({ providers: parsed.providers }),
     engine: new DeterministicRoutingEngine(parsed.providers, strategy),
+    hasProviderCredentials: parsed.providers.some((provider) => Boolean(provider.apiKey)),
   };
 }
 
@@ -135,14 +147,13 @@ async function loadSelfHostedRuntime(
   const sources = await resolveSelfHostedSources(options);
   if (!sources) return null;
 
-  const signature = signatureFor(sources);
-  if (cachedRuntime && cachedRuntimeSignature === signature) {
+  if (cachedRuntime && cachedRuntimeSources && sameSources(cachedRuntimeSources, sources)) {
     return cachedRuntime;
   }
 
   try {
     cachedRuntime = buildSelfHostedRuntime(sources);
-    cachedRuntimeSignature = signature;
+    cachedRuntimeSources = sources;
     failedConfigLoad = null;
     return cachedRuntime;
   } catch (error) {
@@ -237,30 +248,33 @@ export function selectSelfHostedProvider(
  * strategy engine then treats the request as unpinned and applies its full
  * candidate pipeline.
  */
+type PinnedProviderResolution =
+  { id?: string; invalid?: undefined } | { id?: undefined; invalid: string };
+
 function resolvePinnedProviderId(
   router: ProviderRouter,
   request: Request,
   body: { model?: unknown } | null
-): string | undefined {
+): PinnedProviderResolution {
   const headerId = request.headers.get(PROVIDER_SELECTOR_HEADER)?.trim();
   if (headerId) {
     try {
       router.select(headerId);
-      return headerId;
+      return { id: headerId };
     } catch {
-      // unknown header id — fall through to model-prefix resolution
+      return { invalid: headerId };
     }
   }
   const { provider } = splitProviderModel(body?.model);
   if (provider) {
     try {
       router.select(provider);
-      return provider;
+      return { id: provider };
     } catch {
-      // unknown prefix — no pin
+      return { invalid: provider };
     }
   }
-  return undefined;
+  return {};
 }
 
 function buildErrorResponse(statusCode: number, message: string): Response {
@@ -332,8 +346,13 @@ export async function completeViaSelfHostedRouter(
     );
   }
 
-  const pinnedId = resolvePinnedProviderId(runtime.router, request, body);
-  const decision = runtime.engine.candidates(pinnedId);
+  const pin = resolvePinnedProviderId(runtime.router, request, body);
+  if (pin.invalid) {
+    return errorResponse(400, `Unknown provider: ${pin.invalid}`, {
+      type: "invalid_request_error",
+    });
+  }
+  const decision = runtime.engine.candidates(pin.id);
 
   // An explicit pin rejected by a hard filter is an error, not a silent re-route.
   if (decision.pinBlocked) {
@@ -367,7 +386,8 @@ export async function completeViaSelfHostedRouter(
       // to the next candidate in the chain.
       runtime.engine.recordFailure(candidate.provider.id, Date.now());
       const detail = error instanceof Error ? error.message : String(error);
-      lastError = buildErrorResponse(502, `Upstream provider unreachable: ${detail}`);
+      console.warn(`[SELF-HOSTED] provider ${candidate.provider.id} unreachable: ${detail}`);
+      lastError = buildErrorResponse(502, "Upstream provider unreachable");
       continue;
     }
     runtime.engine.recordLatency(candidate.provider.id, Date.now() - attemptStart);
@@ -381,6 +401,7 @@ export async function completeViaSelfHostedRouter(
     // and the failure feeds the cooldown breaker for the next request.
     runtime.engine.recordFailure(candidate.provider.id, Date.now());
     lastError = await normalizeProviderResponse(upstream, routeDecision);
+    if (!isResponseStatusRetryable(upstream.status)) return lastError;
   }
 
   // Every candidate exhausted — return the last normalized error.
@@ -420,6 +441,16 @@ export async function handleSelfHostedCompletions(
   }
 
   const apiKey = resolveSelfHostedApiKey(options);
+  if (!apiKey && runtime.hasProviderCredentials) {
+    return errorResponse(
+      503,
+      "Self-hosted entry API key is required when provider credentials are configured",
+      {
+        type: "provider_error",
+        code: "self_hosted_auth_required",
+      }
+    );
+  }
   if (apiKey) {
     const authHeader = request.headers.get("authorization") ?? "";
     const expected = `Bearer ${apiKey}`;

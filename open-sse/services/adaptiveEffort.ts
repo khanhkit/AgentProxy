@@ -72,15 +72,6 @@ function countRole(messages: ChatMessageLike[], role: string, from: number, to: 
   return n;
 }
 
-function toolLoopDepthAfter(messages: ChatMessageLike[], boundary: number): number {
-  let n = 0;
-  for (let i = boundary + 1; i < messages.length; i++) {
-    const msg = messages[i];
-    if (msg?.role === "assistant" && (msg as { tool_calls?: unknown }).tool_calls) n++;
-  }
-  return n;
-}
-
 export function resolveAdaptiveEffort(messages: ChatMessageLike[] | undefined | null): EffortLevel {
   const msgs = Array.isArray(messages) ? messages : [];
   if (msgs.length === 0) return "medium"; // no signals at all → balanced band, never cheap-by-default
@@ -89,13 +80,12 @@ export function resolveAdaptiveEffort(messages: ChatMessageLike[] | undefined | 
   const userChars = boundary >= 0 ? messageTextChars(msgs[boundary].content) : 0;
   const estCtxTokens = estimateMessageTokens(upToTurn as Array<{ content?: unknown }>);
   const toolResults = boundary >= 0 ? countRole(msgs, "tool", 0, boundary) : 0;
-  const turnDepth = boundary >= 0 ? toolLoopDepthAfter(msgs, boundary) + 1 : 1;
 
+  // Per-turn classification is pinned at the last user boundary. Never inspect
+  // assistant/tool traffic appended after that boundary: doing so can change the
+  // reasoning effort (and cache prefix) while the same user turn is still running.
   const trivial =
-    userChars <= TRIVIAL_USER_CHARS &&
-    estCtxTokens <= TRIVIAL_CTX_TOKENS &&
-    toolResults === 0 &&
-    turnDepth <= 1;
+    userChars <= TRIVIAL_USER_CHARS && estCtxTokens <= TRIVIAL_CTX_TOKENS && toolResults === 0;
   if (trivial) return "low";
   const heavy =
     estCtxTokens >= HEAVY_CTX_TOKENS ||

@@ -57,6 +57,43 @@ test("parseLyceumCreditsResponse returns null on unexpected shape", () => {
   assert.equal(parseLyceumCreditsResponse({ foo: "bar" }), null);
 });
 
+test("AP-ISS-0196 review: partial Lyceum balance payloads retain supported defaults", () => {
+  assert.deepEqual(parseLyceumCreditsResponse({ remaining_credits: 7.5 }), {
+    availableCredits: 0,
+    usedCredits: 0,
+    remainingCredits: 7.5,
+    monthlyFreeCredits: 0,
+    purchasedCredits: 0,
+  });
+  assert.deepEqual(parseLyceumCreditsResponse({ used_credits: 2 }), {
+    availableCredits: 0,
+    usedCredits: 2,
+    remainingCredits: 0,
+    monthlyFreeCredits: 0,
+    purchasedCredits: 0,
+  });
+});
+
+test("AP-ISS-0196 review: malformed ancillary Lyceum credit fields preserve the primary balance", () => {
+  assert.deepEqual(parseLyceumCreditsResponse(creditsResponse({ monthly_free_credits: -1 })), {
+    availableCredits: 50,
+    usedCredits: 10,
+    remainingCredits: 40,
+    monthlyFreeCredits: 0,
+    purchasedCredits: 30,
+  });
+  assert.deepEqual(
+    parseLyceumCreditsResponse(creditsResponse({ purchased_credits: "not-a-number" })),
+    {
+      availableCredits: 50,
+      usedCredits: 10,
+      remainingCredits: 40,
+      monthlyFreeCredits: 20,
+      purchasedCredits: 0,
+    }
+  );
+});
+
 test("parseLyceumCreditsResponse falls back remaining to available", () => {
   const fields = parseLyceumCreditsResponse({ available_credits: 12.5, used_credits: 2 });
   assert.ok(fields);
@@ -239,4 +276,15 @@ test("getLyceumUsage returns a message when no API key given", async () => {
   const usage = await getLyceumUsage(`lyceum-nokey-${Date.now()}`, "");
   assert.ok(usage.message);
   assert.equal(usage.quotas, undefined);
+});
+
+test("AP-ISS-0196: malformed negative Lyceum balances are rejected", () => {
+  assert.equal(
+    parseLyceumCreditsResponse(creditsResponse({ used_credits: -5, remaining_credits: 40 })),
+    null
+  );
+  assert.equal(
+    parseLyceumCreditsResponse(creditsResponse({ used_credits: 5, remaining_credits: -1 })),
+    null
+  );
 });

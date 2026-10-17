@@ -1,8 +1,6 @@
-import {
-  MUSE_CODE_MINT_URL,
-  museCodeHeaders,
-  normalizeMuseBaseUrl,
-} from "../config/museCode.ts";
+import { MUSE_CODE_MINT_URL, museCodeHeaders, normalizeMuseBaseUrl } from "../config/museCode.ts";
+import { safeOutboundFetch } from "@/shared/network/safeOutboundFetch";
+import { getProviderOutboundGuard } from "@/shared/network/outboundUrlGuardPolicy";
 
 export type MuseMintedKey = {
   apiKey: string;
@@ -29,13 +27,23 @@ export async function mintMuseApiKey(
   if (!token) {
     throw new Error("Muse Code mint requires a device access token.");
   }
-  const response = await fetch(mintUrl, {
+  const configuredGuard = getProviderOutboundGuard();
+  const response = await safeOutboundFetch(mintUrl, {
     method: "POST",
     headers: museCodeHeaders({
       Authorization: `Bearer ${token}`,
       "Content-Type": "application/json",
     }),
     body: JSON.stringify({ dca_token: token }),
+    // A bearer mint endpoint must never reach cloud metadata, even when the
+    // operator explicitly allows otherwise-private provider URLs.
+    guard: configuredGuard === "none" ? "block-metadata" : configuredGuard,
+    // The built-in Meta URL is fixed/trusted; custom mint URLs are user/config
+    // supplied and get DNS validation + pinning to close rebinding races.
+    pinDns: mintUrl !== MUSE_CODE_MINT_URL,
+    allowRedirect: false,
+    retry: false,
+    fetchImpl: fetch,
   });
   const text = await response.text();
   if (!response.ok) {

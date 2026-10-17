@@ -516,3 +516,41 @@ describe("getGlmUsage CREDIT_LIMIT (coding-plan subscription keys)", () => {
     }
   });
 });
+
+it("AP-ISS-0196: usage refresh gives reset-card lookup a short auxiliary timeout budget", async () => {
+  const originalFetch = globalThis.fetch;
+  const originalTimeout = AbortSignal.timeout;
+  const timeoutBudgets: number[] = [];
+  AbortSignal.timeout = ((ms: number) => {
+    timeoutBudgets.push(ms);
+    return new AbortController().signal;
+  }) as typeof AbortSignal.timeout;
+  globalThis.fetch = async (url) => {
+    if (String(url).includes("customer-package-reset/list")) {
+      return new Response(
+        JSON.stringify({ code: 200, success: true, data: { fiveHourResets: [] } }),
+        {
+          status: 200,
+        }
+      );
+    }
+    return new Response(
+      JSON.stringify({
+        code: 200,
+        success: true,
+        data: { limits: [{ type: "TOKENS_LIMIT", unit: 3, number: 5, percentage: 10 }] },
+      }),
+      { status: 200 }
+    );
+  };
+  try {
+    await getGlmUsage("glm-key", { apiRegion: "international" });
+    assert.ok(
+      timeoutBudgets.some((ms) => ms <= 1000),
+      `budgets=${timeoutBudgets.join(",")}`
+    );
+  } finally {
+    globalThis.fetch = originalFetch;
+    AbortSignal.timeout = originalTimeout;
+  }
+});

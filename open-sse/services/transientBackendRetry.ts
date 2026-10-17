@@ -11,11 +11,7 @@
  * the worst-case wall-clock for 3 attempts is ~7s.
  */
 
-export const TRANSIENT_BACKEND_STATUS_CODES: ReadonlySet<number> = new Set([
-  502,
-  503,
-  504,
-]);
+export const TRANSIENT_BACKEND_STATUS_CODES: ReadonlySet<number> = new Set([502, 503, 504]);
 
 export function isResponseStatusRetryable(status: number | undefined | null): boolean {
   if (typeof status !== "number") return false;
@@ -30,13 +26,31 @@ export interface TransientRetryOptions {
   source?: string;
   sleep?: (ms: number, signal?: AbortSignal) => Promise<void>;
   signal?: AbortSignal;
-  onRetry?: (info: { attempt: number; delayMs: number; status?: number; error?: unknown; source?: string }) => void;
+  onRetry?: (info: {
+    attempt: number;
+    delayMs: number;
+    status?: number;
+    error?: unknown;
+    source?: string;
+  }) => void;
 }
 
 export interface ResponseLike {
   ok: boolean;
   status: number;
   body: unknown;
+}
+
+function validateRetryOptions(maxAttempts: number, baseMs: number, capMs: number): void {
+  if (!Number.isInteger(maxAttempts) || maxAttempts < 1) {
+    throw new TypeError("Invalid transient retry options: maxAttempts must be an integer >= 1");
+  }
+  if (!Number.isFinite(baseMs) || baseMs < 0) {
+    throw new TypeError("Invalid transient retry options: baseMs must be finite and >= 0");
+  }
+  if (!Number.isFinite(capMs) || capMs < baseMs) {
+    throw new TypeError("Invalid transient retry options: capMs must be finite and >= baseMs");
+  }
 }
 
 const DEFAULT_SLEEP = (ms: number, signal?: AbortSignal): Promise<void> =>
@@ -64,11 +78,12 @@ const DEFAULT_SLEEP = (ms: number, signal?: AbortSignal): Promise<void> =>
  */
 export async function runWithTransientBackendRetry<T extends ResponseLike>(
   action: () => Promise<T>,
-  options: TransientRetryOptions = {},
+  options: TransientRetryOptions = {}
 ): Promise<T> {
   const maxAttempts = options.maxAttempts ?? 3;
   const baseMs = options.baseMs ?? 200;
   const capMs = options.capMs ?? 2000;
+  validateRetryOptions(maxAttempts, baseMs, capMs);
   const sleep = options.sleep ?? DEFAULT_SLEEP;
   const signal = options.signal;
   const onRetry = options.onRetry;
@@ -103,14 +118,11 @@ export async function runWithTransientBackendRetry<T extends ResponseLike>(
       await sleep(delayMs, signal);
       prev = delayMs;
     } catch (error) {
-      if (signal?.aborted) {
-        throw error;
-      }
-      if (attempt >= maxAttempts) throw error;
-      const delayMs = decorrelatedDelay();
-      onRetry?.({ attempt, delayMs, error, source });
-      await sleep(delayMs, signal);
-      prev = delayMs;
+      // A thrown transport/runtime error has no authoritative upstream status.
+      // Replaying the action can duplicate a request that was already accepted
+      // before the connection failed, including tool side effects or billing.
+      // Only explicit HTTP 502/503/504 responses are retryable here.
+      throw error;
     }
   }
 

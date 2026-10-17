@@ -142,7 +142,7 @@ function createKimiCountQuota(value: unknown): UsageQuota | null {
 function createKimiRatioQuota(value: unknown): UsageQuota | null {
   const detail = toRecord(value);
   const ratio = optionalNumber(detail.used_ratio ?? detail.usedRatio);
-  if (ratio === null || ratio < 0) return null;
+  if (ratio === null || ratio < 0 || ratio > 1) return null;
   const used = clampPercentage(Math.round(ratio * 1e6) / 1e4);
   return createQuotaFromUsage(used, 100, detail.reset_time ?? detail.resetTime ?? detail.resetAt);
 }

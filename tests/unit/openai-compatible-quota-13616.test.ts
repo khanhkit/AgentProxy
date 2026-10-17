@@ -180,3 +180,28 @@ test("the gate follows the connection, not the provider id", () => {
     "a url with no mapping can be fetched but never yields a quota"
   );
 });
+
+test("AP-ISS-0196: malformed mapped quota numbers are omitted rather than rendered as 0/0", async () => {
+  let result: { message?: string; quotas?: unknown } | undefined;
+  await withFetch({ data: { used_usd: "not-a-number", limit_usd: -10 } }, 200, async () => {
+    result = (await getOpenAiCompatibleUsage("sk-test", { quotaEndpoint: ENDPOINT })) as never;
+  });
+  assert.equal(result?.quotas, undefined);
+  assert.match(String(result?.message), /no mapping resolved/i);
+});
+
+test("AP-ISS-0196 review: overdrawn usage reports an exhausted quota instead of disappearing", async () => {
+  let result: { quotas?: Record<string, Record<string, unknown>>; message?: string } | undefined;
+  await withFetch({ data: { used_usd: 120, limit_usd: 100 } }, 200, async () => {
+    result = (await getOpenAiCompatibleUsage("sk-test", { quotaEndpoint: ENDPOINT })) as never;
+  });
+  assert.deepEqual(result?.quotas?.credits, {
+    used: 100,
+    total: 100,
+    remaining: 0,
+    remainingPercentage: 0,
+    resetAt: null,
+    unlimited: false,
+    currency: "USD",
+  });
+});

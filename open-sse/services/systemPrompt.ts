@@ -150,8 +150,9 @@ export function injectSystemPrompt<T>(body: T): T {
     }
   }
 
-  markInjected(result);
-  return Object.assign({}, body, result);
+  const output = Object.assign({}, body, result) as Record<string, unknown>;
+  markInjected(output);
+  return output as T;
 }
 
 /**

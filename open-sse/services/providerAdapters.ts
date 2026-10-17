@@ -1,4 +1,10 @@
 import * as yaml from "js-yaml";
+import { safeOutboundFetch } from "@/shared/network/safeOutboundFetch";
+import { getProviderOutboundGuard } from "@/shared/network/outboundUrlGuardPolicy";
+import { openaiToClaudeRequest } from "../translator/request/openai-to-claude.ts";
+import { translateNonStreamingResponse } from "../handlers/responseTranslator.ts";
+import { FORMATS } from "../translator/formats.ts";
+import { createSSETransformStreamWithLogger } from "../utils/stream.ts";
 
 export type ProviderKind = "openai" | "anthropic" | "local";
 
@@ -33,14 +39,43 @@ function authHeaders(config: ProviderConfig): Record<string, string> {
   return config.apiKey ? { Authorization: `Bearer ${config.apiKey}` } : {};
 }
 
+function providerFetch(
+  url: string,
+  init: RequestInit,
+  config: ProviderConfig,
+  fetchImpl: typeof fetch
+): Promise<Response> {
+  const configuredGuard = getProviderOutboundGuard();
+  if (fetchImpl !== fetch) {
+    return Promise.reject(
+      new Error("Provider requests cannot use a custom transport without DNS pinning")
+    );
+  }
+  return safeOutboundFetch(url, {
+    ...init,
+    // Configured provider endpoints may intentionally be local/LAN, but a
+    // credential-bearing request must never reach cloud metadata.
+    guard: config.apiKey && configuredGuard === "none" ? "block-metadata" : configuredGuard,
+    pinDns: true,
+    allowRedirect: false,
+    retry: false,
+    ...(fetchImpl === fetch ? {} : { fetchImpl }),
+  });
+}
+
 const openaiAdapter: ProviderAdapter = {
   kind: "openai",
   complete: (request, config, fetchImpl = fetch) =>
-    fetchImpl(`${trimUrl(config.baseUrl)}/chat/completions`, {
-      method: "POST",
-      headers: { "content-type": "application/json", ...authHeaders(config) },
-      body: JSON.stringify({ ...request, model: request.model || config.model }),
-    }),
+    providerFetch(
+      `${trimUrl(config.baseUrl)}/chat/completions`,
+      {
+        method: "POST",
+        headers: { "content-type": "application/json", ...authHeaders(config) },
+        body: JSON.stringify({ ...request, model: request.model || config.model }),
+      },
+      config,
+      fetchImpl
+    ),
 };
 
 const localAdapter: ProviderAdapter = { ...openaiAdapter, kind: "local" };
@@ -48,20 +83,51 @@ const localAdapter: ProviderAdapter = { ...openaiAdapter, kind: "local" };
 const anthropicAdapter: ProviderAdapter = {
   kind: "anthropic",
   complete: (request, config, fetchImpl = fetch) => {
-    const { system, ...body } = request as ChatRequest & { system?: unknown };
+    const model = request.model || config.model;
+    const body = openaiToClaudeRequest(model, request, Boolean(request.stream));
     const headers: Record<string, string> = {
       "content-type": "application/json",
       "anthropic-version": "2023-06-01",
       ...(config.apiKey ? { "x-api-key": config.apiKey } : {}),
     };
-    return fetchImpl(`${trimUrl(config.baseUrl)}/messages`, {
-      method: "POST",
-      headers,
-      body: JSON.stringify({
-        ...body,
-        ...(system === undefined ? {} : { system }),
-        model: request.model || config.model,
-      }),
+    return providerFetch(
+      `${trimUrl(config.baseUrl)}/messages`,
+      {
+        method: "POST",
+        headers,
+        body: JSON.stringify(body),
+      },
+      config,
+      fetchImpl
+    ).then(async (response) => {
+      if (!response.ok) return response;
+      const responseHeaders = new Headers(response.headers);
+      responseHeaders.delete("content-length");
+      responseHeaders.delete("content-encoding");
+      if (request.stream && response.body) {
+        responseHeaders.set("content-type", "text/event-stream");
+        const transform = createSSETransformStreamWithLogger(
+          FORMATS.CLAUDE,
+          FORMATS.OPENAI,
+          config.id,
+          null,
+          null,
+          model
+        );
+        return new Response(response.body.pipeThrough(transform), {
+          status: response.status,
+          statusText: response.statusText,
+          headers: responseHeaders,
+        });
+      }
+      const payload = await response.json();
+      const translated = translateNonStreamingResponse(payload, FORMATS.CLAUDE, FORMATS.OPENAI);
+      responseHeaders.set("content-type", "application/json");
+      return new Response(JSON.stringify(translated), {
+        status: response.status,
+        statusText: response.statusText,
+        headers: responseHeaders,
+      });
     });
   },
 };
@@ -111,6 +177,11 @@ export function parseProviderConfig(source: string): ProviderConfigFile {
     };
     return provider;
   });
+  const ids = new Set<string>();
+  for (const provider of parsed) {
+    if (ids.has(provider.id)) throw new Error(`Duplicate provider id: ${provider.id}`);
+    ids.add(provider.id);
+  }
   return { providers: parsed };
 }
 

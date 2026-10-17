@@ -60,6 +60,33 @@ function replacePattern(
   });
 }
 
+function replacePatternOutsideFences(
+  text: string,
+  pattern: RegExp,
+  kind: string,
+  addBlock: (content: string, kind: string) => string
+): string {
+  const masked = extractFencedCodeBlocks(text, (content) => "\u0000".repeat(content.length));
+  pattern.lastIndex = 0;
+  const matches = Array.from(masked.matchAll(ensureGlobal(pattern))).filter(
+    (match) => !match[0].includes("\u0000")
+  );
+  if (!matches.length) return text;
+
+  let output = "";
+  let cursor = 0;
+  for (const match of matches) {
+    const start = match.index ?? -1;
+    if (start < cursor) continue;
+    const end = start + match[0].length;
+    const content = text.slice(start, end);
+    output += text.slice(cursor, start);
+    output += content.includes(SENTINEL_PREFIX) ? content : addBlock(content, kind);
+    cursor = end;
+  }
+  return output + text.slice(cursor);
+}
+
 export function findFencedCodeBlocks(text: string): string[] {
   const blocks: string[] = [];
   extractFencedCodeBlocks(text, (content) => {
@@ -88,8 +115,7 @@ export function extractPreservedBlocks(
 
   result = extractFrontmatter(result, addBlock);
 
-  const regionPatterns: CompiledPattern[] = [
-    ...compileUserPatterns(options.preservePatterns),
+  const systemPatterns: CompiledPattern[] = [
     { pattern: /<system-reminder>[\s\S]*?<\/system-reminder>/g, kind: "system_instruction" },
     { pattern: /<instructions?>[\s\S]*?<\/instructions?>/g, kind: "system_instruction" },
     {
@@ -97,8 +123,16 @@ export function extractPreservedBlocks(
       kind: "system_instruction",
     },
   ];
-  for (const { pattern, kind } of regionPatterns) {
-    result = replacePattern(result, ensureGlobal(pattern), kind, addBlock);
+  // System instruction envelopes are security-sensitive atomic regions: preserve
+  // them before user patterns so a custom match cannot fragment the delimiters.
+  for (const { pattern, kind } of systemPatterns) {
+    result = replacePattern(result, pattern, kind, addBlock);
+  }
+
+  // Fenced code is also opaque so a user regex cannot span across a fence and
+  // absorb surrounding prose. System envelopes above are already tombstoned.
+  for (const { pattern, kind } of compileUserPatterns(options.preservePatterns)) {
+    result = replacePatternOutsideFences(result, pattern, kind, addBlock);
   }
 
   result = extractFencedCodeBlocks(result, (content) => addBlock(content, "fenced_code"));

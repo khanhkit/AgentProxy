@@ -3,6 +3,7 @@ import { strict as assert } from "node:assert";
 
 const {
   setSystemPromptConfig,
+  injectSystemPrompt,
   injectSystemPromptPostTranslation,
   injectSystemPromptPreTranslation,
 } = await import("../../open-sse/services/systemPrompt.ts");
@@ -377,3 +378,14 @@ test("pre-translation gate: gemini-source without systemInstruction creates comb
 
 // M3: reset config so this file's settings never leak into other test files.
 test.after(() => setSystemPromptConfig({ enabled: false, prefixPrompt: "", suffixPrompt: "" }));
+
+test("AP-ISS-0196 direct injectSystemPrompt preserves its idempotence marker", () => {
+  resetConfig();
+  const body = { messages: [{ role: "user", content: "hi" }] };
+  const once = injectSystemPrompt(body);
+  const twice = injectSystemPrompt(once);
+  const text = JSON.stringify(twice);
+  assert.equal(countOccurrences(text, PREFIX), 1);
+  assert.equal(countOccurrences(text, SUFFIX), 1);
+  assert.equal(text.includes("_systemPromptInjected"), false);
+});

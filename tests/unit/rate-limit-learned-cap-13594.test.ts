@@ -442,3 +442,53 @@ test("isValidRequestCap bounds what the restore path accepts", () => {
   assert.equal(isValidRequestCap({ requests: 5, windowMs: 10 }), false);
   assert.equal(isValidRequestCap({ requests: 5, windowMs: Number.NaN }), false);
 });
+
+test("AP-ISS-0196: learning a body cap does not evict a busy limiter", async () => {
+  await rateLimitManager.applyRequestQueueSettings({
+    ...DEFAULT_RESILIENCE_SETTINGS.requestQueue,
+    autoEnableApiKeyProviders: false,
+    requestsPerMinute: 0,
+    concurrentRequests: 1,
+    minTimeBetweenRequestsMs: 0,
+    maxWaitMs: 30_000,
+    maxQueueDepth: 0,
+  });
+  const limiters: InstanceType<typeof Bottleneck>[] = [];
+  rateLimitManager.__setLimiterFactoryForTests((options) => {
+    const limiter = new Bottleneck(options);
+    limiters.push(limiter);
+    return limiter;
+  });
+  const connectionId = `busy-cap-${Date.now()}`;
+  rateLimitManager.enableRateLimitProtection(connectionId);
+  const gate = Promise.withResolvers<void>();
+  const first = rateLimitManager.withRateLimit("tokenrouter", connectionId, null, async () => {
+    await gate.promise;
+    return "first";
+  });
+  for (let i = 0; i < 100 && limiters[0]?.counts().EXECUTING !== 1; i++) {
+    await new Promise((resolve) => setTimeout(resolve, 5));
+  }
+  assert.equal(limiters[0]?.counts().EXECUTING, 1, "first request must be executing");
+
+  const abortSecond = new AbortController();
+  const second = rateLimitManager.withRateLimit(
+    "tokenrouter",
+    connectionId,
+    null,
+    async () => "second",
+    abortSecond.signal
+  );
+  for (let i = 0; i < 100 && limiters[0]?.counts().QUEUED !== 1; i++) {
+    await new Promise((resolve) => setTimeout(resolve, 5));
+  }
+  assert.equal(limiters[0]?.counts().QUEUED, 1, "second request must be queued");
+
+  rateLimitManager.updateFromResponseBody("tokenrouter", connectionId, TOKENROUTER_429, 429, null);
+  assert.equal(limiters.length, 1, "busy limiter must be updated in place, not replaced");
+
+  abortSecond.abort(new Error("test cleanup"));
+  await assert.rejects(second, /test cleanup/);
+  gate.resolve();
+  assert.equal(await first, "first");
+});

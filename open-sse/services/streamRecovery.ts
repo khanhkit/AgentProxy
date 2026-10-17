@@ -331,7 +331,8 @@ function scanSseLine(line: string, fold: SseScanFold): void {
   } catch {
     return;
   }
-  const choices = (json as { choices?: unknown })?.choices;
+  if (!json || typeof json !== "object" || Array.isArray(json)) return;
+  const choices = (json as { choices?: unknown }).choices;
   if (Array.isArray(choices)) {
     for (const choice of choices) scanChatChoice(choice, fold);
     return;

@@ -82,6 +82,20 @@ test("mintMuseApiKey posts dca_token with Bearer + muse-code UA", async () => {
   assert.equal(minted.canSubscribe, true);
 });
 
+test("AP-ISS-0196: Muse mint blocks metadata destinations before sending the DCA bearer", async () => {
+  let calls = 0;
+  globalThis.fetch = async () => {
+    calls++;
+    return new Response(JSON.stringify({ api_key: "should-not-send" }), { status: 200 });
+  };
+
+  await assert.rejects(
+    mintMuseApiKey("dca:secret", "http://169.254.169.254/latest/meta-data"),
+    /blocked|outbound|metadata|guard/i
+  );
+  assert.equal(calls, 0, "credential-bearing transport must not run for metadata destinations");
+});
+
 test("postExchange keeps the dca token when mint fails (CLIProxyAPI best-effort)", async () => {
   globalThis.fetch = async () =>
     new Response("nope", { status: 500, headers: { "Content-Type": "text/plain" } });
@@ -123,10 +137,13 @@ test("supportsTokenRefresh includes the muse-code remint path", () => {
 test("refreshMuseCodeToken remints from providerSpecificData.dcaToken", async () => {
   globalThis.fetch = async (_url, init = {}) => {
     assert.equal((init.headers as Record<string, string>).Authorization, "Bearer dca:from-data");
-    return new Response(JSON.stringify({ api_key: "LLM|new", base_url: "https://api.meta.ai/v1" }), {
-      status: 200,
-      headers: { "Content-Type": "application/json" },
-    });
+    return new Response(
+      JSON.stringify({ api_key: "LLM|new", base_url: "https://api.meta.ai/v1" }),
+      {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
+      }
+    );
   };
 
   const result = await refreshMuseCodeToken("not-a-dca", { dcaToken: "dca:from-data" }, null);

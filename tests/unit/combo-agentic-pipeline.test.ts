@@ -36,7 +36,23 @@ test("agentic detector recognizes trailing tool results across supported request
     true
   );
   assert.equal(
+    hasTrailingToolResult({
+      messages: [{ role: "user", content: [{ type: "custom_tool_call_output", call_id: "c2" }] }],
+    }),
+    true
+  );
+  assert.equal(
+    hasTrailingToolResult({
+      messages: [{ role: "user", content: [{ type: "local_shell_call_output", call_id: "s1" }] }],
+    }),
+    true
+  );
+  assert.equal(
     hasTrailingToolResult({ input: [{ type: "function_call_output", call_id: "c1" }] }),
+    true
+  );
+  assert.equal(
+    hasTrailingToolResult({ input: [{ type: "custom_tool_call_output", call_id: "c2" }] }),
     true
   );
   assert.equal(
@@ -55,17 +71,119 @@ test("agentic detector recognizes trailing tool results across supported request
   );
 });
 
-test("agentic detector counts completed rounds for bounded sequential loops", () => {
+test("agentic detector counts completed rounds for bounded sequential loops in each request format", () => {
   assert.equal(
     countToolResultTurns({
       messages: [
         { role: "tool", content: "one" },
         { role: "user", content: [{ type: "tool_result", tool_use_id: "two" }] },
       ],
-      input: [{ type: "function_call_output", call_id: "three" }],
-      contents: [{ role: "user", parts: [{ functionResponse: { name: "four" } }] }],
     }),
-    4
+    2
+  );
+  assert.equal(
+    countToolResultTurns({
+      messages: [
+        { role: "user", content: "run tools" },
+        { role: "user", content: [{ type: "custom_tool_call_output", call_id: "custom" }] },
+        { role: "user", content: [{ type: "local_shell_call_output", call_id: "shell" }] },
+      ],
+    }),
+    2
+  );
+  assert.equal(
+    countToolResultTurns({
+      input: [
+        { type: "function_call_output", call_id: "three" },
+        { type: "computer_call_output", call_id: "four" },
+      ],
+    }),
+    2
+  );
+  assert.equal(
+    countToolResultTurns({
+      contents: [
+        { role: "user", parts: [{ functionResponse: { name: "five" } }] },
+        { role: "user", parts: [{ functionResponse: { name: "six" } }] },
+      ],
+    }),
+    2
+  );
+});
+
+test("AP-ISS-0196 review: Responses custom_tool_call_output counts toward the active tool round", () => {
+  assert.equal(
+    countToolResultTurns({
+      input: [
+        { type: "message", role: "user", content: [{ type: "input_text", text: "run it" }] },
+        { type: "custom_tool_call_output", call_id: "custom-1", output: "done" },
+      ],
+    }),
+    1
+  );
+});
+
+test("AP-ISS-0196: duplicated request representations count one tool-result round once", () => {
+  assert.equal(
+    countToolResultTurns({
+      messages: [{ role: "tool", tool_call_id: "same", content: "ok" }],
+      input: [{ type: "function_call_output", call_id: "same", output: "ok" }],
+      contents: [
+        {
+          role: "user",
+          parts: [{ functionResponse: { id: "same", name: "same", response: { ok: true } } }],
+        },
+      ],
+    }),
+    1,
+    "parallel representations of the same conversation must not consume three loop rounds"
+  );
+});
+
+test("AP-ISS-0196: mixed representations select one active shape even when adapter ids differ", () => {
+  assert.equal(
+    countToolResultTurns({
+      messages: [{ role: "tool", tool_call_id: "legacy-id", content: "ok" }],
+      input: [{ type: "function_call_output", call_id: "responses-id", output: "ok" }],
+    }),
+    1,
+    "Responses input is authoritative when present; preserved messages must not add another round"
+  );
+});
+
+test("AP-ISS-0196 review: legacy function_call_output content counts toward the active tool round", () => {
+  assert.equal(
+    countToolResultTurns({
+      messages: [
+        { role: "user", content: "run the tool" },
+        { role: "assistant", content: [{ type: "tool_use", id: "call-1" }] },
+        {
+          role: "user",
+          content: [{ type: "function_call_output", call_id: "call-1", output: "ok" }],
+        },
+      ],
+    }),
+    1
+  );
+});
+
+test("AP-ISS-0196 review: empty stale representations fall through to active history", () => {
+  assert.equal(
+    countToolResultTurns({
+      input: [],
+      messages: [{ role: "tool", tool_call_id: "active", content: "ok" }],
+    }),
+    1,
+    "an empty Responses mirror must not hide active chat history"
+  );
+  assert.equal(
+    countToolResultTurns({
+      input: [],
+      contents: [],
+      messages: [{ role: "tool", tool_call_id: "active", content: "ok" }],
+    }),
+    1,
+    "empty higher-priority mirrors must fall through to the populated representation"
   );
 });
 

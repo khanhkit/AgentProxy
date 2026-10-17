@@ -54,6 +54,23 @@ test("stateless pin: mid-tool-loop request resolves same as turn start", () => {
   assert.equal(midLoop, turnStart);
 });
 
+test("AP-ISS-0196: assistant tool_calls after the last user cannot change adaptive effort", () => {
+  const toolCall = (content: string, id: string) => ({
+    role: "assistant",
+    content,
+    tool_calls: [{ id }],
+  });
+  const userTurn = [msg("user", "fix the failing test")];
+  const turnStart = resolveAdaptiveEffort(userTurn);
+  const midLoop = resolveAdaptiveEffort([
+    ...userTurn,
+    toolCall("calling tool", "call-1"),
+    msg("tool", "result"),
+    toolCall("calling another", "call-2"),
+  ]);
+  assert.equal(midLoop, turnStart, "per-turn effort must stay pinned after the user boundary");
+});
+
 test("explicit effort wins over auto", () => {
   const body = { messages: [msg("user", "hello there")], reasoning_effort: "high" };
   const out = applyAdaptiveEffort(body, { headerEffort: "auto", modelDefaultEffort: "auto" });

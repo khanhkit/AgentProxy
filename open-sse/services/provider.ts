@@ -115,9 +115,22 @@ export function detectFormatFromEndpoint(body, endpointPath = "") {
   }
 
   if (/\/v1beta(?:\/|$)/i.test(path) || /^v1beta(?:\/|$)/i.test(path)) {
-    if (!(body && typeof body === "object" && body.contents && Array.isArray(body.contents))) {
-      return "openai";
+    if (body && typeof body === "object" && !Array.isArray(body)) {
+      const record = body as Record<string, unknown>;
+      const responsesLike =
+        (Object.prototype.hasOwnProperty.call(record, "input") && record.input !== undefined) ||
+        record.max_output_tokens !== undefined ||
+        record.previous_response_id !== undefined ||
+        record.reasoning !== undefined;
+      const antigravityLike =
+        record.userAgent === "antigravity" &&
+        record.request != null &&
+        typeof record.request === "object" &&
+        Array.isArray((record.request as Record<string, unknown>).contents);
+      if (responsesLike || antigravityLike || Array.isArray(record.contents))
+        return detectFormat(record);
     }
+    return "openai";
   }
 
   if (

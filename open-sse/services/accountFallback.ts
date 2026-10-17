@@ -110,6 +110,7 @@ export { MODEL_LOCKOUT_EVICTION_CAP } from "./accountFallback/lockoutEviction.ts
 export { hasPerModelFailureScope } from "./accountFallback/perModelFailureScope.ts";
 import { capScaledCooldownMs } from "./accountFallback/cooldownCap.ts";
 import { resolveApiKeyForbiddenFallback } from "./accountFallback/nonRetryableUpstream.ts";
+import * as auditHardening from "./accountFallback/auditHardening.ts";
 import * as exactModelLock from "./accountFallback/exactModelLock.ts";
 import { isMistralAmbiguous401 } from "./accountFallback/mistralAmbiguousAuth.ts";
 import { isMistralAmbiguous401SoftLockoutEnabled } from "@/shared/utils/featureFlags";
@@ -1276,16 +1277,13 @@ export function recordProviderSuccess(
 ): void {
   if (!provider || provider === "unknown") return;
 
-  const breaker = connectionId
-    ? getCircuitBreaker(connectionCircuitBreakerName(provider, connectionId))
-    : getProviderBreaker(provider);
+  const connectionBreaker = connectionId ? getCircuitBreaker(connectionCircuitBreakerName(provider, connectionId)) : null;
+  const providerBreaker = getProviderBreaker(provider);
+  const breaker = connectionBreaker ?? providerBreaker;
   if (!breaker) return;
   const breakerState = breaker.getStatus().state;
 
-  // When breaker is OPEN, the provider is failing -- do not reset cooldown
-  // even if one request slipped through (dispatched before the open).
-  // The cooldown resets when the breaker reaches HALF_OPEN and the probe
-  // succeeds below.
+  // Do not treat an already-dispatched success as recovery from an OPEN breaker.
   if (breakerState === "OPEN") return;
 
   // Reset cooldown failureCount (exponential backoff) -- symmetric with
@@ -1297,9 +1295,9 @@ export function recordProviderSuccess(
     lastConnectionFailure.delete(`${provider}:${connectionId}`);
   }
 
-  // Transition breaker on success, matching execute()'s behavior:
-  // HALF_OPEN -> CLOSED (probe success), CLOSED/DEGRADED -> decay failureCount.
+  // Transition the request-scoped breaker on success.
   breaker._onSuccess();
+  if (connectionBreaker) auditHardening.recordProviderWideRecovery(connectionBreaker, providerBreaker);
 }
 
 /**
@@ -2203,7 +2201,9 @@ export function checkFallbackError(
 
   if (status === HTTP_STATUS.NOT_ACCEPTABLE || retryableStatuses.has(status)) {
     if (status === HTTP_STATUS.PAYLOAD_TOO_LARGE) {
-      return buildRetryableFallback(RateLimitReason.MODEL_CAPACITY);
+      return auditHardening.isTpmCapacityPayload(errorStr)
+        ? buildRetryableFallback(RateLimitReason.MODEL_CAPACITY)
+        : auditHardening.NON_RETRYABLE_PAYLOAD_TOO_LARGE;
     }
     return buildRetryableFallback(RateLimitReason.SERVER_ERROR);
   }

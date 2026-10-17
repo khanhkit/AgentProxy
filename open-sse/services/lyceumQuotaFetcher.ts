@@ -111,13 +111,22 @@ export function parseLyceumCreditsResponse(data: unknown): LyceumCreditsFields |
     "remaining_credits" in inner || "available_credits" in inner || "used_credits" in inner;
   if (!hasBalance) return null;
 
-  const availableCredits = toFiniteNumber(inner.available_credits, 0);
+  const readCredit = (key: string, fallback: number): number | null => {
+    if (inner[key] === undefined) return fallback;
+    const value = toFiniteNumber(inner[key], Number.NaN);
+    return Number.isFinite(value) && value >= 0 ? value : null;
+  };
+  const availableCredits = readCredit("available_credits", 0);
+  const usedCredits = readCredit("used_credits", 0);
+  if (availableCredits === null || usedCredits === null) return null;
+  const remainingCredits = readCredit("remaining_credits", availableCredits);
+  if (remainingCredits === null) return null;
   return {
     availableCredits,
-    usedCredits: toFiniteNumber(inner.used_credits, 0),
-    remainingCredits: toFiniteNumber(inner.remaining_credits, availableCredits),
-    monthlyFreeCredits: toFiniteNumber(inner.monthly_free_credits, 0),
-    purchasedCredits: toFiniteNumber(inner.purchased_credits, 0),
+    usedCredits,
+    remainingCredits,
+    monthlyFreeCredits: readCredit("monthly_free_credits", 0) ?? 0,
+    purchasedCredits: readCredit("purchased_credits", 0) ?? 0,
   };
 }
 

@@ -43,3 +43,6 @@ export function checkQueueAdmission(
   // is the provenance signal used by health and routing decisions.
   return markLocalRateLimitError(err, RATE_LIMIT_QUEUE_FULL_CODE) as QueueFullError;
 }
+export function hasActiveLimiterWork(counts: Record<string, number | undefined>): boolean {
+  return ["RECEIVED", "QUEUED", "RUNNING", "EXECUTING"].some((key) => (counts[key] ?? 0) > 0);
+}

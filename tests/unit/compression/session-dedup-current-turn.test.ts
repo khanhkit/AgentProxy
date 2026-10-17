@@ -57,6 +57,15 @@ describe("session-dedup current turn", () => {
     assert.ok(messages[2].content?.includes(FILE));
   });
 
+  it("keeps repeated content intact when the conversation has no assistant boundary yet", () => {
+    const { result, messages } = apply([
+      { role: "user", content: `Initial context:\n${FILE}` },
+      { role: "user", content: `Please use this active-turn context:\n${FILE}` },
+    ]);
+    assert.equal(result.compressed, false);
+    assert.ok(messages[1].content?.includes(FILE));
+  });
+
   it("still dedups the re-read once a later assistant turn follows it", () => {
     const { messages } = apply([
       { role: "user", content: "animate the cart" },

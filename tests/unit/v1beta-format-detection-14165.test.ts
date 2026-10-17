@@ -58,3 +58,26 @@ test("#14165: Gemini ingress conversion emits the OpenAI shape used by detection
   assert.equal(out.max_tokens, 1024);
   assert.equal(out.contents, undefined);
 });
+
+test("AP-ISS-0196: v1beta defers Responses bodies to structural detection", () => {
+  assert.equal(
+    detectFormatFromEndpoint(
+      { model: "gpt-5", input: "hello", max_output_tokens: 64 },
+      "/v1beta/models/gemini-3.8-flash:generateContent"
+    ),
+    "openai-responses"
+  );
+});
+
+test("AP-ISS-0196: v1beta defers wrapped Antigravity bodies to structural detection", () => {
+  assert.equal(
+    detectFormatFromEndpoint(
+      {
+        userAgent: "antigravity",
+        request: { contents: [{ role: "user", parts: [{ text: "hello" }] }] },
+      },
+      "/v1beta/models/gemini-3.8-flash:generateContent"
+    ),
+    "antigravity"
+  );
+});

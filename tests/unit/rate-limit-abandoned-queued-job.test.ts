@@ -230,3 +230,57 @@ test("Bottleneck internals used by cancelQueuedJob are still the verified shape"
   assert.equal(await queued, "dropped");
   await limiter.disconnect();
 });
+
+test("AP-ISS-0196: queued cancel keeps node linked when Bottleneck doDrop refuses settlement", async () => {
+  const { cancelQueuedJob } =
+    await import("../../open-sse/services/rateLimitManager/queuedJobCancel.ts");
+  const job = { options: { id: "job-false" }, doDrop: () => false };
+  const node: GuardNode = { value: job, prev: null, next: null };
+  let decrCalls = 0;
+  const list: GuardList = { _first: node, _last: node, length: 1, decr: () => decrCalls++ };
+  const lock = { schedule: async (task: () => unknown) => await task() };
+  const limiter = {
+    _submitLock: lock,
+    _registerLock: lock,
+    _queues: { _lists: [list] },
+    jobStatus: () => "QUEUED",
+  } as unknown as InstanceType<typeof Bottleneck>;
+
+  assert.equal(await cancelQueuedJob(limiter, "job-false"), false);
+  assert.equal(list._first, node);
+  assert.equal(list._last, node);
+  assert.equal(list.length, 1);
+  assert.equal(decrCalls, 0);
+});
+
+test("AP-ISS-0196: queued cancel keeps node linked when Bottleneck doDrop throws", async () => {
+  const { cancelQueuedJob } =
+    await import("../../open-sse/services/rateLimitManager/queuedJobCancel.ts");
+  const job = {
+    options: { id: "job-throw" },
+    doDrop: () => {
+      throw new Error("state mismatch");
+    },
+  };
+  const node: GuardNode = { value: job, prev: null, next: null };
+  const list: GuardList = {
+    _first: node,
+    _last: node,
+    length: 1,
+    decr: () => {
+      throw new Error("must not unlink");
+    },
+  };
+  const lock = { schedule: async (task: () => unknown) => await task() };
+  const limiter = {
+    _submitLock: lock,
+    _registerLock: lock,
+    _queues: { _lists: [list] },
+    jobStatus: () => "QUEUED",
+  } as unknown as InstanceType<typeof Bottleneck>;
+
+  assert.equal(await cancelQueuedJob(limiter, "job-throw"), false);
+  assert.equal(list._first, node);
+  assert.equal(list._last, node);
+  assert.equal(list.length, 1);
+});

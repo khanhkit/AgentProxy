@@ -183,14 +183,15 @@ async function requestGlmResetCards(
   apiKey: string,
   providerSpecificData: unknown,
   action: GlmResetCardAction,
-  body?: JsonRecord
+  body?: JsonRecord,
+  timeoutMs: number = GLM_RESET_CARD_TIMEOUT_MS
 ): Promise<{ response: Response; payload: unknown }> {
   const { url, headers } = buildGlmResetCardFetch(apiKey, providerSpecificData, action);
   const response = await fetch(url, {
     method: action === "use" ? "POST" : "GET",
     headers,
     ...(body ? { body: JSON.stringify(body) } : {}),
-    signal: AbortSignal.timeout(GLM_RESET_CARD_TIMEOUT_MS),
+    signal: AbortSignal.timeout(timeoutMs),
   });
 
   const text = await response.text();
@@ -208,9 +209,10 @@ async function requestGlmResetCards(
 
 export function fetchGlmResetCardList(
   apiKey: string,
-  providerSpecificData?: unknown
+  providerSpecificData?: unknown,
+  timeoutMs: number = GLM_RESET_CARD_TIMEOUT_MS
 ): Promise<{ response: Response; payload: unknown }> {
-  return requestGlmResetCards(apiKey, providerSpecificData, "list");
+  return requestGlmResetCards(apiKey, providerSpecificData, "list", undefined, timeoutMs);
 }
 
 export function redeemGlmResetCard(
@@ -231,11 +233,16 @@ export function redeemGlmResetCard(
 /** Null means the auxiliary request failed; zero is an authoritative empty list. */
 export async function fetchGlmResetCardCount(
   apiKey: string,
-  providerSpecificData?: unknown
+  providerSpecificData?: unknown,
+  timeoutMs: number = GLM_RESET_CARD_TIMEOUT_MS
 ): Promise<number | null> {
   if (!apiKey) return 0;
   try {
-    const { response, payload } = await fetchGlmResetCardList(apiKey, providerSpecificData);
+    const { response, payload } = await fetchGlmResetCardList(
+      apiKey,
+      providerSpecificData,
+      timeoutMs
+    );
     if (!response.ok || !isGlmResetCardListEnvelopeOk(payload)) return null;
     return parseGlmResetCards(payload).availableCount;
   } catch {

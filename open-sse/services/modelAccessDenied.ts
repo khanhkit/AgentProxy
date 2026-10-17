@@ -12,12 +12,13 @@ export const MODEL_ACCESS_DENIED_PATTERNS = [
   /\bmodel\b[\s\S]{0,80}?\b(?:does\s+not\s+support|doesn't\s+support|unsupported)\b/i,
   /\b(?:does\s+not\s+support|doesn't\s+support|unsupported)\b[\s\S]{0,80}?\bmodel\b/i,
   /\bunsupported\s+model\b/i,
-  /\baccess.*denied.*model\b/i,
-  /\bmodel.*access.*denied\b/i,
   /\bplease select a different model\b/i,
   /\bunknown\s+provider\s+for\s+model\b/i,
-  /\b(?:access|permission)[\s\S]{0,60}?\bmodel\b/i,
-  /\bmodel[\s\S]{0,60}?\b(?:access|permission)\b/i,
+  /\b(?:access|permission)\b[\s\S]{0,30}?\bdenied\b[\s\S]{0,60}?\bmodel\b/i,
+  /\b(?:do(?:es)?\s+not|don't|doesn't)\s+have\s+(?:access|permission)\b[\s\S]{0,60}?\bmodel\b/i,
+  /\bmodel\b[\s\S]{0,60}?\b(?:do(?:es)?\s+not|don't|doesn't)\s+have\s+(?:access|permission)\b/i,
+  /\bpermission\s+to\s+access\b[\s\S]{0,40}?\bmodel\b[\s\S]{0,40}?\bdenied\b/i,
+  /\bmodel\b[\s\S]{0,60}?\b(?:access|permission)\b[\s\S]{0,30}?\bdenied\b/i,
 ];
 
 /** #5249 / #2101: model-scoped 400s must not stop the combo. */
