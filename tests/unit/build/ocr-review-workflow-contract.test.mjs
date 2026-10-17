@@ -98,6 +98,13 @@ test("OCR worker is manual-only, claim-gated, never executes PR-head repository 
   assert.match(y, /upload_artifacts:\s*["']true["']/);
   assert.match(y, /max_tokens_budget:\s*["']0["']/);
   assert.match(y, /rule:\s*\.opencodereview\/rule\.json/);
+  const reviewIndex = y.indexOf("Run OpenCodeReview");
+  const coverageGateIndex = y.indexOf("Require complete OCR coverage");
+  assert.ok(coverageGateIndex > reviewIndex, "coverage gate must run after OCR");
+  assert.match(
+    y.slice(coverageGateIndex),
+    /node\s+scripts\/ci\/validate-ocr-result\.mjs\s+\/tmp\/ocr-result\.json/
+  );
   assert.doesNotMatch(y, /timeout-minutes:/);
 });
 
@@ -132,5 +139,42 @@ test("OCR rule overlay keeps AGENTS.md authoritative and adds semantic review fo
   assert.match(rule, /AGENTS\.md.*authoritative/i);
   for (const focus of ["authorization", "SSRF", "retry", "streaming", "affinity"]) {
     assert.match(rule, new RegExp(focus, "i"));
+  }
+});
+
+test("bounded OCR failed-coverage rescan is main-only, manifest-pinned, secret-gated, and fail-closed", async () => {
+  const y = await readOptional(".github/workflows/ocr-failed-coverage-rescan.yml");
+  assert.notEqual(y, "");
+  assert.match(y, /workflow_dispatch:/);
+  assert.doesNotMatch(y, /pull_request(?:_target)?:|\n\s+push:/);
+  assert.match(y, /github\.ref\s*==\s*['"]refs\/heads\/main['"]/);
+  assert.match(y, /source_sha:/);
+  assert.match(y, /Validate exact default-branch source/);
+  assert.match(y, /github\.rest\.repos\.getBranch/);
+  assert.match(y, /process\.env\.SOURCE_SHA/);
+  assert.match(y, /ref:\s*\$\{\{\s*inputs\.source_sha\s*\}\}/);
+  assert.match(y, /pr104-run37959118532-failed-53\.txt/);
+  assert.match(y, /EXPECTED_COUNT:\s*["']53["']/);
+  assert.match(y, /@alibaba-group\/open-code-review@1\.12\.13/);
+  assert.match(y, /ocr\s+scan\s+--path\s+"\$\{SCAN_PATHS\}"/);
+  assert.match(y, /--format\s+json/);
+  assert.match(y, /--output\s+\/tmp\/ocr-result\.json/);
+  assert.match(y, /actions\/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02/);
+  const scanIndex = y.indexOf("Run bounded 53-file OCR scan");
+  const gateIndex = y.indexOf("Require complete OCR coverage");
+  assert.ok(scanIndex >= 0 && gateIndex > scanIndex);
+  assert.match(y.slice(gateIndex), /validate-ocr-result\.mjs\s+\/tmp\/ocr-result\.json/);
+  assert.doesNotMatch(y, /pull-requests:\s*write/);
+});
+
+test("PR104 failed-coverage scan manifest contains exactly 53 unique repository paths", async () => {
+  const raw = await readOptional(".github/ocr/audits/pr104-run37959118532-failed-53.txt");
+  assert.notEqual(raw, "");
+  const paths = raw.split(/\r?\n/).filter(Boolean);
+  assert.equal(paths.length, 53);
+  assert.equal(new Set(paths).size, 53);
+  for (const file of paths) {
+    assert.equal(file.startsWith("/"), false);
+    assert.equal(file.includes(".."), false);
   }
 });

@@ -200,3 +200,8 @@ jobs:
           upload_artifacts: "true"
           max_tokens_budget: "0"
           rule: .opencodereview/rule.json
+
+      - name: Require complete OCR coverage
+        if: steps.ocr-config.outputs.ready == 'true'
+        shell: bash
+        run: node scripts/ci/validate-ocr-result.mjs /tmp/ocr-result.json
