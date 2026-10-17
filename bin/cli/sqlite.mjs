@@ -6,7 +6,8 @@ import { ensureSettingsSchema, hashManagementPassword, updateSettings } from "./
 async function loadSqlite() {
   if (process.versions.bun) {
     try {
-      return { Database: (await import("bun:sqlite")).Database, driver: "bun:sqlite" };
+      const bunSqliteSpecifier = "bun:sqlite";
+      return { Database: (await import(bunSqliteSpecifier)).Database, driver: "bun:sqlite" };
     } catch (bunError) {
       // fall through to better-sqlite3 if bun:sqlite fails
     }

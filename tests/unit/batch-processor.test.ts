@@ -637,3 +637,53 @@ test("processPendingBatches should not reset an actively processing batch", asyn
   updated = await localDb.getBatch(batch.id);
   assert.strictEqual(updated?.status, "completed");
 });
+
+test("stopBatchProcessor stops polling while waitForAllBatches drains active work", async () => {
+  const content =
+    JSON.stringify({
+      custom_id: "shutdown-drain-item",
+      method: "POST",
+      url: "/v1/chat/completions",
+      body: { model: "gpt-4", messages: [{ role: "user", content: "drain" }] },
+    }) + "\n";
+  const file = await localDb.createFile({
+    bytes: Buffer.byteLength(content),
+    filename: "shutdown-drain.jsonl",
+    purpose: "batch_input",
+    content: Buffer.from(content),
+  });
+  await localDb.createBatch({
+    endpoint: "/v1/chat/completions",
+    status: "validating",
+    apiKeyId: "env-key",
+    inputFileId: file.id,
+    completionWindow: "24h",
+  });
+
+  let release!: () => void;
+  const gate = new Promise<void>((resolve) => {
+    release = resolve;
+  });
+  mock.method(dispatch, "dispatchBatchApiRequest", async () => {
+    await gate;
+    return new Response(JSON.stringify({ id: "chatcmpl-drain", choices: [] }), {
+      status: 200,
+      headers: { "Content-Type": "application/json" },
+    });
+  });
+
+  batchProcessor.initBatchProcessor();
+  await batchProcessor.processPendingBatches();
+  batchProcessor.stopBatchProcessor();
+
+  let drained = false;
+  const drain = batchProcessor.waitForAllBatches().then(() => {
+    drained = true;
+  });
+  await new Promise((resolve) => setTimeout(resolve, 20));
+  assert.equal(drained, false, "clearing the poll interval must not count as draining active work");
+
+  release();
+  await drain;
+  assert.equal(drained, true);
+});

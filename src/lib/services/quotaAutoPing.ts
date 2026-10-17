@@ -20,6 +20,7 @@
  * no real timers, no real DB, no real network.
  */
 
+import { trackLifecycleBackgroundTask } from "@/lib/lifecycle/backgroundTasks";
 import { logger } from "@agentproxy/open-sse/utils/logger.ts";
 import { sanitizeErrorMessage } from "@agentproxy/open-sse/utils/error.ts";
 import type { BaseExecutor } from "@agentproxy/open-sse/executors/base";
@@ -29,6 +30,7 @@ import { getCodexUsage } from "@agentproxy/open-sse/services/usage/codex.ts";
 import { throttleQuotaFetch } from "@agentproxy/open-sse/services/quotaFetchThrottle.ts";
 import { getSettings } from "@/lib/db/settings";
 import { getProviderConnections, updateProviderConnection } from "@/lib/db/providers";
+import { toProviderConnection } from "@/lib/db/providers/lazyConnectionView";
 import { isConnectionUnavailableToAuxiliaryActivity } from "@/lib/exclusiveLeaseIsolation";
 import { refreshAndUpdateCredentialsWithResolver } from "@/lib/usage/providerLimits/credentialRefresh";
 import { getCircuitBreaker } from "@/shared/utils/circuitBreaker";
@@ -147,7 +149,24 @@ export async function resolveQuotaAutoPingModel(
 export function createDefaultQuotaAutoPingDeps(): QuotaAutoPingDeps {
   return {
     getSettings,
-    getProviderConnections,
+    getProviderConnections: async (filter) =>
+      (await getProviderConnections(filter)).map((row) => {
+        const connection = toProviderConnection(row);
+        return {
+          id: connection.id,
+          provider: connection.provider,
+          authType: connection.authType ?? undefined,
+          accessToken: connection.accessToken ?? undefined,
+          refreshToken: connection.refreshToken ?? undefined,
+          tokenExpiresAt: connection.tokenExpiresAt,
+          expiresAt: connection.expiresAt,
+          providerSpecificData: connection.providerSpecificData,
+          rateLimitedUntil: connection.rateLimitedUntil,
+          lastPingAt: typeof row.lastPingAt === "string" ? row.lastPingAt : null,
+          lastPingedResetKey:
+            typeof row.lastPingedResetKey === "string" ? row.lastPingedResetKey : null,
+        };
+      }),
     updateProviderConnection,
     refreshAndUpdateCredentials: async (connection) =>
       refreshAndUpdateCredentialsWithResolver(connection, loadQuotaAutoPingExecutor),
@@ -549,9 +568,14 @@ const schedulerState = createQuotaAutoPingState();
 export function startQuotaAutoPing(): void {
   if (schedulerInterval) return;
   log.info("scheduler started");
-  runQuotaAutoPingTick(createDefaultQuotaAutoPingDeps(), schedulerState).catch(() => undefined);
+  const launchTick = () =>
+    trackLifecycleBackgroundTask(
+      "quota-auto-ping",
+      () => runQuotaAutoPingTick(createDefaultQuotaAutoPingDeps(), schedulerState)
+    )?.catch(() => undefined);
+  void launchTick();
   schedulerInterval = setInterval(() => {
-    runQuotaAutoPingTick(createDefaultQuotaAutoPingDeps(), schedulerState).catch(() => undefined);
+    void launchTick();
   }, QUOTA_AUTOPING_TICK_INTERVAL_MS);
   schedulerInterval.unref?.();
 }

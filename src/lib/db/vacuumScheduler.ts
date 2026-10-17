@@ -1,3 +1,4 @@
+import { trackLifecycleBackgroundTask } from "@/lib/lifecycle/backgroundTasks";
 import { DEFAULT_DATABASE_SETTINGS } from "@/types/databaseSettings";
 import { MAX_TIMER_TIMEOUT_MS } from "@/shared/utils/runtimeTimeouts";
 
@@ -235,7 +236,7 @@ function armTimer(): void {
         armTimer();
         return;
       }
-      void runNow().catch((err) => {
+      void trackLifecycleBackgroundTask("db-vacuum", () => runNow())?.catch((err) => {
         currentState.lastError = err instanceof Error ? err.message : String(err);
       });
     },

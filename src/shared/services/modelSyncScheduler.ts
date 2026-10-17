@@ -125,7 +125,10 @@ const globalState = globalThis as typeof globalThis & {
 
 let schedulerTimer: NodeJS.Timeout | null = null;
 let phaseTimer: NodeJS.Timeout | null = null;
+let startupTimer: NodeJS.Timeout | null = null;
+let activeCycle: Promise<void> | null = null;
 let isRunning = false;
+let schedulerEnabled = false;
 let internalAuthToken: string | null = null;
 
 function getInternalAuthToken(): string {
@@ -300,6 +303,25 @@ async function runSyncCycle(apiBaseUrl: string): Promise<void> {
   }
 }
 
+function launchSyncCycle(apiBaseUrl: string): Promise<void> {
+  if (!schedulerEnabled) return Promise.resolve();
+  if (activeCycle) {
+    console.log("[ModelSync] Skipping cycle — previous run still in progress");
+    return activeCycle;
+  }
+  const cycle = runSyncCycle(apiBaseUrl);
+  activeCycle = cycle;
+  void cycle.then(
+    () => {
+      if (activeCycle === cycle) activeCycle = null;
+    },
+    () => {
+      if (activeCycle === cycle) activeCycle = null;
+    }
+  );
+  return cycle;
+}
+
 /**
  * Start the model sync scheduler.
  * @param apiBaseUrl — internal base URL to call AgentProxy's own API
@@ -309,10 +331,11 @@ export function startModelSyncScheduler(
   apiBaseUrl = getModelSyncInternalBaseUrl(),
   intervalMs = DEFAULT_INTERVAL_MS
 ): void {
-  if (schedulerTimer || phaseTimer) {
+  if (schedulerTimer || phaseTimer || startupTimer || schedulerEnabled) {
     console.log("[ModelSync] Scheduler already running — skipping start");
     return;
   }
+  schedulerEnabled = true;
 
   // Read MODEL_SYNC_INTERVAL_HOURS env override
   const envHours = parseInt(process.env.MODEL_SYNC_INTERVAL_HOURS ?? "", 10);
@@ -326,11 +349,11 @@ export function startModelSyncScheduler(
   );
 
   // Serve traffic first; cleanup's first pass is +30s, so stay past that window.
-  const startupDelay = setTimeout(
-    () => runSyncCycle(trustedApiBaseUrl),
-    MODEL_SYNC_STARTUP_DELAY_MS
-  );
-  startupDelay.unref?.();
+  startupTimer = setTimeout(() => {
+    startupTimer = null;
+    return launchSyncCycle(trustedApiBaseUrl);
+  }, MODEL_SYNC_STARTUP_DELAY_MS);
+  startupTimer.unref?.();
 
   // Codex-only: revalidate catalog only on first-start or app upgrade (not every boot).
   void import("./codexCatalogRevalidation")
@@ -345,7 +368,8 @@ export function startModelSyncScheduler(
   // away from cleanup.ts so the two 6h jobs do not collide for process lifetime.
   phaseTimer = setTimeout(() => {
     phaseTimer = null;
-    schedulerTimer = setInterval(() => runSyncCycle(trustedApiBaseUrl), effectiveIntervalMs);
+    if (!schedulerEnabled) return;
+    schedulerTimer = setInterval(() => launchSyncCycle(trustedApiBaseUrl), effectiveIntervalMs);
     schedulerTimer.unref?.();
   }, MODEL_SYNC_STAGGER_OFFSET_MS);
   phaseTimer.unref?.();
@@ -355,6 +379,12 @@ export function startModelSyncScheduler(
  * Stop the model sync scheduler.
  */
 export function stopModelSyncScheduler(): void {
+  schedulerEnabled = false;
+  if (startupTimer) {
+    clearTimeout(startupTimer);
+    startupTimer = null;
+    console.log("[ModelSync] Scheduler stopped");
+  }
   if (phaseTimer) {
     clearTimeout(phaseTimer);
     phaseTimer = null;
@@ -365,6 +395,10 @@ export function stopModelSyncScheduler(): void {
     schedulerTimer = null;
     console.log("[ModelSync] Scheduler stopped");
   }
+}
+
+export async function drainModelSyncScheduler(): Promise<void> {
+  while (activeCycle) await activeCycle;
 }
 
 /**

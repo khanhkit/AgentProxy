@@ -58,10 +58,7 @@ test("stopProcessGracefully: on win32 escalates to SIGKILL if the process never 
     killed.some((k) => k.signal === "SIGKILL"),
     `expected an eventual SIGKILL escalation, got: ${JSON.stringify(killed)}`
   );
-  assert.ok(
-    !killed.some((k) => k.signal === "SIGTERM"),
-    "must never send SIGTERM on win32"
-  );
+  assert.ok(!killed.some((k) => k.signal === "SIGTERM"), "must never send SIGTERM on win32");
 });
 
 test("stopProcessGracefully: on non-win32 sends SIGTERM immediately (unchanged POSIX behavior)", async () => {
@@ -94,4 +91,15 @@ test("stopProcessGracefully: on non-win32 sends SIGTERM immediately (unchanged P
     !killed.some((k) => k.signal === "SIGKILL"),
     "must not escalate to SIGKILL once the process exited"
   );
+});
+
+test("shutdown escalation budget outlives the app lifecycle deadline", async () => {
+  const { resolveShutdownEscalationTimeoutMs } =
+    await import("../../src/shared/platform/windowsProcess.ts");
+
+  assert.equal(resolveShutdownEscalationTimeoutMs({}), 31_000);
+  assert.equal(resolveShutdownEscalationTimeoutMs({ SHUTDOWN_TIMEOUT_MS: "45" }), 1_045);
+  assert.equal(resolveShutdownEscalationTimeoutMs({ SHUTDOWN_TIMEOUT_MS: "1e3" }), 2_000);
+  assert.equal(resolveShutdownEscalationTimeoutMs({ SHUTDOWN_TIMEOUT_MS: "30000junk" }), 31_000);
+  assert.equal(resolveShutdownEscalationTimeoutMs({ SHUTDOWN_TIMEOUT_MS: "invalid" }), 31_000);
 });

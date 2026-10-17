@@ -245,8 +245,16 @@ function proxyUpgrade(
   });
 }
 
+type ApiBridgeServer = http.Server & {
+  __agentproxyUpgradeSockets?: Set<net.Socket>;
+};
+
 declare global {
   var __agentproxyApiBridgeStarted: boolean | undefined;
+  var __agentproxyApiBridgeServer: http.Server | undefined;
+  var __agentproxyApiBridgeClosePromise: Promise<void> | undefined;
+  var __agentproxyStopApiBridge: (() => void) | undefined;
+  var __agentproxyDrainApiBridge: (() => Promise<void>) | undefined;
 }
 
 export function shouldStartApiBridge(
@@ -283,7 +291,11 @@ export function createApiBridgeServer(dashboardPort: number): http.Server {
   server.headersTimeout = API_BRIDGE_TIMEOUTS.serverHeadersTimeoutMs;
   server.keepAliveTimeout = API_BRIDGE_TIMEOUTS.serverKeepAliveTimeoutMs;
   server.setTimeout(API_BRIDGE_TIMEOUTS.serverSocketTimeoutMs);
+  const upgradeSockets = new Set<net.Socket>();
+  (server as ApiBridgeServer).__agentproxyUpgradeSockets = upgradeSockets;
   server.on("upgrade", (req, socket, head) => {
+    upgradeSockets.add(socket);
+    socket.once("close", () => upgradeSockets.delete(socket));
     const rawUrl = req.url || "/";
     const pathname = rawUrl.split("?")[0] || "/";
 
@@ -310,7 +322,13 @@ export function initApiBridgeServer(): void {
   // becomes an uncaughtException that kills the server. Benign aborts are
   // swallowed; genuine errors still crash loudly (#fix-dev-server-aborted).
   installProcessCrashGuard();
-  if (globalThis.__agentproxyApiBridgeStarted) return;
+  if (
+    globalThis.__agentproxyApiBridgeStarted ||
+    globalThis.__agentproxyApiBridgeServer ||
+    globalThis.__agentproxyApiBridgeClosePromise
+  ) {
+    return;
+  }
 
   const { apiPort, dashboardPort } = getRuntimePorts();
   if (!shouldStartApiBridge(process.env, { apiPort, dashboardPort })) return;
@@ -319,7 +337,12 @@ export function initApiBridgeServer(): void {
   warnIfNonLoopbackWithoutApiKey("API bridge", host);
 
   const server = createApiBridgeServer(dashboardPort);
+  globalThis.__agentproxyApiBridgeServer = server;
   server.on("error", (error: NodeJS.ErrnoException) => {
+    if (globalThis.__agentproxyApiBridgeServer === server) {
+      globalThis.__agentproxyApiBridgeServer = undefined;
+      globalThis.__agentproxyApiBridgeStarted = false;
+    }
     if (error?.code === "EADDRINUSE") {
       console.warn(
         `[API Bridge] Port ${apiPort} is already in use. API bridge disabled. (dashboard: ${dashboardPort})`
@@ -334,3 +357,54 @@ export function initApiBridgeServer(): void {
     console.log(`[API Bridge] Listening on ${host}:${apiPort} -> dashboard:${dashboardPort}`);
   });
 }
+
+/** Stop accepting new API-bridge connections without waiting on active relays. */
+export function stopApiBridgeServer(): void {
+  const server = globalThis.__agentproxyApiBridgeServer;
+  globalThis.__agentproxyApiBridgeStarted = false;
+  if (!server || globalThis.__agentproxyApiBridgeClosePromise) return;
+
+  let resolveClose!: () => void;
+  let rejectClose!: (error: unknown) => void;
+  const closePromise = new Promise<void>((resolve, reject) => {
+    resolveClose = resolve;
+    rejectClose = reject;
+  });
+  globalThis.__agentproxyApiBridgeClosePromise = closePromise;
+
+  const finish = (error?: unknown) => {
+    if (globalThis.__agentproxyApiBridgeServer === server) {
+      globalThis.__agentproxyApiBridgeServer = undefined;
+    }
+    if (globalThis.__agentproxyApiBridgeClosePromise === closePromise) {
+      globalThis.__agentproxyApiBridgeClosePromise = undefined;
+    }
+    if (error) rejectClose(error);
+    else resolveClose();
+  };
+
+  try {
+    for (const socket of (server as ApiBridgeServer).__agentproxyUpgradeSockets ?? []) {
+      socket.destroy();
+    }
+    server.closeIdleConnections?.();
+    server.close((error) => finish(error));
+  } catch (error) {
+    finish(error);
+  }
+
+  void closePromise.catch((error) => {
+    console.warn(
+      "[API Bridge] Failed while draining active relays:",
+      error instanceof Error ? error.message : error
+    );
+  });
+}
+
+export async function drainApiBridgeServer(): Promise<void> {
+  stopApiBridgeServer();
+  await globalThis.__agentproxyApiBridgeClosePromise;
+}
+
+globalThis.__agentproxyStopApiBridge = stopApiBridgeServer;
+globalThis.__agentproxyDrainApiBridge = drainApiBridgeServer;

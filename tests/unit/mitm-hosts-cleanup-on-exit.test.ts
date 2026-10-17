@@ -136,3 +136,30 @@ test("handleExitCleanup: with NO cached password, falls back to orphaned-state f
     "must fall back to the orphaned-state flag for a manual Repair when no password is cached"
   );
 });
+
+test("MITM library cleanup registration does not claim process signal ownership", () => {
+  const beforeInt = process.listenerCount("SIGINT");
+  const beforeTerm = process.listenerCount("SIGTERM");
+
+  manager.installCleanupHandlers();
+
+  assert.equal(process.listenerCount("SIGINT"), beforeInt);
+  assert.equal(process.listenerCount("SIGTERM"), beforeTerm);
+  assert.equal(typeof manager.shutdownMitm, "function");
+});
+
+test("MITM lifecycle cleanup is conditional on active or stale MITM state", () => {
+  const source = fs.readFileSync(path.join(process.cwd(), "src/mitm/manager.ts"), "utf8");
+  assert.match(
+    source,
+    /shutdownMitm[\s\S]*?if \(!serverProcess && !fs\.existsSync\(PID_FILE\)\) return;/
+  );
+});
+
+test("MITM manager publishes an idempotent main-lifecycle drain handle", () => {
+  assert.equal(
+    (globalThis as typeof globalThis & { __agentproxyShutdownMitm?: () => Promise<void> })
+      .__agentproxyShutdownMitm,
+    manager.shutdownMitm
+  );
+});

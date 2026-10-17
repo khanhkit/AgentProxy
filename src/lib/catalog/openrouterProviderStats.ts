@@ -19,6 +19,7 @@
  * (same stale-if-error shape as openrouterCatalog.ts / arenaEloSync.ts).
  */
 
+import { trackLifecycleBackgroundTask } from "@/lib/lifecycle/backgroundTasks";
 import fs from "fs";
 import path from "path";
 import { z } from "zod";
@@ -292,9 +293,20 @@ export async function refreshOpenRouterProviderStats(): Promise<{
 // ─── Periodic sync (mirrors arenaEloSync.ts's startPeriodicSync shape) ──────
 
 let syncTimer: ReturnType<typeof setInterval> | null = null;
+let syncInFlight = false;
 
 function getEffectiveOpenRouterProviderStatsEnabled(): boolean {
   return process.env.OPENROUTER_PROVIDER_STATS_ENABLED !== "false";
+}
+
+async function runPeriodicProviderStatsSync() {
+  if (syncInFlight) return null;
+  syncInFlight = true;
+  try {
+    return await refreshOpenRouterProviderStats();
+  } finally {
+    syncInFlight = false;
+  }
 }
 
 function startPeriodicSync(intervalMs?: number): void {
@@ -303,9 +315,9 @@ function startPeriodicSync(intervalMs?: number): void {
   const interval = intervalMs ?? getTTL();
   console.log(`[OpenRouterProviderStats] Starting periodic sync every ${interval / 1000}s`);
 
-  refreshOpenRouterProviderStats()
-    .then((result) => {
-      if (result.ok) {
+  trackLifecycleBackgroundTask("openrouter-provider-stats", () => runPeriodicProviderStatsSync())
+    ?.then((result) => {
+      if (result?.ok) {
         console.log(
           `[OpenRouterProviderStats] Initial sync complete: ${result.data.length} providers`
         );
@@ -321,7 +333,10 @@ function startPeriodicSync(intervalMs?: number): void {
     });
 
   syncTimer = setInterval(() => {
-    refreshOpenRouterProviderStats().catch((err) => {
+    void trackLifecycleBackgroundTask(
+      "openrouter-provider-stats",
+      () => runPeriodicProviderStatsSync()
+    )?.catch((err) => {
       console.warn(
         "[OpenRouterProviderStats] Periodic sync error:",
         err instanceof Error ? err.message : err
@@ -329,6 +344,13 @@ function startPeriodicSync(intervalMs?: number): void {
     });
   }, interval);
   syncTimer.unref();
+}
+
+export function stopOpenRouterProviderStatsSync(): void {
+  if (syncTimer) {
+    clearInterval(syncTimer);
+    syncTimer = null;
+  }
 }
 
 /**

@@ -178,6 +178,7 @@ const EXPECTED: Record<InventoryKind, Record<string, number>> = {
     "src/lib/providers/volcenginePlanBinding.ts": 1,
     "src/lib/proxyEgress.ts": 1,
     "src/lib/quota/connectionRecovery.ts": 2,
+    "src/lib/services/quotaAutoPing.ts": 1,
     "src/lib/sync/bundle.ts": 1,
     // #11495: verify-only sweep queries oauth + cookie connections
     "src/lib/tokenHealthCheck.ts": 3,

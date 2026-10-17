@@ -17,7 +17,7 @@
 
 import { createLogger } from "../utils/logger";
 import v8 from "node:v8";
-import { trackRequest } from "../../lib/gracefulShutdown";
+import { trackRequest } from "../../lib/shutdownState";
 import { resolveIngestByteBudget, type IngestBudgetSource } from "./admissionBudget";
 import {
   ADMISSION_BYPASS_HEADER,
@@ -359,7 +359,6 @@ export class ChatAdmissionController {
   }
   _queueTimestampCountForTest(): number {
     return this.#queueTimestamps.size;
-
   }
 
   get activeHeavy(): number {
@@ -826,8 +825,7 @@ export type ChatRequestAdmission =
   | { admit: false; response: Response };
 
 export type ChatStructureAdmission =
-  | { admit: true; lease: ChatAdmissionLease | null }
-  | { admit: false; response: Response };
+  { admit: true; lease: ChatAdmissionLease | null } | { admit: false; response: Response };
 
 const INGEST_NORMAL_MAX_WAIT_MS = 250;
 
