@@ -22,7 +22,10 @@ test("TC-OMNIDB-VISION-050B: single lookup is positive-only and never downgrades
   const vision = fs.readFileSync(visionPath, "utf8");
   assert.match(vision, /export function getSyncedAvailableModelVision\(/);
   assert.match(vision, /return bulk\.get\(providerId\)\?\.has\(modelId\) === true \? true : null/);
-  assert.match(vision, /if \(collectVisionModelIds\(providerId, value\)\.includes\(modelId\)\) return true/);
+  assert.match(
+    vision,
+    /if \(collectVisionModelIds\(providerId, value\)\.includes\(modelId\)\) return true/
+  );
   assert.match(vision, /return null/);
 });
 
@@ -30,4 +33,10 @@ test("TC-OMNIDB-VISION-050C: synced vision helpers are exported through models f
   assert.match(models, /getSyncedAvailableModelVision/);
   assert.match(models, /listSyncedAvailableModelVision/);
   assert.match(models, /SyncedAvailableModelVisionMap/);
+});
+
+test("AP-ISS-0198 4233382676: single-provider lookup does not interpret provider id as LIKE wildcards", () => {
+  const vision = fs.readFileSync(visionPath, "utf8");
+  assert.doesNotMatch(vision, /key LIKE \?/);
+  assert.match(vision, /substr\(key, 1, \?\) = \?/);
 });

@@ -104,3 +104,20 @@ test("host re-exports the two public row types (compile-time) and the parsers st
   assert.equal(typeof (HOST as Record<string, unknown>).getApiKeys, "function");
   assert.equal(typeof (HOST as Record<string, unknown>).isModelAllowedForKey, "function");
 });
+
+
+test("AP-ISS-0198 4233373677: malformed permissive policy columns fail closed without changing legacy defaults", () => {
+  assert.equal(P.parseAllowAutoCombos(undefined), true);
+  assert.equal(P.parseAllowAutoCombos(null), true);
+  assert.equal(P.parseAllowAutoCombos(1), true);
+  assert.equal(P.parseAllowAutoCombos("1"), true);
+  assert.equal(P.parseAllowAutoCombos("corrupt"), false);
+  assert.equal(P.parseAllowAutoCombos(2), false);
+
+  assert.equal(P.parseCatalogScope(undefined), "all");
+  assert.equal(P.parseCatalogScope(null), "all");
+  assert.equal(P.parseCatalogScope("all"), "all");
+  assert.equal(P.parseCatalogScope("combos"), "combos");
+  assert.equal(P.parseCatalogScope("models"), "models");
+  assert.equal(P.parseCatalogScope("corrupt"), "models");
+});

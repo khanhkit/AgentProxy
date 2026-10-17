@@ -71,11 +71,12 @@ export function getSyncedAvailableModelVision(
       return bulk.get(providerId)?.has(modelId) === true ? true : null;
     }
     const db = options.getDatabase?.() ?? getDbInstance();
+    const prefix = `${providerId}:`;
     const rows = db
       .prepare(
-        "SELECT value FROM key_value WHERE namespace = 'syncedAvailableModels' AND key LIKE ?"
+        "SELECT value FROM key_value WHERE namespace = 'syncedAvailableModels' AND substr(key, 1, ?) = ?"
       )
-      .all(`${providerId}:%`);
+      .all(prefix.length, prefix);
     for (const row of rows) {
       const { value } = getKeyValue(row);
       if (collectVisionModelIds(providerId, value).includes(modelId)) return true;

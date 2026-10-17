@@ -12,7 +12,8 @@ process.env.DATA_DIR = TEST_DATA_DIR;
 
 const core = await import("../../src/lib/db/core.ts");
 const proxyLogger = await import("../../src/lib/proxyLogger.ts");
-const { getRecentEgressIpForProxy } = await import("../../src/lib/db/proxyLogs.ts");
+const { getRecentEgressIpForProxy, getRecentEgressIpsForProxy } =
+  await import("../../src/lib/db/proxyLogs.ts");
 
 const HOST = "proxy-eu-1.example.com";
 const PORT = 18080;
@@ -111,4 +112,18 @@ test("returns null on empty host or invalid port without throwing", () => {
       assert.equal(getRecentEgressIpForProxy(HOST, badPort), null);
     }
   });
+});
+
+test("AP-ISS-0198 summary-proxyLogs: distinct egress IPs are ordered by most recent observation", () => {
+  const db = core.getDbInstance();
+  const insert = db.prepare(`INSERT INTO proxy_logs
+    (id, timestamp, status, proxy_type, proxy_host, proxy_port, level, connection_id, egress_ip)
+    VALUES (?, ?, 'success', 'http', ?, ?, 'provider', 'conn-order', ?)`);
+  insert.run(randomUUID(), "2026-10-13T10:00:00.000Z", HOST, PORT, "203.0.113.1");
+  insert.run(randomUUID(), "2026-10-13T12:00:00.000Z", HOST, PORT, "203.0.113.2");
+  insert.run(randomUUID(), "2026-10-13T11:00:00.000Z", HOST, PORT, "203.0.113.1");
+  assert.deepEqual(getRecentEgressIpsForProxy(HOST, PORT, "2026-10-13T00:00:00.000Z", 2), [
+    "203.0.113.2",
+    "203.0.113.1",
+  ]);
 });

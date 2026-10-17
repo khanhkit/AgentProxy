@@ -31,3 +31,28 @@ test("normalizeSyncedAvailableModels preserves discovery free metadata", () => {
 
   assert.equal(model?.isFree, true);
 });
+
+
+test("AP-ISS-0198 4233381845/4233382269: synced metadata drops malformed provenance and unknown model types", () => {
+  const [invalid] = normalizeSyncedAvailableModels([{
+    id: "unsafe",
+    metadataProvenance: { attacker: true },
+    modelType: "shell",
+  }]);
+  assert.equal(invalid?.metadataProvenance, undefined);
+  assert.equal(invalid?.modelType, undefined);
+
+  const provenance = {
+    vertexDocs: {
+      source: "google-cloud-docs",
+      sourceUrl: "https://docs.cloud.google.com/gemini-enterprise-agent-platform/models/gemini/2-5-pro?hl=en",
+      fetchedAt: "2026-10-13T00:00:00.000Z",
+      parserVersion: "vertex-docs-v1",
+      confidence: "verified",
+      fields: ["contextWindow"],
+    },
+  };
+  const [valid] = normalizeSyncedAvailableModels([{ id: "safe", metadataProvenance: provenance, modelType: "chat" }]);
+  assert.deepEqual(valid?.metadataProvenance, provenance);
+  assert.equal(valid?.modelType, "chat");
+});

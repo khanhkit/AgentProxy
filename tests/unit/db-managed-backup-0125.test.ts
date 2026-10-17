@@ -7,14 +7,19 @@ import { fileURLToPath } from "node:url";
 const root=path.join(path.dirname(fileURLToPath(import.meta.url)),"../..");
 const read=(p:string)=>fs.readFileSync(path.join(root,p),"utf8");
 
-test("TC-OMNIDB-BACKUP-026A: managed backup isolates sql.js snapshot ownership",()=>{
+test("TC-OMNIDB-BACKUP-026A / AP-ISS-0198 4233378331: sql.js backup exports the live owner image",()=>{
   const source=read("src/lib/db/managedBackup.ts");
   assert.match(source,/db\.driver === "sql\.js"/);
-  assert.match(source,/new Database\(new Uint8Array\(\)\)/);
-  assert.match(source,/owner\.run\("VACUUM main INTO \?", \[filename\]\)/);
+  assert.match(source,/owner\.export\(\)/);
+  assert.doesNotMatch(source,/new Database\(new Uint8Array\(\)\)/);
   assert.match(source,/fs\.openSync\(backupPath, "wx", 0o600\)/);
   assert.match(source,/fs\.fsyncSync\(fd\)/);
-  assert.match(source,/snapshot\.close\(\)/);
+});
+
+test("AP-ISS-0198 4233378732: managed backup reason cannot escape the backup directory",()=>{
+  const source=read("src/lib/db/managedBackup.ts");
+  assert.match(source,/sanitizeBackupReason/);
+  assert.match(source,/path\.join\(backupDir, `db_\$\{timestamp\}_\$\{safeReason\}\.sqlite`\)/);
 });
 
 test("TC-OMNIDB-BACKUP-026B: managed backup uses AgentProxy persisted retention resolver",()=>{

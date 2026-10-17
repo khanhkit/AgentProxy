@@ -56,7 +56,8 @@ function isSyncedAtFresh(syncedModelsAt: string | null): boolean {
   if (!syncedModelsAt) return false;
   const syncedAtMs = Date.parse(syncedModelsAt);
   if (Number.isNaN(syncedAtMs)) return false;
-  return Date.now() - syncedAtMs <= getSyncedCatalogStaleAfterMs();
+  const ageMs = Date.now() - syncedAtMs;
+  return ageMs >= 0 && ageMs <= getSyncedCatalogStaleAfterMs();
 }
 
 function resolveStoredProviderId(aliasOrId: string): string {

@@ -61,16 +61,17 @@ export function parseCompressionEnabled(value: unknown): boolean {
 }
 
 export function parseAllowAutoCombos(value: unknown): boolean {
-  // DEFAULT 1 — a key predating this column keeps its auto/* access.
-  if (value === 0 || value === "0" || value === false) return false;
-  return true;
+  // Missing values are legacy rows and inherit DEFAULT 1. Persisted junk fails closed.
+  if (value === null || value === undefined) return true;
+  return value === true || value === 1 || value === "1";
 }
 
 export type CatalogScope = "all" | "combos" | "models";
 
 export function parseCatalogScope(value: unknown): CatalogScope {
-  // DEFAULT 'all' — unrecognised values widen rather than silently hide rows.
-  return value === "combos" || value === "models" ? value : "all";
+  // Missing values are legacy rows and inherit DEFAULT all; persisted junk must not widen.
+  if (value === null || value === undefined) return "all";
+  return value === "all" || value === "combos" || value === "models" ? value : "models";
 }
 
 export function parseAccessSchedule(value: unknown): AccessSchedule | null {

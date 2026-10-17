@@ -36,6 +36,37 @@ export type SyncedAvailableModelInput = Omit<SyncedAvailableModel, "source"> & {
   source?: string;
 };
 
+type SyncedModelType = NonNullable<SyncedAvailableModel["modelType"]>;
+const MODEL_TYPES = new Set<SyncedModelType>(["chat", "embedding", "image", "rerank"]);
+const VERTEX_METADATA_FIELDS = new Set(["contextWindow", "inputTokenLimit", "outputTokenLimit"]);
+
+function parseMetadataProvenance(value: unknown): VertexModelMetadataProvenance | undefined {
+  const record = asRecord(value);
+  const vertexDocs = asRecord(record.vertexDocs);
+  if (
+    vertexDocs.source !== "google-cloud-docs" ||
+    typeof vertexDocs.sourceUrl !== "string" ||
+    vertexDocs.sourceUrl.length === 0 ||
+    typeof vertexDocs.fetchedAt !== "string" ||
+    vertexDocs.fetchedAt.length === 0 ||
+    vertexDocs.parserVersion !== "vertex-docs-v1" ||
+    vertexDocs.confidence !== "verified" ||
+    !Array.isArray(vertexDocs.fields) ||
+    !vertexDocs.fields.every(
+      (field) => typeof field === "string" && VERTEX_METADATA_FIELDS.has(field)
+    )
+  ) {
+    return undefined;
+  }
+  return value as VertexModelMetadataProvenance;
+}
+
+function parseModelType(value: unknown): SyncedModelType | undefined {
+  return typeof value === "string" && MODEL_TYPES.has(value as SyncedModelType)
+    ? (value as SyncedModelType)
+    : undefined;
+}
+
 function normalizeSyncedAvailableModel(model: unknown): SyncedAvailableModel | null {
   const record = asRecord(model);
   const id =
@@ -56,6 +87,8 @@ function normalizeSyncedAvailableModel(model: unknown): SyncedAvailableModel | n
         )
       ).sort()
     : undefined;
+  const metadataProvenance = parseMetadataProvenance(record.metadataProvenance);
+  const modelType = parseModelType(record.modelType);
 
   return {
     id,
@@ -85,9 +118,7 @@ function normalizeSyncedAvailableModel(model: unknown): SyncedAvailableModel | n
       ? { inputTokenLimit: record.inputTokenLimit }
       : {}),
     ...(typeof record.contextWindow === "number" ? { contextWindow: record.contextWindow } : {}),
-    ...(record.metadataProvenance && typeof record.metadataProvenance === "object"
-      ? { metadataProvenance: record.metadataProvenance as VertexModelMetadataProvenance }
-      : {}),
+    ...(metadataProvenance ? { metadataProvenance } : {}),
     ...(typeof record.outputTokenLimit === "number"
       ? { outputTokenLimit: record.outputTokenLimit }
       : {}),
@@ -110,9 +141,7 @@ function normalizeSyncedAvailableModel(model: unknown): SyncedAvailableModel | n
           ),
         }
       : {}),
-    ...(typeof record.modelType === "string"
-      ? { modelType: record.modelType as "chat" | "embedding" | "image" | "rerank" }
-      : {}),
+    ...(modelType ? { modelType } : {}),
   };
 }
 

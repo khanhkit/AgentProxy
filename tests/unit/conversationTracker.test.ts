@@ -669,3 +669,61 @@ test("resolveConversationId: client-supplied X-AgentProxy-Session-Id wins outrig
 // stores identity only, never turn text (migration 156) — display content is
 // always resolved fresh, full and untruncated, from the call-log artifact
 // (see conversationTurnContent.test.ts).
+
+test("AP-ISS-0198: continuation refreshes a stale root before cleanup can orphan new nodes", async () => {
+  const { getDbInstance } = await import("../../src/lib/db/core.ts");
+  const db = getDbInstance();
+  const apiKeyId = "key-ap0198-cleanup-race";
+  const first = await resolveConversationId({
+    body: { model: "big-pickle", messages: [{ role: "user", content: "race-anchor" }] },
+    model: "big-pickle",
+    apiKeyId,
+    clientSessionIdHeader: null,
+    correlationId: nextCorrelationId(),
+  });
+  assert.ok(first.conversationId);
+
+  db.prepare("UPDATE agentic_conversations SET last_seen_at = ? WHERE id = ?").run(
+    "2000-01-01T00:00:00.000Z",
+    first.conversationId
+  );
+  db.exec(`
+    CREATE TRIGGER ap0198_cleanup_race BEFORE INSERT ON conversation_turn_nodes
+    WHEN NEW.conversation_id = '${first.conversationId}'
+    BEGIN
+      DELETE FROM agentic_conversations
+      WHERE id = NEW.conversation_id AND last_seen_at < '2020-01-01T00:00:00.000Z';
+    END;
+  `);
+  try {
+    const continued = await resolveConversationId({
+      body: {
+        model: "big-pickle",
+        messages: [
+          { role: "user", content: "race-anchor" },
+          { role: "assistant", content: "race-tail" },
+        ],
+      },
+      model: "big-pickle",
+      apiKeyId,
+      clientSessionIdHeader: null,
+      correlationId: nextCorrelationId(),
+    });
+
+    assert.equal(continued.conversationId, first.conversationId);
+    const root = db
+      .prepare("SELECT id FROM agentic_conversations WHERE id = ?")
+      .get(first.conversationId);
+    assert.ok(root, "continuation must refresh the root before inserting new nodes");
+    const orphans = db
+      .prepare(
+        `SELECT COUNT(*) AS c FROM conversation_turn_nodes n
+         WHERE n.conversation_id = ?
+           AND NOT EXISTS (SELECT 1 FROM agentic_conversations c WHERE c.id = n.conversation_id)`
+      )
+      .get(first.conversationId) as { c: number };
+    assert.equal(orphans.c, 0);
+  } finally {
+    db.exec("DROP TRIGGER IF EXISTS ap0198_cleanup_race");
+  }
+});

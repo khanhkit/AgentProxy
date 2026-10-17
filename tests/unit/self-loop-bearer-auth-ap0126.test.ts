@@ -22,10 +22,10 @@ test.after(() => {
   fs.rmSync(TEST_DATA_DIR, { recursive: true, force: true });
 });
 
-test("generated self-loop bearer authenticates without creating a DB key", async () => {
+test("generated self-loop bearer is not a globally valid API key", async () => {
   const bearer = resolveSelfLoopBearer();
   assert.equal(peekGeneratedSelfLoopSecret(), bearer);
-  assert.equal(await apiKeys.validateApiKey(bearer), true);
+  assert.equal(await apiKeys.validateApiKey(bearer), false);
   assert.equal(await apiKeys.validateApiKey(bearer + "x"), false);
   assert.equal((await apiKeys.getApiKeys()).length, 0);
 });

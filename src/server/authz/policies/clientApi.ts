@@ -1,5 +1,7 @@
 import { isDashboardSessionAuthenticated } from "@/shared/utils/apiAuth.ts";
 import { isRequireApiKeyEnabled } from "@/shared/utils/featureFlags";
+import { resolveEndpointCategory } from "@/shared/constants/endpointCategories";
+import { isSelfLoopBearer } from "../../../lib/db/apiKeys/selfLoopKey";
 import { extractApiKey } from "@/sse/services/auth.ts";
 import { extractGoogApiKeyHeader } from "@/sse/services/googApiKeyAuth.ts";
 import type { AuthOutcome, PolicyContext, RoutePolicy } from "../context";
@@ -77,8 +79,13 @@ export const clientApiPolicy: RoutePolicy = {
       return reject(401, "AUTH_002", "Authentication required");
     }
 
-    const { validateApiKey } = await import("../../../lib/db/apiKeys");
-    const ok = await validateApiKey(bearer);
+    const { validateApiKey, getApiKeyMetadata } = await import("../../../lib/db/apiKeys");
+    let ok = await validateApiKey(bearer);
+    if (!ok && isSelfLoopBearer(bearer)) {
+      const metadata = await getApiKeyMetadata(bearer);
+      const category = resolveEndpointCategory(ctx.classification.normalizedPath);
+      ok = Boolean(category && metadata?.allowedEndpoints?.includes(category));
+    }
     if (!ok) {
       // Issue #2257: when REQUIRE_API_KEY is off, a stale CLI config (Codex
       // Desktop auto-config, Hermes, etc.) carrying an invalid Bearer

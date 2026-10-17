@@ -1,8 +1,8 @@
 /**
  * Regression for the AgentProxy vision self-loop credential.
  *
- * The internal bridge must use the per-process self-loop bearer accepted by
- * API-key validation. It must not create a persistent DB key, send the internal
+ * The internal bridge must use the per-process self-loop bearer accepted only by
+ * the request-aware internal endpoint boundary, not by global API-key validation. It must not create a persistent DB key, send the internal
  * bearer to an unrelated localhost service, or fall back to a checked-in sentinel.
  */
 import test from "node:test";
@@ -29,10 +29,10 @@ test.after(() => {
   fs.rmSync(TEST_DATA_DIR, { recursive: true, force: true });
 });
 
-test("the generated self-loop bearer is accepted without a persisted API key", async () => {
+test("the generated self-loop bearer stays ephemeral and globally invalid", async () => {
   const bearer = resolveSelfLoopBearer();
   assert.notEqual(bearer, "sk_agentproxy");
-  assert.equal(await apiKeys.validateApiKey(bearer), true);
+  assert.equal(await apiKeys.validateApiKey(bearer), false);
   assert.equal((await apiKeys.getApiKeys()).length, 0);
 });
 

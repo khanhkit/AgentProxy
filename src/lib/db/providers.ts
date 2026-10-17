@@ -1079,6 +1079,7 @@ export async function touchConnectionSyncedModelsAt(id: string): Promise<void> {
     updatedAt: now,
     id,
   });
+  invalidateDbCache("connections", id, { skipModelCatalog: true });
 }
 
 /**

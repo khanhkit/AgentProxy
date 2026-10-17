@@ -513,7 +513,9 @@ export async function resolveConversationId(
       // Every turn from the reconnect point onward already exists on this
       // chain (e.g. an exact retry, or the whole request is already fully
       // recorded) — a real continuation, nothing new to insert.
-      updateAgenticConversation(candidate.id, { turnCount: candidate.turnCount + 1 });
+      if (!updateAgenticConversation(candidate.id, { turnCount: candidate.turnCount + 1 })) {
+        continue;
+      }
       return { conversationId: candidate.id, isNewConversation: false };
     }
 
@@ -531,8 +533,14 @@ export async function resolveConversationId(
         candidate.id,
         turnHashes
       );
+      // Refresh the root before inserting the tail. Cleanup only removes roots
+      // whose last_seen_at is stale, so this checked write both proves the root
+      // still exists and prevents a concurrent retention sweep from deleting it
+      // before the node insert.
+      if (!updateAgenticConversation(candidate.id, { turnCount: candidate.turnCount + 1 })) {
+        continue;
+      }
       insertConversationTurnNodes(candidate.id, input.correlationId, newNodes);
-      updateAgenticConversation(candidate.id, { turnCount: candidate.turnCount + 1 });
       return { conversationId: candidate.id, isNewConversation: false };
     }
 

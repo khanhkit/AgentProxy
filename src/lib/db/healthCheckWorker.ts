@@ -21,12 +21,25 @@ process.once("message", (job: DbHealthJob) => {
     };
     let result = runDbHealthCheck(connection, { ...options, autoRepair: false });
     if (job.autoRepair && result.issues.length > 0) {
-      // VACUUM INTO cannot run inside a transaction. Snapshot first, then
-      // re-check under a write lock so concurrent edits cannot be overwritten.
-      if (!createManagedDbBackup(connection, "health-check-repair", job.backupDir)) {
-        throw new Error("Database health repair backup failed");
-      }
+      // VACUUM INTO cannot run on the writer's active transaction. Hold the
+      // writer lock first, then snapshot through a separate read-only
+      // connection so no other writer can commit between backup and repair.
       connection.immediate(() => {
+        const snapshotConnection = tryOpenSync(job.filePath, {
+          fileMustExist: true,
+          readonly: true,
+          timeout: 5000,
+        });
+        if (!snapshotConnection) {
+          throw new Error("Native database driver unavailable for health-check backup");
+        }
+        try {
+          if (!createManagedDbBackup(snapshotConnection, "health-check-repair", job.backupDir)) {
+            throw new Error("Database health repair backup failed");
+          }
+        } finally {
+          snapshotConnection.close();
+        }
         result = runDbHealthCheck(connection, {
           ...options,
           autoRepair: true,

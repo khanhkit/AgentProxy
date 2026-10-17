@@ -39,7 +39,7 @@ const INCREMENTAL_VACUUM_BATCH_BYTES = 1024 * 1024;
 /** Hard cap per cleanup pass (≈2 GiB at the target batch size); the rest waits for the next pass. */
 const INCREMENTAL_VACUUM_MAX_BATCHES = 2048;
 /** Wall-clock budget per cleanup pass, so a slow disk cannot turn a pass into a long tail. */
-const INCREMENTAL_VACUUM_TIME_BUDGET_MS = 30_000;
+const INCREMENTAL_VACUUM_TIME_BUDGET_MS = 1_000;
 /** Longest pause between batches; a batch pauses for as long as it took, capped here. */
 const INCREMENTAL_VACUUM_MAX_PAUSE_MS = 250;
 /** PASSIVE checkpoint cadence within a pass so the WAL is folded back as we go. */
@@ -145,6 +145,18 @@ export async function reclaimFreedPages(
 
   const db = getDbInstance();
   const startedAt = now();
+  if (!db.open) {
+    return {
+      mode: "skipped",
+      autoVacuum: 0,
+      pageSize: 0,
+      freelistBefore: 0,
+      freelistAfter: 0,
+      batches: 0,
+      durationMs: now() - startedAt,
+      stopReason: "closed",
+    };
+  }
   const autoVacuum = readPragmaNumber(db, "auto_vacuum");
   const pageSize = readPragmaNumber(db, "page_size") || 4096;
   const freelistBefore = readPragmaNumber(db, "freelist_count");
@@ -238,7 +250,9 @@ export async function reclaimFreedPages(
 export function describeReclaim(result: ReclaimFreedPagesResult): string {
   switch (result.mode) {
     case "skipped":
-      return "freelist already empty";
+      return result.stopReason === "closed"
+        ? "database handle closed before reclamation"
+        : "freelist already empty";
     case "auto":
       return `auto_vacuum=FULL reclaims on commit (${result.freelistBefore} page(s) pending)`;
     case "deferred":
