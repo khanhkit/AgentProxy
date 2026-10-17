@@ -20,7 +20,6 @@ import { backupDbFile } from "./db/backup";
 import {
   applyArenaEloRefresh,
   deleteModelIntelligenceBySource,
-  getLatestSyncedAt,
   type ModelIntelligenceEntry,
 } from "./db/modelIntelligence";
 
@@ -198,6 +197,24 @@ function writeLastFailedAt(ts: number): void {
   } catch (err) {
     console.warn(`[ARENA_ELO_SYNC] Failed to persist lastFailedAt: ${getErrorMessage(err)}`);
   }
+}
+
+function readLastCompleteRefreshAt(): number | null {
+  try {
+    const db = getDbInstance();
+    const row = db.prepare(KV_READ_SQL).get("arena_elo", "lastCompleteRefreshAt") as
+      { value: string } | undefined;
+    if (!row?.value) return null;
+    const ts = Date.parse(row.value);
+    return Number.isFinite(ts) ? ts : null;
+  } catch {
+    return null;
+  }
+}
+
+function writeLastCompleteRefreshAt(ts: number): void {
+  const db = getDbInstance();
+  db.prepare(KV_WRITE_SQL).run("arena_elo", "lastCompleteRefreshAt", new Date(ts).toISOString());
 }
 
 function clearLastFailedAt(): void {
@@ -495,12 +512,12 @@ export async function syncArenaElo(dryRun = false): Promise<SyncResult> {
     }
 
     if (!dryRun) {
-      // Freshness guard: a non-empty dataset synced within the interval is
-      // still good — skip the fetch entirely (cheap fast path on boot).
-      const latest = getLatestSyncedAt("arena_elo");
-      if (latest) {
-        const age = Date.now() - Date.parse(latest);
-        if (Number.isFinite(age) && age >= 0 && age < SYNC_INTERVAL_MS) {
+      // Freshness is advanced only after a complete all-category refresh.
+      // Row timestamps alone can describe a partial historical dataset.
+      const latestCompleteRefresh = readLastCompleteRefreshAt();
+      if (latestCompleteRefresh !== null) {
+        const age = Date.now() - latestCompleteRefresh;
+        if (age >= 0 && age < SYNC_INTERVAL_MS) {
           return {
             success: true,
             modelCount: lastSyncModelCount,
@@ -527,11 +544,25 @@ export async function syncArenaElo(dryRun = false): Promise<SyncResult> {
     // sync while the upstream was rate-limiting; remediation 2026-09-12).
     const leaderboards = await fetchArenaLeaderboards();
     const entries = transformToModelIntelligence(leaderboards);
+    const completeRefresh = FETCH_CATEGORIES.every((category) => {
+      const models = leaderboards[category]?.models;
+      return Array.isArray(models) && models.length > 0;
+    });
+    if (!completeRefresh) {
+      if (!dryRun) writeLastFailedAt(Date.now());
+      return {
+        success: false,
+        modelCount: 0,
+        source: "arena_elo",
+        error: "Incomplete Arena refresh; preserving previous dataset",
+      };
+    }
 
-    if (!dryRun && entries.length > 0) {
+    if (!dryRun) {
       try {
         // Atomic replace: upsert all + prune not-in-refreshed-set in one tx.
         applyArenaEloRefresh(entries);
+        writeLastCompleteRefreshAt(Date.now());
         clearLastFailedAt();
       } catch (err) {
         const message = getErrorMessage(err);

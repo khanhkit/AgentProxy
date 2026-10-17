@@ -59,6 +59,20 @@ test("ttl: entries expire after ttlMs; lru entries never expire", () => {
   assert.equal(lru.get("a", 10_000_000), 1);
 });
 
+test("ttl: size and keys omit expired entries without a prior get or set", () => {
+  const m = boundedMap<number>("ttl-observation", 10, "ttl", 100);
+  const now = Date.now();
+  m.set("expired", 1, now - 1000);
+  m.set("fresh", 2, now);
+  assert.deepEqual([...m.keys()], ["fresh"]);
+  assert.equal(m.size, 1);
+  assert.deepEqual([...m], [["fresh", 2]]);
+
+  const bySize = boundedMap<number>("ttl-size", 10, "ttl", 100);
+  bySize.set("expired", 1, now - 1000);
+  assert.equal(bySize.size, 0, "size must sweep even without keys() or get()");
+});
+
 test("ttl: expired entries are swept before any fresh entry is evicted", () => {
   const { log } = captureLog();
   const m = boundedMap<number>("t", 3, "ttl", 100, { log });

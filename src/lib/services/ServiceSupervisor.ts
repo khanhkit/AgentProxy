@@ -4,7 +4,7 @@ import { EventEmitter } from "node:events";
 import { spawn } from "node:child_process";
 import type { ChildProcess } from "node:child_process";
 import { sanitizeErrorMessage } from "@agentproxy/open-sse/utils/error";
-import { getServiceRow, updateServiceField, setToolStatus } from "@/lib/db/versionManager";
+import { getServiceRow, setToolStatus } from "@/lib/db/versionManager";
 import { RingBuffer } from "./ringBuffer";
 import { HealthChecker } from "./healthCheck";
 import {
@@ -61,6 +61,16 @@ export class ServiceSupervisor extends EventEmitter {
     this.buffer = new RingBuffer(config.logsBufferBytes);
     this.checker = new HealthChecker(config.healthUrl, config.healthIntervalMs, (h) => {
       this.health = h;
+      if (
+        h === "healthy" &&
+        this.state === "starting" &&
+        this.config.healthFailureDuringStartup === "tolerate"
+      ) {
+        this.lastError = null;
+        this.setState("running");
+        void setToolStatus(this.config.tool, "running", this.pid ?? undefined);
+        return;
+      }
       this.emit("stateChange", this.getStatus());
       // A service that fails FAILURE_THRESHOLD consecutive health probes will
       // not recover by itself. Stop the poller and surface an explicit error
@@ -68,6 +78,9 @@ export class ServiceSupervisor extends EventEmitter {
       // fires a full ProxyFetch dispatcher+native fetch pair (e.g. against a
       // CLIProxyAPI binary that cannot execute on this platform).
       if (h === "unhealthy" && (this.state === "running" || this.state === "starting")) {
+        if (this.state === "starting" && this.config.healthFailureDuringStartup === "tolerate") {
+          return;
+        }
         this.checker.stop();
         this.lastError = sanitizeErrorMessage(
           `Health probe failed for ${this.config.tool} (port ${this.config.port})`
@@ -220,7 +233,18 @@ export class ServiceSupervisor extends EventEmitter {
         return this.getStatus();
       }
 
-      this.setState("running");
+      // Interactive services such as OpenWA may legitimately remain unreachable
+      // while waiting for a QR pairing. Keep them in "starting" until a later
+      // healthy probe promotes them through the HealthChecker callback above.
+      if (
+        this.config.healthFailureDuringStartup === "tolerate" &&
+        this.checker.getHealth() !== "healthy"
+      ) {
+        return this.getStatus();
+      }
+
+      const stateAfterHealthWait = this.getStatus().state;
+      if (stateAfterHealthWait !== "running") this.setState("running");
       await setToolStatus(this.config.tool, "running", this.pid ?? undefined);
 
       return this.getStatus();

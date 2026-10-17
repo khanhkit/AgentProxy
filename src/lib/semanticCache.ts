@@ -454,7 +454,7 @@ export function isCacheableForRead(body, headers) {
     return false;
   }
   const cacheControl = (getHeaderValue(headers, "cache-control") || "").toLowerCase();
-  if (cacheControl.includes("no-cache")) return false;
+  if (cacheControl.includes("no-cache") || cacheControl.includes("no-store")) return false;
   if (typeof body.temperature !== "number" || body.temperature !== 0) return false;
   return true;
 }
@@ -470,7 +470,7 @@ export function isCacheableForWrite(body, headers) {
     return false;
   }
   const cacheControl = (getHeaderValue(headers, "cache-control") || "").toLowerCase();
-  if (cacheControl.includes("no-cache")) return false;
+  if (cacheControl.includes("no-cache") || cacheControl.includes("no-store")) return false;
   if (body.temperature !== 0) return false;
   return true;
 }

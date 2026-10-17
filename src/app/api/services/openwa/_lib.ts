@@ -27,6 +27,7 @@ export async function getOrInitSupervisor(): Promise<ServiceSupervisor> {
     // on first pairing. See bootstrap.ts's SERVICES[] "openwa" entry comment
     // for the full verified explanation (must stay in sync with this value).
     healthIntervalMs: 60_000,
+    healthFailureDuringStartup: "tolerate",
     stopTimeoutMs: 30_000,
     logsBufferBytes: 5_242_880,
     // #6205: mirrors bootstrap.ts's own supervisor construction — adopt a

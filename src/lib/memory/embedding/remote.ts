@@ -55,7 +55,7 @@ export async function embedRemote(
     return {
       source: "remote",
       model,
-      reason: "request_failed",
+      reason: [400, 404, 422].includes(status) ? "invalid_config" : "request_failed",
       message: sanitizeErrorMessage(`Embedding provider returned HTTP ${status}`),
     };
   }

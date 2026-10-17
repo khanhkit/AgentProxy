@@ -11,6 +11,8 @@ export interface ServiceConfig {
   };
   healthUrl: () => string;
   healthIntervalMs: number;
+  /** Keep polling instead of failing while an interactive service is still starting. */
+  healthFailureDuringStartup?: "error" | "tolerate";
   stopTimeoutMs: number;
   logsBufferBytes: number;
   /**

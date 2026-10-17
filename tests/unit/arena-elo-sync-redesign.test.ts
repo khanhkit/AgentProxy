@@ -38,10 +38,7 @@ import { tryOpenSync } from "../../src/lib/db/adapters/driverFactory";
 import type { SqliteAdapter } from "../../src/lib/db/adapters/types";
 const core = await import("../../src/lib/db/core.ts");
 const { syncArenaElo, stopArenaEloSync } = await import("../../src/lib/arenaEloSync.ts");
-import type {
-  ArenaLeaderboardData,
-  ArenaModelEntry,
-} from "../../src/lib/arenaEloSync.ts";
+import type { ArenaLeaderboardData, ArenaModelEntry } from "../../src/lib/arenaEloSync.ts";
 
 const originalFetch = globalThis.fetch;
 function mockFetch(impl: (url: string, opts?: RequestInit) => Promise<Response>): void {
@@ -178,7 +175,7 @@ describe("arenaEloSync redesign", () => {
     mockFetch(
       fetchServing({
         text: [makeModelEntry({ model: "fresh-model" })],
-        code: [],
+        code: [makeModelEntry({ model: "fresh-code-model" })],
       })
     );
     const result = await syncArenaElo();
@@ -190,8 +187,36 @@ describe("arenaEloSync redesign", () => {
     assert.equal(getLastFailedAt(), null, "success must clear lastFailedAt");
   });
 
-  it("freshness guard: skips sync when table non-empty and synced_at within interval", async () => {
+  it("empty category fetch preserves the previous dataset and is not marked fresh", async () => {
+    seedEntry("existing-model");
+    mockFetch(
+      fetchServing({
+        text: [makeModelEntry({ model: "partial-new-model" })],
+        code: [],
+      })
+    );
+
+    const result = await syncArenaElo();
+    assert.equal(result.success, false);
+    assert.deepEqual(
+      getAllEntries().map((r) => r.model),
+      ["existing-model"]
+    );
+    const marker = testAdapter
+      .prepare(
+        "SELECT value FROM key_value WHERE namespace='arena_elo' AND key='lastCompleteRefreshAt'"
+      )
+      .get();
+    assert.equal(marker, undefined);
+  });
+
+  it("freshness guard: skips only after a recorded complete refresh", async () => {
     seedEntry("recent-model", { syncedAt: new Date(Date.now() - 60_000).toISOString() }); // 1 min ago
+    testAdapter
+      .prepare(
+        "INSERT OR REPLACE INTO key_value (namespace, key, value) VALUES ('arena_elo','lastCompleteRefreshAt',?)"
+      )
+      .run(new Date(Date.now() - 60_000).toISOString());
 
     let fetchCalled = false;
     mockFetch(async () => {
@@ -202,6 +227,51 @@ describe("arenaEloSync redesign", () => {
 
     assert.equal(fetchCalled, false, "fresh table must not trigger a fetch");
     assert.equal(result.success, true, "skip is a success (fast path)");
+  });
+
+  it("fresh rows without a complete-refresh marker do not suppress recovery fetches", async () => {
+    seedEntry("partial-model", { syncedAt: new Date(Date.now() - 60_000).toISOString() });
+    let fetchCalled = false;
+    mockFetch(
+      fetchServing({
+        text: [makeModelEntry({ model: "fresh-model" })],
+        code: [makeModelEntry({ model: "fresh-code-model" })],
+      })
+    );
+    const wrapped = globalThis.fetch;
+    globalThis.fetch = (async (...args: Parameters<typeof fetch>) => {
+      fetchCalled = true;
+      return wrapped(...args);
+    }) as typeof fetch;
+
+    const result = await syncArenaElo();
+    assert.equal(fetchCalled, true);
+    assert.equal(result.success, true);
+  });
+
+  it("partial category fetch preserves the previous dataset and is not marked fresh", async () => {
+    seedEntry("existing-model");
+    mockFetch(async (url) => {
+      if (url.includes("name=text")) {
+        return jsonResponse(
+          makeLeaderboardData([makeModelEntry({ model: "partial-new-model" })], "text")
+        );
+      }
+      throw new Error("code leaderboard unavailable");
+    });
+
+    const first = await syncArenaElo();
+    assert.equal(first.success, false);
+    assert.deepEqual(
+      getAllEntries().map((r) => r.model),
+      ["existing-model"]
+    );
+    const marker = testAdapter
+      .prepare(
+        "SELECT value FROM key_value WHERE namespace='arena_elo' AND key='lastCompleteRefreshAt'"
+      )
+      .get();
+    assert.equal(marker, undefined);
   });
 
   it("backoff wins even on an empty table: fresh lastFailedAt skips the fetch", async () => {

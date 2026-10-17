@@ -156,9 +156,11 @@ export function boundedMap<V>(
       inner.clear();
     },
     get size(): number {
+      if (expires) sweepExpired(Date.now());
       return inner.size;
     },
     keys(): IterableIterator<string> {
+      if (expires) sweepExpired(Date.now());
       return inner.keys();
     },
     [Symbol.iterator](): IterableIterator<[string, V]> {

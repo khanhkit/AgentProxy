@@ -39,6 +39,7 @@ interface OpenAiMessage {
   tool_calls?: OpenAiToolCall[];
   tool_call_id?: string;
   function_call?: { name?: string; arguments?: string };
+  name?: string;
 }
 
 interface OpenAiChatRequest {
@@ -174,6 +175,7 @@ export function chatRequestToXaiResponses(req: OpenAiChatRequest): XaiResponsesR
   const messages: OpenAiMessage[] = Array.isArray(req.messages) ? req.messages : [];
   const instructionsParts: string[] = [];
   const input: XaiInputItem[] = [];
+  const legacyCallIdsByName = new Map<string, string[]>();
 
   for (const m of messages) {
     if (!m) continue;
@@ -198,6 +200,18 @@ export function chatRequestToXaiResponses(req: OpenAiChatRequest): XaiResponsesR
       });
       continue;
     }
+    if (m.role === "function") {
+      const ids = m.name ? legacyCallIdsByName.get(m.name) : undefined;
+      const callId = ids?.shift();
+      if (callId) {
+        input.push({
+          type: "function_call_output",
+          call_id: callId,
+          output: typeof m.content === "string" ? m.content : JSON.stringify(m.content ?? ""),
+        });
+      }
+      continue;
+    }
     if (m.role === "assistant" && Array.isArray(m.tool_calls) && m.tool_calls.length > 0) {
       // Emit any pre-existing assistant text first
       if (m.content) {
@@ -218,9 +232,13 @@ export function chatRequestToXaiResponses(req: OpenAiChatRequest): XaiResponsesR
       if (m.content) {
         input.push({ role: "assistant", content: messageContentToXaiBlocks(m.content) });
       }
+      const callId = genId("call");
+      const ids = legacyCallIdsByName.get(m.function_call.name) ?? [];
+      ids.push(callId);
+      legacyCallIdsByName.set(m.function_call.name, ids);
       input.push({
         type: "function_call",
-        call_id: genId("call"),
+        call_id: callId,
         name: m.function_call.name,
         arguments: m.function_call.arguments ?? "",
       });

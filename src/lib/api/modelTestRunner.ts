@@ -354,7 +354,7 @@ export interface RunSingleModelTestOptions {
 
 export interface SingleModelTestResult {
   modelId: string;
-  status: "ok" | "error" | "rate_limited" | "slow";
+  status: "ok" | "error" | "rate_limited" | "slow" | "skipped";
   latencyMs: number;
   responseText?: string;
   statusCode?: number;
@@ -484,9 +484,9 @@ export async function runSingleModelTest(
   if (isNonChatGeneration) {
     return {
       modelId: fullModelStr,
-      status: "error",
+      status: "skipped",
       latencyMs: 0,
-      httpStatus: 422,
+      httpStatus: 200,
       error:
         "Skipped: non-chat generation model (images/music/video) — use the corresponding generation endpoint instead",
     };

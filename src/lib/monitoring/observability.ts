@@ -661,6 +661,8 @@ export async function probeDeepHealth(
     });
     const response = await Promise.race([request, timeout]);
     const status = response.status;
+    // Release the unread body/connection without waiting for upstream cancellation.
+    void response.body?.cancel().catch(() => {});
     if (status >= 200 && status < 300) return verdict(true, false, status);
     return verdict(false, status === 502 || status === 503, status);
   } catch {

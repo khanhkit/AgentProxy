@@ -600,6 +600,24 @@ test("large generated API skills split endpoint details into indexed references"
   );
 });
 
+test("large API skill indexes disambiguate colliding Markdown heading anchors", () => {
+  refreshCatalog();
+  const sources = realApiSources();
+  const ops = sources.openapi.areas.get("inference");
+  assert.ok(ops);
+  ops.push(
+    { method: "GET", path: "/a-b", summary: "First", tags: [] },
+    { method: "GET", path: "/a b", summary: "Second", tags: [] }
+  );
+  const result = buildSkillMarkdown("omni-inference", sources);
+  assert.equal(result.references?.length, 1);
+  assert.ok(result.body.includes("[`GET /a-b`](references/endpoints.md#get-a-b)"));
+  assert.ok(result.body.includes("[`GET /a b`](references/endpoints.md#get-a-b-1)"));
+  const reference = result.references[0].content;
+  assert.ok(reference.includes("[`GET /a-b`](#get-a-b)"));
+  assert.ok(reference.includes("[`GET /a b`](#get-a-b-1)"));
+});
+
 test("buildSkillMarkdown CLI skill body contains expected sections", () => {
   refreshCatalog();
   const sources = emptySources();

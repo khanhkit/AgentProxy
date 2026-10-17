@@ -163,14 +163,24 @@ function buildApiDocuments(skill: AgentSkill, sources: BuildSources): ApiSkillDo
     return { body: inlineBody, references: [] };
   }
 
+  // GitHub Markdown suffixes duplicate heading slugs; both indexes must match.
+  const usedAnchors = new Set<string>();
+  const endpointAnchors = endpointBlocks.map((block) => {
+    const base = markdownAnchor(block.title);
+    let anchor = base;
+    let suffix = 1;
+    while (usedAnchors.has(anchor)) anchor = `${base}-${suffix++}`;
+    usedAnchors.add(anchor);
+    return anchor;
+  });
   const endpointIndex = endpointBlocks.map(
-    (block) => `- [\`${block.title}\`](references/endpoints.md#${markdownAnchor(block.title)})`
+    (block, index) => `- [\`${block.title}\`](references/endpoints.md#${endpointAnchors[index]})`
   );
   const indexedLines = [...lines, "## Endpoints\n", ...endpointIndex, ...payloadLines];
 
   const referencePreamble = [GENERATED_COMMENT, "", "# Endpoint reference", ""];
   const tableOfContents = endpointBlocks.map(
-    (block) => `- [\`${block.title}\`](#${markdownAnchor(block.title)})`
+    (block, index) => `- [\`${block.title}\`](#${endpointAnchors[index]})`
   );
   const needsTableOfContents =
     referencePreamble.length + tableOfContents.length + 2 + endpointLines.length >

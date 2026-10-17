@@ -80,6 +80,13 @@ export async function POST(request: Request) {
         responseText: result.responseText,
       });
     }
+    if (result.status === "skipped") {
+      return NextResponse.json({
+        status: "skipped",
+        latencyMs: result.latencyMs,
+        reason: result.error,
+      });
+    }
 
     const body: Record<string, unknown> = {
       status: "error",
