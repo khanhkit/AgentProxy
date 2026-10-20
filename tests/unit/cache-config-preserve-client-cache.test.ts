@@ -24,11 +24,14 @@ function resetStorage() {
 }
 
 function makeJsonRequest(method: string, body?: unknown): Request {
-  return new Request("http://localhost/api/settings/cache-config", {
+  const req = new Request("http://localhost/api/settings/cache-config", {
     method,
     headers: { "Content-Type": "application/json" },
     body: body === undefined ? undefined : JSON.stringify(body),
   });
+  // Route tests exercise a direct loopback socket, not a remote caller with a localhost URL.
+  Object.defineProperty(req, "ip", { value: "127.0.0.1" });
+  return req;
 }
 
 test.beforeEach(() => {

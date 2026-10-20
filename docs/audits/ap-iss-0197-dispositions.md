@@ -84,3 +84,5 @@ This is a **post-HEAD review-remediation checkpoint**, not a claim of integratio
 **NEXT:** verify focused regression superset and review/quality gates against the exact new immutable commit, stage/commit through dedicated `git_admin` only, publish the **same SHA** through an authorized Git transport if supported, request independent review and wait for exact-head CI. Revalidate accepted main and integration/episode provenance before terminal close.
 
 **DO-NOT:** no reset/stash/clean/force push; do not update protected Git admin with raw shell workarounds; do not claim historical CI is proof for unpublished WIP; do not treat recovery/board label as worker progress.
+
+**Additional adjacent legacy regression (Gen16):** `tests/unit/cache-config-preserve-client-cache.test.ts` originally returned 401 because synthetic requests had a localhost URL but no trusted direct-peer metadata. The route's fail-closed behavior was correct. Updated that test-only fixture to represent a genuine loopback peer; no authentication production code changed.
