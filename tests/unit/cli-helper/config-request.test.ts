@@ -3,7 +3,6 @@ import test from "node:test";
 
 import {
   CONFIG_API_KEY_HEADER,
-  LEGACY_CONFIG_API_KEY_HEADER,
   configPreviewQuerySchema,
   configRequestSchema,
   readConfigApiKey,
@@ -31,18 +30,18 @@ test("canonical AgentProxy config-key header is accepted", () => {
   assert.equal(readConfigApiKey(req), "agentproxy-secret");
 });
 
-test("legacy AgentProxy config-key header remains a migration alias", () => {
+test("unrecognized config-key header never authenticates the request", () => {
   const req = new Request("http://localhost/api/cli-tools/config", {
-    headers: { [LEGACY_CONFIG_API_KEY_HEADER]: "legacy-secret" },
+    headers: { "x-unrecognized-config-api-key": "untrusted-secret" },
   });
-  assert.equal(readConfigApiKey(req), "legacy-secret");
+  assert.equal(readConfigApiKey(req), null);
 });
 
-test("canonical header wins when both aliases are present", () => {
+test("canonical config-key header wins over unrelated unrecognized headers", () => {
   const req = new Request("http://localhost/api/cli-tools/config", {
     headers: {
       [CONFIG_API_KEY_HEADER]: "canonical-secret",
-      [LEGACY_CONFIG_API_KEY_HEADER]: "legacy-secret",
+      "x-unrecognized-config-api-key": "untrusted-secret",
     },
   });
   assert.equal(readConfigApiKey(req), "canonical-secret");
