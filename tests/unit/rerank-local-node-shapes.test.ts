@@ -283,7 +283,8 @@ test.describe("POST /v1/rerank against a TEI-shaped local node", () => {
     assert.deepEqual(calls[2].body.texts, ["a cat is a small animal", "the stock market fell"]);
     assert.equal("documents" in calls[2].body, false);
     assert.equal(calls[2].body.return_text, false);
-    assert.equal(calls[2].body.model, "bge-reranker-v2-m3");
+    assert.equal("model" in calls[2].body, false);
+    assert.equal("top_n" in calls[2].body, false);
   });
 
   test("strict Cohere server never receives TEI-only fields", async () => {
@@ -312,6 +313,33 @@ test.describe("POST /v1/rerank against a TEI-shaped local node", () => {
     assert.ok(seen);
     assert.equal("texts" in seen, false);
     assert.equal("return_text" in seen, false);
+  });
+
+  test("semantic 400 errors do not trigger an alternate-dialect retry", async () => {
+    let calls = 0;
+    globalThis.fetch = async () => {
+      calls += 1;
+      return new Response(JSON.stringify({ error: "model does not support this query" }), {
+        status: 400,
+        headers: { "content-type": "application/json" },
+      });
+    };
+
+    const res = await POST(
+      new Request("http://localhost/v1/rerank", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({
+          model: "tei/bge-reranker-v2-m3",
+          query: "cat",
+          documents: ["cat"],
+        }),
+      }),
+      {}
+    );
+
+    assert.equal(res.status, 400);
+    assert.equal(calls, 1, "semantic errors must not be amplified into a second inference request");
   });
 
   test("a `score`-only gateway on /v1/rerank yields relevance_score for clients", async () => {

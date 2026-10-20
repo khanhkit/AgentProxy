@@ -25,6 +25,18 @@ test.afterEach(() => {
   globalThis.fetch = originalFetch;
 });
 
+test("self-hosted policy backend exceptions fail closed", async () => {
+  const response = await chatRoute.enforceSelfHostedPolicyOrReject(
+    new Request("http://localhost/v1/chat/completions"),
+    "local/llama3",
+    async () => {
+      throw new Error("policy backend unavailable");
+    }
+  );
+  assert.ok(response);
+  assert.equal(response.status, 503);
+});
+
 test.after(() => {
   globalThis.fetch = originalFetch;
   delete process.env.OMNIROUTE_SELF_HOSTED_PROVIDERS;

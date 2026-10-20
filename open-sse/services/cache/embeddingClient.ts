@@ -147,7 +147,8 @@ export async function generateEmbeddingWithTimeout(
       embeddingGeneratorCooldownUntil.set(generator, cooldowns);
       if (generatorPromise) {
         quarantineToken = Symbol(cooldownKey);
-        const inFlight = embeddingGeneratorTimedOutInFlight.get(generator) ?? new Map<string, symbol>();
+        const inFlight =
+          embeddingGeneratorTimedOutInFlight.get(generator) ?? new Map<string, symbol>();
         inFlight.set(cooldownKey, quarantineToken);
         embeddingGeneratorTimedOutInFlight.set(generator, inFlight);
         setTimeout(clearTimedOutInFlight, timeoutMs);
@@ -220,6 +221,13 @@ export function createDefaultEmbeddingGenerator(config: {
       }
     }
     const apiKey = config.embeddingApiKey;
+    if (
+      config.embeddingDimension !== undefined &&
+      (!Number.isInteger(config.embeddingDimension) || config.embeddingDimension <= 0)
+    ) {
+      console.warn("[CACHE] Invalid embedding dimension; expected a positive integer");
+      return null;
+    }
 
     try {
       const guard = getProviderValidationGuard();
@@ -248,7 +256,9 @@ export function createDefaultEmbeddingGenerator(config: {
         body: JSON.stringify({
           model,
           input: text,
-          ...(config.embeddingDimension ? { dimensions: config.embeddingDimension } : {}),
+          ...(config.embeddingDimension !== undefined
+            ? { dimensions: config.embeddingDimension }
+            : {}),
         }),
         signal: options?.signal,
       });

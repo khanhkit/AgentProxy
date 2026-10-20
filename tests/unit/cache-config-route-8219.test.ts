@@ -26,11 +26,14 @@ function resetStorage() {
 }
 
 function makeJsonRequest(method: string, body?: unknown): Request {
-  return new Request("http://localhost/api/settings/cache-config", {
+  const req = new Request("http://localhost/api/settings/cache-config", {
     method,
     headers: { "Content-Type": "application/json" },
     body: body === undefined ? undefined : JSON.stringify(body),
   });
+  // The unconfigured fresh-install gate permits only a verified direct loopback peer.
+  Object.defineProperty(req, "ip", { value: "127.0.0.1" });
+  return req;
 }
 
 test.beforeEach(() => {
@@ -80,6 +83,27 @@ test("cache-config route resolves and modelCatalogCacheTtlMs round-trips", async
     const getBody = await getResponse.json();
     assert.equal("semanticCacheEmbeddingApiKey" in getBody, false);
     assert.equal(JSON.stringify(getBody).includes("stored-embedding-secret"), false);
+  });
+
+  await t.test("redacted API-key save does not clear the stored embedding credential", async () => {
+    const { getDatabaseSettings } = await import("../../src/lib/db/databaseSettings.ts");
+    const first = await cacheConfigRoute.PUT(
+      makeJsonRequest("PUT", { semanticCacheEmbeddingApiKey: "stored-embedding-secret" }) as never
+    );
+    assert.equal(first.status, 200);
+
+    const redactedSave = await cacheConfigRoute.PUT(
+      makeJsonRequest("PUT", {
+        semanticCacheEmbeddingApiKey: null,
+        semanticCacheThreshold: 0.81,
+      }) as never
+    );
+    assert.equal(redactedSave.status, 200);
+    assert.equal(
+      getDatabaseSettings().cache.semanticCacheEmbeddingApiKey,
+      "stored-embedding-secret",
+      "null from a redacted UI field must mean unchanged, not clear"
+    );
   });
 
   await t.test("PUT persists idempotencyWindowMs via the flat settings module", async () => {

@@ -63,15 +63,17 @@ export const geminiContentSchema = z
   })
   .catchall(z.unknown());
 
+const geminiSystemInstructionSchema = z
+  .object({
+    parts: z.array(geminiPartSchema).optional(),
+  })
+  .catchall(z.unknown());
+
 export const v1betaGeminiGenerateSchema = z
   .object({
     contents: z.array(geminiContentSchema).optional(),
-    systemInstruction: z
-      .object({
-        parts: z.array(geminiPartSchema).optional(),
-      })
-      .catchall(z.unknown())
-      .optional(),
+    systemInstruction: geminiSystemInstructionSchema.optional(),
+    system_instruction: geminiSystemInstructionSchema.optional(),
     generationConfig: z
       .object({
         stream: z.boolean().optional(),
@@ -84,7 +86,7 @@ export const v1betaGeminiGenerateSchema = z
   })
   .catchall(z.unknown())
   .superRefine((value, ctx) => {
-    if (!value.contents && !value.systemInstruction) {
+    if (!value.contents && !value.systemInstruction && !value.system_instruction) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         message: "contents or systemInstruction is required",
@@ -95,6 +97,7 @@ export const v1betaGeminiGenerateSchema = z
     const allParts = [
       ...(value.contents ?? []).flatMap((content) => content.parts ?? []),
       ...(value.systemInstruction?.parts ?? []),
+      ...(value.system_instruction?.parts ?? []),
     ];
     const totalInlineBytes = allParts.reduce(
       (total, part) => total + decodedInlineBytesFromPart(part),

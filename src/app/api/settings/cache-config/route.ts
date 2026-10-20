@@ -23,7 +23,7 @@ const cacheConfigUpdateSchema = z.object({
   semanticCacheThreshold: z.number().min(0).max(1).optional(),
   semanticCacheEmbeddingProvider: z.string().trim().optional(),
   semanticCacheEmbeddingModel: z.string().trim().optional(),
-  semanticCacheEmbeddingDimension: z.number().positive().nullable().optional(),
+  semanticCacheEmbeddingDimension: z.number().int().positive().nullable().optional(),
   semanticCacheEmbeddingBaseUrl: z.string().trim().nullable().optional(),
   semanticCacheEmbeddingApiKey: z.string().trim().nullable().optional(),
   semanticCacheRedisUrl: z.string().trim().nullable().optional(),

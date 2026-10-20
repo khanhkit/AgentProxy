@@ -12,7 +12,7 @@ const testEmbeddingSchema = z.object({
   model: z.string().trim().min(1),
   baseUrl: z.string().trim().optional(),
   apiKey: z.string().trim().optional(),
-  dimensions: z.number().positive().optional(),
+  dimensions: z.number().int().positive().optional(),
 });
 
 export async function POST(request: Request) {

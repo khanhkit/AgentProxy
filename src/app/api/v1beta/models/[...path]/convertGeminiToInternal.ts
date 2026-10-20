@@ -53,6 +53,7 @@ interface GeminiTool {
 
 interface GeminiGenerateBody {
   systemInstruction?: { parts?: GeminiPart[] };
+  system_instruction?: { parts?: GeminiPart[] };
   contents?: GeminiContent[];
   tools?: GeminiTool[];
   generationConfig?: {
@@ -209,10 +210,10 @@ export function convertGeminiToInternal(
 ): InternalChatBody {
   const messages: InternalMessage[] = [];
 
-  // Convert system instruction
-  if (geminiBody.systemInstruction) {
-    const systemText =
-      geminiBody.systemInstruction.parts?.map((p) => p.text ?? "").join("\n") || "";
+  // Convert either Gemini JS camelCase or REST snake_case system instruction.
+  const systemInstruction = geminiBody.systemInstruction ?? geminiBody.system_instruction;
+  if (systemInstruction) {
+    const systemText = systemInstruction.parts?.map((p) => p.text ?? "").join("\n") || "";
     if (systemText) {
       messages.push({ role: "system", content: systemText });
     }

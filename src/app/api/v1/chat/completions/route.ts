@@ -67,6 +67,20 @@ function isRecord(value: unknown): value is Record<string, unknown> {
   return value !== null && typeof value === "object" && !Array.isArray(value);
 }
 
+export async function enforceSelfHostedPolicyOrReject(
+  request: Request,
+  requestedModel: string | null,
+  policyFn: typeof enforceApiKeyPolicy = enforceApiKeyPolicy
+): Promise<Response | null> {
+  try {
+    const policy = await policyFn(request, requestedModel);
+    return policy.rejection ?? null;
+  } catch (error) {
+    console.error("[SECURITY] Self-hosted API-key policy unavailable:", error);
+    return errorResponse(503, "API key policy unavailable");
+  }
+}
+
 // Minimal request-shape validation (Rule #7 / T06 gate). This is the hottest path in the
 // proxy, and the body is already parsed exactly once above into `parsedBody` (see the
 // #4380/#7862 comment on the single `request.json()` call) — so this only runs `.safeParse()`
@@ -200,9 +214,12 @@ export async function POST(request) {
           );
           if (selfHostedConfigured) {
             const requestedModel = typeof parsedBody.model === "string" ? parsedBody.model : null;
-            const selfHostedPolicy = await enforceApiKeyPolicy(request, requestedModel);
-            if (selfHostedPolicy.rejection) {
-              return finishAdmission(selfHostedPolicy.rejection);
+            const selfHostedPolicyRejection = await enforceSelfHostedPolicyOrReject(
+              request,
+              requestedModel
+            );
+            if (selfHostedPolicyRejection) {
+              return finishAdmission(selfHostedPolicyRejection);
             }
           }
 

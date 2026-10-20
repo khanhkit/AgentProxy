@@ -38,6 +38,17 @@ export async function OPTIONS() {
   });
 }
 
+async function isLocalRerankSchemaValidationResponse(response: Response): Promise<boolean> {
+  if (response.status !== 400 && response.status !== 422) return false;
+  const text = await response
+    .clone()
+    .text()
+    .catch(() => "");
+  return /(?:unknown|unrecognized|unexpected|extra)\s+(?:field|fields|input)|field\s+required|validation\s+error|"type"\s*:\s*"(?:missing|extra_forbidden)"/i.test(
+    text
+  );
+}
+
 /**
  * POST /v1/rerank - Cohere-compatible rerank endpoint
  *
@@ -216,7 +227,7 @@ async function postHandler(request, _context) {
 
         // Strict servers can reject unknown request fields. Retry exactly once with
         // TEI spellings only when the response indicates request-schema validation.
-        if (res.status === 400 || res.status === 422) {
+        if (await isLocalRerankSchemaValidationResponse(res)) {
           res = await fetch(activeUrl, makeUpstreamInit("tei"));
         }
 

@@ -28,7 +28,9 @@ test("GET /api/memory/rerank-providers includes rerank-capable local provider no
   });
 
   const response = await rerankProvidersRoute.GET(
-    new NextRequest("http://localhost/api/memory/rerank-providers")
+    Object.assign(new NextRequest("http://localhost/api/memory/rerank-providers"), {
+      ip: "127.0.0.1",
+    })
   );
   const body = await response.json();
 
@@ -39,6 +41,13 @@ test("GET /api/memory/rerank-providers includes rerank-capable local provider no
     ),
     { provider: "local-reranker", hasKey: true, models: [] }
   );
+});
+
+test("anonymous remote requests cannot list providers despite a localhost URL", async () => {
+  const response = await rerankProvidersRoute.GET(
+    new NextRequest("http://localhost/api/memory/rerank-providers")
+  );
+  assert.equal(response.status, 401);
 });
 
 test("local node listing failure is isolated from curated rerank providers", () => {

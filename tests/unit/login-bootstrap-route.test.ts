@@ -361,6 +361,20 @@ test("#14296 concurrent remote bootstrap writes can consume the one-shot token o
   assert.equal(bootstrapToken.peekBootstrapToken(token), false);
 });
 
+test("#14296 a claimed bootstrap token can be released after persistence failure", () => {
+  const token = bootstrapToken.getOrCreateBootstrapToken({ log: () => {} });
+  const claim = bootstrapToken.claimBootstrapToken(token);
+  assert.ok(claim, "first claimant owns the token");
+  assert.equal(bootstrapToken.claimBootstrapToken(token), null, "concurrent claim is rejected");
+  bootstrapToken.releaseBootstrapTokenClaim(claim);
+  assert.equal(bootstrapToken.peekBootstrapToken(token), true, "released claim remains retryable");
+
+  const retryClaim = bootstrapToken.claimBootstrapToken(token);
+  assert.ok(retryClaim);
+  assert.equal(bootstrapToken.commitBootstrapTokenClaim(retryClaim), true);
+  assert.equal(bootstrapToken.peekBootstrapToken(token), false, "committed claim consumes token");
+});
+
 test("public login bootstrap route POST returns 500 when hashing fails", async () => {
   bcrypt.hash = async () => {
     throw new Error("hash failed");

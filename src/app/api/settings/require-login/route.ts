@@ -7,7 +7,13 @@ import {
   hasManagementPasswordConfigured,
   hashManagementPassword,
 } from "@/lib/auth/managementPassword";
-import { consumeBootstrapToken, peekBootstrapToken } from "@/lib/auth/bootstrapToken";
+import {
+  claimBootstrapToken,
+  commitBootstrapTokenClaim,
+  consumeBootstrapToken,
+  peekBootstrapToken,
+  releaseBootstrapTokenClaim,
+} from "@/lib/auth/bootstrapToken";
 import { hasConfiguredOidc, isAuthenticated } from "@/shared/utils/apiAuth";
 import { AUTHZ_HEADER_PEER_LOCALITY, BOOTSTRAP_TOKEN_HEADER } from "@/server/authz/headers";
 import { getNodeRuntimeSupport } from "@/shared/utils/nodeRuntimeSupport.ts";
@@ -91,6 +97,7 @@ export async function GET() {
 export async function POST(request: Request) {
   const settings = await getSettings();
   let requiresBootstrapTokenClaim = false;
+  let bootstrapTokenClaim: ReturnType<typeof claimBootstrapToken> = null;
   if (isBootstrapSecurityWindow(settings)) {
     const peerLocality = request.headers.get(AUTHZ_HEADER_PEER_LOCALITY);
     // In production this header is stripped from client input and re-stamped by
@@ -141,16 +148,27 @@ export async function POST(request: Request) {
     }
 
     const bootstrapCandidate = request.headers.get(BOOTSTRAP_TOKEN_HEADER);
-    if (requiresBootstrapTokenClaim && !consumeBootstrapToken(bootstrapCandidate)) {
-      return NextResponse.json({ error: "Local bootstrap required" }, { status: 403 });
+    if (requiresBootstrapTokenClaim) {
+      bootstrapTokenClaim = claimBootstrapToken(bootstrapCandidate);
+      if (!bootstrapTokenClaim) {
+        return NextResponse.json({ error: "Local bootstrap required" }, { status: 403 });
+      }
     }
 
     await updateSettings(updates);
-    // Loopback bootstrap does not need the token for authorization, but preserve
-    // the existing one-shot behavior when a valid token happens to be supplied.
-    if (!requiresBootstrapTokenClaim) consumeBootstrapToken(bootstrapCandidate);
+    if (bootstrapTokenClaim) {
+      if (!commitBootstrapTokenClaim(bootstrapTokenClaim)) {
+        throw new Error("Bootstrap token claim was lost before commit");
+      }
+      bootstrapTokenClaim = null;
+    } else {
+      // Loopback bootstrap does not need the token for authorization, but preserve
+      // the existing one-shot behavior when a valid token happens to be supplied.
+      consumeBootstrapToken(bootstrapCandidate);
+    }
     return NextResponse.json({ success: true });
   } catch (error) {
+    if (bootstrapTokenClaim) releaseBootstrapTokenClaim(bootstrapTokenClaim);
     console.error("[API] Error updating require-login settings:", error);
     return NextResponse.json(
       { error: error instanceof Error ? error.message : "Failed to update settings" },

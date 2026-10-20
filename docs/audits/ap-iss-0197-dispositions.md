@@ -63,3 +63,24 @@ Protected-main integration and exact-head verification:
 - Post-merge scoped ESLint over AP-ISS-0197 changed TypeScript files: PASS with the repository suppression bank.
 - Post-merge `git diff --check`: PASS.
 - Hosted PR/check evidence is recorded in the canonical KitControl terminal handoff after publication; this issue is not DONE until that evidence is green/terminal.
+
+## Hosted PR #142 review follow-up — KitDev25, 2026-10-20 (Gen16)
+
+This is a **post-HEAD review-remediation checkpoint**, not a claim of integration or full-CI PASS. The previously published PR HEAD is `e9611720ae09c0a534756c85c213c57e2e22c3fe`; the 8 automated inline review findings refer to that immutable commit. All existing task WIP was preserved through the KitControl validated Gen16 recovery.
+
+| PR review concern | Disposition and regression evidence |
+| --- | --- |
+| Fractional embedding `dimensions` | FIXED in request schema and embedding generator positive-integer boundary; focused probe test rejects `1.5` before transport. |
+| Redacted semantic-cache API key cleared on partial UI save | FIXED: null/redacted update means unchanged; targeted cache GET/PUT test preserves the stored secret without exposing it in GET. |
+| One-shot bootstrap token lost on DB write failure | FIXED: atomically claim token before write, commit claim only on success and release on failure; login bootstrap regression exercises retry. |
+| TEI `model`/`top_n` leakage | FIXED: TEI-specific request body omits Cohere-only fields; rerank strict-shape tests pass. |
+| Self-hosted policy erroneously applied to cloud dispatch when config is present | **NOT REPRODUCED / FALSE PREMISE FOR CURRENT ENTRY CONTRACT**: `open-sse/services/selfHostedEntry.ts:400+` returns `null` *only* when provider config is absent, and `src/app/api/v1/chat/completions/route.ts` tests the same two config env vars. A configured self-hosted entry owns this endpoint and returns a response or configured-entry error, not cloud fallthrough. Preserve fail-closed policy before any self-hosted upstream dispatch. Do not accept the suggested post-dispatch policy because it would authorize after side effects. |
+| Policy-backend exception could fall through injection `try/catch` | FIXED: dedicated helper catches policy exceptions and returns sanitized 503 before transport; focused unit regression passes. |
+| Blind rerank retries on all 400/422 | FIXED: retry TEI dialect only on response-body validation/schema indicators; semantic 400 regression asserts no retry. |
+| Gemini snake_case `system_instruction` inlineData outside bound | FIXED: validation accounts for snake_case alias and conversion recognizes it; focused inline-media limit test passes. |
+
+**Fresh evidence on 2026-10-20 host 19:12–19:21 ICT:** initial standalone cache/rerank tests RED because synthetic `localhost` URL supplied no trustworthy direct-peer evidence and the current authentication guard correctly returned 401. Test-only fixture update supplies an explicit direct-loopback socket peer; two added negative tests prove anonymous requests lacking this peer still receive 401 and do not call upstream. Cache/embedding/rerank suites individually GREEN **14/14**; extended AP-ISS-0197 related group **72/72** PASS. `npm run typecheck:core`, `npm run check:open-sse-typecheck`, `npm run test:security` (23/23), `npm run check:route-guard-membership`, `npm run check:public-creds`, Prettier, and `git diff --check` all passed. ESLint on changed files emitted 11 **pre-existing baseline unused-import diagnostics** for `src/shared/validation/schemas/gemini.ts` (same import list at old HEAD), so it is not claimed wholly clean. Bounded full suite and hosted CI have NOT been rerun against the new worktree changes.
+
+**NEXT:** verify focused regression superset and review/quality gates against the exact new immutable commit, stage/commit through dedicated `git_admin` only, publish the **same SHA** through an authorized Git transport if supported, request independent review and wait for exact-head CI. Revalidate accepted main and integration/episode provenance before terminal close.
+
+**DO-NOT:** no reset/stash/clean/force push; do not update protected Git admin with raw shell workarounds; do not claim historical CI is proof for unpublished WIP; do not treat recovery/board label as worker progress.

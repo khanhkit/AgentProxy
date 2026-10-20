@@ -70,20 +70,17 @@ export function buildLocalRerankRequestBody(
 ): Record<string, unknown> {
   const topN = input.top_n || input.documents.length;
   const returnDocuments = input.return_documents === true;
-  const common = {
-    model: input.model,
-    query: input.query,
-    top_n: topN,
-  };
   if (dialect === "tei") {
     return {
-      ...common,
+      query: input.query,
       texts: input.documents.map(documentText),
       return_text: returnDocuments,
     };
   }
   return {
-    ...common,
+    model: input.model,
+    query: input.query,
+    top_n: topN,
     documents: input.documents,
     return_documents: returnDocuments,
   };
