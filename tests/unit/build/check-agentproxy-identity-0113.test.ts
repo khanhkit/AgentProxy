@@ -55,6 +55,16 @@ test("AP-ISS-0171 identity guard treats changelogs as active product docs", () =
     ).length,
     1
   );
+  assert.equal(
+    violations.filter((item) => item.file === "src/current.ts").length,
+    0,
+    "canonical AgentProxy source must stay accepted"
+  );
+  assert.equal(
+    violations.filter((item) => item.file === "README.md").length,
+    0,
+    "canonical AgentProxy product docs must stay accepted"
+  );
   const attributionViolations = findIdentityViolations(
     ["THIRD_PARTY_NOTICES.md"],
     () => Buffer.from(oldScope)

@@ -71,6 +71,22 @@ describe("gateway credential resolution", () => {
     assert.deepEqual(env, { key: "from-env", origin: "env" });
   });
 
+  it("uses the canonical environment key when the configured option is empty", async () => {
+    const { log } = collectingLogger();
+    const got = await withEnv("from-env", () =>
+      resolveApiKey(ctxWith(undefined), "agentproxy", "", log)
+    );
+    assert.deepEqual(got, { key: "from-env", origin: "env" });
+  });
+
+  it("rejects an empty canonical environment key as a missing credential", async () => {
+    const { log } = collectingLogger();
+    const got = await withEnv("", () =>
+      resolveApiKey(ctxWith(undefined), "agentproxy", undefined, log)
+    );
+    assert.deepEqual(got, { key: "", origin: "missing" });
+  });
+
   it("reports no key rather than pretending an empty one works", async () => {
     const { log, warnings } = collectingLogger();
     const got = await withEnv(undefined, () =>
