@@ -7,7 +7,13 @@ import {
   hasManagementPasswordConfigured,
   hashManagementPassword,
 } from "@/lib/auth/managementPassword";
-import { consumeBootstrapToken, peekBootstrapToken } from "@/lib/auth/bootstrapToken";
+import {
+  claimBootstrapToken,
+  commitBootstrapTokenClaim,
+  consumeBootstrapToken,
+  peekBootstrapToken,
+  releaseBootstrapTokenClaim,
+} from "@/lib/auth/bootstrapToken";
 import { hasConfiguredOidc, isAuthenticated } from "@/shared/utils/apiAuth";
 import { AUTHZ_HEADER_PEER_LOCALITY, BOOTSTRAP_TOKEN_HEADER } from "@/server/authz/headers";
 import { getNodeRuntimeSupport } from "@/shared/utils/nodeRuntimeSupport.ts";
@@ -90,17 +96,18 @@ export async function GET() {
  */
 export async function POST(request: Request) {
   const settings = await getSettings();
+  let requiresBootstrapTokenClaim = false;
+  let bootstrapTokenClaim: ReturnType<typeof claimBootstrapToken> = null;
   if (isBootstrapSecurityWindow(settings)) {
     const peerLocality = request.headers.get(AUTHZ_HEADER_PEER_LOCALITY);
     // In production this header is stripped from client input and re-stamped by
     // the authz pipeline from the authenticated TCP-peer stamp. Reject any
     // explicitly non-loopback verdict before parsing or persisting the body.
-    if (
-      peerLocality &&
-      peerLocality !== "loopback" &&
-      !peekBootstrapToken(request.headers.get(BOOTSTRAP_TOKEN_HEADER))
-    ) {
-      return NextResponse.json({ error: "Local bootstrap required" }, { status: 403 });
+    if (peerLocality && peerLocality !== "loopback") {
+      if (!peekBootstrapToken(request.headers.get(BOOTSTRAP_TOKEN_HEADER))) {
+        return NextResponse.json({ error: "Local bootstrap required" }, { status: 403 });
+      }
+      requiresBootstrapTokenClaim = true;
     }
   } else if (!(await isAuthenticated(request))) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -140,13 +147,28 @@ export async function POST(request: Request) {
       updates.password = hashedPassword;
     }
 
+    const bootstrapCandidate = request.headers.get(BOOTSTRAP_TOKEN_HEADER);
+    if (requiresBootstrapTokenClaim) {
+      bootstrapTokenClaim = claimBootstrapToken(bootstrapCandidate);
+      if (!bootstrapTokenClaim) {
+        return NextResponse.json({ error: "Local bootstrap required" }, { status: 403 });
+      }
+    }
+
     await updateSettings(updates);
-    // #14296: one-shot — a Docker/NAT-forwarded operator that authenticated
-    // this write via the bootstrap token cannot replay it for a second write.
-    // A no-op when the header is absent or stale (never matches).
-    consumeBootstrapToken(request.headers.get(BOOTSTRAP_TOKEN_HEADER));
+    if (bootstrapTokenClaim) {
+      if (!commitBootstrapTokenClaim(bootstrapTokenClaim)) {
+        throw new Error("Bootstrap token claim was lost before commit");
+      }
+      bootstrapTokenClaim = null;
+    } else {
+      // Loopback bootstrap does not need the token for authorization, but preserve
+      // the existing one-shot behavior when a valid token happens to be supplied.
+      consumeBootstrapToken(bootstrapCandidate);
+    }
     return NextResponse.json({ success: true });
   } catch (error) {
+    if (bootstrapTokenClaim) releaseBootstrapTokenClaim(bootstrapTokenClaim);
     console.error("[API] Error updating require-login settings:", error);
     return NextResponse.json(
       { error: error instanceof Error ? error.message : "Failed to update settings" },

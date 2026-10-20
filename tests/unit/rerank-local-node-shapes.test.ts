@@ -26,7 +26,7 @@ const { POST } = await import("../../src/app/api/v1/rerank/route.ts");
 const DOCS = ["a cat is a small animal", "the stock market fell", { text: "cats purr" }];
 
 test.describe("buildLocalRerankRequestBody", () => {
-  test("sends both the Cohere/OpenAI and the TEI spellings", () => {
+  test("builds strict Cohere/OpenAI and TEI request bodies without cross-dialect fields", () => {
     const body = buildLocalRerankRequestBody({
       model: "bge-reranker-v2-m3",
       query: "what is a cat",
@@ -37,10 +37,25 @@ test.describe("buildLocalRerankRequestBody", () => {
     assert.equal(body.model, "bge-reranker-v2-m3");
     assert.equal(body.query, "what is a cat");
     assert.deepEqual(body.documents, DOCS);
-    assert.deepEqual(body.texts, ["a cat is a small animal", "the stock market fell", "cats purr"]);
+    assert.equal("texts" in body, false);
     assert.equal(body.top_n, 2);
     assert.equal(body.return_documents, false);
-    assert.equal(body.return_text, false);
+    assert.equal("return_text" in body, false);
+
+    const tei = buildLocalRerankRequestBody(
+      {
+        model: "bge-reranker-v2-m3",
+        query: "what is a cat",
+        documents: DOCS,
+        top_n: 2,
+        return_documents: false,
+      },
+      "tei"
+    );
+    assert.equal("documents" in tei, false);
+    assert.deepEqual(tei.texts, ["a cat is a small animal", "the stock market fell", "cats purr"]);
+    assert.equal("return_documents" in tei, false);
+    assert.equal(tei.return_text, false);
   });
 
   test("defaults top_n to the document count and return_documents to false (Cohere default)", () => {
@@ -50,7 +65,7 @@ test.describe("buildLocalRerankRequestBody", () => {
     const body = buildLocalRerankRequestBody({ model: "m", query: "q", documents: DOCS });
     assert.equal(body.top_n, 3);
     assert.equal(body.return_documents, false);
-    assert.equal(body.return_text, false);
+    assert.equal("return_text" in body, false);
     const explicit = buildLocalRerankRequestBody({
       model: "m",
       query: "q",
@@ -58,7 +73,7 @@ test.describe("buildLocalRerankRequestBody", () => {
       return_documents: true,
     });
     assert.equal(explicit.return_documents, true);
-    assert.equal(explicit.return_text, true);
+    assert.equal("return_text" in explicit, false);
   });
 
   test("documentText flattens strings, {text} objects, and other values", () => {
@@ -219,9 +234,12 @@ test.describe("POST /v1/rerank against a TEI-shaped local node", () => {
       if (String(url).endsWith("/v1/rerank")) {
         return new Response("Not Found", { status: 404 });
       }
-      // TEI: requires `texts`, answers a bare array sorted by score, `text` when asked.
-      if (!Array.isArray(body.texts)) {
-        return new Response(JSON.stringify({ error: "missing field `texts`" }), { status: 422 });
+      // Strict TEI: rejects Cohere-only fields, then accepts the one bounded
+      // alternate-shape retry.
+      if ("documents" in body || !Array.isArray(body.texts)) {
+        return new Response(JSON.stringify({ error: "unknown field `documents`" }), {
+          status: 422,
+        });
       }
       return new Response(
         JSON.stringify([
@@ -254,12 +272,74 @@ test.describe("POST /v1/rerank against a TEI-shaped local node", () => {
     assert.deepEqual(data, { results: [{ index: 0, relevance_score: 0.9875887 }] });
     assert.deepEqual(
       calls.map((c) => c.url),
-      ["http://127.0.0.1:8081/v1/rerank", "http://127.0.0.1:8081/rerank"]
+      [
+        "http://127.0.0.1:8081/v1/rerank",
+        "http://127.0.0.1:8081/rerank",
+        "http://127.0.0.1:8081/rerank",
+      ]
     );
-    assert.deepEqual(calls[1].body.texts, ["a cat is a small animal", "the stock market fell"]);
     assert.deepEqual(calls[1].body.documents, ["a cat is a small animal", "the stock market fell"]);
-    assert.equal(calls[1].body.return_text, false);
-    assert.equal(calls[1].body.model, "bge-reranker-v2-m3");
+    assert.equal("texts" in calls[1].body, false);
+    assert.deepEqual(calls[2].body.texts, ["a cat is a small animal", "the stock market fell"]);
+    assert.equal("documents" in calls[2].body, false);
+    assert.equal(calls[2].body.return_text, false);
+    assert.equal("model" in calls[2].body, false);
+    assert.equal("top_n" in calls[2].body, false);
+  });
+
+  test("strict Cohere server never receives TEI-only fields", async () => {
+    let seen: Record<string, unknown> | undefined;
+    globalThis.fetch = async (_url: string | URL | Request, init?: RequestInit) => {
+      seen = JSON.parse(String(init?.body || "{}"));
+      if ("texts" in seen || "return_text" in seen) {
+        return new Response(JSON.stringify({ error: "unknown field" }), { status: 400 });
+      }
+      return Response.json({ results: [{ index: 0, relevance_score: 0.9 }] });
+    };
+
+    const res = await POST(
+      new Request("http://localhost/v1/rerank", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({
+          model: "tei/bge-reranker-v2-m3",
+          query: "cat",
+          documents: ["cat"],
+        }),
+      }),
+      {}
+    );
+    assert.equal(res.status, 200);
+    assert.ok(seen);
+    assert.equal("texts" in seen, false);
+    assert.equal("return_text" in seen, false);
+  });
+
+  test("semantic 400 errors do not trigger an alternate-dialect retry", async () => {
+    let calls = 0;
+    globalThis.fetch = async () => {
+      calls += 1;
+      return new Response(JSON.stringify({ error: "model does not support this query" }), {
+        status: 400,
+        headers: { "content-type": "application/json" },
+      });
+    };
+
+    const res = await POST(
+      new Request("http://localhost/v1/rerank", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({
+          model: "tei/bge-reranker-v2-m3",
+          query: "cat",
+          documents: ["cat"],
+        }),
+      }),
+      {}
+    );
+
+    assert.equal(res.status, 400);
+    assert.equal(calls, 1, "semantic errors must not be amplified into a second inference request");
   });
 
   test("a `score`-only gateway on /v1/rerank yields relevance_score for clients", async () => {

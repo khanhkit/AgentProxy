@@ -2,10 +2,14 @@ import { z } from "zod";
 import { updateServiceField } from "@/lib/db/versionManager";
 import { createErrorResponse } from "@/lib/api/errorResponse";
 import { sanitizeErrorMessage } from "@agentproxy/open-sse/utils/error";
+import { requireManagementAuth } from "@/lib/api/requireManagementAuth";
 
 const BodySchema = z.object({ enabled: z.boolean() });
 
 export async function POST(request: Request): Promise<Response> {
+  const authError = await requireManagementAuth(request, { alwaysRequireAuth: true });
+  if (authError) return authError;
+
   let body: unknown;
   try {
     body = await request.json();

@@ -1,10 +1,14 @@
 import { getSupervisor } from "@/lib/services/registry";
 import { createErrorResponse } from "@/lib/api/errorResponse";
 import { sanitizeErrorMessage } from "@agentproxy/open-sse/utils/error";
+import { requireManagementAuth } from "@/lib/api/requireManagementAuth";
 
 const TOOL = "openwa";
 
-export async function POST(): Promise<Response> {
+export async function POST(request: Request): Promise<Response> {
+  const authError = await requireManagementAuth(request, { alwaysRequireAuth: true });
+  if (authError) return authError;
+
   try {
     const sup = getSupervisor(TOOL);
     if (!sup) {

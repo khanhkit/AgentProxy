@@ -7,8 +7,12 @@ import {
 } from "@/lib/services/installers/openwa";
 import { createErrorResponse } from "@/lib/api/errorResponse";
 import { sanitizeErrorMessage } from "@agentproxy/open-sse/utils/error";
+import { requireManagementAuth } from "@/lib/api/requireManagementAuth";
 
-export async function POST(): Promise<Response> {
+export async function POST(request: Request): Promise<Response> {
+  const authError = await requireManagementAuth(request, { alwaysRequireAuth: true });
+  if (authError) return authError;
+
   try {
     const [installed, latest] = await Promise.all([getInstalledVersion(), getLatestVersion()]);
 

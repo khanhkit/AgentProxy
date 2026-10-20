@@ -4,7 +4,12 @@ import { handleChat } from "@/sse/handlers/chat";
 import { generateRequestId } from "@/shared/utils/requestId";
 import { resolveIncomingCorrelationId } from "@/shared/utils/correlationPreserve.ts";
 import { errorResponse } from "@agentproxy/open-sse/utils/error.ts";
-import { handleSelfHostedCompletions } from "@agentproxy/open-sse/services/selfHostedEntry.ts";
+import {
+  CONFIG_ENV as SELF_HOSTED_CONFIG_ENV,
+  CONFIG_FILE_ENV as SELF_HOSTED_CONFIG_FILE_ENV,
+  handleSelfHostedCompletions,
+} from "@agentproxy/open-sse/services/selfHostedEntry.ts";
+import { enforceApiKeyPolicy } from "@/shared/utils/apiKeyPolicy";
 import { initTranslators } from "@agentproxy/open-sse/translator/index.ts";
 import { createInjectionGuard } from "@/middleware/promptInjectionGuard";
 import { acceptHeaderForcesStream } from "@agentproxy/open-sse/utils/aiSdkCompat.ts";
@@ -60,6 +65,20 @@ function ensureInitialized() {
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return value !== null && typeof value === "object" && !Array.isArray(value);
+}
+
+export async function enforceSelfHostedPolicyOrReject(
+  request: Request,
+  requestedModel: string | null,
+  policyFn: typeof enforceApiKeyPolicy = enforceApiKeyPolicy
+): Promise<Response | null> {
+  try {
+    const policy = await policyFn(request, requestedModel);
+    return policy.rejection ?? null;
+  } catch (error) {
+    console.error("[SECURITY] Self-hosted API-key policy unavailable:", error);
+    return errorResponse(503, "API key policy unavailable");
+  }
 }
 
 // Minimal request-shape validation (Rule #7 / T06 gate). This is the hottest path in the
@@ -168,28 +187,42 @@ export async function POST(request) {
             );
           }
 
-        const { blocked, result } = injectionGuard(parsedBody);
-        if (blocked) {
-          return finishAdmission(
-            new Response(
-              JSON.stringify({
-                error: {
-                  message: "Request blocked: potential prompt injection detected",
-                  type: "injection_detected",
-                  code: "SECURITY_001",
-                  detections: result.detections.length,
-                },
-              }),
-              { status: 400, headers: { ...CORS_HEADERS, "Content-Type": "application/json" } }
-            )
-          );
-        }
+          const { blocked, result } = injectionGuard(parsedBody);
+          if (blocked) {
+            return finishAdmission(
+              new Response(
+                JSON.stringify({
+                  error: {
+                    message: "Request blocked: potential prompt injection detected",
+                    type: "injection_detected",
+                    code: "SECURITY_001",
+                    detections: result.detections.length,
+                  },
+                }),
+                { status: 400, headers: { ...CORS_HEADERS, "Content-Type": "application/json" } }
+              )
+            );
+          }
 
           // Self-hosted unified entry (D4 — RIC-738): when a provider config is
           // present, divert BEFORE the cloud-only model retirement/alias checks so
           // self-hosted model ids (`local/llama3`, `ollama/qwen2`, ...) never trip
           // cloud-peer 410s or alias rewrites. Config-absent requests proceed to the
           // normal cloud pipeline unchanged.
+          const selfHostedConfigured = Boolean(
+            process.env[SELF_HOSTED_CONFIG_ENV] || process.env[SELF_HOSTED_CONFIG_FILE_ENV]
+          );
+          if (selfHostedConfigured) {
+            const requestedModel = typeof parsedBody.model === "string" ? parsedBody.model : null;
+            const selfHostedPolicyRejection = await enforceSelfHostedPolicyOrReject(
+              request,
+              requestedModel
+            );
+            if (selfHostedPolicyRejection) {
+              return finishAdmission(selfHostedPolicyRejection);
+            }
+          }
+
           const selfHostedResponse = await handleSelfHostedCompletions(request, parsedBody);
           if (selfHostedResponse) {
             return finishAdmission(selfHostedResponse);
@@ -244,7 +277,6 @@ export async function POST(request) {
             /* swallow — fall through with original model */
           });
         }
-
       }
     } catch (error) {
       console.error("[SECURITY] Prompt injection guard failed:", error);

@@ -31,6 +31,12 @@ import { randomBytes, timingSafeEqual } from "node:crypto";
 let currentToken: string | null = null;
 let announced = false;
 
+export interface BootstrapTokenClaim {
+  readonly kind: "bootstrap-token-claim";
+}
+
+let activeClaim: BootstrapTokenClaim | null = null;
+
 function generateToken(): string {
   return randomBytes(24).toString("base64url");
 }
@@ -80,8 +86,32 @@ export function peekBootstrapToken(candidate: string | null | undefined): boolea
  * Route handlers call this once, after a bootstrap write has actually
  * succeeded, so the token cannot be replayed for a second write.
  */
+export function claimBootstrapToken(
+  candidate: string | null | undefined
+): BootstrapTokenClaim | null {
+  if (activeClaim || !peekBootstrapToken(candidate)) return null;
+  activeClaim = Object.freeze({ kind: "bootstrap-token-claim" });
+  return activeClaim;
+}
+
+/** Release an in-flight claim after persistence fails so the operator can retry. */
+export function releaseBootstrapTokenClaim(claim: BootstrapTokenClaim): boolean {
+  if (activeClaim !== claim) return false;
+  activeClaim = null;
+  return true;
+}
+
+/** Commit an in-flight claim only after the guarded bootstrap write succeeds. */
+export function commitBootstrapTokenClaim(claim: BootstrapTokenClaim): boolean {
+  if (activeClaim !== claim || !currentToken) return false;
+  currentToken = null;
+  activeClaim = null;
+  announced = false;
+  return true;
+}
+
 export function consumeBootstrapToken(candidate: string | null | undefined): boolean {
-  if (!peekBootstrapToken(candidate)) return false;
+  if (activeClaim || !peekBootstrapToken(candidate)) return false;
   currentToken = null;
   announced = false;
   return true;
@@ -90,5 +120,6 @@ export function consumeBootstrapToken(candidate: string | null | undefined): boo
 /** Test helper — resets the module singleton between test cases. */
 export function __resetBootstrapTokenForTest(): void {
   currentToken = null;
+  activeClaim = null;
   announced = false;
 }

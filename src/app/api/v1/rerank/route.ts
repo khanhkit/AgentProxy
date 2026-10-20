@@ -38,6 +38,17 @@ export async function OPTIONS() {
   });
 }
 
+async function isLocalRerankSchemaValidationResponse(response: Response): Promise<boolean> {
+  if (response.status !== 400 && response.status !== 422) return false;
+  const text = await response
+    .clone()
+    .text()
+    .catch(() => "");
+  return /(?:unknown|unrecognized|unexpected|extra)\s+(?:field|fields|input)|field\s+required|validation\s+error|"type"\s*:\s*"(?:missing|extra_forbidden)"/i.test(
+    text
+  );
+}
+
 /**
  * POST /v1/rerank - Cohere-compatible rerank endpoint
  *
@@ -181,37 +192,43 @@ async function postHandler(request, _context) {
 
       const token = credentials?.apiKey || credentials?.accessToken;
       const startTime = Date.now();
-      const upstreamBody = JSON.stringify(
-        buildLocalRerankRequestBody({
-          model: localModel,
-          query: body.query,
-          documents: body.documents,
-          top_n: body.top_n as number | undefined,
-          return_documents: body.return_documents as boolean | undefined,
-        })
-      );
-      const upstreamInit: RequestInit = {
+      const rerankInput = {
+        model: localModel,
+        query: body.query,
+        documents: body.documents,
+        top_n: body.top_n as number | undefined,
+        return_documents: body.return_documents as boolean | undefined,
+      };
+      const makeUpstreamInit = (dialect: "cohere" | "tei"): RequestInit => ({
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: upstreamBody,
-      };
+        body: JSON.stringify(buildLocalRerankRequestBody(rerankInput, dialect)),
+      });
       try {
-        let res = await fetch(localProvider.baseUrl, upstreamInit);
+        let activeUrl = localProvider.baseUrl;
+        let res = await fetch(activeUrl, makeUpstreamInit("cohere"));
 
-        // Some local providers (e.g. Infinity, TEI) mount at /rerank rather than /v1/rerank
+        // Some local providers (e.g. Infinity, TEI) mount at /rerank rather than /v1/rerank.
         if (res.status === 404 && localProvider.baseUrl.endsWith("/v1/rerank")) {
           const fallbackUrl = localProvider.baseUrl.replace(/\/v1\/rerank$/, "/rerank");
           try {
-            const fallbackRes = await fetch(fallbackUrl, upstreamInit);
+            const fallbackRes = await fetch(fallbackUrl, makeUpstreamInit("cohere"));
             if (fallbackRes.ok || fallbackRes.status !== 404) {
+              activeUrl = fallbackUrl;
               res = fallbackRes;
             }
           } catch {
             // retain original 404 response if fallback fetch fails
           }
+        }
+
+        // Strict servers can reject unknown request fields. Retry exactly once with
+        // TEI spellings only when the response indicates request-schema validation.
+        if (await isLocalRerankSchemaValidationResponse(res)) {
+          res = await fetch(activeUrl, makeUpstreamInit("tei"));
         }
 
         if (!res.ok) {
