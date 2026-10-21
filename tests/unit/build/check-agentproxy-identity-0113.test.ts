@@ -100,3 +100,10 @@ test("AP-ISS-0171 OCR regression: cache header fallback does not repeat canonica
   assert.doesNotMatch(source, /getHeader\(headers, `x-agentproxy-cache-\$\{suffix\}`\)\s*\?\?\s*getHeader\(headers, `x-agentproxy-cache-\$\{suffix\}`\)/u);
   assert.doesNotMatch(source, /getHeader\(headers, "x-agentproxy-no-cache"\)\s*\?\?\s*getHeader\(headers, "x-agentproxy-no-cache"\)/u);
 });
+
+
+test("AP-ISS-0171 OCR regression: OpenAPI never advertises a fake canonical legacy alias", () => {
+  const source = readFileSync("docs/openapi.yaml", "utf8");
+  assert.doesNotMatch(source, /The legacy x-agentproxy-config-api-key header remains a migration alias\./u);
+  assert.match(source, /x-agentproxy-config-api-key/u);
+});
