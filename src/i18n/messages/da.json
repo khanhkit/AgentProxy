@@ -5995,7 +5995,7 @@
     "zedNoCredentials": "Ingen Zed-legitimationsoplysninger fundet i nøgleringen",
     "zedUnsupportedCredentials": "Fandt {count} legitimationsoplysning(er) i nøgleringen, men ingen matchede understøttede udbydere",
     "zedManualTitle": "Manuel token-import",
-    "zedManualDescription": "Brug dette, når AgentProxy kører i Docker, eller når nøgleringen ikke er tilgængelig. Indsæt den API-nøgle, som Zed gemte under <path>~/.config/zed/settings.json</path>, or kopier den fra Zed AI-indstillingspanelet.",
+    "zedManualDescription": "Brug dette, når AgentProxy kører i Docker, eller når nøgleringen ikke er tilgængelig. Indsæt den API-nøgle, som Zed gemte under <path>~/.config/zed/settings.json</path>, eller kopier den fra Zed AI-indstillingspanelet.",
     "zedPasteApiKey": "Indsæt API-nøgle…",
     "zedSaving": "Gemmer…",
     "zedImportAction": "Importer",
@@ -13702,7 +13702,7 @@
     }
   },
   "featureFlagCapabilityFilterEnabledDescription": "Afvis anmodninger før afsendelse, når målmodellen mangler de nødvendige funktioner (vision, værktøjer, struktureret output, kontekstvindue). Beskytter direkte anmodninger fra en enkelt udbyder, der omgår kombinationslagets kompatibilitetsfilter.",
-  "featureFlagDisableContextWindowChecksDescription": "Spring AgentProxy's lokale kontrol af kontekstvindue og maksimalt antal inputtokens over for direkte anmodninger til en enkelt model. Opstrømsudbydere håndhæver stadig deres faktiske grænser. Promptkomprimering og grænser for outputtokens forbliver aktive.",
+  "featureFlagDisableContextWindowChecksDescription": "Spring AgentProxys lokale kontrol af kontekstvindue og maksimalt antal inputtokens over for direkte anmodninger til en enkelt model. Opstrømsudbydere håndhæver stadig deres faktiske grænser. Promptkomprimering og grænser for outputtokens forbliver aktive.",
   "publicSystem": {
     "notFound": {
       "title": "Siden blev ikke fundet",

@@ -7589,7 +7589,7 @@
     "qdrantEmbeddingModel": "Model de încorporare",
     "qdrantHelpTitle": "Ajutor pentru configurarea rapidă",
     "qdrantHelpQuickTitle": "Configurare rapidă (Qdrant + OpenRouter)",
-    "qdrantHelpStep1": "1. Gazdă: IP/URL Qdrant, Port: 6333, Colecție: agentproxy_memory.",
+    "qdrantHelpStep1": "1. Gazdă: IP/URL Qdrant, Port: 6333, Colecție: agentproxy_memory pentru instalări noi; pentru instalări existente păstrați numele colecției curente (QDRANT_COLLECTION).",
     "qdrantHelpStep2": "2. Dacă utilizați nvidia/llama-nemotron-embed-vl-1b-v2:free, folosiți dimensiunea 2048 pentru colecție.",
     "qdrantHelpStep3": "3. Câmpul modelului: openrouter/nvidia/llama-nemotron-embed-vl-1b-v2:free.",
     "qdrantHelpStep4": "4. Salvați, testați conexiunea, apoi testați căutarea.",

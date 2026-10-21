@@ -123,10 +123,7 @@ function normalizeMessagesForHash(conversation: unknown): Array<{ role: string; 
  * Generate Layer 1 exact hash signature from request parameters.
  */
 function getCacheHeader(headers: unknown, suffix: string): string | null {
-  return (
-    getHeader(headers, `x-agentproxy-cache-${suffix}`) ??
-    getHeader(headers, `x-agentproxy-cache-${suffix}`)
-  );
+  return getHeader(headers, `x-agentproxy-cache-${suffix}`);
 }
 
 export function generateDirectHash(
@@ -205,8 +202,7 @@ export class SemanticCacheManager {
   }
 
   private isBypassed(headers: unknown, body: Record<string, unknown>): boolean {
-    const noCacheHeader =
-      getHeader(headers, "x-agentproxy-no-cache") ?? getHeader(headers, "x-agentproxy-no-cache");
+    const noCacheHeader = getHeader(headers, "x-agentproxy-no-cache");
     if (noCacheHeader && noCacheHeader.toLowerCase() === "true") {
       return true;
     }

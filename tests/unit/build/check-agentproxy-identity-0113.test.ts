@@ -79,3 +79,24 @@ test("AP-ISS-0171 package scripts expose one canonical verification command", ()
 
   assert.equal(occurrences, 1, "identity cleanup must not collapse a legacy alias into a duplicate key");
 });
+
+
+test("AP-ISS-0171 OCR regression: canonical CLI env keys are unique", () => {
+  const source = readFileSync("bin/cli/commands/env.mjs", "utf8");
+  const arrayBody = source.match(/const AGENTPROXY_ENV_VARS = \[([\s\S]*?)\];/u)?.[1];
+  assert.ok(arrayBody, "CLI canonical env list must exist");
+  const entries = [...arrayBody.matchAll(/"([A-Z][A-Z0-9_]*)"/gu)].map((match) => match[1]);
+  assert.equal(new Set(entries).size, entries.length, "env show must not iterate duplicate keys");
+});
+
+test("AP-ISS-0171 OCR regression: Japanese UI must use AgentProxy branding", () => {
+  const messages = readFileSync("src/i18n/messages/ja.json", "utf8");
+  const legacyBrand = ["オムニ", "ルート"].join("");
+  assert.equal(messages.includes(legacyBrand), false, "old brand must not render in Japanese UI");
+});
+
+test("AP-ISS-0171 OCR regression: cache header fallback does not repeat canonical lookup", () => {
+  const source = readFileSync("open-sse/services/cache/semanticCacheManager.ts", "utf8");
+  assert.doesNotMatch(source, /getHeader\(headers, `x-agentproxy-cache-\$\{suffix\}`\)\s*\?\?\s*getHeader\(headers, `x-agentproxy-cache-\$\{suffix\}`\)/u);
+  assert.doesNotMatch(source, /getHeader\(headers, "x-agentproxy-no-cache"\)\s*\?\?\s*getHeader\(headers, "x-agentproxy-no-cache"\)/u);
+});

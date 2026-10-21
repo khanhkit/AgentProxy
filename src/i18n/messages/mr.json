@@ -7627,7 +7627,7 @@
     "qdrantEmbeddingModel": "एम्बेडिंग मॉडेल",
     "qdrantHelpTitle": "द्रुत सेटअप मदत",
     "qdrantHelpQuickTitle": "द्रुत सेटअप (Qdrant + OpenRouter)",
-    "qdrantHelpStep1": "1. होस्ट: Qdrant IP/URL, पोर्ट: 6333, कलेक्शन: agentproxy_memory.",
+    "qdrantHelpStep1": "1. होस्ट: Qdrant IP/URL, पोर्ट: 6333, कलेक्शन: नवीन स्थापनेसाठी agentproxy_memory; विद्यमान स्थापनेसाठी मूळ कलेक्शनचे नाव जसेच्या तसे ठेवा (QDRANT_COLLECTION).",
     "qdrantHelpStep2": "2. nvidia/llama-nemotron-embed-vl-1b-v2:free वापरत असल्यास, कलेक्शनचे डायमेन्शन 2048 ठेवा.",
     "qdrantHelpStep3": "3. मॉडेल फील्ड: openrouter/nvidia/llama-nemotron-embed-vl-1b-v2:free.",
     "qdrantHelpStep4": "4. सेव्ह करा, कनेक्शन तपासा आणि नंतर शोध तपासा.",
