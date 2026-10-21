@@ -251,6 +251,8 @@ for setting the explicit public URL when OAuth or generated browser links need o
 `AGENTPROXY_TRUST_PROXY` if AgentProxy is not directly reachable by clients and your proxy
 strips/rebuilds incoming forwarded headers.
 
+For a private-LAN reverse proxy forwarding through the API bridge, also set `AGENTPROXY_TRUSTED_PROXY_PEERS` to the comma-separated literal IP addresses of your trusted proxy peers. The bridge ignores forwarding headers from all other LAN clients, even with `AGENTPROXY_TRUST_PROXY=private`.
+
 ### 3.3 Enable and Test
 
 ```bash
@@ -421,7 +423,7 @@ See also [TUNNELS_GUIDE.md](./TUNNELS_GUIDE.md) for the in-repo Cloudflare Tunne
 | 22    | SSH         | Public (with fail2ban)     |
 | 80    | nginx HTTP  | Redirect → HTTPS           |
 | 443   | nginx HTTPS | Via Cloudflare Proxy       |
-| 20128 | AgentProxy   | Localhost only (via nginx) |
+| 20128 | AgentProxy  | Localhost only (via nginx) |
 
 ## Low-Memory / Small VPS Optimization
 

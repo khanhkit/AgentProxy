@@ -280,7 +280,7 @@ export async function embed(
       return {
         source: "remote",
         model: resolution.model,
-        reason: "request_failed",
+        reason: "invalid_config",
         message:
           error instanceof Error
             ? error.message
@@ -318,6 +318,13 @@ export async function embedWithRetry(
   for (let attempt = 1; attempt <= Math.max(1, maxAttempts); attempt++) {
     const result = await embedFn(text, settings);
     if ("vector" in result) return result;
+    if (
+      result.reason === "no_key" ||
+      result.reason === "unknown" ||
+      result.reason === "invalid_config"
+    ) {
+      return result;
+    }
     last = result;
   }
   return last as EmbeddingResult | EmbeddingError;

@@ -440,11 +440,16 @@ test("runSingleModelTest preserves trusted local limiter HTTP statuses", async (
   }
 });
 
-test("non-chat generation models are skipped with 422 before dispatch", async () => {
+test("non-chat generation models are skipped without reporting a connection failure", async () => {
   const { addCustomModel } = await import("@/lib/db/models");
-  await addCustomModel("openai", "image-only-ap0130", "Image only", "manual", "images-generations", [
-    "images",
-  ]);
+  await addCustomModel(
+    "openai",
+    "image-only-ap0130",
+    "Image only",
+    "manual",
+    "images-generations",
+    ["images"]
+  );
 
   const originalFetch = globalThis.fetch;
   let dispatched = false;
@@ -464,8 +469,8 @@ test("non-chat generation models are skipped with 422 before dispatch", async ()
     });
 
     assert.equal(dispatched, false);
-    assert.equal(result.status, "error");
-    assert.equal(result.httpStatus, 422);
+    assert.equal(result.status, "skipped");
+    assert.equal(result.httpStatus, 200);
   } finally {
     globalThis.fetch = originalFetch;
   }

@@ -131,6 +131,15 @@ describe("Semantic Cache", () => {
       assert.equal(isCacheableForRead({ temperature: 0 }, headers), false);
     });
 
+    it("rejects Cache-Control: no-store for reads, including mixed-case directives", () => {
+      for (const header of ["no-store", "private, No-Store", "max-age=0, no-store"]) {
+        assert.equal(
+          isCacheableForRead({ temperature: 0 }, new Headers({ "cache-control": header })),
+          false
+        );
+      }
+    });
+
     it("returns true when no-cache header is absent", () => {
       const headers = new Headers({});
       assert.equal(isCacheableForRead({ temperature: 0 }, headers), true);
@@ -153,6 +162,15 @@ describe("Semantic Cache", () => {
     it("returns false when no-cache header is set", () => {
       const headers = new Headers({ "x-agentproxy-no-cache": "true" });
       assert.equal(isCacheableForWrite({ temperature: 0 }, headers), false);
+    });
+
+    it("rejects Cache-Control: no-store for writes", () => {
+      for (const header of ["no-store", "private, No-Store", "max-age=0, no-store"]) {
+        assert.equal(
+          isCacheableForWrite({ temperature: 0 }, new Headers({ "cache-control": header })),
+          false
+        );
+      }
     });
   });
 });

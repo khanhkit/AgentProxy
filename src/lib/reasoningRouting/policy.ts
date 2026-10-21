@@ -557,6 +557,10 @@ export function attachReasoningRuleDirective(
   return body;
 }
 
+function dropIncompatibleCarrier(body: JsonRecord, carrier: "reasoning" | "output_config"): void {
+  delete body[carrier];
+}
+
 export function applyReasoningRuleDirective(
   bodyInput: unknown,
   targetFormat?: "openai-responses" | "claude"
@@ -571,6 +575,8 @@ export function applyReasoningRuleDirective(
   if (effortMode === "force" && targetEffort === "none") clearReasoning(body);
   else if ((effortMode === "force" || effortMode === "default") && targetEffort) {
     if (effortMode === "force") clearDiscreteReasoning(body);
+    if (targetFormat === "claude") dropIncompatibleCarrier(body, "reasoning");
+    if (targetFormat === "openai-responses") dropIncompatibleCarrier(body, "output_config");
     if (!targetFormat) body.reasoning_effort = targetEffort;
     if (targetFormat !== "claude")
       body.reasoning = { ...asRecord(body.reasoning), effort: targetEffort };

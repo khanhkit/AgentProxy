@@ -121,7 +121,11 @@ function nodeListing(
 ): EmbeddingProviderListing | null {
   const apiType = str(node.apiType).trim().toLowerCase();
   const nodeId = str(node.id);
-  const rows = mergeNodeRows(apiType, syncedByNodeId[nodeId], customByNodeId[nodeId]);
+  const rows = mergeNodeRows(
+    apiType,
+    syncedByNodeId[prefix] ?? syncedByNodeId[nodeId],
+    customByNodeId[prefix] ?? customByNodeId[nodeId]
+  );
   const typed = [...rows.values()].filter((row) => row.endpoints.includes(modality));
   if (typed.length === 0 && !IMPLICIT_API_TYPES[modality].has(apiType)) return null;
   return {

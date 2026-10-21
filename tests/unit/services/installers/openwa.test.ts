@@ -93,6 +93,21 @@ test("install creates package.json structure", async () => {
   assert.ok(result.durationMs >= 0);
 });
 
+test("install persists the configured service port rather than the default", async () => {
+  const original = process.env.OPENWA_SERVICE_PORT;
+  process.env.OPENWA_SERVICE_PORT = "8462";
+  try {
+    await install(MOCK_OPENWA_VERSION);
+    const { getVersionManagerTool } = await import("../../../../src/lib/db/versionManager.ts");
+    const row = await getVersionManagerTool("openwa");
+    assert.equal(row?.port, 8462);
+  } finally {
+    if (original === undefined) delete process.env.OPENWA_SERVICE_PORT;
+    else process.env.OPENWA_SERVICE_PORT = original;
+    await install(MOCK_OPENWA_VERSION);
+  }
+});
+
 test("install captures real version from node_modules/@open-wa/wa-automate/package.json", async () => {
   const ver = await getInstalledVersion();
   assert.equal(ver, MOCK_OPENWA_VERSION, "should read version from installed package");

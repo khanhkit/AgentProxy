@@ -18,7 +18,11 @@ const { stampPeerIp, PEER_IP_HEADER, VIA_PROXY_HEADER } =
 const { classifyStampedPeerLocality } = await import("../../src/server/authz/peerStamp.ts");
 
 const STAMP_TOKEN = "api-bridge-client-address-token";
-const ENV_KEYS = ["AGENTPROXY_PEER_STAMP_TOKEN", "AGENTPROXY_TRUST_PROXY"];
+const ENV_KEYS = [
+  "AGENTPROXY_PEER_STAMP_TOKEN",
+  "AGENTPROXY_TRUST_PROXY",
+  "AGENTPROXY_TRUSTED_PROXY_PEERS",
+];
 const originalEnv = Object.fromEntries(ENV_KEYS.map((key) => [key, process.env[key]]));
 
 function restoreEnv() {
@@ -31,6 +35,7 @@ function restoreEnv() {
 test.beforeEach(() => {
   restoreEnv();
   delete process.env.AGENTPROXY_TRUST_PROXY;
+  delete process.env.AGENTPROXY_TRUSTED_PROXY_PEERS;
 });
 
 test.after(restoreEnv);
@@ -128,8 +133,44 @@ test("a loopback client keeps every forwarding header it sent", () => {
   assert.deepEqual({ ...relayed, host: undefined }, { ...sent, host: undefined });
 });
 
+test("private trust mode does not trust an unlisted LAN peer's forwarding headers", () => {
+  process.env.AGENTPROXY_TRUST_PROXY = "private";
+  process.env.AGENTPROXY_TRUSTED_PROXY_PEERS = "10.0.0.7";
+  const relayed = bridge.buildBridgeRequestHeaders(
+    { "x-forwarded-for": "127.0.0.1", "x-real-ip": "127.0.0.1" },
+    "10.0.0.8",
+    20128
+  );
+  assert.equal(relayed["x-forwarded-for"], "10.0.0.8");
+  assert.equal(relayed["x-real-ip"], undefined);
+  const upgrade = bridge.buildBridgeUpgradeHeaderLines(
+    ["Host", "api.example", "X-Forwarded-For", "127.0.0.1"],
+    "10.0.0.8",
+    20128
+  );
+  assert.ok(upgrade.includes("X-Forwarded-For: 10.0.0.8"));
+  assert.ok(
+    !upgrade.some((line) => line.includes("127.0.0.1") && line.startsWith("X-Forwarded-For:"))
+  );
+});
+
+test("private trust mode requires literal proxy IPs, not missing or CIDR wildcard entries", () => {
+  process.env.AGENTPROXY_TRUST_PROXY = "private";
+  for (const value of [undefined, "10.0.0.0/8", "not-an-ip"]) {
+    if (value === undefined) delete process.env.AGENTPROXY_TRUSTED_PROXY_PEERS;
+    else process.env.AGENTPROXY_TRUSTED_PROXY_PEERS = value;
+    const headers = bridge.buildBridgeRequestHeaders(
+      { "x-forwarded-for": "127.0.0.1" },
+      "10.0.0.7",
+      20128
+    );
+    assert.equal(headers["x-forwarded-for"], "10.0.0.7");
+  }
+});
+
 test("with AGENTPROXY_TRUST_PROXY=private a private-LAN proxy keeps its chain and is appended to it", () => {
   process.env.AGENTPROXY_TRUST_PROXY = "private";
+  process.env.AGENTPROXY_TRUSTED_PROXY_PEERS = "172.18.0.5";
   const relayed = bridge.buildBridgeRequestHeaders(
     { "x-forwarded-for": "198.51.100.4", "x-forwarded-proto": "https" },
     "172.18.0.5",
@@ -142,6 +183,7 @@ test("with AGENTPROXY_TRUST_PROXY=private a private-LAN proxy keeps its chain an
 
 test("a trusted private-LAN proxy that sends no chain is still reported by its own address", () => {
   process.env.AGENTPROXY_TRUST_PROXY = "lan";
+  process.env.AGENTPROXY_TRUSTED_PROXY_PEERS = "10.0.0.7";
   const relayed = bridge.buildBridgeRequestHeaders({}, "10.0.0.7", 20128);
   assert.equal(relayed["x-forwarded-for"], "10.0.0.7");
 });
@@ -203,6 +245,7 @@ test("the upgrade headers of a loopback client pass through unchanged", () => {
 
 test("the upgrade headers of a trusted private-LAN proxy carry its chain plus its own address", () => {
   process.env.AGENTPROXY_TRUST_PROXY = "private";
+  process.env.AGENTPROXY_TRUSTED_PROXY_PEERS = "192.168.1.20";
   const lines = bridge.buildBridgeUpgradeHeaderLines(
     ["Host", "api.example", "X-Forwarded-For", "198.51.100.4", "X-Forwarded-For", "203.0.113.3"],
     "192.168.1.20",

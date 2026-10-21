@@ -64,6 +64,28 @@ test("deep probe marks only 502/503 as failover", async () => {
   assert.equal(DEEP_HEALTH_VERDICT_TTL_MS, 30_000);
 });
 
+test("deep probe cancels unread response streams for both healthy and failed status", async () => {
+  for (const status of [200, 503]) {
+    let cancelled = 0;
+    let read = 0;
+    const stream = new ReadableStream<Uint8Array>({
+      pull(controller) {
+        read += 1;
+        controller.enqueue(new Uint8Array([123]));
+      },
+      cancel() {
+        cancelled += 1;
+      },
+    });
+    const verdict = await probeDeepHealth("http://health.example/v1/chat/completions", {
+      fetcher: (async () => new Response(stream, { status })) as typeof fetch,
+    });
+    assert.equal(verdict.status, status);
+    assert.equal(cancelled, 1, "unread response stream must be released");
+    assert.ok(read <= 1, "deep probe must not consume the body");
+  }
+});
+
 test("deep probe posts one-token non-streaming body and optional bearer token", async () => {
   let seenUrl = "";
   let seenInit: RequestInit | undefined;

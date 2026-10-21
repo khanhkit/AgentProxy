@@ -42,6 +42,7 @@ type ServiceEntry = {
   port: number;
   healthPath: string;
   healthIntervalMs: number;
+  healthFailureDuringStartup?: "error" | "tolerate";
   stopTimeoutMs: number;
   logsBufferBytes: number;
   needsApiKey: boolean;
@@ -115,18 +116,14 @@ const SERVICES: ServiceEntry[] = [
     // HealthChecker's FAILURE_THRESHOLD (3, src/lib/services/healthCheck.ts)
     // means the supervisor would otherwise declare "error" ~3×healthIntervalMs
     // after every legitimate start — including a normal, successful one.
-    // healthIntervalMs is set high (vs. the 5s every other service uses) so
-    // that grace period (3×healthIntervalMs, ServiceSupervisor.waitForHealthy)
-    // is generous enough for a human to notice and scan the QR
-    // (~3 minutes) instead of always racing to "error". This is a
-    // ServiceSupervisor framework limitation (no separate "startup grace"
-    // knob distinct from the steady-state poll interval) — a real fix
-    // belongs in ServiceSupervisor/HealthChecker as a follow-up affecting
-    // all 5 services, not scoped here.
+    // OpenWA is explicitly allowed to remain unhealthy while starting so the
+    // QR pairing window is not converted into a terminal service error. Once
+    // it has reached running/healthy state, ordinary health failures are fatal.
     tool: "openwa",
     port: OPENWA_PORT,
     healthPath: "/api-docs/",
     healthIntervalMs: 60_000,
+    healthFailureDuringStartup: "tolerate",
     stopTimeoutMs: 30_000,
     logsBufferBytes: 5_242_880,
     needsApiKey: true,
@@ -177,6 +174,7 @@ export async function bootstrapEmbeddedServices(): Promise<void> {
       spawnArgs: buildSpawnArgsFactory(cfg, apiKey),
       healthUrl: () => `http://127.0.0.1:${cfg.port}${cfg.healthPath}`,
       healthIntervalMs: cfg.healthIntervalMs,
+      healthFailureDuringStartup: cfg.healthFailureDuringStartup,
       stopTimeoutMs: cfg.stopTimeoutMs,
       logsBufferBytes: cfg.logsBufferBytes,
       // #6205: embedded services bind a fixed port — probe before spawning so
