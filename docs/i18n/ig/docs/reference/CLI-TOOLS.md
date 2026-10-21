@@ -51,11 +51,11 @@ AgentProxy na-agba ọsọ (nke mpaghara ma ọ bụ nke dịpụrụ adịpụ)
 ngwaọrụ ahụ n'onwe ya na kọmputa gị:
 
 ```bash
-omniroute setup-codex        omniroute setup-claude       omniroute setup-opencode
-omniroute setup-cline        omniroute setup-kilo         omniroute setup-continue
-omniroute setup-cursor       omniroute setup-roo          omniroute setup-crush
-omniroute setup-goose        omniroute setup-qwen         omniroute setup-aider
-omniroute setup-5dive
+agentproxy setup-codex        agentproxy setup-claude       agentproxy setup-opencode
+agentproxy setup-cline        agentproxy setup-kilo         agentproxy setup-continue
+agentproxy setup-cursor       agentproxy setup-roo          agentproxy setup-crush
+agentproxy setup-goose        agentproxy setup-qwen         agentproxy setup-aider
+agentproxy setup-5dive
 ```
 
 Nke ọ bụla na-anabata `--remote <url> --api-key <key>` (iji hazie ngwaọrụ mpaghara
@@ -67,10 +67,10 @@ achọ mkparịta ụka). `setup-5dive` bụ naanị usoro nhazi na-adịghị e
 root nwere n'elu host nke ìgwè ahụ, ya mere ọ na-amaliteghachi onwe ya site na
 `sudo` ma ọ nweghị mode dịpụrụ adịpụ nke ya. Iji malite CLI ebe e tinyere env
 ziri ezi n'edeghị config ọ bụla, jiri launcher izugbe
-`omniroute run <target>` (claude, codex, aider, goose, opencode, qwen, gemini —
+`agentproxy run <target>` (claude, codex, aider, goose, opencode, qwen, gemini —
 target na alias sitere na `bin/cli/cli-manifest.mjs`); launcher ochie nke
-ngwaọrụ ọ bụla, `omniroute launch` (Claude Code) na `omniroute launch-codex`
-(Codex), ka dị. Gemini CLI bụ naanị maka ịmalite: ọ bụ target nke `omniroute run`
+ngwaọrụ ọ bụla, `agentproxy launch` (Claude Code) na `agentproxy launch-codex`
+(Codex), ka dị. Gemini CLI bụ naanị maka ịmalite: ọ bụ target nke `agentproxy run`
 mana o nweghị usoro `setup-*`/`configure`.
 
 > **Ntụaka zuru ezu:** tebụl bụ isi — ihe iwu ọ bụla na-ede, flag niile,
@@ -83,20 +83,20 @@ Iwu `setup-*` e mere n'ime container AgentProxy na-ede ihe n'ime home nke
 container ahụ n'onwe ya, nke CLI ọ bụla dị na host na-adịghị agụ, nke ga-apụkwa
 mgbe container ahụ kwụsịrị ịdị. AgentProxy na-achọpụta nke ahụ ma jiri `2` pụọ,
 na-enye ntuziaka kama ide ihe. E nwere ụzọ abụọ akwadoro iji gaa n'ihu — wụnye
-CLI na host ma jiri `omniroute connect` jikọọ na container, ma ọ bụ mee bind-mount
+CLI na host ma jiri `agentproxy connect` jikọọ na container, ma ọ bụ mee bind-mount
 nke config dirs ma tọọ `CLI_CONFIG_HOME` (profaịlụ compose `host`). Iwu
-`setup-*` ọ bụla, tinyere `omniroute configure` na `omniroute config set`,
+`setup-*` ọ bụla, tinyere `agentproxy configure` na `agentproxy config set`,
 na-anabata `--allow-container-write` mgbe ihe i bu n'obi n'ezie bụ ịhazi CLI
-nke container ahụ n'onwe ya; `OMNIROUTE_ALLOW_CONTAINER_CONFIG_WRITE=true`
+nke container ahụ n'onwe ya; `AGENTPROXY_ALLOW_CONTAINER_CONFIG_WRITE=true`
 na-emekwa otu ihe ahụ maka sava. Lee
-[Ntuziaka Docker → Ịhazi ngwaọrụ CLI nke host](../guides/DOCKER_GUIDE.md#configuring-host-cli-tools-when-omniroute-runs-in-docker).
+[Ntuziaka Docker → Ịhazi ngwaọrụ CLI nke host](../guides/DOCKER_GUIDE.md#configuring-host-cli-tools-when-agentproxy-runs-in-docker).
 
 **Apply endpoint** nke dashboard (`POST /api/cli-tools/apply`) na-amanyekwa otu
 nchedo ahụ: n'ime container, ide ihe ebe target ya na-abụghị nke e si na host
 mee bind-mount na-aza **`422`** tinyere `containerEphemeralTarget: true`, ederede
 njehie nchekwa yana — maka ngwaọrụ ndị nwere usoro host (claude, codex,
 opencode, cline, kilo, continue) — `hostSetupCommand` (dịka
-`omniroute setup-opencode`) nke a ga-agba na host kama ime ya n'ime container;
+`agentproxy setup-opencode`) nke a ga-agba na host kama ime ya n'ime container;
 ọ dịghị ihe a na-ede. `dryRun: true` ka na-arụ ọrụ na mode container ma na-eweghachi
 ọdịnaya e mepụtara + target path n'emetụghị disk aka, ka i nwee ike ilele ya site
 na dashboard ma tinye ya n'ọrụ na host. Akparamàgwà a bụ nke e mere ụma ma jiri
@@ -131,8 +131,8 @@ isi mmalite na-ekwupụta ya, ule drift na-emekwa ka ha nọgide kwekọọ:
 | ----------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------ |
 | **Nke dị na katalọgụ**  | Na-apụta na katalọgụ dashboard (aha, vendor, docs, ụdị nhazi)       | `src/shared/constants/cliTools.ts` (`CLI_TOOLS`)                   |
 | **Nke a pụrụ ịchọpụta** | Nchọpụta binary/config, nyocha ahụike, ụzọ config                   | `src/shared/services/cliRuntime.ts` (katalọgụ runtime `CLI_TOOLS`) |
-| **Nke a pụrụ ịhazi**    | `omniroute configure <cli>` na-akwado ya (usoro nrụnye dị)          | `bin/cli/cli-manifest.mjs` (`configure: true`)                     |
-| **Nke a pụrụ ibido**    | `omniroute run <target>` na-akwado ya (akọwapụtara ntinye env/args) | `bin/cli/cli-manifest.mjs` (`run: true`)                           |
+| **Nke a pụrụ ịhazi**    | `agentproxy configure <cli>` na-akwado ya (usoro nrụnye dị)          | `bin/cli/cli-manifest.mjs` (`configure: true`)                     |
+| **Nke a pụrụ ibido**    | `agentproxy run <target>` na-akwado ya (akọwapụtara ntinye env/args) | `bin/cli/cli-manifest.mjs` (`run: true`)                           |
 
 `bin/cli/cli-manifest.mjs` bụ manifest mmebe iwu a pụrụ ịrụ ọrụ nke bụ isi maka akụkụ iwu CLI:
 `run`, `configure` na ndị na-emepụta shell-completion niile na-enweta ndepụta
@@ -266,7 +266,7 @@ Ngwaọrụ ọhụrụ nwere `configType: "custom"` nwere ụzọ API ntọala 
 | `POST /api/cli-tools/codewhale-settings`    | CodeWhale (OPENAI_BASE_URL, nke mbụ + mmekọrịta nke ochie `~/.deepseek`) |
 | `POST /api/cli-tools/smelt-settings`        | Smelt                                                                    |
 | `POST /api/cli-tools/pi-settings`           | Onye nnọchi anya ide koodu Pi                                            |
-| `POST /api/cli-tools/grok-build-settings`   | Grok Build (~/.grok/config.toml, `[model.omniroute]`)                    |
+| `POST /api/cli-tools/grok-build-settings`   | Grok Build (~/.grok/config.toml, `[model.agentproxy]`)                    |
 | `POST /api/cli-tools/qwen-settings`         | Qwen Code (`~/.qwen/settings.json` + igodo `.env` pụrụ iche)             |
 
 Ụzọ niile na-eji `sanitizeErrorMessage()` maka nzaghachi njehie (Iwu Siri Ike #12).
@@ -361,7 +361,7 @@ npm install -g kilocode
 # Qwen Code
 npm install -g @qwen-code/qwen-code
 
-# Google Gemini CLI (enwere ike ibido ya site na `omniroute run gemini` → elu /v1beta)
+# Google Gemini CLI (enwere ike ibido ya site na `agentproxy run gemini` → elu /v1beta)
 npm install -g @google/gemini-cli
 
 # Aider
@@ -394,12 +394,12 @@ cargo install smelt  # Dabere na Rust
 ```bash
 # Endpoint Izugbe nke AgentProxy
 export OPENAI_BASE_URL="http://localhost:20128/v1"
-export OPENAI_API_KEY="sk-your-omniroute-key"
+export OPENAI_API_KEY="sk-your-agentproxy-key"
 export ANTHROPIC_BASE_URL="http://localhost:20128"
-export ANTHROPIC_AUTH_TOKEN="sk-your-omniroute-key"
+export ANTHROPIC_AUTH_TOKEN="sk-your-agentproxy-key"
 # Gemini CLI na-agụ GOOGLE_GEMINI_BASE_URL na ROOT (SDK ya na-agbakwụnye /v1beta/... n'onwe ya)
 export GOOGLE_GEMINI_BASE_URL="http://localhost:20128"
-export GEMINI_API_KEY="sk-your-omniroute-key"
+export GEMINI_API_KEY="sk-your-agentproxy-key"
 ```
 
 > Maka **sava dịpụrụ adịpụ**, jiri IP ma ọ bụ domain sava ahụ dochie `localhost:20128`,
@@ -417,7 +417,7 @@ mkdir -p ~/.claude && cat > ~/.claude/settings.json << EOF
 {
   "env": {
     "ANTHROPIC_BASE_URL": "http://localhost:20128",
-    "ANTHROPIC_AUTH_TOKEN": "sk-your-omniroute-key"
+    "ANTHROPIC_AUTH_TOKEN": "sk-your-agentproxy-key"
   }
 }
 EOF
@@ -433,20 +433,20 @@ Jiri mgbọrọgwụ gateway Anthropic ejikọtara ọnụ maka Claude Code. Eti
 
 Codex ọgbara ọhụrụ (v0.137+) na-agụ naanị `~/.codex/config.toml` — `config.yaml`
 ochie bụ nke npm CLI mgbe ochie, a na-eleghara ya anya n'enweghị ọkwa. API
-key ahụ na-anọgide na environment variable `OMNIROUTE_API_KEY` (`env_key`), ọ dịghị mgbe
+key ahụ na-anọgide na environment variable `AGENTPROXY_API_KEY` (`env_key`), ọ dịghị mgbe
 ọ ga-adị n'ime faịlụ ahụ:
 
 ```bash
 mkdir -p ~/.codex && cat > ~/.codex/config.toml << EOF
-model_provider = "omniroute"
+model_provider = "agentproxy"
 
-[model_providers.omniroute]
+[model_providers.agentproxy]
 name                 = "AgentProxy"
 base_url             = "http://localhost:20128/v1"
-env_key              = "OMNIROUTE_API_KEY"
+env_key              = "AGENTPROXY_API_KEY"
 requires_openai_auth = false
 EOF
-export OMNIROUTE_API_KEY="sk-your-omniroute-key"
+export AGENTPROXY_API_KEY="sk-your-agentproxy-key"
 ```
 
 Ntụaka zuru ezu (profiles, `wire_api`, context windows): [CODEX-CLI-CONFIGURATION.md](../guides/CODEX-CLI-CONFIGURATION.md).
@@ -462,12 +462,12 @@ mkdir -p ~/.config/opencode && cat > ~/.config/opencode/opencode.json << EOF
 {
   "\$schema": "https://opencode.ai/config.json",
   "provider": {
-    "omniroute": {
+    "agentproxy": {
       "npm": "@ai-sdk/openai-compatible",
       "name": "AgentProxy",
       "options": {
         "baseURL": "http://localhost:20128/v1",
-        "apiKey": "sk-your-omniroute-key"
+        "apiKey": "sk-your-agentproxy-key"
       },
       "models": {
         "claude-sonnet-4-5": { "name": "claude-sonnet-4-5" },
@@ -482,7 +482,7 @@ EOF
 
 **Nnwale:** `opencode`
 
-> Jiri `opencode run "your prompt" --model omniroute/claude-sonnet-4-5-thinking --variant high`
+> Jiri `opencode run "your prompt" --model agentproxy/claude-sonnet-4-5-thinking --variant high`
 > iji zipu ụdị ndị na-eche echiche.
 
 ---
@@ -496,7 +496,7 @@ mkdir -p ~/.cline/data && cat > ~/.cline/data/globalState.json << EOF
 {
   "apiProvider": "openai",
   "openAiBaseUrl": "http://localhost:20128/v1",
-  "openAiApiKey": "sk-your-omniroute-key"
+  "openAiApiKey": "sk-your-agentproxy-key"
 }
 EOF
 ```
@@ -513,7 +513,7 @@ Ma ọ bụ jiri dashboard AgentProxy → **Ngwaọrụ CLI → Cline → Tinye 
 **Ụdị CLI:**
 
 ```bash
-kilocode --api-base http://localhost:20128/v1 --api-key sk-your-omniroute-key
+kilocode --api-base http://localhost:20128/v1 --api-key sk-your-agentproxy-key
 ```
 
 **Ntọala VS Code:**
@@ -521,7 +521,7 @@ kilocode --api-base http://localhost:20128/v1 --api-key sk-your-omniroute-key
 ```json
 {
   "kilo-code.openAiBaseUrl": "http://localhost:20128/v1",
-  "kilo-code.apiKey": "sk-your-omniroute-key"
+  "kilo-code.apiKey": "sk-your-agentproxy-key"
 }
 ```
 
@@ -539,7 +539,7 @@ models:
     provider: openai
     model: auto
     apiBase: http://localhost:20128/v1
-    apiKey: sk-your-omniroute-key
+    apiKey: sk-your-agentproxy-key
     default: true
 ```
 
@@ -566,8 +566,8 @@ Jiri nke a mgbe ahaziri VS Code Insiders maka model endpoint omenala ma ịchọ
     "name": "AgentProxy Auto",
     "family": "gpt-4",
     "version": "1.0.0",
-    "url": "http://localhost:20128/api/v1/vscode/sk-your-omniroute-key/chat/completions",
-    "modelsUrl": "http://localhost:20128/api/v1/vscode/sk-your-omniroute-key/models",
+    "url": "http://localhost:20128/api/v1/vscode/sk-your-agentproxy-key/chat/completions",
+    "modelsUrl": "http://localhost:20128/api/v1/vscode/sk-your-agentproxy-key/models",
     "requestFormat": "openai-chat-completions",
     "contextWindow": 256000,
     "maxOutputTokens": 32768,
@@ -580,7 +580,7 @@ Jiri nke a mgbe ahaziri VS Code Insiders maka model endpoint omenala ma ịchọ
 
 **Ihe ndị kwesịrị ịma:**
 
-- Jiri igodo API e mepụtara na AgentProxy dochie `sk-your-omniroute-key`.
+- Jiri igodo API e mepụtara na AgentProxy dochie `sk-your-agentproxy-key`.
 - Ogige `url` kwesịrị iz pointing gaa na `/api/v1/vscode/{token}/chat/completions`.
 - Ogige `modelsUrl` kwesịrị iz pointing gaa na `/api/v1/vscode/{token}/models`.
 - Họrọ usoro nkịtị nke `/v1` + nkụnyeisi Bearer mgbe onye ahịa na-akwado nkụnyeisi omenala.
@@ -606,28 +606,28 @@ n'okpuru `/dashboard/cli-tools → Kiro`.
 
 ## 10. AgentProxy CLI nke ime
 
-Faịlụ binary `omniroute` na-enye iwu maka usoro ndụ sava, nhazi, nchọpụta nsogbu, na njikwa ndị na-eweta ọrụ. Ebe mbido: `bin/omniroute.mjs`.
+Faịlụ binary `agentproxy` na-enye iwu maka usoro ndụ sava, nhazi, nchọpụta nsogbu, na njikwa ndị na-eweta ọrụ. Ebe mbido: `bin/agentproxy.mjs`.
 
 ```bash
-omniroute                              # Bido sava (ọdụ ụgbọ mmiri ndabara bụ 20128)
-omniroute setup                        # Ọkachamara nhazi na-emekọrịta ihe
-omniroute doctor                       # Nyochaa nhazi, DB, ọdụ ụgbọ mmiri, na gburugburu oge nrụọrụ
-omniroute providers list               # Njikọ ndị na-eweta ọrụ ahaziri
-omniroute providers test-all           # Nwalee njikọ ọ bụla na-arụ ọrụ
-omniroute reset-password               # Tọgharịa okwuntughe onye nchịkwa
-omniroute logs                         # Gbasaa ndekọ arịrịọ ozugbo
-omniroute health                       # Ọnọdụ ahụike zuru ezu (ndị nkwụsị, cache, ebe nchekwa)
-omniroute --version                    # Bipụta ụdị
-omniroute --help                       # Gosi iwu niile
+agentproxy                              # Bido sava (ọdụ ụgbọ mmiri ndabara bụ 20128)
+agentproxy setup                        # Ọkachamara nhazi na-emekọrịta ihe
+agentproxy doctor                       # Nyochaa nhazi, DB, ọdụ ụgbọ mmiri, na gburugburu oge nrụọrụ
+agentproxy providers list               # Njikọ ndị na-eweta ọrụ ahaziri
+agentproxy providers test-all           # Nwalee njikọ ọ bụla na-arụ ọrụ
+agentproxy reset-password               # Tọgharịa okwuntughe onye nchịkwa
+agentproxy logs                         # Gbasaa ndekọ arịrịọ ozugbo
+agentproxy health                       # Ọnọdụ ahụike zuru ezu (ndị nkwụsị, cache, ebe nchekwa)
+agentproxy --version                    # Bipụta ụdị
+agentproxy --help                       # Gosi iwu niile
 ```
 
 ### Nhazi & Mbido
 
 ```bash
-omniroute setup                        # Ọkachamara nhazi na-emekọrịta ihe
-omniroute setup --non-interactive      # Ọnọdụ CI/akpaaka (na-agụ env vars + flags)
-omniroute setup --password '<value>'   # Tọọ okwuntughe onye nchịkwa ozugbo
-omniroute setup --add-provider \
+agentproxy setup                        # Ọkachamara nhazi na-emekọrịta ihe
+agentproxy setup --non-interactive      # Ọnọdụ CI/akpaaka (na-agụ env vars + flags)
+agentproxy setup --password '<value>'   # Tọọ okwuntughe onye nchịkwa ozugbo
+agentproxy setup --add-provider \
   --provider openai \
   --api-key '<value>' \
   --test-provider                      # Tinye ma nwalee onye na-eweta ọrụ n'otu oge
@@ -637,21 +637,21 @@ Mgbanwe gburugburu ebe a na-amata maka nhazi anaghị emekọrịta ihe:
 
 | Var                 | Ebumnuche                                                                             |
 | ------------------- | ------------------------------------------------------------------------------------- |
-| `OMNIROUTE_API_KEY` | Igodo API nke onye na-eweta ọrụ (ejikọtara na `--api-key` site na Commander `.env()`) |
+| `AGENTPROXY_API_KEY` | Igodo API nke onye na-eweta ọrụ (ejikọtara na `--api-key` site na Commander `.env()`) |
 | `DATA_DIR`          | Dochie ndekọ data AgentProxy                                                           |
 
 A na-ebufe ntinye ndị ọzọ niile anaghị emekọrịta ihe dịka flags, ọ bụghị mgbanwe gburugburu:
 `--password`, `--provider`, `--provider-name`, `--provider-base-url`, `--default-model`
-(lee nhọrọ `omniroute setup` ndị dị n'elu).
+(lee nhọrọ `agentproxy setup` ndị dị n'elu).
 
 ### Nchọpụta nsogbu
 
 ```bash
-omniroute doctor                       # Nyochaa nhazi, DB, ọdụ ụgbọ mmiri, oge nrụọrụ, ebe nchekwa, na ịdị ndụ
-omniroute doctor --json                # JSON igwe nwere ike ịgụ
-omniroute doctor --no-liveness         # Mafere nyocha ahụike HTTP
-omniroute doctor --host 0.0.0.0        # Dochie host maka nyocha ịdị ndụ
-omniroute doctor --liveness-url <url>  # Dochie URL zuru ezu nke endpoint ahụike
+agentproxy doctor                       # Nyochaa nhazi, DB, ọdụ ụgbọ mmiri, oge nrụọrụ, ebe nchekwa, na ịdị ndụ
+agentproxy doctor --json                # JSON igwe nwere ike ịgụ
+agentproxy doctor --no-liveness         # Mafere nyocha ahụike HTTP
+agentproxy doctor --host 0.0.0.0        # Dochie host maka nyocha ịdị ndụ
+agentproxy doctor --liveness-url <url>  # Dochie URL zuru ezu nke endpoint ahụike
 ```
 
 Doctor na-eme nyocha ndị a: `Config`, `Database`, `Storage/encryption`,
@@ -661,22 +661,22 @@ Doctor na-eme nyocha ndị a: `Config`, `Database`, `Storage/encryption`,
 ### Njikwa ndị na-eweta ọrụ
 
 ```bash
-omniroute providers available                       # Katalọgụ ndị na-eweta ọrụ AgentProxy
-omniroute providers available --search openai       # Nzacha katalọgụ site na id/name/alias/category
-omniroute providers available --category api-key    # Nzacha site na category (api-key, oauth, free, ...)
-omniroute providers available --json                # JSON igwe nwere ike ịgụ
+agentproxy providers available                       # Katalọgụ ndị na-eweta ọrụ AgentProxy
+agentproxy providers available --search openai       # Nzacha katalọgụ site na id/name/alias/category
+agentproxy providers available --category api-key    # Nzacha site na category (api-key, oauth, free, ...)
+agentproxy providers available --json                # JSON igwe nwere ike ịgụ
 
-omniroute providers list                            # Njikọ ndị na-eweta ọrụ ahaziri
-omniroute providers list --json
+agentproxy providers list                            # Njikọ ndị na-eweta ọrụ ahaziri
+agentproxy providers list --json
 
-omniroute providers test <id|name>                  # Nwalee otu njikọ ahaziri
-omniroute providers test-all                        # Nwalee njikọ ọ bụla na-arụ ọrụ
-omniroute providers validate                        # Nkwado nhazi nke mpaghara naanị
-omniroute providers add <provider> --credential-env PROVIDER_KEY
-omniroute providers import ./providers.json --dry-run --json
-omniroute providers auth <provider>                 # Usoro OAuth dị adị
-omniroute providers edit <id|name> --default-model <model>
-omniroute providers remove <id|name> --yes
+agentproxy providers test <id|name>                  # Nwalee otu njikọ ahaziri
+agentproxy providers test-all                        # Nwalee njikọ ọ bụla na-arụ ọrụ
+agentproxy providers validate                        # Nkwado nhazi nke mpaghara naanị
+agentproxy providers add <provider> --credential-env PROVIDER_KEY
+agentproxy providers import ./providers.json --dry-run --json
+agentproxy providers auth <provider>                 # Usoro OAuth dị adị
+agentproxy providers edit <id|name> --default-model <model>
+agentproxy providers remove <id|name> --yes
 ```
 
 `providers add/import/auth/edit/remove` na-ebu API ụzọ, ya mere ha na-arụ ọrụ megide
@@ -689,19 +689,19 @@ ha anaghị achọ ka sava na-arụ ọrụ.
 ### Mweghachi & Ntọgharị
 
 ```bash
-omniroute reset-password                # Tọgharịa okwuntughe onye nchịkwa (ọzọkwa: omniroute-reset-password)
-omniroute reset-encrypted-columns       # Gosi ịdọ aka ná ntị + dry-run maka ntọgharị nzere ezoro ezo
-omniroute reset-encrypted-columns --force  # Wepụ nzere ezoro ezo n'ezie site n'itinye null na SQLite
+agentproxy reset-password                # Tọgharịa okwuntughe onye nchịkwa (ọzọkwa: agentproxy-reset-password)
+agentproxy reset-encrypted-columns       # Gosi ịdọ aka ná ntị + dry-run maka ntọgharị nzere ezoro ezo
+agentproxy reset-encrypted-columns --force  # Wepụ nzere ezoro ezo n'ezie site n'itinye null na SQLite
 ```
 
 ### Mbupụ Nzere (⚠ jiri nlezianya mee ya)
 
 ```bash
-omniroute auth export                                 # Gosi ịdọ aka ná ntị + ọnụ ụzọ nkwenye — enweghị ohere DB
-omniroute auth export --force                          # Bupụ nzere E WEPUOLA NZOCHI nke njikọ NIILE gaa na stdout dịka JSON
-omniroute auth export --force --id <id>                 # Bupụ naanị njikọ dabara adaba
-omniroute auth export --force --format env               # Wepụta ahịrị OMNIROUTE_<PROVIDER>_<FIELD>=<value>
-omniroute auth export --force --out creds.json           # Dee ya na faịlụ (e ji ikike 0600 kee ya)
+agentproxy auth export                                 # Gosi ịdọ aka ná ntị + ọnụ ụzọ nkwenye — enweghị ohere DB
+agentproxy auth export --force                          # Bupụ nzere E WEPUOLA NZOCHI nke njikọ NIILE gaa na stdout dịka JSON
+agentproxy auth export --force --id <id>                 # Bupụ naanị njikọ dabara adaba
+agentproxy auth export --force --format env               # Wepụta ahịrị AGENTPROXY_<PROVIDER>_<FIELD>=<value>
+agentproxy auth export --force --out creds.json           # Dee ya na faịlụ (e ji ikike 0600 kee ya)
 ```
 
 `auth export` bụ nke **mpaghara naanị** (ịgụ SQLite ozugbo, enweghị ụzọ HTTP), ma a kpachapụrụ anya mee ka ọ bipụta/dee
@@ -716,33 +716,33 @@ A na-akọ ubi nke mwepụ nzuzo ya dara (igodo ochie, ciphertext mebiri emebi) 
 Ndị a na-eche na sava AgentProxy na-arụ ọrụ, ma e wezụga ebe e kwuru ihe ọzọ:
 
 ```bash
-omniroute status                       # Ọnọdụ oge-ngagharị zuru ezu
-omniroute logs                         # Gosi ndekọ arịrịọ na-aga n'ihu (--json, --search, --follow)
-omniroute config list                  # Gosi ngwa CLI ahaziri
+agentproxy status                       # Ọnọdụ oge-ngagharị zuru ezu
+agentproxy logs                         # Gosi ndekọ arịrịọ na-aga n'ihu (--json, --search, --follow)
+agentproxy config list                  # Gosi ngwa CLI ahaziri
 
-omniroute provider list                # Depụta ndị na-eweta dị (aha ọzọ maka providers list)
-omniroute provider add                 # Debanye AgentProxy dịka onye na-eweta na ngwa
-omniroute keys add | list | remove     # Jikwaa igodo API
-omniroute models [provider]            # Depụta ụdị (--json, --search)
-omniroute combo list | switch | create | delete
+agentproxy provider list                # Depụta ndị na-eweta dị (aha ọzọ maka providers list)
+agentproxy provider add                 # Debanye AgentProxy dịka onye na-eweta na ngwa
+agentproxy keys add | list | remove     # Jikwaa igodo API
+agentproxy models [provider]            # Depụta ụdị (--json, --search)
+agentproxy combo list | switch | create | delete
 
-omniroute backup                       # Mepụta foto-ọnọdụ nke nhazi + DB
-omniroute restore                      # Weghachite site na foto-ọnọdụ gara aga
+agentproxy backup                       # Mepụta foto-ọnọdụ nke nhazi + DB
+agentproxy restore                      # Weghachite site na foto-ọnọdụ gara aga
 
-omniroute health                       # Nkọwa ahụike zuru ezu (ndị nkwụsị, cache, ebe nchekwa)
-omniroute quota                        # Ojiji oke onye na-eweta
-omniroute cache                        # Ọnọdụ cache
-omniroute cache clear                  # Hichapụ cache semantic + signature
+agentproxy health                       # Nkọwa ahụike zuru ezu (ndị nkwụsị, cache, ebe nchekwa)
+agentproxy quota                        # Ojiji oke onye na-eweta
+agentproxy cache                        # Ọnọdụ cache
+agentproxy cache clear                  # Hichapụ cache semantic + signature
 
-omniroute mcp status | restart         # Ọnọdụ / ịmalitegharị sava MCP
-omniroute a2a status | card            # Ọnọdụ sava A2A / kaadị agent
+agentproxy mcp status | restart         # Ọnọdụ / ịmalitegharị sava MCP
+agentproxy a2a status | card            # Ọnọdụ sava A2A / kaadị agent
 
-omniroute tunnel list | create | stop  # Jikwaa ọwara (cloudflare/tailscale/ngrok)
-omniroute env show | get <k> | set <k> <v>  # Nyochaa / tọọ mgbanwe gburugburu (nwa oge)
+agentproxy tunnel list | create | stop  # Jikwaa ọwara (cloudflare/tailscale/ngrok)
+agentproxy env show | get <k> | set <k> <v>  # Nyochaa / tọọ mgbanwe gburugburu (nwa oge)
 
-omniroute test                         # Nnwale ngwa ngwa nke njikọ onye na-eweta
-omniroute update                       # Lelee mmelite
-omniroute completion                   # Mepụta mmecha shell
+agentproxy test                         # Nnwale ngwa ngwa nke njikọ onye na-eweta
+agentproxy update                       # Lelee mmelite
+agentproxy completion                   # Mepụta mmecha shell
 ```
 
 ### Ọkọlọtọ ndị a na-ejikarị
@@ -790,7 +790,7 @@ Mkparịta ụka Ollama: http://localhost:20128/api/v1/vscode/sk-a3ab3c080beaee3
 
 | Njehie                                              | Ihe kpatara ya                           | Ndozi                                                                |
 | --------------------------------------------------- | ---------------------------------------- | -------------------------------------------------------------------- |
-| `Connection refused`                                | AgentProxy anaghị arụ ọrụ                 | `omniroute serve`                                                    |
+| `Connection refused`                                | AgentProxy anaghị arụ ọrụ                 | `agentproxy serve`                                                    |
 | `401 Unauthorized`                                  | Igodo API ezighi ezi                     | Lelee na `/dashboard/api-manager`                                    |
 | `No combo configured`                               | Enweghị ngwakọta ntụgharị ụzọ na-arụ ọrụ | Hazie ya na `/dashboard/combos`                                      |
 | CLI na-egosi "not installed"                        | Faịlụ binary adịghị na PATH              | Lelee `which <command>`                                              |

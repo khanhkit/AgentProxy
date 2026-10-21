@@ -77,7 +77,7 @@ AgentProxy ustuvorlik bo‘yicha tartiblangan 3 ta ichki himoya mexanizmiga ega,
 | `pii-masker`       | 10         | Chaqiruvdan oldin va keyin PII ma’lumotlarini yashirish (elektron pochta, telefon, CPF, CNPJ, kredit kartalari, SSN) |
 | `prompt-injection` | 20         | Ko‘rsatmalarni almashtirish/rolni egallash/jailbreak/ma’lumot sizdirish namunalarini aniqlaydi                       |
 
-Maxsus himoya mexanizmlari `registerGuardrail(new MyGuardrail())` orqali ro‘yxatdan o‘tkaziladi. Model fail-open tamoyiliga asoslangan (istisnolar trafikni hech qachon bloklamaydi). Har bir so‘rov uchun `x-omniroute-disabled-guardrails` sarlavhasi orqali undan voz kechish mumkin. → [`docs/security/GUARDRAILS.md`](docs/security/GUARDRAILS.md) fayliga qarang.
+Maxsus himoya mexanizmlari `registerGuardrail(new MyGuardrail())` orqali ro‘yxatdan o‘tkaziladi. Model fail-open tamoyiliga asoslangan (istisnolar trafikni hech qachon bloklamaydi). Har bir so‘rov uchun `x-agentproxy-disabled-guardrails` sarlavhasi orqali undan voz kechish mumkin. → [`docs/security/GUARDRAILS.md`](docs/security/GUARDRAILS.md) fayliga qarang.
 
 ### 🧠 Prompt inyeksiyasidan himoya
 
@@ -182,15 +182,15 @@ Server `changeme`, `secret` yoki `password` kabi ma’lum zaif qiymatlarni faol 
 
 ```bash
 docker run -d \
-  --name omniroute \
+  --name agentproxy \
   --restart unless-stopped \
   --read-only \
   -p 20128:20128 \
-  -v omniroute-data:/app/data \
+  -v agentproxy-data:/app/data \
   -e JWT_SECRET="$(openssl rand -base64 48)" \
   -e API_KEY_SECRET="$(openssl rand -hex 32)" \
   -e STORAGE_ENCRYPTION_KEY="$(openssl rand -hex 32)" \
-  diegosouzapw/omniroute:latest
+  diegosouzapw/agentproxy:latest
 ```
 
 ---
@@ -224,7 +224,7 @@ Ushbu qoidalarga rioya qilish vositalar va tekshiruvchilar tomonidan ta’minlan
 
 > **Qamrov eslatmasi:** Repozitoriy ildizidagi `socket.yml` faqat eʼlon qilingan npm artefaktining Socket.dev registri tomonida nashrdan keyin bajariladigan skanerlashi uchun `projectIgnorePaths` sozlamasini shakllantiradi — u majburiy CI/PR birlashtirish toʻsigʻi emas. `.github/workflows` ichidagi hech bir ish jarayoni, hech bir `package.json` skripti va hech bir `Makefile` maqsadi Socket.dev vositasini ishga tushirmaydi.
 
-Eʼlon qilingan `omniroute` npm artefakti Next.js `output: "standalone"`
+Eʼlon qilingan `agentproxy` npm artefakti Next.js `output: "standalone"`
 qurilmasini paketga qoʻshadi, bu esa har bir marshrut ishlov beruvchisi — jumladan,
 hujjatlashtirilgan imtiyozli funksiyalar (MITM, Zed importi, Cloud Sync,
 oʻrnatilgan xizmat supervizori) — `.next/server/*.js` ichidagi minifikatsiya
@@ -249,7 +249,7 @@ Har bir aniqlangan holat toifasi uchun masʼul qoʻllab-quvvatlovchining alohida
   ayni hujjatga havola qiladi.
 
 Quvuri ushbu ogohlantirishni yumshata olmaydigan foydalanuvchilar quyidagicha
-qurishlari mumkin: `OMNIROUTE_BUILD_PROFILE=minimal npm run build`. Bu toʻrtta
+qurishlari mumkin: `AGENTPROXY_BUILD_PROFILE=minimal npm run build`. Bu toʻrtta
 sezgir modulni ish vaqtida HTTP 503 `feature-disabled` qaytaradigan zaglushkalar
 bilan almashtiradi, natijada imtiyozli kod yoʻllari paketdan jismonan chiqarib
 tashlanadi. Nashr qilish retsepti uchun

@@ -1,8 +1,8 @@
-// GHSA-2pg2-xm9r-8544: on first run the CLI created ~/.omniroute and wrote .env (which holds
+// GHSA-2pg2-xm9r-8544: on first run the CLI created ~/.agentproxy and wrote .env (which holds
 // STORAGE_ENCRYPTION_KEY, the key to every credential in storage.sqlite) without an explicit
 // mode, so under the common umask 002 the directory was 0775 and .env 0664 — any other local
 // user could read the key and the database. These cases pin the private-by-default contract
-// of the helpers bin/omniroute.mjs now uses. POSIX-only: Windows has no mode bits to check.
+// of the helpers bin/agentproxy.mjs now uses. POSIX-only: Windows has no mode bits to check.
 
 import test from "node:test";
 import assert from "node:assert/strict";
@@ -30,7 +30,7 @@ test.afterEach(() => {
 });
 
 test("a fresh data dir is created 0700 even under umask 002", { skip: !posix }, () => {
-  const dataDir = path.join(root, "fresh", ".omniroute");
+  const dataDir = path.join(root, "fresh", ".agentproxy");
   ensurePrivateDataDir(dataDir);
   assert.equal(mode(dataDir), 0o700);
 });
@@ -54,7 +54,7 @@ test(
   "an existing install is repaired on startup: world bits off the dir, .env/server.env 0600",
   { skip: !posix },
   () => {
-    const dataDir = path.join(root, ".omniroute");
+    const dataDir = path.join(root, ".agentproxy");
     fs.mkdirSync(dataDir, { mode: 0o775 });
     fs.chmodSync(dataDir, 0o775);
     for (const name of [".env", "server.env"]) {

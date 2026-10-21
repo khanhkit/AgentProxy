@@ -435,7 +435,7 @@ namespace `src/domain/` ប្រមូលផ្ដុំការសម្រ�
 - ឃ្លាំងសម្ងាត់កូតា៖ `src/domain/quotaCache.ts`
 - ស្ថានភាពថយចុះគុណភាព៖ `src/domain/degradation.ts`
 - សវនកម្មការកំណត់រចនាសម្ព័ន្ធ៖ `src/domain/configAudit.ts`
-- កម្មវិធីបង្កើតទិន្នន័យមេតានៃការឆ្លើយតប AgentProxy៖ `src/domain/omnirouteResponseMeta.ts`
+- កម្មវិធីបង្កើតទិន្នន័យមេតានៃការឆ្លើយតប AgentProxy៖ `src/domain/agentproxyesponseMeta.ts`
 - ប្រព័ន្ធរងវាយតម្លៃ៖ `src/domain/assessment/` — កិច្ចការវាយតម្លៃតាមកាលកំណត់
 
 ### E. បំពង់ដំណើរការផ្ដល់សិទ្ធិ
@@ -516,7 +516,7 @@ Provider មួយចំនួនផ្តល់មកជាមួយ module ព
 
 - ហេដ្ឋារចនាសម្ព័ន្ធស្នូល៖ `src/lib/db/core.ts` (better-sqlite3, migrations, WAL)
 - ការចូលប្រើ DB៖ នាំចូលម៉ូឌុល `src/lib/db/*` ជាក់លាក់ដោយផ្ទាល់ (`localDb.ts` barrel ចាស់ត្រូវបានដកចេញ)
-- ឯកសារ៖ `${DATA_DIR}/storage.sqlite` (ឬ `$XDG_CONFIG_HOME/omniroute/storage.sqlite` នៅពេលបានកំណត់ បើមិនដូច្នោះទេប្រើ `~/.omniroute/storage.sqlite`)
+- ឯកសារ៖ `${DATA_DIR}/storage.sqlite` (ឬ `$XDG_CONFIG_HOME/agentproxy/storage.sqlite` នៅពេលបានកំណត់ បើមិនដូច្នោះទេប្រើ `~/.agentproxy/storage.sqlite`)
 - អង្គភាព (តារាង + KV namespaces)៖ providerConnections, providerNodes, modelAliases, combos, apiKeys, settings, pricing, **customModels**, **proxyConfig**, **ipFilter**, **thinkingBudget**, **systemPrompt**
 
 ការរក្សាទុកទិន្នន័យប្រើប្រាស់៖
@@ -1139,11 +1139,11 @@ Provider នីមួយៗមាន executor ឯកទេសមួយដែល�
 
 ## កំណត់សម្គាល់ស្ថាបត្យកម្មដែលបានដឹង
 
-1. `usageDb` និង `localDb` ប្រើគោលការណ៍ថតមូលដ្ឋានដូចគ្នា (`DATA_DIR` -> `XDG_CONFIG_HOME/omniroute` -> `~/.omniroute`) ជាមួយការផ្ទេរឯកសារចាស់។
+1. `usageDb` និង `localDb` ប្រើគោលការណ៍ថតមូលដ្ឋានដូចគ្នា (`DATA_DIR` -> `XDG_CONFIG_HOME/agentproxy` -> `~/.agentproxy`) ជាមួយការផ្ទេរឯកសារចាស់។
 2. `/api/v1/route.ts` ប្រគល់ភារកិច្ចទៅឱ្យកម្មវិធីបង្កើតកាតាឡុករួមដូចគ្នាដែលប្រើដោយ `/api/v1/models` (`src/app/api/v1/models/catalog.ts`) ដើម្បីជៀសវាងភាពខុសគ្នានៃអត្ថន័យ។
 3. កម្មវិធីកត់ត្រាសំណើ សរសេរ headers/body ពេញលេញនៅពេលបើកប្រើ។ ត្រូវចាត់ទុកថតកំណត់ហេតុជាទិន្នន័យរសើប។
 4. ឥរិយាបថរបស់ cloud ពឹងផ្អែកលើ `NEXT_PUBLIC_BASE_URL` ដែលត្រឹមត្រូវ និងលទ្ធភាពចូលដំណើរការចំណុចបញ្ចប់របស់ cloud។
-5. ថត `open-sse/` ត្រូវបានបោះផ្សាយជា **npm workspace package** `@omniroute/open-sse`។ កូដប្រភព import វាតាមរយៈ `@omniroute/open-sse/...` (ដោះស្រាយដោយ `transpilePackages` របស់ Next.js)។ ផ្លូវឯកសារក្នុងឯកសារនេះនៅតែប្រើឈ្មោះថត `open-sse/` ដើម្បីរក្សាភាពស៊ីសង្វាក់គ្នា។
+5. ថត `open-sse/` ត្រូវបានបោះផ្សាយជា **npm workspace package** `@agentproxy/open-sse`។ កូដប្រភព import វាតាមរយៈ `@agentproxy/open-sse/...` (ដោះស្រាយដោយ `transpilePackages` របស់ Next.js)។ ផ្លូវឯកសារក្នុងឯកសារនេះនៅតែប្រើឈ្មោះថត `open-sse/` ដើម្បីរក្សាភាពស៊ីសង្វាក់គ្នា។
 6. គំនូសតាងក្នុង dashboard ប្រើ **Recharts** (ផ្អែកលើ SVG) សម្រាប់ការមើលឃើញទិន្នន័យវិភាគដែលអាចចូលប្រើបាន និងអន្តរកម្ម (គំនូសតាងបារនៃការប្រើប្រាស់ model និងតារាងបែងចែកតាមអ្នកផ្តល់សេវា ជាមួយអត្រាជោគជ័យ)។
 7. ការធ្វើតេស្ត E2E ប្រើ **Playwright** (`tests/e2e/`) និងដំណើរការតាមរយៈ `npm run test:e2e`។ ការធ្វើតេស្ត unit ប្រើ **Node.js test runner** (`tests/unit/`) និងដំណើរការតាមរយៈ `npm run test:unit`។ កូដប្រភពនៅក្រោម `src/` គឺជា **TypeScript** (`.ts`/`.tsx`) ខណៈដែល workspace `open-sse/` នៅតែជា JavaScript (`.js`)។
 8. ទំព័រការកំណត់ត្រូវបានរៀបចំជា 7 ផ្ទាំង៖ ទូទៅ, រូបរាង, AI, សុវត្ថិភាព, ការកំណត់ផ្លូវ, ភាពធន់ និងកម្រិតខ្ពស់។ ទំព័រភាពធន់ កំណត់រចនាសម្ព័ន្ធតែជួរសំណើ រយៈពេលរង់ចាំនៃការតភ្ជាប់ ឧបករណ៍ផ្តាច់សៀគ្វីរបស់អ្នកផ្តល់សេវា និងឥរិយាបថរង់ចាំរហូតដល់ផុតរយៈពេលរង់ចាំប៉ុណ្ណោះ។ ស្ថានភាព runtime ផ្ទាល់របស់ឧបករណ៍ផ្តាច់សៀគ្វី ត្រូវបានបង្ហាញនៅលើទំព័រសុខភាព។
@@ -1154,7 +1154,7 @@ Provider នីមួយៗមាន executor ឯកទេសមួយដែល�
 ## បញ្ជីត្រួតពិនិត្យការផ្ទៀងផ្ទាត់ប្រតិបត្តិការ
 
 - បង្កើតពីកូដប្រភព៖ `npm run build`
-- បង្កើត Docker image៖ `docker build -t omniroute .`
+- បង្កើត Docker image៖ `docker build -t agentproxy .`
 - ចាប់ផ្តើមសេវាកម្ម និងផ្ទៀងផ្ទាត់៖
 - `GET /api/settings`
 - `GET /api/v1/models`

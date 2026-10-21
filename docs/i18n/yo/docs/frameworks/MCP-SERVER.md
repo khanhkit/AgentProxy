@@ -6,21 +6,21 @@
 
 > Sẹ́ńbà Model Context Protocol pẹ̀lú irinṣẹ́ 110 fún ìdarí ipa-ọ̀nà, àpamọ́, ìfúnpọ̀, ìrántí, àwọn ọgbọ́n, aṣojú, àkójọpọ̀, Radar, àti àwọn iṣẹ́ orísun àyíká.
 >
-> Orísun òtítọ́: `open-sse/mcp-server/server.ts` ṣe ìṣirò **àwọn irinṣẹ́ aláìlẹ́ẹ̀mejì 110** pẹ̀lú `countUniqueMcpTools()`: àwọn ìtumọ̀ àṣẹ 45 (tí ó ní àwọn irinṣẹ́ ìgbésí-ayé CCR mẹ́fà, ẹ̀ẹ̀mẹ́ta ti ọgbọ́n aṣojú, `omniroute_radar_catalog`, àti `omniroute_x_search`), pẹ̀lú ìrántí (3), àwọn ọgbọ́n (4), àwọn ọgbọ́n GitHub (3), àkójọpọ̀ (6), ṣíṣe bí eré (8), àwọn àfikún (8), Notion (6), Obsidian (22), àkójọ ọ̀rọ̀ abẹ́lé (3), àti àwọn irinṣẹ́ ìfúnpọ̀ méjì tí ó jẹ́ ti RTK nìkan.
+> Orísun òtítọ́: `open-sse/mcp-server/server.ts` ṣe ìṣirò **àwọn irinṣẹ́ aláìlẹ́ẹ̀mejì 110** pẹ̀lú `countUniqueMcpTools()`: àwọn ìtumọ̀ àṣẹ 45 (tí ó ní àwọn irinṣẹ́ ìgbésí-ayé CCR mẹ́fà, ẹ̀ẹ̀mẹ́ta ti ọgbọ́n aṣojú, `agentproxy_radar_catalog`, àti `agentproxy_x_search`), pẹ̀lú ìrántí (3), àwọn ọgbọ́n (4), àwọn ọgbọ́n GitHub (3), àkójọpọ̀ (6), ṣíṣe bí eré (8), àwọn àfikún (8), Notion (6), Obsidian (22), àkójọ ọ̀rọ̀ abẹ́lé (3), àti àwọn irinṣẹ́ ìfúnpọ̀ méjì tí ó jẹ́ ti RTK nìkan.
 
 ## Fífi sori ẹrọ
 
 AgentProxy MCP wà nínú rẹ̀ láti ìbẹ̀rẹ̀. Bẹ̀rẹ̀ rẹ̀ pẹ̀lú:
 
 ```bash
-omniroute --mcp
+agentproxy --mcp
 ```
 
 Tàbí nípasẹ̀ ìrìnàjò open-sse:
 
 ```bash
 # Ìrìnàjò HTTP tí a lè sanwọle (port 20130)
-omniroute --dev  # MCP máa ń bẹ̀rẹ̀ fúnra rẹ̀ lórí endpoint /mcp
+agentproxy --dev  # MCP máa ń bẹ̀rẹ̀ fúnra rẹ̀ lórí endpoint /mcp
 ```
 
 Àwọn ìrìnàjò HTTP (`sse` / `streamable-http`, tí server dashboard ń pèsè láàárín process náà) jẹ́
@@ -28,10 +28,10 @@ pípà nípa àìròtẹ́lẹ̀, àti pé tẹ́lẹ̀, ojú-ìwé `/dashboard/
 lọ, CLI náà ní agbára kan náà:
 
 ```bash
-omniroute mcp status                                  # enabled/online, ìrìnàjò, iye irinṣẹ́
-omniroute mcp enable [--transport stdio|sse|streamable-http]
-omniroute mcp disable
-omniroute mcp restart                                 # tún àwọn session sse/streamable-http tó ń ṣiṣẹ́ ṣe
+agentproxy mcp status                                  # enabled/online, ìrìnàjò, iye irinṣẹ́
+agentproxy mcp enable [--transport stdio|sse|streamable-http]
+agentproxy mcp disable
+agentproxy mcp restart                                 # tún àwọn session sse/streamable-http tó ń ṣiṣẹ́ ṣe
 ```
 
 `mcp enable`/`mcp disable` máa ń fi PATCH ranṣẹ́ sí setting `mcpEnabled` kan náà (àti `mcpTransport` bí ó bá yẹ)
@@ -83,61 +83,61 @@ Cursor, Cline, àti àwọn oníbàárà MCP tó bá a mu.
 
 | Irinṣẹ́                          | Àwọn Àṣẹ              | Àpèjúwe                                                                                                                 |
 | :------------------------------ | :-------------------- | :---------------------------------------------------------------------------------------------------------------------- |
-| `omniroute_get_health`          | `read:health`         | Àkókò tí ó ti ń ṣiṣẹ́, ìrántí, àwọn olùdáwọ́lé àyíká, àwọn òpin ìwọ̀n, àwọn ìṣirò àpamọ́                                    |
-| `omniroute_list_combos`         | `read:combos`         | Gbogbo àwọn combo tí a ti ṣètò pẹ̀lú àwọn ọgbọ́n ìlànà (àwọn ìwọ̀n iṣẹ́ jẹ́ àṣàyàn)                                          |
-| `omniroute_get_combo_metrics`   | `read:combos`         | Àwọn ìwọ̀n iṣẹ́ fún combo kan pàtó                                                                                        |
-| `omniroute_switch_combo`        | `write:combos`        | Mú combo kan ṣiṣẹ́ tàbí dá a dúró                                                                                        |
-| `omniroute_create_combo`        | `write:combos`        | Ṣẹ̀dá combo tí a ti fìdí rẹ̀ múlẹ̀ nípasẹ̀ API combo tó wà tẹ́lẹ̀                                                             |
-| `omniroute_check_quota`         | `read:quota`          | Ìpín tí a lò/lápapọ̀, ìdá ọgọ́rùn-ún tó kù, àkókò àtúntò, ìlera token                                                     |
-| `omniroute_route_request`       | `execute:completions` | Fi ìbéèrè ìparí ìfọ̀rọ̀wérọ̀ ránṣẹ́ nípasẹ̀ ìdarí ọ̀nà AgentProxy                                                              |
-| `omniroute_cost_report`         | `read:usage`          | Ìròyìn iye owó gẹ́gẹ́ bí àkókò (ìgbà/ọjọ́/ọ̀sẹ̀/oṣù)                                                                         |
-| `omniroute_list_models_catalog` | `read:models`         | Àkójọ model kíkún pẹ̀lú àwọn agbára, ipò, àti ìdíyelé                                                                    |
-| `omniroute_radar_catalog`       | `read:radar`          | Àkójọ Radar agbègbè tí a fọwọ́ sí; àwọn àsẹ̀ olùpèsè/ẹbí jẹ́ àṣàyàn                                                        |
-| `omniroute_tool_search`         | `read:tools`          | Ṣàwárí àwọn irinṣẹ́ láti inú àkójọ MCP tí a forúkọsílẹ̀                                                                   |
-| `omniroute_web_search`          | `execute:search`      | Ṣàwárí wẹ́ẹ̀bù nípasẹ̀ àwọn olùpèsè ìṣàwárí tí a ti ṣètò. Kì í ṣe X/Twitter.                                               |
-| `omniroute_x_search`            | `execute:search`      | Ṣàwárí X nípasẹ̀ xAI/SuperGrok, tàbí yan `xquik-search` fún àwọn èsì Xquik API. Ó nílò ẹ̀rí ìdánimọ̀ fún backend tí a yàn. |
-| `omniroute_web_fetch`           | `execute:search`      | Gba àkóónú wẹ́ẹ̀bù nípasẹ̀ àwọn olùpèsè ìgbàwá tí a ti ṣètò                                                                |
+| `agentproxy_get_health`          | `read:health`         | Àkókò tí ó ti ń ṣiṣẹ́, ìrántí, àwọn olùdáwọ́lé àyíká, àwọn òpin ìwọ̀n, àwọn ìṣirò àpamọ́                                    |
+| `agentproxy_list_combos`         | `read:combos`         | Gbogbo àwọn combo tí a ti ṣètò pẹ̀lú àwọn ọgbọ́n ìlànà (àwọn ìwọ̀n iṣẹ́ jẹ́ àṣàyàn)                                          |
+| `agentproxy_get_combo_metrics`   | `read:combos`         | Àwọn ìwọ̀n iṣẹ́ fún combo kan pàtó                                                                                        |
+| `agentproxy_switch_combo`        | `write:combos`        | Mú combo kan ṣiṣẹ́ tàbí dá a dúró                                                                                        |
+| `agentproxy_create_combo`        | `write:combos`        | Ṣẹ̀dá combo tí a ti fìdí rẹ̀ múlẹ̀ nípasẹ̀ API combo tó wà tẹ́lẹ̀                                                             |
+| `agentproxy_check_quota`         | `read:quota`          | Ìpín tí a lò/lápapọ̀, ìdá ọgọ́rùn-ún tó kù, àkókò àtúntò, ìlera token                                                     |
+| `agentproxy_route_request`       | `execute:completions` | Fi ìbéèrè ìparí ìfọ̀rọ̀wérọ̀ ránṣẹ́ nípasẹ̀ ìdarí ọ̀nà AgentProxy                                                              |
+| `agentproxy_cost_report`         | `read:usage`          | Ìròyìn iye owó gẹ́gẹ́ bí àkókò (ìgbà/ọjọ́/ọ̀sẹ̀/oṣù)                                                                         |
+| `agentproxy_list_models_catalog` | `read:models`         | Àkójọ model kíkún pẹ̀lú àwọn agbára, ipò, àti ìdíyelé                                                                    |
+| `agentproxy_radar_catalog`       | `read:radar`          | Àkójọ Radar agbègbè tí a fọwọ́ sí; àwọn àsẹ̀ olùpèsè/ẹbí jẹ́ àṣàyàn                                                        |
+| `agentproxy_tool_search`         | `read:tools`          | Ṣàwárí àwọn irinṣẹ́ láti inú àkójọ MCP tí a forúkọsílẹ̀                                                                   |
+| `agentproxy_web_search`          | `execute:search`      | Ṣàwárí wẹ́ẹ̀bù nípasẹ̀ àwọn olùpèsè ìṣàwárí tí a ti ṣètò. Kì í ṣe X/Twitter.                                               |
+| `agentproxy_x_search`            | `execute:search`      | Ṣàwárí X nípasẹ̀ xAI/SuperGrok, tàbí yan `xquik-search` fún àwọn èsì Xquik API. Ó nílò ẹ̀rí ìdánimọ̀ fún backend tí a yàn. |
+| `agentproxy_web_fetch`           | `execute:search`      | Gba àkóónú wẹ́ẹ̀bù nípasẹ̀ àwọn olùpèsè ìgbàwá tí a ti ṣètò                                                                |
 
 ## Àwọn Irinṣẹ́ Onípele Gíga (11) — Ìpele 2
 
 | Irinṣẹ́                             | Àwọn Ààyè Àṣẹ                        | Àpèjúwe                                                                                                   |
 | :--------------------------------- | :----------------------------------- | :-------------------------------------------------------------------------------------------------------- |
-| `omniroute_simulate_route`         | `read:health`, `read:combos`         | Ìfọwọ́ṣe ìdarí ọ̀nà láìṣe ìmúlò gidi pẹ̀lú igi ọ̀nà àfirọ́pò                                                   |
-| `omniroute_set_budget_guard`       | `write:budget`                       | Ìṣúná sáà pẹ̀lú ìgbésẹ̀ ìdínkù/ìdènà/ìkìlọ̀                                                                  |
-| `omniroute_set_routing_strategy`   | `write:combos`                       | Ṣàfikún ọgbọ́n combo ní àsìkò ìṣiṣẹ́ (ààyò/ìwọ̀n/àìfọwọ́yí/àti bẹ́ẹ̀ bẹ́ẹ̀ lọ)                                    |
-| `omniroute_set_resilience_profile` | `write:resilience`                   | Lo àgbékalẹ̀ ìfaradà `aggressive` / `balanced` / `conservative`                                            |
-| `omniroute_test_combo`             | `execute:completions`, `read:combos` | Ìdánwò tààrà fún gbogbo olùpèsè inú combo nípa lílo ìpè gidi sí upstream                                  |
-| `omniroute_get_provider_metrics`   | `read:health`                        | Àwọn òṣùwọ̀n olùpèsè kọ̀ọ̀kan pẹ̀lú ìdádúró p50/p95/p99 àti ipò circuit breaker                               |
-| `omniroute_best_combo_for_task`    | `read:combos`, `read:health`         | Dábàá combo gẹ́gẹ́ bí irú iṣẹ́, pẹ̀lú àwọn ààlà ìṣúná/ìdádúró                                                 |
-| `omniroute_explain_route`          | `read:health`, `read:usage`          | Ṣàlàyé ìdí tí a fi darí ìbéèrè kan sí olùpèsè kan (àwọn kókó ìṣírò àmì + àwọn ọ̀nà àfirọ́pò)                |
-| `omniroute_get_session_snapshot`   | `read:usage`                         | Àwòrán-ẹ̀kúnrẹ́rẹ́ sáà: iye owó, token, àwọn model/olùpèsè àkọ́kọ́, àṣìṣe, olùṣọ́ ìṣúná                         |
-| `omniroute_db_health_check`        | `read:health`, `write:resilience`    | Ṣàyẹ̀wò (kí o sì túnṣe fúnra rẹ bí ó bá yẹ) yíyapa database bíi combo refs tó bàjẹ́ / àwọn ìlà aláìní-olùní |
-| `omniroute_sync_pricing`           | `pricing:write`                      | Mú dátà ìdíyelé bá àwọn orísun ìta mu (LiteLLM); ó ṣe àtìlẹ́yìn `dryRun`                                   |
+| `agentproxy_simulate_route`         | `read:health`, `read:combos`         | Ìfọwọ́ṣe ìdarí ọ̀nà láìṣe ìmúlò gidi pẹ̀lú igi ọ̀nà àfirọ́pò                                                   |
+| `agentproxy_set_budget_guard`       | `write:budget`                       | Ìṣúná sáà pẹ̀lú ìgbésẹ̀ ìdínkù/ìdènà/ìkìlọ̀                                                                  |
+| `agentproxy_set_routing_strategy`   | `write:combos`                       | Ṣàfikún ọgbọ́n combo ní àsìkò ìṣiṣẹ́ (ààyò/ìwọ̀n/àìfọwọ́yí/àti bẹ́ẹ̀ bẹ́ẹ̀ lọ)                                    |
+| `agentproxy_set_resilience_profile` | `write:resilience`                   | Lo àgbékalẹ̀ ìfaradà `aggressive` / `balanced` / `conservative`                                            |
+| `agentproxy_test_combo`             | `execute:completions`, `read:combos` | Ìdánwò tààrà fún gbogbo olùpèsè inú combo nípa lílo ìpè gidi sí upstream                                  |
+| `agentproxy_get_provider_metrics`   | `read:health`                        | Àwọn òṣùwọ̀n olùpèsè kọ̀ọ̀kan pẹ̀lú ìdádúró p50/p95/p99 àti ipò circuit breaker                               |
+| `agentproxy_best_combo_for_task`    | `read:combos`, `read:health`         | Dábàá combo gẹ́gẹ́ bí irú iṣẹ́, pẹ̀lú àwọn ààlà ìṣúná/ìdádúró                                                 |
+| `agentproxy_explain_route`          | `read:health`, `read:usage`          | Ṣàlàyé ìdí tí a fi darí ìbéèrè kan sí olùpèsè kan (àwọn kókó ìṣírò àmì + àwọn ọ̀nà àfirọ́pò)                |
+| `agentproxy_get_session_snapshot`   | `read:usage`                         | Àwòrán-ẹ̀kúnrẹ́rẹ́ sáà: iye owó, token, àwọn model/olùpèsè àkọ́kọ́, àṣìṣe, olùṣọ́ ìṣúná                         |
+| `agentproxy_db_health_check`        | `read:health`, `write:resilience`    | Ṣàyẹ̀wò (kí o sì túnṣe fúnra rẹ bí ó bá yẹ) yíyapa database bíi combo refs tó bàjẹ́ / àwọn ìlà aláìní-olùní |
+| `agentproxy_sync_pricing`           | `pricing:write`                      | Mú dátà ìdíyelé bá àwọn orísun ìta mu (LiteLLM); ó ṣe àtìlẹ́yìn `dryRun`                                   |
 
 ## Àwọn Irinṣẹ́ Cache (2)
 
 | Irinṣẹ́                  | Àwọn Ààyè Àṣẹ | Àpèjúwe                                                  |
 | :---------------------- | :------------ | :------------------------------------------------------- |
-| `omniroute_cache_stats` | `read:cache`  | Àwọn ìṣirò semantic cache, prompt-cache, àti idempotency |
-| `omniroute_cache_flush` | `write:cache` | Pa cache rẹ́ káàkiri tàbí nípasẹ̀ signature/model          |
+| `agentproxy_cache_stats` | `read:cache`  | Àwọn ìṣirò semantic cache, prompt-cache, àti idempotency |
+| `agentproxy_cache_flush` | `write:cache` | Pa cache rẹ́ káàkiri tàbí nípasẹ̀ signature/model          |
 
 ## Àwọn Irinṣẹ́ Ìkójọpọ̀ (13)
 
 | Irinṣẹ́                              | Àwọn Ààyè Àṣẹ       | Àpèjúwe                                                                                                                   |
 | :---------------------------------- | :------------------ | :------------------------------------------------------------------------------------------------------------------------ |
-| `omniroute_compression_status`      | `read:compression`  | Àwọn ètò ìkójọpọ̀, àkótán ìtúpalẹ̀, àti àwọn ìṣirò tó mọ̀ nípa cache (pẹ̀lú metadata `analytics.mcpDescriptionCompression`)   |
-| `omniroute_compression_configure`   | `write:compression` | Ṣètò mode ìkójọpọ̀, ààlà, ìpín àfojúsùn, pípa system-prompt mọ́, àti títan tàbí pípa ìkójọpọ̀ àpèjúwe MCP                    |
-| `omniroute_set_compression_engine`  | `write:compression` | Yan engine tó ń ṣiṣẹ́ (off/caveman/rtk/stacked) àti bí Caveman/RTK ṣe lágbára tó                                           |
-| `omniroute_list_compression_combos` | `read:compression`  | Ṣe àkójọ àwọn combo ìkójọpọ̀ tí a fún ní orúkọ àti àwọn pipeline engine wọn                                                |
-| `omniroute_compression_combo_stats` | `read:compression`  | Ìtúpalẹ̀ tí a pín sí ẹ̀ka gẹ́gẹ́ bí combo ìkójọpọ̀ àti engine                                                                  |
-| `omniroute_ccr_store`               | `write:compression` | Fi àkóónú tí a yà sọ́tọ̀ fún olùpè sínú ibi ìpamọ́ CCR inú-memory tó ní ààlà, kí o sì dá àmì kan àti reference `ccr://` padà |
-| `omniroute_ccr_retrieve`            | `read:compression`  | Gba àkóónú CCR padà ní ẹ̀kúnrẹ́rẹ́ tàbí pẹ̀lú mode head, tail, lines, grep, àti stats                                         |
-| `omniroute_ccr_inspect`             | `read:compression`  | Ṣàyẹ̀wò metadata CCR tí olùpè ní láì dá àkóónú padà                                                                        |
-| `omniroute_ccr_list`                | `read:compression`  | Ṣe àkójọ metadata ọlọ́jọ́-ojú-ìwé fún àwọn block CCR tí olùpè ní                                                            |
-| `omniroute_ccr_delete`              | `write:compression` | Pa block CCR tí olùpè ní rẹ́                                                                                               |
-| `omniroute_ccr_stats`               | `read:compression`  | Jábọ̀ lílo memory tó dá lórí olùpè, àwọn counter ìgbésí-ayé, àti àwọn ààlà ibi ìpamọ́                                       |
-| `omniroute_rtk_discover`            | `read:compression`  | Ṣàwárí ariwo tó ń tún ara rẹ̀ ṣe nínú àwọn àpẹẹrẹ àbájáde RTK tí a yàn láti kópa                                           |
-| `omniroute_rtk_learn`               | `read:compression`  | Ṣẹ̀dá àkọ́kọ́ filter RTK tí a lè ṣàyẹ̀wò láti inú àwọn àpẹẹrẹ tí a yàn láti kópa                                              |
+| `agentproxy_compression_status`      | `read:compression`  | Àwọn ètò ìkójọpọ̀, àkótán ìtúpalẹ̀, àti àwọn ìṣirò tó mọ̀ nípa cache (pẹ̀lú metadata `analytics.mcpDescriptionCompression`)   |
+| `agentproxy_compression_configure`   | `write:compression` | Ṣètò mode ìkójọpọ̀, ààlà, ìpín àfojúsùn, pípa system-prompt mọ́, àti títan tàbí pípa ìkójọpọ̀ àpèjúwe MCP                    |
+| `agentproxy_set_compression_engine`  | `write:compression` | Yan engine tó ń ṣiṣẹ́ (off/caveman/rtk/stacked) àti bí Caveman/RTK ṣe lágbára tó                                           |
+| `agentproxy_list_compression_combos` | `read:compression`  | Ṣe àkójọ àwọn combo ìkójọpọ̀ tí a fún ní orúkọ àti àwọn pipeline engine wọn                                                |
+| `agentproxy_compression_combo_stats` | `read:compression`  | Ìtúpalẹ̀ tí a pín sí ẹ̀ka gẹ́gẹ́ bí combo ìkójọpọ̀ àti engine                                                                  |
+| `agentproxy_ccr_store`               | `write:compression` | Fi àkóónú tí a yà sọ́tọ̀ fún olùpè sínú ibi ìpamọ́ CCR inú-memory tó ní ààlà, kí o sì dá àmì kan àti reference `ccr://` padà |
+| `agentproxy_ccr_retrieve`            | `read:compression`  | Gba àkóónú CCR padà ní ẹ̀kúnrẹ́rẹ́ tàbí pẹ̀lú mode head, tail, lines, grep, àti stats                                         |
+| `agentproxy_ccr_inspect`             | `read:compression`  | Ṣàyẹ̀wò metadata CCR tí olùpè ní láì dá àkóónú padà                                                                        |
+| `agentproxy_ccr_list`                | `read:compression`  | Ṣe àkójọ metadata ọlọ́jọ́-ojú-ìwé fún àwọn block CCR tí olùpè ní                                                            |
+| `agentproxy_ccr_delete`              | `write:compression` | Pa block CCR tí olùpè ní rẹ́                                                                                               |
+| `agentproxy_ccr_stats`               | `read:compression`  | Jábọ̀ lílo memory tó dá lórí olùpè, àwọn counter ìgbésí-ayé, àti àwọn ààlà ibi ìpamọ́                                       |
+| `agentproxy_rtk_discover`            | `read:compression`  | Ṣàwárí ariwo tó ń tún ara rẹ̀ ṣe nínú àwọn àpẹẹrẹ àbájáde RTK tí a yàn láti kópa                                           |
+| `agentproxy_rtk_learn`               | `read:compression`  | Ṣẹ̀dá àkọ́kọ́ filter RTK tí a lè ṣàyẹ̀wò láti inú àwọn àpẹẹrẹ tí a yàn láti kópa                                              |
 
 Àwọn àkọsílẹ̀ CCR wà nínú memory nìkan, wọ́n sì máa parẹ́ nígbà tí a bá tún ètò náà bẹ̀rẹ̀. Block kọ̀ọ̀kan ní ààlà 2 MiB, principal kọ̀ọ̀kan
 ní ààlà 16 MiB, ibi ìpamọ́ àgbáyé sì ní ààlà 64 MiB. Àwọn àkọsílẹ̀ máa ń lo TTL wákàtí 24 gẹ́gẹ́ bí àtẹ̀jáde (ọjọ́ méje
@@ -145,7 +145,7 @@ ni ó pọ̀ jù). Ìgbàpadà MCP ní ẹ̀kúnrẹ́rẹ́ ní ààlà 256 KiB
 àwọn mode ranged àti grep. Ìpamọ́, ìgbàpadà, ṣíṣe àkójọ, àyẹ̀wò, ìparẹ́, àti àwọn stats jẹ́ èyí tí a yà sọ́tọ̀ nípasẹ̀
 principal API-key tí a ti fi ìdánimọ̀ rẹ̀ múlẹ̀. Àwọn àkọsílẹ̀ audit ní hashes àti metadata ìwọ̀n nínú, kì í ṣe àkóónú.
 
-`omniroute_compression_status` ń ṣe ìròyìn fúnmọ́ra MCP lọ́tọ̀ọ̀tọ̀ lábẹ́
+`agentproxy_compression_status` ń ṣe ìròyìn fúnmọ́ra MCP lọ́tọ̀ọ̀tọ̀ lábẹ́
 `analytics.mcpDescriptionCompression`. Àwọn iye wọ̀nyẹn jẹ́ àfojúsùn ìwọ̀n metadata fún àwọn àpèjúwe MCP tí a lè ṣe àtòjọ
 (`tools`, `prompts`, `resources`, àti `resourceTemplates`); wọn kì í ṣe ẹ̀rí lílò láti ọ̀dọ̀ olùpèsè,
 a sì máa ń fi `source: "mcp_metadata_estimate"` sàmì sí wọn.
@@ -175,9 +175,9 @@ Wo [Àwọn Ẹ́ńjìnnì Fúnmọ́ra](../compression/COMPRESSION_ENGINES.md) �
 
 | Irinṣẹ́                      | Àwọn àyè ìwọlé | Àpèjúwe                                                                         |
 | :-------------------------- | :------------- | :------------------------------------------------------------------------------ |
-| `omniroute_oneproxy_fetch`  | `read:proxies` | Gba àwọn proxy ọ̀fẹ́ láti ọjà 1proxy (àwọn àsẹ protocol/orílẹ̀-èdè/dídára/òpin)    |
-| `omniroute_oneproxy_rotate` | `read:proxies` | Gba proxy tó wà nílẹ̀ tó tẹ̀lé nípasẹ̀ ọgbọ́n (`random` / `quality` / `sequential`) |
-| `omniroute_oneproxy_stats`  | `read:proxies` | Àwọn ìṣirò àkójọpọ̀, ipò ìṣiṣẹ́pọ̀, àti pínpín gẹ́gẹ́ bí protocol àti orílẹ̀-èdè      |
+| `agentproxy_oneproxy_fetch`  | `read:proxies` | Gba àwọn proxy ọ̀fẹ́ láti ọjà 1proxy (àwọn àsẹ protocol/orílẹ̀-èdè/dídára/òpin)    |
+| `agentproxy_oneproxy_rotate` | `read:proxies` | Gba proxy tó wà nílẹ̀ tó tẹ̀lé nípasẹ̀ ọgbọ́n (`random` / `quality` / `sequential`) |
+| `agentproxy_oneproxy_stats`  | `read:proxies` | Àwọn ìṣirò àkójọpọ̀, ipò ìṣiṣẹ́pọ̀, àti pínpín gẹ́gẹ́ bí protocol àti orílẹ̀-èdè      |
 
 ## Àwọn Irinṣẹ́ Ìrántí (3)
 
@@ -185,9 +185,9 @@ A ṣàlàyé wọn nínú `open-sse/mcp-server/tools/memoryTools.ts`. A ń fip�
 
 | Irinṣẹ́                    | Àwọn àyè ìwọlé | Àpèjúwe                                                                                     |
 | :------------------------ | :------------- | :------------------------------------------------------------------------------------------ |
-| `omniroute_memory_search` | `read:memory`  | Ṣàwárí àwọn ìrántí nípasẹ̀ ìbéèrè / irú / kọ́kọ́rọ́ API pẹ̀lú ìmúlò òfin ààlà token              |
-| `omniroute_memory_add`    | `write:memory` | Ṣàfikún àkọsílẹ̀ ìrántí tuntun (`factual` / `episodic` / `procedural` / `semantic`)          |
-| `omniroute_memory_clear`  | `write:memory` | Pa àwọn ìrántí fún kọ́kọ́rọ́ API kan rẹ́, pẹ̀lú àsẹ àṣàyàn nípasẹ̀ irú tàbí àmì-àkókò `olderThan` |
+| `agentproxy_memory_search` | `read:memory`  | Ṣàwárí àwọn ìrántí nípasẹ̀ ìbéèrè / irú / kọ́kọ́rọ́ API pẹ̀lú ìmúlò òfin ààlà token              |
+| `agentproxy_memory_add`    | `write:memory` | Ṣàfikún àkọsílẹ̀ ìrántí tuntun (`factual` / `episodic` / `procedural` / `semantic`)          |
+| `agentproxy_memory_clear`  | `write:memory` | Pa àwọn ìrántí fún kọ́kọ́rọ́ API kan rẹ́, pẹ̀lú àsẹ àṣàyàn nípasẹ̀ irú tàbí àmì-àkókò `olderThan` |
 
 ## Àwọn Irinṣẹ́ Ọgbọ́n (4)
 
@@ -195,10 +195,10 @@ A ṣàlàyé wọn nínú `open-sse/mcp-server/tools/skillTools.ts`. `src/lib/s
 
 | Irinṣẹ́                        | Àwọn àyè ìwọlé   | Àpèjúwe                                                                                        |
 | :---------------------------- | :--------------- | :--------------------------------------------------------------------------------------------- |
-| `omniroute_skills_list`       | `read:skills`    | Ṣe àtòjọ àwọn ọgbọ́n tí a forúkọsílẹ̀ pẹ̀lú àsẹ àṣàyàn nípasẹ̀ kọ́kọ́rọ́ API, orúkọ, tàbí ipò ìmúṣiṣẹ́ |
-| `omniroute_skills_enable`     | `write:skills`   | Mú ọgbọ́n pàtó kan ṣiṣẹ́ tàbí pa á nípasẹ̀ ID                                                     |
-| `omniroute_skills_execute`    | `execute:skills` | Ṣe ọgbọ́n kan pẹ̀lú ìwọlé tí a pèsè, kí o sì dá àkọsílẹ̀ ìṣiṣẹ́ padà                               |
-| `omniroute_skills_executions` | `read:skills`    | Ṣe àtòjọ ìtàn àwọn ìṣiṣẹ́ ọgbọ́n láìpẹ́                                                           |
+| `agentproxy_skills_list`       | `read:skills`    | Ṣe àtòjọ àwọn ọgbọ́n tí a forúkọsílẹ̀ pẹ̀lú àsẹ àṣàyàn nípasẹ̀ kọ́kọ́rọ́ API, orúkọ, tàbí ipò ìmúṣiṣẹ́ |
+| `agentproxy_skills_enable`     | `write:skills`   | Mú ọgbọ́n pàtó kan ṣiṣẹ́ tàbí pa á nípasẹ̀ ID                                                     |
+| `agentproxy_skills_execute`    | `execute:skills` | Ṣe ọgbọ́n kan pẹ̀lú ìwọlé tí a pèsè, kí o sì dá àkọsílẹ̀ ìṣiṣẹ́ padà                               |
+| `agentproxy_skills_executions` | `read:skills`    | Ṣe àtòjọ ìtàn àwọn ìṣiṣẹ́ ọgbọ́n láìpẹ́                                                           |
 
 ## Orísun Àyíká-ọ̀rọ̀ Notion (6)
 
@@ -234,9 +234,9 @@ A ṣàlàyé wọn nínú `open-sse/mcp-server/tools/agentSkillTools.ts`. `src/
 
 | Irinṣẹ́                            | Àwọn Ààlà      | Àpèjúwe                                                                                                                                 |
 | :-------------------------------- | :------------- | :-------------------------------------------------------------------------------------------------------------------------------------- |
-| `omniroute_agent_skills_list`     | `read:catalog` | Ṣe àkójọ gbogbo ọgbọ́n aṣojú 45 pẹ̀lú àwọn àsẹ̀ `category` (api\|cli) àti `area` tí kò pọndandan; ó dá metadata + coverage padà            |
-| `omniroute_agent_skills_get`      | `read:catalog` | Gba metadata kíkún + àkóónú SKILL.md fún ọgbọ́n kan ṣoṣo nípasẹ̀ `id` àṣẹ                                                                 |
-| `omniroute_agent_skills_coverage` | `read:catalog` | Àwọn ìṣirò coverage: mélòó nínú ọgbọ́n API 23, CLI 21 àti config 1 ni àwọn fáìlì SKILL.md lórí ètò fáìlì ní ìfiwéra pẹ̀lú àpapọ̀ inú àkójọ |
+| `agentproxy_agent_skills_list`     | `read:catalog` | Ṣe àkójọ gbogbo ọgbọ́n aṣojú 45 pẹ̀lú àwọn àsẹ̀ `category` (api\|cli) àti `area` tí kò pọndandan; ó dá metadata + coverage padà            |
+| `agentproxy_agent_skills_get`      | `read:catalog` | Gba metadata kíkún + àkóónú SKILL.md fún ọgbọ́n kan ṣoṣo nípasẹ̀ `id` àṣẹ                                                                 |
+| `agentproxy_agent_skills_coverage` | `read:catalog` | Àwọn ìṣirò coverage: mélòó nínú ọgbọ́n API 23, CLI 21 àti config 1 ni àwọn fáìlì SKILL.md lórí ètò fáìlì ní ìfiwéra pẹ̀lú àpapọ̀ inú àkójọ |
 
 Wo [AGENT-SKILLS.md](./AGENT-SKILLS.md) fún àkójọ kíkún àti bí àwọn aṣojú ìta ṣe ń lò ó.
 
@@ -301,7 +301,7 @@ Ohun èlò MCP n pè àwọn okun ààyè kíkà láti ọ̀dọ̀ olùpè. Ìy�
 | :--------------------- | :--------------------------------------------------------------------- | :------------------------------ | :-------------------------------------------- |
 | Ìṣàkóso kọ́kọ́rọ́ API     | `api_keys.scopes`                                                      | `hasManageScope`                | Ìṣàkóso REST fún kọ́kọ́rọ́ Bearer yẹn            |
 | Àfikún kọ́kọ́rọ́ API      | àkójọ kan náà, okun kan ṣoṣo tí ó péye                                 | olùrànlọ́wọ́ tí a dárúkọ ní ìsàlẹ̀ | Agbára kan ṣoṣo yẹn                           |
-| Àwọn ààyè ohun èlò MCP | àkójọ kan náà, bí bẹ́ẹ̀ kọ́ MCP `_meta`, bí bẹ́ẹ̀ kọ́ `OMNIROUTE_MCP_SCOPES` | `scopeMatches`                  | Ohun èlò yẹn, nígbà tí ìfìdímúlẹ̀ bá wà lórí   |
+| Àwọn ààyè ohun èlò MCP | àkójọ kan náà, bí bẹ́ẹ̀ kọ́ MCP `_meta`, bí bẹ́ẹ̀ kọ́ `AGENTPROXY_MCP_SCOPES` | `scopeMatches`                  | Ohun èlò yẹn, nígbà tí ìfìdímúlẹ̀ bá wà lórí   |
 | Ààmì ìwọlé             | `oma_live_…`                                                           | `scopeSatisfies`                | Ọ̀nà ìṣàkóso tí ọ̀nà àti ọ̀nà rẹ̀ béèrè ìpele yẹn |
 
 Ìṣẹ̀dá ìwé-ẹ̀rí kọ̀ọ̀kan wà nínú [Ìfìdímúlẹ̀ Ìṣàkóso](../guides/MANAGEMENT-AUTH.md).
@@ -333,7 +333,7 @@ Ohun èlò MCP n pè àwọn okun ààyè kíkà láti ọ̀dọ̀ olùpè. Ìy�
 
 Kọ́kọ́rọ́ kan tí àwọn ààyè rẹ̀ jẹ́ `["manage"]` kùnà `scopeMatches` fún `read:compression`. Ìpè kan náà kùnà fún `admin`, `mcp:connect`, `read`, àti `write` nígbà tí àwọn wọ̀nyẹn nìkan ni àwọn okun tí a fúnni. Kò sí ìpele láàrin àwọn ààyè ohun èlò MCP ju `*` tí ó wà lẹ́yìn.
 
-Ìfìdímúlẹ̀ wà ní àìṣiṣẹ́ àyàfi tí `OMNIROUTE_MCP_ENFORCE_SCOPES=true` (ìpilẹ̀ṣẹ̀ `false`). Nígbà tí ó bá wà ní àìṣiṣẹ́, `evaluateToolScopes` gba ìpè láàyè ó sì fò àtòjọ náà. Nígbà tí ó bá wà lórí, HTTP n lo `api_keys.scopes` kọ́kọ́rọ́ Bearer gẹ́gẹ́ bí `authInfo` (wo [Ìsopọ̀ ààyè HTTP fún kọ́kọ́rọ́ kọ̀ọ̀kan](#per-key-http-scope-binding-7895)). Nígbà tí kò sí àwọn ààyè kọ́kọ́rọ́ tí ó yanjú, àkójọ tí a fúnni yóò lọ sí MCP `_meta`, lẹ́yìn náà `OMNIROUTE_MCP_SCOPES`.
+Ìfìdímúlẹ̀ wà ní àìṣiṣẹ́ àyàfi tí `AGENTPROXY_MCP_ENFORCE_SCOPES=true` (ìpilẹ̀ṣẹ̀ `false`). Nígbà tí ó bá wà ní àìṣiṣẹ́, `evaluateToolScopes` gba ìpè láàyè ó sì fò àtòjọ náà. Nígbà tí ó bá wà lórí, HTTP n lo `api_keys.scopes` kọ́kọ́rọ́ Bearer gẹ́gẹ́ bí `authInfo` (wo [Ìsopọ̀ ààyè HTTP fún kọ́kọ́rọ́ kọ̀ọ̀kan](#per-key-http-scope-binding-7895)). Nígbà tí kò sí àwọn ààyè kọ́kọ́rọ́ tí ó yanjú, àkójọ tí a fúnni yóò lọ sí MCP `_meta`, lẹ́yìn náà `AGENTPROXY_MCP_SCOPES`.
 
 #### Àwọn ààyè ààmì ìwọlé
 
@@ -382,8 +382,8 @@ Irinṣẹ́ kọ̀ọ̀kan nílò àwọn ìpele pàtó:
 | `write:skills`        | `skills_enable`                                                                                                                                                                    |
 | `execute:skills`      | `skills_execute`                                                                                                                                                                   |
 | `read:catalog`        | `agent_skills_list`, `agent_skills_get`, `agent_skills_coverage`                                                                                                                   |
-| `read:tools`          | `omniroute_tool_search`                                                                                                                                                            |
-| `read:radar`          | `omniroute_radar_catalog`                                                                                                                                                          |
+| `read:tools`          | `agentproxy_tool_search`                                                                                                                                                            |
+| `read:radar`          | `agentproxy_radar_catalog`                                                                                                                                                          |
 | `read:gamification`   | `gamification_profile`, `gamification_rank`, `gamification_leaderboard`, `gamification_badges`, `gamification_servers`, `gamification_anomalies`                                   |
 | `write:gamification`  | `gamification_invite`, `gamification_transfer`                                                                                                                                     |
 | `read:plugins`        | `plugin_list`, `plugin_executions`                                                                                                                                                 |
@@ -400,7 +400,7 @@ Láti dé ọ̀nà ìgbéjáde HTTP/SSE MCP (`/api/mcp/*`) láti ibi tí kìí �
 
 ### Ìsopọ̀ àyè HTTP fún kọ́kọ́rọ́ kọ̀ọ̀kan (#7895)
 
-Lórí HTTP/SSE, `open-sse/mcp-server/httpTransport.ts` nísinsìnyí yanjú `api_keys.scopes` gidi ti olùpè nípasẹ̀ `resolveMcpCallerAuthInfo()` (`open-sse/mcp-server/httpAuthContext.ts`) ó sì fi ránṣẹ́ sí `transport.handleRequest(req, { authInfo })` ti MCP SDK, nítorí náà `extra.authInfo.scopes` tí ó dé ọ̀kọ̀ọ̀kan ìpè irinṣẹ́ ń fi àwọn àyè kọ́kọ́rọ́ Bearer fúnra rẹ̀ hàn. `resolveCallerScopeContext()` ti `scopeEnforcement.ts` ti fi `authInfo` sí ipò àkọ́kọ́ ju `_meta` àti `OMNIROUTE_MCP_SCOPES` ìpadàbọ̀ àyíká — èyí kàn ń pèsè orísun àkọ́kọ́, tí ó ga jùlọ yẹn, tí kò tíì gba oúnjẹ lórí HTTP tẹ́lẹ̀. Nígbà tí kò sí kọ́kọ́rọ́ API tí ó yanjú (kò sí àkọlé, kọ́kọ́rọ́ tí kò tọ́), `authInfo` dúró bí `undefined` àti ìyànjú sì tẹ̀ síwájú sí `meta`/env àtìlẹ́yìn tí ó wà tẹ́lẹ̀ láìyípadà. Èyí KÒ yí àṣàyàn `OMNIROUTE_MCP_ENFORCE_SCOPES` padà — ìfiagbára mú ṣiṣẹ́ ṣì ní láti jẹ́ kí ó ṣiṣẹ́ ní gbangba; ìyípadà yìí kàn mú kí ọ̀nà kọ́kọ́rọ́ kọ̀ọ̀kan gba ipò àkọ́kọ́ nígbà tí ó bá ti ṣiṣẹ́. stdio kò ní ìdámọ̀ olùpè kọ̀ọ̀kan (wo `mcpCallerIdentity.ts`) kò sì nípa lórí rẹ̀ — ó dúró lórí `_meta`/env àtìlẹ́yìn.
+Lórí HTTP/SSE, `open-sse/mcp-server/httpTransport.ts` nísinsìnyí yanjú `api_keys.scopes` gidi ti olùpè nípasẹ̀ `resolveMcpCallerAuthInfo()` (`open-sse/mcp-server/httpAuthContext.ts`) ó sì fi ránṣẹ́ sí `transport.handleRequest(req, { authInfo })` ti MCP SDK, nítorí náà `extra.authInfo.scopes` tí ó dé ọ̀kọ̀ọ̀kan ìpè irinṣẹ́ ń fi àwọn àyè kọ́kọ́rọ́ Bearer fúnra rẹ̀ hàn. `resolveCallerScopeContext()` ti `scopeEnforcement.ts` ti fi `authInfo` sí ipò àkọ́kọ́ ju `_meta` àti `AGENTPROXY_MCP_SCOPES` ìpadàbọ̀ àyíká — èyí kàn ń pèsè orísun àkọ́kọ́, tí ó ga jùlọ yẹn, tí kò tíì gba oúnjẹ lórí HTTP tẹ́lẹ̀. Nígbà tí kò sí kọ́kọ́rọ́ API tí ó yanjú (kò sí àkọlé, kọ́kọ́rọ́ tí kò tọ́), `authInfo` dúró bí `undefined` àti ìyànjú sì tẹ̀ síwájú sí `meta`/env àtìlẹ́yìn tí ó wà tẹ́lẹ̀ láìyípadà. Èyí KÒ yí àṣàyàn `AGENTPROXY_MCP_ENFORCE_SCOPES` padà — ìfiagbára mú ṣiṣẹ́ ṣì ní láti jẹ́ kí ó ṣiṣẹ́ ní gbangba; ìyípadà yìí kàn mú kí ọ̀nà kọ́kọ́rọ́ kọ̀ọ̀kan gba ipò àkọ́kọ́ nígbà tí ó bá ti ṣiṣẹ́. stdio kò ní ìdámọ̀ olùpè kọ̀ọ̀kan (wo `mcpCallerIdentity.ts`) kò sì nípa lórí rẹ̀ — ó dúró lórí `_meta`/env àtìlẹ́yìn.
 
 ---
 
@@ -408,17 +408,17 @@ Lórí HTTP/SSE, `open-sse/mcp-server/httpTransport.ts` nísinsìnyí yanjú `ap
 
 | Àyípadà                                 | Àìyípadà                                 | Ète                                                                                                                             |
 | :-------------------------------------- | :--------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------ |
-| `OMNIROUTE_BASE_URL`                    | `http://localhost:20128`                 | URL ìpìlẹ̀ tí olupin MCP ń lò nígbà tó bá ń pe àwọn API inú AgentProxy                                                            |
-| `OMNIROUTE_API_KEY`                     | (òfo)                                    | Kọ́kọ́rọ́ API tí a ń fi ránṣẹ́ gẹ́gẹ́ bí `Authorization: Bearer` sí àwọn ìpè API inú                                                  |
-| `OMNIROUTE_MCP_ENFORCE_SCOPES`          | `false` (`"true"` nìkan ló ń mú un ṣiṣẹ́) | Nígbà tí a bá mú un ṣiṣẹ́, àwọn àyè tí kò sí yóò kọ àwọn ìpè irinṣẹ́, yóò sì kọ `scope_denied:<reason>` sínú àkọsílẹ̀ àyẹ̀wò        |
-| `OMNIROUTE_MCP_SCOPES`                  | (òfo)                                    | Àkójọ àwọn àyè tí a yà pẹ̀lú àmì kọ́mà, tí a kà sí “èyí tó wà” ní àìyípadà (a máa ń lò ó nígbà tí olùpè kò bá pèsè àwọn àyè tirẹ̀) |
-| `OMNIROUTE_MCP_COMPRESS_DESCRIPTIONS`   | (a kò ṣètò = ó ṣiṣẹ́)                     | Nígbà tí a bá ṣètò rẹ̀ sí `0/false/off/no`, ó máa pa ìkópọ̀ àpèjúwe MCP ní àsìkò ìforúkọsílẹ̀                                      |
-| `OMNIROUTE_MCP_DESCRIPTION_COMPRESSION` | (a kò ṣètò = ó ṣiṣẹ́)                     | Orúkọ àfirọ́pò fún ìṣàkóso kan náà tó wà lókè                                                                                    |
-| `OMNIROUTE_MCP_FETCH_TIMEOUT_MS`        | `10000`                                  | Àkókò ìdádúró tó pọ̀jù fún àwọn kíkà ìṣàkóso inú (ìlera, ìfaradà, àwọn àkópọ̀, ìwọ̀n, lílò)                                        |
-| `OMNIROUTE_MCP_UPSTREAM_TIMEOUT_MS`     | `60000`                                  | Àkókò ìdádúró tó pọ̀jù fún àwọn ìpele tó ń dúró de olupèsè (`route_request`, `web_search`, `web_fetch`)                          |
+| `AGENTPROXY_BASE_URL`                    | `http://localhost:20128`                 | URL ìpìlẹ̀ tí olupin MCP ń lò nígbà tó bá ń pe àwọn API inú AgentProxy                                                            |
+| `AGENTPROXY_API_KEY`                     | (òfo)                                    | Kọ́kọ́rọ́ API tí a ń fi ránṣẹ́ gẹ́gẹ́ bí `Authorization: Bearer` sí àwọn ìpè API inú                                                  |
+| `AGENTPROXY_MCP_ENFORCE_SCOPES`          | `false` (`"true"` nìkan ló ń mú un ṣiṣẹ́) | Nígbà tí a bá mú un ṣiṣẹ́, àwọn àyè tí kò sí yóò kọ àwọn ìpè irinṣẹ́, yóò sì kọ `scope_denied:<reason>` sínú àkọsílẹ̀ àyẹ̀wò        |
+| `AGENTPROXY_MCP_SCOPES`                  | (òfo)                                    | Àkójọ àwọn àyè tí a yà pẹ̀lú àmì kọ́mà, tí a kà sí “èyí tó wà” ní àìyípadà (a máa ń lò ó nígbà tí olùpè kò bá pèsè àwọn àyè tirẹ̀) |
+| `AGENTPROXY_MCP_COMPRESS_DESCRIPTIONS`   | (a kò ṣètò = ó ṣiṣẹ́)                     | Nígbà tí a bá ṣètò rẹ̀ sí `0/false/off/no`, ó máa pa ìkópọ̀ àpèjúwe MCP ní àsìkò ìforúkọsílẹ̀                                      |
+| `AGENTPROXY_MCP_DESCRIPTION_COMPRESSION` | (a kò ṣètò = ó ṣiṣẹ́)                     | Orúkọ àfirọ́pò fún ìṣàkóso kan náà tó wà lókè                                                                                    |
+| `AGENTPROXY_MCP_FETCH_TIMEOUT_MS`        | `10000`                                  | Àkókò ìdádúró tó pọ̀jù fún àwọn kíkà ìṣàkóso inú (ìlera, ìfaradà, àwọn àkópọ̀, ìwọ̀n, lílò)                                        |
+| `AGENTPROXY_MCP_UPSTREAM_TIMEOUT_MS`     | `60000`                                  | Àkókò ìdádúró tó pọ̀jù fún àwọn ìpele tó ń dúró de olupèsè (`route_request`, `web_search`, `web_fetch`)                          |
 | `MCP_TOOL_DENY`                         | (a kò ṣètò = kò sí àsẹ̀)                  | Àwọn orúkọ irinṣẹ́ tí a yà pẹ̀lú àmì kọ́mà láti yọ kúrò nínú `tools/list` (dídín iye onírúurú irinṣẹ́ kù — wo ìsàlẹ̀)                |
 | `MCP_TOOL_ALLOW`                        | (a kò ṣètò = kò sí àsẹ̀)                  | Àwọn orúkọ irinṣẹ́ tí a yà pẹ̀lú àmì kọ́mà láti dá dúró ní pàtó (ìpo àkójọ-àṣẹ — wo ìsàlẹ̀)                                         |
-| `DATA_DIR`                              | `~/.omniroute`                           | A kọ fáìlì àmì-ìwàláàyè sí `${DATA_DIR}/runtime/mcp-heartbeat.json`                                                             |
+| `DATA_DIR`                              | `~/.agentproxy`                           | A kọ fáìlì àmì-ìwàláàyè sí `${DATA_DIR}/runtime/mcp-heartbeat.json`                                                             |
 
 ---
 
@@ -428,8 +428,8 @@ Lórí HTTP/SSE, `open-sse/mcp-server/httpTransport.ts` nísinsìnyí yanjú `ap
 
 - Ìkópọ̀ máa ń ṣiṣẹ́ lórí ọ̀rọ̀ àpèjúwe ní lílo ètò òfin Caveman (`getRulesForContext("all", "full")`) pẹ̀lú yíyọ àwọn abala tí a dáàbò bo jáde (àwọn àlàfo kóòdù, àwọn búlọ́ọ̀kù tí a fi ààlà sí, àti bẹ́ẹ̀ bẹ́ẹ̀ lọ) kí àkóónú ìgbékalẹ̀ má bàa yí padà.
 - Ṣàkóso rẹ̀ fún ìmúṣiṣẹ́ kọ̀ọ̀kan nípasẹ̀ iye `compression.mcpDescriptionCompressionEnabled` nínú tábìlì ètò `key_value` (àìyípadà: ó ṣiṣẹ́) — a fi hàn nínú UI gẹ́gẹ́ bí **Ìtúpalẹ̀ → Ìkópọ̀ àpèjúwe MCP**.
-- Ṣàkóso rẹ̀ káàkiri gbogbo ìlànà nípasẹ̀ bóyá `OMNIROUTE_MCP_COMPRESS_DESCRIPTIONS=false` tàbí `OMNIROUTE_MCP_DESCRIPTION_COMPRESSION=false`.
-- A fi àwọn ìṣirò àsìkò-gidi hàn nípasẹ̀ `omniroute_compression_status` lábẹ́ `analytics.mcpDescriptionCompression`, a sì fi àmì `source: "mcp_metadata_estimate"` sí wọn láti yà wọ́n sọ́tọ̀ kúrò nínú àwọn ẹ̀rí lílò olupèsè gidi.
+- Ṣàkóso rẹ̀ káàkiri gbogbo ìlànà nípasẹ̀ bóyá `AGENTPROXY_MCP_COMPRESS_DESCRIPTIONS=false` tàbí `AGENTPROXY_MCP_DESCRIPTION_COMPRESSION=false`.
+- A fi àwọn ìṣirò àsìkò-gidi hàn nípasẹ̀ `agentproxy_compression_status` lábẹ́ `analytics.mcpDescriptionCompression`, a sì fi àmì `source: "mcp_metadata_estimate"` sí wọn láti yà wọ́n sọ́tọ̀ kúrò nínú àwọn ẹ̀rí lílò olupèsè gidi.
 
 ---
 
@@ -448,10 +448,10 @@ Lórí HTTP/SSE, `open-sse/mcp-server/httpTransport.ts` nísinsìnyí yanjú `ap
 
 ```bash
 # Yọ irinṣẹ́ méjì kúrò nínú katalogi
-MCP_TOOL_DENY="omniroute_get_health,omniroute_list_combos" omniroute --mcp
+MCP_TOOL_DENY="agentproxy_get_health,agentproxy_list_combos" agentproxy --mcp
 
 # Kéde àwọn irinṣẹ́ ìdarí-ọ̀nà àti quota nìkan (ìpo àtòjọ-ìfàyègbà)
-MCP_TOOL_ALLOW="omniroute_route_request,omniroute_check_quota" omniroute --mcp
+MCP_TOOL_ALLOW="agentproxy_route_request,agentproxy_check_quota" agentproxy --mcp
 ```
 
 **Bí a ṣe ń yọ àwọn irinṣẹ́ tí a ti ṣe àsẹ̀ sí kúrò:** ìforúkọsílẹ̀ máa ń ṣàṣeyọrí ní gbogbo ìgbà; lẹ́yìn náà, irinṣẹ́ tí profile kọ̀ ni a máa ń `.disable()` lórí handle MCP SDK, nítorí náà kò ní farahàn nínú `tools/list`, ṣùgbọ́n àsopọ̀ rẹ̀ á dúró ṣinṣin (mímú ṣiṣẹ́/pípa tó mọ́, kò sí àtúnforúkọsílẹ̀). Parser profile náà ni `readMcpToolProfileFromEnv(process.env)`, èyí tí ó máa ń dá `null` padà (kò sí àsẹ̀) nígbà tí variable méjèèjì bá ṣófo.

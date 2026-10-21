@@ -4,7 +4,7 @@
 // a mid-sentence answer that no retry can clear (only a cache flush).
 // Observed live on AgentProxy against github/gemini-3.5-flash: temperature:0 returned
 // finish_reason "length" at 93 completion tokens on every call, while the same request
-// with x-omniroute-no-cache:true returned a complete 239-token response.
+// with x-agentproxy-no-cache:true returned a complete 239-token response.
 import { test } from "node:test";
 import assert from "node:assert/strict";
 

@@ -488,7 +488,7 @@ function coercePluginOptions(opts?: PluginOptions): AgentProxyPluginOptions {
 export const DEFAULT_ANTHROPIC_PREFIXES = ["cc", "claude", "anthropic", "kiro", "kr"];
 
 /**
- * First-class OmniRoute catalog suffixes (`GET /v1/models`). The Anthropic
+ * First-class AgentProxy catalog suffixes (`GET /v1/models`). The Anthropic
  * Messages translator looks these up as `claude-<model>` on provider
  * `claude` and 404s. Keep them on openai-compatible `/v1` so the full
  * catalog id (`cc/claude-haiku-4-5-20251001-low`) is sent unchanged.
@@ -539,7 +539,7 @@ export function ensureV1Suffix(url: string): string {
  * Resolve the API block (id + url + npm package) for a given model id.
  *
  * Decision matrix:
- * - If the model id ends with a first-class OmniRoute effort-tier suffix
+ * - If the model id ends with a first-class AgentProxy effort-tier suffix
  *   (`-low` / `-medium` / `-high` / `-xhigh` / `-thinking` / `-minimal` /
  *   `-max`), return the OpenAI-compat block even when the prefix is
  *   Anthropic. Those ids exist only in `GET /v1/models`; the Anthropic

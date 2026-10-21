@@ -1,5 +1,5 @@
 /**
- * Shared policy for OmniRoute npm publish artifact hygiene.
+ * Shared policy for AgentProxy npm publish artifact hygiene.
  *
  * The package publishes the standalone runtime under dist/ (Layer 1: renamed from app/).
  * This policy keeps local backups, QA scratch files, and development-only
@@ -124,7 +124,7 @@ export const PACK_ARTIFACT_ROOT_ALLOWED_EXACT_PATHS: string[] = [
   "bin/restore-policies.sh",
   "bin/rollback.sh",
   "bin/snapshot-data.sh",
-  // Locale source of truth read at runtime by bin/cli/i18n.mjs (OMNIROUTE_LANG alias
+  // Locale source of truth read at runtime by bin/cli/i18n.mjs (AGENTPROXY_LANG alias
   // resolution: uk → uk-UA, fil/tl → phi, zh-hk/zh-mo/zh-hant → zh-TW) and by
   // bin/cli/commands/config.mjs (`config lang list`). Shipped via package.json "files";
   // without it the published CLI cannot resolve aliases and `config lang list` is empty.

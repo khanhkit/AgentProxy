@@ -30,7 +30,7 @@ curl http://localhost:20128/.well-known/agent.json
 ყველა `/a2a` მოთხოვნა საჭიროებს API გასაღებს `Authorization` სათაურის მეშვეობით:
 
 ```
-Authorization: Bearer YOUR_OMNIROUTE_API_KEY
+Authorization: Bearer YOUR_AGENTPROXY_API_KEY
 ```
 
 თუ სერვერზე API გასაღები კონფიგურირებული არ არის, ავთენტიფიკაცია გამოიტოვება.
@@ -187,7 +187,7 @@ JSON-RPC საბოლოო წერტილი `/a2a` არის A2A-ი
 | `/api/a2a/tasks/[id]`        | GET    | ამოცანის მიღება ID-ის მიხედვით                                        | მართვის                                                  |
 | `/api/a2a/tasks/[id]/cancel` | POST   | მიმდინარე ამოცანის გაუქმება                                           | მართვის                                                  |
 | `/.well-known/agent.json`    | GET    | აგენტის ბარათი (A2A აღმოჩენა)                                         | (საჯარო, კეშირებული 3600s-ით)                            |
-| `/api/a2a/tasks`             | POST   | შემომავალი დელეგირება OmniConductor-ის ფლოტისთვის (Conductor PRD RF5) | Bearer შედარებული `OMNIROUTE_API_KEY`-თან + `a2aEnabled` |
+| `/api/a2a/tasks`             | POST   | შემომავალი დელეგირება OmniConductor-ის ფლოტისთვის (Conductor PRD RF5) | Bearer შედარებული `AGENTPROXY_API_KEY`-თან + `a2aEnabled` |
 
 **შემომავალი Conductor-ის დელეგირება (`POST /api/a2a/tasks`):** გარე A2A აგენტები AgentProxy-ის მეშვეობით კოდირების სამუშაოს OmniConductor-ის ფლოტს გადასცემენ. მოთხოვნის სხეული: `{ skill: "conductor" | "conductor-cli-<profile>", messages: [{role, content}], metadata: { conductor: { repo: { url, base_ref? }, mode?, cli?, model? } } }` — დელეგირება შესაძლებელია მხოლოდ Conductor-ის ფლოტის უნარებზე (რომლებიც აგენტის ბარათზეა გამოცხადებული); `metadata.conductor.repo.url` სავალდებულოა (ფლოტი git რეპოზიტორიებზე მუშაობს). მარშრუტი გარდაიქმნება ჰაბის `POST /v1/tasks` მოთხოვნად, სერვერის მხარის `CONDUCTOR_ORCHESTRATOR_TOKEN`-ის გამოყენებით (სარეზერვო ვარიანტი: `CONDUCTOR_HUB_TOKEN`) და აბრუნებს `201 { conductor_task_id, state: "submitted" }`; ამოცანების მდგომარეობები უკან გადაიცემა SSE→A2A სარკის (RF1) მეშვეობით და ხილულია `GET /api/a2a/tasks?skill=conductor` მოთხოვნით.
 

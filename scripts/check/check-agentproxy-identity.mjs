@@ -12,18 +12,12 @@ const LEGACY_TOKENS = [
 
 const LEGACY_PATTERN = new RegExp(LEGACY_TOKENS.join("|"), "i");
 
-export function isHistoricalContentPath(file) {
-  return file === "CHANGELOG.md" || /^docs\/i18n\/[^/]+\/CHANGELOG\.md$/i.test(file);
-}
-
 export function findIdentityViolations(files, readFile) {
   const violations = [];
   for (const file of files) {
     if (LEGACY_PATTERN.test(file)) {
       violations.push({ kind: "path", file });
     }
-
-    if (isHistoricalContentPath(file)) continue;
 
     let buffer;
     try {

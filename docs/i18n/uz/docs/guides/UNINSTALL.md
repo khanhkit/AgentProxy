@@ -20,7 +20,7 @@ AgentProxy toza o‘chirish uchun ikkita ichki skriptni taqdim etadi:
 npm run uninstall
 ```
 
-Bu AgentProxy ilovasini o‘chiradi, ammo `~/.omniroute/` ichidagi ma’lumotlar bazasi, konfiguratsiyalar, API kalitlari va provayder sozlamalarini **saqlab qoladi**. Keyinroq qayta o‘rnatishni rejalashtirsangiz va sozlamalaringizni saqlab qolmoqchi bo‘lsangiz, bundan foydalaning.
+Bu AgentProxy ilovasini o‘chiradi, ammo `~/.agentproxy/` ichidagi ma’lumotlar bazasi, konfiguratsiyalar, API kalitlari va provayder sozlamalarini **saqlab qoladi**. Keyinroq qayta o‘rnatishni rejalashtirsangiz va sozlamalaringizni saqlab qolmoqchi bo‘lsangiz, bundan foydalaning.
 
 ### To‘liq o‘chirish
 
@@ -34,7 +34,7 @@ Bu ilovani o‘chiradi va barcha ma’lumotlarni **butunlay yo‘q qiladi**:
 - Provayder konfiguratsiyalari va API kalitlari
 - Zaxira fayllari
 - Jurnal fayllari
-- `~/.omniroute/` katalogidagi barcha fayllar
+- `~/.agentproxy/` katalogidagi barcha fayllar
 
 > ⚠️ **Ogohlantirish:** `npm run uninstall:full` amalini ortga qaytarib bo‘lmaydi. Barcha provayder ulanishlaringiz, kombinatsiyalaringiz, API kalitlaringiz va foydalanish tarixingiz butunlay o‘chiriladi.
 
@@ -46,31 +46,31 @@ Bu ilovani o‘chiradi va barcha ma’lumotlarni **butunlay yo‘q qiladi**:
 
 ```bash
 # Global paketni o‘chirish
-npm uninstall -g omniroute
+npm uninstall -g agentproxy
 
 # (Ixtiyoriy) Ma’lumotlar katalogini o‘chirish
-rm -rf ~/.omniroute
+rm -rf ~/.agentproxy
 ```
 
 ### pnpm global o‘rnatmasi
 
 ```bash
-pnpm uninstall -g omniroute
-rm -rf ~/.omniroute
+pnpm uninstall -g agentproxy
+rm -rf ~/.agentproxy
 ```
 
 ### Docker
 
 ```bash
 # Konteynerni to‘xtatish va o‘chirish
-docker stop omniroute
-docker rm omniroute
+docker stop agentproxy
+docker rm agentproxy
 
 # Jildni o‘chirish (barcha ma’lumotlarni o‘chiradi)
-docker volume rm omniroute-data
+docker volume rm agentproxy-data
 
 # (Ixtiyoriy) Tasvirni o‘chirish
-docker rmi diegosouzapw/omniroute:latest
+docker rmi diegosouzapw/agentproxy:latest
 ```
 
 ### Docker Compose
@@ -93,21 +93,21 @@ docker compose down -v
 **macOS:**
 
 - `/Applications` ichidagi `AgentProxy.app` faylini chiqindilar qutisiga olib o‘ting
-- Ma’lumotlarni o‘chirish: `rm -rf ~/Library/Application Support/omniroute`
+- Ma’lumotlarni o‘chirish: `rm -rf ~/Library/Application Support/agentproxy`
 
 **Linux:**
 
 - AppImage faylini o‘chiring
-- Ma’lumotlarni o‘chirish: `rm -rf ~/.omniroute`
+- Ma’lumotlarni o‘chirish: `rm -rf ~/.agentproxy`
 
 ### Manba kodidan o‘rnatish (git clone)
 
 ```bash
 # Klonlangan katalogni o‘chirish
-rm -rf /path/to/omniroute
+rm -rf /path/to/agentproxy
 
 # (Ixtiyoriy) Ma’lumotlar katalogini o‘chirish
-rm -rf ~/.omniroute
+rm -rf ~/.agentproxy
 ```
 
 ---
@@ -118,11 +118,11 @@ Odatiy holatda AgentProxy ma’lumotlarni quyidagi joylarda saqlaydi:
 
 | Platforma     | Standart yo‘l                 | Qayta belgilash                       |
 | ------------- | ----------------------------- | ------------------------------------- |
-| Linux         | `~/.omniroute/`               | `DATA_DIR` muhit o‘zgaruvchisi        |
-| macOS         | `~/.omniroute/`               | `DATA_DIR` muhit o‘zgaruvchisi        |
-| Windows       | `%APPDATA%/omniroute/`        | `DATA_DIR` muhit o‘zgaruvchisi        |
+| Linux         | `~/.agentproxy/`               | `DATA_DIR` muhit o‘zgaruvchisi        |
+| macOS         | `~/.agentproxy/`               | `DATA_DIR` muhit o‘zgaruvchisi        |
+| Windows       | `%APPDATA%/agentproxy/`        | `DATA_DIR` muhit o‘zgaruvchisi        |
 | Docker        | `/app/data/` (ulangan jild)   | `DATA_DIR` muhit o‘zgaruvchisi        |
-| XDG bilan mos | `$XDG_CONFIG_HOME/omniroute/` | `XDG_CONFIG_HOME` muhit o‘zgaruvchisi |
+| XDG bilan mos | `$XDG_CONFIG_HOME/agentproxy/` | `XDG_CONFIG_HOME` muhit o‘zgaruvchisi |
 
 ### Ma’lumotlar katalogidagi fayllar
 
@@ -143,17 +143,17 @@ Oʻchirib tashlaganingizdan soʻng, hech qanday fayl qolmaganini tekshiring:
 
 ```bash
 # Global npm paketini tekshirish
-npm list -g omniroute 2>/dev/null
+npm list -g agentproxy 2>/dev/null
 
 # Maʼlumotlar katalogini tekshirish
-ls -la ~/.omniroute/ 2>/dev/null
+ls -la ~/.agentproxy/ 2>/dev/null
 
 # Ishlayotgan jarayonlarni tekshirish
-pgrep -f omniroute
+pgrep -f agentproxy
 ```
 
 Agar biror jarayon hali ham ishlayotgan boʻlsa, uni toʻxtating:
 
 ```bash
-pkill -f omniroute
+pkill -f agentproxy
 ```

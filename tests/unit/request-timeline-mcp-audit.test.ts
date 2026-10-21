@@ -35,7 +35,7 @@ function llmLog(id: string, apiKeyId: string | null = "key-llm"): TimelineLog {
 
 const SAMPLE_ENTRY = {
   id: 42,
-  toolName: "omniroute_get_health",
+  toolName: "agentproxy_get_health",
   durationMs: 37,
   apiKeyId: "key-mcp",
   success: true,
@@ -45,12 +45,12 @@ const SAMPLE_ENTRY = {
 
 test("mapMcpAuditEntry prefixes the id and marks the row as mcp", () => {
   const row = mapMcpAuditEntry(SAMPLE_ENTRY, (tool) =>
-    tool === "omniroute_get_health" ? (["read:health"] as const) : undefined
+    tool === "agentproxy_get_health" ? (["read:health"] as const) : undefined
   );
   assert.equal(row.id, mcpAuditId(42));
   assert.equal(row.kind, "mcp");
-  assert.equal(row.toolName, "omniroute_get_health");
-  assert.equal(row.model, "omniroute_get_health");
+  assert.equal(row.toolName, "agentproxy_get_health");
+  assert.equal(row.model, "agentproxy_get_health");
   assert.equal(row.duration, 37);
   assert.equal(row.status, 200);
   assert.equal(row.apiKeyId, "key-mcp");
@@ -213,7 +213,7 @@ test("nextTimelineLogs keeps current bars when LLM fetch failed", () => {
 
 test("nextTimelineLogs keeps LLM bars and takes fresh MCP when LLM fetch failed", () => {
   const current = [llmLog("kept"), mapMcpAuditEntry({ ...SAMPLE_ENTRY, id: 1 })];
-  const freshMcp = mapMcpAuditEntry({ ...SAMPLE_ENTRY, id: 99, toolName: "omniroute_web_search" });
+  const freshMcp = mapMcpAuditEntry({ ...SAMPLE_ENTRY, id: 99, toolName: "agentproxy_web_search" });
   const next = nextTimelineLogs(current, {
     logs: [freshMcp],
     llmOk: false,

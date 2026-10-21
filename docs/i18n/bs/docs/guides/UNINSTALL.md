@@ -22,7 +22,7 @@ AgentProxy nudi dvije ugrađene skripte za potpuno uklanjanje:
 npm run uninstall
 ```
 
-Ovo uklanja AgentProxy aplikaciju, ali **zadržava** vašu bazu podataka, konfiguracije, API ključeve i postavke provajdera u `~/.omniroute/`. Koristite ovo ako planirate ponovnu instalaciju kasnije i želite zadržati svoje postavke.
+Ovo uklanja AgentProxy aplikaciju, ali **zadržava** vašu bazu podataka, konfiguracije, API ključeve i postavke provajdera u `~/.agentproxy/`. Koristite ovo ako planirate ponovnu instalaciju kasnije i želite zadržati svoje postavke.
 
 ### Potpuno uklanjanje
 
@@ -36,7 +36,7 @@ Ovo uklanja aplikaciju **i trajno briše** sve podatke:
 - Konfiguracije provajdera i API ključevi
 - Datoteke rezervnih kopija (backup)
 - Log datoteke
-- Sve datoteke u direktorijumu `~/.omniroute/`
+- Sve datoteke u direktorijumu `~/.agentproxy/`
 
 > ⚠️ **Upozorenje:** `npm run uninstall:full` je nepovratna radnja. Sve vaše veze sa provajderima, kombi, API ključevi i historija korištenja bit će trajno izbrisani.
 
@@ -48,31 +48,31 @@ Ovo uklanja aplikaciju **i trajno briše** sve podatke:
 
 ```bash
 # Ukloni globalni paket
-npm uninstall -g omniroute
+npm uninstall -g agentproxy
 
 # (Opcionalno) Ukloni direktorijum sa podacima
-rm -rf ~/.omniroute
+rm -rf ~/.agentproxy
 ```
 
 ### pnpm Globalna instalacija
 
 ```bash
-pnpm uninstall -g omniroute
-rm -rf ~/.omniroute
+pnpm uninstall -g agentproxy
+rm -rf ~/.agentproxy
 ```
 
 ### Docker
 
 ```bash
 # Zaustavi i ukloni kontejner
-docker stop omniroute
-docker rm omniroute
+docker stop agentproxy
+docker rm agentproxy
 
 # Ukloni volume (briše sve podatke)
-docker volume rm omniroute-data
+docker volume rm agentproxy-data
 
 # (Opcionalno) Ukloni image
-docker rmi diegosouzapw/omniroute:latest
+docker rmi diegosouzapw/agentproxy:latest
 ```
 
 ### Docker Compose
@@ -95,21 +95,21 @@ docker compose down -v
 **macOS:**
 
 - Prevucite `AgentProxy.app` iz `/Applications` u Trash
-- Uklonite podatke: `rm -rf ~/Library/Application Support/omniroute`
+- Uklonite podatke: `rm -rf ~/Library/Application Support/agentproxy`
 
 **Linux:**
 
 - Uklonite AppImage datoteku
-- Uklonite podatke: `rm -rf ~/.omniroute`
+- Uklonite podatke: `rm -rf ~/.agentproxy`
 
 ### Instalacija iz izvornog koda (git clone)
 
 ```bash
 # Ukloni klonirani direktorijum
-rm -rf /path/to/omniroute
+rm -rf /path/to/agentproxy
 
 # (Opcionalno) Ukloni direktorijum sa podacima
-rm -rf ~/.omniroute
+rm -rf ~/.agentproxy
 ```
 
 ---
@@ -120,11 +120,11 @@ AgentProxy po defaultu pohranjuje podatke na sljedećim lokacijama:
 
 | Platforma        | Defaultna putanja             | Override                  |
 | ---------------- | ----------------------------- | ------------------------- |
-| Linux            | `~/.omniroute/`               | `DATA_DIR` env var        |
-| macOS            | `~/.omniroute/`               | `DATA_DIR` env var        |
-| Windows          | `%APPDATA%/omniroute/`        | `DATA_DIR` env var        |
+| Linux            | `~/.agentproxy/`               | `DATA_DIR` env var        |
+| macOS            | `~/.agentproxy/`               | `DATA_DIR` env var        |
+| Windows          | `%APPDATA%/agentproxy/`        | `DATA_DIR` env var        |
 | Docker           | `/app/data/` (mounted volume) | `DATA_DIR` env var        |
-| XDG-kompatibilno | `$XDG_CONFIG_HOME/omniroute/` | `XDG_CONFIG_HOME` env var |
+| XDG-kompatibilno | `$XDG_CONFIG_HOME/agentproxy/` | `XDG_CONFIG_HOME` env var |
 
 ### Datoteke u direktorijumu sa podacima
 
@@ -145,17 +145,17 @@ Nakon deinstalacije, provjerite da nema preostalih datoteka:
 
 ```bash
 # Provjera globalnog npm paketa
-npm list -g omniroute 2>/dev/null
+npm list -g agentproxy 2>/dev/null
 
 # Provjera direktorija sa podacima
-ls -la ~/.omniroute/ 2>/dev/null
+ls -la ~/.agentproxy/ 2>/dev/null
 
 # Provjera aktivnih procesa
-pgrep -f omniroute
+pgrep -f agentproxy
 ```
 
 Ako je neki proces još uvijek aktivan, zaustavite ga:
 
 ```bash
-pkill -f omniroute
+pkill -f agentproxy
 ```

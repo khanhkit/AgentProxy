@@ -22,7 +22,7 @@ function dashboardExample({ path, method }: Operation): string[] {
     "CSRF_TOKEN=$(curl -s https://localhost:20128/api/auth/csrf -b cookie.jar | jq -r .token)",
     `curl -X ${method} https://localhost:20128${path} \\`,
     "  -b cookie.jar \\",
-    `  -H "x-omniroute-csrf: $CSRF_TOKEN"${hasJsonBody ? " \\" : ""}`,
+    `  -H "x-agentproxy-csrf: $CSRF_TOKEN"${hasJsonBody ? " \\" : ""}`,
     ...(hasJsonBody ? ['  -H "Content-Type: application/json" \\', "  -d '{}'"] : []),
   ];
 }
@@ -32,7 +32,7 @@ function bearerExample({ path, method }: Operation): string[] {
   const hasJsonBody = ["POST", "PUT", "PATCH"].includes(method);
   return [
     `curl ${curlMethod}https://localhost:20128${path} \\`,
-    `  -H "Authorization: Bearer $OMNIROUTE_TOKEN"${hasJsonBody ? " \\" : ""}`,
+    `  -H "Authorization: Bearer $AGENTPROXY_TOKEN"${hasJsonBody ? " \\" : ""}`,
     ...(hasJsonBody ? ['  -H "Content-Type: application/json" \\', "  -d '{}'"] : []),
   ];
 }

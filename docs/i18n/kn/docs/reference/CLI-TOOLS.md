@@ -51,11 +51,11 @@ AgentProxyನಿಂದ (ಸ್ಥಳೀಯ ಅಥವಾ ದೂರಸ್ಥ) **�
 ಕಮಾಂಡ್ ಅನ್ನು ಒದಗಿಸುತ್ತದೆ:
 
 ```bash
-omniroute setup-codex        omniroute setup-claude       omniroute setup-opencode
-omniroute setup-cline        omniroute setup-kilo         omniroute setup-continue
-omniroute setup-cursor       omniroute setup-roo          omniroute setup-crush
-omniroute setup-goose        omniroute setup-qwen         omniroute setup-aider
-omniroute setup-5dive
+agentproxy setup-codex        agentproxy setup-claude       agentproxy setup-opencode
+agentproxy setup-cline        agentproxy setup-kilo         agentproxy setup-continue
+agentproxy setup-cursor       agentproxy setup-roo          agentproxy setup-crush
+agentproxy setup-goose        agentproxy setup-qwen         agentproxy setup-aider
+agentproxy setup-5dive
 ```
 
 ಪ್ರತಿಯೊಂದೂ `--remote <url> --api-key <key>` (ದೂರಸ್ಥ AgentProxyಗೆ ವಿರುದ್ಧವಾಗಿ ಸ್ಥಳೀಯ
@@ -66,11 +66,11 @@ Qwen, 5dive) `--model <id>` ಅನ್ನು (ಮತ್ತು ಸಂವಾದರ�
 ಹೋಸ್ಟ್ನಲ್ಲಿ root ಮಾಲೀಕತ್ವದ ದೃಢೀಕರಣ ಪ್ರೊಫೈಲ್ ಬರೆಯುವ ಮೂಲಕ 5dive ಏಜೆಂಟ್ ಫ್ಲೀಟ್ ಅನ್ನು
 ಸಂರಚಿಸುತ್ತದೆ, ಆದ್ದರಿಂದ ಇದು `sudo` ಮೂಲಕ ಮರು-ಕಾರ್ಯಗತಗೊಳ್ಳುತ್ತದೆ ಮತ್ತು ತನ್ನದೇ ಆದ
 ದೂರಸ್ಥ ಮೋಡ್ ಹೊಂದಿಲ್ಲ. ಸರಿಯಾದ ಪರಿಸರವನ್ನು ಸೇರಿಸಿ, ಯಾವುದೇ ಸಂರಚನೆಯನ್ನು ಬರೆಯದೆ CLI ಅನ್ನು
-ಪ್ರಾರಂಭಿಸಲು ಸಾಮಾನ್ಯ `omniroute run <target>` ಲಾಂಚರ್ ಅನ್ನು ಬಳಸಿ (claude, codex,
+ಪ್ರಾರಂಭಿಸಲು ಸಾಮಾನ್ಯ `agentproxy run <target>` ಲಾಂಚರ್ ಅನ್ನು ಬಳಸಿ (claude, codex,
 aider, goose, opencode, qwen, gemini — ಗುರಿಗಳು ಮತ್ತು ಅಲಿಯಾಸ್ಗಳು
 `bin/cli/cli-manifest.mjs` ನಿಂದ ಬರುತ್ತವೆ); ಹಿಂದಿನ ಪ್ರತಿ-ಪರಿಕರ ಲಾಂಚರ್ಗಳಾದ
-`omniroute launch` (Claude Code) ಮತ್ತು `omniroute launch-codex` (Codex) ಇನ್ನೂ
-ಲಭ್ಯವಿವೆ. Gemini CLI ಪ್ರಾರಂಭಕ್ಕೆ ಮಾತ್ರ ಸೀಮಿತವಾಗಿದೆ: ಅದು `omniroute run` ಗುರಿಯಾಗಿದೆ,
+`agentproxy launch` (Claude Code) ಮತ್ತು `agentproxy launch-codex` (Codex) ಇನ್ನೂ
+ಲಭ್ಯವಿವೆ. Gemini CLI ಪ್ರಾರಂಭಕ್ಕೆ ಮಾತ್ರ ಸೀಮಿತವಾಗಿದೆ: ಅದು `agentproxy run` ಗುರಿಯಾಗಿದೆ,
 ಆದರೆ ಅದಕ್ಕೆ `setup-*`/`configure` ವಿಧಾನವಿಲ್ಲ.
 
 > **ಪೂರ್ಣ ಉಲ್ಲೇಖ:** ಪ್ರತಿ ಕಮಾಂಡ್ ಏನನ್ನು ಬರೆಯುತ್ತದೆ, ಪ್ರತಿಯೊಂದು ಫ್ಲ್ಯಾಗ್,
@@ -84,20 +84,20 @@ AgentProxy ಕಂಟೇನರ್ ಒಳಗೆ ಕಾರ್ಯಗತಗೊಳಿ�
 ಬರೆಯುತ್ತದೆ; ಅದನ್ನು ಯಾವುದೇ ಹೋಸ್ಟ್ CLI ಓದುವುದಿಲ್ಲ ಮತ್ತು ಅದು ಕಂಟೇನರ್ ಜೊತೆಗೆ
 ಕಣ್ಮರೆಯಾಗುತ್ತದೆ. AgentProxy ಇದನ್ನು ಪತ್ತೆಹಚ್ಚಿ, ಬರೆಯುವುದಕ್ಕೆ ಬದಲಾಗಿ ಸೂಚನೆಗಳೊಂದಿಗೆ
 `2` ಕೋಡ್ನೊಂದಿಗೆ ನಿರ್ಗಮಿಸುತ್ತದೆ. ಮುಂದುವರಿಯಲು ಬೆಂಬಲಿತ ಎರಡು ಮಾರ್ಗಗಳಿವೆ — ಹೋಸ್ಟ್ನಲ್ಲಿ
-CLI ಅನ್ನು ಸ್ಥಾಪಿಸಿ ಕಂಟೇನರ್ಗೆ `omniroute connect` ಬಳಸಿ, ಅಥವಾ ಸಂರಚನಾ ಡೈರೆಕ್ಟರಿಗಳನ್ನು
+CLI ಅನ್ನು ಸ್ಥಾಪಿಸಿ ಕಂಟೇನರ್ಗೆ `agentproxy connect` ಬಳಸಿ, ಅಥವಾ ಸಂರಚನಾ ಡೈರೆಕ್ಟರಿಗಳನ್ನು
 ಬೈಂಡ್-ಮೌಂಟ್ ಮಾಡಿ `CLI_CONFIG_HOME` ಅನ್ನು ಹೊಂದಿಸಿ (compose `host` ಪ್ರೊಫೈಲ್).
-ಪ್ರತಿಯೊಂದು `setup-*` ಕಮಾಂಡ್, ಜೊತೆಗೆ `omniroute configure` ಮತ್ತು
-`omniroute config set`, ನೀವು ನಿಜವಾಗಿಯೂ ಕಂಟೇನರ್ನ ಸ್ವಂತ CLIಗಳನ್ನು ಸಂರಚಿಸಲು ಬಯಸಿದಾಗ
+ಪ್ರತಿಯೊಂದು `setup-*` ಕಮಾಂಡ್, ಜೊತೆಗೆ `agentproxy configure` ಮತ್ತು
+`agentproxy config set`, ನೀವು ನಿಜವಾಗಿಯೂ ಕಂಟೇನರ್ನ ಸ್ವಂತ CLIಗಳನ್ನು ಸಂರಚಿಸಲು ಬಯಸಿದಾಗ
 `--allow-container-write` ಅನ್ನು ಸ್ವೀಕರಿಸುತ್ತವೆ; ಸರ್ವರ್ಗಾಗಿ
-`OMNIROUTE_ALLOW_CONTAINER_CONFIG_WRITE=true` ಅದೇ ಕೆಲಸವನ್ನು ಮಾಡುತ್ತದೆ. ನೋಡಿ:
-[Docker ಮಾರ್ಗದರ್ಶಿ → ಹೋಸ್ಟ್ CLI ಪರಿಕರಗಳನ್ನು ಸಂರಚಿಸುವುದು](../guides/DOCKER_GUIDE.md#configuring-host-cli-tools-when-omniroute-runs-in-docker).
+`AGENTPROXY_ALLOW_CONTAINER_CONFIG_WRITE=true` ಅದೇ ಕೆಲಸವನ್ನು ಮಾಡುತ್ತದೆ. ನೋಡಿ:
+[Docker ಮಾರ್ಗದರ್ಶಿ → ಹೋಸ್ಟ್ CLI ಪರಿಕರಗಳನ್ನು ಸಂರಚಿಸುವುದು](../guides/DOCKER_GUIDE.md#configuring-host-cli-tools-when-agentproxy-runs-in-docker).
 
 ಡ್ಯಾಶ್ಬೋರ್ಡ್ನ **ಅನ್ವಯಿಸುವ ಎಂಡ್ಪಾಯಿಂಟ್** (`POST /api/cli-tools/apply`) ಇದೇ
 ರಕ್ಷಣೆಯನ್ನು ಜಾರಿಗೊಳಿಸುತ್ತದೆ: ಕಂಟೇನರ್ನಲ್ಲಿ, ಗುರಿಯನ್ನು ಹೋಸ್ಟ್ನಿಂದ ಬೈಂಡ್-ಮೌಂಟ್
 ಮಾಡಿರದ ಬರವಣಿಗೆಯು **`422`** ಜೊತೆಗೆ `containerEphemeralTarget: true`, ಸುರಕ್ಷಿತ ದೋಷ
 ಪಠ್ಯ ಮತ್ತು — ಹೋಸ್ಟ್ ವಿಧಾನವಿರುವ ಪರಿಕರಗಳಿಗೆ (claude, codex, opencode, cline,
 kilo, continue) — ಹೋಸ್ಟ್ನಲ್ಲಿ ಚಲಾಯಿಸಲು `hostSetupCommand` (ಉದಾ.
-`omniroute setup-opencode`) ಅನ್ನು ಹಿಂತಿರುಗಿಸುತ್ತದೆ; ಏನನ್ನೂ ಬರೆಯಲಾಗುವುದಿಲ್ಲ.
+`agentproxy setup-opencode`) ಅನ್ನು ಹಿಂತಿರುಗಿಸುತ್ತದೆ; ಏನನ್ನೂ ಬರೆಯಲಾಗುವುದಿಲ್ಲ.
 ಕಂಟೇನರ್ ಮೋಡ್ನಲ್ಲಿ `dryRun: true` ಕಾರ್ಯನಿರ್ವಹಿಸುವುದನ್ನು ಮುಂದುವರಿಸುತ್ತದೆ ಮತ್ತು
 ಡಿಸ್ಕ್ ಅನ್ನು ಸ್ಪರ್ಶಿಸದೆ ರಚಿಸಲಾದ ವಿಷಯ + ಗುರಿ ಮಾರ್ಗವನ್ನು ಹಿಂತಿರುಗಿಸುತ್ತದೆ; ಆದ್ದರಿಂದ
 ನೀವು ಡ್ಯಾಶ್ಬೋರ್ಡ್ನಿಂದ ಪೂರ್ವವೀಕ್ಷಿಸಿ ಹೋಸ್ಟ್ನಲ್ಲಿ ಅನ್ವಯಿಸಬಹುದು. ಈ ನಡವಳಿಕೆ
@@ -133,8 +133,8 @@ kilo, continue) — ಹೋಸ್ಟ್ನಲ್ಲಿ ಚಲಾಯಿಸಲು `
 | ------------------------ | ---------------------------------------------------------------------------------- | ------------------------------------------------------------------- |
 | **ಕ್ಯಾಟಲಾಗ್ ಮಾಡಿರುವುದು** | ಡ್ಯಾಶ್ಬೋರ್ಡ್ ಕ್ಯಾಟಲಾಗ್ನಲ್ಲಿ ಕಾಣಿಸುತ್ತದೆ (ಹೆಸರು, ಮಾರಾಟಗಾರ, ಡಾಕ್ಸ್, ಸಂರಚನಾ ಪ್ರಕಾರ)   | `src/shared/constants/cliTools.ts` (`CLI_TOOLS`)                    |
 | **ಪತ್ತೆಹಚ್ಚಬಹುದಾದುದು**   | ಬೈನರಿ/ಸಂರಚನೆ ಪತ್ತೆ, ಆರೋಗ್ಯ ಪರಿಶೀಲನೆಗಳು, ಸಂರಚನಾ ಪಥಗಳು                               | `src/shared/services/cliRuntime.ts` (`CLI_TOOLS` ರನ್ಟೈಮ್ ಕ್ಯಾಟಲಾಗ್) |
-| **ಸಂರಚಿಸಬಹುದಾದುದು**      | `omniroute configure <cli>` ನಿಂದ ಬೆಂಬಲಿತವಾಗಿದೆ (ಸೆಟಪ್ ವಿಧಾನ ಅಸ್ತಿತ್ವದಲ್ಲಿದೆ)       | `bin/cli/cli-manifest.mjs` (`configure: true`)                      |
-| **ಪ್ರಾರಂಭಿಸಬಹುದಾದುದು**   | `omniroute run <target>` ನಿಂದ ಬೆಂಬಲಿತವಾಗಿದೆ (env/args ಇಂಜೆಕ್ಷನ್ ವ್ಯಾಖ್ಯಾನಿಸಲಾಗಿದೆ) | `bin/cli/cli-manifest.mjs` (`run: true`)                            |
+| **ಸಂರಚಿಸಬಹುದಾದುದು**      | `agentproxy configure <cli>` ನಿಂದ ಬೆಂಬಲಿತವಾಗಿದೆ (ಸೆಟಪ್ ವಿಧಾನ ಅಸ್ತಿತ್ವದಲ್ಲಿದೆ)       | `bin/cli/cli-manifest.mjs` (`configure: true`)                      |
+| **ಪ್ರಾರಂಭಿಸಬಹುದಾದುದು**   | `agentproxy run <target>` ನಿಂದ ಬೆಂಬಲಿತವಾಗಿದೆ (env/args ಇಂಜೆಕ್ಷನ್ ವ್ಯಾಖ್ಯಾನಿಸಲಾಗಿದೆ) | `bin/cli/cli-manifest.mjs` (`run: true`)                            |
 
 `bin/cli/cli-manifest.mjs` ಎಂಬುದು CLI ಕಮಾಂಡ್
 ಸರ್ಫೇಸ್ಗಳ ಅಧಿಕೃತ ಎಕ್ಸಿಕ್ಯೂಟಬಲ್ ಮ್ಯಾನಿಫೆಸ್ಟ್ ಆಗಿದೆ: `run`, `configure` ಮತ್ತು ಶೆಲ್-ಕಂಪ್ಲೀಷನ್ ಜನರೇಟರ್ಗಳೆಲ್ಲವೂ ತಮ್ಮ
@@ -268,7 +268,7 @@ interface ToolBatchStatus {
 | `POST /api/cli-tools/codewhale-settings`    | CodeWhale (OPENAI_BASE_URL, ಪ್ರಾಥಮಿಕ + ಹಳೆಯ `~/.deepseek` ಸಿಂಕ್) |
 | `POST /api/cli-tools/smelt-settings`        | Smelt                                                            |
 | `POST /api/cli-tools/pi-settings`           | Pi ಕೋಡಿಂಗ್ ಏಜೆಂಟ್                                                |
-| `POST /api/cli-tools/grok-build-settings`   | Grok Build (~/.grok/config.toml, `[model.omniroute]`)            |
+| `POST /api/cli-tools/grok-build-settings`   | Grok Build (~/.grok/config.toml, `[model.agentproxy]`)            |
 | `POST /api/cli-tools/qwen-settings`         | Qwen Code (`~/.qwen/settings.json` + ಮೀಸಲಾದ `.env` ಕೀಲಿ)         |
 
 ಎಲ್ಲಾ ಮಾರ್ಗಗಳು ದೋಷ ಪ್ರತಿಕ್ರಿಯೆಗಳಿಗಾಗಿ `sanitizeErrorMessage()` ಅನ್ನು ಬಳಸುತ್ತವೆ (ಕಠಿಣ ನಿಯಮ #12).
@@ -363,7 +363,7 @@ npm install -g kilocode
 # Qwen Code
 npm install -g @qwen-code/qwen-code
 
-# Google Gemini CLI (`omniroute run gemini` ಮೂಲಕ ಪ್ರಾರಂಭಿಸಬಹುದು → /v1beta ಮೇಲ್ಮೈ)
+# Google Gemini CLI (`agentproxy run gemini` ಮೂಲಕ ಪ್ರಾರಂಭಿಸಬಹುದು → /v1beta ಮೇಲ್ಮೈ)
 npm install -g @google/gemini-cli
 
 # Aider
@@ -396,12 +396,12 @@ cargo install smelt  # Rust-ಆಧಾರಿತ
 ```bash
 # AgentProxy ಯುನಿವರ್ಸಲ್ ಎಂಡ್ಪಾಯಿಂಟ್
 export OPENAI_BASE_URL="http://localhost:20128/v1"
-export OPENAI_API_KEY="sk-your-omniroute-key"
+export OPENAI_API_KEY="sk-your-agentproxy-key"
 export ANTHROPIC_BASE_URL="http://localhost:20128"
-export ANTHROPIC_AUTH_TOKEN="sk-your-omniroute-key"
+export ANTHROPIC_AUTH_TOKEN="sk-your-agentproxy-key"
 # Gemini CLI, ROOT ನಲ್ಲಿರುವ GOOGLE_GEMINI_BASE_URL ಅನ್ನು ಓದುತ್ತದೆ (ಅದರ SDK ಸ್ವತಃ /v1beta/... ಅನ್ನು ಸೇರಿಸುತ್ತದೆ)
 export GOOGLE_GEMINI_BASE_URL="http://localhost:20128"
-export GEMINI_API_KEY="sk-your-omniroute-key"
+export GEMINI_API_KEY="sk-your-agentproxy-key"
 ```
 
 > **ದೂರಸ್ಥ ಸರ್ವರ್ಗಾಗಿ** `localhost:20128` ಅನ್ನು ಸರ್ವರ್ IP ಅಥವಾ domain ನಿಂದ ಬದಲಾಯಿಸಿ,
@@ -419,7 +419,7 @@ mkdir -p ~/.claude && cat > ~/.claude/settings.json << EOF
 {
   "env": {
     "ANTHROPIC_BASE_URL": "http://localhost:20128",
-    "ANTHROPIC_AUTH_TOKEN": "sk-your-omniroute-key"
+    "ANTHROPIC_AUTH_TOKEN": "sk-your-agentproxy-key"
   }
 }
 EOF
@@ -435,20 +435,20 @@ Claude Code ಗಾಗಿ ಏಕೀಕೃತ Anthropic gateway root ಬಳಸಿ.
 
 ಆಧುನಿಕ Codex (v0.137+) ಕೇವಲ `~/.codex/config.toml` ಅನ್ನು ಓದುತ್ತದೆ — ಹಳೆಯ
 `config.yaml` legacy npm CLI ಗೆ ಸೇರಿದ್ದು, ಅದನ್ನು ಯಾವುದೇ ಸೂಚನೆಯಿಲ್ಲದೆ ನಿರ್ಲಕ್ಷಿಸಲಾಗುತ್ತದೆ. API
-ಕೀ `OMNIROUTE_API_KEY` ಪರಿಸರ ಚರಾಂಶದಲ್ಲಿಯೇ (`env_key`) ಉಳಿಯುತ್ತದೆ, ಎಂದಿಗೂ
+ಕೀ `AGENTPROXY_API_KEY` ಪರಿಸರ ಚರಾಂಶದಲ್ಲಿಯೇ (`env_key`) ಉಳಿಯುತ್ತದೆ, ಎಂದಿಗೂ
 ಫೈಲ್ ಒಳಗೆ ಅಲ್ಲ:
 
 ```bash
 mkdir -p ~/.codex && cat > ~/.codex/config.toml << EOF
-model_provider = "omniroute"
+model_provider = "agentproxy"
 
-[model_providers.omniroute]
+[model_providers.agentproxy]
 name                 = "AgentProxy"
 base_url             = "http://localhost:20128/v1"
-env_key              = "OMNIROUTE_API_KEY"
+env_key              = "AGENTPROXY_API_KEY"
 requires_openai_auth = false
 EOF
-export OMNIROUTE_API_KEY="sk-your-omniroute-key"
+export AGENTPROXY_API_KEY="sk-your-agentproxy-key"
 ```
 
 ಸಂಪೂರ್ಣ ಉಲ್ಲೇಖ (profile-ಗಳು, `wire_api`, context window-ಗಳು): [CODEX-CLI-CONFIGURATION.md](../guides/CODEX-CLI-CONFIGURATION.md).
@@ -464,12 +464,12 @@ mkdir -p ~/.config/opencode && cat > ~/.config/opencode/opencode.json << EOF
 {
   "\$schema": "https://opencode.ai/config.json",
   "provider": {
-    "omniroute": {
+    "agentproxy": {
       "npm": "@ai-sdk/openai-compatible",
       "name": "AgentProxy",
       "options": {
         "baseURL": "http://localhost:20128/v1",
-        "apiKey": "sk-your-omniroute-key"
+        "apiKey": "sk-your-agentproxy-key"
       },
       "models": {
         "claude-sonnet-4-5": { "name": "claude-sonnet-4-5" },
@@ -484,7 +484,7 @@ EOF
 
 **ಪರೀಕ್ಷೆ:** `opencode`
 
-> thinking variant-ಗಳನ್ನು ಕಳುಹಿಸಲು `opencode run "your prompt" --model omniroute/claude-sonnet-4-5-thinking --variant high`
+> thinking variant-ಗಳನ್ನು ಕಳುಹಿಸಲು `opencode run "your prompt" --model agentproxy/claude-sonnet-4-5-thinking --variant high`
 > ಬಳಸಿ.
 
 ---
@@ -498,7 +498,7 @@ mkdir -p ~/.cline/data && cat > ~/.cline/data/globalState.json << EOF
 {
   "apiProvider": "openai",
   "openAiBaseUrl": "http://localhost:20128/v1",
-  "openAiApiKey": "sk-your-omniroute-key"
+  "openAiApiKey": "sk-your-agentproxy-key"
 }
 EOF
 ```
@@ -515,7 +515,7 @@ Cline extension settings → API Provider: `OpenAI Compatible` → Base URL: `ht
 **CLI ಮೋಡ್:**
 
 ```bash
-kilocode --api-base http://localhost:20128/v1 --api-key sk-your-omniroute-key
+kilocode --api-base http://localhost:20128/v1 --api-key sk-your-agentproxy-key
 ```
 
 **VS Code settings:**
@@ -523,7 +523,7 @@ kilocode --api-base http://localhost:20128/v1 --api-key sk-your-omniroute-key
 ```json
 {
   "kilo-code.openAiBaseUrl": "http://localhost:20128/v1",
-  "kilo-code.apiKey": "sk-your-omniroute-key"
+  "kilo-code.apiKey": "sk-your-agentproxy-key"
 }
 ```
 
@@ -541,7 +541,7 @@ models:
     provider: openai
     model: auto
     apiBase: http://localhost:20128/v1
-    apiKey: sk-your-omniroute-key
+    apiKey: sk-your-agentproxy-key
     default: true
 ```
 
@@ -568,8 +568,8 @@ custom endpoint model-ಗಳಿಗಾಗಿ VS Code Insiders ಅನ್ನು ಕ
     "name": "AgentProxy Auto",
     "family": "gpt-4",
     "version": "1.0.0",
-    "url": "http://localhost:20128/api/v1/vscode/sk-your-omniroute-key/chat/completions",
-    "modelsUrl": "http://localhost:20128/api/v1/vscode/sk-your-omniroute-key/models",
+    "url": "http://localhost:20128/api/v1/vscode/sk-your-agentproxy-key/chat/completions",
+    "modelsUrl": "http://localhost:20128/api/v1/vscode/sk-your-agentproxy-key/models",
     "requestFormat": "openai-chat-completions",
     "contextWindow": 256000,
     "maxOutputTokens": 32768,
@@ -582,7 +582,7 @@ custom endpoint model-ಗಳಿಗಾಗಿ VS Code Insiders ಅನ್ನು ಕ
 
 **ಟಿಪ್ಪಣಿಗಳು:**
 
-- `sk-your-omniroute-key` ಅನ್ನು AgentProxy ನಲ್ಲಿ ರಚಿಸಿದ API ಕೀಯಿಂದ ಬದಲಾಯಿಸಿ.
+- `sk-your-agentproxy-key` ಅನ್ನು AgentProxy ನಲ್ಲಿ ರಚಿಸಿದ API ಕೀಯಿಂದ ಬದಲಾಯಿಸಿ.
 - `url` field `/api/v1/vscode/{token}/chat/completions` ಅನ್ನು ಸೂಚಿಸಬೇಕು.
 - `modelsUrl` field `/api/v1/vscode/{token}/models` ಅನ್ನು ಸೂಚಿಸಬೇಕು.
 - client custom header-ಗಳನ್ನು ಬೆಂಬಲಿಸಿದಾಗ ಸಾಮಾನ್ಯ `/v1` + Bearer header flow ಗೆ ಆದ್ಯತೆ ನೀಡಿ.
@@ -608,28 +608,28 @@ kiro-cli status
 
 ## 10. ಆಂತರಿಕ AgentProxy CLI
 
-`omniroute` ಬೈನರಿ ಸರ್ವರ್ ಜೀವನಚಕ್ರ, ಸೆಟಪ್, ರೋಗನಿರ್ಣಯ ಮತ್ತು ಪೂರೈಕೆದಾರರ ನಿರ್ವಹಣೆಗಾಗಿ ಕಮಾಂಡ್ಗಳನ್ನು ಒದಗಿಸುತ್ತದೆ. ಪ್ರವೇಶ ಬಿಂದು: `bin/omniroute.mjs`.
+`agentproxy` ಬೈನರಿ ಸರ್ವರ್ ಜೀವನಚಕ್ರ, ಸೆಟಪ್, ರೋಗನಿರ್ಣಯ ಮತ್ತು ಪೂರೈಕೆದಾರರ ನಿರ್ವಹಣೆಗಾಗಿ ಕಮಾಂಡ್ಗಳನ್ನು ಒದಗಿಸುತ್ತದೆ. ಪ್ರವೇಶ ಬಿಂದು: `bin/agentproxy.mjs`.
 
 ```bash
-omniroute                              # ಸರ್ವರ್ ಪ್ರಾರಂಭಿಸಿ (ಡೀಫಾಲ್ಟ್ ಪೋರ್ಟ್ 20128)
-omniroute setup                        # ಸಂವಾದಾತ್ಮಕ ಸೆಟಪ್ ಮಾಂತ್ರಿಕ
-omniroute doctor                       # ಕಾನ್ಫಿಗ್, DB, ಪೋರ್ಟ್ಗಳು ಮತ್ತು ರನ್ಟೈಮ್ ಪರಿಶೀಲಿಸಿ
-omniroute providers list               # ಕಾನ್ಫಿಗರ್ ಮಾಡಿದ ಪೂರೈಕೆದಾರ ಸಂಪರ್ಕಗಳು
-omniroute providers test-all           # ಪ್ರತಿಯೊಂದು ಸಕ್ರಿಯ ಸಂಪರ್ಕವನ್ನು ಪರೀಕ್ಷಿಸಿ
-omniroute reset-password               # ನಿರ್ವಾಹಕರ ಪಾಸ್ವರ್ಡ್ ಮರುಹೊಂದಿಸಿ
-omniroute logs                         # ವಿನಂತಿ ಲಾಗ್ಗಳನ್ನು ಸ್ಟ್ರೀಮ್ ಮಾಡಿ
-omniroute health                       # ವಿವರವಾದ ಆರೋಗ್ಯ ಸ್ಥಿತಿ (ಬ್ರೇಕರ್ಗಳು, ಕ್ಯಾಶ್, ಮೆಮೊರಿ)
-omniroute --version                    # ಆವೃತ್ತಿಯನ್ನು ಮುದ್ರಿಸಿ
-omniroute --help                       # ಎಲ್ಲಾ ಕಮಾಂಡ್ಗಳನ್ನು ತೋರಿಸಿ
+agentproxy                              # ಸರ್ವರ್ ಪ್ರಾರಂಭಿಸಿ (ಡೀಫಾಲ್ಟ್ ಪೋರ್ಟ್ 20128)
+agentproxy setup                        # ಸಂವಾದಾತ್ಮಕ ಸೆಟಪ್ ಮಾಂತ್ರಿಕ
+agentproxy doctor                       # ಕಾನ್ಫಿಗ್, DB, ಪೋರ್ಟ್ಗಳು ಮತ್ತು ರನ್ಟೈಮ್ ಪರಿಶೀಲಿಸಿ
+agentproxy providers list               # ಕಾನ್ಫಿಗರ್ ಮಾಡಿದ ಪೂರೈಕೆದಾರ ಸಂಪರ್ಕಗಳು
+agentproxy providers test-all           # ಪ್ರತಿಯೊಂದು ಸಕ್ರಿಯ ಸಂಪರ್ಕವನ್ನು ಪರೀಕ್ಷಿಸಿ
+agentproxy reset-password               # ನಿರ್ವಾಹಕರ ಪಾಸ್ವರ್ಡ್ ಮರುಹೊಂದಿಸಿ
+agentproxy logs                         # ವಿನಂತಿ ಲಾಗ್ಗಳನ್ನು ಸ್ಟ್ರೀಮ್ ಮಾಡಿ
+agentproxy health                       # ವಿವರವಾದ ಆರೋಗ್ಯ ಸ್ಥಿತಿ (ಬ್ರೇಕರ್ಗಳು, ಕ್ಯಾಶ್, ಮೆಮೊರಿ)
+agentproxy --version                    # ಆವೃತ್ತಿಯನ್ನು ಮುದ್ರಿಸಿ
+agentproxy --help                       # ಎಲ್ಲಾ ಕಮಾಂಡ್ಗಳನ್ನು ತೋರಿಸಿ
 ```
 
 ### ಸೆಟಪ್ ಮತ್ತು ಪ್ರಾರಂಭೀಕರಣ
 
 ```bash
-omniroute setup                        # ಸಂವಾದಾತ್ಮಕ ಸೆಟಪ್ ಮಾಂತ್ರಿಕ
-omniroute setup --non-interactive      # CI/ಸ್ವಯಂಚಾಲನೆ ಮೋಡ್ (env vars + flags ಓದುತ್ತದೆ)
-omniroute setup --password '<value>'   # ನಿರ್ವಾಹಕರ ಪಾಸ್ವರ್ಡ್ ಅನ್ನು ನೇರವಾಗಿ ಹೊಂದಿಸಿ
-omniroute setup --add-provider \
+agentproxy setup                        # ಸಂವಾದಾತ್ಮಕ ಸೆಟಪ್ ಮಾಂತ್ರಿಕ
+agentproxy setup --non-interactive      # CI/ಸ್ವಯಂಚಾಲನೆ ಮೋಡ್ (env vars + flags ಓದುತ್ತದೆ)
+agentproxy setup --password '<value>'   # ನಿರ್ವಾಹಕರ ಪಾಸ್ವರ್ಡ್ ಅನ್ನು ನೇರವಾಗಿ ಹೊಂದಿಸಿ
+agentproxy setup --add-provider \
   --provider openai \
   --api-key '<value>' \
   --test-provider                      # ಒಂದೇ ಬಾರಿಗೆ ಪೂರೈಕೆದಾರರನ್ನು ಸೇರಿಸಿ ಮತ್ತು ಪರೀಕ್ಷಿಸಿ
@@ -639,21 +639,21 @@ omniroute setup --add-provider \
 
 | Var                 | ಉದ್ದೇಶ                                                              |
 | ------------------- | ------------------------------------------------------------------- |
-| `OMNIROUTE_API_KEY` | ಪೂರೈಕೆದಾರ API ಕೀ (Commander `.env()` ಮೂಲಕ `--api-key`ಗೆ ಬದ್ಧವಾಗಿದೆ) |
+| `AGENTPROXY_API_KEY` | ಪೂರೈಕೆದಾರ API ಕೀ (Commander `.env()` ಮೂಲಕ `--api-key`ಗೆ ಬದ್ಧವಾಗಿದೆ) |
 | `DATA_DIR`          | AgentProxy ಡೇಟಾ ಡೈರೆಕ್ಟರಿಯನ್ನು ಅತಿಕ್ರಮಿಸಿ                            |
 
 ಇತರ ಎಲ್ಲಾ ಸಂವಾದರಹಿತ ಇನ್ಪುಟ್ಗಳನ್ನು ಪರಿಸರ ಚರಗಳಾಗಿ ಅಲ್ಲ, ಫ್ಲ್ಯಾಗ್ಗಳಾಗಿ ರವಾನಿಸಲಾಗುತ್ತದೆ:
 `--password`, `--provider`, `--provider-name`, `--provider-base-url`, `--default-model`
-(ಮೇಲಿನ `omniroute setup` ಆಯ್ಕೆಗಳನ್ನು ನೋಡಿ).
+(ಮೇಲಿನ `agentproxy setup` ಆಯ್ಕೆಗಳನ್ನು ನೋಡಿ).
 
 ### ರೋಗನಿರ್ಣಯ
 
 ```bash
-omniroute doctor                       # ಕಾನ್ಫಿಗ್, DB, ಪೋರ್ಟ್ಗಳು, ರನ್ಟೈಮ್, ಮೆಮೊರಿ ಮತ್ತು ಜೀವಂತಿಕೆ ಪರಿಶೀಲಿಸಿ
-omniroute doctor --json                # ಯಂತ್ರ-ಓದಬಹುದಾದ JSON
-omniroute doctor --no-liveness         # HTTP ಆರೋಗ್ಯ ಪರಿಶೀಲನೆಯನ್ನು ಬಿಟ್ಟುಬಿಡಿ
-omniroute doctor --host 0.0.0.0        # ಜೀವಂತಿಕೆ ಹೋಸ್ಟ್ ಅನ್ನು ಅತಿಕ್ರಮಿಸಿ
-omniroute doctor --liveness-url <url>  # ಸಂಪೂರ್ಣ ಆರೋಗ್ಯ ಎಂಡ್ಪಾಯಿಂಟ್ URL ಅನ್ನು ಅತಿಕ್ರಮಿಸಿ
+agentproxy doctor                       # ಕಾನ್ಫಿಗ್, DB, ಪೋರ್ಟ್ಗಳು, ರನ್ಟೈಮ್, ಮೆಮೊರಿ ಮತ್ತು ಜೀವಂತಿಕೆ ಪರಿಶೀಲಿಸಿ
+agentproxy doctor --json                # ಯಂತ್ರ-ಓದಬಹುದಾದ JSON
+agentproxy doctor --no-liveness         # HTTP ಆರೋಗ್ಯ ಪರಿಶೀಲನೆಯನ್ನು ಬಿಟ್ಟುಬಿಡಿ
+agentproxy doctor --host 0.0.0.0        # ಜೀವಂತಿಕೆ ಹೋಸ್ಟ್ ಅನ್ನು ಅತಿಕ್ರಮಿಸಿ
+agentproxy doctor --liveness-url <url>  # ಸಂಪೂರ್ಣ ಆರೋಗ್ಯ ಎಂಡ್ಪಾಯಿಂಟ್ URL ಅನ್ನು ಅತಿಕ್ರಮಿಸಿ
 ```
 
 doctor ಈ ಪರಿಶೀಲನೆಗಳನ್ನು ನಡೆಸುತ್ತದೆ: `Config`, `Database`, `Storage/encryption`,
@@ -663,22 +663,22 @@ doctor ಈ ಪರಿಶೀಲನೆಗಳನ್ನು ನಡೆಸುತ್ತ�
 ### ಪೂರೈಕೆದಾರರ ನಿರ್ವಹಣೆ
 
 ```bash
-omniroute providers available                       # AgentProxy ಪೂರೈಕೆದಾರರ ಕ್ಯಾಟಲಾಗ್
-omniroute providers available --search openai       # id/name/alias/category ಮೂಲಕ ಕ್ಯಾಟಲಾಗ್ ಅನ್ನು ಫಿಲ್ಟರ್ ಮಾಡಿ
-omniroute providers available --category api-key    # ವರ್ಗದ ಮೂಲಕ ಫಿಲ್ಟರ್ ಮಾಡಿ (api-key, oauth, free, ...)
-omniroute providers available --json                # ಯಂತ್ರ-ಓದಬಹುದಾದ JSON
+agentproxy providers available                       # AgentProxy ಪೂರೈಕೆದಾರರ ಕ್ಯಾಟಲಾಗ್
+agentproxy providers available --search openai       # id/name/alias/category ಮೂಲಕ ಕ್ಯಾಟಲಾಗ್ ಅನ್ನು ಫಿಲ್ಟರ್ ಮಾಡಿ
+agentproxy providers available --category api-key    # ವರ್ಗದ ಮೂಲಕ ಫಿಲ್ಟರ್ ಮಾಡಿ (api-key, oauth, free, ...)
+agentproxy providers available --json                # ಯಂತ್ರ-ಓದಬಹುದಾದ JSON
 
-omniroute providers list                            # ಕಾನ್ಫಿಗರ್ ಮಾಡಿದ ಪೂರೈಕೆದಾರ ಸಂಪರ್ಕಗಳು
-omniroute providers list --json
+agentproxy providers list                            # ಕಾನ್ಫಿಗರ್ ಮಾಡಿದ ಪೂರೈಕೆದಾರ ಸಂಪರ್ಕಗಳು
+agentproxy providers list --json
 
-omniroute providers test <id|name>                  # ಕಾನ್ಫಿಗರ್ ಮಾಡಿದ ಒಂದು ಸಂಪರ್ಕವನ್ನು ಪರೀಕ್ಷಿಸಿ
-omniroute providers test-all                        # ಪ್ರತಿಯೊಂದು ಸಕ್ರಿಯ ಸಂಪರ್ಕವನ್ನು ಪರೀಕ್ಷಿಸಿ
-omniroute providers validate                        # ಸ್ಥಳೀಯ-ಮಾತ್ರ ರಚನಾತ್ಮಕ ಮೌಲ್ಯಮಾಪನ
-omniroute providers add <provider> --credential-env PROVIDER_KEY
-omniroute providers import ./providers.json --dry-run --json
-omniroute providers auth <provider>                 # ಅಸ್ತಿತ್ವದಲ್ಲಿರುವ OAuth ಹರಿವು
-omniroute providers edit <id|name> --default-model <model>
-omniroute providers remove <id|name> --yes
+agentproxy providers test <id|name>                  # ಕಾನ್ಫಿಗರ್ ಮಾಡಿದ ಒಂದು ಸಂಪರ್ಕವನ್ನು ಪರೀಕ್ಷಿಸಿ
+agentproxy providers test-all                        # ಪ್ರತಿಯೊಂದು ಸಕ್ರಿಯ ಸಂಪರ್ಕವನ್ನು ಪರೀಕ್ಷಿಸಿ
+agentproxy providers validate                        # ಸ್ಥಳೀಯ-ಮಾತ್ರ ರಚನಾತ್ಮಕ ಮೌಲ್ಯಮಾಪನ
+agentproxy providers add <provider> --credential-env PROVIDER_KEY
+agentproxy providers import ./providers.json --dry-run --json
+agentproxy providers auth <provider>                 # ಅಸ್ತಿತ್ವದಲ್ಲಿರುವ OAuth ಹರಿವು
+agentproxy providers edit <id|name> --default-model <model>
+agentproxy providers remove <id|name> --yes
 ```
 
 `providers add/import/auth/edit/remove` API-ಪ್ರಥಮವಾಗಿವೆ ಮತ್ತು ಆದ್ದರಿಂದ ಸಕ್ರಿಯ ಸ್ಥಳೀಯ ಅಥವಾ ದೂರಸ್ಥ ಸಂದರ್ಭದ ವಿರುದ್ಧ ಕಾರ್ಯನಿರ್ವಹಿಸುತ್ತವೆ. ರುಜುವಾತು ಇನ್ಪುಟ್ಗಾಗಿ
@@ -689,19 +689,19 @@ omniroute providers remove <id|name> --yes
 ### ಮರುಪಡೆಯುವಿಕೆ ಮತ್ತು ಮರುಹೊಂದಿಕೆ
 
 ```bash
-omniroute reset-password                # ನಿರ್ವಾಹಕರ ಪಾಸ್ವರ್ಡ್ ಮರುಹೊಂದಿಸಿ (ಇದೂ ಸಹ: omniroute-reset-password)
-omniroute reset-encrypted-columns       # ಎನ್ಕ್ರಿಪ್ಟ್ ಮಾಡಿದ ರುಜುವಾತು ಮರುಹೊಂದಿಕೆಗಾಗಿ ಎಚ್ಚರಿಕೆ + ಪ್ರಾಯೋಗಿಕ ಚಾಲನೆ ತೋರಿಸಿ
-omniroute reset-encrypted-columns --force  # SQLiteನಲ್ಲಿ ಎನ್ಕ್ರಿಪ್ಟ್ ಮಾಡಿದ ರುಜುವಾತುಗಳನ್ನು ನಿಜವಾಗಿಯೂ null ಮಾಡಿ
+agentproxy reset-password                # ನಿರ್ವಾಹಕರ ಪಾಸ್ವರ್ಡ್ ಮರುಹೊಂದಿಸಿ (ಇದೂ ಸಹ: agentproxy-reset-password)
+agentproxy reset-encrypted-columns       # ಎನ್ಕ್ರಿಪ್ಟ್ ಮಾಡಿದ ರುಜುವಾತು ಮರುಹೊಂದಿಕೆಗಾಗಿ ಎಚ್ಚರಿಕೆ + ಪ್ರಾಯೋಗಿಕ ಚಾಲನೆ ತೋರಿಸಿ
+agentproxy reset-encrypted-columns --force  # SQLiteನಲ್ಲಿ ಎನ್ಕ್ರಿಪ್ಟ್ ಮಾಡಿದ ರುಜುವಾತುಗಳನ್ನು ನಿಜವಾಗಿಯೂ null ಮಾಡಿ
 ```
 
 ### ರುಜುವಾತು ರಫ್ತು (⚠ ಎಚ್ಚರಿಕೆಯಿಂದ ನಿರ್ವಹಿಸಿ)
 
 ```bash
-omniroute auth export                                 # ಎಚ್ಚರಿಕೆ + ದೃಢೀಕರಣ ದ್ವಾರ ತೋರಿಸಿ — DB ಪ್ರವೇಶವಿಲ್ಲ
-omniroute auth export --force                          # ಎಲ್ಲಾ ಸಂಪರ್ಕಗಳ ಡೀಕ್ರಿಪ್ಟ್ ಮಾಡಿದ ರುಜುವಾತುಗಳನ್ನು JSON ರೂಪದಲ್ಲಿ stdoutಗೆ ರಫ್ತು ಮಾಡಿ
-omniroute auth export --force --id <id>                 # ಹೊಂದಿಕೆಯಾಗುವ ಸಂಪರ್ಕವನ್ನು ಮಾತ್ರ ರಫ್ತು ಮಾಡಿ
-omniroute auth export --force --format env               # OMNIROUTE_<PROVIDER>_<FIELD>=<value> ಸಾಲುಗಳನ್ನು ಹೊರಸೂಸಿ
-omniroute auth export --force --out creds.json           # ಫೈಲ್ಗೆ ಬರೆಯಿರಿ (0600 ಅನುಮತಿಗಳೊಂದಿಗೆ ರಚಿಸಲಾಗುತ್ತದೆ)
+agentproxy auth export                                 # ಎಚ್ಚರಿಕೆ + ದೃಢೀಕರಣ ದ್ವಾರ ತೋರಿಸಿ — DB ಪ್ರವೇಶವಿಲ್ಲ
+agentproxy auth export --force                          # ಎಲ್ಲಾ ಸಂಪರ್ಕಗಳ ಡೀಕ್ರಿಪ್ಟ್ ಮಾಡಿದ ರುಜುವಾತುಗಳನ್ನು JSON ರೂಪದಲ್ಲಿ stdoutಗೆ ರಫ್ತು ಮಾಡಿ
+agentproxy auth export --force --id <id>                 # ಹೊಂದಿಕೆಯಾಗುವ ಸಂಪರ್ಕವನ್ನು ಮಾತ್ರ ರಫ್ತು ಮಾಡಿ
+agentproxy auth export --force --format env               # AGENTPROXY_<PROVIDER>_<FIELD>=<value> ಸಾಲುಗಳನ್ನು ಹೊರಸೂಸಿ
+agentproxy auth export --force --out creds.json           # ಫೈಲ್ಗೆ ಬರೆಯಿರಿ (0600 ಅನುಮತಿಗಳೊಂದಿಗೆ ರಚಿಸಲಾಗುತ್ತದೆ)
 ```
 
 `auth export` **ಸ್ಥಳೀಯ-ಮಾತ್ರ** ಆಗಿದೆ (ನೇರ SQLite ಓದುವಿಕೆ, HTTP ರೂಟ್ ಇಲ್ಲ) ಮತ್ತು ಉದ್ದೇಶಪೂರ್ವಕವಾಗಿ
@@ -716,33 +716,33 @@ omniroute auth export --force --out creds.json           # ಫೈಲ್ಗೆ �
 ಬೇರೆಯಾಗಿ ಸೂಚಿಸದ ಹೊರತು, ಇವು ಚಾಲನೆಯಲ್ಲಿರುವ AgentProxy ಸರ್ವರ್ ಅನ್ನು ಅವಲಂಬಿಸುತ್ತವೆ:
 
 ```bash
-omniroute status                       # ಸಮಗ್ರ ರನ್ಟೈಮ್ ಸ್ಥಿತಿ
-omniroute logs                         # ವಿನಂತಿ ಲಾಗ್ಗಳನ್ನು ಸ್ಟ್ರೀಮ್ ಮಾಡಿ (--json, --search, --follow)
-omniroute config list                  # ಕಾನ್ಫಿಗರ್ ಮಾಡಲಾದ CLI ಪರಿಕರಗಳನ್ನು ಪ್ರದರ್ಶಿಸಿ
+agentproxy status                       # ಸಮಗ್ರ ರನ್ಟೈಮ್ ಸ್ಥಿತಿ
+agentproxy logs                         # ವಿನಂತಿ ಲಾಗ್ಗಳನ್ನು ಸ್ಟ್ರೀಮ್ ಮಾಡಿ (--json, --search, --follow)
+agentproxy config list                  # ಕಾನ್ಫಿಗರ್ ಮಾಡಲಾದ CLI ಪರಿಕರಗಳನ್ನು ಪ್ರದರ್ಶಿಸಿ
 
-omniroute provider list                # ಲಭ್ಯವಿರುವ ಪೂರೈಕೆದಾರರನ್ನು ಪಟ್ಟಿ ಮಾಡಿ (providers list ನ ಅಲಿಯಾಸ್)
-omniroute provider add                 # ಪರಿಕರದಲ್ಲಿ AgentProxy ಅನ್ನು ಪೂರೈಕೆದಾರನಾಗಿ ನೋಂದಾಯಿಸಿ
-omniroute keys add | list | remove     # API ಕೀಗಳನ್ನು ನಿರ್ವಹಿಸಿ
-omniroute models [provider]            # ಮಾದರಿಗಳನ್ನು ಪಟ್ಟಿ ಮಾಡಿ (--json, --search)
-omniroute combo list | switch | create | delete
+agentproxy provider list                # ಲಭ್ಯವಿರುವ ಪೂರೈಕೆದಾರರನ್ನು ಪಟ್ಟಿ ಮಾಡಿ (providers list ನ ಅಲಿಯಾಸ್)
+agentproxy provider add                 # ಪರಿಕರದಲ್ಲಿ AgentProxy ಅನ್ನು ಪೂರೈಕೆದಾರನಾಗಿ ನೋಂದಾಯಿಸಿ
+agentproxy keys add | list | remove     # API ಕೀಗಳನ್ನು ನಿರ್ವಹಿಸಿ
+agentproxy models [provider]            # ಮಾದರಿಗಳನ್ನು ಪಟ್ಟಿ ಮಾಡಿ (--json, --search)
+agentproxy combo list | switch | create | delete
 
-omniroute backup                       # ಕಾನ್ಫಿಗ್ + DB ಸ್ನ್ಯಾಪ್ಶಾಟ್ ರಚಿಸಿ
-omniroute restore                      # ಹಿಂದಿನ ಸ್ನ್ಯಾಪ್ಶಾಟ್ನಿಂದ ಮರುಸ್ಥಾಪಿಸಿ
+agentproxy backup                       # ಕಾನ್ಫಿಗ್ + DB ಸ್ನ್ಯಾಪ್ಶಾಟ್ ರಚಿಸಿ
+agentproxy restore                      # ಹಿಂದಿನ ಸ್ನ್ಯಾಪ್ಶಾಟ್ನಿಂದ ಮರುಸ್ಥಾಪಿಸಿ
 
-omniroute health                       # ವಿವರವಾದ ಸ್ಥಿತಿ (ಬ್ರೇಕರ್ಗಳು, ಕ್ಯಾಶ್, ಮೆಮೊರಿ)
-omniroute quota                        # ಪೂರೈಕೆದಾರರ ಕೋಟಾ ಬಳಕೆ
-omniroute cache                        # ಕ್ಯಾಶ್ ಸ್ಥಿತಿ
-omniroute cache clear                  # ಸೆಮ್ಯಾಂಟಿಕ್ + ಸಿಗ್ನೇಚರ್ ಕ್ಯಾಶ್ಗಳನ್ನು ತೆರವುಗೊಳಿಸಿ
+agentproxy health                       # ವಿವರವಾದ ಸ್ಥಿತಿ (ಬ್ರೇಕರ್ಗಳು, ಕ್ಯಾಶ್, ಮೆಮೊರಿ)
+agentproxy quota                        # ಪೂರೈಕೆದಾರರ ಕೋಟಾ ಬಳಕೆ
+agentproxy cache                        # ಕ್ಯಾಶ್ ಸ್ಥಿತಿ
+agentproxy cache clear                  # ಸೆಮ್ಯಾಂಟಿಕ್ + ಸಿಗ್ನೇಚರ್ ಕ್ಯಾಶ್ಗಳನ್ನು ತೆರವುಗೊಳಿಸಿ
 
-omniroute mcp status | restart         # MCP ಸರ್ವರ್ ಸ್ಥಿತಿ / ಮರುಪ್ರಾರಂಭ
-omniroute a2a status | card            # A2A ಸರ್ವರ್ ಸ್ಥಿತಿ / ಏಜೆಂಟ್ ಕಾರ್ಡ್
+agentproxy mcp status | restart         # MCP ಸರ್ವರ್ ಸ್ಥಿತಿ / ಮರುಪ್ರಾರಂಭ
+agentproxy a2a status | card            # A2A ಸರ್ವರ್ ಸ್ಥಿತಿ / ಏಜೆಂಟ್ ಕಾರ್ಡ್
 
-omniroute tunnel list | create | stop  # ಟನಲ್ಗಳನ್ನು ನಿರ್ವಹಿಸಿ (cloudflare/tailscale/ngrok)
-omniroute env show | get <k> | set <k> <v>  # ಪರಿಸರ ವೇರಿಯೇಬಲ್ಗಳನ್ನು ಪರಿಶೀಲಿಸಿ / ಹೊಂದಿಸಿ (ತಾತ್ಕಾಲಿಕ)
+agentproxy tunnel list | create | stop  # ಟನಲ್ಗಳನ್ನು ನಿರ್ವಹಿಸಿ (cloudflare/tailscale/ngrok)
+agentproxy env show | get <k> | set <k> <v>  # ಪರಿಸರ ವೇರಿಯೇಬಲ್ಗಳನ್ನು ಪರಿಶೀಲಿಸಿ / ಹೊಂದಿಸಿ (ತಾತ್ಕಾಲಿಕ)
 
-omniroute test                         # ಪೂರೈಕೆದಾರರ ಸಂಪರ್ಕದ ಸ್ಮೋಕ್ ಟೆಸ್ಟ್
-omniroute update                       # ಅಪ್ಡೇಟ್ಗಳಿಗಾಗಿ ಪರಿಶೀಲಿಸಿ
-omniroute completion                   # ಶೆಲ್ ಕಂಪ್ಲೀಷನ್ ರಚಿಸಿ
+agentproxy test                         # ಪೂರೈಕೆದಾರರ ಸಂಪರ್ಕದ ಸ್ಮೋಕ್ ಟೆಸ್ಟ್
+agentproxy update                       # ಅಪ್ಡೇಟ್ಗಳಿಗಾಗಿ ಪರಿಶೀಲಿಸಿ
+agentproxy completion                   # ಶೆಲ್ ಕಂಪ್ಲೀಷನ್ ರಚಿಸಿ
 ```
 
 ### ಸಾಮಾನ್ಯ ಫ್ಲ್ಯಾಗ್ಗಳು
@@ -790,7 +790,7 @@ Ollama ಚಾಟ್: http://localhost:20128/api/v1/vscode/sk-a3ab3c080beaee3a-69
 
 | ದೋಷ                                                        | ಕಾರಣ                             | ಪರಿಹಾರ                                                             |
 | ---------------------------------------------------------- | -------------------------------- | ------------------------------------------------------------------ |
-| `Connection refused`                                       | AgentProxy ಚಾಲನೆಯಲ್ಲಿಲ್ಲ          | `omniroute serve`                                                  |
+| `Connection refused`                                       | AgentProxy ಚಾಲನೆಯಲ್ಲಿಲ್ಲ          | `agentproxy serve`                                                  |
 | `401 Unauthorized`                                         | ತಪ್ಪಾದ API ಕೀ                    | `/dashboard/api-manager` ನಲ್ಲಿ ಪರಿಶೀಲಿಸಿ                           |
 | `No combo configured`                                      | ಯಾವುದೇ ಸಕ್ರಿಯ ರೂಟಿಂಗ್ ಕಾಂಬೊ ಇಲ್ಲ | `/dashboard/combos` ನಲ್ಲಿ ಹೊಂದಿಸಿ                                  |
 | CLI "ಸ್ಥಾಪಿಸಲಾಗಿಲ್ಲ" ಎಂದು ತೋರಿಸುತ್ತದೆ                      | ಬೈನರಿ PATH ನಲ್ಲಿ ಇಲ್ಲ            | `which <command>` ಪರಿಶೀಲಿಸಿ                                        |

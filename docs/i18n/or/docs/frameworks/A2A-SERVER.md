@@ -30,7 +30,7 @@ AgentProxy ର ଦକ୍ଷତା, ସ୍କିଲ୍ ଏବଂ ପ୍ରମା�
 ସମସ୍ତ `/a2a` ଅନୁରୋଧଗୁଡ଼ିକ `Authorization` ହେଡର୍ ମାଧ୍ୟମରେ ଏକ API key ଆବଶ୍ୟକ କରେ:
 
 ```
-Authorization: Bearer YOUR_OMNIROUTE_API_KEY
+Authorization: Bearer YOUR_AGENTPROXY_API_KEY
 ```
 
 ଯଦି ସର୍ଭର୍ରେ କୌଣସି API key କନ୍ଫିଗର ହୋଇ ନାହିଁ, ତେବେ ପ୍ରମାଣୀକରଣ ଛାଡ଼ ଦିଆଯାଏ।
@@ -184,7 +184,7 @@ AgentProxy `src/lib/a2a/taskExecution.ts::A2A_SKILL_HANDLERS` ରେ ୬ଟି A
 | `/api/a2a/tasks/[id]`        | GET    | ଆଇଡି ଦ୍ୱାରା ଟାସ୍କ ପ୍ରାପ୍ତ କରନ୍ତୁ                               | ପରିଚାଳନା                                    |
 | `/api/a2a/tasks/[id]/cancel` | POST   | ଚାଲୁଥିବା ଟାସ୍କ ବାତିଲ କରନ୍ତୁ                                    | ପରିଚାଳନା                                    |
 | `/.well-known/agent.json`    | GET    | ଏଜେଣ୍ଟ କାର୍ଡ (ଏ2ଏ ଆବିଷ୍କାର)                                    | (ସାର୍ବଜନୀନ, 3600ସେକେଣ୍ଡ କ୍ୟାଶେଡ)            |
-| `/api/a2a/tasks`             | POST   | ଓମ୍ନିକଣ୍ଡକ୍ଟର ଫ୍ଲିଟ୍ ପ୍ରତି ବାହ୍ୟ ପ୍ରତିନିଦେଶ (କଣ୍ଡକ୍ଟର PRD RF5) | ବିୟରର vs `OMNIROUTE_API_KEY` + `a2aEnabled` |
+| `/api/a2a/tasks`             | POST   | ଓମ୍ନିକଣ୍ଡକ୍ଟର ଫ୍ଲିଟ୍ ପ୍ରତି ବାହ୍ୟ ପ୍ରତିନିଦେଶ (କଣ୍ଡକ୍ଟର PRD RF5) | ବିୟରର vs `AGENTPROXY_API_KEY` + `a2aEnabled` |
 
 **ବାହ୍ୟ କଣ୍ଡକ୍ଟର ପ୍ରତିନିଦେଶ (`POST /api/a2a/tasks`):** ବାହ୍ୟ ଏ2ଏ ଏଜେଣ୍ଟମାନେ ଓମ୍ନିରୁଟ୍ ମାଧ୍ୟମରେ ଓମ୍ନିକଣ୍ଡକ୍ଟର ଫ୍ଲିଟ୍ କୁ କୋଡିଂ କାର୍ଯ୍ୟ ପ୍ରତିନିଦେଶ କରନ୍ତି। ବଡୀ: `{ skill: "conductor" | "conductor-cli-<profile>", messages: [{role, content}], metadata: { conductor: { repo: { url, base_ref? }, mode?, cli?, model? } } }` — କେବଳ କଣ୍ଡକ୍ଟର ଫ୍ଲିଟ୍ ସ୍କିଲ (ଏଜେଣ୍ଟ କାର୍ଡରେ ଘୋଷିତ) ପ୍ରତିନିଦେଶଯୋଗ୍ୟ; `metadata.conductor.repo.url` ଆବଶ୍ୟକ (ଫ୍ଲିଟ୍ ଗିଟ୍ ରେପୋଜିରେ କାର୍ଯ୍ୟ କରେ)। ରୁଟ୍ ସର୍ଭର-ସାଇଡ୍ `CONDUCTOR_ORCHESTRATOR_TOKEN` (ଫଲବ୍ୟାକ `CONDUCTOR_HUB_TOKEN`) ବ୍ୟବହାର କରି ହବ୍ର `POST /v1/tasks` କୁ ଅନୁବାଦ କରେ ଏବଂ `201 { conductor_task_id, state: "submitted" }` ଫେରାଏ; ଟାସ୍କ ସ୍ଥିତି SSE→A2A ମିରର (RF1) ମାଧ୍ୟମରେ ପ୍ରବାହିତ ହୁଏ ଏବଂ `GET /api/a2a/tasks?skill=conductor` ମାଧ୍ୟମରେ ଦୃଶ୍ୟ।
 

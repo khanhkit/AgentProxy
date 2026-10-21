@@ -87,5 +87,5 @@ test("CLI updater preserves AgentProxy immutable-version install semantics", () 
 
   assert.match(src, /npm install -g agentproxy@\$\{latest\} --include=optional/);
   assert.match(src, /Missing or invalid npm integrity metadata for agentproxy@\$\{latest\}/);
-  assert.doesNotMatch(src, /omniroute@latest/);
+  assert.doesNotMatch(src, /agentproxy@latest/);
 });

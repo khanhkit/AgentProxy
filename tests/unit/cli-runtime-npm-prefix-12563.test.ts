@@ -53,7 +53,7 @@ describe("#12563 — npm global prefix soft-fail cache", () => {
     assert.equal(calls, 1);
 
     // Env can recover without waiting for the retry window.
-    const recovered = path.join(os.tmpdir(), "omniroute-12563-recovered-prefix");
+    const recovered = path.join(os.tmpdir(), "agentproxy-12563-recovered-prefix");
     process.env.npm_config_prefix = recovered;
     assert.equal(mod.getNpmGlobalPrefix(), recovered);
     assert.equal(calls, 1);
@@ -61,7 +61,7 @@ describe("#12563 — npm global prefix soft-fail cache", () => {
 
   it("caches a successful npm prefix and skips further spawns", async () => {
     delete process.env.npm_config_prefix;
-    const prefix = path.join(os.tmpdir(), "omniroute-12563-ok-prefix");
+    const prefix = path.join(os.tmpdir(), "agentproxy-12563-ok-prefix");
 
     let calls = 0;
     childProcess.execFileSync = () => {
@@ -78,7 +78,7 @@ describe("#12563 — npm global prefix soft-fail cache", () => {
 
   it("reset helper clears success so a later failure can soft-fail again", async () => {
     delete process.env.npm_config_prefix;
-    const prefix = path.join(os.tmpdir(), "omniroute-12563-reset-prefix");
+    const prefix = path.join(os.tmpdir(), "agentproxy-12563-reset-prefix");
 
     childProcess.execFileSync = () => `${prefix}\n`;
     syncBuiltinESMExports();

@@ -9,7 +9,7 @@ import path from "node:path";
 // member (once per set-aside event, never a DB cascade per request). With every member set
 // aside, or the flag explicitly off, selection is exactly what it was.
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-pool-skip-refused-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-pool-skip-refused-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 process.env.API_KEY_SECRET = "test-secret";
 

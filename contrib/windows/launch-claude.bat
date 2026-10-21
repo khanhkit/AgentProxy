@@ -24,7 +24,7 @@ shift
 goto collect
 
 :run
-rem bin/omniroute.mjs remains the source entrypoint for the current compatibility CLI.
-node "%AGENTPROXY_ROOT%\bin\omniroute.mjs" launch!ARGS!
+rem bin/agentproxy.mjs remains the source entrypoint for the current compatibility CLI.
+node "%AGENTPROXY_ROOT%\bin\agentproxy.mjs" launch!ARGS!
 endlocal
 pause

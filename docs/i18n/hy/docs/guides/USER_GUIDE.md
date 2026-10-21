@@ -189,7 +189,7 @@ Claude-ի և Claude Code-ի հետ համատեղելի երթուղիները �
 
 #### Kimi K2 (ամսական հաստատագրված $9)
 
-1. Բաժանորդագրվեք՝ [Moonshot AI](https://platform.kimi.ai?aff=omniroute)
+1. Բաժանորդագրվեք՝ [Moonshot AI](https://platform.kimi.ai)
 2. Ստացեք API բանալին → Կառավարման վահանակ → Ավելացնել API բանալի
 
 **Օգտագործում․** `kimi/kimi-k2.5` — **Մասնագիտական խորհուրդ․** Ամսական հաստատագրված $9՝ 10M թոքենի համար = արդյունավետ արժեքը՝ $0.90/1M։
@@ -280,7 +280,7 @@ Claude-ի և Claude Code-ի հետ համատեղելի երթուղիները �
 {
   "env": {
     "ANTHROPIC_BASE_URL": "http://localhost:20128",
-    "ANTHROPIC_AUTH_TOKEN": "your-omniroute-api-key"
+    "ANTHROPIC_AUTH_TOKEN": "your-agentproxy-api-key"
   }
 }
 ```
@@ -291,7 +291,7 @@ Claude-ի և Claude Code-ի հետ համատեղելի երթուղիները �
 
 ```bash
 export OPENAI_BASE_URL="http://localhost:20128"
-export OPENAI_API_KEY="your-omniroute-api-key"
+export OPENAI_API_KEY="your-agentproxy-api-key"
 codex "your prompt"
 ```
 
@@ -303,14 +303,14 @@ codex "your prompt"
 {
   "agents": {
     "defaults": {
-      "model": { "primary": "omniroute/if/kimi-k2.7-code" }
+      "model": { "primary": "agentproxy/if/kimi-k2.7-code" }
     }
   },
   "models": {
     "providers": {
-      "omniroute": {
+      "agentproxy": {
         "baseUrl": "http://localhost:20128/v1",
-        "apiKey": "your-omniroute-api-key",
+        "apiKey": "your-agentproxy-api-key",
         "api": "openai-completions",
         "models": [{ "id": "if/kimi-k2.7-code", "name": "Kimi K2.7 Code" }]
       }
@@ -337,28 +337,28 @@ API բանալի՝ [կառավարման վահանակից]
 ### npm-ի գլոբալ տեղադրում (խորհուրդ է տրվում)
 
 ```bash
-npm install -g omniroute
+npm install -g agentproxy
 
 # Ստեղծել կազմաձևման պանակը
-mkdir -p ~/.omniroute
+mkdir -p ~/.agentproxy
 
 # Ստեղծել .env ֆայլը (տե՛ս .env.example)
-cp .env.example ~/.omniroute/.env
+cp .env.example ~/.agentproxy/.env
 
 # Գործարկել սերվերը
-omniroute
+agentproxy
 # Կամ հատուկ պորտով՝
-omniroute --port 3000
+agentproxy --port 3000
 ```
 
-CLI-ն ավտոմատ կերպով բեռնում է `.env`-ը `~/.omniroute/.env`-ից կամ `./.env`-ից։
+CLI-ն ավտոմատ կերպով բեռնում է `.env`-ը `~/.agentproxy/.env`-ից կամ `./.env`-ից։
 
 ### Համակարգային դարակի ռեժիմ
 
 Գործարկեք AgentProxy-ը համակարգային դարակում․
 
 ```bash
-omniroute serve --tray
+agentproxy serve --tray
 ```
 
 Հրամանի կատարումն ավարտվում է սերվերի և համակարգային դարակի պատրաստ լինելուց հետո։
@@ -385,7 +385,7 @@ omniroute serve --tray
 Միացրեք գործարկումը համակարգ հաջորդ մուտք գործելիս․
 
 ```bash
-omniroute autostart enable
+agentproxy autostart enable
 ```
 
 Ավտոմատ գործարկումն օգտագործում է համակարգային դարակի ռեժիմը macOS-ում, Windows-ում և գրաֆիկական Linux աշխատաշրջաններում։ Առանց գրաֆիկական միջավայրի Linux-ն օգտագործում է գոյություն ունեցող systemd օգտատիրոջ ծառայությունը։
@@ -393,7 +393,7 @@ omniroute autostart enable
 Անջատեք մուտք գործելիս ավտոմատ գործարկումը․
 
 ```bash
-omniroute autostart disable
+agentproxy autostart disable
 ```
 
 ### Ապատեղադրում
@@ -402,10 +402,10 @@ omniroute autostart disable
 
 | Հրաման                   | Գործողություն                                                                                          |
 | ------------------------ | ------------------------------------------------------------------------------------------------------ |
-| `npm run uninstall`      | Հեռացնում է համակարգային հավելվածը, բայց **պահպանում է ձեր ՏԲ-ն և կազմաձևումները** `~/.omniroute`-ում։ |
+| `npm run uninstall`      | Հեռացնում է համակարգային հավելվածը, բայց **պահպանում է ձեր ՏԲ-ն և կազմաձևումները** `~/.agentproxy`-ում։ |
 | `npm run uninstall:full` | Հեռացնում է հավելվածը ԵՎ ընդմիշտ **ջնջում է բոլոր կազմաձևումները, բանալիներն ու տվյալների բազաները**։  |
 
-> Նշում․ այս հրամանները գործարկելու համար անցեք AgentProxy նախագծի պանակ (եթե կլոնավորել եք այն) և գործարկեք դրանք։ Որպես այլընտրանք, եթե այն տեղադրված է գլոբալ կերպով, կարող եք պարզապես գործարկել `npm uninstall -g omniroute`։
+> Նշում․ այս հրամանները գործարկելու համար անցեք AgentProxy նախագծի պանակ (եթե կլոնավորել եք այն) և գործարկեք դրանք։ Որպես այլընտրանք, եթե այն տեղադրված է գլոբալ կերպով, կարող եք պարզապես գործարկել `npm uninstall -g agentproxy`։
 
 ### Տեղակայում VPS-ում
 
@@ -415,7 +415,7 @@ cd AgentProxy && npm install && npm run build
 
 export JWT_SECRET="your-secure-secret-change-this"
 export INITIAL_PASSWORD="your-password"
-export DATA_DIR="/var/lib/omniroute"
+export DATA_DIR="/var/lib/agentproxy"
 export PORT="20128"
 export HOSTNAME="0.0.0.0"
 export NODE_ENV="production"
@@ -423,7 +423,7 @@ export NEXT_PUBLIC_BASE_URL="http://localhost:20128"
 export API_KEY_SECRET="endpoint-proxy-api-key-secret"
 
 npm run start
-# Կամ՝ pm2 start npm --name omniroute -- start
+# Կամ՝ pm2 start npm --name agentproxy -- start
 ```
 
 ### PM2 տեղակայում (քիչ հիշողությամբ)
@@ -432,10 +432,10 @@ npm run start
 
 ```bash
 # 512MB սահմանաչափով (լռելյայն)
-pm2 start npm --name omniroute -- start
+pm2 start npm --name agentproxy -- start
 
 # Կամ հիշողության հատուկ սահմանաչափով
-OMNIROUTE_MEMORY_MB=512 pm2 start npm --name omniroute -- start
+AGENTPROXY_MEMORY_MB=512 pm2 start npm --name agentproxy -- start
 
 # Կամ՝ օգտագործելով ecosystem.config.js
 pm2 start ecosystem.config.js
@@ -447,12 +447,12 @@ pm2 start ecosystem.config.js
 module.exports = {
   apps: [
     {
-      name: "omniroute",
+      name: "agentproxy",
       script: "npm",
       args: "start",
       env: {
         NODE_ENV: "production",
-        OMNIROUTE_MEMORY_MB: "512",
+        AGENTPROXY_MEMORY_MB: "512",
         JWT_SECRET: "your-secret",
         INITIAL_PASSWORD: "your-password",
       },
@@ -467,10 +467,10 @@ module.exports = {
 
 ```bash
 # Կառուցել պատկերը (լռելյայն = runner-cli՝ նախապես տեղադրված codex/claude/droid-ով)
-docker build -t omniroute:cli .
+docker build -t agentproxy:cli .
 
 # Դյուրակիր ռեժիմ (խորհուրդ է տրվում)
-docker run -d --name omniroute -p 20128:20128 --env-file ./.env -v omniroute-data:/app/data omniroute:cli
+docker run -d --name agentproxy -p 20128:20128 --env-file ./.env -v agentproxy-data:/app/data agentproxy:cli
 ```
 
 CLI բինար ֆայլերով հոսթին ինտեգրված ռեժիմի համար տե՛ս հիմնական փաստաթղթերի Docker բաժինը։
@@ -483,8 +483,8 @@ Void Linux-ի օգտատերերը կարող են փաթեթավորել և տ�
 <summary><b>Դիտել xbps-src ձևանմուշը</b></summary>
 
 ```bash
-# «omniroute»-ի ձևանմուշի ֆայլ
-pkgname=omniroute
+# «agentproxy»-ի ձևանմուշի ֆայլ
+pkgname=agentproxy
 version=3.8.0
 revision=1
 hostmakedepends="nodejs python3 make"
@@ -495,8 +495,8 @@ license="MIT"
 homepage="https://github.com/diegosouzapw/AgentProxy"
 distfiles="https://github.com/diegosouzapw/AgentProxy/archive/refs/tags/v${version}.tar.gz"
 checksum=009400afee90a9f32599d8fe734145cfd84098140b7287990183dde45ae2245b
-system_accounts="_omniroute"
-omniroute_homedir="/var/lib/omniroute"
+system_accounts="_agentproxy"
+agentproxy_homedir="/var/lib/agentproxy"
 export NODE_ENV=production
 export npm_config_engine_strict=false
 export npm_config_loglevel=error
@@ -546,26 +546,26 @@ do_check() {
 }
 
 do_install() {
-	vmkdir usr/lib/omniroute/.next
-	vcopy .next/standalone/. usr/lib/omniroute/.next/standalone
+	vmkdir usr/lib/agentproxy/.next
+	vcopy .next/standalone/. usr/lib/agentproxy/.next/standalone
 
 	# Կանխել Next.js հավելվածի երթուղիչի դատարկ պանակների հեռացումը հետտեղադրման մշակիչի կողմից
 	for _d in \
 		.next/standalone/.next/server/app/dashboard \
 		.next/standalone/.next/server/app/dashboard/settings \
 		.next/standalone/.next/server/app/dashboard/providers; do
-		touch "${DESTDIR}/usr/lib/omniroute/${_d}/.keep"
+		touch "${DESTDIR}/usr/lib/agentproxy/${_d}/.keep"
 	done
 
-	cat > "${WRKDIR}/omniroute" <<'EOF'
+	cat > "${WRKDIR}/agentproxy" <<'EOF'
 #!/bin/sh
 export PORT="${PORT:-20128}"
-export DATA_DIR="${DATA_DIR:-${XDG_DATA_HOME:-${HOME}/.local/share}/omniroute}"
+export DATA_DIR="${DATA_DIR:-${XDG_DATA_HOME:-${HOME}/.local/share}/agentproxy}"
 export APP_LOG_TO_FILE="${APP_LOG_TO_FILE:-false}"
 mkdir -p "${DATA_DIR}"
-exec node /usr/lib/omniroute/.next/standalone/server.js "$@"
+exec node /usr/lib/agentproxy/.next/standalone/server.js "$@"
 EOF
-	vbin "${WRKDIR}/omniroute"
+	vbin "${WRKDIR}/agentproxy"
 }
 
 post_install() {
@@ -579,14 +579,14 @@ post_install() {
 
 | Փոփոխական                               | Լռելյայն արժեք                       | Նկարագրություն                                                                                                                                                          |
 | --------------------------------------- | ------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `JWT_SECRET`                            | `omniroute-default-secret-change-me` | JWT ստորագրման գաղտնիք (**փոխեք արտադրական միջավայրում**)                                                                                                               |
+| `JWT_SECRET`                            | `agentproxy-default-secret-change-me` | JWT ստորագրման գաղտնիք (**փոխեք արտադրական միջավայրում**)                                                                                                               |
 | `INITIAL_PASSWORD`                      | `CHANGEME`                           | Առաջին մուտքի գաղտնաբառ                                                                                                                                                 |
-| `DATA_DIR`                              | `~/.omniroute`                       | Տվյալների գրացուցակ (տվյալների բազա, օգտագործման տվյալներ, մատյաններ)                                                                                                   |
+| `DATA_DIR`                              | `~/.agentproxy`                       | Տվյալների գրացուցակ (տվյալների բազա, օգտագործման տվյալներ, մատյաններ)                                                                                                   |
 | `PORT`                                  | ֆրեյմվորկի լռելյայն արժեք            | Ծառայության միացք (օրինակներում՝ `20128`)                                                                                                                               |
 | `HOSTNAME`                              | ֆրեյմվորկի լռելյայն արժեք            | Կապակցման հոսթ (Docker-ի լռելյայն արժեքը՝ `0.0.0.0`)                                                                                                                    |
 | `NODE_ENV`                              | գործարկման միջավայրի լռելյայն արժեք  | Տեղակայման համար սահմանեք `production`                                                                                                                                  |
 | `NEXT_PUBLIC_BASE_URL`                  | `http://localhost:20128`             | Հանրային բազային URL, որը հասանելի է կառավարման վահանակին և սերվերին (փոխարինում է հնացած `BASE_URL`-ը)                                                                 |
-| `NEXT_PUBLIC_CLOUD_URL`                 | `https://omniroute.dev`              | Ամպային համաժամացման վերջնակետի բազային URL (փոխարինում է հնացած `CLOUD_URL`-ը)                                                                                         |
+| `NEXT_PUBLIC_CLOUD_URL`                 | `https://agentproxy.online`              | Ամպային համաժամացման վերջնակետի բազային URL (փոխարինում է հնացած `CLOUD_URL`-ը)                                                                                         |
 | `API_KEY_SECRET`                        | `endpoint-proxy-api-key-secret`      | HMAC գաղտնիք՝ API բանալիներ ստեղծելու համար                                                                                                                             |
 | `REQUIRE_API_KEY`                       | `false`                              | Պահանջել Bearer API բանալի `/v1/*` հասցեների համար                                                                                                                      |
 | `ALLOW_API_KEY_REVEAL`                  | `false`                              | Թույլատրել նույնականացված կառավարման վահանակի օգտատերերին ըստ պահանջի ցուցադրել պահված API բանալիների ամբողջական արժեքները                                              |
@@ -596,7 +596,7 @@ post_install() {
 | `AUTH_COOKIE_SECURE`                    | `false`                              | Պարտադրել նույնականացման `Secure` cookie-ի օգտագործումը (HTTPS հակադարձ պրոքսիի հետևում)                                                                                |
 | `CLOUDFLARED_BIN`                       | սահմանված չէ                         | Կառավարվող ներբեռնման փոխարեն օգտագործել առկա `cloudflared` երկուական ֆայլը                                                                                             |
 | `CLOUDFLARED_PROTOCOL`                  | `http2`                              | Կառավարվող Quick Tunnels-ի փոխանցման արձանագրություն (`http2`, `quic` կամ `auto`)                                                                                       |
-| `OMNIROUTE_MEMORY_MB`                   | `512`                                | Node.js-ի heap հիշողության սահմանաչափը՝ MB-ով                                                                                                                           |
+| `AGENTPROXY_MEMORY_MB`                   | `512`                                | Node.js-ի heap հիշողության սահմանաչափը՝ MB-ով                                                                                                                           |
 | `PROMPT_CACHE_MAX_SIZE`                 | `50`                                 | Հուշումների քեշի գրառումների առավելագույն քանակը                                                                                                                        |
 | `SEMANTIC_CACHE_MAX_SIZE`               | `100`                                | Իմաստային քեշի գրառումների առավելագույն քանակը                                                                                                                          |
 
@@ -657,7 +657,7 @@ post_install() {
 
 **Այլ համատեղելի մատակարարներ** (ընտրված)՝ `cohere`, `databricks`, `snowflake`, `together`, `vertex`, `alibaba`, `alibaba-cn`, `bedrock` (`aws-bedrock`-ի միջոցով), `azure-ai`, `openrouter` (միջանցիկ կատալոգ), `siliconflow`, `hyperbolic`, `huggingface`, `featherless-ai`, `cloudflare-ai`, `scaleway`, `deepinfra`, `vercel-ai-gateway`, `bazaarlink`, `friendliai`, `nous-research`, `reka`, `volcengine`, `ai21`, `gigachat`։ Յուրաքանչյուրը պահպանում է մոդելների իր սեփական ցանկը `providerRegistry.ts`-ում և կարող է ավտոմատ համաժամացվել, երբ մատակարարը տրամադրում է `/models` վերջնակետ։
 
-**Նշում մոդելների ID-ների մասին․** AgentProxy-ն օգտագործում է մատակարարի բնիկ ID-ները (`claude-opus-4-8`, `gpt-5.5`, `glm-5.1`, `MiniMax-M2.7`, `kimi-k2.5`, `grok-4.20-0309-reasoning`)։ Որոշ ID-ներ ներառում են կետերով տարբերակներ, քանի որ վերին հոսքի API-ն դրանք հենց այդ ձևաչափով է ակնկալում։ Եթե որևէ մոդել վերևում նշված չէ, հասանելիությունը հաստատելու համար գործարկեք `omniroute models --search <term>` կամ դիմեք `GET /api/models/catalog` հասցեին։
+**Նշում մոդելների ID-ների մասին․** AgentProxy-ն օգտագործում է մատակարարի բնիկ ID-ները (`claude-opus-4-8`, `gpt-5.5`, `glm-5.1`, `MiniMax-M2.7`, `kimi-k2.5`, `grok-4.20-0309-reasoning`)։ Որոշ ID-ներ ներառում են կետերով տարբերակներ, քանի որ վերին հոսքի API-ն դրանք հենց այդ ձևաչափով է ակնկալում։ Եթե որևէ մոդել վերևում նշված չէ, հասանելիությունը հաստատելու համար գործարկեք `agentproxy models --search <term>` կամ դիմեք `GET /api/models/catalog` հասցեին։
 
 </details>
 
@@ -695,16 +695,16 @@ curl -X POST http://localhost:20128/api/provider-models \
 
 ```bash
 # gateway-a
-OMNIROUTE_INSTANCE_ID=gateway-a
-OMNIROUTE_PEER_URLS=http://gateway-b:20128/v1
-OMNIROUTE_PEER_MAX_HOPS=4
+AGENTPROXY_INSTANCE_ID=gateway-a
+AGENTPROXY_PEER_URLS=http://gateway-b:20128/v1
+AGENTPROXY_PEER_MAX_HOPS=4
 ```
 
 ```bash
 # gateway-b
-OMNIROUTE_INSTANCE_ID=gateway-b
-OMNIROUTE_PEER_URLS=http://gateway-a:20128/v1
-OMNIROUTE_PEER_MAX_HOPS=4
+AGENTPROXY_INSTANCE_ID=gateway-b
+AGENTPROXY_PEER_URLS=http://gateway-a:20128/v1
+AGENTPROXY_PEER_MAX_HOPS=4
 ```
 
 Միայն հստակ թույլատրված հանգույցի URL-ին ուղարկված հարցումներն են ստանում
@@ -1096,7 +1096,7 @@ AgentProxy-ը ներառում է **գնահատականով կառավարվո�
 
 ```bash
 curl -X POST http://localhost:20128/v1/chat/completions \
-  -H "Authorization: Bearer $OMNIROUTE_KEY" \
+  -H "Authorization: Bearer $AGENTPROXY_KEY" \
   -H "Content-Type: application/json" \
   -d '{
     "model": "auto/coding",
@@ -1117,7 +1117,7 @@ AgentProxy-ը միաժամանակ **MCP սերվեր** (Model Context Protocol)
 
 - **SSE**: `http://localhost:20128/api/mcp/sse`
 - **Հոսքային HTTP**: `http://localhost:20128/api/mcp/stream`
-- **stdio**: `omniroute --mcp` (stdio նախընտրող IDE հավելումների համար)
+- **stdio**: `agentproxy --mcp` (stdio նախընտրող IDE հավելումների համար)
 
 ### Claude Desktop-ի միացում
 
@@ -1126,8 +1126,8 @@ AgentProxy-ը միաժամանակ **MCP սերվեր** (Model Context Protocol)
 ```json
 {
   "mcpServers": {
-    "omniroute": {
-      "command": "omniroute",
+    "agentproxy": {
+      "command": "agentproxy",
       "args": ["--mcp"]
     }
   }
@@ -1203,23 +1203,23 @@ AgentProxy-ը ինտեգրվում է ամպային ծրագրավորման գ
 ```bash
 # Ցուցադրել մատակարարները
 curl http://localhost:20128/api/providers \
-  -H "Authorization: Bearer $OMNIROUTE_MANAGE_KEY"
+  -H "Authorization: Bearer $AGENTPROXY_MANAGE_KEY"
 
 # Ավելացնել մատակարարի միացում
 curl -X POST http://localhost:20128/api/providers \
-  -H "Authorization: Bearer $OMNIROUTE_MANAGE_KEY" \
+  -H "Authorization: Bearer $AGENTPROXY_MANAGE_KEY" \
   -H "Content-Type: application/json" \
   -d '{ "provider": "openai", "apiKey": "sk-...", "name": "main" }'
 
 # Ստեղծել համակցություն
 curl -X POST http://localhost:20128/api/combos \
-  -H "Authorization: Bearer $OMNIROUTE_MANAGE_KEY" \
+  -H "Authorization: Bearer $AGENTPROXY_MANAGE_KEY" \
   -H "Content-Type: application/json" \
   -d '{ "name": "premium", "strategy": "priority", "models": [{ "model": "cc/claude-opus-4-7" }, { "model": "glm/glm-5.1" }] }'
 
 # Ցուցադրել/ստեղծել API բանալիներ
-curl http://localhost:20128/api/keys -H "Authorization: Bearer $OMNIROUTE_MANAGE_KEY"
-curl -X POST http://localhost:20128/api/keys -H "Authorization: Bearer $OMNIROUTE_MANAGE_KEY" \
+curl http://localhost:20128/api/keys -H "Authorization: Bearer $AGENTPROXY_MANAGE_KEY"
+curl -X POST http://localhost:20128/api/keys -H "Authorization: Bearer $AGENTPROXY_MANAGE_KEY" \
   -d '{ "name": "ci-bot", "scopes": ["chat"] }'
 ```
 
@@ -1229,32 +1229,32 @@ curl -X POST http://localhost:20128/api/keys -H "Authorization: Bearer $OMNIROUT
 
 ## 💻 Ներքին CLI
 
-AgentProxy-ը ներառում է ներքին CLI (`omniroute …`)՝ սկզբնական կարգավորման, ախտորոշման և կատարման ժամանակ կառավարման համար։ Սա **առանձին է կառավարման վահանակի «CLI գործիքներ» էջից**, որը կարգավորում է երրորդ կողմի CLI-ները (Claude Code, Cursor, Codex, Cline, …), որպեսզի դրանք կարողանան հաղորդակցվել AgentProxy-ի հետ։
+AgentProxy-ը ներառում է ներքին CLI (`agentproxy …`)՝ սկզբնական կարգավորման, ախտորոշման և կատարման ժամանակ կառավարման համար։ Սա **առանձին է կառավարման վահանակի «CLI գործիքներ» էջից**, որը կարգավորում է երրորդ կողմի CLI-ները (Claude Code, Cursor, Codex, Cline, …), որպեսզի դրանք կարողանան հաղորդակցվել AgentProxy-ի հետ։
 
 ```bash
-omniroute setup                    # Ինտերակտիվ օգնական (գաղտնաբառ, մատակարարներ, համակցություններ)
-omniroute setup --non-interactive  # Հարմար է CI-ի համար
-omniroute doctor                   # Համակարգի վիճակի ախտորոշում (տվյալների պանակ, ՏԲ, մատակարարներ, պորտեր)
-omniroute providers available      # Ցուցադրել աջակցվող մատակարարները
-omniroute providers list           # Ցուցադրել կարգավորված կապերը
-omniroute providers test <id>      # Իրական ժամանակում ստուգել մատակարարի կապը
-omniroute combos list              # Ցուցադրել համակցությունները
-omniroute combos switch <name>     # Սահմանել լռելյայն համակցությունը
-omniroute models                   # Ցուցադրել հասանելի մոդելները (--json, --search)
-omniroute keys add | list | remove # Կառավարել API բանալիները տերմինալից
-omniroute backup                   # Ստեղծել կարգավորումների + ՏԲ-ի պատճեն
-omniroute restore [<timestamp>]    # Վերականգնել պատճենից
-omniroute health                   # Մանրամասն վիճակ (անջատիչներ, քեշ, հիշողություն)
-omniroute quota                    # Մատակարարի քվոտայի օգտագործում
-omniroute mcp status               # MCP սերվերի վիճակ
-omniroute a2a status               # A2A սերվերի վիճակ
-omniroute tunnel list|create|stop  # Cloudflare/Tailscale/ngrok թունելներ
-omniroute reset-password           # Վերակայել ադմինիստրատորի գաղտնաբառը
-omniroute --mcp                    # Գործարկել MCP սերվերը stdio-ի միջոցով
-omniroute --port 3000              # Գործարկել սերվերը հատուկ պորտով
+agentproxy setup                    # Ինտերակտիվ օգնական (գաղտնաբառ, մատակարարներ, համակցություններ)
+agentproxy setup --non-interactive  # Հարմար է CI-ի համար
+agentproxy doctor                   # Համակարգի վիճակի ախտորոշում (տվյալների պանակ, ՏԲ, մատակարարներ, պորտեր)
+agentproxy providers available      # Ցուցադրել աջակցվող մատակարարները
+agentproxy providers list           # Ցուցադրել կարգավորված կապերը
+agentproxy providers test <id>      # Իրական ժամանակում ստուգել մատակարարի կապը
+agentproxy combos list              # Ցուցադրել համակցությունները
+agentproxy combos switch <name>     # Սահմանել լռելյայն համակցությունը
+agentproxy models                   # Ցուցադրել հասանելի մոդելները (--json, --search)
+agentproxy keys add | list | remove # Կառավարել API բանալիները տերմինալից
+agentproxy backup                   # Ստեղծել կարգավորումների + ՏԲ-ի պատճեն
+agentproxy restore [<timestamp>]    # Վերականգնել պատճենից
+agentproxy health                   # Մանրամասն վիճակ (անջատիչներ, քեշ, հիշողություն)
+agentproxy quota                    # Մատակարարի քվոտայի օգտագործում
+agentproxy mcp status               # MCP սերվերի վիճակ
+agentproxy a2a status               # A2A սերվերի վիճակ
+agentproxy tunnel list|create|stop  # Cloudflare/Tailscale/ngrok թունելներ
+agentproxy reset-password           # Վերակայել ադմինիստրատորի գաղտնաբառը
+agentproxy --mcp                    # Գործարկել MCP սերվերը stdio-ի միջոցով
+agentproxy --port 3000              # Գործարկել սերվերը հատուկ պորտով
 ```
 
-Հուշում․ օգտագործեք `omniroute doctor --json`-ը ձեր մոնիթորինգի գործիքի հետ՝ մատակարարների անսարք կապերի մասին ծանուցումներ ստանալու համար։
+Հուշում․ օգտագործեք `agentproxy doctor --json`-ը ձեր մոնիթորինգի գործիքի հետ՝ մատակարարների անսարք կապերի մասին ծանուցումներ ստանալու համար։
 
 ---
 
@@ -1303,7 +1303,7 @@ npm run build:linux    # Linux (.AppImage)
 
 | Փոփոխական             | Լռելյայն | Նկարագրություն                          |
 | --------------------- | -------- | --------------------------------------- |
-| `OMNIROUTE_PORT`      | `20128`  | Սերվերի պորտ                            |
-| `OMNIROUTE_MEMORY_MB` | `512`    | Node.js կույտի սահմանաչափ (64–16384 MB) |
+| `AGENTPROXY_PORT`      | `20128`  | Սերվերի պորտ                            |
+| `AGENTPROXY_MEMORY_MB` | `512`    | Node.js կույտի սահմանաչափ (64–16384 MB) |
 
 📖 Ամբողջական փաստաթղթեր՝ [`electron/README.md`](../../electron/README.md)

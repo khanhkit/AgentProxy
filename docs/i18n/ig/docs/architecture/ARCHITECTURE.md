@@ -436,7 +436,7 @@ Namespace `src/domain/` na-achịkọta mkpebi policy n'otu ebe ka route handler
 - Cache quota: `src/domain/quotaCache.ts`
 - Ọnọdụ mmebi ogo: `src/domain/degradation.ts`
 - Nnyocha configuration: `src/domain/configAudit.ts`
-- Onye na-ewu metadata nzaghachi AgentProxy: `src/domain/omnirouteResponseMeta.ts`
+- Onye na-ewu metadata nzaghachi AgentProxy: `src/domain/agentproxyesponseMeta.ts`
 - Sistemụ nyocha: `src/domain/assessment/` — job nyocha oge niile
 
 ### E. Usoro Authorization
@@ -515,7 +515,7 @@ DB steeti bụ isi (SQLite):
 
 - Akụrụngwa bụ isi: `src/lib/db/core.ts` (better-sqlite3, mbufe, WAL)
 - Ịnweta DB: bubata modulu `src/lib/db/*` ndị akọwapụtara ozugbo (e wepụrụ barrel ochie `localDb.ts`)
-- faịlụ: `${DATA_DIR}/storage.sqlite` (ma ọ bụ `$XDG_CONFIG_HOME/omniroute/storage.sqlite` mgbe edobere ya, ma ọ bụghị ya `~/.omniroute/storage.sqlite`)
+- faịlụ: `${DATA_DIR}/storage.sqlite` (ma ọ bụ `$XDG_CONFIG_HOME/agentproxy/storage.sqlite` mgbe edobere ya, ma ọ bụghị ya `~/.agentproxy/storage.sqlite`)
 - ihe ndị dị na ya (tebụl + oghere aha KV): providerConnections, providerNodes, modelAliases, combos, apiKeys, settings, pricing, **customModels**, **proxyConfig**, **ipFilter**, **thinkingBudget**, **systemPrompt**
 
 Nchekwa ojiji na-adịgide adịgide:
@@ -1138,11 +1138,11 @@ Mgbanwe gburugburụ ndị koodu na-eji kpọmkwem:
 
 ## Nkọwa Nhazi Sistemụ Ndị A Maara
 
-1. `usageDb` na `localDb` na-ekekọrịta otu iwu ndekọ ntọala (`DATA_DIR` -> `XDG_CONFIG_HOME/omniroute` -> `~/.omniroute`) yana mbugharị faịlụ ochie.
+1. `usageDb` na `localDb` na-ekekọrịta otu iwu ndekọ ntọala (`DATA_DIR` -> `XDG_CONFIG_HOME/agentproxy` -> `~/.agentproxy`) yana mbugharị faịlụ ochie.
 2. `/api/v1/route.ts` na-enyefe ọrụ n'aka otu onye nrụpụta katalọgụ jikọtara ọnụ nke `/api/v1/models` (`src/app/api/v1/models/catalog.ts`) na-eji, iji zere ndahie semantics.
 3. Onye ndekọ arịrịọ na-ede headers/body niile mgbe agbanyere ya; were ndekọ log dị ka ebe nwere ozi dị nro.
 4. Omume cloud na-adabere na `NEXT_PUBLIC_BASE_URL` ziri ezi yana ike iru ebe njedebe cloud.
-5. A na-ebipụta ndekọ `open-sse/` dị ka **ngwugwu npm workspace** `@omniroute/open-sse`. Koodu isi mmalite na-ebubata ya site na `@omniroute/open-sse/...` (nke Next.js `transpilePackages` na-edozi). Ụzọ faịlụ dị n'akwụkwọ a ka na-eji aha ndekọ `open-sse/` iji nọgide na-enwe nkwekọrịta.
+5. A na-ebipụta ndekọ `open-sse/` dị ka **ngwugwu npm workspace** `@agentproxy/open-sse`. Koodu isi mmalite na-ebubata ya site na `@agentproxy/open-sse/...` (nke Next.js `transpilePackages` na-edozi). Ụzọ faịlụ dị n'akwụkwọ a ka na-eji aha ndekọ `open-sse/` iji nọgide na-enwe nkwekọrịta.
 6. Chaatị ndị dị na dashboard na-eji **Recharts** (nke dabere na SVG) maka ngosipụta nyocha data ndị dị mfe ịnweta ma na-emekọrịta ihe (chaatị ogwe ojiji model, tebụl nkọwa ndị na-eweta ọrụ nwere ọnụego ihe ịga nke ọma).
 7. Nnwale E2E na-eji **Playwright** (`tests/e2e/`), a na-agba ha site na `npm run test:e2e`. Nnwale unit na-eji **onye na-agba nnwale Node.js** (`tests/unit/`), a na-agba ha site na `npm run test:unit`. Koodu isi mmalite dị n'okpuru `src/` bụ **TypeScript** (`.ts`/`.tsx`); workspace `open-sse/` ka bụ JavaScript (`.js`).
 8. A haziri ibe Settings n'ime taabụ 7: General, Appearance, AI, Security, Routing, Resilience, Advanced. Ibe Resilience na-ahazi naanị kwụ arịrịọ, oge njikọ ga-anọ jụụ, breaker nke onye na-eweta ọrụ, na omume ichere ka oge ịdị jụụ gwụ; a na-egosi ọnọdụ runtime breaker dị ugbu a na ibe Health.
@@ -1153,7 +1153,7 @@ Mgbanwe gburugburụ ndị koodu na-eji kpọmkwem:
 ## Ndepụta Nnyocha Nkwado Ọrụ
 
 - Wuo site na koodu mmalite: `npm run build`
-- Wuo onyonyo Docker: `docker build -t omniroute .`
+- Wuo onyonyo Docker: `docker build -t agentproxy .`
 - Bido ọrụ ahụ ma nyochaa:
 - `GET /api/settings`
 - `GET /api/v1/models`

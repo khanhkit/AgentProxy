@@ -64,7 +64,7 @@ Content-Type: application/json
 | ራስጌ                      | አቅጣጫ | መግለጫ                                                                                                                                                     |
 | ------------------------ | ---- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `X-AgentProxy-No-Cache`   | ጥያቄ  | መሸጎጫውን ለማለፍ ወደ `true` ያዘጋጁ                                                                                                                               |
-| `x-omniroute-no-memory`  | ጥያቄ  | ለዚህ ጥያቄ የማህደረ ትውስታ እና የክህሎቶች ማስገባትን ለመዝለል ወደ `true` ያዘጋጁ (ከno-cache ጋር ተመሳሳይ ነው፤ በእያንዳንዱ ጥሪ የሚኖረውን ተጨማሪ የቶከን/ወጪ ጫና ያስወግዳል)                               |
+| `x-agentproxy-no-memory`  | ጥያቄ  | ለዚህ ጥያቄ የማህደረ ትውስታ እና የክህሎቶች ማስገባትን ለመዝለል ወደ `true` ያዘጋጁ (ከno-cache ጋር ተመሳሳይ ነው፤ በእያንዳንዱ ጥሪ የሚኖረውን ተጨማሪ የቶከን/ወጪ ጫና ያስወግዳል)                               |
 | `X-AgentProxy-Progress`   | ጥያቄ  | ለሂደት ሁነቶች ወደ `true` ያዘጋጁ                                                                                                                                 |
 | `X-Session-Id`           | ጥያቄ  | ለውጫዊ የክፍለ ጊዜ ትስስር የሚያገለግል ቋሚ የክፍለ ጊዜ ቁልፍ                                                                                                                 |
 | `x_session_id`           | ጥያቄ  | የሥር ሰረዝ ልዩነቱም ተቀባይነት አለው (ቀጥተኛ HTTP)                                                                                                                     |
@@ -180,7 +180,7 @@ X-AgentProxy-Lease-Generation: 1
 በሌላ ንቁ ኪራይ ተይዞ እንደነበር ብቻ ነው። የማይደገፉ ሞዴሎች/አቅራቢዎች፣ የፖሊሲ አለመዛመድ፣ የማቀዝቀዣ ጊዜ፣ ኮታ፣
 የጤና ሁኔታ እና ሌሎች መደበኛ የብቁነት ውድቀቶች ነባር የAgentProxy ምላሾቻቸውን ይዘው ይቀጥላሉ።
 
-### `x-omniroute-compression`
+### `x-agentproxy-compression`
 
 ለእያንዳንዱ ጥያቄ የመጭመቂያ ዕቅዱን መሻር። ከፍተኛው ቅድሚያ — የማዘዋወሪያ-combo
 መሻሪያውን፣ ንቁ መገለጫውን፣ ራስ-ሰር ቀስቃሹን እና የፓነሉን Default ያሸንፋል። እሴቶች፦
@@ -415,10 +415,10 @@ GET /v1/models?prefix=canonical    # ሙሉው የአቅራቢ-id ቅድመ ቅ�
 
 ### ያለ-አስተሳሰብ የሞዴል ልዩነቶች
 
-አስተሳሰብን ለሚደግፉ የClaude ሞዴሎች፣ `/v1/models` idው `claude-3-omniroute-no-thinking/` የሚለው ቅድመ ቅጥያ ያለውን **ያለ-አስተሳሰብ** ልዩነትም ያሳውቃል፦
+አስተሳሰብን ለሚደግፉ የClaude ሞዴሎች፣ `/v1/models` idው `claude-3-agentproxy-no-thinking/` የሚለው ቅድመ ቅጥያ ያለውን **ያለ-አስተሳሰብ** ልዩነትም ያሳውቃል፦
 
 ```
-claude-3-omniroute-no-thinking/<provider>/<model>
+claude-3-agentproxy-no-thinking/<provider>/<model>
 ```
 
 ይህን id መምረጥ (ለምሳሌ፣ ሁልጊዜ `thinking` ብሎክ በሚያያይዝ የClaude Code ቅንብር ውስጥ) ምክንያታዊ አስተሳሰብን በማገድ ወደ እውነተኛው `<provider>/<model>` መልሶ ይፈታዋል — በ`/v1/messages` መንገድ ላይ `thinking:{type:"disabled"}`፣ ወይም በ`/v1/chat/completions` መንገድ ላይ የ`reasoning`/`reasoning_effort` መስኮች ይወገዳሉ። ልዩነቱ የሚዘረዘረው አስተሳሰብን ለሚደግፉ **እና** `disabled`ን ለሚያከብሩ የClaude-ቤተሰብ ሞዴሎች ብቻ ነው (ስለዚህ፣ ለምሳሌ `disabled`ን የማይቀበሉ adaptive-only ሞዴሎች አይካተቱም)። ኦፕሬተሮች `ModelSpec.noThinkingAlias`ን በመጠቀም ልዩነቱን ለእያንዳንዱ ሞዴል በግድ ማብራት ወይም ማጥፋት ይችላሉ።
@@ -504,7 +504,7 @@ POST /v1/music/generations  { "model": "suno/v3.5",   "prompt": "..." }
 > ኖዶች (`localhost`፣ `127.0.0.1`፣ `172.16.0.0/12`) ሁልጊዜ ብቁ ናቸው። በሌላ ማንኛውም
 > አስተናጋጅ ላይ ያሉ ኖዶች — የLAN ማሽን ወይም የTailscale አቻ — ብቁ የሚሆኑት ኦፕሬተሩ
 > `RERANK_REMOTE_PROVIDER_NODES` የባህሪ ጥቆማን ሲያነቃ **እና** የኖዱ መሠረታዊ URL የአቅራቢውን
-> የወጪ URL መመሪያ (`OMNIROUTE_ALLOW_LOCAL_PROVIDER_URLS` / `OMNIROUTE_ALLOW_PRIVATE_PROVIDER_URLS`) ሲያልፍ ብቻ ነው፤
+> የወጪ URL መመሪያ (`AGENTPROXY_ALLOW_LOCAL_PROVIDER_URLS` / `AGENTPROXY_ALLOW_PRIVATE_PROVIDER_URLS`) ሲያልፍ ብቻ ነው፤
 > የደመና-ሜታዳታ አስተናጋጆች ፈጽሞ ጥያቄ አይደርሳቸውም። የማስታወሻ ሞተሩ የዳግም ደረጃ መስጫ ደረጃ ይህን መስመር በ
 > loopback በኩል ይጠራል፣ ስለዚህ ይኸው ደንብ በማስታወሻ ቅንብሮች ውስጥ `rerankProviderModel`ን ይቆጣጠራል።
 >
@@ -625,8 +625,8 @@ GET /v1/ws?handshake=1
 
 ```bash
 # ከHTTP API ጋር ተመሳሳይ host:port (ነባሪ 20128)፤ ግንኙነቱን upgrade ያድርጉ፦
-wscat -c "ws://localhost:20128/v1/responses?api_key=<OMNIROUTE_API_KEY>"
-# (ወይም፦ -H "Authorization: Bearer <OMNIROUTE_API_KEY>")
+wscat -c "ws://localhost:20128/v1/responses?api_key=<AGENTPROXY_API_KEY>"
+# (ወይም፦ -H "Authorization: Bearer <AGENTPROXY_API_KEY>")
 
 # የመጀመሪያው frame response.create መሆን አለበት፦
 { "type": "response.create", "model": "gpt-5.5", "input": [ { "role": "user", "content": "hi" } ] }
@@ -661,18 +661,18 @@ WebSocket ድጋፍ ያለው custom provider ወደ `~/.codex/config.toml` በ�
 
 ```toml
 model = "gpt-5.5"                 # ባዶ id — "codex/gpt-5.5" አይደለም
-model_provider = "omniroute"
+model_provider = "agentproxy"
 
-[model_providers.omniroute]
+[model_providers.agentproxy]
 name = "AgentProxy (WS)"
 base_url = "http://localhost:20128/v1"   # መጨረሻ ላይ slash የለም፤ WS URL ከዚህ ይመነጫል (በproduction https/wss ይጠቀሙ)
 wire_api = "responses"                    # ከFeb 2026 ጀምሮ የሚደገፈው ብቸኛ እሴት
 supports_websockets = true                # Responses-over-WS transportን ያነቃል
-env_key = "OMNIROUTE_API_KEY"             # የAgentProxy API ቁልፍን ይይዛል (Bearer)
+env_key = "AGENTPROXY_API_KEY"             # የAgentProxy API ቁልፍን ይይዛል (Bearer)
 ```
 
 ```bash
-export OMNIROUTE_API_KEY=sk-...           # የAgentProxy API ቁልፍ (REQUIRE_API_KEY=false ከሆነ ማንኛውም ቁልፍ)
+export AGENTPROXY_API_KEY=sk-...           # የAgentProxy API ቁልፍ (REQUIRE_API_KEY=false ከሆነ ማንኛውም ቁልፍ)
 codex exec "Responda apenas: PONG"
 ```
 
@@ -1033,7 +1033,7 @@ Content-Type: application/json
 {
   "success": true,
   "repaired": ["CLAUDE_CODE_OAUTH_CLIENT_ID", "CLAUDE_CODE_OAUTH_CLIENT_SECRET"],
-  "backupPath": "/home/user/.omniroute/backups/env-repair-2026-04-11.bak"
+  "backupPath": "/home/user/.agentproxy/backups/env-repair-2026-04-11.bak"
 }
 ```
 
@@ -1407,7 +1407,7 @@ AgentProxy የA2A (Agent-to-Agent) JSON-RPC 2.0 መጨረሻ ነጥብን፣ እ
 
 ```bash
 POST /a2a
-Authorization: Bearer your-api-key   # OMNIROUTE_API_KEY ካልተዋቀረ በስተቀር አማራጭ ነው
+Authorization: Bearer your-api-key   # AGENTPROXY_API_KEY ካልተዋቀረ በስተቀር አማራጭ ነው
 Content-Type: application/json
 
 {
@@ -1450,7 +1450,7 @@ GET /.well-known/agent.json
 | GET  | `/api/a2a/tasks/[id]`        | አንድ ተግባር ያመጣል                                                                                                      |
 | POST | `/api/a2a/tasks/[id]/cancel` | ተግባርን ይሰርዛል                                                                                                        |
 
-**ማረጋገጫ፦** የREST አጋዥ መንገዶች ያለ የአስተዳደር ማረጋገጫ ይሰራሉ (በዳሽቦርድ ሊነበቡ የሚችሉ)፤ የJSON-RPC `/a2a` መንገድ ከተዋቀረ Bearer `OMNIROUTE_API_KEY`ን ይጠቀማል።
+**ማረጋገጫ፦** የREST አጋዥ መንገዶች ያለ የአስተዳደር ማረጋገጫ ይሰራሉ (በዳሽቦርድ ሊነበቡ የሚችሉ)፤ የJSON-RPC `/a2a` መንገድ ከተዋቀረ Bearer `AGENTPROXY_API_KEY`ን ይጠቀማል።
 
 ---
 
@@ -1767,7 +1767,7 @@ devin-cli፣ ወዘተ) ያስተዳድሩ። ሙሉውን ዝርዝር ለማ�
 
 ## የደኅንነት ገደቦች
 
-በሩጫ ጊዜ የሚተገበሩ የደኅንነት ገደቦችን (PII ማወቅ፣ የጥያቄ መርፌ ማወቅ፣ የምስል ማገናኘት) ይመርምሩ። የደኅንነት ገደቦች በእያንዳንዱ ጥያቄ ላይ ይሰራሉ፤ ለእያንዳንዱ ጥሪ አለመሳተፍ በ`x-omniroute-disabled-guardrails` የጥያቄ ራስጌ በኩል ነው — በቋሚነት የተቀመጠ የማንቃት/ማሰናከል በይነገጽ የለም።
+በሩጫ ጊዜ የሚተገበሩ የደኅንነት ገደቦችን (PII ማወቅ፣ የጥያቄ መርፌ ማወቅ፣ የምስል ማገናኘት) ይመርምሩ። የደኅንነት ገደቦች በእያንዳንዱ ጥያቄ ላይ ይሰራሉ፤ ለእያንዳንዱ ጥሪ አለመሳተፍ በ`x-agentproxy-disabled-guardrails` የጥያቄ ራስጌ በኩል ነው — በቋሚነት የተቀመጠ የማንቃት/ማሰናከል በይነገጽ የለም።
 
 | ዘዴ   | ዱካ                     | መግለጫ                                                                             |
 | ---- | ---------------------- | -------------------------------------------------------------------------------- |

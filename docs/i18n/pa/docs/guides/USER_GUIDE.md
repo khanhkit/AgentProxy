@@ -189,7 +189,7 @@ Claude ਅਤੇ Claude Code-ਅਨੁਕੂਲ ਰੂਟ, Opus ਅਤੇ Sonnet
 
 #### Kimi K2 ($9/ਮਹੀਨਾ ਨਿਰਧਾਰਤ)
 
-1. ਸਬਸਕ੍ਰਾਈਬ ਕਰੋ: [Moonshot AI](https://platform.kimi.ai?aff=omniroute)
+1. ਸਬਸਕ੍ਰਾਈਬ ਕਰੋ: [Moonshot AI](https://platform.kimi.ai)
 2. API ਕੁੰਜੀ ਪ੍ਰਾਪਤ ਕਰੋ → ਡੈਸ਼ਬੋਰਡ → API ਕੁੰਜੀ ਜੋੜੋ
 
 **ਵਰਤੋਂ:** `kimi/kimi-k2.5` — **ਮਾਹਰ ਸੁਝਾਅ:** 10M ਟੋਕਨਾਂ ਲਈ ਨਿਰਧਾਰਤ $9/ਮਹੀਨਾ = $0.90/1M ਦੀ ਪ੍ਰਭਾਵੀ ਲਾਗਤ!
@@ -279,7 +279,7 @@ Settings → Models → Advanced:
 {
   "env": {
     "ANTHROPIC_BASE_URL": "http://localhost:20128",
-    "ANTHROPIC_AUTH_TOKEN": "your-omniroute-api-key"
+    "ANTHROPIC_AUTH_TOKEN": "your-agentproxy-api-key"
   }
 }
 ```
@@ -290,7 +290,7 @@ Settings → Models → Advanced:
 
 ```bash
 export OPENAI_BASE_URL="http://localhost:20128"
-export OPENAI_API_KEY="your-omniroute-api-key"
+export OPENAI_API_KEY="your-agentproxy-api-key"
 codex "your prompt"
 ```
 
@@ -302,14 +302,14 @@ codex "your prompt"
 {
   "agents": {
     "defaults": {
-      "model": { "primary": "omniroute/if/kimi-k2.7-code" }
+      "model": { "primary": "agentproxy/if/kimi-k2.7-code" }
     }
   },
   "models": {
     "providers": {
-      "omniroute": {
+      "agentproxy": {
         "baseUrl": "http://localhost:20128/v1",
-        "apiKey": "your-omniroute-api-key",
+        "apiKey": "your-agentproxy-api-key",
         "api": "openai-completions",
         "models": [{ "id": "if/kimi-k2.7-code", "name": "Kimi K2.7 Code" }]
       }
@@ -336,28 +336,28 @@ API ਕੁੰਜੀ: [ਡੈਸ਼ਬੋਰਡ ਤੋਂ]
 ### ਗਲੋਬਲ npm ਇੰਸਟਾਲੇਸ਼ਨ (ਸਿਫ਼ਾਰਸ਼ੀ)
 
 ```bash
-npm install -g omniroute
+npm install -g agentproxy
 
 # ਸੰਰਚਨਾ ਡਾਇਰੈਕਟਰੀ ਬਣਾਓ
-mkdir -p ~/.omniroute
+mkdir -p ~/.agentproxy
 
 # .env ਫ਼ਾਈਲ ਬਣਾਓ (.env.example ਵੇਖੋ)
-cp .env.example ~/.omniroute/.env
+cp .env.example ~/.agentproxy/.env
 
 # ਸਰਵਰ ਸ਼ੁਰੂ ਕਰੋ
-omniroute
+agentproxy
 # ਜਾਂ ਕਸਟਮ ਪੋਰਟ ਨਾਲ:
-omniroute --port 3000
+agentproxy --port 3000
 ```
 
-CLI ਆਪਣੇ-ਆਪ `.env` ਨੂੰ `~/.omniroute/.env` ਜਾਂ `./.env` ਤੋਂ ਲੋਡ ਕਰਦਾ ਹੈ।
+CLI ਆਪਣੇ-ਆਪ `.env` ਨੂੰ `~/.agentproxy/.env` ਜਾਂ `./.env` ਤੋਂ ਲੋਡ ਕਰਦਾ ਹੈ।
 
 ### ਟਰੇ ਮੋਡ
 
 AgentProxy ਨੂੰ ਸਿਸਟਮ ਟਰੇ ਵਿੱਚ ਸ਼ੁਰੂ ਕਰੋ:
 
 ```bash
-omniroute serve --tray
+agentproxy serve --tray
 ```
 
 ਸਰਵਰ ਅਤੇ ਟਰੇ ਤਿਆਰ ਹੋਣ ਤੋਂ ਬਾਅਦ ਕਮਾਂਡ ਵਾਪਸ ਆ ਜਾਂਦੀ ਹੈ।
@@ -384,7 +384,7 @@ omniroute serve --tray
 ਮਸ਼ੀਨ ਵਿੱਚ ਅਗਲੇ ਲੌਗਇਨ ਸਮੇਂ ਸਟਾਰਟਅੱਪ ਸਮਰੱਥ ਕਰੋ:
 
 ```bash
-omniroute autostart enable
+agentproxy autostart enable
 ```
 
 ਆਟੋ-ਸਟਾਰਟ macOS, Windows ਅਤੇ ਗ੍ਰਾਫ਼ਿਕਲ Linux ਸੈਸ਼ਨਾਂ ਉੱਤੇ ਟਰੇ ਮੋਡ ਵਰਤਦਾ ਹੈ। ਹੈੱਡਲੈੱਸ Linux ਮੌਜੂਦਾ systemd ਯੂਜ਼ਰ ਸਰਵਿਸ ਵਰਤਦਾ ਹੈ।
@@ -392,7 +392,7 @@ omniroute autostart enable
 ਲੌਗਇਨ ਸਮੇਂ ਸਟਾਰਟਅੱਪ ਨੂੰ ਅਸਮਰੱਥ ਕਰੋ:
 
 ```bash
-omniroute autostart disable
+agentproxy autostart disable
 ```
 
 ### ਅਣਇੰਸਟਾਲ ਕਰਨਾ
@@ -401,10 +401,10 @@ omniroute autostart disable
 
 | ਕਮਾਂਡ                    | ਕਾਰਵਾਈ                                                                                      |
 | ------------------------ | ------------------------------------------------------------------------------------------- |
-| `npm run uninstall`      | ਸਿਸਟਮ ਐਪ ਨੂੰ ਹਟਾਉਂਦੀ ਹੈ, ਪਰ `~/.omniroute` ਵਿੱਚ **ਤੁਹਾਡਾ DB ਅਤੇ ਸੰਰਚਨਾਵਾਂ ਰੱਖਦੀ ਹੈ**।       |
+| `npm run uninstall`      | ਸਿਸਟਮ ਐਪ ਨੂੰ ਹਟਾਉਂਦੀ ਹੈ, ਪਰ `~/.agentproxy` ਵਿੱਚ **ਤੁਹਾਡਾ DB ਅਤੇ ਸੰਰਚਨਾਵਾਂ ਰੱਖਦੀ ਹੈ**।       |
 | `npm run uninstall:full` | ਐਪ ਨੂੰ ਹਟਾਉਂਦੀ ਹੈ ਅਤੇ **ਸਾਰੀਆਂ ਸੰਰਚਨਾਵਾਂ, ਕੁੰਜੀਆਂ ਅਤੇ ਡਾਟਾਬੇਸ ਸਥਾਈ ਤੌਰ ’ਤੇ ਮਿਟਾ ਦਿੰਦੀ ਹੈ**। |
 
-> ਨੋਟ: ਇਹ ਕਮਾਂਡਾਂ ਚਲਾਉਣ ਲਈ AgentProxy ਪ੍ਰੋਜੈਕਟ ਫੋਲਡਰ ਵਿੱਚ ਜਾਓ (ਜੇ ਤੁਸੀਂ ਇਸਨੂੰ ਕਲੋਨ ਕੀਤਾ ਸੀ) ਅਤੇ ਉਨ੍ਹਾਂ ਨੂੰ ਚਲਾਓ। ਵਿਕਲਪਕ ਤੌਰ ’ਤੇ, ਜੇ ਇਹ ਗਲੋਬਲ ਤੌਰ ’ਤੇ ਇੰਸਟਾਲ ਹੈ, ਤਾਂ ਤੁਸੀਂ ਸਿਰਫ਼ `npm uninstall -g omniroute` ਚਲਾ ਸਕਦੇ ਹੋ।
+> ਨੋਟ: ਇਹ ਕਮਾਂਡਾਂ ਚਲਾਉਣ ਲਈ AgentProxy ਪ੍ਰੋਜੈਕਟ ਫੋਲਡਰ ਵਿੱਚ ਜਾਓ (ਜੇ ਤੁਸੀਂ ਇਸਨੂੰ ਕਲੋਨ ਕੀਤਾ ਸੀ) ਅਤੇ ਉਨ੍ਹਾਂ ਨੂੰ ਚਲਾਓ। ਵਿਕਲਪਕ ਤੌਰ ’ਤੇ, ਜੇ ਇਹ ਗਲੋਬਲ ਤੌਰ ’ਤੇ ਇੰਸਟਾਲ ਹੈ, ਤਾਂ ਤੁਸੀਂ ਸਿਰਫ਼ `npm uninstall -g agentproxy` ਚਲਾ ਸਕਦੇ ਹੋ।
 
 ### VPS ਡਿਪਲੌਇਮੈਂਟ
 
@@ -414,7 +414,7 @@ cd AgentProxy && npm install && npm run build
 
 export JWT_SECRET="your-secure-secret-change-this"
 export INITIAL_PASSWORD="your-password"
-export DATA_DIR="/var/lib/omniroute"
+export DATA_DIR="/var/lib/agentproxy"
 export PORT="20128"
 export HOSTNAME="0.0.0.0"
 export NODE_ENV="production"
@@ -422,7 +422,7 @@ export NEXT_PUBLIC_BASE_URL="http://localhost:20128"
 export API_KEY_SECRET="endpoint-proxy-api-key-secret"
 
 npm run start
-# ਜਾਂ: pm2 start npm --name omniroute -- start
+# ਜਾਂ: pm2 start npm --name agentproxy -- start
 ```
 
 ### PM2 ਡਿਪਲੌਇਮੈਂਟ (ਘੱਟ ਮੈਮੋਰੀ)
@@ -431,10 +431,10 @@ npm run start
 
 ```bash
 # 512MB ਸੀਮਾ ਨਾਲ (ਡਿਫਾਲਟ)
-pm2 start npm --name omniroute -- start
+pm2 start npm --name agentproxy -- start
 
 # ਜਾਂ ਕਸਟਮ ਮੈਮੋਰੀ ਸੀਮਾ ਨਾਲ
-OMNIROUTE_MEMORY_MB=512 pm2 start npm --name omniroute -- start
+AGENTPROXY_MEMORY_MB=512 pm2 start npm --name agentproxy -- start
 
 # ਜਾਂ ecosystem.config.js ਦੀ ਵਰਤੋਂ ਕਰਕੇ
 pm2 start ecosystem.config.js
@@ -446,12 +446,12 @@ pm2 start ecosystem.config.js
 module.exports = {
   apps: [
     {
-      name: "omniroute",
+      name: "agentproxy",
       script: "npm",
       args: "start",
       env: {
         NODE_ENV: "production",
-        OMNIROUTE_MEMORY_MB: "512",
+        AGENTPROXY_MEMORY_MB: "512",
         JWT_SECRET: "your-secret",
         INITIAL_PASSWORD: "your-password",
       },
@@ -466,10 +466,10 @@ module.exports = {
 
 ```bash
 # ਇਮੇਜ ਬਣਾਓ (ਡਿਫਾਲਟ = runner-cli ਜਿਸ ਵਿੱਚ codex/claude/droid ਪਹਿਲਾਂ ਤੋਂ ਇੰਸਟਾਲ ਹਨ)
-docker build -t omniroute:cli .
+docker build -t agentproxy:cli .
 
 # ਪੋਰਟੇਬਲ ਮੋਡ (ਸਿਫ਼ਾਰਸ਼ੀ)
-docker run -d --name omniroute -p 20128:20128 --env-file ./.env -v omniroute-data:/app/data omniroute:cli
+docker run -d --name agentproxy -p 20128:20128 --env-file ./.env -v agentproxy-data:/app/data agentproxy:cli
 ```
 
 CLI ਬਾਈਨਰੀਆਂ ਵਾਲੇ ਹੋਸਟ-ਏਕੀਕ੍ਰਿਤ ਮੋਡ ਲਈ ਮੁੱਖ ਦਸਤਾਵੇਜ਼ਾਂ ਵਿੱਚ Docker ਭਾਗ ਵੇਖੋ।
@@ -482,8 +482,8 @@ Void Linux ਵਰਤੋਂਕਾਰ `xbps-src` ਕ੍ਰਾਸ-ਕੰਪਾਇ�
 <summary><b>xbps-src ਟੈਂਪਲੇਟ ਵੇਖੋ</b></summary>
 
 ```bash
-# 'omniroute' ਲਈ ਟੈਂਪਲੇਟ ਫ਼ਾਈਲ
-pkgname=omniroute
+# 'agentproxy' ਲਈ ਟੈਂਪਲੇਟ ਫ਼ਾਈਲ
+pkgname=agentproxy
 version=3.8.0
 revision=1
 hostmakedepends="nodejs python3 make"
@@ -494,8 +494,8 @@ license="MIT"
 homepage="https://github.com/diegosouzapw/AgentProxy"
 distfiles="https://github.com/diegosouzapw/AgentProxy/archive/refs/tags/v${version}.tar.gz"
 checksum=009400afee90a9f32599d8fe734145cfd84098140b7287990183dde45ae2245b
-system_accounts="_omniroute"
-omniroute_homedir="/var/lib/omniroute"
+system_accounts="_agentproxy"
+agentproxy_homedir="/var/lib/agentproxy"
 export NODE_ENV=production
 export npm_config_engine_strict=false
 export npm_config_loglevel=error
@@ -545,26 +545,26 @@ do_check() {
 }
 
 do_install() {
-	vmkdir usr/lib/omniroute/.next
-	vcopy .next/standalone/. usr/lib/omniroute/.next/standalone
+	vmkdir usr/lib/agentproxy/.next
+	vcopy .next/standalone/. usr/lib/agentproxy/.next/standalone
 
 	# ਪੋਸਟ-ਇੰਸਟਾਲ ਹੁੱਕ ਦੁਆਰਾ ਖ਼ਾਲੀ Next.js ਐਪ ਰਾਊਟਰ ਡਾਇਰੈਕਟਰੀਆਂ ਨੂੰ ਹਟਾਏ ਜਾਣ ਤੋਂ ਰੋਕੋ
 	for _d in \
 		.next/standalone/.next/server/app/dashboard \
 		.next/standalone/.next/server/app/dashboard/settings \
 		.next/standalone/.next/server/app/dashboard/providers; do
-		touch "${DESTDIR}/usr/lib/omniroute/${_d}/.keep"
+		touch "${DESTDIR}/usr/lib/agentproxy/${_d}/.keep"
 	done
 
-	cat > "${WRKDIR}/omniroute" <<'EOF'
+	cat > "${WRKDIR}/agentproxy" <<'EOF'
 #!/bin/sh
 export PORT="${PORT:-20128}"
-export DATA_DIR="${DATA_DIR:-${XDG_DATA_HOME:-${HOME}/.local/share}/omniroute}"
+export DATA_DIR="${DATA_DIR:-${XDG_DATA_HOME:-${HOME}/.local/share}/agentproxy}"
 export APP_LOG_TO_FILE="${APP_LOG_TO_FILE:-false}"
 mkdir -p "${DATA_DIR}"
-exec node /usr/lib/omniroute/.next/standalone/server.js "$@"
+exec node /usr/lib/agentproxy/.next/standalone/server.js "$@"
 EOF
-	vbin "${WRKDIR}/omniroute"
+	vbin "${WRKDIR}/agentproxy"
 }
 
 post_install() {
@@ -578,14 +578,14 @@ post_install() {
 
 | ਵੇਰੀਏਬਲ                                 | ਡਿਫਾਲਟ                               | ਵੇਰਵਾ                                                                                                         |
 | --------------------------------------- | ------------------------------------ | ------------------------------------------------------------------------------------------------------------- |
-| `JWT_SECRET`                            | `omniroute-default-secret-change-me` | JWT ਸਾਈਨਿੰਗ ਸੀਕ੍ਰੇਟ (**ਪ੍ਰੋਡਕਸ਼ਨ ਵਿੱਚ ਬਦਲੋ**)                                                                 |
+| `JWT_SECRET`                            | `agentproxy-default-secret-change-me` | JWT ਸਾਈਨਿੰਗ ਸੀਕ੍ਰੇਟ (**ਪ੍ਰੋਡਕਸ਼ਨ ਵਿੱਚ ਬਦਲੋ**)                                                                 |
 | `INITIAL_PASSWORD`                      | `CHANGEME`                           | ਪਹਿਲੀ ਵਾਰ ਲੌਗਇਨ ਕਰਨ ਲਈ ਪਾਸਵਰਡ                                                                                 |
-| `DATA_DIR`                              | `~/.omniroute`                       | ਡਾਟਾ ਡਾਇਰੈਕਟਰੀ (ਡੇਟਾਬੇਸ, ਵਰਤੋਂ, ਲੌਗ)                                                                          |
+| `DATA_DIR`                              | `~/.agentproxy`                       | ਡਾਟਾ ਡਾਇਰੈਕਟਰੀ (ਡੇਟਾਬੇਸ, ਵਰਤੋਂ, ਲੌਗ)                                                                          |
 | `PORT`                                  | ਫਰੇਮਵਰਕ ਡਿਫਾਲਟ                       | ਸਰਵਿਸ ਪੋਰਟ (ਉਦਾਹਰਨਾਂ ਵਿੱਚ `20128`)                                                                            |
 | `HOSTNAME`                              | ਫਰੇਮਵਰਕ ਡਿਫਾਲਟ                       | ਬਾਈਂਡ ਹੋਸਟ (Docker ਵਿੱਚ ਡਿਫਾਲਟ `0.0.0.0`)                                                                     |
 | `NODE_ENV`                              | ਰਨਟਾਈਮ ਡਿਫਾਲਟ                        | ਡਿਪਲੌਇਮੈਂਟ ਲਈ `production` ਸੈੱਟ ਕਰੋ                                                                           |
 | `NEXT_PUBLIC_BASE_URL`                  | `http://localhost:20128`             | ਡੈਸ਼ਬੋਰਡ ਉੱਤੇ ਦਿਖਾਇਆ ਅਤੇ ਸਰਵਰ ਲਈ ਉਪਲਬਧ ਕਰਵਾਇਆ ਜਾਣ ਵਾਲਾ ਪਬਲਿਕ ਬੇਸ URL (ਪੁਰਾਣੇ `BASE_URL` ਦੀ ਥਾਂ ਲੈਂਦਾ ਹੈ)      |
-| `NEXT_PUBLIC_CLOUD_URL`                 | `https://omniroute.dev`              | ਕਲਾਉਡ ਸਿੰਕ ਐਂਡਪੌਇੰਟ ਦਾ ਬੇਸ URL (ਪੁਰਾਣੇ `CLOUD_URL` ਦੀ ਥਾਂ ਲੈਂਦਾ ਹੈ)                                           |
+| `NEXT_PUBLIC_CLOUD_URL`                 | `https://agentproxy.online`              | ਕਲਾਉਡ ਸਿੰਕ ਐਂਡਪੌਇੰਟ ਦਾ ਬੇਸ URL (ਪੁਰਾਣੇ `CLOUD_URL` ਦੀ ਥਾਂ ਲੈਂਦਾ ਹੈ)                                           |
 | `API_KEY_SECRET`                        | `endpoint-proxy-api-key-secret`      | ਤਿਆਰ ਕੀਤੀਆਂ API ਕੁੰਜੀਆਂ ਲਈ HMAC ਸੀਕ੍ਰੇਟ                                                                       |
 | `REQUIRE_API_KEY`                       | `false`                              | `/v1/*` ਉੱਤੇ Bearer API ਕੁੰਜੀ ਲਾਜ਼ਮੀ ਕਰੋ                                                                      |
 | `ALLOW_API_KEY_REVEAL`                  | `false`                              | ਪ੍ਰਮਾਣਿਤ ਡੈਸ਼ਬੋਰਡ ਵਰਤੋਂਕਾਰਾਂ ਨੂੰ ਮੰਗ 'ਤੇ ਸਟੋਰ ਕੀਤੀਆਂ API ਕੁੰਜੀਆਂ ਦੇ ਪੂਰੇ ਮੁੱਲ ਦਿਖਾਉਣ ਦੀ ਇਜਾਜ਼ਤ ਦਿਓ            |
@@ -595,7 +595,7 @@ post_install() {
 | `AUTH_COOKIE_SECURE`                    | `false`                              | `Secure` ਪ੍ਰਮਾਣੀਕਰਨ ਕੁਕੀ ਲਾਜ਼ਮੀ ਕਰੋ (HTTPS ਰਿਵਰਸ ਪ੍ਰੌਕਸੀ ਦੇ ਪਿੱਛੇ)                                            |
 | `CLOUDFLARED_BIN`                       | ਸੈੱਟ ਨਹੀਂ                            | ਪ੍ਰਬੰਧਿਤ ਡਾਊਨਲੋਡ ਦੀ ਬਜਾਏ ਮੌਜੂਦਾ `cloudflared` ਬਾਈਨਰੀ ਵਰਤੋ                                                     |
 | `CLOUDFLARED_PROTOCOL`                  | `http2`                              | ਪ੍ਰਬੰਧਿਤ Quick Tunnels ਲਈ ਟ੍ਰਾਂਸਪੋਰਟ (`http2`, `quic`, ਜਾਂ `auto`)                                            |
-| `OMNIROUTE_MEMORY_MB`                   | `512`                                | MB ਵਿੱਚ Node.js ਹੀਪ ਸੀਮਾ                                                                                      |
+| `AGENTPROXY_MEMORY_MB`                   | `512`                                | MB ਵਿੱਚ Node.js ਹੀਪ ਸੀਮਾ                                                                                      |
 | `PROMPT_CACHE_MAX_SIZE`                 | `50`                                 | ਪ੍ਰੌਮਪਟ ਕੈਸ਼ ਐਂਟਰੀਆਂ ਦੀ ਅਧਿਕਤਮ ਗਿਣਤੀ                                                                          |
 | `SEMANTIC_CACHE_MAX_SIZE`               | `100`                                | ਸਿਮੈਂਟਿਕ ਕੈਸ਼ ਐਂਟਰੀਆਂ ਦੀ ਅਧਿਕਤਮ ਗਿਣਤੀ                                                                         |
 
@@ -656,7 +656,7 @@ post_install() {
 
 **ਹੋਰ ਅਨੁਕੂਲ ਪ੍ਰਦਾਤਾ** (ਚੁਣੇ ਹੋਏ): `cohere`, `databricks`, `snowflake`, `together`, `vertex`, `alibaba`, `alibaba-cn`, `bedrock` (`aws-bedrock` ਰਾਹੀਂ), `azure-ai`, `openrouter` (ਪਾਸਥਰੂ ਕੈਟਾਲਾਗ), `siliconflow`, `hyperbolic`, `huggingface`, `featherless-ai`, `cloudflare-ai`, `scaleway`, `deepinfra`, `vercel-ai-gateway`, `bazaarlink`, `friendliai`, `nous-research`, `reka`, `volcengine`, `ai21`, `gigachat`। ਹਰ ਇੱਕ `providerRegistry.ts` ਵਿੱਚ ਆਪਣੀ ਮਾਡਲ ਸੂਚੀ ਰੱਖਦਾ ਹੈ ਅਤੇ ਜਦੋਂ ਪ੍ਰਦਾਤਾ `/models` ਐਂਡਪੌਇੰਟ ਉਪਲਬਧ ਕਰਦਾ ਹੈ ਤਾਂ ਇਸਨੂੰ ਆਟੋਮੈਟਿਕ ਤੌਰ 'ਤੇ ਸਿੰਕ ਕੀਤਾ ਜਾ ਸਕਦਾ ਹੈ।
 
-**ਮਾਡਲ IDs ਬਾਰੇ ਨੋਟ:** AgentProxy ਪ੍ਰਦਾਤਾ-ਮੂਲ IDs (`claude-opus-4-8`, `gpt-5.5`, `glm-5.1`, `MiniMax-M2.7`, `kimi-k2.5`, `grok-4.20-0309-reasoning`) ਵਰਤਦਾ ਹੈ। ਕੁਝ IDs ਵਿੱਚ ਬਿੰਦੀਆਂ ਵਾਲੇ ਵਰਜਨ ਸ਼ਾਮਲ ਹਨ, ਕਿਉਂਕਿ ਅੱਪਸਟ੍ਰੀਮ API ਉਨ੍ਹਾਂ ਨੂੰ ਇਸੇ ਤਰ੍ਹਾਂ ਉਮੀਦ ਕਰਦੀ ਹੈ। ਜੇ ਕੋਈ ਮਾਡਲ ਉੱਪਰ ਸੂਚੀਬੱਧ ਨਹੀਂ ਹੈ, ਤਾਂ ਉਪਲਬਧਤਾ ਦੀ ਪੁਸ਼ਟੀ ਕਰਨ ਲਈ `omniroute models --search <term>` ਚਲਾਓ ਜਾਂ `GET /api/models/catalog` ਨੂੰ ਹਿੱਟ ਕਰੋ।
+**ਮਾਡਲ IDs ਬਾਰੇ ਨੋਟ:** AgentProxy ਪ੍ਰਦਾਤਾ-ਮੂਲ IDs (`claude-opus-4-8`, `gpt-5.5`, `glm-5.1`, `MiniMax-M2.7`, `kimi-k2.5`, `grok-4.20-0309-reasoning`) ਵਰਤਦਾ ਹੈ। ਕੁਝ IDs ਵਿੱਚ ਬਿੰਦੀਆਂ ਵਾਲੇ ਵਰਜਨ ਸ਼ਾਮਲ ਹਨ, ਕਿਉਂਕਿ ਅੱਪਸਟ੍ਰੀਮ API ਉਨ੍ਹਾਂ ਨੂੰ ਇਸੇ ਤਰ੍ਹਾਂ ਉਮੀਦ ਕਰਦੀ ਹੈ। ਜੇ ਕੋਈ ਮਾਡਲ ਉੱਪਰ ਸੂਚੀਬੱਧ ਨਹੀਂ ਹੈ, ਤਾਂ ਉਪਲਬਧਤਾ ਦੀ ਪੁਸ਼ਟੀ ਕਰਨ ਲਈ `agentproxy models --search <term>` ਚਲਾਓ ਜਾਂ `GET /api/models/catalog` ਨੂੰ ਹਿੱਟ ਕਰੋ।
 
 </details>
 
@@ -693,16 +693,16 @@ curl -X POST http://localhost:20128/api/provider-models \
 
 ```bash
 # gateway-a
-OMNIROUTE_INSTANCE_ID=gateway-a
-OMNIROUTE_PEER_URLS=http://gateway-b:20128/v1
-OMNIROUTE_PEER_MAX_HOPS=4
+AGENTPROXY_INSTANCE_ID=gateway-a
+AGENTPROXY_PEER_URLS=http://gateway-b:20128/v1
+AGENTPROXY_PEER_MAX_HOPS=4
 ```
 
 ```bash
 # gateway-b
-OMNIROUTE_INSTANCE_ID=gateway-b
-OMNIROUTE_PEER_URLS=http://gateway-a:20128/v1
-OMNIROUTE_PEER_MAX_HOPS=4
+AGENTPROXY_INSTANCE_ID=gateway-b
+AGENTPROXY_PEER_URLS=http://gateway-a:20128/v1
+AGENTPROXY_PEER_MAX_HOPS=4
 ```
 
 ਸਿਰਫ਼ ਸਪਸ਼ਟ ਤੌਰ 'ਤੇ ਮਨਜ਼ੂਰਸ਼ੁਦਾ ਸੂਚੀ ਵਿੱਚ ਸ਼ਾਮਲ ਪੀਅਰ URL ਨੂੰ ਭੇਜੀਆਂ ਬੇਨਤੀਆਂ ਨੂੰ ਹੀ `X-AgentProxy-Peer-Trace` ਹੈਡਰ ਮਿਲਦਾ ਹੈ। ਗੇਟਵੇ ਦੁਹਰਾਈ ਗਈ ਇੰਸਟੈਂਸ ID ਜਾਂ ਸਮਾਪਤ ਹੋ ਚੁੱਕੇ ਹੌਪ ਬਜਟ ਨੂੰ HTTP `508 Loop Detected` ਨਾਲ ਅਸਵੀਕਾਰ ਕਰਦਾ ਹੈ; ਆਮ ਅੱਪਸਟ੍ਰੀਮ ਪ੍ਰੋਵਾਈਡਰਾਂ ਨੂੰ ਕੋਈ ਪੀਅਰ ਮੈਟਾਡਾਟਾ ਨਹੀਂ ਮਿਲਦਾ।
@@ -1088,7 +1088,7 @@ AgentProxy ਇੱਕ **ਸਕੋਰ-ਅਧਾਰਿਤ ਆਟੋ-ਰਾਊਟਰ
 
 ```bash
 curl -X POST http://localhost:20128/v1/chat/completions \
-  -H "Authorization: Bearer $OMNIROUTE_KEY" \
+  -H "Authorization: Bearer $AGENTPROXY_KEY" \
   -H "Content-Type: application/json" \
   -d '{
     "model": "auto/coding",
@@ -1109,7 +1109,7 @@ AgentProxy ਇੱਕ **MCP ਸਰਵਰ** (Model Context Protocol) ਅਤੇ ਇ
 
 - **SSE**: `http://localhost:20128/api/mcp/sse`
 - **ਸਟ੍ਰੀਮੇਬਲ HTTP**: `http://localhost:20128/api/mcp/stream`
-- **stdio**: `omniroute --mcp` (ਉਨ੍ਹਾਂ IDE ਪਲੱਗਇਨਾਂ ਲਈ ਜੋ stdio ਨੂੰ ਤਰਜੀਹ ਦਿੰਦੇ ਹਨ)
+- **stdio**: `agentproxy --mcp` (ਉਨ੍ਹਾਂ IDE ਪਲੱਗਇਨਾਂ ਲਈ ਜੋ stdio ਨੂੰ ਤਰਜੀਹ ਦਿੰਦੇ ਹਨ)
 
 ### Claude Desktop ਨੂੰ ਕਨੈਕਟ ਕਰੋ
 
@@ -1118,8 +1118,8 @@ AgentProxy ਇੱਕ **MCP ਸਰਵਰ** (Model Context Protocol) ਅਤੇ ਇ
 ```json
 {
   "mcpServers": {
-    "omniroute": {
-      "command": "omniroute",
+    "agentproxy": {
+      "command": "agentproxy",
       "args": ["--mcp"]
     }
   }
@@ -1195,23 +1195,23 @@ AgentProxy ਕਲਾਉਡ ਕੋਡਿੰਗ ਏਜੰਟਾਂ (**OpenAI Codex
 ```bash
 # ਪ੍ਰਦਾਤਾਵਾਂ ਦੀ ਸੂਚੀ ਦਿਖਾਓ
 curl http://localhost:20128/api/providers \
-  -H "Authorization: Bearer $OMNIROUTE_MANAGE_KEY"
+  -H "Authorization: Bearer $AGENTPROXY_MANAGE_KEY"
 
 # ਪ੍ਰਦਾਤਾ ਕਨੈਕਸ਼ਨ ਜੋੜੋ
 curl -X POST http://localhost:20128/api/providers \
-  -H "Authorization: Bearer $OMNIROUTE_MANAGE_KEY" \
+  -H "Authorization: Bearer $AGENTPROXY_MANAGE_KEY" \
   -H "Content-Type: application/json" \
   -d '{ "provider": "openai", "apiKey": "sk-...", "name": "main" }'
 
 # ਕੰਬੋ ਬਣਾਓ
 curl -X POST http://localhost:20128/api/combos \
-  -H "Authorization: Bearer $OMNIROUTE_MANAGE_KEY" \
+  -H "Authorization: Bearer $AGENTPROXY_MANAGE_KEY" \
   -H "Content-Type: application/json" \
   -d '{ "name": "premium", "strategy": "priority", "models": [{ "model": "cc/claude-opus-4-7" }, { "model": "glm/glm-5.1" }] }'
 
 # API ਕੁੰਜੀਆਂ ਦੀ ਸੂਚੀ ਦਿਖਾਓ/ਬਣਾਓ
-curl http://localhost:20128/api/keys -H "Authorization: Bearer $OMNIROUTE_MANAGE_KEY"
-curl -X POST http://localhost:20128/api/keys -H "Authorization: Bearer $OMNIROUTE_MANAGE_KEY" \
+curl http://localhost:20128/api/keys -H "Authorization: Bearer $AGENTPROXY_MANAGE_KEY"
+curl -X POST http://localhost:20128/api/keys -H "Authorization: Bearer $AGENTPROXY_MANAGE_KEY" \
   -d '{ "name": "ci-bot", "scopes": ["chat"] }'
 ```
 
@@ -1221,32 +1221,32 @@ curl -X POST http://localhost:20128/api/keys -H "Authorization: Bearer $OMNIROUT
 
 ## 💻 ਅੰਦਰੂਨੀ CLI
 
-AgentProxy ਸੈੱਟਅੱਪ, ਡਾਇਗਨੌਸਟਿਕਸ ਅਤੇ ਰਨਟਾਈਮ ਕੰਟਰੋਲ ਲਈ ਇੱਕ ਅੰਦਰੂਨੀ CLI (`omniroute …`) ਨਾਲ ਆਉਂਦਾ ਹੈ। ਇਹ **ਡੈਸ਼ਬੋਰਡ ਵਿਚਲੇ "CLI ਟੂਲਜ਼" ਪੰਨੇ ਤੋਂ ਵੱਖਰਾ ਹੈ**, ਜੋ ਤੀਜੀ-ਧਿਰ ਦੇ CLIs (Claude Code, Cursor, Codex, Cline, …) ਨੂੰ ਕੌਂਫਿਗਰ ਕਰਦਾ ਹੈ ਤਾਂ ਜੋ ਉਹ AgentProxy ਨਾਲ ਸੰਚਾਰ ਕਰ ਸਕਣ।
+AgentProxy ਸੈੱਟਅੱਪ, ਡਾਇਗਨੌਸਟਿਕਸ ਅਤੇ ਰਨਟਾਈਮ ਕੰਟਰੋਲ ਲਈ ਇੱਕ ਅੰਦਰੂਨੀ CLI (`agentproxy …`) ਨਾਲ ਆਉਂਦਾ ਹੈ। ਇਹ **ਡੈਸ਼ਬੋਰਡ ਵਿਚਲੇ "CLI ਟੂਲਜ਼" ਪੰਨੇ ਤੋਂ ਵੱਖਰਾ ਹੈ**, ਜੋ ਤੀਜੀ-ਧਿਰ ਦੇ CLIs (Claude Code, Cursor, Codex, Cline, …) ਨੂੰ ਕੌਂਫਿਗਰ ਕਰਦਾ ਹੈ ਤਾਂ ਜੋ ਉਹ AgentProxy ਨਾਲ ਸੰਚਾਰ ਕਰ ਸਕਣ।
 
 ```bash
-omniroute setup                    # ਇੰਟਰਐਕਟਿਵ ਵਿਜ਼ਾਰਡ (ਪਾਸਵਰਡ, ਪ੍ਰਦਾਤਾ, ਕਾਂਬੋ)
-omniroute setup --non-interactive  # CI-ਅਨੁਕੂਲ
-omniroute doctor                   # ਸਿਹਤ ਡਾਇਗਨੌਸਟਿਕਸ (ਡਾਟਾ ਡਾਇਰੈਕਟਰੀ, DB, ਪ੍ਰਦਾਤਾ, ਪੋਰਟ)
-omniroute providers available      # ਸਮਰਥਿਤ ਪ੍ਰਦਾਤਾਵਾਂ ਦੀ ਸੂਚੀ
-omniroute providers list           # ਕੌਂਫਿਗਰ ਕੀਤੇ ਕਨੈਕਸ਼ਨਾਂ ਦੀ ਸੂਚੀ
-omniroute providers test <id>      # ਕਿਸੇ ਪ੍ਰਦਾਤਾ ਕਨੈਕਸ਼ਨ ਦੀ ਲਾਈਵ ਜਾਂਚ
-omniroute combos list              # ਕਾਂਬੋਆਂ ਦੀ ਸੂਚੀ
-omniroute combos switch <name>     # ਡਿਫਾਲਟ ਕਾਂਬੋ ਸੈੱਟ ਕਰੋ
-omniroute models                   # ਉਪਲਬਧ ਮਾਡਲਾਂ ਦੀ ਸੂਚੀ (--json, --search)
-omniroute keys add | list | remove # ਟਰਮੀਨਲ ਤੋਂ API ਕੁੰਜੀਆਂ ਦਾ ਪ੍ਰਬੰਧਨ ਕਰੋ
-omniroute backup                   # ਕੌਂਫਿਗ + DB ਦਾ ਸਨੈਪਸ਼ਾਟ
-omniroute restore [<timestamp>]    # ਸਨੈਪਸ਼ਾਟ ਤੋਂ ਰੀਸਟੋਰ ਕਰੋ
-omniroute health                   # ਵਿਸਤ੍ਰਿਤ ਸਿਹਤ ਜਾਣਕਾਰੀ (ਬ੍ਰੇਕਰ, ਕੈਸ਼, ਮੈਮੋਰੀ)
-omniroute quota                    # ਪ੍ਰਦਾਤਾ ਕੋਟੇ ਦੀ ਵਰਤੋਂ
-omniroute mcp status               # MCP ਸਰਵਰ ਦੀ ਸਥਿਤੀ
-omniroute a2a status               # A2A ਸਰਵਰ ਦੀ ਸਥਿਤੀ
-omniroute tunnel list|create|stop  # Cloudflare/Tailscale/ngrok ਟਨਲਾਂ
-omniroute reset-password           # ਐਡਮਿਨ ਪਾਸਵਰਡ ਰੀਸੈੱਟ ਕਰੋ
-omniroute --mcp                    # stdio ਉੱਤੇ MCP ਸਰਵਰ ਸ਼ੁਰੂ ਕਰੋ
-omniroute --port 3000              # ਸਰਵਰ ਨੂੰ ਕਸਟਮ ਪੋਰਟ ਉੱਤੇ ਸ਼ੁਰੂ ਕਰੋ
+agentproxy setup                    # ਇੰਟਰਐਕਟਿਵ ਵਿਜ਼ਾਰਡ (ਪਾਸਵਰਡ, ਪ੍ਰਦਾਤਾ, ਕਾਂਬੋ)
+agentproxy setup --non-interactive  # CI-ਅਨੁਕੂਲ
+agentproxy doctor                   # ਸਿਹਤ ਡਾਇਗਨੌਸਟਿਕਸ (ਡਾਟਾ ਡਾਇਰੈਕਟਰੀ, DB, ਪ੍ਰਦਾਤਾ, ਪੋਰਟ)
+agentproxy providers available      # ਸਮਰਥਿਤ ਪ੍ਰਦਾਤਾਵਾਂ ਦੀ ਸੂਚੀ
+agentproxy providers list           # ਕੌਂਫਿਗਰ ਕੀਤੇ ਕਨੈਕਸ਼ਨਾਂ ਦੀ ਸੂਚੀ
+agentproxy providers test <id>      # ਕਿਸੇ ਪ੍ਰਦਾਤਾ ਕਨੈਕਸ਼ਨ ਦੀ ਲਾਈਵ ਜਾਂਚ
+agentproxy combos list              # ਕਾਂਬੋਆਂ ਦੀ ਸੂਚੀ
+agentproxy combos switch <name>     # ਡਿਫਾਲਟ ਕਾਂਬੋ ਸੈੱਟ ਕਰੋ
+agentproxy models                   # ਉਪਲਬਧ ਮਾਡਲਾਂ ਦੀ ਸੂਚੀ (--json, --search)
+agentproxy keys add | list | remove # ਟਰਮੀਨਲ ਤੋਂ API ਕੁੰਜੀਆਂ ਦਾ ਪ੍ਰਬੰਧਨ ਕਰੋ
+agentproxy backup                   # ਕੌਂਫਿਗ + DB ਦਾ ਸਨੈਪਸ਼ਾਟ
+agentproxy restore [<timestamp>]    # ਸਨੈਪਸ਼ਾਟ ਤੋਂ ਰੀਸਟੋਰ ਕਰੋ
+agentproxy health                   # ਵਿਸਤ੍ਰਿਤ ਸਿਹਤ ਜਾਣਕਾਰੀ (ਬ੍ਰੇਕਰ, ਕੈਸ਼, ਮੈਮੋਰੀ)
+agentproxy quota                    # ਪ੍ਰਦਾਤਾ ਕੋਟੇ ਦੀ ਵਰਤੋਂ
+agentproxy mcp status               # MCP ਸਰਵਰ ਦੀ ਸਥਿਤੀ
+agentproxy a2a status               # A2A ਸਰਵਰ ਦੀ ਸਥਿਤੀ
+agentproxy tunnel list|create|stop  # Cloudflare/Tailscale/ngrok ਟਨਲਾਂ
+agentproxy reset-password           # ਐਡਮਿਨ ਪਾਸਵਰਡ ਰੀਸੈੱਟ ਕਰੋ
+agentproxy --mcp                    # stdio ਉੱਤੇ MCP ਸਰਵਰ ਸ਼ੁਰੂ ਕਰੋ
+agentproxy --port 3000              # ਸਰਵਰ ਨੂੰ ਕਸਟਮ ਪੋਰਟ ਉੱਤੇ ਸ਼ੁਰੂ ਕਰੋ
 ```
 
-ਸੁਝਾਅ: ਅਸਿਹਤਮੰਦ ਪ੍ਰਦਾਤਾ ਕਨੈਕਸ਼ਨਾਂ ਬਾਰੇ ਚੇਤਾਵਨੀਆਂ ਪ੍ਰਾਪਤ ਕਰਨ ਲਈ `omniroute doctor --json` ਨੂੰ ਆਪਣੇ ਮਾਨੀਟਰਿੰਗ ਟੂਲ ਨਾਲ ਜੋੜੋ।
+ਸੁਝਾਅ: ਅਸਿਹਤਮੰਦ ਪ੍ਰਦਾਤਾ ਕਨੈਕਸ਼ਨਾਂ ਬਾਰੇ ਚੇਤਾਵਨੀਆਂ ਪ੍ਰਾਪਤ ਕਰਨ ਲਈ `agentproxy doctor --json` ਨੂੰ ਆਪਣੇ ਮਾਨੀਟਰਿੰਗ ਟੂਲ ਨਾਲ ਜੋੜੋ।
 
 ---
 
@@ -1295,7 +1295,7 @@ npm run build:linux    # Linux (.AppImage)
 
 | ਵੇਰੀਏਬਲ               | ਡਿਫਾਲਟ  | ਵੇਰਵਾ                          |
 | --------------------- | ------- | ------------------------------ |
-| `OMNIROUTE_PORT`      | `20128` | ਸਰਵਰ ਪੋਰਟ                      |
-| `OMNIROUTE_MEMORY_MB` | `512`   | Node.js ਹੀਪ ਸੀਮਾ (64–16384 MB) |
+| `AGENTPROXY_PORT`      | `20128` | ਸਰਵਰ ਪੋਰਟ                      |
+| `AGENTPROXY_MEMORY_MB` | `512`   | Node.js ਹੀਪ ਸੀਮਾ (64–16384 MB) |
 
 📖 ਪੂਰਾ ਦਸਤਾਵੇਜ਼: [`electron/README.md`](../../electron/README.md)

@@ -14,7 +14,7 @@ export interface MigrationPreviewItem {
 
 export interface MigrationPreviewPlan {
   source: {
-    family: "9router" | "omniroute";
+    family: "9router" | "agentproxy";
     format: "json" | "sqlite";
     version?: string;
   };
@@ -53,7 +53,7 @@ const DEFERRED_JSON_KEYS = [
 
 const SQLITE_SOURCE_SCHEMAS = [
   {
-    family: "omniroute" as const,
+    family: "agentproxy" as const,
     tables: {
       providerConnections: "provider_connections",
       providerNodes: "provider_nodes",

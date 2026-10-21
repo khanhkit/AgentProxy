@@ -11,12 +11,12 @@ AgentProxyನಿಂದ (ಸ್ಥಳೀಯ ಅಥವಾ ರಿಮೋಟ್) **�
 ಯಂತ್ರದಲ್ಲಿ ಟೂಲ್ನ ಸ್ವಂತ ಕಾನ್ಫಿಗ್ ಫೈಲ್ ಅನ್ನು ಬರೆಯುತ್ತದೆ. ಟೂಲ್ ಬೆಂಬಲಿಸುವ ಎಲ್ಲೆಡೆ API ಕೀಯನ್ನು ಎನ್ವಿರಾನ್ಮೆಂಟ್ ವೇರಿಯಬಲ್ ಮೂಲಕ ಉಲ್ಲೇಖಿಸಲಾಗುತ್ತದೆ. ಟೂಲ್ಗೆ ಸ್ಥಳೀಯವಾದ ಎನ್ವಿರಾನ್ಮೆಂಟ್ ಫೈಲ್ ಅನ್ನು ಶಾಶ್ವತವಾಗಿ ಉಳಿಸುವ ಕಮಾಂಡ್ಗಳನ್ನು ಕೆಳಗೆ ಗುರುತಿಸಲಾಗಿದೆ.
 
 ಯಾವುದೇ ಕಾನ್ಫಿಗ್ ಬರೆಯದೆಯೇ ಸರಿಯಾದ ಎನ್ವಿರಾನ್ಮೆಂಟ್ ಅನ್ನು ಇಂಜೆಕ್ಟ್ ಮಾಡಿ
-`claude`, `codex`, `aider`, `goose`, `opencode`, `qwen` ಅಥವಾ `gemini` ಅನ್ನು ಪ್ರಾರಂಭಿಸುವ ಸಾಮಾನ್ಯ ಲಾಂಚರ್ — `omniroute run <target>` — ಸಹ ಇದೆ.
+`claude`, `codex`, `aider`, `goose`, `opencode`, `qwen` ಅಥವಾ `gemini` ಅನ್ನು ಪ್ರಾರಂಭಿಸುವ ಸಾಮಾನ್ಯ ಲಾಂಚರ್ — `agentproxy run <target>` — ಸಹ ಇದೆ.
 ಟಾರ್ಗೆಟ್ಗಳು ಮತ್ತು ಅವುಗಳ ಅಲಿಯಾಸ್ಗಳು ಅಧಿಕೃತ ಮ್ಯಾನಿಫೆಸ್ಟ್ `bin/cli/cli-manifest.mjs`
 (`claude-code|cc|anthropic`, `codex-cli|openai-codex|openai`, `goose-cli`,
-`open-code`, `qwen-code`, `gemini-cli`) ನಿಂದ ಬರುತ್ತವೆ ಮತ್ತು `omniroute completion` ಅದೇ
+`open-code`, `qwen-code`, `gemini-cli`) ನಿಂದ ಬರುತ್ತವೆ ಮತ್ತು `agentproxy completion` ಅದೇ
 ಮ್ಯಾನಿಫೆಸ್ಟ್ನಿಂದ ಪಡೆದ ಟಾರ್ಗೆಟ್ ಪದಗಳನ್ನು ಒದಗಿಸುತ್ತದೆ. ಹಳೆಯ ಪ್ರತಿ-ಟೂಲ್ ಲಾಂಚರ್ಗಳು —
-`omniroute launch` (Claude Code) ಮತ್ತು `omniroute launch-codex` (Codex) — ಇನ್ನೂ
+`agentproxy launch` (Claude Code) ಮತ್ತು `agentproxy launch-codex` (Codex) — ಇನ್ನೂ
 ಲಭ್ಯವಿವೆ.
 
 ಅದೇ ಸ್ಥಳೀಯ/ರಿಮೋಟ್ ಸಂದರ್ಭದಿಂದ ಪ್ರೊವೈಡರ್ ಆನ್ಬೋರ್ಡಿಂಗ್ ಲಭ್ಯವಿದೆ. ಕೆಳಗಿನ
@@ -24,11 +24,11 @@ API-ಆದ್ಯತೆಯ ಕಮಾಂಡ್ಗಳು ನಿರ್ವಹಣಾ �
 ರುಜುವಾತುಗಳಿಂದ ಪ್ರತ್ಯೇಕವಾಗಿರಿಸುತ್ತವೆ ಮತ್ತು ರಚನಾತ್ಮಕ ಔಟ್ಪುಟ್ನಲ್ಲಿ ಎಂದಿಗೂ ರುಜುವಾತನ್ನು ಮುದ್ರಿಸುವುದಿಲ್ಲ:
 
 ```bash
-omniroute providers add glm --credential-env GLM_API_KEY --name work
-omniroute providers import ./providers.json --dry-run --json
-omniroute providers auth openai
-omniroute providers edit <connection-id> --default-model glm/glm-5.2
-omniroute providers remove <connection-id> --yes
+agentproxy providers add glm --credential-env GLM_API_KEY --name work
+agentproxy providers import ./providers.json --dry-run --json
+agentproxy providers auth openai
+agentproxy providers edit <connection-id> --default-model glm/glm-5.2
+agentproxy providers remove <connection-id> --yes
 ```
 
 ಸ್ಕ್ರಿಪ್ಟ್ಗಳಿಗಾಗಿ, `--credential-stdin` ಅಥವಾ `--credential-env` ಗೆ ಆದ್ಯತೆ ನೀಡಿ; ನಿಯಂತ್ರಿತ ಸ್ಥಳೀಯ ಬಳಕೆಗಾಗಿ `--credential`
@@ -48,7 +48,7 @@ omniroute providers remove <connection-id> --yes
 
 ## ಪ್ರಧಾನ ಕೋಷ್ಟಕ
 
-ಪ್ರತಿಯೊಂದು ಕಮಾಂಡ್ **ಸಕ್ರಿಯ ಸಂದರ್ಭವನ್ನು** (`omniroute connect` ಮೂಲಕ ಹೊಂದಿಸಲಾಗಿದೆ,
+ಪ್ರತಿಯೊಂದು ಕಮಾಂಡ್ **ಸಕ್ರಿಯ ಸಂದರ್ಭವನ್ನು** (`agentproxy connect` ಮೂಲಕ ಹೊಂದಿಸಲಾಗಿದೆ,
 [ದೂರಸ್ಥ ಮೋಡ್](./REMOTE-MODE.md) ನೋಡಿ) ಅಥವಾ ಸ್ಪಷ್ಟವಾದ
 `--remote <url> --api-key <key>` ಫ್ಲ್ಯಾಗ್ಗಳನ್ನು ಗೌರವಿಸುತ್ತದೆ. ಕೆಳಗಿನ "ಸ್ಥಳೀಯ ಮತ್ತು
 ದೂರಸ್ಥ" ಎಂದರೆ: ಯಾವುದೇ ಫ್ಲ್ಯಾಗ್ಗಳಿಲ್ಲದೆ ಇದು `http://localhost:20128` ಅನ್ನು
@@ -57,28 +57,28 @@ omniroute providers remove <connection-id> --yes
 
 | ಕಮಾಂಡ್                     | ಉಪಕರಣ                       | ಇದು ಬರೆಯುವುದು                                                                                                                                                                           | ಪ್ರಮುಖ ಫ್ಲ್ಯಾಗ್ಗಳು                                                                                                                         | ಸ್ಥಳೀಯ ಮತ್ತು ದೂರಸ್ಥ |
 | -------------------------- | --------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ | ------------------- |
-| `omniroute setup-codex`    | OpenAI Codex CLI            | `~/.codex/<name>.config.toml` — ಪ್ರತಿ ಹೊಂದಾಣಿಕೆಯ ಪಠ್ಯ ಮಾದರಿಗೆ ಒಂದು ಪ್ರೊಫೈಲ್ (`codex --profile <name>`)                                                                                  | `--remote` `--api-key` `--only` `--dry-run` `--port` `--codex-home`                                                                        | ಎರಡೂ                |
-| `omniroute setup-claude`   | Claude Code                 | `~/.claude/profiles/<name>/settings.json` — ಪ್ರತಿ ಹೊಂದಿಕೆಯಾದ ಮಾದರಿಗೆ ಒಂದು ಪ್ರೊಫೈಲ್ (`CLAUDE_CONFIG_DIR`)                                                                                | `--remote` `--api-key` `--only` `--dry-run` `--port` `--claude-home`                                                                       | ಎರಡೂ                |
-| `omniroute setup-opencode` | OpenCode (openai-ಹೊಂದಾಣಿಕೆ) | `~/.config/opencode/opencode.json` — ಪ್ರತಿಯೊಂದು ಕ್ಯಾಟಲಾಗ್ ಮಾದರಿಯೊಂದಿಗೆ `omniroute` ಪೂರೈಕೆದಾರ (`opencode -m omniroute/<model>`)                                                          | `--remote` `--api-key` `--only` `--model` `--dry-run` `--port`                                                                             | ಎರಡೂ                |
-| `omniroute setup-cline`    | Cline                       | `~/.cline/data/{globalState,secrets}.json` (CLI ಮೋಡ್) + VS Code ವಿಸ್ತರಣೆ ಸೆಟ್ಟಿಂಗ್ಗಳನ್ನು ಮುದ್ರಿಸುತ್ತದೆ                                                                                  | `--remote` `--api-key` `--model` `--yes` `--dry-run` `--port` `--cline-dir`                                                                | ಎರಡೂ                |
-| `omniroute setup-kilo`     | Kilo Code                   | `~/.local/share/kilo/auth.json` (CLI) + VS Code `settings.json` ಇದ್ದರೆ ಅದರಲ್ಲಿ `kilocode.*` ಅನ್ನು ವಿಲೀನಗೊಳಿಸುತ್ತದೆ                                                                      | `--remote` `--api-key` `--model` `--yes` `--dry-run` `--port` `--auth-path` `--vscode-settings`                                            | ಎರಡೂ                |
-| `omniroute setup-continue` | Continue / `cn` CLI         | `~/.continue/config.yaml` — `provider: openai` ಮಾದರಿಗಳು, `${{ secrets.OMNIROUTE_API_KEY }}` ಮೂಲಕ ಕೀ                                                                                     | `--remote` `--api-key` `--only` `--dry-run` `--port` `--config-path`                                                                       | ಎರಡೂ                |
-| `omniroute setup-cursor`   | Cursor                      | ಏನೂ ಇಲ್ಲ — ಆ್ಯಪ್ನೊಳಗಿನ ಹಂತಗಳನ್ನು ಮುದ್ರಿಸುತ್ತದೆ (Cursor ಸಂರಚನೆಯು ಅಪಾರದರ್ಶಕ SQLite ಆಗಿದೆ)                                                                                                 | `--remote` `--api-key` `--only` `--port`                                                                                                   | ಎರಡೂ                |
-| `omniroute setup-roo`      | Roo Code                    | `~/.omniroute/roo-settings.json` (ಆಮದು ಡಾಕ್ಯುಮೆಂಟ್) + VS Code `settings.json` ಇದ್ದರೆ `roo-cline.autoImportSettingsPath` ಅನ್ನು ಹೊಂದಿಸುತ್ತದೆ                                              | `--remote` `--api-key` `--model` `--yes` `--dry-run` `--port` `--import-path` `--vscode-settings`                                          | ಎರಡೂ                |
-| `omniroute setup-crush`    | Crush                       | `~/.config/crush/crush.json` — `openai-compat` ಪೂರೈಕೆದಾರ, `$OMNIROUTE_API_KEY` ಮೂಲಕ ಕೀ                                                                                                  | `--remote` `--api-key` `--only` `--dry-run` `--port` `--config-path`                                                                       | ಎರಡೂ                |
-| `omniroute setup-goose`    | Goose                       | `~/.config/goose/config.yaml` (`GOOSE_PROVIDER`/`OPENAI_HOST`/`GOOSE_MODEL`) + env ವಿಧಾನವನ್ನು ಮುದ್ರಿಸುತ್ತದೆ                                                                             | `--remote` `--api-key` `--model` `--yes` `--dry-run` `--port` `--config-path`                                                              | ಎರಡೂ                |
-| `omniroute setup-aider`    | Aider                       | `~/.aider.conf.yml` (`openai-api-base` + `model: openai/<id>`) + env ವಿಧಾನವನ್ನು ಮುದ್ರಿಸುತ್ತದೆ                                                                                           | `--remote` `--api-key` `--model` `--yes` `--dry-run` `--port` `--config-path`                                                              | ಎರಡೂ                |
-| `omniroute setup-qwen`     | Qwen Code                   | `~/.qwen/settings.json` — V4 `modelProviders.openai` ಅರೇ + `~/.qwen/.env` ನಲ್ಲಿ `OMNIROUTE_API_KEY`                                                                                     | `--remote` `--api-key` `--model` `--yes` `--dry-run` `--port` `--config-path` `--env-path`                                                 | ಎರಡೂ                |
-| `omniroute setup-5dive`    | 5dive (ಏಜೆಂಟ್ ಸಮೂಹ)         | `$HOME` ಅಡಿಯಲ್ಲಿ ಏನೂ ಇಲ್ಲ — `5dive agent auth set` ಮೂಲಕ 5dive **ದೃಢೀಕರಣ ಪ್ರೊಫೈಲ್** (`/var/lib/5dive/auth-profiles/<name>/`) ಬರೆಯುತ್ತದೆ; root-ಮಾತ್ರ, ಸಮೂಹ ಹೋಸ್ಟ್ನಲ್ಲಿ ಚಲಿಸುತ್ತದೆ         | `--remote` `--api-key` `--model` `--auth-profile` `--agent` `--byo-provider` `--fivedive-bin` `--no-sudo` `--yes` `--dry-run` `--port`     | ಎರಡೂ                |
-| `omniroute run <target>`   | ರನ್ಟೈಮ್ ಪ್ರಾರಂಭ (ಸಾಮಾನ್ಯ)   | ಏನೂ ಇಲ್ಲ — ಸರಿಯಾದ env ಮತ್ತು ಆರ್ಗ್ಯುಮೆಂಟ್ಗಳೊಂದಿಗೆ `claude`/`codex`/`aider`/`goose`/`opencode`/`qwen`/`gemini` ಅನ್ನು ಪ್ರಾರಂಭಿಸುತ್ತದೆ; Qwen ಮತ್ತು Gemini ತಾತ್ಕಾಲಿಕ ಪ್ರತ್ಯೇಕ home ಬಳಸುತ್ತವೆ | `--remote` `--base-url` `--context` `--provider` `--model` `--api-key` `--api-key-env` `--dry-run` `--json` `--port` `--profile` `--token` | ಎರಡೂ                |
-| `omniroute launch`         | Claude Code                 | ಏನೂ ಇಲ್ಲ — `ANTHROPIC_BASE_URL`/`ANTHROPIC_AUTH_TOKEN` ಸೇರಿಸಿ `claude` ಅನ್ನು ಪ್ರಾರಂಭಿಸುತ್ತದೆ                                                                                            | `--remote` `--api-key` `--token` `--profile` `--port`                                                                                      | ಎರಡೂ                |
-| `omniroute launch-codex`   | OpenAI Codex CLI            | ಏನೂ ಇಲ್ಲ — `-c` ಫ್ಲ್ಯಾಗ್ಗಳ ಮೂಲಕ `omniroute` ಪೂರೈಕೆದಾರವನ್ನು ಸೇರಿಸಿ `codex` ಅನ್ನು ಪ್ರಾರಂಭಿಸುತ್ತದೆ                                                                                         | `--remote` `--api-key` `--profile` (`-p`) `--port`                                                                                         | ಎರಡೂ                |
+| `agentproxy setup-codex`    | OpenAI Codex CLI            | `~/.codex/<name>.config.toml` — ಪ್ರತಿ ಹೊಂದಾಣಿಕೆಯ ಪಠ್ಯ ಮಾದರಿಗೆ ಒಂದು ಪ್ರೊಫೈಲ್ (`codex --profile <name>`)                                                                                  | `--remote` `--api-key` `--only` `--dry-run` `--port` `--codex-home`                                                                        | ಎರಡೂ                |
+| `agentproxy setup-claude`   | Claude Code                 | `~/.claude/profiles/<name>/settings.json` — ಪ್ರತಿ ಹೊಂದಿಕೆಯಾದ ಮಾದರಿಗೆ ಒಂದು ಪ್ರೊಫೈಲ್ (`CLAUDE_CONFIG_DIR`)                                                                                | `--remote` `--api-key` `--only` `--dry-run` `--port` `--claude-home`                                                                       | ಎರಡೂ                |
+| `agentproxy setup-opencode` | OpenCode (openai-ಹೊಂದಾಣಿಕೆ) | `~/.config/opencode/opencode.json` — ಪ್ರತಿಯೊಂದು ಕ್ಯಾಟಲಾಗ್ ಮಾದರಿಯೊಂದಿಗೆ `agentproxy` ಪೂರೈಕೆದಾರ (`opencode -m agentproxy/<model>`)                                                          | `--remote` `--api-key` `--only` `--model` `--dry-run` `--port`                                                                             | ಎರಡೂ                |
+| `agentproxy setup-cline`    | Cline                       | `~/.cline/data/{globalState,secrets}.json` (CLI ಮೋಡ್) + VS Code ವಿಸ್ತರಣೆ ಸೆಟ್ಟಿಂಗ್ಗಳನ್ನು ಮುದ್ರಿಸುತ್ತದೆ                                                                                  | `--remote` `--api-key` `--model` `--yes` `--dry-run` `--port` `--cline-dir`                                                                | ಎರಡೂ                |
+| `agentproxy setup-kilo`     | Kilo Code                   | `~/.local/share/kilo/auth.json` (CLI) + VS Code `settings.json` ಇದ್ದರೆ ಅದರಲ್ಲಿ `kilocode.*` ಅನ್ನು ವಿಲೀನಗೊಳಿಸುತ್ತದೆ                                                                      | `--remote` `--api-key` `--model` `--yes` `--dry-run` `--port` `--auth-path` `--vscode-settings`                                            | ಎರಡೂ                |
+| `agentproxy setup-continue` | Continue / `cn` CLI         | `~/.continue/config.yaml` — `provider: openai` ಮಾದರಿಗಳು, `${{ secrets.AGENTPROXY_API_KEY }}` ಮೂಲಕ ಕೀ                                                                                     | `--remote` `--api-key` `--only` `--dry-run` `--port` `--config-path`                                                                       | ಎರಡೂ                |
+| `agentproxy setup-cursor`   | Cursor                      | ಏನೂ ಇಲ್ಲ — ಆ್ಯಪ್ನೊಳಗಿನ ಹಂತಗಳನ್ನು ಮುದ್ರಿಸುತ್ತದೆ (Cursor ಸಂರಚನೆಯು ಅಪಾರದರ್ಶಕ SQLite ಆಗಿದೆ)                                                                                                 | `--remote` `--api-key` `--only` `--port`                                                                                                   | ಎರಡೂ                |
+| `agentproxy setup-roo`      | Roo Code                    | `~/.agentproxy/roo-settings.json` (ಆಮದು ಡಾಕ್ಯುಮೆಂಟ್) + VS Code `settings.json` ಇದ್ದರೆ `roo-cline.autoImportSettingsPath` ಅನ್ನು ಹೊಂದಿಸುತ್ತದೆ                                              | `--remote` `--api-key` `--model` `--yes` `--dry-run` `--port` `--import-path` `--vscode-settings`                                          | ಎರಡೂ                |
+| `agentproxy setup-crush`    | Crush                       | `~/.config/crush/crush.json` — `openai-compat` ಪೂರೈಕೆದಾರ, `$AGENTPROXY_API_KEY` ಮೂಲಕ ಕೀ                                                                                                  | `--remote` `--api-key` `--only` `--dry-run` `--port` `--config-path`                                                                       | ಎರಡೂ                |
+| `agentproxy setup-goose`    | Goose                       | `~/.config/goose/config.yaml` (`GOOSE_PROVIDER`/`OPENAI_HOST`/`GOOSE_MODEL`) + env ವಿಧಾನವನ್ನು ಮುದ್ರಿಸುತ್ತದೆ                                                                             | `--remote` `--api-key` `--model` `--yes` `--dry-run` `--port` `--config-path`                                                              | ಎರಡೂ                |
+| `agentproxy setup-aider`    | Aider                       | `~/.aider.conf.yml` (`openai-api-base` + `model: openai/<id>`) + env ವಿಧಾನವನ್ನು ಮುದ್ರಿಸುತ್ತದೆ                                                                                           | `--remote` `--api-key` `--model` `--yes` `--dry-run` `--port` `--config-path`                                                              | ಎರಡೂ                |
+| `agentproxy setup-qwen`     | Qwen Code                   | `~/.qwen/settings.json` — V4 `modelProviders.openai` ಅರೇ + `~/.qwen/.env` ನಲ್ಲಿ `AGENTPROXY_API_KEY`                                                                                     | `--remote` `--api-key` `--model` `--yes` `--dry-run` `--port` `--config-path` `--env-path`                                                 | ಎರಡೂ                |
+| `agentproxy setup-5dive`    | 5dive (ಏಜೆಂಟ್ ಸಮೂಹ)         | `$HOME` ಅಡಿಯಲ್ಲಿ ಏನೂ ಇಲ್ಲ — `5dive agent auth set` ಮೂಲಕ 5dive **ದೃಢೀಕರಣ ಪ್ರೊಫೈಲ್** (`/var/lib/5dive/auth-profiles/<name>/`) ಬರೆಯುತ್ತದೆ; root-ಮಾತ್ರ, ಸಮೂಹ ಹೋಸ್ಟ್ನಲ್ಲಿ ಚಲಿಸುತ್ತದೆ         | `--remote` `--api-key` `--model` `--auth-profile` `--agent` `--byo-provider` `--fivedive-bin` `--no-sudo` `--yes` `--dry-run` `--port`     | ಎರಡೂ                |
+| `agentproxy run <target>`   | ರನ್ಟೈಮ್ ಪ್ರಾರಂಭ (ಸಾಮಾನ್ಯ)   | ಏನೂ ಇಲ್ಲ — ಸರಿಯಾದ env ಮತ್ತು ಆರ್ಗ್ಯುಮೆಂಟ್ಗಳೊಂದಿಗೆ `claude`/`codex`/`aider`/`goose`/`opencode`/`qwen`/`gemini` ಅನ್ನು ಪ್ರಾರಂಭಿಸುತ್ತದೆ; Qwen ಮತ್ತು Gemini ತಾತ್ಕಾಲಿಕ ಪ್ರತ್ಯೇಕ home ಬಳಸುತ್ತವೆ | `--remote` `--base-url` `--context` `--provider` `--model` `--api-key` `--api-key-env` `--dry-run` `--json` `--port` `--profile` `--token` | ಎರಡೂ                |
+| `agentproxy launch`         | Claude Code                 | ಏನೂ ಇಲ್ಲ — `ANTHROPIC_BASE_URL`/`ANTHROPIC_AUTH_TOKEN` ಸೇರಿಸಿ `claude` ಅನ್ನು ಪ್ರಾರಂಭಿಸುತ್ತದೆ                                                                                            | `--remote` `--api-key` `--token` `--profile` `--port`                                                                                      | ಎರಡೂ                |
+| `agentproxy launch-codex`   | OpenAI Codex CLI            | ಏನೂ ಇಲ್ಲ — `-c` ಫ್ಲ್ಯಾಗ್ಗಳ ಮೂಲಕ `agentproxy` ಪೂರೈಕೆದಾರವನ್ನು ಸೇರಿಸಿ `codex` ಅನ್ನು ಪ್ರಾರಂಭಿಸುತ್ತದೆ                                                                                         | `--remote` `--api-key` `--profile` (`-p`) `--port`                                                                                         | ಎರಡೂ                |
 
 ಫ್ಲ್ಯಾಗ್ಗಳ ಕುರಿತ ಟಿಪ್ಪಣಿಗಳು (ಕಮಾಂಡ್ ಮೂಲದಲ್ಲಿ ಪರಿಶೀಲಿಸಲಾಗಿದೆ):
 
 - `--remote <url>` — ದೂರಸ್ಥ AgentProxy ನಿಂದ ಕ್ಯಾಟಲಾಗ್ ಅನ್ನು ಪಡೆಯುತ್ತದೆ (`--port`
   ಮತ್ತು ಸಕ್ರಿಯ ಸಂದರ್ಭವನ್ನು ಅತಿಕ್ರಮಿಸುತ್ತದೆ). `--api-key <key>` ಆ ಸರ್ವರ್ಗೆ
-  ರುಜುವಾತನ್ನು ಒದಗಿಸುತ್ತದೆ (`OMNIROUTE_API_KEY` env ಚರಕ್ಕೆ ಅಥವಾ ಸಕ್ರಿಯ ಸಂದರ್ಭದ
+  ರುಜುವಾತನ್ನು ಒದಗಿಸುತ್ತದೆ (`AGENTPROXY_API_KEY` env ಚರಕ್ಕೆ ಅಥವಾ ಸಕ್ರಿಯ ಸಂದರ್ಭದ
   ಟೋಕನ್ಗೆ ಡೀಫಾಲ್ಟ್ ಆಗುತ್ತದೆ).
 - `--only <patterns>` — ಅಲ್ಪವಿರಾಮದಿಂದ ಪ್ರತ್ಯೇಕಿಸಿದ ಉಪಸ್ಟ್ರಿಂಗ್ಗಳು; ಹೊಂದಿಕೆಯಾಗುವ
   ಮಾದರಿ ID ಗಳನ್ನು ಮಾತ್ರ ಉಳಿಸುತ್ತದೆ (ಉದಾ. `--only glm,kimi`). ಇದು
@@ -92,19 +92,19 @@ omniroute providers remove <connection-id> --yes
   5dive. ಆ ಉಪಕರಣಗಳು ಸಂವಾದಾತ್ಮಕವಲ್ಲದ ಚಾಲನೆಗಳಿಗಾಗಿ `--yes` ಅನ್ನು ಸಹ ಸ್ವೀಕರಿಸುತ್ತವೆ
   (ಆಗ `--model` ಅಗತ್ಯವಾಗುತ್ತದೆ). ಮೇಲ್ಮಟ್ಟದ ಡೀಫಾಲ್ಟ್ ಮಾದರಿಯನ್ನು ಹೊಂದಿಸಲು
   `setup-opencode` `--model` ಅನ್ನು ಸ್ವೀಕರಿಸುತ್ತದೆ.
-- `omniroute run` ನಲ್ಲಿನ `--model <id>` ಮ್ಯಾನಿಫೆಸ್ಟ್ನ ಪ್ರತಿ-ಗುರಿ ಜೋಡಣೆಯನ್ನು
+- `agentproxy run` ನಲ್ಲಿನ `--model <id>` ಮ್ಯಾನಿಫೆಸ್ಟ್ನ ಪ್ರತಿ-ಗುರಿ ಜೋಡಣೆಯನ್ನು
   (`bin/cli/cli-manifest.mjs`) ಅನುಸರಿಸುತ್ತದೆ: **aider** ಗೆ
-  `--model openai/<id>` ಮತ್ತು **opencode** ಗೆ `--model omniroute/<id>`
+  `--model openai/<id>` ಮತ್ತು **opencode** ಗೆ `--model agentproxy/<id>`
   ಲಭಿಸುತ್ತದೆ (id ಈಗಾಗಲೇ ಅದನ್ನು ಹೊಂದಿಲ್ಲದಿದ್ದಾಗ ಮಾತ್ರ ಪೂರ್ವಪ್ರತ್ಯಯವನ್ನು ಸೇರಿಸಲಾಗುತ್ತದೆ);
   **qwen** ಮತ್ತು **gemini** ಗೆ id ಯಥಾವತ್ತಾಗಿ ಲಭಿಸುತ್ತದೆ; **claude** ಗೆ ಅದು
   `ANTHROPIC_MODEL` ಮೂಲಕ, **goose** ಗೆ `GOOSE_MODEL` ಮೂಲಕ ಮತ್ತು **codex** ಗೆ
-  `-c model_providers.omniroute.*` ಆರ್ಗ್ಯುಮೆಂಟ್ಗಳ ಮೂಲಕ ಲಭಿಸುತ್ತದೆ. **`--model`
+  `-c model_providers.agentproxy.*` ಆರ್ಗ್ಯುಮೆಂಟ್ಗಳ ಮೂಲಕ ಲಭಿಸುತ್ತದೆ. **`--model`
   ಅನ್ನು ಕಡ್ಡಾಯವಾಗಿ ಅಗತ್ಯಪಡಿಸುವ ಏಕೈಕ run ಗುರಿ Qwen** — ಅದಿಲ್ಲದೆ
-  `omniroute run qwen` ಸ್ಪಷ್ಟ ದೋಷದೊಂದಿಗೆ `2` ನಲ್ಲಿ ನಿರ್ಗಮಿಸುತ್ತದೆ.
+  `agentproxy run qwen` ಸ್ಪಷ್ಟ ದೋಷದೊಂದಿಗೆ `2` ನಲ್ಲಿ ನಿರ್ಗಮಿಸುತ್ತದೆ.
 - `--port <port>` — ಸ್ಥಳೀಯ AgentProxy ಪೋರ್ಟ್ (ಡೀಫಾಲ್ಟ್ `20128`, `--remote`
   ಹೊಂದಿಸಿದಾಗ ನಿರ್ಲಕ್ಷಿಸಲಾಗುತ್ತದೆ). ಎಲ್ಲಾ `setup-*` ಕಮಾಂಡ್ಗಳು ಮತ್ತು ಎರಡೂ
   ಲಾಂಚರ್ಗಳಲ್ಲಿ ಲಭ್ಯವಿದೆ.
-- `omniroute run` ನಿರ್ಗಮನ ಕೋಡ್ಗಳು: ಚೈಲ್ಡ್ CLI ಯ ಸ್ವಂತ ನಿರ್ಗಮನ ಕೋಡ್ ಅನ್ನು
+- `agentproxy run` ನಿರ್ಗಮನ ಕೋಡ್ಗಳು: ಚೈಲ್ಡ್ CLI ಯ ಸ್ವಂತ ನಿರ್ಗಮನ ಕೋಡ್ ಅನ್ನು
   ಯಥಾವತ್ತಾಗಿ ರವಾನಿಸಲಾಗುತ್ತದೆ; `2` = ಅಮಾನ್ಯ ಆರ್ಗ್ಯುಮೆಂಟ್ಗಳು (ಬೆಂಬಲಿಸದ ಗುರಿ,
   ಅಗತ್ಯವಿರುವ `--model` ಕಾಣೆಯಾಗಿದೆ, ಕಂಟೇನರ್ ಗಾರ್ಡ್); `127` = ಗುರಿ ಬೈನರಿ
   `PATH` ನಲ್ಲಿ ಇಲ್ಲ; `SIGINT`/`SIGTERM`/`SIGHUP` ಮೂಲಕ ಪ್ರಾರಂಭವನ್ನು ಕೊನೆಗೊಳಿಸಿದಾಗ
@@ -118,9 +118,9 @@ omniroute providers remove <connection-id> --yes
 
 ```bash
 # ಸಕ್ರಿಯ ಸ್ಥಳೀಯ ಅಥವಾ ದೂರಸ್ಥ ಮಾದರಿ ಕ್ಯಾಟಲಾಗ್ನಿಂದ ಆಯ್ಕೆಮಾಡಿ ಮತ್ತು ಗುರಿಯನ್ನು ಸಂರಚಿಸಿ.
-omniroute configure claude
-omniroute configure opencode --provider glm
-omniroute configure qwen --model qwen/qwen3.8-max-preview --yes
+agentproxy configure claude
+agentproxy configure opencode --provider glm
+agentproxy configure qwen --model qwen/qwen3.8-max-preview --yes
 ```
 
 `configure` ಪ್ರಸ್ತುತ `codex`, `claude`, `opencode`, `qwen`, `aider`, `goose`,
@@ -130,18 +130,18 @@ MITM ಮತ್ತು ಮಾರ್ಗದರ್ಶಿ-ಮಾತ್ರ ಕ್ಯಾ
 ಪ್ರವಾಹಗಳಾಗಿಯೇ ಉಳಿಯುತ್ತವೆ ಮತ್ತು ಪ್ರಾರಂಭಿಸಬಹುದಾದ ಗುರಿಗಳಾಗಿ ಪ್ರದರ್ಶಿಸಲಾಗುವುದಿಲ್ಲ.
 
 > `setup-opencode` ಎಂಬುದು **ಹಗುರವಾದ openai-ಹೊಂದಾಣಿಕೆಯ** OpenCode ಏಕೀಕರಣವಾಗಿದೆ.
-> ಇನ್ನಷ್ಟು ಸಮೃದ್ಧವಾದ ಪ್ಲಗಿನ್ ಏಕೀಕರಣವೂ ಇದೆ — `omniroute setup opencode` — ಇದು
-> `@omniroute/opencode-plugin` ಅನ್ನು ಸ್ಥಾಪಿಸುತ್ತದೆ. ಅವು ವಿಭಿನ್ನ ಕಮಾಂಡ್ಗಳು; ಮೇಲಿನ
+> ಇನ್ನಷ್ಟು ಸಮೃದ್ಧವಾದ ಪ್ಲಗಿನ್ ಏಕೀಕರಣವೂ ಇದೆ — `agentproxy setup opencode` — ಇದು
+> `@agentproxy/opencode-plugin` ಅನ್ನು ಸ್ಥಾಪಿಸುತ್ತದೆ. ಅವು ವಿಭಿನ್ನ ಕಮಾಂಡ್ಗಳು; ಮೇಲಿನ
 > ಕೋಷ್ಟಕವು `setup-opencode` ಅನ್ನು ದಾಖಲಿಸುತ್ತದೆ.
 >
 > ಎರಡು ಲೋಡರ್ಗಳು ವಿಭಿನ್ನ ಎಂಟ್ರಿಪಾಯಿಂಟ್ಗಳನ್ನು ನಿರೀಕ್ಷಿಸುವುದರಿಂದ, ಪ್ರತಿ OpenCode
 > ಪ್ರಮುಖ ಆವೃತ್ತಿಗೆ ಒಂದರಂತೆ ಪ್ಲಗಿನ್ ಎರಡು ಪ್ಯಾಕೇಜ್ಗಳಲ್ಲಿ ಬರುತ್ತದೆ:
-> OpenCode v1 ಗಾಗಿ `@omniroute/opencode-plugin` ಮತ್ತು
-> OpenCode v2 ಗಾಗಿ `@omniroute/opencode-plugin-v2`. v2 ಪ್ಯಾಕೇಜ್ ಹೊಸದು
+> OpenCode v1 ಗಾಗಿ `@agentproxy/opencode-plugin` ಮತ್ತು
+> OpenCode v2 ಗಾಗಿ `@agentproxy/opencode-plugin-v2`. v2 ಪ್ಯಾಕೇಜ್ ಹೊಸದು
 > (`0.1.0`) ಮತ್ತು ಇನ್ನೂ ಬದಲಾಗುತ್ತಿರುವ ಹೋಸ್ಟ್ ಒಪ್ಪಂದವನ್ನು ಅನುಸರಿಸುತ್ತದೆ, ಆದ್ದರಿಂದ
 > ಒಂದು ರಚನೆಯನ್ನು ಊಹಿಸುವ ಬದಲು OpenCode ಕ್ಯಾಟಲಾಗ್ ಕರಡಿಗೆ ಆರಂಭಿಕವಾಗಿ ಸೇರಿಸುವ
 > ರಚನೆಯನ್ನು ಅದು ಓದುತ್ತದೆ. `opencode.json` ಗೆ `plugins` ನಮೂದನ್ನು ಸೇರಿಸುವ ಮೂಲಕ
-> ಅದನ್ನು ಸ್ಥಾಪಿಸಿ; `omniroute setup opencode` ಇನ್ನೂ v1 ಪ್ಯಾಕೇಜ್ ಅನ್ನು ಸ್ಥಾಪಿಸುತ್ತದೆ.
+> ಅದನ್ನು ಸ್ಥಾಪಿಸಿ; `agentproxy setup opencode` ಇನ್ನೂ v1 ಪ್ಯಾಕೇಜ್ ಅನ್ನು ಸ್ಥಾಪಿಸುತ್ತದೆ.
 > ಆಯ್ಕೆಗಳು ಮತ್ತು ರುಜುವಾತು ಹುಡುಕುವ ಕ್ರಮವು ಪ್ಯಾಕೇಜ್ README ಯಲ್ಲಿವೆ.
 
 ---
@@ -153,42 +153,42 @@ AgentProxy ಅನ್ನು `localhost:20128` ನಲ್ಲಿ ಚಾಲನೆಯ�
 
 ```bash
 # Codex: ಹೊಂದಿಕೆಯಾಗುವ ಪ್ರತಿ ಮಾಡೆಲ್ಗೆ ಒಂದು ಪ್ರೊಫೈಲ್ ಅನ್ನು ~/.codex/ ಒಳಗೆ ಬರೆಯಿರಿ
-omniroute setup-codex
+agentproxy setup-codex
 codex --profile glm52            # ರಚಿಸಲಾದ ಪ್ರೊಫೈಲ್ ಬಳಸಿ
 
 # Claude Code: ಪ್ರತಿ ಮಾಡೆಲ್ಗೆ ಪ್ರೊಫೈಲ್ಗಳನ್ನು ಬರೆದು, ನಂತರ ಒಂದನ್ನು ಪ್ರಾರಂಭಿಸಿ
-omniroute setup-claude
-omniroute launch --profile glm52
+agentproxy setup-claude
+agentproxy launch --profile glm52
 
 # OpenCode: ಎಲ್ಲಾ ಕ್ಯಾಟಲಾಗ್ ಮಾಡೆಲ್ಗಳೊಂದಿಗೆ openai-ಹೊಂದಾಣಿಕೆಯ ಪ್ರೊವೈಡರ್ ಅನ್ನು ಬರೆಯಿರಿ
-omniroute setup-opencode
-export OMNIROUTE_API_KEY=sk-...  # {env:OMNIROUTE_API_KEY} ಮೂಲಕ ಉಲ್ಲೇಖಿಸಲಾಗುತ್ತದೆ, ಡಿಸ್ಕ್ನಲ್ಲಿ ಎಂದಿಗೂ ಅಲ್ಲ
-opencode -m omniroute/glm/glm-5.2 "..."
+agentproxy setup-opencode
+export AGENTPROXY_API_KEY=sk-...  # {env:AGENTPROXY_API_KEY} ಮೂಲಕ ಉಲ್ಲೇಖಿಸಲಾಗುತ್ತದೆ, ಡಿಸ್ಕ್ನಲ್ಲಿ ಎಂದಿಗೂ ಅಲ್ಲ
+opencode -m agentproxy/glm/glm-5.2 "..."
 
 # ಸ್ವಯಂ-ಪತ್ತೆ ಇಲ್ಲದ ಉಪಕರಣಗಳಿಗೆ ಸ್ಪಷ್ಟವಾದ ಮಾಡೆಲ್ ಅಗತ್ಯ:
-omniroute setup-aider --model glm/glm-5.2
-omniroute setup-qwen --model qwen/qwen3.8-max-preview
+agentproxy setup-aider --model glm/glm-5.2
+agentproxy setup-qwen --model qwen/qwen3.8-max-preview
 
 # ಏನನ್ನೂ ಬರೆಯದೆ ಪೂರ್ವವೀಕ್ಷಿಸಿ:
-omniroute setup-continue --dry-run
+agentproxy setup-continue --dry-run
 ```
 
 ಯಾವುದೇ ಕಾನ್ಫಿಗ್ ಬರೆಯದೆಯೇ ಪ್ರಾರಂಭಿಸಿ (env-ಇಂಜೆಕ್ಷನ್ ಮಾತ್ರ):
 
 ```bash
-omniroute launch                 # Claude Code → ಸ್ಥಳೀಯ AgentProxy
-omniroute launch-codex           # Codex CLI → ಸ್ಥಳೀಯ AgentProxy
-omniroute launch-codex --profile glm52
-omniroute run claude --model openai/gpt-5.4
-omniroute run codex --model openai/gpt-5.4 --dry-run --json
-omniroute run aider --model glm/glm-5.2 -- --message "reply OK"
-omniroute run goose --model glm/glm-5.2
-omniroute run opencode --model glm/glm-5.2 -- run "reply OK"
-omniroute run qwen --model glm/glm-5.2 -- -p "reply OK"
-omniroute run gemini --model glm/glm-5.2 -- --skip-trust -p "reply OK"
+agentproxy launch                 # Claude Code → ಸ್ಥಳೀಯ AgentProxy
+agentproxy launch-codex           # Codex CLI → ಸ್ಥಳೀಯ AgentProxy
+agentproxy launch-codex --profile glm52
+agentproxy run claude --model openai/gpt-5.4
+agentproxy run codex --model openai/gpt-5.4 --dry-run --json
+agentproxy run aider --model glm/glm-5.2 -- --message "reply OK"
+agentproxy run goose --model glm/glm-5.2
+agentproxy run opencode --model glm/glm-5.2 -- run "reply OK"
+agentproxy run qwen --model glm/glm-5.2 -- -p "reply OK"
+agentproxy run gemini --model glm/glm-5.2 -- --skip-trust -p "reply OK"
 
 # ಸ್ಪಷ್ಟವಾದ ಕಮಾಂಡ್ ಪಥ: -- ನಂತರ ಬರುವುದೆಲ್ಲವನ್ನೂ ಹಾಗೆಯೇ ರವಾನಿಸಿ
-omniroute run claude -- --print-system-prompt "review this diff"
+agentproxy run claude -- --print-system-prompt "review this diff"
 ```
 
 ---
@@ -200,26 +200,26 @@ omniroute run claude -- --print-system-prompt "review this diff"
 
 ```bash
 # ದೂರಸ್ಥ VPS ವಿರುದ್ಧ OpenCode, glm/kimi ಮಾಡೆಲ್ಗಳನ್ನು ಮಾತ್ರ ಉಳಿಸಿ
-omniroute setup-opencode --remote http://192.168.0.15:20128 --api-key oma_live_xxx \
+agentproxy setup-opencode --remote http://192.168.0.15:20128 --api-key oma_live_xxx \
   --only glm,kimi
-opencode -m omniroute/glm/glm-5.2 "..."   # ಮೊದಲು OMNIROUTE_API_KEY ಅನ್ನು export ಮಾಡಿ
+opencode -m agentproxy/glm/glm-5.2 "..."   # ಮೊದಲು AGENTPROXY_API_KEY ಅನ್ನು export ಮಾಡಿ
 
 # ದೂರಸ್ಥ ಕ್ಯಾಟಲಾಗ್ನಿಂದ Codex ಪ್ರೊಫೈಲ್ಗಳು
-omniroute setup-codex --remote http://192.168.0.15:20128 --api-key oma_live_xxx
+agentproxy setup-codex --remote http://192.168.0.15:20128 --api-key oma_live_xxx
 
 # ದೂರಸ್ಥ ಸರ್ವರ್ ವಿರುದ್ಧ ನೇರವಾಗಿ CLI ಅನ್ನು ಪ್ರಾರಂಭಿಸಿ
-omniroute launch       --remote http://192.168.0.15:20128 --api-key oma_live_xxx
-omniroute launch-codex --remote http://192.168.0.15:20128 --api-key oma_live_xxx
+agentproxy launch       --remote http://192.168.0.15:20128 --api-key oma_live_xxx
+agentproxy launch-codex --remote http://192.168.0.15:20128 --api-key oma_live_xxx
 ```
 
 ಪ್ರತಿ ಬಾರಿ `--remote`/`--api-key` ರವಾನಿಸುವ ಬದಲು, ಒಮ್ಮೆ ಲಾಗಿನ್ ಮಾಡಿ ಮತ್ತು
 **ಸಕ್ರಿಯ ಸಂದರ್ಭ** ಅವುಗಳನ್ನು ಸ್ವಯಂಚಾಲಿತವಾಗಿ ಒದಗಿಸಲು ಬಿಡಿ:
 
 ```bash
-omniroute connect 192.168.0.15        # ವ್ಯಾಪ್ತಿ-ನಿರ್ಬಂಧಿತ ಟೋಕನ್ ರಚಿಸಿ, ಸಂದರ್ಭವನ್ನು ಸಂಗ್ರಹಿಸುತ್ತದೆ
-omniroute setup-codex                 # ← ಈಗ ದೂರಸ್ಥ ಕ್ಯಾಟಲಾಗ್ ಬಳಸುತ್ತದೆ
-omniroute setup-opencode              # ← ಇದೇ ರೀತಿ
-omniroute launch                      # ← ದೂರಸ್ಥ ಸರ್ವರ್ ವಿರುದ್ಧ Claude Code
+agentproxy connect 192.168.0.15        # ವ್ಯಾಪ್ತಿ-ನಿರ್ಬಂಧಿತ ಟೋಕನ್ ರಚಿಸಿ, ಸಂದರ್ಭವನ್ನು ಸಂಗ್ರಹಿಸುತ್ತದೆ
+agentproxy setup-codex                 # ← ಈಗ ದೂರಸ್ಥ ಕ್ಯಾಟಲಾಗ್ ಬಳಸುತ್ತದೆ
+agentproxy setup-opencode              # ← ಇದೇ ರೀತಿ
+agentproxy launch                      # ← ದೂರಸ್ಥ ಸರ್ವರ್ ವಿರುದ್ಧ Claude Code
 ```
 
 ಸಂದರ್ಭಗಳು, ವ್ಯಾಪ್ತಿಗಳು ಮತ್ತು ಟೋಕನ್ ನಿರ್ವಹಣೆಗಾಗಿ [ದೂರಸ್ಥ ಮೋಡ್](./REMOTE-MODE.md) ನೋಡಿ.
@@ -230,11 +230,11 @@ omniroute launch                      # ← ದೂರಸ್ಥ ಸರ್ವರ�
 
 [5dive](https://5dive.ai) ದೀರ್ಘಕಾಲ ಚಾಲನೆಯಲ್ಲಿರುವ ಕೋಡಿಂಗ್ ಏಜೆಂಟ್ಗಳ ಸಮೂಹವನ್ನು ಚಲಾಯಿಸುತ್ತದೆ; ಪ್ರತಿಯೊಂದೂ
 ತನ್ನದೇ Unix ಬಳಕೆದಾರನ ಅಡಿಯಲ್ಲಿ systemd ಯೂನಿಟ್ ಆಗಿರುತ್ತದೆ. ಅದು ಸ್ವತಃ ಕೋಡಿಂಗ್ CLI ಅಲ್ಲ, ಆದ್ದರಿಂದ
-`omniroute run` ಪ್ರಾರಂಭಿಸಲು ಏನೂ ಇಲ್ಲ — `5dive` ಒಂದು **ಕಾನ್ಫಿಗರ್-ಮಾತ್ರ** ಗುರಿಯಾಗಿದೆ.
+`agentproxy run` ಪ್ರಾರಂಭಿಸಲು ಏನೂ ಇಲ್ಲ — `5dive` ಒಂದು **ಕಾನ್ಫಿಗರ್-ಮಾತ್ರ** ಗುರಿಯಾಗಿದೆ.
 
 ```bash
-omniroute configure 5dive --model failover-demo --yes
-omniroute setup-5dive --model failover-demo --auth-profile omniroute --agent worker1
+agentproxy configure 5dive --model failover-demo --yes
+agentproxy setup-5dive --model failover-demo --auth-profile agentproxy --agent worker1
 ```
 
 ಎರಡೂ ರೂಪಗಳು ಒಂದು 5dive **ದೃಢೀಕರಣ ಪ್ರೊಫೈಲ್** ಅನ್ನು ಬರೆಯುತ್ತವೆ ಮತ್ತು ಆ ಪ್ರೊಫೈಲ್ಗೆ ಬದ್ಧವಾಗಿರುವ ಪ್ರತಿಯೊಂದು
@@ -277,7 +277,7 @@ AgentProxy, OpenAI ಮೇಲ್ಮೈಯನ್ನು `/v1` ನಲ್ಲಿ, Anth
 | `setup-aider` (`OPENAI_API_BASE`)                                          | ಮೂಲ             | ಇಲ್ಲ — LiteLLM `/v1/chat/completions` ಅನ್ನು ಸೇರಿಸುತ್ತದೆ |
 | `setup-kilo`, `setup-roo`, `setup-continue`, `setup-crush`, `setup-cursor` | `/v1` ಜೊತೆಗೆ    | ಹೌದು                                                    |
 | `setup-claude` (`ANTHROPIC_BASE_URL`), `launch`                            | ಮೂಲ             | ಇಲ್ಲ — Claude Code `/v1/messages` ಅನ್ನು ಸೇರಿಸುತ್ತದೆ     |
-| `setup-codex`, `launch-codex` (`model_providers.omniroute.base_url`)       | `/v1` ಜೊತೆಗೆ    | ಹೌದು                                                    |
+| `setup-codex`, `launch-codex` (`model_providers.agentproxy.base_url`)       | `/v1` ಜೊತೆಗೆ    | ಹೌದು                                                    |
 | `setup-qwen` (`modelProviders.openai[].baseUrl`)                           | `/v1` ಜೊತೆಗೆ    | ಹೌದು                                                    |
 | `run gemini` (`GOOGLE_GEMINI_BASE_URL`)                                    | ಮೂಲ             | ಇಲ್ಲ — SDK `/v1beta/models/…` ಅನ್ನು ಸೇರಿಸುತ್ತದೆ         |
 | `setup-5dive` (ದೃಢೀಕರಣ ಪ್ರೊಫೈಲ್ನಲ್ಲಿನ `ANTHROPIC_BASE_URL`)                | ಮೂಲ             | ಇಲ್ಲ — Claude Code `/v1/messages` ಅನ್ನು ಸೇರಿಸುತ್ತದೆ     |
@@ -286,14 +286,14 @@ AgentProxy, OpenAI ಮೇಲ್ಮೈಯನ್ನು `/v1` ನಲ್ಲಿ, Anth
 
 ## ನವೀಕರಣದ ವೇಳೆ ಸ್ಥಳೀಯ ಅವಲಂಬನೆಗಳನ್ನು ಉಳಿಸಿಕೊಳ್ಳುವುದು: `--include=optional`
 
-ನೀವು `omniroute update` ಮೂಲಕ ನವೀಕರಿಸಿದಾಗ (ದೃಢೀಕರಿಸಿದ ನಂತರ ಅಥವಾ `--apply` ಜೊತೆಗೆ),
+ನೀವು `agentproxy update` ಮೂಲಕ ನವೀಕರಿಸಿದಾಗ (ದೃಢೀಕರಿಸಿದ ನಂತರ ಅಥವಾ `--apply` ಜೊತೆಗೆ),
 AgentProxy ಅನುಸ್ಥಾಪನೆಯನ್ನು ಅಂತರ್ನಿರ್ಮಿತ `--include=optional` ಜೊತೆಗೆ ಚಾಲನೆ ಮಾಡುತ್ತದೆ:
 
 ```bash
-npm install -g omniroute@latest --include=optional
+npm install -g agentproxy@latest --include=optional
 ```
 
-ಇದು `omniroute update` ಗೆ ನೀವು ರವಾನಿಸುವ ಫ್ಲ್ಯಾಗ್ **ಅಲ್ಲ** — ನವೀಕರಣಕಾರವು ಇದನ್ನು
+ಇದು `agentproxy update` ಗೆ ನೀವು ರವಾನಿಸುವ ಫ್ಲ್ಯಾಗ್ **ಅಲ್ಲ** — ನವೀಕರಣಕಾರವು ಇದನ್ನು
 ಯಾವಾಗಲೂ ಅನ್ವಯಿಸುತ್ತದೆ. ನಿಮ್ಮ npm ಸಂರಚನೆಯಲ್ಲಿ `omit=optional` ಹೊಂದಿಸಿದ್ದರೂ
 `optionalDependencies` (`better-sqlite3`, `keytar`, `tls-client`, LLMLingua SLM
 ಸ್ಟ್ಯಾಕ್) ನವೀಕರಣದ ನಂತರವೂ ಉಳಿಯುವುದನ್ನು ಇದು ಖಚಿತಪಡಿಸುತ್ತದೆ; ಇಲ್ಲದಿದ್ದರೆ ಸ್ಥಳೀಯ SQLite
@@ -301,23 +301,23 @@ npm install -g omniroute@latest --include=optional
 ನಿಖರವಾದ ಆದೇಶವನ್ನು ಪೂರ್ವವೀಕ್ಷಿಸಲು:
 
 ```bash
-omniroute update --dry-run
-# [ಪ್ರಾಯೋಗಿಕ ಚಾಲನೆ] ಚಾಲನೆಯಾಗಲಿರುವುದು: npm install -g omniroute@latest --include=optional
+agentproxy update --dry-run
+# [ಪ್ರಾಯೋಗಿಕ ಚಾಲನೆ] ಚಾಲನೆಯಾಗಲಿರುವುದು: npm install -g agentproxy@latest --include=optional
 ```
 
-ಇತರ `omniroute update` ಫ್ಲ್ಯಾಗ್ಗಳು (ಮೂಲದಲ್ಲಿ ಪರಿಶೀಲಿಸಲಾಗಿದೆ): `--check` (ಹಳೆಯದಾಗಿದ್ದರೆ
+ಇತರ `agentproxy update` ಫ್ಲ್ಯಾಗ್ಗಳು (ಮೂಲದಲ್ಲಿ ಪರಿಶೀಲಿಸಲಾಗಿದೆ): `--check` (ಹಳೆಯದಾಗಿದ್ದರೆ
 ನಿರ್ಗಮನ 1), `--apply` (ಕೇಳದೆ ಅನುಸ್ಥಾಪಿಸಿ), `--changelog`, `--no-backup`,
 `--yes`.
 
 ---
 
-## `omniroute run gemini` ಮೂಲಕ Google Gemini CLI
+## `agentproxy run gemini` ಮೂಲಕ Google Gemini CLI
 
 `@google/gemini-cli` 0.50.0 ವಿರುದ್ಧ ಒಪ್ಪಂದವನ್ನು ಪರಿಶೀಲಿಸಲಾಗಿದೆ: CLI,
 `GOOGLE_GEMINI_BASE_URL` ಅನ್ನು ಗೌರವಿಸುತ್ತದೆ ಮತ್ತು ಅದರ ವಿರುದ್ಧ
 `POST /v1beta/models/<model>:generateContent` (ಹಾಗೂ
 `:streamGenerateContent?alt=sse`) ವಿನಂತಿಗಳನ್ನು ಕಳುಹಿಸುತ್ತದೆ — ಇದು ನಿಖರವಾಗಿ
-AgentProxy ನ ಸ್ಥಳೀಯ Gemini ಮೇಲ್ಮೈ (`/v1beta`) ಆಗಿದೆ. `omniroute run gemini` ಅದನ್ನು
+AgentProxy ನ ಸ್ಥಳೀಯ Gemini ಮೇಲ್ಮೈ (`/v1beta`) ಆಗಿದೆ. `agentproxy run gemini` ಅದನ್ನು
 ಸ್ವಯಂಚಾಲಿತವಾಗಿ ಜೋಡಿಸುತ್ತದೆ:
 
 - `GOOGLE_GEMINI_BASE_URL` → ಸಕ್ರಿಯ AgentProxy ಮೂಲ URL (ಮೂಲ, `/v1` ಇಲ್ಲ);
@@ -334,7 +334,7 @@ AgentProxy ನ ಸ್ಥಳೀಯ Gemini ಮೇಲ್ಮೈ (`/v1beta`) ಆಗ�
 - `--provider`/`--model` ನಿಂದ `--model <id>` ಸೇರಿಸುವಿಕೆ.
 
 ```bash
-omniroute run gemini --model glm/glm-5.2 -- --skip-trust -p "hello"
+agentproxy run gemini --model glm/glm-5.2 -- --skip-trust -p "hello"
 ```
 
 ಹೆಡ್ಲೆಸ್ ಮೋಡ್ನಲ್ಲಿಯೂ Gemini ಯ ಕಾರ್ಯಸ್ಥಳ-ವಿಶ್ವಾಸ ರಕ್ಷಣೆ ಅನ್ವಯಿಸುತ್ತದೆ — ನೀವೇ
@@ -358,21 +358,21 @@ auth / upstream / config ಎಂದು ವರ್ಗೀಕರಿಸುತ್ತದ
 
 ```bash
 RUN_CLI_SMOKE=1 \
-OMNIROUTE_SMOKE_BASE_URL="http://localhost:20128" \
-OMNIROUTE_SMOKE_MODEL="<provider/model>" \
-OMNIROUTE_SMOKE_API_KEY_ENV="OMNIROUTE_API_KEY" \
+AGENTPROXY_SMOKE_BASE_URL="http://localhost:20128" \
+AGENTPROXY_SMOKE_MODEL="<provider/model>" \
+AGENTPROXY_SMOKE_API_KEY_ENV="AGENTPROXY_API_KEY" \
 node --import tsx/esm --test tests/integration/upstream-cli-smoke.int.test.ts
 ```
 
-ಐಚ್ಛಿಕ: `OMNIROUTE_SMOKE_TARGETS="codex,opencode,qwen"` ಸ್ವೀಪ್ ಅನ್ನು ನಿರ್ದಿಷ್ಟ ಗುರಿಗಳಿಗೆ ಸೀಮಿತಗೊಳಿಸುತ್ತದೆ;
-`OMNIROUTE_SMOKE_TIMEOUT_MS` ಪ್ರತಿ ಗುರಿಗೆ ಇರುವ 120s ಕಾಲಾವಧಿ ಮಿತಿಯನ್ನು ಅತಿಕ್ರಮಿಸುತ್ತದೆ.
+ಐಚ್ಛಿಕ: `AGENTPROXY_SMOKE_TARGETS="codex,opencode,qwen"` ಸ್ವೀಪ್ ಅನ್ನು ನಿರ್ದಿಷ್ಟ ಗುರಿಗಳಿಗೆ ಸೀಮಿತಗೊಳಿಸುತ್ತದೆ;
+`AGENTPROXY_SMOKE_TIMEOUT_MS` ಪ್ರತಿ ಗುರಿಗೆ ಇರುವ 120s ಕಾಲಾವಧಿ ಮಿತಿಯನ್ನು ಅತಿಕ್ರಮಿಸುತ್ತದೆ.
 
 ---
 
 ## ಇದನ್ನೂ ನೋಡಿ
 
 - [Claude Code ಕಾನ್ಫಿಗರೇಶನ್](./CLAUDE-CODE-CONFIGURATION.md) — ಹೆಚ್ಚು ವಿವರವಾದ Claude Code ಮಾರ್ಗದರ್ಶಿ
-- [Codex CLI ಕಾನ್ಫಿಗರೇಶನ್](./CODEX-CLI-CONFIGURATION.md) — ಒಂದು ಬಾರಿ ಮಾಡಬೇಕಾದ `[model_providers.omniroute]` ಮೂಲ ಸೆಟಪ್
+- [Codex CLI ಕಾನ್ಫಿಗರೇಶನ್](./CODEX-CLI-CONFIGURATION.md) — ಒಂದು ಬಾರಿ ಮಾಡಬೇಕಾದ `[model_providers.agentproxy]` ಮೂಲ ಸೆಟಪ್
 - [ರಿಮೋಟ್ ಮೋಡ್](./REMOTE-MODE.md) — ಸಂದರ್ಭಗಳು, ವ್ಯಾಪ್ತಿ-ನಿರ್ಬಂಧಿತ ಪ್ರವೇಶ ಟೋಕನ್ಗಳು ಮತ್ತು ರಿಮೋಟ್ ಸರ್ವರ್ನ್ನು ನಿಯಂತ್ರಿಸುವುದು
 - [CLI ಪರಿಕರಗಳ ಉಲ್ಲೇಖ](../reference/CLI-TOOLS.md) — ಬೆಂಬಲಿತ ಪರಿಕರಗಳು + ಡ್ಯಾಶ್ಬೋರ್ಡ್ ಪುಟಗಳ ಸಂಪೂರ್ಣ ಕ್ಯಾಟಲಾಗ್
 - [ಸೆಟಪ್ ಮಾರ್ಗದರ್ಶಿ](./SETUP_GUIDE.md) — ಇನ್ಸ್ಟಾಲ್ ವಿಧಾನಗಳು ಮತ್ತು ಮೊದಲ ರನ್ನ ಆನ್ಬೋರ್ಡಿಂಗ್

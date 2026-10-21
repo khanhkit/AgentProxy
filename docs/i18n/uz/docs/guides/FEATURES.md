@@ -36,7 +36,7 @@ v3.7.x → v3.8.0 siklida sozlashni talab qilmaydigan avtomatik marshrutlash, ya
 - 🚦 **Har bir provayder uchun 429 tasnifi** + `useUpstream429BreakerHints` almashtirgichi — yuqori oqim tezlik cheklovi ishoralari yordamida uzgich xatti-harakatini aniqroq boshqarish
 - 🩺 **Model sovish davrlari boshqaruv paneli** — har bir model bloklanishini kuzatish va uni interfeys orqali qoʻlda qayta yoqish
 - 🔒 **MITM uchun Linux sertifikatlarini dinamik aniqlash** — Debian/Ubuntu, Fedora/RHEL, Arch va boshqa distributivlarda ishlaydi
-- 💻 **CLI takomillashtirishlari toʻplami** — 20 dan ortiq buyruq, jumladan `omniroute providers`, `omniroute combos`, `omniroute doctor`, `omniroute setup`
+- 💻 **CLI takomillashtirishlari toʻplami** — 20 dan ortiq buyruq, jumladan `agentproxy providers`, `agentproxy combos`, `agentproxy doctor`, `agentproxy setup`
 - 🔍 **Qdrant embedding modelini aniqlash** — vektor ombori modelini avtomatik tekshirish
 - 🔑 **`manage` doirasiga ega API kalitlari / Bearer kalitlari** — API orqali administrator amallarini dasturiy tarzda bajarish
 - 🏥 **Kombinatsiya maqsadlari holati tahlili** + **tuzilmaviy kombinatsiya konstruktori** — har bir maqsad holati va `(provider, model, connection)` bosqichlarini yigʻish uchun UI konstruktori
@@ -225,7 +225,7 @@ Barcha o‘rnatish usullari uchun toza o‘chirish skriptlari:
 
 | Buyruq                   | Amal                                                                                                                        |
 | ------------------------ | --------------------------------------------------------------------------------------------------------------------------- |
-| `npm run uninstall`      | Tizim ilovasini o‘chiradi, ammo `~/.omniroute` ichidagi **ma’lumotlar bazangiz va konfiguratsiyalaringizni saqlab qoladi**. |
+| `npm run uninstall`      | Tizim ilovasini o‘chiradi, ammo `~/.agentproxy` ichidagi **ma’lumotlar bazangiz va konfiguratsiyalaringizni saqlab qoladi**. |
 | `npm run uninstall:full` | Ilovani o‘chiradi VA **barcha konfiguratsiyalar, kalitlar va ma’lumotlar bazalarini butunlay yo‘q qiladi**.                 |
 
 ---

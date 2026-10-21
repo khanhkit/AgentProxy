@@ -116,7 +116,7 @@ dashboard UI files लाई stubs ले प्रतिस्थापन ग�
 पुनर्स्थापित गर्छ। Dashboard UI लाई असर गर्ने परिवर्तनहरू वा पूर्ण
 release validation का लागि `npm run build` प्रयोग गर्नुहोस्; contributor profile release build को विकल्प होइन।
 
-> **VPS deploy सम्बन्धी टिप्पणी:** remote image directory `/usr/lib/node_modules/omniroute/app/`
+> **VPS deploy सम्बन्धी टिप्पणी:** remote image directory `/usr/lib/node_modules/agentproxy/app/`
 > अपरिवर्तित छ। Deploy skills ले `dist/` का सामग्रीहरू यसमा rsync गर्छन्।
 > Repository भित्रको build output path मात्र परिवर्तन भएको हो (`app/` → `dist/`)।
 
@@ -322,7 +322,7 @@ src/                        # TypeScript (.ts / .tsx)
 │   └── validation/         # Zod v4 स्किमाहरू
 └── sse/                    # SSE प्रोक्सी पाइपलाइन
 
-open-sse/                   # @omniroute/open-sse वर्कस्पेस
+open-sse/                   # @agentproxy/open-sse वर्कस्पेस
 ├── executors/              # 89 एक्जिक्युटर कार्यान्वयन मोड्युल
 ├── handlers/               # 11 अनुरोध ह्यान्डलर (च्याट, प्रतिक्रियाहरू, एम्बेडिङहरू, छविहरू, आदि)
 ├── mcp-server/             # MCP सर्भर (110 विशिष्ट उपकरण, 3 ट्रान्सपोर्ट, 33 स्कोप)

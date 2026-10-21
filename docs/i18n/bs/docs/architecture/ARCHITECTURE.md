@@ -439,7 +439,7 @@ evaluacija prije izvršenja (slijed blokova → izračun → rezervni)
 - kvota keša: `src/domain/quotaCache.ts`
 - Stanje degradacije: `src/domain/degradation.ts`
 - Revizija konfiguracije: `src/domain/configAudit.ts`
-- AgentProxy alat za izradu metapodataka odgovora: `src/domain/omnirouteResponseMeta.ts`
+- AgentProxy alat za izradu metapodataka odgovora: `src/domain/agentproxyesponseMeta.ts`
 - Podsistem procjene: `src/domain/assessment/` — periodični zadaci evaluacije
 
 ### E. Cjevovod autorizacije
@@ -520,7 +520,7 @@ Primarna baza podataka stanja (SQLite):
 
 - Osnovna infrastruktura: `src/lib/db/core.ts` (better-sqlite3, migracije, WAL)
 - Pristup bazi podataka: direktan uvoz specifičnih `src/lib/db/*` modula (stari `localDb.ts` barrel modul je uklonjen)
-- datoteka: `TOADIR/storage.sqlite`(ili`XDG_CONFIG_HOME/omniroute/storage.sqlite` kada je postavljeno, inače `~/.omniroute/storage.sqlite`)
+- datoteka: `TOADIR/storage.sqlite`(ili`XDG_CONFIG_HOME/agentproxy/storage.sqlite` kada je postavljeno, inače `~/.agentproxy/storage.sqlite`)
 - entiteti (tablice + KV imenski prostori): providerConnections, providerNodes, modelAliases, combos, apiKeys, settings, pricing, **customModels**, **proxyConfig**, **ipFilter**, **thinkingBudget**, **systemPrompt**
 
 Trajnost upotrebe:
@@ -1148,11 +1148,11 @@ Varijable okruženja koje se aktivno koriste u kodu:
 
 ## Poznate arhitektonske bilješke
 
-1. `usageDb` i `localDb` dijele istu politiku osnovnog direktorija (`DATA_DIR` -> `XDG_CONFIG_HOME/omniroute` -> `~/.omniroute`) uz migraciju zastarjelih datoteka.
+1. `usageDb` i `localDb` dijele istu politiku osnovnog direktorija (`DATA_DIR` -> `XDG_CONFIG_HOME/agentproxy` -> `~/.agentproxy`) uz migraciju zastarjelih datoteka.
 2. `/api/v1/route.ts` delegira istom objedinjenom alatu za izradu kataloga koji se koristi za `/api/v1/models` (`src/app/api/v1/models/catalog.ts`) kako bi se izbjegla semantička divergencija.
 3. Zapisivač zahtjeva zapisuje pune zaglavlja/tijelo zahtjeva kada je omogućen; direktorij zapisnika treba tretirati kao osjetljiv.
 4. Ponašanje u oblaku zavisi od ispravnog `NEXT_PUBLIC_BASE_URL` i dostupnosti krajnje tačke u oblaku.
-5. Direktorij `open-sse/` je objavljen kao **npm paket radnog prostora** `@omniroute/open-sse`. Izvorni kod ga uvozi putem `@omniroute/open-sse/...` (riješeno pomoću Next.js `transpilePackages`). Putanje datoteka u ovom dokumentu i dalje koriste naziv direktorija `open-sse/` radi konzistentnosti.
+5. Direktorij `open-sse/` je objavljen kao **npm paket radnog prostora** `@agentproxy/open-sse`. Izvorni kod ga uvozi putem `@agentproxy/open-sse/...` (riješeno pomoću Next.js `transpilePackages`). Putanje datoteka u ovom dokumentu i dalje koriste naziv direktorija `open-sse/` radi konzistentnosti.
 6. Grafikoni kontrolne ploče koriste **Recharts** (bazirano na SVG-u) za pristupačne, interaktivne vizualizacije analitike (grafikoni korištenja modela, tabele distribucije dobavljača sa stopama uspjeha).
 7. E2E testovi koriste **Playwright** (`tests/e2e/`), koji se pokreće putem `npm run test:e2e`. Jedinični testovi koriste **Node.js test runner** (`tests/unit/`), koji se pokreće putem `npm run test:unit`. Izvorni kod u `src/` je **TypeScript** (`.ts`/`.tsx`); radni prostor `open-sse/` ostaje u JavaScriptu (`.js`).
 8. Stranica s postavkama organizirana je u 7 kartica: Općenito, Izgled, Vještačka inteligencija, Sigurnost, Rutiranje, Otpornost, Napredno. Stranica Otpornost konfiguriše samo čekanje zahtjeva, hlađenje veze, prekidač provajdera i ponašanje hlađenja; status prekidača u stvarnom vremenu prikazuje se na stranici Ispravnost.
@@ -1163,7 +1163,7 @@ Varijable okruženja koje se aktivno koriste u kodu:
 ## Operativna kontrolna lista
 
 - Izgradnja iz izvornog koda: `npm run build`
-- Izrada Docker slike: `docker build -t omniroute .`
+- Izrada Docker slike: `docker build -t agentproxy .`
 - Pokretanje i verifikacija usluge:
 - `GET /api/settings`
 - `GET /api/v1/models`

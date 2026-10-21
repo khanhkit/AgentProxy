@@ -82,10 +82,10 @@ async function extractEndpointFromConfig(
         return match ? match[1] : null;
       }
       case "omp": {
-        const omnirouteBlock = content.match(/omniroute:\s*\n(?:[^\n]+\n)*?\s*baseUrl:\s*["']?([^"'\r\n]+)["']?/i);
-        if (omnirouteBlock) return omnirouteBlock[1].trim();
+        const agentproxyBlock = content.match(/agentproxy:\s*\n(?:[^\n]+\n)*?\s*baseUrl:\s*["']?([^"'\r\n]+)["']?/i);
+        if (agentproxyBlock) return agentproxyBlock[1].trim();
         const match =
-          content.match(/baseUrl:\s*["']?([^"'\r\n]*(?:omniroute|20128)[^"'\r\n]*)["']?/i) ||
+          content.match(/baseUrl:\s*["']?([^"'\r\n]*(?:agentproxy|20128)[^"'\r\n]*)["']?/i) ||
           content.match(/baseUrl:\s*["']?([^"'\r\n]+)["']?/i);
         return match ? match[1].trim() : null;
       }

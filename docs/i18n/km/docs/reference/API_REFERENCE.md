@@ -64,7 +64,7 @@ Content-Type: application/json
 | Header                   | ទិសដៅ      | ការពិពណ៌នា                                                                                                                                                                                                                                      |
 | ------------------------ | ---------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `X-AgentProxy-No-Cache`   | សំណើ       | កំណត់ជា `true` ដើម្បីរំលងឃ្លាំងសម្ងាត់                                                                                                                                                                                                          |
-| `x-omniroute-no-memory`  | សំណើ       | កំណត់ជា `true` ដើម្បីរំលងការបញ្ចូលអង្គចងចាំ + ជំនាញសម្រាប់សំណើនេះ (ដូចនឹងការមិនប្រើឃ្លាំងសម្ងាត់; ជៀសវាងការចំណាយ token/ថ្លៃដើមក្នុងការហៅនីមួយៗ)                                                                                                 |
+| `x-agentproxy-no-memory`  | សំណើ       | កំណត់ជា `true` ដើម្បីរំលងការបញ្ចូលអង្គចងចាំ + ជំនាញសម្រាប់សំណើនេះ (ដូចនឹងការមិនប្រើឃ្លាំងសម្ងាត់; ជៀសវាងការចំណាយ token/ថ្លៃដើមក្នុងការហៅនីមួយៗ)                                                                                                 |
 | `X-AgentProxy-Progress`   | សំណើ       | កំណត់ជា `true` សម្រាប់ព្រឹត្តិការណ៍វឌ្ឍនភាព                                                                                                                                                                                                     |
 | `X-Session-Id`           | សំណើ       | កូនសោសម័យជាប់លាប់សម្រាប់ភាពស្និទ្ធស្នាលនៃសម័យខាងក្រៅ                                                                                                                                                                                            |
 | `x_session_id`           | សំណើ       | វ៉ារ្យ៉ង់ដែលប្រើសញ្ញាគូសក្រោមក៏ត្រូវបានទទួលយកផងដែរ (HTTP ផ្ទាល់)                                                                                                                                                                                |
@@ -159,7 +159,7 @@ X-AgentProxy-Lease-Generation: 1
 
 ការឆ្លើយតបនេះមានន័យថាឈុតដែលមានសិទ្ធិធម្មតាមិនទទេ ហើយបេក្ខជនទំនេរទាំងអស់ត្រូវបានកាន់កាប់ដោយកិច្ចសន្យាជួលសកម្មបរទេស។ គំរូ/អ្នកផ្តល់សេវាដែលមិនគាំទ្រ ការមិនស៊ីគ្នានៃគោលការណ៍ ការរង់ចាំ សមាមាត្រ សុខភាព និងការបរាជ័យសិទ្ធិធម្មតាផ្សេងទៀតរក្សាការឆ្លើយតប AgentProxy ដែលមានស្រាប់របស់ពួកគេ។
 
-### `x-omniroute-compression`
+### `x-agentproxy-compression`
 
 ការបដិសេធផែនការបង្ហាប់តាមសំណើ។ អាទិភាពខ្ពស់បំផុត — ឈ្នះការបដិសេធការរួមបញ្ចូលផ្លូវ ទម្រង់សកម្ម ការបង្កដោយស្វ័យប្រវត្តិ និងផ្ទាំងលំនាំដើម។ តម្លៃ៖
 
@@ -396,10 +396,10 @@ client ដែលបង្ហាញឧបករណ៍ជ្រើសរើសម�
 
 ### វ៉ារ្យ៉ង់ម៉ូដែលដែលមិនគិត
 
-សម្រាប់ម៉ូដែល Claude ដែលអាចគិតបាន `/v1/models` ក៏ផ្សព្វផ្សាយវ៉ារ្យ៉ង់ **ដែលមិនគិត** ផងដែរ ដែល id របស់វាត្រូវបានដាក់បុព្វបទ `claude-3-omniroute-no-thinking/`៖
+សម្រាប់ម៉ូដែល Claude ដែលអាចគិតបាន `/v1/models` ក៏ផ្សព្វផ្សាយវ៉ារ្យ៉ង់ **ដែលមិនគិត** ផងដែរ ដែល id របស់វាត្រូវបានដាក់បុព្វបទ `claude-3-agentproxy-no-thinking/`៖
 
 ```
-claude-3-omniroute-no-thinking/<provider>/<model>
+claude-3-agentproxy-no-thinking/<provider>/<model>
 ```
 
 ការជ្រើសរើស id នេះ (ឧ. ក្នុង config របស់ Claude Code ដែលតែងតែភ្ជាប់ block `thinking`) នឹងដោះស្រាយត្រឡប់ទៅកាន់ `<provider>/<model>` ពិតប្រាកដ ដោយបិទការវែកញែក — `thinking:{type:"disabled"}` នៅលើ path `/v1/messages` ឬទម្លាក់ field `reasoning`/`reasoning_effort` នៅលើ path `/v1/chat/completions`។ វ៉ារ្យ៉ង់នេះត្រូវបានរាយតែសម្រាប់ម៉ូដែលក្នុងត្រកូល Claude ដែលគាំទ្រការគិត **និង** ទទួលយក `disabled` ប៉ុណ្ណោះ (ដូច្នេះ ឧ. ម៉ូដែល adaptive-only ដែលបដិសេធ `disabled` មិនត្រូវបានរាប់បញ្ចូលទេ)។ ប្រតិបត្តិករអាចបង្ខំបើក ឬបិទវ៉ារ្យ៉ង់នេះសម្រាប់ម៉ូដែលនីមួយៗតាមរយៈ `ModelSpec.noThinkingAlias`។
@@ -488,7 +488,7 @@ POST /v1/music/generations  { "model": "suno/v3.5",   "prompt": "..." }
 > (`localhost`, `127.0.0.1`, `172.16.0.0/12`) តែងតែអាចប្រើបាន។ Node នៅលើ host ផ្សេងទៀត
 > — ម៉ាស៊ីនក្នុង LAN ឬ peer របស់ Tailscale — អាចប្រើបានតែនៅពេល operator បើក feature flag
 > `RERANK_REMOTE_PROVIDER_NODES` **និង** URL មូលដ្ឋានរបស់ node ឆ្លងកាត់គោលការណ៍ URL ចេញក្រៅរបស់ provider
-> (`OMNIROUTE_ALLOW_LOCAL_PROVIDER_URLS` / `OMNIROUTE_ALLOW_PRIVATE_PROVIDER_URLS`);
+> (`AGENTPROXY_ALLOW_LOCAL_PROVIDER_URLS` / `AGENTPROXY_ALLOW_PRIVATE_PROVIDER_URLS`);
 > host សម្រាប់ cloud metadata នឹងមិនត្រូវបានបញ្ជូនផ្លូវទៅកាន់ឡើយ។ ជំហានរៀបចំណាត់ថ្នាក់ឡើងវិញរបស់ memory engine ហៅផ្លូវនេះតាម
 > loopback ដូច្នេះច្បាប់ដូចគ្នានេះគ្រប់គ្រង `rerankProviderModel` នៅក្នុងការកំណត់ Memory។
 >
@@ -612,8 +612,8 @@ GET /v1/ws?handshake=1
 
 ```bash
 # ម៉ាស៊ីនមេ host:port ដូចគ្នានឹង HTTP API (លំនាំដើម 20128); ដំឡើងកម្រិតការតភ្ជាប់៖
-wscat -c "ws://localhost:20128/v1/responses?api_key=<OMNIROUTE_API_KEY>"
-# (ឬ៖ -H "Authorization: Bearer <OMNIROUTE_API_KEY>")
+wscat -c "ws://localhost:20128/v1/responses?api_key=<AGENTPROXY_API_KEY>"
+# (ឬ៖ -H "Authorization: Bearer <AGENTPROXY_API_KEY>")
 
 # frame ដំបូងត្រូវតែជា response.create៖
 { "type": "response.create", "model": "gpt-5.5", "input": [ { "role": "user", "content": "hi" } ] }
@@ -649,18 +649,18 @@ a ChatGPT account`)។ ផ្ញើលេខសម្គាល់ **ដើម** 
 
 ```toml
 model = "gpt-5.5"                 # លេខសម្គាល់ដើម — មិនមែន "codex/gpt-5.5"
-model_provider = "omniroute"
+model_provider = "agentproxy"
 
-[model_providers.omniroute]
+[model_providers.agentproxy]
 name = "AgentProxy (WS)"
 base_url = "http://localhost:20128/v1"   # គ្មានសញ្ញា slash នៅខាងចុង; WS URL ត្រូវបានបង្កើតចេញពីនេះ (ប្រើ https/wss ក្នុង production)
 wire_api = "responses"                    # តម្លៃតែមួយគត់ដែលគាំទ្រចាប់តាំងពី Feb 2026
 supports_websockets = true                # បើកដំណើរការ transport Responses-over-WS
-env_key = "OMNIROUTE_API_KEY"             # រក្សាទុក AgentProxy API key (Bearer)
+env_key = "AGENTPROXY_API_KEY"             # រក្សាទុក AgentProxy API key (Bearer)
 ```
 
 ```bash
-export OMNIROUTE_API_KEY=sk-...           # AgentProxy API key មួយ (key ណាមួយ ប្រសិនបើ REQUIRE_API_KEY=false)
+export AGENTPROXY_API_KEY=sk-...           # AgentProxy API key មួយ (key ណាមួយ ប្រសិនបើ REQUIRE_API_KEY=false)
 codex exec "Responda apenas: PONG"
 ```
 
@@ -1022,7 +1022,7 @@ Content-Type: application/json
 {
   "success": true,
   "repaired": ["CLAUDE_CODE_OAUTH_CLIENT_ID", "CLAUDE_CODE_OAUTH_CLIENT_SECRET"],
-  "backupPath": "/home/user/.omniroute/backups/env-repair-2026-04-11.bak"
+  "backupPath": "/home/user/.agentproxy/backups/env-repair-2026-04-11.bak"
 }
 ```
 
@@ -1396,7 +1396,7 @@ AgentProxy ផ្តល់ endpoint A2A (Agent-to-Agent) JSON-RPC 2.0 រួម�
 
 ```bash
 POST /a2a
-Authorization: Bearer your-api-key   # ជាជម្រើស លុះត្រាតែ OMNIROUTE_API_KEY ត្រូវបានកំណត់
+Authorization: Bearer your-api-key   # ជាជម្រើស លុះត្រាតែ AGENTPROXY_API_KEY ត្រូវបានកំណត់
 Content-Type: application/json
 
 {
@@ -1439,7 +1439,7 @@ GET /.well-known/agent.json
 | GET         | `/api/a2a/tasks/[id]`        | ទាញយក task មួយ                                                                                                     |
 | POST        | `/api/a2a/tasks/[id]/cancel` | បោះបង់ task មួយ                                                                                                    |
 
-**Auth៖** REST helper ដំណើរការដោយមិនត្រូវការ management auth (dashboard អាចអានបាន); route JSON-RPC `/a2a` ប្រើ Bearer `OMNIROUTE_API_KEY` ប្រសិនបើបានកំណត់រចនាសម្ព័ន្ធ។
+**Auth៖** REST helper ដំណើរការដោយមិនត្រូវការ management auth (dashboard អាចអានបាន); route JSON-RPC `/a2a` ប្រើ Bearer `AGENTPROXY_API_KEY` ប្រសិនបើបានកំណត់រចនាសម្ព័ន្ធ។
 
 ---
 
@@ -1753,7 +1753,7 @@ devin-cli ជាដើម)។ សូមមើល [ឯកសារយោងអ្
 
 ## Guardrails
 
-ពិនិត្យមើល guardrails ពេលដំណើរការ (ការរកឃើញ PII, ការរកឃើញការបញ្ចូល prompt និង vision bridging)។ Guardrails ដំណើរការលើគ្រប់សំណើទាំងអស់។ ការដកខ្លួនចេញសម្រាប់ការហៅនីមួយៗធ្វើឡើងតាម request header `x-omniroute-disabled-guardrails` — មិនមានចំណុចប្រទាក់សម្រាប់រក្សាទុកការបើក/បិទទេ។
+ពិនិត្យមើល guardrails ពេលដំណើរការ (ការរកឃើញ PII, ការរកឃើញការបញ្ចូល prompt និង vision bridging)។ Guardrails ដំណើរការលើគ្រប់សំណើទាំងអស់។ ការដកខ្លួនចេញសម្រាប់ការហៅនីមួយៗធ្វើឡើងតាម request header `x-agentproxy-disabled-guardrails` — មិនមានចំណុចប្រទាក់សម្រាប់រក្សាទុកការបើក/បិទទេ។
 
 | វិធីសាស្ត្រ | ផ្លូវ                  | សេចក្ដីពិពណ៌នា                                                                                                      |
 | ----------- | ---------------------- | ------------------------------------------------------------------------------------------------------------------- |

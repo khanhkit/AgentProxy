@@ -5,7 +5,7 @@ import os from "node:os";
 import path from "node:path";
 
 // Isolate DB state
-const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-test-issue-13488-"));
+const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-test-issue-13488-"));
 process.env.DATA_DIR = tmpDir;
 
 // Enable the feature flag for tests (mode "warn" per the issue repro steps — "nothing is

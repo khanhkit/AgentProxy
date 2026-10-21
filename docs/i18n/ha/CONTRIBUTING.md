@@ -116,7 +116,7 @@ fayilolin UI na dashboard na ɗan lokaci da stub yayin ginawa, yana riƙe masu s
 bayan ginawa. Yi amfani da `npm run build` don sauye-sauyen da suka shafi UI na dashboard ko don cikakkiyar
 tabbatar da sakin kaya; tsarin mai ba da gudummawa ba madadin ginawar sakin kaya ba ne.
 
-> **Bayanin turawa zuwa VPS:** kundin adireshin image na nesa `/usr/lib/node_modules/omniroute/app/`
+> **Bayanin turawa zuwa VPS:** kundin adireshin image na nesa `/usr/lib/node_modules/agentproxy/app/`
 > bai canza ba. Kwarewar turawa suna amfani da rsync don kwafe abubuwan da ke cikin `dist/` zuwa gare shi.
 > Hanyar fitowar ginawa da ke cikin repo ce kawai ta koma (`app/` → `dist/`).
 
@@ -321,7 +321,7 @@ src/                        # TypeScript (.ts / .tsx)
 │   └── validation/         # Zod v4 schemas
 └── sse/                    # Bututun wakilin SSE
 
-open-sse/                   # @omniroute/open-sse workspace
+open-sse/                   # @agentproxy/open-sse workspace
 ├── executors/              # Modules 89 na aiwatar da executor
 ├── handlers/               # Request handlers 11 (chat, responses, embeddings, images, da sauransu)
 ├── mcp-server/             # Uwar garken MCP (tools na musamman 110, transports 3, scopes 33)

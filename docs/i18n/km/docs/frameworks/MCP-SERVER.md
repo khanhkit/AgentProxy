@@ -6,21 +6,21 @@
 
 > ម៉ូដែលពិធីការបរិបទម៉ាស៊ីនមេដែលមានឧបករណ៍ចំនួន 110 នៅក្នុងការកំណត់ផ្លូវ, ឃ្លាំងសម្ងាត់, ការបង្ហាប់, អង្គចងចាំ, ជំនាញ, ប្រូកស៊ី, អាង, រ៉ាដា, និងប្រតិបត្តិការប្រភពបរិបទ។
 >
-> ប្រភពនៃការពិត: `open-sse/mcp-server/server.ts` គណនា **ឧបករណ៍ប្លែកៗចំនួន 110** ជាមួយ `countUniqueMcpTools()`: 45 និយមន័យ Canonical (រួមទាំងឧបករណ៍វដ្តជីវិត CCR ទាំងប្រាំមួយ, ក្រុមជំនាញភ្នាក់ងារ, `omniroute_radar_catalog`, និង `omniroute_x_search`), បូកនឹងអង្គចងចាំ (3), ជំនាញ (4), ជំនាញ GitHub (3), អាង (6), Gamification (8), កម្មវិធីជំនួយ (8), Notion (6), Obsidian (22), Corpus ក្នុងស្រុក (3), និងឧបករណ៍បង្ហាប់ RTK-តែប៉ុណ្ណោះពីរ។
+> ប្រភពនៃការពិត: `open-sse/mcp-server/server.ts` គណនា **ឧបករណ៍ប្លែកៗចំនួន 110** ជាមួយ `countUniqueMcpTools()`: 45 និយមន័យ Canonical (រួមទាំងឧបករណ៍វដ្តជីវិត CCR ទាំងប្រាំមួយ, ក្រុមជំនាញភ្នាក់ងារ, `agentproxy_radar_catalog`, និង `agentproxy_x_search`), បូកនឹងអង្គចងចាំ (3), ជំនាញ (4), ជំនាញ GitHub (3), អាង (6), Gamification (8), កម្មវិធីជំនួយ (8), Notion (6), Obsidian (22), Corpus ក្នុងស្រុក (3), និងឧបករណ៍បង្ហាប់ RTK-តែប៉ុណ្ណោះពីរ។
 
 ## ការដំឡើង
 
 AgentProxy MCP ត្រូវបានបង្កើតឡើង។ ចាប់ផ្តើមវាជាមួយ:
 
 ```bash
-omniroute --mcp
+agentproxy --mcp
 ```
 
 ឬតាមរយៈការដឹកជញ្ជូន open-sse:
 
 ```bash
 # ការដឹកជញ្ជូនស្ទ្រីម HTTP (ច្រក 20130)
-omniroute --dev  # MCP ចាប់ផ្តើមដោយស្វ័យប្រវត្តិនៅលើ /mcp endpoint
+agentproxy --dev  # MCP ចាប់ផ្តើមដោយស្វ័យប្រវត្តិនៅលើ /mcp endpoint
 ```
 
 ការដឹកជញ្ជូន HTTP (`sse` / `streamable-http`, បម្រើក្នុងដំណើរការដោយម៉ាស៊ីនមេផ្ទាំងគ្រប់គ្រង) ត្រូវបាន
@@ -28,10 +28,10 @@ omniroute --dev  # MCP ចាប់ផ្តើមដោយស្វ័យប្
 CLI មានភាពស្មើគ្នា:
 
 ```bash
-omniroute mcp status                                  # អាចប្រើបាន/អនឡាញ, ការដឹកជញ្ជូន, ចំនួនឧបករណ៍
-omniroute mcp enable [--transport stdio|sse|streamable-http]
-omniroute mcp disable
-omniroute mcp restart                                 # កំណត់ឡើងវិញនូវវគ្គ sse/streamable-http សកម្ម
+agentproxy mcp status                                  # អាចប្រើបាន/អនឡាញ, ការដឹកជញ្ជូន, ចំនួនឧបករណ៍
+agentproxy mcp enable [--transport stdio|sse|streamable-http]
+agentproxy mcp disable
+agentproxy mcp restart                                 # កំណត់ឡើងវិញនូវវគ្គ sse/streamable-http សកម្ម
 ```
 
 `mcp enable`/`mcp disable` PATCH ការកំណត់ `mcpEnabled` (និងជាជម្រើស `mcpTransport`) ដូចគ្នា
@@ -82,65 +82,65 @@ curl -i \
 
 | Tool                            | Scopes                | Description                                                                                                                                     |
 | :------------------------------ | :-------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------- |
-| `omniroute_get_health`          | `read:health`         | រយៈពេលដំណើរការ, អង្គចងចាំ, ឧបករណ៍បំបែកសៀគ្វី, កម្រិតកំណត់អត្រា, ស្ថិតិឃ្លាំងសម្ងាត់                                                             |
-| `omniroute_list_combos`         | `read:combos`         | បន្សំដែលបានកំណត់រចនាសម្ព័ន្ធទាំងអស់ជាមួយនឹងយុទ្ធសាស្ត្រ (ម៉ែត្រស្រេចចិត្ត)                                                                      |
-| `omniroute_get_combo_metrics`   | `read:combos`         | ម៉ែត្រដំណើរការសម្រាប់បន្សំជាក់លាក់មួយ                                                                                                           |
-| `omniroute_switch_combo`        | `write:combos`        | ធ្វើឱ្យសកម្ម ឬអសកម្មបន្សំមួយ                                                                                                                    |
-| `omniroute_create_combo`        | `write:combos`        | បង្កើតបន្សំដែលបានផ្ទៀងផ្ទាត់តាមរយៈ API បន្សំដែលមានស្រាប់                                                                                        |
-| `omniroute_check_quota`         | `read:quota`          | កូតាដែលបានប្រើ/សរុប, ភាគរយដែលនៅសល់, ពេលវេលាកំណត់ឡើងវិញ, សុខភាពថូខឹន                                                                             |
-| `omniroute_route_request`       | `execute:completions` | ផ្ញើការបញ្ចប់ការជជែកតាមរយៈការកំណត់ផ្លូវ AgentProxy                                                                                               |
-| `omniroute_cost_report`         | `read:usage`          | របាយការណ៍ចំណាយតាមរយៈពេល (វគ្គ/ថ្ងៃ/សប្តាហ៍/ខែ)                                                                                                  |
-| `omniroute_list_models_catalog` | `read:models`         | កាតាឡុកម៉ូដែលពេញលេញជាមួយនឹងសមត្ថភាព, ស្ថានភាព, តម្លៃ                                                                                            |
-| `omniroute_radar_catalog`       | `read:radar`          | កាតាឡុក Radar ដែលបានចុះហត្ថលេខាក្នុងស្រុក; តម្រងអ្នកផ្តល់សេវា/គ្រួសារស្រេចចិត្ត                                                                 |
-| `omniroute_tool_search`         | `read:tools`          | ស្វែងរកឧបករណ៍ពីកាតាឡុក MCP ដែលបានចុះឈ្មោះ                                                                                                       |
-| `omniroute_web_search`          | `execute:search`      | ស្វែងរកគេហទំព័រតាមរយៈអ្នកផ្តល់សេវាស្វែងរកដែលបានកំណត់រចនាសម្ព័ន្ធ។ មិនមែន X/Twitter ទេ។                                                          |
-| `omniroute_x_search`            | `execute:search`      | ស្វែងរក X តាមរយៈ xAI/SuperGrok, ឬជ្រើសរើស `xquik-search` សម្រាប់លទ្ធផល Xquik API។ តម្រូវឱ្យមានព័ត៌មានសម្ងាត់សម្រាប់ផ្នែកខាងក្រោយដែលបានជ្រើសរើស។ |
-| `omniroute_web_fetch`           | `execute:search`      | ទាញយកមាតិកាគេហទំព័រតាមរយៈអ្នកផ្តល់សេវាទាញយកដែលបានកំណត់រចនាសម្ព័ន្ធ                                                                              |
+| `agentproxy_get_health`          | `read:health`         | រយៈពេលដំណើរការ, អង្គចងចាំ, ឧបករណ៍បំបែកសៀគ្វី, កម្រិតកំណត់អត្រា, ស្ថិតិឃ្លាំងសម្ងាត់                                                             |
+| `agentproxy_list_combos`         | `read:combos`         | បន្សំដែលបានកំណត់រចនាសម្ព័ន្ធទាំងអស់ជាមួយនឹងយុទ្ធសាស្ត្រ (ម៉ែត្រស្រេចចិត្ត)                                                                      |
+| `agentproxy_get_combo_metrics`   | `read:combos`         | ម៉ែត្រដំណើរការសម្រាប់បន្សំជាក់លាក់មួយ                                                                                                           |
+| `agentproxy_switch_combo`        | `write:combos`        | ធ្វើឱ្យសកម្ម ឬអសកម្មបន្សំមួយ                                                                                                                    |
+| `agentproxy_create_combo`        | `write:combos`        | បង្កើតបន្សំដែលបានផ្ទៀងផ្ទាត់តាមរយៈ API បន្សំដែលមានស្រាប់                                                                                        |
+| `agentproxy_check_quota`         | `read:quota`          | កូតាដែលបានប្រើ/សរុប, ភាគរយដែលនៅសល់, ពេលវេលាកំណត់ឡើងវិញ, សុខភាពថូខឹន                                                                             |
+| `agentproxy_route_request`       | `execute:completions` | ផ្ញើការបញ្ចប់ការជជែកតាមរយៈការកំណត់ផ្លូវ AgentProxy                                                                                               |
+| `agentproxy_cost_report`         | `read:usage`          | របាយការណ៍ចំណាយតាមរយៈពេល (វគ្គ/ថ្ងៃ/សប្តាហ៍/ខែ)                                                                                                  |
+| `agentproxy_list_models_catalog` | `read:models`         | កាតាឡុកម៉ូដែលពេញលេញជាមួយនឹងសមត្ថភាព, ស្ថានភាព, តម្លៃ                                                                                            |
+| `agentproxy_radar_catalog`       | `read:radar`          | កាតាឡុក Radar ដែលបានចុះហត្ថលេខាក្នុងស្រុក; តម្រងអ្នកផ្តល់សេវា/គ្រួសារស្រេចចិត្ត                                                                 |
+| `agentproxy_tool_search`         | `read:tools`          | ស្វែងរកឧបករណ៍ពីកាតាឡុក MCP ដែលបានចុះឈ្មោះ                                                                                                       |
+| `agentproxy_web_search`          | `execute:search`      | ស្វែងរកគេហទំព័រតាមរយៈអ្នកផ្តល់សេវាស្វែងរកដែលបានកំណត់រចនាសម្ព័ន្ធ។ មិនមែន X/Twitter ទេ។                                                          |
+| `agentproxy_x_search`            | `execute:search`      | ស្វែងរក X តាមរយៈ xAI/SuperGrok, ឬជ្រើសរើស `xquik-search` សម្រាប់លទ្ធផល Xquik API។ តម្រូវឱ្យមានព័ត៌មានសម្ងាត់សម្រាប់ផ្នែកខាងក្រោយដែលបានជ្រើសរើស។ |
+| `agentproxy_web_fetch`           | `execute:search`      | ទាញយកមាតិកាគេហទំព័រតាមរយៈអ្នកផ្តល់សេវាទាញយកដែលបានកំណត់រចនាសម្ព័ន្ធ                                                                              |
 
 ## ឧបករណ៍កម្រិតខ្ពស់ (11) — ដំណាក់កាលទី 2
 
 | ឧបករណ៍                             | វិសាលភាព                             | ការពិពណ៌នា                                                                                                            |
 | :--------------------------------- | :----------------------------------- | :-------------------------------------------------------------------------------------------------------------------- |
-| `omniroute_simulate_route`         | `read:health`, `read:combos`         | ការក្លែងធ្វើផ្លូវរត់ស្ងួត (dry-run) ជាមួយនឹង fallback tree                                                            |
-| `omniroute_set_budget_guard`       | `write:budget`                       | ថវិកាសម្រាប់វគ្គ (session) ជាមួយនឹងសកម្មភាពបន្ថយ/ទប់ស្កាត់/ជូនដំណឹង                                                   |
-| `omniroute_set_routing_strategy`   | `write:combos`                       | ធ្វើបច្ចុប្បន្នភាពយុទ្ធសាស្ត្រ combo នៅពេលដំណើរការ (priority/weighted/auto/etc.)                                      |
-| `omniroute_set_resilience_profile` | `write:resilience`                   | អនុវត្តការកំណត់ជាមុន (preset) នៃភាពធន់ `aggressive` / `balanced` / `conservative`                                     |
-| `omniroute_test_combo`             | `execute:completions`, `read:combos` | ការធ្វើតេស្តផ្ទាល់នៃ provider នីមួយៗនៅក្នុង combo ដោយប្រើការហៅ upstream ពិតប្រាកដ                                     |
-| `omniroute_get_provider_metrics`   | `read:health`                        | Metric តាម provider ជាមួយនឹង p50/p95/p99 latency និងស្ថានភាព circuit breaker                                          |
-| `omniroute_best_combo_for_task`    | `read:combos`, `read:health`         | ណែនាំ combo តាមប្រភេទកិច្ចការ ជាមួយនឹងដែនកំណត់ថវិកា/latency                                                           |
-| `omniroute_explain_route`          | `read:health`, `read:usage`          | ពន្យល់ពីមូលហេតុដែលសំណើត្រូវបានបញ្ជូនទៅ provider (កត្តាពិន្ទុ + fallbacks)                                             |
-| `omniroute_get_session_snapshot`   | `read:usage`                         | រូបថតពេញលេញនៃវគ្គ (session): តម្លៃ, tokens, models/providers កំពូល, កំហុស, budget guard                               |
-| `omniroute_db_health_check`        | `read:health`, `write:resilience`    | ធ្វើរោគវិនិច្ឆ័យ (និងជួសជុលដោយស្វ័យប្រវត្តិប្រសិនបើអាច) ការផ្លាស់ប្តូរ database ដូចជា combo refs ដែលខូច / orphan rows |
-| `omniroute_sync_pricing`           | `pricing:write`                      | ធ្វើសមកាលកម្មទិន្នន័យតម្លៃពីប្រភពខាងក្រៅ (LiteLLM); គាំទ្រ `dryRun`                                                   |
+| `agentproxy_simulate_route`         | `read:health`, `read:combos`         | ការក្លែងធ្វើផ្លូវរត់ស្ងួត (dry-run) ជាមួយនឹង fallback tree                                                            |
+| `agentproxy_set_budget_guard`       | `write:budget`                       | ថវិកាសម្រាប់វគ្គ (session) ជាមួយនឹងសកម្មភាពបន្ថយ/ទប់ស្កាត់/ជូនដំណឹង                                                   |
+| `agentproxy_set_routing_strategy`   | `write:combos`                       | ធ្វើបច្ចុប្បន្នភាពយុទ្ធសាស្ត្រ combo នៅពេលដំណើរការ (priority/weighted/auto/etc.)                                      |
+| `agentproxy_set_resilience_profile` | `write:resilience`                   | អនុវត្តការកំណត់ជាមុន (preset) នៃភាពធន់ `aggressive` / `balanced` / `conservative`                                     |
+| `agentproxy_test_combo`             | `execute:completions`, `read:combos` | ការធ្វើតេស្តផ្ទាល់នៃ provider នីមួយៗនៅក្នុង combo ដោយប្រើការហៅ upstream ពិតប្រាកដ                                     |
+| `agentproxy_get_provider_metrics`   | `read:health`                        | Metric តាម provider ជាមួយនឹង p50/p95/p99 latency និងស្ថានភាព circuit breaker                                          |
+| `agentproxy_best_combo_for_task`    | `read:combos`, `read:health`         | ណែនាំ combo តាមប្រភេទកិច្ចការ ជាមួយនឹងដែនកំណត់ថវិកា/latency                                                           |
+| `agentproxy_explain_route`          | `read:health`, `read:usage`          | ពន្យល់ពីមូលហេតុដែលសំណើត្រូវបានបញ្ជូនទៅ provider (កត្តាពិន្ទុ + fallbacks)                                             |
+| `agentproxy_get_session_snapshot`   | `read:usage`                         | រូបថតពេញលេញនៃវគ្គ (session): តម្លៃ, tokens, models/providers កំពូល, កំហុស, budget guard                               |
+| `agentproxy_db_health_check`        | `read:health`, `write:resilience`    | ធ្វើរោគវិនិច្ឆ័យ (និងជួសជុលដោយស្វ័យប្រវត្តិប្រសិនបើអាច) ការផ្លាស់ប្តូរ database ដូចជា combo refs ដែលខូច / orphan rows |
+| `agentproxy_sync_pricing`           | `pricing:write`                      | ធ្វើសមកាលកម្មទិន្នន័យតម្លៃពីប្រភពខាងក្រៅ (LiteLLM); គាំទ្រ `dryRun`                                                   |
 
 ## ឧបករណ៍ Cache (2)
 
 | ឧបករណ៍                  | វិសាលភាព      | ការពិពណ៌នា                                          |
 | :---------------------- | :------------ | :-------------------------------------------------- |
-| `omniroute_cache_stats` | `read:cache`  | Semantic cache, prompt-cache, និង idempotency stats |
-| `omniroute_cache_flush` | `write:cache` | Flush cache ជាសកល ឬតាម signature/model              |
+| `agentproxy_cache_stats` | `read:cache`  | Semantic cache, prompt-cache, និង idempotency stats |
+| `agentproxy_cache_flush` | `write:cache` | Flush cache ជាសកល ឬតាម signature/model              |
 
 ## ឧបករណ៍បង្រួម (13)
 
 | ឧបករណ៍                              | វិសាលភាព            | ការពិពណ៌នា                                                                                                                                                       |
 | :---------------------------------- | :------------------ | :--------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `omniroute_compression_status`      | `read:compression`  | ការកំណត់ការបង្រួម, សេចក្តីសង្ខេបការវិភាគ, និង cache-aware stats (រួមបញ្ចូល metadata `analytics.mcpDescriptionCompression`)                                       |
-| `omniroute_compression_configure`   | `write:compression` | កំណត់រចនាសម្ព័ន្ធរបៀបបង្រួម, កម្រិតកំណត់, សមាមាត្រគោលដៅ, ការរក្សា system-prompt, ការបិទ/បើកការបង្រួមការពិពណ៌នា MCP                                               |
-| `omniroute_set_compression_engine`  | `write:compression` | ជ្រើសរើស engine សកម្ម (off/caveman/rtk/stacked) និងកម្រិត Caveman/RTK                                                                                            |
-| `omniroute_list_compression_combos` | `read:compression`  | រាយបញ្ជី compression combos ដែលមានឈ្មោះ និង engine pipelines របស់ពួកគេ                                                                                           |
-| `omniroute_compression_combo_stats` | `read:compression`  | ការវិភាគដែលបានដាក់ជាក្រុមតាម compression combo និង engine                                                                                                        |
-| `omniroute_ccr_store`               | `write:compression` | រក្សាទុកមាតិកាដែលដាច់ដោយឡែកពីអ្នកហៅ (caller-isolated) នៅក្នុងឃ្លាំង CCR ក្នុងអង្គចងចាំដែលមានកំណត់ (bounded in-memory) ហើយប្រគល់ marker បូកនឹង reference `ccr://` |
-| `omniroute_ccr_retrieve`            | `read:compression`  | ទាញយកមាតិកា CCR ទាំងស្រុង ឬជាមួយនឹងរបៀប head, tail, lines, grep, និង stats                                                                                       |
-| `omniroute_ccr_inspect`             | `read:compression`  | ត្រួតពិនិត្យ metadata CCR ដែលជាកម្មសិទ្ធិរបស់អ្នកហៅ (caller-owned) ដោយមិនប្រគល់មាតិកា                                                                            |
-| `omniroute_ccr_list`                | `read:compression`  | រាយបញ្ជី metadata ដែលបានបែងចែកទំព័រ (paginated) សម្រាប់ caller-owned CCR blocks                                                                                  |
-| `omniroute_ccr_delete`              | `write:compression` | លុប caller-owned CCR block                                                                                                                                       |
-| `omniroute_ccr_stats`               | `read:compression`  | រាយការណ៍ការប្រើប្រាស់អង្គចងចាំតាម caller (caller-scoped), lifecycle counters, និងដែនកំណត់ឃ្លាំង                                                                  |
-| `omniroute_rtk_discover`            | `read:compression`  | ស្វែងរកសំឡេងរំខានដែលកើតឡើងដដែលៗនៅក្នុង opt-in RTK output samples                                                                                                 |
-| `omniroute_rtk_learn`               | `read:compression`  | បង្កើត RTK filter draft ដែលអាចពិនិត្យបានពី opt-in samples                                                                                                        |
+| `agentproxy_compression_status`      | `read:compression`  | ការកំណត់ការបង្រួម, សេចក្តីសង្ខេបការវិភាគ, និង cache-aware stats (រួមបញ្ចូល metadata `analytics.mcpDescriptionCompression`)                                       |
+| `agentproxy_compression_configure`   | `write:compression` | កំណត់រចនាសម្ព័ន្ធរបៀបបង្រួម, កម្រិតកំណត់, សមាមាត្រគោលដៅ, ការរក្សា system-prompt, ការបិទ/បើកការបង្រួមការពិពណ៌នា MCP                                               |
+| `agentproxy_set_compression_engine`  | `write:compression` | ជ្រើសរើស engine សកម្ម (off/caveman/rtk/stacked) និងកម្រិត Caveman/RTK                                                                                            |
+| `agentproxy_list_compression_combos` | `read:compression`  | រាយបញ្ជី compression combos ដែលមានឈ្មោះ និង engine pipelines របស់ពួកគេ                                                                                           |
+| `agentproxy_compression_combo_stats` | `read:compression`  | ការវិភាគដែលបានដាក់ជាក្រុមតាម compression combo និង engine                                                                                                        |
+| `agentproxy_ccr_store`               | `write:compression` | រក្សាទុកមាតិកាដែលដាច់ដោយឡែកពីអ្នកហៅ (caller-isolated) នៅក្នុងឃ្លាំង CCR ក្នុងអង្គចងចាំដែលមានកំណត់ (bounded in-memory) ហើយប្រគល់ marker បូកនឹង reference `ccr://` |
+| `agentproxy_ccr_retrieve`            | `read:compression`  | ទាញយកមាតិកា CCR ទាំងស្រុង ឬជាមួយនឹងរបៀប head, tail, lines, grep, និង stats                                                                                       |
+| `agentproxy_ccr_inspect`             | `read:compression`  | ត្រួតពិនិត្យ metadata CCR ដែលជាកម្មសិទ្ធិរបស់អ្នកហៅ (caller-owned) ដោយមិនប្រគល់មាតិកា                                                                            |
+| `agentproxy_ccr_list`                | `read:compression`  | រាយបញ្ជី metadata ដែលបានបែងចែកទំព័រ (paginated) សម្រាប់ caller-owned CCR blocks                                                                                  |
+| `agentproxy_ccr_delete`              | `write:compression` | លុប caller-owned CCR block                                                                                                                                       |
+| `agentproxy_ccr_stats`               | `read:compression`  | រាយការណ៍ការប្រើប្រាស់អង្គចងចាំតាម caller (caller-scoped), lifecycle counters, និងដែនកំណត់ឃ្លាំង                                                                  |
+| `agentproxy_rtk_discover`            | `read:compression`  | ស្វែងរកសំឡេងរំខានដែលកើតឡើងដដែលៗនៅក្នុង opt-in RTK output samples                                                                                                 |
+| `agentproxy_rtk_learn`               | `read:compression`  | បង្កើត RTK filter draft ដែលអាចពិនិត្យបានពី opt-in samples                                                                                                        |
 
 ធាតុ CCR គឺស្ថិតនៅក្នុងអង្គចងចាំតែប៉ុណ្ណោះ ហើយបាត់ទៅវិញនៅពេលចាប់ផ្តើមឡើងវិញ។ block នីមួយៗត្រូវបានកំណត់ត្រឹម 2 MiB, principal នីមួយៗត្រឹម 16 MiB, និងឃ្លាំងសកលត្រឹម 64 MiB។ ធាតុមាន TTL លំនាំដើម 24 ម៉ោង (អតិបរមាប្រាំពីរថ្ងៃ)។ ការទាញយក MCP ពេញលេញត្រូវបានកំណត់ត្រឹម 256 KiB; blocks ដែលធំជាងនេះនៅតែអាចប្រើបានតាមរយៈរបៀប ranged និង grep។ ការផ្ទុក, ការទាញយក, ការរាយបញ្ជី, ការត្រួតពិនិត្យ, ការលុប, និង stats ត្រូវបានញែកដាច់ដោយឡែកដោយ API-key principal ដែលបានផ្ទៀងផ្ទាត់។ កំណត់ត្រា Audit មាន hashes និង metadata ទំហំ មិនមែនមាតិកាឡើយ។
 
-`omniroute_compression_status` រាយការណ៍ពីការបង្ហាប់ការពិពណ៌នា MCP ដោយឡែកពីគ្នានៅក្រោម
+`agentproxy_compression_status` រាយការណ៍ពីការបង្ហាប់ការពិពណ៌នា MCP ដោយឡែកពីគ្នានៅក្រោម
 `analytics.mcpDescriptionCompression`។ តម្លៃទាំងនោះគឺជាការប៉ាន់ស្មានទំហំទិន្នន័យមេតាសម្រាប់
 ការពិពណ៌នា MCP ដែលអាចរាយបញ្ជីបាន (`tools`, `prompts`, `resources`, និង `resourceTemplates`);
 ពួកវាមិនមែនជាបង្កាន់ដៃប្រើប្រាស់របស់អ្នកផ្តល់សេវាទេ ហើយត្រូវបានសម្គាល់ដោយ `source: "mcp_metadata_estimate"`។
@@ -170,9 +170,9 @@ curl -i \
 
 | ឧបករណ៍                      | វិសាលភាព       | ការពិពណ៌នា                                                                               |
 | :-------------------------- | :------------- | :--------------------------------------------------------------------------------------- |
-| `omniroute_oneproxy_fetch`  | `read:proxies` | ទាញយកប្រូកស៊ីឥតគិតថ្លៃពីទីផ្សារ 1proxy (តម្រងពិធីការ/ប្រទេស/គុណភាព/ដែនកំណត់)             |
-| `omniroute_oneproxy_rotate` | `read:proxies` | ទទួលបានប្រូកស៊ីបន្ទាប់ដែលអាចប្រើបានតាមយុទ្ធសាស្ត្រ (`random` / `quality` / `sequential`) |
-| `omniroute_oneproxy_stats`  | `read:proxies` | ស្ថិតិ Pool, ស្ថានភាពធ្វើសមកាលកម្ម, ការចែកចាយតាមពិធីការ និងប្រទេស                        |
+| `agentproxy_oneproxy_fetch`  | `read:proxies` | ទាញយកប្រូកស៊ីឥតគិតថ្លៃពីទីផ្សារ 1proxy (តម្រងពិធីការ/ប្រទេស/គុណភាព/ដែនកំណត់)             |
+| `agentproxy_oneproxy_rotate` | `read:proxies` | ទទួលបានប្រូកស៊ីបន្ទាប់ដែលអាចប្រើបានតាមយុទ្ធសាស្ត្រ (`random` / `quality` / `sequential`) |
+| `agentproxy_oneproxy_stats`  | `read:proxies` | ស្ថិតិ Pool, ស្ថានភាពធ្វើសមកាលកម្ម, ការចែកចាយតាមពិធីការ និងប្រទេស                        |
 
 ## ឧបករណ៍ Memory (3)
 
@@ -180,9 +180,9 @@ curl -i \
 
 | ឧបករណ៍                    | វិសាលភាព       | ការពិពណ៌នា                                                                   |
 | :------------------------ | :------------- | :--------------------------------------------------------------------------- |
-| `omniroute_memory_search` | `read:memory`  | ស្វែងរក memories តាមសំណួរ / ប្រភេទ / API key ជាមួយនឹងការអនុវត្តថវិកា token   |
-| `omniroute_memory_add`    | `write:memory` | បន្ថែមធាតុ memory ថ្មី (`factual` / `episodic` / `procedural` / `semantic`)  |
-| `omniroute_memory_clear`  | `write:memory` | សម្អាត memories សម្រាប់ API key ដោយអាចតម្រងតាមប្រភេទ ឬ `olderThan` timestamp |
+| `agentproxy_memory_search` | `read:memory`  | ស្វែងរក memories តាមសំណួរ / ប្រភេទ / API key ជាមួយនឹងការអនុវត្តថវិកា token   |
+| `agentproxy_memory_add`    | `write:memory` | បន្ថែមធាតុ memory ថ្មី (`factual` / `episodic` / `procedural` / `semantic`)  |
+| `agentproxy_memory_clear`  | `write:memory` | សម្អាត memories សម្រាប់ API key ដោយអាចតម្រងតាមប្រភេទ ឬ `olderThan` timestamp |
 
 ## ឧបករណ៍ Skill (4)
 
@@ -190,10 +190,10 @@ curl -i \
 
 | ឧបករណ៍                        | វិសាលភាព         | ការពិពណ៌នា                                                                                   |
 | :---------------------------- | :--------------- | :------------------------------------------------------------------------------------------- |
-| `omniroute_skills_list`       | `read:skills`    | រាយបញ្ជី skills ដែលបានចុះឈ្មោះជាមួយនឹងការតម្រងជាជម្រើសតាម API key, ឈ្មោះ, ឬស្ថានភាពដែលបានបើក |
-| `omniroute_skills_enable`     | `write:skills`   | បើក ឬបិទ skill ជាក់លាក់មួយតាម ID                                                             |
-| `omniroute_skills_execute`    | `execute:skills` | ប្រតិបត្តិ skill ជាមួយនឹងការបញ្ចូលដែលបានផ្ដល់ និងប្រគល់កំណត់ត្រាប្រតិបត្តិមកវិញ              |
-| `omniroute_skills_executions` | `read:skills`    | រាយបញ្ជីប្រវត្តិប្រតិបត្តិ skill ថ្មីៗ                                                       |
+| `agentproxy_skills_list`       | `read:skills`    | រាយបញ្ជី skills ដែលបានចុះឈ្មោះជាមួយនឹងការតម្រងជាជម្រើសតាម API key, ឈ្មោះ, ឬស្ថានភាពដែលបានបើក |
+| `agentproxy_skills_enable`     | `write:skills`   | បើក ឬបិទ skill ជាក់លាក់មួយតាម ID                                                             |
+| `agentproxy_skills_execute`    | `execute:skills` | ប្រតិបត្តិ skill ជាមួយនឹងការបញ្ចូលដែលបានផ្ដល់ និងប្រគល់កំណត់ត្រាប្រតិបត្តិមកវិញ              |
+| `agentproxy_skills_executions` | `read:skills`    | រាយបញ្ជីប្រវត្តិប្រតិបត្តិ skill ថ្មីៗ                                                       |
 
 ## ប្រភពបរិបទ Notion (6)
 
@@ -232,9 +232,9 @@ The following table lists the tools available in the MCP tool catalog.
 
 | Tool                              | Scopes         | Description                                                                                                                  |
 | :-------------------------------- | :------------- | :--------------------------------------------------------------------------------------------------------------------------- |
-| `omniroute_agent_skills_list`     | `read:catalog` | រាយបញ្ជីជំនាញភ្នាក់ងារទាំង 45 ជាមួយនឹងតម្រង `category` (api\|cli) និង `area` ស្រេចចិត្ត; ត្រឡប់ metadata + coverage          |
-| `omniroute_agent_skills_get`      | `read:catalog` | ទទួលបាន metadata ពេញលេញ + ខ្លឹមសារ SKILL.md សម្រាប់ជំនាញតែមួយដោយ `id` តាមលំដាប់លំដោយ                                         |
-| `omniroute_agent_skills_coverage` | `read:catalog` | ស្ថិតិគ្របដណ្តប់៖ តើជំនាញ API 23, CLI 21 និង config 1 មានឯកសារ SKILL.md ប៉ុន្មាននៅលើប្រព័ន្ធឯកសារធៀបនឹងចំនួនសរុបក្នុងកាតាឡុក |
+| `agentproxy_agent_skills_list`     | `read:catalog` | រាយបញ្ជីជំនាញភ្នាក់ងារទាំង 45 ជាមួយនឹងតម្រង `category` (api\|cli) និង `area` ស្រេចចិត្ត; ត្រឡប់ metadata + coverage          |
+| `agentproxy_agent_skills_get`      | `read:catalog` | ទទួលបាន metadata ពេញលេញ + ខ្លឹមសារ SKILL.md សម្រាប់ជំនាញតែមួយដោយ `id` តាមលំដាប់លំដោយ                                         |
+| `agentproxy_agent_skills_coverage` | `read:catalog` | ស្ថិតិគ្របដណ្តប់៖ តើជំនាញ API 23, CLI 21 និង config 1 មានឯកសារ SKILL.md ប៉ុន្មាននៅលើប្រព័ន្ធឯកសារធៀបនឹងចំនួនសរុបក្នុងកាតាឡុក |
 
 សូមមើល [AGENT-SKILLS.md](./AGENT-SKILLS.md) សម្រាប់កាតាឡុកពេញលេញ និងរបៀបដែលភ្នាក់ងារខាងក្រៅប្រើប្រាស់វា។
 
@@ -302,7 +302,7 @@ guardrail **មុន** វាទៅដល់ស្រទាប់អនុវ�
 | :------------------- | :------------------------------------------------------------------------------- | :---------------------------- | :------------------------------------------------------------------ |
 | ការគ្រប់គ្រង API-key | `api_keys.scopes`                                                                | `hasManageScope`              | Management REST សម្រាប់ Bearer key នោះ                              |
 | API-key បន្ថែម       | array ដូចគ្នា, ខ្សែអក្សរពិតប្រាកដមួយ                                             | ជំនួយការដែលបានរៀបរាប់ខាងក្រោម | សមត្ថភាពតែមួយគត់នោះ                                                 |
-| វិសាលភាពឧបករណ៍ MCP   | array ដូចគ្នា, បើមិនដូច្នោះទេ MCP `_meta`, បើមិនដូច្នោះទេ `OMNIROUTE_MCP_SCOPES` | `scopeMatches`                | ឧបករណ៍នោះ, នៅពេលដែលការអនុវត្តត្រូវបានបើក                            |
+| វិសាលភាពឧបករណ៍ MCP   | array ដូចគ្នា, បើមិនដូច្នោះទេ MCP `_meta`, បើមិនដូច្នោះទេ `AGENTPROXY_MCP_SCOPES` | `scopeMatches`                | ឧបករណ៍នោះ, នៅពេលដែលការអនុវត្តត្រូវបានបើក                            |
 | Access token         | `oma_live_…`                                                                     | `scopeSatisfies`              | management route ដែលវិធីសាស្ត្រ និងផ្លូវរបស់វាទាមទារចំណាត់ថ្នាក់នោះ |
 
 ការបង្កើតព័ត៌មានសម្ងាត់នីមួយៗត្រូវបានគ្របដណ្តប់នៅក្នុង
@@ -348,12 +348,12 @@ key ដែលវិសាលភាពរបស់វាគឺ `["manage"]` ប�
 គឺជាខ្សែអក្សរដែលបានផ្តល់តែមួយគត់។ មិនមានឋានានុក្រមក្នុងចំណោមវិសាលភាពឧបករណ៍ MCP
 ក្រៅពី `*` ដែលនៅខាងចុងឡើយ។
 
-ការអនុវត្តត្រូវបានបិទលុះត្រាតែ `OMNIROUTE_MCP_ENFORCE_SCOPES=true` (លំនាំដើម
+ការអនុវត្តត្រូវបានបិទលុះត្រាតែ `AGENTPROXY_MCP_ENFORCE_SCOPES=true` (លំនាំដើម
 `false`)។ ខណៈពេលដែលវាបិទ, `evaluateToolScopes` អនុញ្ញាតការហៅ និងរំលងកាតាឡុក។
 ខណៈពេលដែលវាបើក, HTTP ប្រើ Bearer key's `api_keys.scopes` ជា
 `authInfo` (សូមមើល [ការចងវិសាលភាព HTTP តាម key](#per-key-http-scope-binding-7895))។
 នៅពេលដែលគ្មាន key scopes ត្រូវបានដោះស្រាយ, granted set ធ្លាក់ទៅ MCP `_meta`, បន្ទាប់មក
-`OMNIROUTE_MCP_SCOPES`។
+`AGENTPROXY_MCP_SCOPES`។
 
 #### វិសាលភាព Access-token
 
@@ -408,8 +408,8 @@ tokens `oma_live_…` (`src/lib/accessTokens/scopes.ts`) ផ្ទុក `read`,
 | `write:skills`        | `skills_enable`                                                                                                                                                                  |
 | `execute:skills`      | `skills_execute`                                                                                                                                                                 |
 | `read:catalog`        | `agent_skills_list`, `agent_skills_get`, `agent_skills_coverage`                                                                                                                 |
-| `read:tools`          | `omniroute_tool_search`                                                                                                                                                          |
-| `read:radar`          | `omniroute_radar_catalog`                                                                                                                                                        |
+| `read:tools`          | `agentproxy_tool_search`                                                                                                                                                          |
+| `read:radar`          | `agentproxy_radar_catalog`                                                                                                                                                        |
 | `read:gamification`   | `gamification_profile`, `gamification_rank`, `gamification_leaderboard`, `gamification_badges`, `gamification_servers`, `gamification_anomalies`                                 |
 | `write:gamification`  | `gamification_invite`, `gamification_transfer`                                                                                                                                   |
 | `read:plugins`        | `plugin_list`, `plugin_executions`                                                                                                                                               |
@@ -426,23 +426,23 @@ Wildcard scopes ត្រូវបានគាំទ្រ៖ `read:*` ផ្ដ
 
 ### ការចង HTTP scope តាម Key នីមួយៗ (#7895)
 
-លើ HTTP/SSE, `open-sse/mcp-server/httpTransport.ts` ឥឡូវនេះដោះស្រាយ `api_keys.scopes` ពិតប្រាកដរបស់អ្នកហៅតាមរយៈ `resolveMcpCallerAuthInfo()` (`open-sse/mcp-server/httpAuthContext.ts`) ហើយបញ្ជូនវាទៅ `transport.handleRequest(req, { authInfo })` របស់ MCP SDK ដូច្នេះ `extra.authInfo.scopes` ដែលទៅដល់ការហៅឧបករណ៍នីមួយៗឆ្លុះបញ្ចាំងពី scopes របស់ Bearer key ផ្ទាល់។ `resolveCallerScopeContext()` របស់ `scopeEnforcement.ts` បានផ្ដល់អាទិភាពរួចហើយដល់ `authInfo` លើ `_meta` និង `OMNIROUTE_MCP_SCOPES` env fallback — នេះគ្រាន់តែបំពេញប្រភពដែលមានអាទិភាពខ្ពស់បំផុតដំបូងគេប៉ុណ្ណោះ ដែលពីមុនមិនត្រូវបានបញ្ចូលតាម HTTP ទេ។ នៅពេលដែលគ្មាន API key ត្រូវបានដោះស្រាយ (គ្មាន header, key មិនត្រឹមត្រូវ), `authInfo` នៅតែ `undefined` ហើយការដោះស្រាយនឹងបន្តទៅខ្សែសង្វាក់ `meta`/env ដែលមានស្រាប់ដោយមិនផ្លាស់ប្តូរ។ នេះមិនផ្លាស់ប្ដូរតម្លៃលំនាំដើមរបស់ `OMNIROUTE_MCP_ENFORCE_SCOPES` ទេ — ការអនុវត្តនៅតែត្រូវបើកដំណើរការដោយជាក់លាក់; ការផ្លាស់ប្តូរនេះគ្រាន់តែធ្វើឱ្យផ្លូវតាម key នីមួយៗមានអាទិភាពនៅពេលដែលវាត្រូវបានបើកដំណើរការប៉ុណ្ណោះ។ stdio មិនមានអត្តសញ្ញាណតាមអ្នកហៅនីមួយៗទេ (សូមមើល `mcpCallerIdentity.ts`) ហើយមិនត្រូវបានប៉ះពាល់ទេ — វាស្ថិតនៅលើខ្សែសង្វាក់ `_meta`/env fallback ។
+លើ HTTP/SSE, `open-sse/mcp-server/httpTransport.ts` ឥឡូវនេះដោះស្រាយ `api_keys.scopes` ពិតប្រាកដរបស់អ្នកហៅតាមរយៈ `resolveMcpCallerAuthInfo()` (`open-sse/mcp-server/httpAuthContext.ts`) ហើយបញ្ជូនវាទៅ `transport.handleRequest(req, { authInfo })` របស់ MCP SDK ដូច្នេះ `extra.authInfo.scopes` ដែលទៅដល់ការហៅឧបករណ៍នីមួយៗឆ្លុះបញ្ចាំងពី scopes របស់ Bearer key ផ្ទាល់។ `resolveCallerScopeContext()` របស់ `scopeEnforcement.ts` បានផ្ដល់អាទិភាពរួចហើយដល់ `authInfo` លើ `_meta` និង `AGENTPROXY_MCP_SCOPES` env fallback — នេះគ្រាន់តែបំពេញប្រភពដែលមានអាទិភាពខ្ពស់បំផុតដំបូងគេប៉ុណ្ណោះ ដែលពីមុនមិនត្រូវបានបញ្ចូលតាម HTTP ទេ។ នៅពេលដែលគ្មាន API key ត្រូវបានដោះស្រាយ (គ្មាន header, key មិនត្រឹមត្រូវ), `authInfo` នៅតែ `undefined` ហើយការដោះស្រាយនឹងបន្តទៅខ្សែសង្វាក់ `meta`/env ដែលមានស្រាប់ដោយមិនផ្លាស់ប្តូរ។ នេះមិនផ្លាស់ប្ដូរតម្លៃលំនាំដើមរបស់ `AGENTPROXY_MCP_ENFORCE_SCOPES` ទេ — ការអនុវត្តនៅតែត្រូវបើកដំណើរការដោយជាក់លាក់; ការផ្លាស់ប្តូរនេះគ្រាន់តែធ្វើឱ្យផ្លូវតាម key នីមួយៗមានអាទិភាពនៅពេលដែលវាត្រូវបានបើកដំណើរការប៉ុណ្ណោះ។ stdio មិនមានអត្តសញ្ញាណតាមអ្នកហៅនីមួយៗទេ (សូមមើល `mcpCallerIdentity.ts`) ហើយមិនត្រូវបានប៉ះពាល់ទេ — វាស្ថិតនៅលើខ្សែសង្វាក់ `_meta`/env fallback ។
 
 ## អថេរបរិស្ថាន
 
 | អថេរ                                    | លំនាំដើម                                  | គោលបំណង                                                                                                                         |
 | :-------------------------------------- | :---------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------ |
-| `OMNIROUTE_BASE_URL`                    | `http://localhost:20128`                  | URL មូលដ្ឋានដែលម៉ាស៊ីនមេ MCP ប្រើនៅពេលហៅ API ផ្ទៃក្នុងរបស់ AgentProxy                                                            |
-| `OMNIROUTE_API_KEY`                     | (ទទេ)                                     | កូនសោ API ដែលបញ្ជូនបន្តជា `Authorization: Bearer` ទៅការហៅ API ផ្ទៃក្នុង                                                         |
-| `OMNIROUTE_MCP_ENFORCE_SCOPES`          | `false` (មានតែ `"true"` ប៉ុណ្ណោះដែលបើកវា) | នៅពេលបើកដំណើរការ វិសាលភាពដែលបាត់បង់នឹងបដិសេធការហៅឧបករណ៍ និងកត់ត្រា `scope_denied:<reason>` នៅក្នុងកំណត់ហេតុសវនកម្ម              |
-| `OMNIROUTE_MCP_SCOPES`                  | (ទទេ)                                     | បញ្ជីអនុញ្ញាតដែលបំបែកដោយសញ្ញាក្បៀសនៃវិសាលភាពដែលត្រូវបានចាត់ទុកថា "មាន" តាមលំនាំដើម (ប្រើនៅពេលអ្នកហៅមិនផ្តល់វិសាលភាពផ្ទាល់ខ្លួន) |
-| `OMNIROUTE_MCP_COMPRESS_DESCRIPTIONS`   | (មិនបានកំណត់ = បើក)                       | នៅពេលកំណត់ទៅ `0/false/off/no` វានឹងបិទការបង្ហាប់ការពិពណ៌នា MCP នៅពេលចុះឈ្មោះ                                                    |
-| `OMNIROUTE_MCP_DESCRIPTION_COMPRESSION` | (មិនបានកំណត់ = បើក)                       | ឈ្មោះហៅក្រៅជំនួសសម្រាប់ប៊ូតុងបិទបើកដូចខាងលើ                                                                                     |
-| `OMNIROUTE_MCP_FETCH_TIMEOUT_MS`        | `10000`                                   | ថវិកាបោះបង់ចោលសម្រាប់ការអានការគ្រប់គ្រងផ្ទៃក្នុង (សុខភាព ភាពធន់ បន្សំ កូតា ការប្រើប្រាស់)                                       |
-| `OMNIROUTE_MCP_UPSTREAM_TIMEOUT_MS`     | `60000`                                   | ថវិកាបោះបង់ចោលសម្រាប់ការលោតដែលរង់ចាំអ្នកផ្តល់សេវា (`route_request`, `web_search`, `web_fetch`)                                  |
+| `AGENTPROXY_BASE_URL`                    | `http://localhost:20128`                  | URL មូលដ្ឋានដែលម៉ាស៊ីនមេ MCP ប្រើនៅពេលហៅ API ផ្ទៃក្នុងរបស់ AgentProxy                                                            |
+| `AGENTPROXY_API_KEY`                     | (ទទេ)                                     | កូនសោ API ដែលបញ្ជូនបន្តជា `Authorization: Bearer` ទៅការហៅ API ផ្ទៃក្នុង                                                         |
+| `AGENTPROXY_MCP_ENFORCE_SCOPES`          | `false` (មានតែ `"true"` ប៉ុណ្ណោះដែលបើកវា) | នៅពេលបើកដំណើរការ វិសាលភាពដែលបាត់បង់នឹងបដិសេធការហៅឧបករណ៍ និងកត់ត្រា `scope_denied:<reason>` នៅក្នុងកំណត់ហេតុសវនកម្ម              |
+| `AGENTPROXY_MCP_SCOPES`                  | (ទទេ)                                     | បញ្ជីអនុញ្ញាតដែលបំបែកដោយសញ្ញាក្បៀសនៃវិសាលភាពដែលត្រូវបានចាត់ទុកថា "មាន" តាមលំនាំដើម (ប្រើនៅពេលអ្នកហៅមិនផ្តល់វិសាលភាពផ្ទាល់ខ្លួន) |
+| `AGENTPROXY_MCP_COMPRESS_DESCRIPTIONS`   | (មិនបានកំណត់ = បើក)                       | នៅពេលកំណត់ទៅ `0/false/off/no` វានឹងបិទការបង្ហាប់ការពិពណ៌នា MCP នៅពេលចុះឈ្មោះ                                                    |
+| `AGENTPROXY_MCP_DESCRIPTION_COMPRESSION` | (មិនបានកំណត់ = បើក)                       | ឈ្មោះហៅក្រៅជំនួសសម្រាប់ប៊ូតុងបិទបើកដូចខាងលើ                                                                                     |
+| `AGENTPROXY_MCP_FETCH_TIMEOUT_MS`        | `10000`                                   | ថវិកាបោះបង់ចោលសម្រាប់ការអានការគ្រប់គ្រងផ្ទៃក្នុង (សុខភាព ភាពធន់ បន្សំ កូតា ការប្រើប្រាស់)                                       |
+| `AGENTPROXY_MCP_UPSTREAM_TIMEOUT_MS`     | `60000`                                   | ថវិកាបោះបង់ចោលសម្រាប់ការលោតដែលរង់ចាំអ្នកផ្តល់សេវា (`route_request`, `web_search`, `web_fetch`)                                  |
 | `MCP_TOOL_DENY`                         | (មិនបានកំណត់ = គ្មានតម្រង)                | ឈ្មោះឧបករណ៍ដែលបំបែកដោយសញ្ញាក្បៀសដើម្បីទម្លាក់ចេញពី `tools/list` (ការកាត់បន្ថយចំនួនឧបករណ៍ — សូមមើលខាងក្រោម)                      |
 | `MCP_TOOL_ALLOW`                        | (មិនបានកំណត់ = គ្មានតម្រង)                | ឈ្មោះឧបករណ៍ដែលបំបែកដោយសញ្ញាក្បៀសដើម្បីរក្សាទុកតែប៉ុណ្ណោះ (របៀបបញ្ជីអនុញ្ញាត — សូមមើលខាងក្រោម)                                   |
-| `DATA_DIR`                              | `~/.omniroute`                            | ឯកសារ Heartbeat ត្រូវបានសរសេរទៅ `${DATA_DIR}/runtime/mcp-heartbeat.json`                                                        |
+| `DATA_DIR`                              | `~/.agentproxy`                            | ឯកសារ Heartbeat ត្រូវបានសរសេរទៅ `${DATA_DIR}/runtime/mcp-heartbeat.json`                                                        |
 
 ---
 
@@ -452,8 +452,8 @@ Wildcard scopes ត្រូវបានគាំទ្រ៖ `read:*` ផ្ដ
 
 - ការបង្ហាប់ដំណើរការលើអត្ថបទពិពណ៌នាដោយប្រើសំណុំច្បាប់ Caveman (`getRulesForContext("all", "full")`) ជាមួយនឹងការទាញយកប្លុកដែលបានរក្សាទុក (code spans, fenced blocks, etc.) ដូច្នេះមាតិការចនាសម្ព័ន្ធមិនត្រូវបានផ្លាស់ប្តូរទេ។
 - បិទបើកតាមការដាក់ពង្រាយនីមួយៗតាមរយៈតម្លៃ `compression.mcpDescriptionCompressionEnabled` នៅក្នុងតារាងការកំណត់ `key_value` (លំនាំដើម: បើក) — បង្ហាញនៅក្នុង UI ជា **Analytics → MCP description compression**។
-- បិទបើកទូទាំងដំណើរការតាមរយៈ `OMNIROUTE_MCP_COMPRESS_DESCRIPTIONS=false` ឬ `OMNIROUTE_MCP_DESCRIPTION_COMPRESSION=false`។
-- ស្ថិតិពេលវេលាពិតត្រូវបានបង្ហាញតាមរយៈ `omniroute_compression_status` ក្រោម `analytics.mcpDescriptionCompression` និងដាក់ស្លាក `source: "mcp_metadata_estimate"` ដើម្បីបែងចែកពីបង្កាន់ដៃប្រើប្រាស់របស់អ្នកផ្តល់សេវាពិតប្រាកដ។
+- បិទបើកទូទាំងដំណើរការតាមរយៈ `AGENTPROXY_MCP_COMPRESS_DESCRIPTIONS=false` ឬ `AGENTPROXY_MCP_DESCRIPTION_COMPRESSION=false`។
+- ស្ថិតិពេលវេលាពិតត្រូវបានបង្ហាញតាមរយៈ `agentproxy_compression_status` ក្រោម `analytics.mcpDescriptionCompression` និងដាក់ស្លាក `source: "mcp_metadata_estimate"` ដើម្បីបែងចែកពីបង្កាន់ដៃប្រើប្រាស់របស់អ្នកផ្តល់សេវាពិតប្រាកដ។
 
 ---
 
@@ -472,10 +472,10 @@ Wildcard scopes ត្រូវបានគាំទ្រ៖ `read:*` ផ្ដ
 
 ```bash
 # Drop two tools from the catalog
-MCP_TOOL_DENY="omniroute_get_health,omniroute_list_combos" omniroute --mcp
+MCP_TOOL_DENY="agentproxy_get_health,agentproxy_list_combos" agentproxy --mcp
 
 # Announce only the routing + quota tools (allow-list mode)
-MCP_TOOL_ALLOW="omniroute_route_request,omniroute_check_quota" omniroute --mcp
+MCP_TOOL_ALLOW="agentproxy_route_request,agentproxy_check_quota" agentproxy --mcp
 ```
 
 **របៀបដែលឧបករណ៍ដែលបានត្រងត្រូវបានដកចេញ៖** ការចុះឈ្មោះតែងតែជោគជ័យ; ឧបករណ៍ដែល profile បដិសេធត្រូវបាន `.disable()` នៅលើ MCP SDK handle ដូច្នេះវាមិនដែលបង្ហាញនៅក្នុង `tools/list` ទេ ប៉ុន្តែការតភ្ជាប់នៅតែដដែល (បើក/បិទស្អាត គ្មានការចុះឈ្មោះឡើងវិញ)។ profile parser គឺ `readMcpToolProfileFromEnv(process.env)` ដែលប្រគល់ `null` មកវិញ (គ្មានការត្រង) នៅពេលដែលអថេរទាំងពីរទទេរ។

@@ -1,10 +1,8 @@
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
 import test from "node:test";
 
-import {
-  findIdentityViolations,
-  isHistoricalContentPath,
-} from "../../../scripts/check/check-agentproxy-identity.mjs";
+import { findIdentityViolations } from "../../../scripts/check/check-agentproxy-identity.mjs";
 
 const oldProduct = ["Omni", "Route"].join("");
 const oldEnv = ["OMNI", "ROUTE", "_TOKEN"].join("");
@@ -32,7 +30,7 @@ test("AP-ISS-0113 identity guard rejects former-base paths and active content", 
   );
 });
 
-test("AP-ISS-0113 identity guard permits AgentProxy identity and only explicit changelog history", () => {
+test("AP-ISS-0171 identity guard treats changelogs as active product docs", () => {
   const files = [
     "src/current.ts",
     "README.md",
@@ -47,15 +45,65 @@ test("AP-ISS-0113 identity guard permits AgentProxy identity and only explicit c
   ]);
 
   const violations = findIdentityViolations(files, (file) => content.get(file) ?? Buffer.from(""));
-  assert.deepEqual(violations, []);
-  assert.equal(isHistoricalContentPath("CHANGELOG.md"), true);
-  assert.equal(isHistoricalContentPath("docs/i18n/fr/CHANGELOG.md"), true);
-  assert.equal(isHistoricalContentPath("THIRD_PARTY_NOTICES.md"), false);
-  assert.equal(isHistoricalContentPath("README.md"), false);
-
+  assert.equal(
+    violations.filter((item) => item.kind === "content" && item.file === "CHANGELOG.md").length,
+    1
+  );
+  assert.equal(
+    violations.filter(
+      (item) => item.kind === "content" && item.file === "docs/i18n/fr/CHANGELOG.md"
+    ).length,
+    1
+  );
+  assert.equal(
+    violations.filter((item) => item.file === "src/current.ts").length,
+    0,
+    "canonical AgentProxy source must stay accepted"
+  );
+  assert.equal(
+    violations.filter((item) => item.file === "README.md").length,
+    0,
+    "canonical AgentProxy product docs must stay accepted"
+  );
   const attributionViolations = findIdentityViolations(
     ["THIRD_PARTY_NOTICES.md"],
     () => Buffer.from(oldScope)
   );
   assert.equal(attributionViolations.length, 1);
+});
+
+test("AP-ISS-0171 package scripts expose one canonical verification command", () => {
+  const packageJson = readFileSync("package.json", "utf8");
+  const canonicalVerifyKey = JSON.stringify("agentproxy:verify");
+  const occurrences = packageJson.split(canonicalVerifyKey).length - 1;
+
+  assert.equal(occurrences, 1, "identity cleanup must not collapse a legacy alias into a duplicate key");
+});
+
+
+test("AP-ISS-0171 OCR regression: canonical CLI env keys are unique", () => {
+  const source = readFileSync("bin/cli/commands/env.mjs", "utf8");
+  const arrayBody = source.match(/const AGENTPROXY_ENV_VARS = \[([\s\S]*?)\];/u)?.[1];
+  assert.ok(arrayBody, "CLI canonical env list must exist");
+  const entries = [...arrayBody.matchAll(/"([A-Z][A-Z0-9_]*)"/gu)].map((match) => match[1]);
+  assert.equal(new Set(entries).size, entries.length, "env show must not iterate duplicate keys");
+});
+
+test("AP-ISS-0171 OCR regression: Japanese UI must use AgentProxy branding", () => {
+  const messages = readFileSync("src/i18n/messages/ja.json", "utf8");
+  const legacyBrand = ["オムニ", "ルート"].join("");
+  assert.equal(messages.includes(legacyBrand), false, "old brand must not render in Japanese UI");
+});
+
+test("AP-ISS-0171 OCR regression: cache header fallback does not repeat canonical lookup", () => {
+  const source = readFileSync("open-sse/services/cache/semanticCacheManager.ts", "utf8");
+  assert.doesNotMatch(source, /getHeader\(headers, `x-agentproxy-cache-\$\{suffix\}`\)\s*\?\?\s*getHeader\(headers, `x-agentproxy-cache-\$\{suffix\}`\)/u);
+  assert.doesNotMatch(source, /getHeader\(headers, "x-agentproxy-no-cache"\)\s*\?\?\s*getHeader\(headers, "x-agentproxy-no-cache"\)/u);
+});
+
+
+test("AP-ISS-0171 OCR regression: OpenAPI never advertises a fake canonical legacy alias", () => {
+  const source = readFileSync("docs/openapi.yaml", "utf8");
+  assert.doesNotMatch(source, /The legacy x-agentproxy-config-api-key header remains a migration alias\./u);
+  assert.match(source, /x-agentproxy-config-api-key/u);
 });

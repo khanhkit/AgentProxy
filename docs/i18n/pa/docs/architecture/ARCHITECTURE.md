@@ -433,7 +433,7 @@ Jules) ਨੂੰ ਇੱਕਸਾਰ DB-ਸਮਰਥਿਤ ਟਾਸਕ ਜੀਵ
 - ਕੋਟਾ ਕੈਸ਼: `src/domain/quotaCache.ts`
 - ਡਿਗਰੇਡੇਸ਼ਨ ਸਥਿਤੀ: `src/domain/degradation.ts`
 - ਕੌਂਫਿਗਰੇਸ਼ਨ ਆਡਿਟ: `src/domain/configAudit.ts`
-- AgentProxy ਜਵਾਬ ਮੈਟਾਡਾਟਾ ਬਿਲਡਰ: `src/domain/omnirouteResponseMeta.ts`
+- AgentProxy ਜਵਾਬ ਮੈਟਾਡਾਟਾ ਬਿਲਡਰ: `src/domain/agentproxyesponseMeta.ts`
 - ਮੁਲਾਂਕਣ ਉਪ-ਸਿਸਟਮ: `src/domain/assessment/` — ਆਵਰਤੀ ਮੁਲਾਂਕਣ ਜੌਬਾਂ
 
 ### E. ਅਧਿਕਾਰ-ਪ੍ਰਦਾਨ ਪਾਈਪਲਾਈਨ
@@ -514,7 +514,7 @@ FSM ਟ੍ਰਾਂਜ਼ਿਸ਼ਨ Auto Combo ਦੀ ਸਕੋਰਿੰਗ �
 
 - ਮੁੱਖ ਇਨਫ੍ਰਾ: `src/lib/db/core.ts` (better-sqlite3, ਮਾਈਗ੍ਰੇਸ਼ਨਾਂ, WAL)
 - DB ਪਹੁੰਚ: ਖਾਸ `src/lib/db/*` ਮੋਡੀਊਲਾਂ ਨੂੰ ਸਿੱਧੇ ਇੰਪੋਰਟ ਕਰੋ (ਪੁਰਾਣਾ `localDb.ts` ਬੈਰਲ ਹਟਾ ਦਿੱਤਾ ਗਿਆ ਸੀ)
-- ਫ਼ਾਈਲ: `${DATA_DIR}/storage.sqlite` (ਜਾਂ ਜਦੋਂ `$XDG_CONFIG_HOME/omniroute/storage.sqlite` ਸੈੱਟ ਹੋਵੇ, ਨਹੀਂ ਤਾਂ `~/.omniroute/storage.sqlite`)
+- ਫ਼ਾਈਲ: `${DATA_DIR}/storage.sqlite` (ਜਾਂ ਜਦੋਂ `$XDG_CONFIG_HOME/agentproxy/storage.sqlite` ਸੈੱਟ ਹੋਵੇ, ਨਹੀਂ ਤਾਂ `~/.agentproxy/storage.sqlite`)
 - ਇਕਾਈਆਂ (ਟੇਬਲਾਂ + KV ਨੇਮਸਪੇਸ): providerConnections, providerNodes, modelAliases, combos, apiKeys, settings, pricing, **customModels**, **proxyConfig**, **ipFilter**, **thinkingBudget**, **systemPrompt**
 
 ਵਰਤੋਂ ਦੀ ਸਥਿਰਤਾ:
@@ -1137,11 +1137,11 @@ flowchart LR
 
 ## ਜਾਣੇ-ਪਛਾਣੇ ਆਰਕੀਟੈਕਚਰਲ ਨੋਟ
 
-1. `usageDb` ਅਤੇ `localDb` ਪੁਰਾਣੀਆਂ ਫਾਇਲਾਂ ਦੀ ਮਾਈਗ੍ਰੇਸ਼ਨ ਸਮੇਤ ਇੱਕੋ ਬੇਸ ਡਾਇਰੈਕਟਰੀ ਨੀਤੀ (`DATA_DIR` -> `XDG_CONFIG_HOME/omniroute` -> `~/.omniroute`) ਸਾਂਝੀ ਕਰਦੇ ਹਨ।
+1. `usageDb` ਅਤੇ `localDb` ਪੁਰਾਣੀਆਂ ਫਾਇਲਾਂ ਦੀ ਮਾਈਗ੍ਰੇਸ਼ਨ ਸਮੇਤ ਇੱਕੋ ਬੇਸ ਡਾਇਰੈਕਟਰੀ ਨੀਤੀ (`DATA_DIR` -> `XDG_CONFIG_HOME/agentproxy` -> `~/.agentproxy`) ਸਾਂਝੀ ਕਰਦੇ ਹਨ।
 2. ਅਰਥਕ ਅੰਤਰ ਤੋਂ ਬਚਣ ਲਈ `/api/v1/route.ts`, `/api/v1/models` (`src/app/api/v1/models/catalog.ts`) ਵੱਲੋਂ ਵਰਤੇ ਜਾਂਦੇ ਉਸੇ ਏਕੀਕ੍ਰਿਤ ਕੈਟਾਲਾਗ ਬਿਲਡਰ ਨੂੰ ਕੰਮ ਸੌਂਪਦਾ ਹੈ।
 3. ਸਮਰੱਥ ਹੋਣ 'ਤੇ ਬੇਨਤੀ ਲੌਗਰ ਪੂਰੇ ਹੈਡਰ/ਬਾਡੀ ਲਿਖਦਾ ਹੈ; ਲੌਗ ਡਾਇਰੈਕਟਰੀ ਨੂੰ ਸੰਵੇਦਨਸ਼ੀਲ ਮੰਨੋ।
 4. ਕਲਾਉਡ ਦਾ ਵਿਹਾਰ ਸਹੀ `NEXT_PUBLIC_BASE_URL` ਅਤੇ ਕਲਾਉਡ ਐਂਡਪੌਇੰਟ ਦੀ ਪਹੁੰਚਯੋਗਤਾ 'ਤੇ ਨਿਰਭਰ ਕਰਦਾ ਹੈ।
-5. `open-sse/` ਡਾਇਰੈਕਟਰੀ ਨੂੰ `@omniroute/open-sse` **npm ਵਰਕਸਪੇਸ ਪੈਕੇਜ** ਵਜੋਂ ਪ੍ਰਕਾਸ਼ਿਤ ਕੀਤਾ ਜਾਂਦਾ ਹੈ। ਸੋਰਸ ਕੋਡ ਇਸ ਨੂੰ `@omniroute/open-sse/...` ਰਾਹੀਂ ਇੰਪੋਰਟ ਕਰਦਾ ਹੈ (Next.js `transpilePackages` ਵੱਲੋਂ ਰਿਜ਼ਾਲਵ ਕੀਤਾ ਜਾਂਦਾ ਹੈ)। ਇਕਸਾਰਤਾ ਲਈ ਇਸ ਦਸਤਾਵੇਜ਼ ਵਿੱਚ ਫਾਇਲ ਪਾਥ ਅਜੇ ਵੀ ਡਾਇਰੈਕਟਰੀ ਨਾਮ `open-sse/` ਦੀ ਵਰਤੋਂ ਕਰਦੇ ਹਨ।
+5. `open-sse/` ਡਾਇਰੈਕਟਰੀ ਨੂੰ `@agentproxy/open-sse` **npm ਵਰਕਸਪੇਸ ਪੈਕੇਜ** ਵਜੋਂ ਪ੍ਰਕਾਸ਼ਿਤ ਕੀਤਾ ਜਾਂਦਾ ਹੈ। ਸੋਰਸ ਕੋਡ ਇਸ ਨੂੰ `@agentproxy/open-sse/...` ਰਾਹੀਂ ਇੰਪੋਰਟ ਕਰਦਾ ਹੈ (Next.js `transpilePackages` ਵੱਲੋਂ ਰਿਜ਼ਾਲਵ ਕੀਤਾ ਜਾਂਦਾ ਹੈ)। ਇਕਸਾਰਤਾ ਲਈ ਇਸ ਦਸਤਾਵੇਜ਼ ਵਿੱਚ ਫਾਇਲ ਪਾਥ ਅਜੇ ਵੀ ਡਾਇਰੈਕਟਰੀ ਨਾਮ `open-sse/` ਦੀ ਵਰਤੋਂ ਕਰਦੇ ਹਨ।
 6. ਡੈਸ਼ਬੋਰਡ ਵਿੱਚ ਚਾਰਟ ਪਹੁੰਚਯੋਗ, ਇੰਟਰਐਕਟਿਵ ਵਿਸ਼ਲੇਸ਼ਣਾਤਮਕ ਵਿਜੁਅਲਾਈਜ਼ੇਸ਼ਨਾਂ (ਮਾਡਲ ਵਰਤੋਂ ਬਾਰ ਚਾਰਟ, ਸਫਲਤਾ ਦਰਾਂ ਵਾਲੀਆਂ ਪ੍ਰਦਾਤਾ ਵੰਡ ਟੇਬਲਾਂ) ਲਈ **Recharts** (SVG-ਅਧਾਰਿਤ) ਦੀ ਵਰਤੋਂ ਕਰਦੇ ਹਨ।
 7. E2E ਟੈਸਟ **Playwright** (`tests/e2e/`) ਦੀ ਵਰਤੋਂ ਕਰਦੇ ਹਨ ਅਤੇ `npm run test:e2e` ਰਾਹੀਂ ਚਲਾਏ ਜਾਂਦੇ ਹਨ। ਯੂਨਿਟ ਟੈਸਟ **Node.js test runner** (`tests/unit/`) ਦੀ ਵਰਤੋਂ ਕਰਦੇ ਹਨ ਅਤੇ `npm run test:unit` ਰਾਹੀਂ ਚਲਾਏ ਜਾਂਦੇ ਹਨ। `src/` ਅਧੀਨ ਸੋਰਸ ਕੋਡ **TypeScript** (`.ts`/`.tsx`) ਹੈ; `open-sse/` ਵਰਕਸਪੇਸ JavaScript (`.js`) ਹੀ ਰਹਿੰਦਾ ਹੈ।
 8. ਸੈਟਿੰਗਾਂ ਪੰਨਾ 7 ਟੈਬਾਂ ਵਿੱਚ ਵਿਵਸਥਿਤ ਹੈ: ਆਮ, ਦਿੱਖ, AI, ਸੁਰੱਖਿਆ, ਰਾਊਟਿੰਗ, ਲਚਕੀਲਾਪਣ, ਉੱਨਤ। ਲਚਕੀਲਾਪਣ ਪੰਨਾ ਸਿਰਫ਼ ਬੇਨਤੀ ਕਤਾਰ, ਕਨੈਕਸ਼ਨ ਕੂਲਡਾਊਨ, ਪ੍ਰਦਾਤਾ ਬ੍ਰੇਕਰ ਅਤੇ ਕੂਲਡਾਊਨ ਦੀ ਉਡੀਕ ਵਾਲੇ ਵਿਹਾਰ ਨੂੰ ਸੰਰਚਿਤ ਕਰਦਾ ਹੈ; ਬ੍ਰੇਕਰ ਦੀ ਲਾਈਵ ਰਨਟਾਈਮ ਸਥਿਤੀ ਸਿਹਤ ਪੰਨੇ 'ਤੇ ਦਿਖਾਈ ਜਾਂਦੀ ਹੈ।
@@ -1152,7 +1152,7 @@ flowchart LR
 ## ਕਾਰਜਾਤਮਕ ਤਸਦੀਕ ਚੈੱਕਲਿਸਟ
 
 - ਸਰੋਤ ਤੋਂ ਬਿਲਡ ਕਰੋ: `npm run build`
-- Docker ਇਮੇਜ ਬਿਲਡ ਕਰੋ: `docker build -t omniroute .`
+- Docker ਇਮੇਜ ਬਿਲਡ ਕਰੋ: `docker build -t agentproxy .`
 - ਸੇਵਾ ਸ਼ੁਰੂ ਕਰੋ ਅਤੇ ਤਸਦੀਕ ਕਰੋ:
 - `GET /api/settings`
 - `GET /api/v1/models`

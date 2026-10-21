@@ -77,7 +77,7 @@ AgentProxy በቅድሚያ ቅደም ተከተል የተደረደሩ 3 አብሮ
 | `pii-masker`       | 10   | ከጥሪ በፊትና በኋላ የPII ማደብዘዝ (ኢሜይሎች፣ ስልክ፣ CPF፣ CNPJ፣ ክሬዲት ካርዶች፣ SSN)      |
 | `prompt-injection` | 20   | የመሻር/ሚና ጠለፋ/jailbreak/መረጃ ማፍሰስ ንድፎችን ይለያል                            |
 
-ብጁ መከላከያዎች በ`registerGuardrail(new MyGuardrail())` በኩል ይመዘገባሉ። ሞዴሉ fail-open ነው (ልዩ ሁኔታዎች ትራፊክን ፈጽሞ አያግዱም)። በእያንዳንዱ ጥያቄ `x-omniroute-disabled-guardrails` ራስጌን በመጠቀም ማሰናከል ይቻላል። → [`docs/security/GUARDRAILS.md`](docs/security/GUARDRAILS.md)ን ይመልከቱ።
+ብጁ መከላከያዎች በ`registerGuardrail(new MyGuardrail())` በኩል ይመዘገባሉ። ሞዴሉ fail-open ነው (ልዩ ሁኔታዎች ትራፊክን ፈጽሞ አያግዱም)። በእያንዳንዱ ጥያቄ `x-agentproxy-disabled-guardrails` ራስጌን በመጠቀም ማሰናከል ይቻላል። → [`docs/security/GUARDRAILS.md`](docs/security/GUARDRAILS.md)ን ይመልከቱ።
 
 ### 🧠 የጥያቄ መርፌ መከላከያ
 
@@ -182,15 +182,15 @@ STORAGE_ENCRYPTION_KEY=$(openssl rand -hex 32)
 
 ```bash
 docker run -d \
-  --name omniroute \
+  --name agentproxy \
   --restart unless-stopped \
   --read-only \
   -p 20128:20128 \
-  -v omniroute-data:/app/data \
+  -v agentproxy-data:/app/data \
   -e JWT_SECRET="$(openssl rand -base64 48)" \
   -e API_KEY_SECRET="$(openssl rand -hex 32)" \
   -e STORAGE_ENCRYPTION_KEY="$(openssl rand -hex 32)" \
-  diegosouzapw/omniroute:latest
+  diegosouzapw/agentproxy:latest
 ```
 
 ---
@@ -224,7 +224,7 @@ docker run -d \
 
 > **የወሰን ማስታወሻ፦** በማከማቻው ሥር ያለው `socket.yml`፣ ለታተመው npm አርቲፋክት በSocket.dev ሬጂስትሪ በኩል ከህትመት በኋላ በሚደረገው ቅኝት ውስጥ `projectIgnorePaths`ን ብቻ ይቀርጻል — በCI/PR ውህደት ላይ ተፈጻሚ የሆነ መግቢያ በር አይደለም። በ`.github/workflows` ውስጥ ያለ ምንም የሥራ ፍሰት፣ ምንም የ`package.json` ስክሪፕት፣ እና ምንም የ`Makefile` ዒላማ Socket.devን አይጠራም።
 
-የታተመው `omniroute` npm አርቲፋክት የNext.js `output: "standalone"`
+የታተመው `agentproxy` npm አርቲፋክት የNext.js `output: "standalone"`
 ግንባታን አቅፎ ይዟል፤ ይህም እያንዳንዱ የመንገድ መቆጣጠሪያ — በሰነድ የተገለጹ ልዩ ፈቃድ የሚጠይቁ
 ባህሪያትን (MITM፣ Zed import፣ Cloud Sync፣ የተካተተ የአገልግሎት ተቆጣጣሪ) ጨምሮ — በመጨረሻ
 በ`.next/server/*.js` ውስጥ ወደሚገኙ የተጨመቁ ቁርጥራጮች ይገባል ማለት ነው። በሂዩሪስቲክ ላይ የተመሠረቱ የሶፍትዌር አቅርቦት ሰንሰለት ስካነሮች
@@ -247,7 +247,7 @@ GitHub App ይከናወናል።
   ወደዚያው ሰነድ ይጠቁማሉ።
 
 የሥራ ፍሰታቸው ማንቂያውን ማላላት ለማይችል ተጠቃሚዎች፦
-`OMNIROUTE_BUILD_PROFILE=minimal npm run build`ን በመጠቀም ይገንቡ። ይህም አራቱን
+`AGENTPROXY_BUILD_PROFILE=minimal npm run build`ን በመጠቀም ይገንቡ። ይህም አራቱን
 ስሱ ሞጁሎች በአሂድ ጊዜ HTTP 503 `feature-disabled`ን በሚመልሱ
 ተተኪዎች ይተካቸዋል፤ በዚህም ልዩ ፈቃድ የሚጠይቁ የኮድ መንገዶች በቁሳዊ ሁኔታ ከጥቅሉ ውስጥ አይኖሩም።
 የህትመት አሠራሩን ለማየት [`docs/security/SOCKET_DEV_FINDINGS.md`](docs/security/SOCKET_DEV_FINDINGS.md)ን

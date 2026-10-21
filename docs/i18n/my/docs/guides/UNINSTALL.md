@@ -20,7 +20,7 @@ AgentProxy တွင် အပြီးသတ်ရှင်းလင်းဖ�
 npm run uninstall
 ```
 
-ဤ command သည် AgentProxy application ကို ဖယ်ရှားပေးသော်လည်း `~/.omniroute/` ရှိ သင့် database၊ configuration များ၊ API key များနှင့် provider setting များကို **ထိန်းသိမ်းထားသည်**။ နောက်ပိုင်းတွင် ပြန်လည် install လုပ်ရန် စီစဉ်ထားပြီး လက်ရှိ setup ကို ဆက်လက်ထိန်းသိမ်းလိုပါက ဤနည်းလမ်းကို အသုံးပြုပါ။
+ဤ command သည် AgentProxy application ကို ဖယ်ရှားပေးသော်လည်း `~/.agentproxy/` ရှိ သင့် database၊ configuration များ၊ API key များနှင့် provider setting များကို **ထိန်းသိမ်းထားသည်**။ နောက်ပိုင်းတွင် ပြန်လည် install လုပ်ရန် စီစဉ်ထားပြီး လက်ရှိ setup ကို ဆက်လက်ထိန်းသိမ်းလိုပါက ဤနည်းလမ်းကို အသုံးပြုပါ။
 
 ### အပြည့်အစုံ ဖယ်ရှားခြင်း
 
@@ -34,7 +34,7 @@ npm run uninstall:full
 - Provider configuration များနှင့် API key များ
 - Backup file များ
 - Log file များ
-- `~/.omniroute/` directory အတွင်းရှိ file အားလုံး
+- `~/.agentproxy/` directory အတွင်းရှိ file အားလုံး
 
 > ⚠️ **သတိပေးချက်:** `npm run uninstall:full` ကို ပြန်ပြင်၍မရပါ။ သင့် provider connection များ၊ combo များ၊ API key များနှင့် အသုံးပြုမှုမှတ်တမ်းအားလုံးကို အပြီးအပိုင် ဖျက်ပစ်မည်ဖြစ်သည်။
 
@@ -46,31 +46,31 @@ npm run uninstall:full
 
 ```bash
 # Global package ကို ဖယ်ရှားပါ
-npm uninstall -g omniroute
+npm uninstall -g agentproxy
 
 # (ရွေးချယ်နိုင်သည်) ဒေတာ directory ကို ဖယ်ရှားပါ
-rm -rf ~/.omniroute
+rm -rf ~/.agentproxy
 ```
 
 ### pnpm Global Install
 
 ```bash
-pnpm uninstall -g omniroute
-rm -rf ~/.omniroute
+pnpm uninstall -g agentproxy
+rm -rf ~/.agentproxy
 ```
 
 ### Docker
 
 ```bash
 # Container ကို ရပ်တန့်ပြီး ဖယ်ရှားပါ
-docker stop omniroute
-docker rm omniroute
+docker stop agentproxy
+docker rm agentproxy
 
 # Volume ကို ဖယ်ရှားပါ (ဒေတာအားလုံးကို ဖျက်ပစ်သည်)
-docker volume rm omniroute-data
+docker volume rm agentproxy-data
 
 # (ရွေးချယ်နိုင်သည်) Image ကို ဖယ်ရှားပါ
-docker rmi diegosouzapw/omniroute:latest
+docker rmi diegosouzapw/agentproxy:latest
 ```
 
 ### Docker Compose
@@ -93,21 +93,21 @@ docker compose down -v
 **macOS:**
 
 - `/Applications` ရှိ `AgentProxy.app` ကို အမှိုက်ပုံးသို့ ဆွဲထည့်ပါ
-- ဒေတာကို ဖယ်ရှားရန်- `rm -rf ~/Library/Application Support/omniroute`
+- ဒေတာကို ဖယ်ရှားရန်- `rm -rf ~/Library/Application Support/agentproxy`
 
 **Linux:**
 
 - AppImage file ကို ဖယ်ရှားပါ
-- ဒေတာကို ဖယ်ရှားရန်- `rm -rf ~/.omniroute`
+- ဒေတာကို ဖယ်ရှားရန်- `rm -rf ~/.agentproxy`
 
 ### Source မှ Install ပြုလုပ်ထားခြင်း (git clone)
 
 ```bash
 # Clone လုပ်ထားသော directory ကို ဖယ်ရှားပါ
-rm -rf /path/to/omniroute
+rm -rf /path/to/agentproxy
 
 # (ရွေးချယ်နိုင်သည်) ဒေတာ directory ကို ဖယ်ရှားပါ
-rm -rf ~/.omniroute
+rm -rf ~/.agentproxy
 ```
 
 ---
@@ -118,11 +118,11 @@ rm -rf ~/.omniroute
 
 | Platform                 | ပုံမှန် Path                         | အစားထိုးသတ်မှတ်မှု        |
 | ------------------------ | ------------------------------------ | ------------------------- |
-| Linux                    | `~/.omniroute/`                      | `DATA_DIR` env var        |
-| macOS                    | `~/.omniroute/`                      | `DATA_DIR` env var        |
-| Windows                  | `%APPDATA%/omniroute/`               | `DATA_DIR` env var        |
+| Linux                    | `~/.agentproxy/`                      | `DATA_DIR` env var        |
+| macOS                    | `~/.agentproxy/`                      | `DATA_DIR` env var        |
+| Windows                  | `%APPDATA%/agentproxy/`               | `DATA_DIR` env var        |
 | Docker                   | `/app/data/` (ချိတ်ဆက်ထားသော volume) | `DATA_DIR` env var        |
-| XDG နှင့် ကိုက်ညီသောစနစ် | `$XDG_CONFIG_HOME/omniroute/`        | `XDG_CONFIG_HOME` env var |
+| XDG နှင့် ကိုက်ညီသောစနစ် | `$XDG_CONFIG_HOME/agentproxy/`        | `XDG_CONFIG_HOME` env var |
 
 ### ဒေတာ directory အတွင်းရှိ File များ
 
@@ -143,17 +143,17 @@ Uninstall လုပ်ပြီးနောက် ကျန်ရှိနေသ
 
 ```bash
 # Global npm package ရှိမရှိ စစ်ဆေးပါ
-npm list -g omniroute 2>/dev/null
+npm list -g agentproxy 2>/dev/null
 
 # Data directory ရှိမရှိ စစ်ဆေးပါ
-ls -la ~/.omniroute/ 2>/dev/null
+ls -la ~/.agentproxy/ 2>/dev/null
 
 # လုပ်ဆောင်နေသော process များ ရှိမရှိ စစ်ဆေးပါ
-pgrep -f omniroute
+pgrep -f agentproxy
 ```
 
 Process တစ်ခုခု လုပ်ဆောင်နေဆဲဖြစ်ပါက ၎င်းကို ရပ်တန့်ပါ:
 
 ```bash
-pkill -f omniroute
+pkill -f agentproxy
 ```

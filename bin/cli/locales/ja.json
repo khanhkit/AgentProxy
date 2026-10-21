@@ -1,8 +1,8 @@
 {
   "common": {
     "error": "エラー: {message}",
-    "serverOffline": "OmniRouteサーバーはオフラインです。起動: omniroute serve",
-    "authRequired": "認証が必要です。OMNIROUTE_API_KEYを設定するか実行してください: omniroute setup",
+    "serverOffline": "AgentProxyサーバーはオフラインです。起動: agentproxy serve",
+    "authRequired": "認証が必要です。AGENTPROXY_API_KEYを設定するか実行してください: agentproxy setup",
     "rateLimited": "リクエスト制限を超えました。{seconds}秒後に再試行してください。",
     "timeout": "{ms}ms後にリクエストがタイムアウトしました。",
     "success": "完了。",
@@ -15,22 +15,22 @@
     "yesOpt": "確認をスキップ"
   },
   "program": {
-    "description": "OmniRoute — 自動フォールバック付きスマートAIルーター",
+    "description": "AgentProxy — 自動フォールバック付きスマートAIルーター",
     "version": "バージョンを表示して終了",
     "output": "出力形式 (table, json, jsonl, csv)",
     "quiet": "重要でない出力を抑制",
     "no_color": "カラー出力を無効化",
     "timeout": "HTTPリクエストタイムアウト（ミリ秒）",
-    "api_key": "OmniRouteサーバーのAPIキー",
-    "base_url": "OmniRouteサーバーのベースURL",
+    "api_key": "AgentProxyサーバーのAPIキー",
+    "base_url": "AgentProxyサーバーのベースURL",
     "context": "このコマンドで使用するサーバーコンテキスト/プロファイル",
-    "lang": "CLI表示言語を設定（OMNIROUTE_LANGを上書き）"
+    "lang": "CLI表示言語を設定（AGENTPROXY_LANGを上書き）"
   },
   "redis": {
-    "description": "OmniRouteのキャッシュとクォータ追跡用に、ローカルRedisコンテナー（PodmanまたはDocker）をワンクリックで起動"
+    "description": "AgentProxyのキャッシュとクォータ追跡用に、ローカルRedisコンテナー（PodmanまたはDocker）をワンクリックで起動"
   },
   "setup": {
-    "title": "OmniRoute セットアップ",
+    "title": "AgentProxy セットアップ",
     "passwordPrompt": "管理者パスワード",
     "providerPrompt": "デフォルトプロバイダー（スキップする場合は空欄）",
     "done": "セットアップが完了しました",
@@ -42,22 +42,22 @@
     "loginEnabled": "ログイン: 有効（パスワード更新済み）",
     "loginDisabled": "ログイン: 無効",
     "providerInfo": "プロバイダー: {info}",
-    "opencode": "OpenCode 用の同梱 @omniroute/opencode-plugin をインストールして設定"
+    "opencode": "OpenCode 用の同梱 @agentproxy/opencode-plugin をインストールして設定"
   },
   "doctor": {
-    "title": "OmniRoute 診断",
+    "title": "AgentProxy 診断",
     "dbOk": "データベース: 正常（{path}）",
-    "dbMissing": "データベース: 初期化されていません — `omniroute setup` を実行してください",
+    "dbMissing": "データベース: 初期化されていません — `agentproxy setup` を実行してください",
     "portOk": "ポート {port}: 使用可能",
     "portConflict": "ポート {port}: 別のプロセスが使用中",
     "encryptionOk": "暗号化キー: 設定済み",
-    "encryptionMissing": "暗号化キーがありません — `omniroute setup` を実行してください",
+    "encryptionMissing": "暗号化キーがありません — `agentproxy setup` を実行してください",
     "allGood": "すべてのチェックに合格しました。",
     "warnings": "警告が {count} 件あります — 上記を確認してください。"
   },
   "providers": {
     "title": "プロバイダー",
-    "noProviders": "プロバイダーが設定されていません。次を実行してください: omniroute setup",
+    "noProviders": "プロバイダーが設定されていません。次を実行してください: agentproxy setup",
     "testing": "{name} をテスト中...",
     "available": "利用可能なプロバイダー: {count} 件",
     "connected": "接続済み",
@@ -86,7 +86,7 @@
       "dryRunOpt": "書き込まずに変更内容を表示する",
       "confirmPrompt": "接続「{name}」（{id}）の API キーを置き換えますか？ [y/N]",
       "dryRunResult": "[dry-run] 「{name}」（{id}）のキーをローテーションします。変更は行われていません。",
-      "oauthHint": "OAuth 接続 — 実行: omniroute oauth {provider}",
+      "oauthHint": "OAuth 接続 — 実行: agentproxy oauth {provider}",
       "envVarEmpty": "環境変数 {var} が設定されていないか、空です。",
       "success": "「{name}」のキーをローテーションしました。確認するには `providers test {id}` を実行してください。",
       "testPassed": "ローテーション後のテストに合格しました。",
@@ -97,7 +97,7 @@
       "providerOpt": "プロバイダー名で絞り込む",
       "header": "ID         プロバイダー   名前                     有効期限の状態  テスト状態  クールダウン期限",
       "noData": "利用可能なプロバイダー接続データがありません。",
-      "requiresServer": "providers status を実行するには、OmniRoute サーバーが稼働している必要があります。"
+      "requiresServer": "providers status を実行するには、AgentProxy サーバーが稼働している必要があります。"
     }
   },
   "keys": {
@@ -105,8 +105,8 @@
     "addDescription": "プロバイダーの API キーを追加または更新する",
     "listDescription": "設定済みのすべての API キーを一覧表示する",
     "removeDescription": "プロバイダーの API キーを削除する",
-    "regenerateDescription": "OmniRoute API キーを再生成する",
-    "revokeDescription": "OmniRoute API キーを失効させる",
+    "regenerateDescription": "AgentProxy API キーを再生成する",
+    "revokeDescription": "AgentProxy API キーを失効させる",
     "revealDescription": "マスクされていない API キーの値を表示する",
     "usageDescription": "API キーの最近の使用状況を表示する",
     "usageLimitOpt": "最近のリクエスト数",
@@ -157,7 +157,7 @@
     "warning": "⚠ 復号された平文の API キーと OAuth トークンが表示／書き込みされます。画面、シェル履歴、および出力ファイルが他人に見られないようにしてください。",
     "confirmHeading": "⚠ 警告: 復号されたプロバイダー認証情報が平文でエクスポートされます",
     "confirmBody": "このコマンドは、選択した接続の apiKey、accessToken、refreshToken、および\nidToken を復号して表示／書き込みします。出力はシークレットとして扱ってください。",
-    "confirmFooter": "確認するには、次を実行してください:\n  omniroute auth export --force",
+    "confirmFooter": "確認するには、次を実行してください:\n  agentproxy auth export --force",
     "missingKey": "認証情報をエクスポートするには STORAGE_ENCRYPTION_KEY が必要です。",
     "notFound": "接続が見つかりません: {id}",
     "invalidFormat": "無効な形式: {format}。json または env を使用してください。"
@@ -235,10 +235,10 @@
     "reasoning": "推論エフォートレベル（low|medium|high）",
     "thinking": "拡張思考のトークン予算",
     "explain": "フォールバックツリーとコスト範囲をstderrに出力",
-    "noCombo": "一致するコンボが見つかりません。次のコマンドで設定してください: omniroute combo create"
+    "noCombo": "一致するコンボが見つかりません。次のコマンドで設定してください: agentproxy combo create"
   },
   "chat": {
-    "description": "OmniRoute に単発のチャットプロンプトを送信",
+    "description": "AgentProxy に単発のチャットプロンプトを送信",
     "file": "ファイルからプロンプトを読み込む",
     "stdin": "標準入力からプロンプトを読み込む",
     "system": "システムプロンプト",
@@ -251,14 +251,14 @@
     "combo": "名前を指定して特定のコンボを強制使用",
     "responses_api": "/v1/chat/completions の代わりに /v1/responses を使用",
     "stream": "応答を逐次ストリーミング",
-    "no_history": "~/.omniroute/cli-history.jsonl に保存しない",
+    "no_history": "~/.agentproxy/cli-history.jsonl に保存しない",
     "error": {
       "empty_prompt": "エラー: プロンプトが必要です（位置引数、--file、または --stdin）"
     }
   },
   "serve": {
-    "description": "OmniRoute サーバーを起動（デフォルトのアクション）",
-    "starting": "ポート {port} で OmniRoute サーバーを起動しています...",
+    "description": "AgentProxy サーバーを起動（デフォルトのアクション）",
+    "starting": "ポート {port} で AgentProxy サーバーを起動しています...",
     "ready": "http://localhost:{port} で準備完了",
     "stopping": "サーバーを停止しています（PID {pid}）...",
     "stopped": "サーバーを停止しました。",
@@ -272,12 +272,12 @@
     "tray": "システムトレイで起動（デスクトップ版のみ、オプトイン）",
     "no_tray": "システムトレイアイコンを無効化",
     "ready_timeout": "準備状況プローブのタイムアウト（ミリ秒、AGENTPROXY_READY_TIMEOUT_MS でも設定可能、デフォルト: 60000）",
-    "tls_cert": "HTTPS の提供に使用する TLS 証明書（PEM）へのパス（OMNIROUTE_TLS_CERT でも設定可能）",
-    "tls_key": "HTTPS の提供に使用する TLS 秘密鍵（PEM）へのパス（OMNIROUTE_TLS_KEY でも設定可能）"
+    "tls_cert": "HTTPS の提供に使用する TLS 証明書（PEM）へのパス（AGENTPROXY_TLS_CERT でも設定可能）",
+    "tls_key": "HTTPS の提供に使用する TLS 秘密鍵（PEM）へのパス（AGENTPROXY_TLS_KEY でも設定可能）"
   },
   "backup": {
     "title": "バックアップ",
-    "description": "OmniRoute データのバックアップを作成",
+    "description": "AgentProxy データのバックアップを作成",
     "creating": "バックアップを作成しています...",
     "done": "バックアップを {path} に保存しました",
     "noFiles": "バックアップするファイルがありません（データベースが初期化されていません）",
@@ -289,7 +289,7 @@
     "noBackups": "バックアップが見つかりません。",
     "notFound": "バックアップが見つかりません: {name}",
     "confirmRestore": "現在のデータを {ts} のバックアップで上書きしますか？",
-    "createDescription": "OmniRoute データのバックアップを作成",
+    "createDescription": "AgentProxy データのバックアップを作成",
     "nameOpt": "カスタムバックアップ名",
     "cloudOpt": "バックアップをクラウドストレージにアップロード",
     "encryptOpt": "AES-256-GCM でバックアップを暗号化",
@@ -307,14 +307,14 @@
       "statusDescription": "現在のバックアップスケジュールの状態を表示",
       "cronOpt": "スケジュールの Cron 式（デフォルト: 毎日午前3時）",
       "enabled": "自動バックアップが有効です（Cron: {cron}）。",
-      "hint": "このスケジュールは omniroute serve の起動時に読み込まれます。",
+      "hint": "このスケジュールは agentproxy serve の起動時に読み込まれます。",
       "disabled": "自動バックアップが無効です。",
       "notConfigured": "バックアップスケジュールが設定されていません。"
     }
   },
   "health": {
     "description": "サーバーの稼働状態とコンポーネントの状態を確認",
-    "noServer": "サーバーが実行されていません。次のコマンドで起動してください: omniroute serve",
+    "noServer": "サーバーが実行されていません。次のコマンドで起動してください: agentproxy serve",
     "title": "稼働状態",
     "status": "ステータス: {status}",
     "uptime": "稼働時間: {uptime}",
@@ -323,18 +323,18 @@
   },
   "quota": {
     "description": "プロバイダーのクォータ使用量を表示",
-    "noServer": "サーバーが実行されていません。次のコマンドで起動してください: omniroute serve",
+    "noServer": "サーバーが実行されていません。次のコマンドで起動してください: agentproxy serve",
     "noData": "利用可能なクォータ情報がありません。"
   },
   "cache": {
     "description": "レスポンスキャッシュを管理",
-    "noServer": "サーバーが実行されていません。次のコマンドで起動してください: omniroute serve",
+    "noServer": "サーバーが実行されていません。次のコマンドで起動してください: agentproxy serve",
     "cleared": "キャッシュをクリアしました。",
     "clearFailed": "キャッシュのクリアに失敗しました。"
   },
   "test": {
     "description": "プロバイダー接続をテスト",
-    "noServer": "サーバーが実行されていません。次のコマンドで起動してください: omniroute serve",
+    "noServer": "サーバーが実行されていません。次のコマンドで起動してください: agentproxy serve",
     "testing": "{provider} / {model} をテストしています...",
     "passed": "接続に成功しました！",
     "failed": "接続に失敗しました: {error}",
@@ -346,7 +346,7 @@
     "saved": "結果を {path} に保存しました",
     "compareTitle": "モデル比較",
     "compareMinTwo": "--compare には少なくとも2つのモデルをカンマ区切りで指定する必要があります",
-    "noProviders": "プロバイダーが設定されていません。次のコマンドで追加してください: omniroute keys add"
+    "noProviders": "プロバイダーが設定されていません。次のコマンドで追加してください: agentproxy keys add"
   },
   "update": {
     "checking": "アップデートを確認しています...",
@@ -360,7 +360,7 @@
     "running": "MCP サーバーは実行中です（{transport}）",
     "stopped": "MCP サーバーを停止しました。",
     "restarted": "MCP サーバーを再起動しました。",
-    "stoppedHint": "有効にするには `omniroute mcp enable` を実行してください。",
+    "stoppedHint": "有効にするには `agentproxy mcp enable` を実行してください。",
     "enabled": "MCP サーバーを有効にしました。",
     "disabled": "MCP サーバーを無効にしました。",
     "enable": {
@@ -428,7 +428,7 @@
     }
   },
   "policy": {
-    "description": "OmniRouteの認可ポリシーを管理",
+    "description": "AgentProxyの認可ポリシーを管理",
     "list": {
       "description": "ポリシーを一覧表示",
       "kind": "種別（allow|deny|rate-limit|cost-cap）でフィルタリング",
@@ -465,7 +465,7 @@
     }
   },
   "compression": {
-    "description": "OmniRouteの圧縮パイプラインを設定および確認",
+    "description": "AgentProxyの圧縮パイプラインを設定および確認",
     "status": {
       "description": "現在の圧縮ステータスと設定を表示"
     },
@@ -519,18 +519,18 @@
     "confirmRotate": "トンネル {type} のURLを更新しますか？（新しいURLが生成されます）"
   },
   "stop": {
-    "description": "OmniRouteサーバーを停止",
+    "description": "AgentProxyサーバーを停止",
     "stopping": "サーバーを停止しています（PID {pid}）...",
     "stopped": "サーバーを停止しました。",
     "notRunning": "実行中のサーバーはありません。",
     "portFallback": "PIDファイルが見つからないため、ポートベースでの停止を試行しています..."
   },
   "restart": {
-    "description": "OmniRouteサーバーを再起動",
-    "restarting": "OmniRouteサーバーを再起動しています..."
+    "description": "AgentProxyサーバーを再起動",
+    "restarting": "AgentProxyサーバーを再起動しています..."
   },
   "dashboard": {
-    "description": "ブラウザーでOmniRouteダッシュボードを開く",
+    "description": "ブラウザーでAgentProxyダッシュボードを開く",
     "opening": "{url} でダッシュボードを開いています",
     "urlOnly": "ブラウザーを開かずにダッシュボードURLを出力",
     "tui": "対話型TUIダッシュボードを開く（ターミナルUI、7タブ）"
@@ -538,7 +538,7 @@
   "models": {
     "description": "利用可能なモデルを一覧表示（サーバーが必要）",
     "search": "ID、名前、プロバイダー、または説明でモデルを絞り込む",
-    "noServer": "サーバーが実行されていません。次のコマンドで起動してください: omniroute serve",
+    "noServer": "サーバーが実行されていません。次のコマンドで起動してください: agentproxy serve",
     "noModels": "モデルが見つかりません。"
   },
   "audit": {
@@ -570,7 +570,7 @@
     }
   },
   "skills": {
-    "description": "OmniRouteスキルを管理（sandbox、builtin、custom、hybrid、skillssh）",
+    "description": "AgentProxyスキルを管理（sandbox、builtin、custom、hybrid、skillssh）",
     "list": {
       "description": "インストール済みのスキルを一覧表示",
       "type": "タイプで絞り込む（sandbox|custom|builtin|hybrid|skillssh）",
@@ -643,7 +643,7 @@
     }
   },
   "memory": {
-    "description": "OmniRouteの会話メモリ（FTS5 + vector）を管理",
+    "description": "AgentProxyの会話メモリ（FTS5 + vector）を管理",
     "search": {
       "description": "セマンティッククエリでメモリエントリを検索",
       "type": "メモリタイプでフィルタリング（user|feedback|project|reference）",
@@ -801,7 +801,7 @@
     }
   },
   "webhooks": {
-    "description": "OmniRouteのWebhookを管理",
+    "description": "AgentProxyのWebhookを管理",
     "events": {
       "description": "利用可能なすべてのWebhookイベントタイプを一覧表示"
     },
@@ -1079,7 +1079,7 @@
     }
   },
   "openapi": {
-    "description": "OmniRoute OpenAPI 仕様にアクセスしてテスト",
+    "description": "AgentProxy OpenAPI 仕様にアクセスしてテスト",
     "dump": {
       "description": "OpenAPI 仕様を stdout またはファイルに出力",
       "format": "出力形式: yaml|json（デフォルト: yaml）",
@@ -1149,7 +1149,7 @@
     }
   },
   "open": {
-    "description": "特定のOmniRouteダッシュボードページをブラウザーで開く",
+    "description": "特定のAgentProxyダッシュボードページをブラウザーで開く",
     "url": "URLのみを表示し、ブラウザーは開かない"
   },
   "telemetry": {
@@ -1166,7 +1166,7 @@
     }
   },
   "sync": {
-    "description": "OmniRouteインスタンス間で設定を同期",
+    "description": "AgentProxyインスタンス間で設定を同期",
     "push": {
       "description": "設定をクラウドまたはリモートインスタンスにプッシュ",
       "target": "ターゲット（cloudまたはcontext:name）",
@@ -1222,10 +1222,10 @@
       "listTitle": "利用可能な言語",
       "current": "言語: {code}（{name}）",
       "saved": "言語を {code}（{name}）に設定しました。",
-      "noCode": "言語コードが必要です。利用可能なコードを確認するには 'omniroute config lang list' を実行してください。",
-      "unknown": "不明な言語コード: {code}。利用可能なコードを確認するには 'omniroute config lang list' を実行してください。",
+      "noCode": "言語コードが必要です。利用可能なコードを確認するには 'agentproxy config lang list' を実行してください。",
+      "unknown": "不明な言語コード: {code}。利用可能なコードを確認するには 'agentproxy config lang list' を実行してください。",
       "alreadySet": "言語はすでに {code} に設定されています。",
-      "envHint": "ヒント: 環境変数に OMNIROUTE_LANG={code} を設定することもできます。"
+      "envHint": "ヒント: 環境変数に AGENTPROXY_LANG={code} を設定することもできます。"
     }
   },
   "completion": {
@@ -1242,7 +1242,7 @@
     "filter": "レベル（error,warn,info）でフィルタリング — カンマ区切り",
     "lines": "取得する行数",
     "timeout": "接続タイムアウト（ミリ秒）",
-    "baseUrl": "OmniRoute API のベース URL",
+    "baseUrl": "AgentProxy API のベース URL",
     "requestId": "リクエスト ID でフィルタリング",
     "apiKey": "API キーでフィルタリング",
     "combo": "コンボ名でフィルタリング",
@@ -1258,10 +1258,10 @@
     "description": "システムトレイアイコンを制御します",
     "show": "トレイアイコンを表示します（サーバーが --tray オプション付きで実行されている場合）",
     "hide": "トレイアイコンを非表示にします",
-    "quit": "トレイから OmniRoute を終了します"
+    "quit": "トレイから AgentProxy を終了します"
   },
   "autostart": {
-    "description": "起動時の OmniRoute の自動起動を管理します（Linux: systemd ユーザーサービス）",
+    "description": "起動時の AgentProxy の自動起動を管理します（Linux: systemd ユーザーサービス）",
     "enable": "起動時の自動起動を有効にします",
     "disable": "起動時の自動起動を無効にします",
     "toggle": "起動時の自動起動を切り替えます",
@@ -1283,7 +1283,7 @@
     "resume": "名前を指定して保存済みセッションを再開"
   },
   "plugin": {
-    "description": "CLIプラグイン（omniroute-cmd-*）を管理",
+    "description": "CLIプラグイン（agentproxy-cmd-*）を管理",
     "list": "インストール済みプラグインを一覧表示",
     "install": "npmまたはローカルパスからプラグインをインストール",
     "remove": "インストール済みプラグインを削除",
@@ -1293,19 +1293,19 @@
     "scaffold": "新しいプラグインのボイラープレートを生成"
   },
   "launch": {
-    "description": "OmniRouteを参照するClaude Codeを起動（ローカルまたはリモート、--profile対応）",
+    "description": "AgentProxyを参照するClaude Codeを起動（ローカルまたはリモート、--profile対応）",
     "token": "Claudeクライアントが送信するトークン（ANTHROPIC_AUTH_TOKEN）",
-    "notRunning": "ポート{port}でOmniRouteに接続できません。'omniroute serve'で起動してください。",
+    "notRunning": "ポート{port}でAgentProxyに接続できません。'agentproxy serve'で起動してください。",
     "notFound": "'claude' CLIがPATHに見つかりません。"
   },
   "run": {
-    "description": "OmniRoute経由でサポート対象のCLIを起動"
+    "description": "AgentProxy経由でサポート対象のCLIを起動"
   },
   "setupClaude": {
-    "description": "OmniRouteモデルカタログから~/.claude/profiles用のClaude Codeプロファイルを生成"
+    "description": "AgentProxyモデルカタログから~/.claude/profiles用のClaude Codeプロファイルを生成"
   },
   "connect": {
-    "description": "リモートOmniRouteサーバーに接続してリモートモードに移行"
+    "description": "リモートAgentProxyサーバーに接続してリモートモードに移行"
   },
   "tokens": {
     "description": "スコープ付きCLIアクセストークンを管理（リモートモード）"
@@ -1314,10 +1314,10 @@
     "description": "アクティブなサーバーからプロバイダーとモデルを選択し、サポート対象のローカルCLIを設定"
   },
   "launchCodex": {
-    "description": "OmniRouteを参照するCodex CLIを起動（ローカルまたはリモートVPS）"
+    "description": "AgentProxyを参照するCodex CLIを起動（ローカルまたはリモートVPS）"
   },
   "setupCodex": {
-    "description": "OmniRouteのライブモデルカタログから~/.codexプロファイルファイルを生成"
+    "description": "AgentProxyのライブモデルカタログから~/.codexプロファイルファイルを生成"
   },
   "packs": {
     "description": "オプションのランタイムパック（ML／ブラウザー自動化）を管理",
@@ -1330,7 +1330,7 @@
     "errUnknown": "不明なパック：{name}",
     "errNoIndex": "パックインデックスが見つかりません。パックのペイロードを格納したディレクトリを--source <dir>で指定してください（デスクトップバンドルではアプリの隣に同梱されています）",
     "installed": "パック「{name}」を{dir}にインストールし、検証しました",
-    "restartHint": "ランタイムがパックを認識するように、OmniRouteサーバー（またはデスクトップアプリ）を再起動してください",
+    "restartHint": "ランタイムがパックを認識するように、AgentProxyサーバー（またはデスクトップアプリ）を再起動してください",
     "removed": "パック「{name}」を削除しました",
     "notInstalled": "パック「{name}」はインストールされていません",
     "verifyOk": "インストール済みのすべてのパックを検証しました",

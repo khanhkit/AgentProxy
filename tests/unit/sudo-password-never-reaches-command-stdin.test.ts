@@ -18,7 +18,7 @@ const PASSWORD = "PROBE-PASSWORD-9f3a";
 const DATA = "127.0.0.1 example.test\n";
 // Never a real system file: if a regression ever ignored the injected spawn, a real `tee`
 // would fail on this missing directory instead of appending to the host's /etc/hosts.
-const HOSTS = "/nonexistent-omniroute-sudo-test/hosts";
+const HOSTS = "/nonexistent-agentproxy-sudo-test/hosts";
 const NON_ROOT_WITH_SUDO = { root: false, sudoAvailable: true, noSudo: false } as const;
 
 type Call = { command: string; args: string[]; stdin: string };
@@ -65,7 +65,7 @@ test("plan: the password goes only to `sudo -S -v`, the command gets only its da
   assert.deepEqual(fallback?.args, ["-S", "tee", "-a", HOSTS]);
 });
 
-test("plan: without sudo (root / no sudo / OMNIROUTE_NO_SUDO) there is one plain step, no password", () => {
+test("plan: without sudo (root / no sudo / AGENTPROXY_NO_SUDO) there is one plain step, no password", () => {
   const { steps, fallback } = planSudoSteps("sudo", ["-S", "tee", "-a", HOSTS], PASSWORD, DATA, {
     root: true,
     sudoAvailable: true,

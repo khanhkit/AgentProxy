@@ -1,0 +1,17 @@
+{
+  "schema": 1,
+  "issue": "AP-ISS-0171",
+  "scanner": "scripts/check/check-agentproxy-identity.mjs",
+  "scan_scope": "Git-visible tracked and unignored files; release distributable scan remains a separate acceptance gate",
+  "classes": ["ACTIVE", "IMMUTABLE_PROVENANCE"],
+  "entry_schema": {
+    "required": ["path", "location", "match", "class", "rationale"]
+  },
+  "entries": [],
+  "summary": {
+    "ACTIVE": 0,
+    "IMMUTABLE_PROVENANCE": 0,
+    "total": 0
+  },
+  "rationale": "Fresh identity scan found no retained occurrences in the Git-visible source tree; no provenance-only occurrence is retained in active repository artifacts."
+}

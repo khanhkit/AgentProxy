@@ -434,7 +434,7 @@ Jules) ಏಕರೂಪದ DB-ಬೆಂಬಲಿತ ಕಾರ್ಯ ಜೀವನ�
 - ಕೋಟಾ ಕ್ಯಾಶ್: `src/domain/quotaCache.ts`
 - ಅಧಃಪತನದ ಸ್ಥಿತಿ: `src/domain/degradation.ts`
 - ಸಂರಚನಾ ಆಡಿಟ್: `src/domain/configAudit.ts`
-- AgentProxy ಪ್ರತಿಕ್ರಿಯೆ ಮೆಟಾಡೇಟಾ ಬಿಲ್ಡರ್: `src/domain/omnirouteResponseMeta.ts`
+- AgentProxy ಪ್ರತಿಕ್ರಿಯೆ ಮೆಟಾಡೇಟಾ ಬಿಲ್ಡರ್: `src/domain/agentproxyesponseMeta.ts`
 - ಮೌಲ್ಯಮಾಪನ ಉಪವ್ಯವಸ್ಥೆ: `src/domain/assessment/` — ಆವರ್ತಕ ಮೌಲ್ಯಮಾಪನ ಕಾರ್ಯಗಳು
 
 ### E. ದೃಢೀಕರಣ ಪೈಪ್ಲೈನ್
@@ -504,7 +504,7 @@ FSM ಸ್ಥಿತಿ ಪರಿವರ್ತನೆಗಳು Auto Comboದ ಸ್
 
 - ಮೂಲಸೌಕರ್ಯ: `src/lib/db/core.ts` (better-sqlite3, ಮೈಗ್ರೇಶನ್ಗಳು, WAL)
 - DB ಪ್ರವೇಶ: ನಿರ್ದಿಷ್ಟ `src/lib/db/*` ಮಾಡ್ಯೂಲ್ಗಳನ್ನು ನೇರವಾಗಿ ಇಂಪೋರ್ಟ್ ಮಾಡಿ (ಹಳೆಯ `localDb.ts` ಬ್ಯಾರೆಲ್ ಅನ್ನು ತೆಗೆದುಹಾಕಲಾಗಿದೆ)
-- ಕಡತ: `${DATA_DIR}/storage.sqlite` (ಅಥವಾ `$XDG_CONFIG_HOME/omniroute/storage.sqlite` ಹೊಂದಿಸಿದ್ದರೆ, ಇಲ್ಲದಿದ್ದರೆ `~/.omniroute/storage.sqlite`)
+- ಕಡತ: `${DATA_DIR}/storage.sqlite` (ಅಥವಾ `$XDG_CONFIG_HOME/agentproxy/storage.sqlite` ಹೊಂದಿಸಿದ್ದರೆ, ಇಲ್ಲದಿದ್ದರೆ `~/.agentproxy/storage.sqlite`)
 - ಎಂಟಿಟಿಗಳು (ಟೇಬಲ್ಗಳು + KV ನೇಮ್ಸ್ಪೇಸ್ಗಳು): providerConnections, providerNodes, modelAliases, combos, apiKeys, settings, pricing, **customModels**, **proxyConfig**, **ipFilter**, **thinkingBudget**, **systemPrompt**
 
 ಬಳಕೆಯ ಸ್ಥಿರ ಸಂಗ್ರಹಣೆ:
@@ -1127,11 +1127,11 @@ flowchart LR
 
 ## ತಿಳಿದಿರುವ ವಾಸ್ತುಶಿಲ್ಪದ ಟಿಪ್ಪಣಿಗಳು
 
-1. `usageDb` ಮತ್ತು `localDb` ಹಳೆಯ ಫೈಲ್ ಸ್ಥಳಾಂತರದೊಂದಿಗೆ ಒಂದೇ ಮೂಲ ಡೈರೆಕ್ಟರಿ ನೀತಿಯನ್ನು (`DATA_DIR` -> `XDG_CONFIG_HOME/omniroute` -> `~/.omniroute`) ಹಂಚಿಕೊಳ್ಳುತ್ತವೆ.
+1. `usageDb` ಮತ್ತು `localDb` ಹಳೆಯ ಫೈಲ್ ಸ್ಥಳಾಂತರದೊಂದಿಗೆ ಒಂದೇ ಮೂಲ ಡೈರೆಕ್ಟರಿ ನೀತಿಯನ್ನು (`DATA_DIR` -> `XDG_CONFIG_HOME/agentproxy` -> `~/.agentproxy`) ಹಂಚಿಕೊಳ್ಳುತ್ತವೆ.
 2. ಅರ್ಥವ್ಯವಸ್ಥೆಯ ವ್ಯತ್ಯಾಸವನ್ನು ತಪ್ಪಿಸಲು `/api/v1/route.ts`, `/api/v1/models` ಬಳಸುವ ಅದೇ ಏಕೀಕೃತ ಕ್ಯಾಟಲಾಗ್ ಬಿಲ್ಡರ್ಗೆ (`src/app/api/v1/models/catalog.ts`) ಕಾರ್ಯವನ್ನು ನಿಯೋಜಿಸುತ್ತದೆ.
 3. ಸಕ್ರಿಯಗೊಳಿಸಿದಾಗ ವಿನಂತಿ ಲಾಗರ್ ಸಂಪೂರ್ಣ ಹೆಡರ್ಗಳು/ಬಾಡಿಯನ್ನು ಬರೆಯುತ್ತದೆ; ಲಾಗ್ ಡೈರೆಕ್ಟರಿಯನ್ನು ಸೂಕ್ಷ್ಮವೆಂದು ಪರಿಗಣಿಸಿ.
 4. ಕ್ಲೌಡ್ ನಡವಳಿಕೆಯು ಸರಿಯಾದ `NEXT_PUBLIC_BASE_URL` ಮತ್ತು ಕ್ಲೌಡ್ ಎಂಡ್ಪಾಯಿಂಟ್ನ ತಲುಪುವಿಕೆಯನ್ನು ಅವಲಂಬಿಸಿದೆ.
-5. `open-sse/` ಡೈರೆಕ್ಟರಿಯನ್ನು `@omniroute/open-sse` **npm ವರ್ಕ್ಸ್ಪೇಸ್ ಪ್ಯಾಕೇಜ್** ಆಗಿ ಪ್ರಕಟಿಸಲಾಗಿದೆ. ಮೂಲ ಕೋಡ್ ಅದನ್ನು `@omniroute/open-sse/...` ಮೂಲಕ ಆಮದು ಮಾಡುತ್ತದೆ (Next.js `transpilePackages` ಮೂಲಕ ಪರಿಹರಿಸಲಾಗುತ್ತದೆ). ಸ್ಥಿರತೆಗಾಗಿ ಈ ದಾಖಲೆಯಲ್ಲಿನ ಫೈಲ್ ಪಥಗಳು ಇನ್ನೂ `open-sse/` ಡೈರೆಕ್ಟರಿ ಹೆಸರನ್ನೇ ಬಳಸುತ್ತವೆ.
+5. `open-sse/` ಡೈರೆಕ್ಟರಿಯನ್ನು `@agentproxy/open-sse` **npm ವರ್ಕ್ಸ್ಪೇಸ್ ಪ್ಯಾಕೇಜ್** ಆಗಿ ಪ್ರಕಟಿಸಲಾಗಿದೆ. ಮೂಲ ಕೋಡ್ ಅದನ್ನು `@agentproxy/open-sse/...` ಮೂಲಕ ಆಮದು ಮಾಡುತ್ತದೆ (Next.js `transpilePackages` ಮೂಲಕ ಪರಿಹರಿಸಲಾಗುತ್ತದೆ). ಸ್ಥಿರತೆಗಾಗಿ ಈ ದಾಖಲೆಯಲ್ಲಿನ ಫೈಲ್ ಪಥಗಳು ಇನ್ನೂ `open-sse/` ಡೈರೆಕ್ಟರಿ ಹೆಸರನ್ನೇ ಬಳಸುತ್ತವೆ.
 6. ಡ್ಯಾಶ್ಬೋರ್ಡ್ನಲ್ಲಿನ ಚಾರ್ಟ್ಗಳು ಪ್ರವೇಶಿಸಬಹುದಾದ, ಸಂವಾದಾತ್ಮಕ ವಿಶ್ಲೇಷಣಾ ದೃಶ್ಯೀಕರಣಗಳಿಗಾಗಿ (ಮಾದರಿ ಬಳಕೆಯ ಬಾರ್ ಚಾರ್ಟ್ಗಳು, ಯಶಸ್ಸಿನ ದರಗಳನ್ನು ಹೊಂದಿರುವ ಪೂರೈಕೆದಾರರ ವಿವರ ಕೋಷ್ಟಕಗಳು) **Recharts** (SVG-ಆಧಾರಿತ) ಅನ್ನು ಬಳಸುತ್ತವೆ.
 7. E2E ಪರೀಕ್ಷೆಗಳು **Playwright** (`tests/e2e/`) ಅನ್ನು ಬಳಸುತ್ತವೆ ಮತ್ತು `npm run test:e2e` ಮೂಲಕ ಚಲಾಯಿಸಲ್ಪಡುತ್ತವೆ. ಘಟಕ ಪರೀಕ್ಷೆಗಳು **Node.js test runner** (`tests/unit/`) ಅನ್ನು ಬಳಸುತ್ತವೆ ಮತ್ತು `npm run test:unit` ಮೂಲಕ ಚಲಾಯಿಸಲ್ಪಡುತ್ತವೆ. `src/` ಅಡಿಯಲ್ಲಿರುವ ಮೂಲ ಕೋಡ್ **TypeScript** (`.ts`/`.tsx`) ಆಗಿದೆ; `open-sse/` ವರ್ಕ್ಸ್ಪೇಸ್ JavaScript (`.js`) ಆಗಿಯೇ ಉಳಿದಿದೆ.
 8. ಸೆಟ್ಟಿಂಗ್ಗಳ ಪುಟವನ್ನು 7 ಟ್ಯಾಬ್ಗಳಾಗಿ ಸಂಘಟಿಸಲಾಗಿದೆ: ಸಾಮಾನ್ಯ, ಗೋಚರತೆ, AI, ಭದ್ರತೆ, ರೂಟಿಂಗ್, ಸ್ಥಿತಿಸ್ಥಾಪಕತೆ, ಸುಧಾರಿತ. ಸ್ಥಿತಿಸ್ಥಾಪಕತೆ ಪುಟವು ವಿನಂತಿ ಸರತಿ, ಸಂಪರ್ಕ ಕೂಲ್ಡೌನ್, ಪೂರೈಕೆದಾರ ಬ್ರೇಕರ್ ಮತ್ತು ಕೂಲ್ಡೌನ್ಗಾಗಿ ಕಾಯುವ ನಡವಳಿಕೆಯನ್ನು ಮಾತ್ರ ಸಂರಚಿಸುತ್ತದೆ; ಲೈವ್ ಬ್ರೇಕರ್ ರನ್ಟೈಮ್ ಸ್ಥಿತಿಯನ್ನು ಆರೋಗ್ಯ ಪುಟದಲ್ಲಿ ತೋರಿಸಲಾಗುತ್ತದೆ.
@@ -1142,7 +1142,7 @@ flowchart LR
 ## ಕಾರ್ಯಾಚರಣೆಯ ಪರಿಶೀಲನಾ ಪಟ್ಟಿ
 
 - ಮೂಲದಿಂದ ಬಿಲ್ಡ್ ಮಾಡಿ: `npm run build`
-- Docker ಇಮೇಜ್ ಬಿಲ್ಡ್ ಮಾಡಿ: `docker build -t omniroute .`
+- Docker ಇಮೇಜ್ ಬಿಲ್ಡ್ ಮಾಡಿ: `docker build -t agentproxy .`
 - ಸೇವೆಯನ್ನು ಪ್ರಾರಂಭಿಸಿ ಮತ್ತು ಪರಿಶೀಲಿಸಿ:
 - `GET /api/settings`
 - `GET /api/v1/models`

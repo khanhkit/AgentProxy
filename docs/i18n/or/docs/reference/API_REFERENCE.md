@@ -64,7 +64,7 @@ Content-Type: application/json
 | Header                   | Direction   | Description                                                                                                                                                                                                               |
 | ------------------------ | ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `X-AgentProxy-No-Cache`   | ଅନୁରୋଧ      | କ୍ୟାଚ୍ ବାଇପାସ୍ କରିବାକୁ `true` ସେଟ୍ କରନ୍ତୁ                                                                                                                                                                                 |
-| `x-omniroute-no-memory`  | ଅନୁରୋଧ      | ଏହି ଅନୁରୋଧ ପାଇଁ ମେମୋରୀ + ସ୍କିଲ୍ ଇଞ୍ଜେକ୍ସନ୍ ସ୍କିପ୍ କରିବାକୁ `true` ସେଟ୍ କରନ୍ତୁ (no-cache କୁ ମିରର୍ କରେ; ପ୍ରତି-କଲ୍ ଟୋକନ୍/ଖର୍ଚ୍ଚ ଓଭରହେଡ୍ ଏଡ଼ାଏ)                                                                                |
+| `x-agentproxy-no-memory`  | ଅନୁରୋଧ      | ଏହି ଅନୁରୋଧ ପାଇଁ ମେମୋରୀ + ସ୍କିଲ୍ ଇଞ୍ଜେକ୍ସନ୍ ସ୍କିପ୍ କରିବାକୁ `true` ସେଟ୍ କରନ୍ତୁ (no-cache କୁ ମିରର୍ କରେ; ପ୍ରତି-କଲ୍ ଟୋକନ୍/ଖର୍ଚ୍ଚ ଓଭରହେଡ୍ ଏଡ଼ାଏ)                                                                                |
 | `X-AgentProxy-Progress`   | ଅନୁରୋଧ      | ପ୍ରଗତି ଇଭେଣ୍ଟଗୁଡ଼ିକ ପାଇଁ `true` ସେଟ୍ କରନ୍ତୁ                                                                                                                                                                               |
 | `X-Session-Id`           | ଅନୁରୋଧ      | ବାହ୍ୟ ସେସନ ଆଫିନିଟି ପାଇଁ ସ୍ଟିକି ସେସନ କୀ                                                                                                                                                                                    |
 | `x_session_id`           | ଅନୁରୋଧ      | ଅଣ୍ଡରସ୍କୋର ଭାରିଆଣ୍ଟ ମଧ୍ୟ ଗ୍ରହଣ କରାଯାଏ (ସିଧାସଳଖ HTTP)                                                                                                                                                                      |
@@ -159,7 +159,7 @@ X-AgentProxy-Lease-Generation: 1
 
 ଏହି ପ୍ରତିକ୍ରିୟା କେବଳ ଏହାର ଅର୍ଥ ହେଉଛି ଯେ ସାଧାରଣ ଯୋଗ୍ୟ ସେଟ୍ ଅଣ-ଶୂନ୍ୟ ଥିଲା ଏବଂ ପ୍ରତ୍ୟେକ ମୁକ୍ତ ପ୍ରାର୍ଥୀ ଏକ ବିଦେଶୀ ସକ୍ରିୟ ଲିଜ୍ ଦ୍ୱାରା ଧାରଣ କରାଯାଇଥିଲା। ଅସମର୍ଥିତ ମଡେଲ୍/ପ୍ରଦାନକାରୀ, ନୀତି ଅସଙ୍ଗତି, କୁଲଡାଉନ୍, କୋଟା, ସ୍ୱାସ୍ଥ୍ୟ, ଏବଂ ଅନ୍ୟାନ୍ୟ ସାଧାରଣ ଯୋଗ୍ୟତା ବିଫଳତା ସେମାନଙ୍କର ବିଦ୍ୟମାନ AgentProxy ପ୍ରତିକ୍ରିୟା ବଜାୟ ରଖନ୍ତି।
 
-### `x-omniroute-compression`
+### `x-agentproxy-compression`
 
 ସଙ୍କୋଚନ ଯୋଜନାର ପ୍ରତି-ଅନୁରୋଧ ଓଭରରାଇଡ୍। ସର୍ବୋଚ୍ଚ ପ୍ରାଧାନ୍ୟ — ରାଉଟିଂ-କମ୍ବୋ ଓଭରରାଇଡ୍, ସକ୍ରିୟ ପ୍ରୋଫାଇଲ୍, ଅଟୋ-ଟ୍ରିଗର୍, ଏବଂ ପ୍ୟାନେଲ୍ ଡିଫଲ୍ଟକୁ ହରାଏ। ମୂଲ୍ୟଗୁଡ଼ିକ:
 
@@ -361,10 +361,10 @@ GET /v1/models?prefix=canonical    # କେବଳ ସମ୍ପୂର୍ଣ୍ଣ
 
 ### ନୋ-ଥିଙ୍କିଂ ମଡେଲ୍ ଭେରିଆଣ୍ଟ
 
-ଥିଙ୍କିଂ-ସକ୍ଷମ Claude ମଡେଲ୍ ପାଇଁ, `/v1/models` ଏକ **ନୋ-ଥିଙ୍କିଂ** ଭେରିଆଣ୍ଟ ମଧ୍ୟ ବିଜ୍ଞାପନ କରେ ଯାହାର id `claude-3-omniroute-no-thinking/` ଉପସର୍ଗ ସହ ଅଟେ:
+ଥିଙ୍କିଂ-ସକ୍ଷମ Claude ମଡେଲ୍ ପାଇଁ, `/v1/models` ଏକ **ନୋ-ଥିଙ୍କିଂ** ଭେରିଆଣ୍ଟ ମଧ୍ୟ ବିଜ୍ଞାପନ କରେ ଯାହାର id `claude-3-agentproxy-no-thinking/` ଉପସର୍ଗ ସହ ଅଟେ:
 
 ```
-claude-3-omniroute-no-thinking/<provider>/<model>
+claude-3-agentproxy-no-thinking/<provider>/<model>
 ```
 
 ଏହି id ବାଛିବା (ଉଦାହରଣ ସ୍ୱରୂପ ସର୍ବଦା `thinking` ବ୍ଲକ୍ ସଂଲଗ୍ନ କରୁଥିବା Claude Code କନଫିଗ୍ ରେ) ଯୁକ୍ତି ଦମନ କରି ପ୍ରକୃତ `<provider>/<model>` କୁ ସଂକଳ୍ପ କରେ — `/v1/messages` ପଥ୍ ରେ `thinking:{type:"disabled"}`, ଅଥବା `/v1/chat/completions` ପଥ୍ ରେ `reasoning`/`reasoning_effort` କ୍ଷେତ୍ର ବାଦ୍ ଦିଆଯାଏ। ଏହି ଭେରିଆଣ୍ଟ କେବଳ ସେହି Claude-ପରିବାର ମଡେଲ୍ ପାଇଁ ତାଲିକାଭୁକ୍ତ ହୁଏ ଯେଉଁମାନେ ଥିଙ୍କିଂ ସମର୍ଥନ କରନ୍ତି **ଏବଂ** `disabled` ମାନନ୍ତି (ତେଣୁ ଉଦାହରଣ ସ୍ୱରୂପ `disabled` ପ୍ରତ୍ୟାଖ୍ୟାନ କରୁଥିବା କେବଳ ଅନୁକୂଳମୂଳକ ମଡେଲ୍ ବାଦ୍ ଦିଆଯାଏ)। ଅପରେଟର୍ `ModelSpec.noThinkingAlias` ମାଧ୍ୟମରେ ପ୍ରତ୍ୟେକ ମଡେଲ୍ ପାଇଁ ଭେରିଆଣ୍ଟ ଚାଲୁ ଅଥବା ବନ୍ଦ କରିପାରିବେ।
@@ -449,7 +449,7 @@ POST /v1/music/generations  { "model": "suno/v3.5",   "prompt": "..." }
 > ନୋଡ୍ଗୁଡ଼ିକ (`localhost`, `127.0.0.1`, `172.16.0.0/12`) ସର୍ବଦା ଯୋଗ୍ୟ। ଅନ୍ୟ ଯେକୌଣସି
 > ହୋଷ୍ଟରେ ଥିବା ନୋଡ୍—ଏକ LAN ବକ୍ସ କିମ୍ବା Tailscale ପିୟର୍—କେବଳ ଅପରେଟର୍
 > `RERANK_REMOTE_PROVIDER_NODES` ଫିଚର୍ ଫ୍ଲାଗ୍ ସକ୍ଷମ କଲେ **ଏବଂ** ନୋଡ୍ର ମୂଳ URL ପ୍ରଦାନକାରୀଙ୍କ
-> ଆଉଟ୍ବାଉଣ୍ଡ୍ URL ନୀତି (`OMNIROUTE_ALLOW_LOCAL_PROVIDER_URLS` / `OMNIROUTE_ALLOW_PRIVATE_PROVIDER_URLS`) ପାସ୍ କଲେ ଯୋଗ୍ୟ ହୁଏ;
+> ଆଉଟ୍ବାଉଣ୍ଡ୍ URL ନୀତି (`AGENTPROXY_ALLOW_LOCAL_PROVIDER_URLS` / `AGENTPROXY_ALLOW_PRIVATE_PROVIDER_URLS`) ପାସ୍ କଲେ ଯୋଗ୍ୟ ହୁଏ;
 > କ୍ଲାଉଡ୍-ମେଟାଡାଟା ହୋଷ୍ଟଗୁଡ଼ିକୁ କେବେ ମଧ୍ୟ ରୁଟ୍ କରାଯାଏ ନାହିଁ। ମେମୋରି ଇଞ୍ଜିନ୍ର ପୁନଃକ୍ରମାଙ୍କନ ପଦକ୍ଷେପ ଲୁପ୍ବ୍ୟାକ୍ ମାଧ୍ୟମରେ
 > ଏହି ରୁଟ୍କୁ କଲ୍ କରେ, ତେଣୁ ସମାନ ନିୟମ ମେମୋରି ସେଟିଂସ୍ର `rerankProviderModel` ପାଇଁ ମଧ୍ୟ ପ୍ରଯୁଜ୍ୟ।
 >
@@ -561,8 +561,8 @@ GET /v1/ws?handshake=1
 
 ```bash
 # Same host:port as the HTTP API (default 20128); upgrade the connection:
-wscat -c "ws://localhost:20128/v1/responses?api_key=<OMNIROUTE_API_KEY>"
-# (or: -H "Authorization: Bearer <OMNIROUTE_API_KEY>")
+wscat -c "ws://localhost:20128/v1/responses?api_key=<AGENTPROXY_API_KEY>"
+# (or: -H "Authorization: Bearer <AGENTPROXY_API_KEY>")
 
 # First frame MUST be response.create:
 { "type": "response.create", "model": "gpt-5.5", "input": [ { "role": "user", "content": "hi" } ] }
@@ -582,18 +582,18 @@ WebSocket ସମର୍ଥନ ସହ ଏକ କଷ୍ଟମ ପ୍ରଦାନକ
 
 ```toml
 model = "gpt-5.5"                 # bare id — NOT "codex/gpt-5.5"
-model_provider = "omniroute"
+model_provider = "agentproxy"
 
-[model_providers.omniroute]
+[model_providers.agentproxy]
 name = "AgentProxy (WS)"
 base_url = "http://localhost:20128/v1"   # no trailing slash; the WS URL is derived (use https/wss in production)
 wire_api = "responses"                    # only supported value since Feb 2026
 supports_websockets = true                # enables the Responses-over-WS transport
-env_key = "OMNIROUTE_API_KEY"             # holds the AgentProxy API key (Bearer)
+env_key = "AGENTPROXY_API_KEY"             # holds the AgentProxy API key (Bearer)
 ```
 
 ```bash
-export OMNIROUTE_API_KEY=sk-...           # an AgentProxy API key (any key if REQUIRE_API_KEY=false)
+export AGENTPROXY_API_KEY=sk-...           # an AgentProxy API key (any key if REQUIRE_API_KEY=false)
 codex exec "Responda apenas: PONG"
 ```
 
@@ -938,7 +938,7 @@ Content-Type: application/json
 {
   "success": true,
   "repaired": ["CLAUDE_CODE_OAUTH_CLIENT_ID", "CLAUDE_CODE_OAUTH_CLIENT_SECRET"],
-  "backupPath": "/home/user/.omniroute/backups/env-repair-2026-04-11.bak"
+  "backupPath": "/home/user/.agentproxy/backups/env-repair-2026-04-11.bak"
 }
 ```
 
@@ -1301,7 +1301,7 @@ AgentProxy ଏକ A2A (Agent-to-Agent) JSON-RPC 2.0 ଏଣ୍ଡପଏଣ୍ଟ 
 
 ```bash
 POST /a2a
-Authorization: Bearer your-api-key   # optional unless OMNIROUTE_API_KEY is set
+Authorization: Bearer your-api-key   # optional unless AGENTPROXY_API_KEY is set
 Content-Type: application/json
 
 {
@@ -1344,7 +1344,7 @@ GET /.well-known/agent.json
 | GET       | `/api/a2a/tasks/[id]`        | ଗୋଟିଏ କାର୍ଯ୍ୟ ଆଣନ୍ତୁ                                                                                                |
 | POST      | `/api/a2a/tasks/[id]/cancel` | ଗୋଟିଏ କାର୍ଯ୍ୟ ବାତିଲ କରନ୍ତୁ                                                                                          |
 
-**ପ୍ରମାଣୀକରଣ:** REST ସାହାଯ୍ୟକାରୀ ବ୍ୟବସ୍ଥାପନ ପ୍ରମାଣୀକରଣ ବିନା ଚାଲେ (ଡ୍ୟାସବୋର୍ଡ-ପଠନଯୋଗ୍ୟ); JSON-RPC `/a2a` ରୁଟ୍ ଯଦି କନ୍ଫିଗର କରାଯାଇଛି ତେବେ Bearer `OMNIROUTE_API_KEY` ବ୍ୟବହାର କରେ।
+**ପ୍ରମାଣୀକରଣ:** REST ସାହାଯ୍ୟକାରୀ ବ୍ୟବସ୍ଥାପନ ପ୍ରମାଣୀକରଣ ବିନା ଚାଲେ (ଡ୍ୟାସବୋର୍ଡ-ପଠନଯୋଗ୍ୟ); JSON-RPC `/a2a` ରୁଟ୍ ଯଦି କନ୍ଫିଗର କରାଯାଇଛି ତେବେ Bearer `AGENTPROXY_API_KEY` ବ୍ୟବହାର କରେ।
 
 ---
 
@@ -1658,7 +1658,7 @@ AgentProxy ପ୍ଲଗିନ୍ସ୍ ପରିଚାଳନା କରନ୍ତ�
 
 ## ଗାର୍ଡରେଲ୍ସ୍
 
-ରନଟାଇମ୍ ଗାର୍ଡରେଲ୍ସ୍ ନିରୀକ୍ଷଣ କରନ୍ତୁ (PII ସନ୍ଧାନ, ପ୍ରମ୍ପଟ୍ ଇନ୍ଜେକ୍ସନ୍ ସନ୍ଧାନ, ଭିଜୁଆଲ୍ ବ୍ରିଜିଂ)। ଗାର୍ଡରେଲ୍ସ୍ ପ୍ରତ୍ୟେକ ଅନୁରୋଧରେ ଚାଲେ; ପ୍ରତି-କଲ୍ ଅପ୍-ଅପ୍ଟ୍ `x-omniroute-disabled-guardrails` ଅନୁରୋଧ ହେଡର୍ ମାଧ୍ୟମରେ କରାଯାଏ — ସ୍ଥାୟୀ ସକ୍ରିୟ/ନିଷ୍କ୍ରିୟ ସତହ ନାହିଁ।
+ରନଟାଇମ୍ ଗାର୍ଡରେଲ୍ସ୍ ନିରୀକ୍ଷଣ କରନ୍ତୁ (PII ସନ୍ଧାନ, ପ୍ରମ୍ପଟ୍ ଇନ୍ଜେକ୍ସନ୍ ସନ୍ଧାନ, ଭିଜୁଆଲ୍ ବ୍ରିଜିଂ)। ଗାର୍ଡରେଲ୍ସ୍ ପ୍ରତ୍ୟେକ ଅନୁରୋଧରେ ଚାଲେ; ପ୍ରତି-କଲ୍ ଅପ୍-ଅପ୍ଟ୍ `x-agentproxy-disabled-guardrails` ଅନୁରୋଧ ହେଡର୍ ମାଧ୍ୟମରେ କରାଯାଏ — ସ୍ଥାୟୀ ସକ୍ରିୟ/ନିଷ୍କ୍ରିୟ ସତହ ନାହିଁ।
 
 | ପଦ୍ଧତି | ପଥ                     | ବର୍ଣ୍ଣନା                                                                                     |
 | ------ | ---------------------- | -------------------------------------------------------------------------------------------- |

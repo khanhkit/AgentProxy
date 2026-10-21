@@ -89,13 +89,13 @@ ufw enable
 ### 2.1 Ստեղծեք կազմաձևման գրացուցակը
 
 ```bash
-mkdir -p /opt/omniroute
+mkdir -p /opt/agentproxy
 ```
 
 ### 2.2 Ստեղծեք միջավայրի փոփոխականների ֆայլը
 
 ```bash
-cat > /opt/omniroute/.env << 'EOF'
+cat > /opt/agentproxy/.env << 'EOF'
 # === Անվտանգություն ===
 JWT_SECRET=CHANGE-TO-A-UNIQUE-64-CHAR-SECRET-KEY
 INITIAL_PASSWORD=YourSecurePassword123!
@@ -103,7 +103,7 @@ API_KEY_SECRET=REPLACE-WITH-ANOTHER-SECRET-KEY
 STORAGE_ENCRYPTION_KEY=REPLACE-WITH-THIRD-SECRET-KEY
 STORAGE_ENCRYPTION_KEY_VERSION=v1
 MACHINE_ID_SALT=CHANGE-TO-A-UNIQUE-SALT
-OMNIROUTE_WS_BRIDGE_SECRET=REPLACE-WITH-WS-BRIDGE-SECRET  # ՊԱՐՏԱԴԻՐ է արտադրական միջավայրում․ օգտագործվում է Codex Responses WS կամրջի կողմից
+AGENTPROXY_WS_BRIDGE_SECRET=REPLACE-WITH-WS-BRIDGE-SECRET  # ՊԱՐՏԱԴԻՐ է արտադրական միջավայրում․ օգտագործվում է Codex Responses WS կամրջի կողմից
 
 # === Հավելված ===
 PORT=20128
@@ -120,11 +120,11 @@ BASE_URL=http://127.0.0.1:20128
 # Զննարկչին հասանելի URL, որն օգտագործվում է OAuth հետադարձ կանչերի, կառավարման վահանակի հղումների և ստեղծվող հանրային URL-ների համար։
 NEXT_PUBLIC_BASE_URL=https://llms.seudominio.com
 # Ընտրովի բացահայտ հանրային սկզբնաղբյուրի վերասահմանում՝ ստեղծվող հանրային ռեսուրսների URL-ների համար։
-# OMNIROUTE_PUBLIC_BASE_URL=https://llms.seudominio.com
+# AGENTPROXY_PUBLIC_BASE_URL=https://llms.seudominio.com
 
 # === Ամպային համաժամացում (ընտրովի) ===
-# CLOUD_URL=https://cloud.omniroute.online
-# NEXT_PUBLIC_CLOUD_URL=https://cloud.omniroute.online
+# CLOUD_URL=https://agentproxy.online
+# NEXT_PUBLIC_CLOUD_URL=https://agentproxy.online
 EOF
 ```
 
@@ -133,22 +133,22 @@ EOF
 ### 2.3 Գործարկեք կոնտեյները
 
 ```bash
-docker pull diegosouzapw/omniroute:latest
+docker pull diegosouzapw/agentproxy:latest
 
 docker run -d \
-  --name omniroute \
+  --name agentproxy \
   --restart unless-stopped \
-  --env-file /opt/omniroute/.env \
+  --env-file /opt/agentproxy/.env \
   -p 20128:20128 \
-  -v omniroute-data:/app/data \
-  diegosouzapw/omniroute:latest
+  -v agentproxy-data:/app/data \
+  diegosouzapw/agentproxy:latest
 ```
 
 ### 2.4 Ստուգեք, որ այն աշխատում է
 
 ```bash
-docker ps | grep omniroute
-docker logs omniroute --tail 20
+docker ps | grep agentproxy
+docker logs agentproxy --tail 20
 ```
 
 Պետք է ցուցադրվեն՝ `[DB] SQLite database ready` և `listening on port 20128`։
@@ -181,7 +181,7 @@ chmod 600 /etc/nginx/ssl/origin.key
 ### 3.2 Nginx-ի կարգավորում
 
 ```bash
-cat > /etc/nginx/sites-available/omniroute << 'NGINX'
+cat > /etc/nginx/sites-available/agentproxy << 'NGINX'
 # Լռելյայն սերվեր — արգելափակում է IP-ի միջոցով ուղիղ հասանելիությունը
 server {
     listen 80 default_server;
@@ -245,7 +245,7 @@ AgentProxy-ն օգտագործում է `NEXT_PUBLIC_BASE_URL`-ը՝ որպես �
 հետադարձ կանչերի և ստեղծվող հանրային հղումների համար։ Նույնականացված կառավարման վահանակի գրանցման հարցումներն օգտագործում են նույն սկզբնաղբյուրի հարցումներ՝
 գումարած աշխատաշրջանին կապված CSRF պաշտպանություն, ուստի դրանց համար ստատիկ հանրային բազային URL չի պահանջվում։ Վերոնշյալ
 `X-Forwarded-*` վերնագրերը դեռևս օգտակար երթուղավորման մետատվյալներ են, սակայն դրանք չեն փոխարինում
-հստակ հանրային URL-ի սահմանմանը, երբ այն անհրաժեշտ է OAuth-ի կամ ստեղծվող դիտարկիչային հղումների համար։ `OMNIROUTE_TRUST_PROXY`-ն միացրեք միայն այն դեպքում,
+հստակ հանրային URL-ի սահմանմանը, երբ այն անհրաժեշտ է OAuth-ի կամ ստեղծվող դիտարկիչային հղումների համար։ `AGENTPROXY_TRUST_PROXY`-ն միացրեք միայն այն դեպքում,
 եթե AgentProxy-ն ուղղակիորեն հասանելի չէ հաճախորդներին, և ձեր պրոքսին հեռացնում/վերակառուցում է մուտքային վերահասցեավորման վերնագրերը։
 
 ### 3.3 Միացրեք և ստուգեք
@@ -255,7 +255,7 @@ AgentProxy-ն օգտագործում է `NEXT_PUBLIC_BASE_URL`-ը՝ որպես �
 rm -f /etc/nginx/sites-enabled/default
 
 # Միացրեք AgentProxy-ը
-ln -sf /etc/nginx/sites-available/omniroute /etc/nginx/sites-enabled/omniroute
+ln -sf /etc/nginx/sites-available/agentproxy /etc/nginx/sites-enabled/agentproxy
 
 # Ստուգեք և վերաբեռնեք
 nginx -t && systemctl reload nginx
@@ -299,40 +299,40 @@ curl -sI https://llms.seudominio.com/health
 ### Թարմացում նոր տարբերակի
 
 ```bash
-docker pull diegosouzapw/omniroute:latest
-docker stop omniroute && docker rm omniroute
-docker run -d --name omniroute --restart unless-stopped \
-  --env-file /opt/omniroute/.env \
+docker pull diegosouzapw/agentproxy:latest
+docker stop agentproxy && docker rm agentproxy
+docker run -d --name agentproxy --restart unless-stopped \
+  --env-file /opt/agentproxy/.env \
   -p 20128:20128 \
-  -v omniroute-data:/app/data \
-  diegosouzapw/omniroute:latest
+  -v agentproxy-data:/app/data \
+  diegosouzapw/agentproxy:latest
 ```
 
 ### Դիտեք մատյանները
 
 ```bash
-docker logs -f omniroute          # Հոսք իրական ժամանակում
-docker logs omniroute --tail 50   # Վերջին 50 տողերը
+docker logs -f agentproxy          # Հոսք իրական ժամանակում
+docker logs agentproxy --tail 50   # Վերջին 50 տողերը
 ```
 
 ### Տվյալների բազայի ձեռքով պահուստավորում
 
 ```bash
 # Պատճենել տվյալները հատորից հոսթ
-docker cp omniroute:/app/data ./backup-$(date +%F)
+docker cp agentproxy:/app/data ./backup-$(date +%F)
 
 # Կամ սեղմել ամբողջ հատորը
-docker run --rm -v omniroute-data:/data -v $(pwd):/backup \
-  alpine tar czf /backup/omniroute-data-$(date +%F).tar.gz /data
+docker run --rm -v agentproxy-data:/data -v $(pwd):/backup \
+  alpine tar czf /backup/agentproxy-data-$(date +%F).tar.gz /data
 ```
 
 ### Վերականգնում պահուստային պատճենից
 
 ```bash
-docker stop omniroute
-docker run --rm -v omniroute-data:/data -v $(pwd):/backup \
-  alpine sh -c "rm -rf /data/* && tar xzf /backup/omniroute-data-YYYY-MM-DD.tar.gz -C /"
-docker start omniroute
+docker stop agentproxy
+docker run --rm -v agentproxy-data:/data -v $(pwd):/backup \
+  alpine sh -c "rm -rf /data/* && tar xzf /backup/agentproxy-data-YYYY-MM-DD.tar.gz -C /"
+docker start agentproxy
 ```
 
 ---
@@ -401,13 +401,13 @@ Cloudflare Workers-ի միջոցով հեռակա հասանելիության �
 
 ```bash
 # Տեղային շտեմարանում
-cd omnirouteCloud
+cd agentproxyCloud
 npm install
 npx wrangler login
 npx wrangler deploy
 ```
 
-Տե՛ս նաև [TUNNELS_GUIDE.md](./TUNNELS_GUIDE.md)՝ շտեմարանում ներառված Cloudflare Tunnel-ի քայլ առ քայլ ուղեցույցի համար։ Առանձին `omnirouteCloud/` աշխատիչը գտնվում է առանձին ուղեկից շտեմարանում։
+Տե՛ս նաև [TUNNELS_GUIDE.md](./TUNNELS_GUIDE.md)՝ շտեմարանում ներառված Cloudflare Tunnel-ի քայլ առ քայլ ուղեցույցի համար։ Առանձին `agentproxyCloud/` աշխատիչը գտնվում է առանձին ուղեկից շտեմարանում։
 
 ---
 
@@ -424,9 +424,9 @@ npx wrangler deploy
 
 Փոքր VPS օրինակների վրա տեղակայումների համար (1 GB RAM կամ պակաս).
 
-- **Անջատեք ֆոնային ծառայությունները** — սահմանեք `OMNIROUTE_DISABLE_BACKGROUND_SERVICES=1`՝ ժամանակացույցը, MCP սերվերը և պարբերական սպասարկման առաջադրանքները բաց թողնելու համար։ Տե՛ս `docs/reference/ENVIRONMENT.md`։
+- **Անջատեք ֆոնային ծառայությունները** — սահմանեք `AGENTPROXY_DISABLE_BACKGROUND_SERVICES=1`՝ ժամանակացույցը, MCP սերվերը և պարբերական սպասարկման առաջադրանքները բաց թողնելու համար։ Տե՛ս `docs/reference/ENVIRONMENT.md`։
 - **Օգտագործեք SQLite WAL ռեժիմը** — լռելյայն միացված է և նվազեցնում է հիշողության առավելագույն օգտագործումը միաժամանակյա ընթերցումների ժամանակ։
-- **Սահմանափակեք V8 կույտը** — սահմանեք `OMNIROUTE_MEMORY_MB` (օրինակ՝ `512`), որպեսզի կատարման միջավայրը VM-ից մեծ վերին սահման չչափաբերի։ Տե՛ս `docs/reference/ENVIRONMENT.md`։
-- **Ծանր հարցումների ընդունումն ավտոմատ մասշտաբավորվում է կույտի սահմանաչափին համապատասխան** -- վերևում `OMNIROUTE_MEMORY_MB`-ը սահմանելուց հետո մուտքային տվյալների բայթային բյուջեն (`OMNIROUTE_CHAT_MAX_INFLIGHT_BYTES`) հաշվարկվում է նույն վերին սահմանից, ուստի հիշողությամբ սահմանափակված VM-ն առանց լրացուցիչ կարգավորման արդեն ստանում է միաժամանակյա հարցումների ավելի փոքր բյուջե․ ավելցուկային հարցումները հիշողության համար մրցակցելու փոխարեն ստանում են կրկին փորձարկելի `503` պատասխան՝ `Retry-After`-ով։ Սահմանեք հին `OMNIROUTE_CHAT_MAX_HEAVY_IN_FLIGHT` հարցումների քանակի սահմանաչափը միայն այն դեպքում, եթե դրանից բացի անհրաժեշտ է նաև կոշտ վերին սահման։
+- **Սահմանափակեք V8 կույտը** — սահմանեք `AGENTPROXY_MEMORY_MB` (օրինակ՝ `512`), որպեսզի կատարման միջավայրը VM-ից մեծ վերին սահման չչափաբերի։ Տե՛ս `docs/reference/ENVIRONMENT.md`։
+- **Ծանր հարցումների ընդունումն ավտոմատ մասշտաբավորվում է կույտի սահմանաչափին համապատասխան** -- վերևում `AGENTPROXY_MEMORY_MB`-ը սահմանելուց հետո մուտքային տվյալների բայթային բյուջեն (`AGENTPROXY_CHAT_MAX_INFLIGHT_BYTES`) հաշվարկվում է նույն վերին սահմանից, ուստի հիշողությամբ սահմանափակված VM-ն առանց լրացուցիչ կարգավորման արդեն ստանում է միաժամանակյա հարցումների ավելի փոքր բյուջե․ ավելցուկային հարցումները հիշողության համար մրցակցելու փոխարեն ստանում են կրկին փորձարկելի `503` պատասխան՝ `Retry-After`-ով։ Սահմանեք հին `AGENTPROXY_CHAT_MAX_HEAVY_IN_FLIGHT` հարցումների քանակի սահմանաչափը միայն այն դեպքում, եթե դրանից բացի անհրաժեշտ է նաև կոշտ վերին սահման։
 - **VPS-ում խուսափեք `next build`-ից** — կառուցեք տեղային միջավայրում և տեղակայեք ինքնուրույն ելքային տարբերակը (`.next/standalone/`)։
 - **Վերահսկեք `top` / `free -m` հրամաններով** — 1 GB հիշողությամբ VM-ում անգործության ժամանակ AgentProxy-ը սովորաբար օգտագործում է 200-400 MB RSS։

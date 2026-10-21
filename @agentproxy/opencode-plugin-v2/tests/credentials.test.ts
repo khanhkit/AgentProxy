@@ -71,34 +71,20 @@ describe("gateway credential resolution", () => {
     assert.deepEqual(env, { key: "from-env", origin: "env" });
   });
 
-  it("prefers AGENTPROXY_API_KEY over the legacy OMNIROUTE_API_KEY fallback", async () => {
-    const previousLegacy = process.env.OMNIROUTE_API_KEY;
-    process.env.OMNIROUTE_API_KEY = "legacy-env";
-    try {
-      const { log } = collectingLogger();
-      const got = await withEnv("agentproxy-env", () =>
-        resolveApiKey(ctxWith(undefined), "agentproxy", undefined, log)
-      );
-      assert.deepEqual(got, { key: "agentproxy-env", origin: "env" });
-    } finally {
-      if (previousLegacy === undefined) delete process.env.OMNIROUTE_API_KEY;
-      else process.env.OMNIROUTE_API_KEY = previousLegacy;
-    }
+  it("uses the canonical environment key when the configured option is empty", async () => {
+    const { log } = collectingLogger();
+    const got = await withEnv("from-env", () =>
+      resolveApiKey(ctxWith(undefined), "agentproxy", "", log)
+    );
+    assert.deepEqual(got, { key: "from-env", origin: "env" });
   });
 
-  it("keeps OMNIROUTE_API_KEY as a legacy fallback when the canonical env is absent", async () => {
-    const previousLegacy = process.env.OMNIROUTE_API_KEY;
-    process.env.OMNIROUTE_API_KEY = "legacy-env";
-    try {
-      const { log } = collectingLogger();
-      const got = await withEnv(undefined, () =>
-        resolveApiKey(ctxWith(undefined), "agentproxy", undefined, log)
-      );
-      assert.deepEqual(got, { key: "legacy-env", origin: "env" });
-    } finally {
-      if (previousLegacy === undefined) delete process.env.OMNIROUTE_API_KEY;
-      else process.env.OMNIROUTE_API_KEY = previousLegacy;
-    }
+  it("rejects an empty canonical environment key as a missing credential", async () => {
+    const { log } = collectingLogger();
+    const got = await withEnv("", () =>
+      resolveApiKey(ctxWith(undefined), "agentproxy", undefined, log)
+    );
+    assert.deepEqual(got, { key: "", origin: "missing" });
   });
 
   it("reports no key rather than pretending an empty one works", async () => {

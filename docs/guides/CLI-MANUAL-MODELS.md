@@ -64,7 +64,7 @@ exact provider connection produced all three proofs: generation, a nonce-bound
 synthetic tool call, and continuation after a synthetic tool result. No real tool
 execution is needed for those proofs.
 
-The existing `x-omniroute-connection` pin alone is insufficient as a proof receipt:
+The existing `x-agentproxy-connection` pin alone is insufficient as a proof receipt:
 credential selection can intentionally release a pin for cooldown, quota or
 excluded-account cases, and session affinity participates in selection. See
 `src/sse/services/auth.ts` and the `forcedConnectionId` handling in

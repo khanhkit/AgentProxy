@@ -30,7 +30,7 @@ curl http://localhost:20128/.well-known/agent.json
 Բոլոր `/a2a` հարցումները պահանջում են API բանալի՝ `Authorization` վերնագրի միջոցով.
 
 ```
-Authorization: Bearer YOUR_OMNIROUTE_API_KEY
+Authorization: Bearer YOUR_AGENTPROXY_API_KEY
 ```
 
 Եթե սերվերում API բանալի կազմաձևված չէ, նույնականացումը շրջանցվում է։
@@ -187,7 +187,7 @@ JSON-RPC վերջնակետը՝ `/a2a`, կանոնական A2A մուտքի կե
 | `/api/a2a/tasks/[id]`        | GET   | Ստանալ առաջադրանքն ըստ ID-ի                                   | կառավարում                                                  |
 | `/api/a2a/tasks/[id]/cancel` | POST  | Չեղարկել կատարվող առաջադրանքը                                 | կառավարում                                                  |
 | `/.well-known/agent.json`    | GET   | Agent Card (A2A հայտնաբերում)                                 | (հանրային, քեշավորված 3600s)                                |
-| `/api/a2a/tasks`             | POST  | Մուտքային պատվիրակում OmniConductor խմբին (Conductor PRD RF5) | Bearer՝ `OMNIROUTE_API_KEY`-ի համեմատությամբ + `a2aEnabled` |
+| `/api/a2a/tasks`             | POST  | Մուտքային պատվիրակում OmniConductor խմբին (Conductor PRD RF5) | Bearer՝ `AGENTPROXY_API_KEY`-ի համեմատությամբ + `a2aEnabled` |
 
 **Conductor-ի մուտքային պատվիրակում (`POST /api/a2a/tasks`)․** արտաքին A2A գործակալները AgentProxy-ի միջոցով կոդավորման աշխատանք են պատվիրակում OmniConductor խմբին։ Մարմին՝ `{ skill: "conductor" | "conductor-cli-<profile>", messages: [{role, content}], metadata: { conductor: { repo: { url, base_ref? }, mode?, cli?, model? } } }` — պատվիրակման ենթակա են միայն Conductor խմբի հմտությունները (Agent Card-ում հայտարարվածները), իսկ `metadata.conductor.repo.url`-ը պարտադիր է (խումբն աշխատում է git շտեմարանների հետ)։ Ուղին փոխակերպվում է հանգույցի `POST /v1/tasks` հարցման՝ օգտագործելով սերվերային `CONDUCTOR_ORCHESTRATOR_TOKEN`-ը (պահուստային տարբերակ՝ `CONDUCTOR_HUB_TOKEN`) և վերադարձնում է `201 { conductor_task_id, state: "submitted" }`։ Առաջադրանքների վիճակները հետ են փոխանցվում SSE→A2A հայելու միջոցով (RF1) և տեսանելի են `GET /api/a2a/tasks?skill=conductor` հարցմամբ։
 

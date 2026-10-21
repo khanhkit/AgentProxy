@@ -30,7 +30,7 @@ Agent Card ਦਾ `version` ਫੀਲਡ `process.env.npm_package_version` ਤ�
 ਸਾਰੀਆਂ `/a2a` ਬੇਨਤੀਆਂ ਲਈ `Authorization` ਹੈਡਰ ਰਾਹੀਂ ਇੱਕ API ਕੁੰਜੀ ਦੀ ਲੋੜ ਹੁੰਦੀ ਹੈ:
 
 ```
-Authorization: Bearer YOUR_OMNIROUTE_API_KEY
+Authorization: Bearer YOUR_AGENTPROXY_API_KEY
 ```
 
 ਜੇ ਸਰਵਰ ਉੱਤੇ ਕੋਈ API ਕੁੰਜੀ ਸੰਰਚਿਤ ਨਹੀਂ ਹੈ, ਤਾਂ ਪ੍ਰਮਾਣੀਕਰਨ ਨੂੰ ਬਾਈਪਾਸ ਕਰ ਦਿੱਤਾ ਜਾਂਦਾ ਹੈ।
@@ -187,7 +187,7 @@ JSON-RPC ਐਂਡਪੌਇੰਟ `/a2a` ਪ੍ਰਮਾਣਿਕ A2A ਪ੍ਰ�
 | `/api/a2a/tasks/[id]`        | GET  | ID ਰਾਹੀਂ ਕਾਰਜ ਪ੍ਰਾਪਤ ਕਰੋ                                       | ਪ੍ਰਬੰਧਨ                                              |
 | `/api/a2a/tasks/[id]/cancel` | POST | ਚੱਲ ਰਿਹਾ ਕਾਰਜ ਰੱਦ ਕਰੋ                                          | ਪ੍ਰਬੰਧਨ                                              |
 | `/.well-known/agent.json`    | GET  | ਏਜੰਟ ਕਾਰਡ (A2A ਖੋਜ)                                            | (ਜਨਤਕ, 3600s ਲਈ ਕੈਸ਼ ਕੀਤਾ)                           |
-| `/api/a2a/tasks`             | POST | OmniConductor ਫ਼ਲੀਟ ਨੂੰ ਆਉਣ ਵਾਲਾ ਡੈਲੀਗੇਸ਼ਨ (Conductor PRD RF5) | `OMNIROUTE_API_KEY` + `a2aEnabled` ਦੇ ਮੁਕਾਬਲੇ Bearer |
+| `/api/a2a/tasks`             | POST | OmniConductor ਫ਼ਲੀਟ ਨੂੰ ਆਉਣ ਵਾਲਾ ਡੈਲੀਗੇਸ਼ਨ (Conductor PRD RF5) | `AGENTPROXY_API_KEY` + `a2aEnabled` ਦੇ ਮੁਕਾਬਲੇ Bearer |
 
 **ਆਉਣ ਵਾਲਾ Conductor ਡੈਲੀਗੇਸ਼ਨ (`POST /api/a2a/tasks`):** ਬਾਹਰੀ A2A ਏਜੰਟ AgentProxy ਰਾਹੀਂ ਕੋਡਿੰਗ ਦਾ ਕੰਮ OmniConductor ਫ਼ਲੀਟ ਨੂੰ ਸੌਂਪਦੇ ਹਨ। ਬਾਡੀ: `{ skill: "conductor" | "conductor-cli-<profile>", messages: [{role, content}], metadata: { conductor: { repo: { url, base_ref? }, mode?, cli?, model? } } }` — ਸਿਰਫ਼ Conductor ਫ਼ਲੀਟ ਦੇ ਹੁਨਰ (ਜੋ ਏਜੰਟ ਕਾਰਡ ਉੱਤੇ ਘੋਸ਼ਿਤ ਕੀਤੇ ਗਏ ਹਨ) ਹੀ ਸੌਂਪੇ ਜਾ ਸਕਦੇ ਹਨ; `metadata.conductor.repo.url` ਲਾਜ਼ਮੀ ਹੈ (ਫ਼ਲੀਟ git ਰਿਪੋਜ਼ ਉੱਤੇ ਕੰਮ ਕਰਦੀ ਹੈ)। ਇਹ ਰੂਟ ਸਰਵਰ-ਸਾਈਡ `CONDUCTOR_ORCHESTRATOR_TOKEN` (ਫ਼ਾਲਬੈਕ `CONDUCTOR_HUB_TOKEN`) ਦੀ ਵਰਤੋਂ ਕਰਕੇ ਹੱਬ ਦੇ `POST /v1/tasks` ਵਿੱਚ ਅਨੁਵਾਦ ਹੁੰਦਾ ਹੈ ਅਤੇ `201 { conductor_task_id, state: "submitted" }` ਵਾਪਸ ਕਰਦਾ ਹੈ; ਕਾਰਜ ਦੀਆਂ ਸਥਿਤੀਆਂ SSE→A2A ਮਿਰਰ (RF1) ਰਾਹੀਂ ਵਾਪਸ ਪ੍ਰਵਾਹਿਤ ਹੁੰਦੀਆਂ ਹਨ ਅਤੇ `GET /api/a2a/tasks?skill=conductor` ਰਾਹੀਂ ਦਿਸਦੀਆਂ ਹਨ।
 

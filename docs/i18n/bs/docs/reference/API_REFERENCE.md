@@ -66,7 +66,7 @@ Content-Type: application/json
 | Header                   | Smjer    | Opis                                                                                                                                                                                                                         |
 | ------------------------ | -------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `X-AgentProxy-No-Cache`   | Request  | Postavite na `true` za zaobilaženje keša                                                                                                                                                                                     |
-| `x-omniroute-no-memory`  | Request  | Postavite na `true` za preskakanje injekcije memorije + vještina za ovaj zahtjev (ogledalo no-cache; izbjegava overhead tokena/troškova po pozivu)                                                                           |
+| `x-agentproxy-no-memory`  | Request  | Postavite na `true` za preskakanje injekcije memorije + vještina za ovaj zahtjev (ogledalo no-cache; izbjegava overhead tokena/troškova po pozivu)                                                                           |
 | `X-AgentProxy-Progress`   | Request  | Postavite na `true` za događaje napretka                                                                                                                                                                                     |
 | `X-Session-Id`           | Request  | Sticky session ključ za eksternu afinitet sesije                                                                                                                                                                             |
 | `x_session_id`           | Request  | Varijanta s donjom crtom je također prihvaćena (direktan HTTP)                                                                                                                                                               |
@@ -184,7 +184,7 @@ Ovaj odgovor znači samo da obični skup odgovarajućih veza nije bio prazan i d
 bio zauzet stranim aktivnim zakupom. Nepodržani modeli/pružaoci usluga, nepodudaranje pravila, period hlađenja, kvota,
 zdravstveno stanje i drugi uobičajeni neuspjesi provjere podobnosti zadržavaju svoje postojeće AgentProxy odgovore.
 
-### `x-omniroute-compression`
+### `x-agentproxy-compression`
 
 Promjena plana kompresije za pojedinačni zahtjev. Ima najviši prioritet — nadjačava
 promjenu kombinacije usmjeravanja, aktivni profil, automatsko aktiviranje i opciju Default na panelu. Vrijednosti:
@@ -390,10 +390,10 @@ Klijenti koji renderuju birač modela trebali bi zahtijevati `?prefix=alias` —
 
 ### No-thinking varijante modela
 
-Za Claude modele sa sposobnošću razmišljanja (thinking), `/v1/models` također oglašava **no-thinking** varijantu čiji je id prefiksiran sa `claude-3-omniroute-no-thinking/`:
+Za Claude modele sa sposobnošću razmišljanja (thinking), `/v1/models` također oglašava **no-thinking** varijantu čiji je id prefiksiran sa `claude-3-agentproxy-no-thinking/`:
 
 ```
-claude-3-omniroute-no-thinking/<provider>/<model>
+claude-3-agentproxy-no-thinking/<provider>/<model>
 ```
 
 Odabir ovog id-a (npr. u Claude Code konfiguraciji koja uvijek prilaže `thinking` blok) razrješava se nazad na pravi `<provider>/<model>` sa suzbijenim razmišljanjem — `thinking:{type:"disabled"}` na `/v1/messages` putanji, ili uklonjenim `reasoning`/`reasoning_effort` poljima na `/v1/chat/completions` putanji. Varijanta je navedena samo za modele iz Claude porodice koji podržavaju razmišljanje **i** poštuju `disabled` (tako su npr. isključeni adaptive-only modeli koji odbijaju `disabled`). Operateri mogu prisilno uključiti ili isključiti varijantu po modelu putem `ModelSpec.noThinkingAlias`.
@@ -566,8 +566,8 @@ Validira WebSocket upgrade handshake i vraća primjere poruka wire protokola (`r
 
 ```bash
 # Isti host:port kao HTTP API (podrazumijevano 20128); nadogradite konekciju:
-wscat -c "ws://localhost:20128/v1/responses?api_key=<OMNIROUTE_API_KEY>"
-# (ili: -H "Authorization: Bearer <OMNIROUTE_API_KEY>")
+wscat -c "ws://localhost:20128/v1/responses?api_key=<AGENTPROXY_API_KEY>"
+# (ili: -H "Authorization: Bearer <AGENTPROXY_API_KEY>")
 
 # Prvi frame MORA biti response.create:
 { "type": "response.create", "model": "gpt-5.5", "input": [ { "role": "user", "content": "hi" } ] }
@@ -587,18 +587,18 @@ Usmjerite Codex CLI na AgentProxy dodavanjem custom provajdera s WebSocket podr�
 
 ```toml
 model = "gpt-5.5"                 # čisti id — NE "codex/gpt-5.5"
-model_provider = "omniroute"
+model_provider = "agentproxy"
 
-[model_providers.omniroute]
+[model_providers.agentproxy]
 name = "AgentProxy (WS)"
 base_url = "http://localhost:20128/v1"   # bez trailing slash-a; WS URL je izveden (koristite https/wss u produkciji)
 wire_api = "responses"                    # jedina podržana vrijednost od februara 2026.
 supports_websockets = true                # omogućava Responses-over-WS transport
-env_key = "OMNIROUTE_API_KEY"             # sadrži AgentProxy API ključ (Bearer)
+env_key = "AGENTPROXY_API_KEY"             # sadrži AgentProxy API ključ (Bearer)
 ```
 
 ```bash
-export OMNIROUTE_API_KEY=sk-...           # AgentProxy API ključ (bilo koji ključ ako je REQUIRE_API_KEY=false)
+export AGENTPROXY_API_KEY=sk-...           # AgentProxy API ključ (bilo koji ključ ako je REQUIRE_API_KEY=false)
 codex exec "Responda apenas: PONG"
 ```
 
@@ -944,7 +944,7 @@ Popravlja nedostajuće ili oštećene OAuth environment varijable za specifično
 {
   "success": true,
   "repaired": ["CLAUDE_CODE_OAUTH_CLIENT_ID", "CLAUDE_CODE_OAUTH_CLIENT_SECRET"],
-  "backupPath": "/home/user/.omniroute/backups/env-repair-2026-04-11.bak"
+  "backupPath": "/home/user/.agentproxy/backups/env-repair-2026-04-11.bak"
 }
 ```
 
@@ -1312,7 +1312,7 @@ AgentProxy izlaže A2A (Agent-to-Agent) JSON-RPC 2.0 endpoint i REST wrapper za 
 
 ```bash
 POST /a2a
-Authorization: Bearer your-api-key   # opcionalno osim ako OMNIROUTE_API_KEY nije postavljen
+Authorization: Bearer your-api-key   # opcionalno osim ako AGENTPROXY_API_KEY nije postavljen
 Content-Type: application/json
 
 {
@@ -1355,7 +1355,7 @@ Vraća javnu A2A agent karticu (ime, opis, mogućnosti, katalog skill-ova, auth 
 | GET    | `/api/a2a/tasks/[id]`        | Preuzimanje jednog zadatka                                                                                          |
 | POST   | `/api/a2a/tasks/[id]/cancel` | Otkazivanje zadatka                                                                                                 |
 
-**Auth:** REST helperi rade bez management autentifikacije (čitljivo iz dashboard-a); JSON-RPC `/a2a` ruta koristi Bearer `OMNIROUTE_API_KEY` ako je konfigurisan.
+**Auth:** REST helperi rade bez management autentifikacije (čitljivo iz dashboard-a); JSON-RPC `/a2a` ruta koristi Bearer `AGENTPROXY_API_KEY` ako je konfigurisan.
 
 ---
 
@@ -1669,7 +1669,7 @@ Shadow / A-B poređenje provajdera **nije zaseban REST interfejs** — konfiguri
 
 ## Guardrails (Zaštitni mehanizmi)
 
-Pregled runtime zaštitnih mehanizama (detekcija PII-a, detekcija prompt injekcije, vision bridging). Guardrails rade na svakom zahtjevu; isključivanje po pojedinačnom pozivu vrši se putem `x-omniroute-disabled-guardrails` zaglavlja zahtjeva — ne postoji trajno površina za omogućavanje/onemogućavanje.
+Pregled runtime zaštitnih mehanizama (detekcija PII-a, detekcija prompt injekcije, vision bridging). Guardrails rade na svakom zahtjevu; isključivanje po pojedinačnom pozivu vrši se putem `x-agentproxy-disabled-guardrails` zaglavlja zahtjeva — ne postoji trajno površina za omogućavanje/onemogućavanje.
 
 | Metoda | Putanja                | Opis                                                                                                       |
 | ------ | ---------------------- | ---------------------------------------------------------------------------------------------------------- |

@@ -37,11 +37,11 @@
 ឈ្មោះក្លែងកាត់ផ្លូវ (`tsconfig.json`):
 
 - `@/*` → `src/*`
-- `@omniroute/open-sse` → `open-sse/index.ts`
-- `@omniroute/open-sse/*` → `open-sse/*`
+- `@agentproxy/open-sse` → `open-sse/index.ts`
+- `@agentproxy/open-sse/*` → `open-sse/*`
 
 ច្រក HTTP លំនាំដើម៖ **`20128`** (API និង dashboard ប្រើដំណើរការតែមួយ)។ ថតទិន្នន័យ
-គឺជាអថេរបរិស្ថាន `DATA_DIR` ដែលតាមលំនាំដើមកំណត់ទៅ `~/.omniroute/`។
+គឺជាអថេរបរិស្ថាន `DATA_DIR` ដែលតាមលំនាំដើមកំណត់ទៅ `~/.agentproxy/`។
 
 ---
 
@@ -50,9 +50,9 @@
 ```
 AgentProxy/
 ├── src/                  កម្មវិធី Next.js (App Router, បណ្ណាល័យ, domain, server, ធាតុប្រើរួម)
-├── open-sse/             workspace ម៉ាស៊ីន streaming (@omniroute/open-sse)
+├── open-sse/             workspace ម៉ាស៊ីន streaming (@agentproxy/open-sse)
 ├── electron/             ស្រទាប់ផ្ទៃតុ (Electron 41 main + preload)
-├── bin/                  ចំណុចចូល CLI (omniroute, reset-password)
+├── bin/                  ចំណុចចូល CLI (agentproxy, reset-password)
 ├── tests/                Unit, integration, e2e, protocols-e2e, translator, security, fixtures
 ├── scripts/              ស្គ្រីបជំនួយសម្រាប់ build, sync, check, migration និង runtime
 ├── docs/                 ឯកសារសាធារណៈ (ថតនេះ)
@@ -298,7 +298,7 @@ Route → ការត្រួតពិនិត្យជាមុន CORS → 
 | `runtime/`        | ការរកឃើញមុខងារពេលដំណើរការ                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
 | `search/`         | `executeWebSearch.ts`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
 | `services/`       | ក្របខណ្ឌសេវាបង្កប់៖ `ServiceSupervisor.ts` (កម្មវិធីគ្រប់គ្រងដំណើរការរងទូទៅ ដែលមានសោប្រតិបត្តិការ ring buffer និងកម្មវិធីត្រួតពិនិត្យស្ថានភាព), `bootstrap.ts` (ការចុះបញ្ជីកម្រិតដំណើរការ និងការចាប់ផ្តើមដោយស្វ័យប្រវត្តិ), `registry.ts` (ផែនទីឧបករណ៍ → កម្មវិធីគ្រប់គ្រង), `apiKey.ts` (ឃ្លាំងរក្សាទុកសោ AES-256-GCM), `modelSync.ts` (ការធ្វើសមកាលកម្មម៉ូដែលជាប្រចាំ), `ringBuffer.ts` (សតិបណ្ដោះអាសន្នកំណត់ហេតុវិលជុំទំហំ 5 MB), `healthCheck.ts` (ការស្ទង់ពិនិត្យស្ថានភាព HTTP), `types.ts`, `embedWsProxy.ts` (ប្រូកស៊ី WebSocket), `installers/{ninerouter,cliproxy}.ts`។ សូមមើល `docs/frameworks/EMBEDDED-SERVICES.md`                                                                  |
-| `agentSkills/`    | កាតាឡុក + កម្មវិធីបង្កើត Agent Skills៖ `catalog.ts` (getCatalog/getSkillById/filterCatalog/computeCoverage), `generator.ts` (generateAgentSkills → សរសេរទៅ `skills/{id}/SKILL.md`), `openapiParser.ts` (ស្រង់ endpoint REST ពីលក្ខណៈបច្ចេកទេស OpenAPI), `cliRegistryParser.ts` (ស្រង់ពាក្យបញ្ជារង CLI ពី bin/cli-registry), `schemas.ts` (Zod៖ AgentSkillSchema, SkillCoverageSchema, ListQuerySchema, GenerateBodySchema), `types.ts` (AgentSkill, SkillCoverage, SkillMarkdown, GeneratorReport)។ ត្រូវបានប្រើប្រាស់ដោយផ្លូវ REST (`/api/agent-skills/*`), ឧបករណ៍ MCP (`omniroute_agent_skills_*`) និងជំនាញ A2A `list-capabilities`។ សូមមើល [AGENT-SKILLS.md](../frameworks/AGENT-SKILLS.md)។ |
+| `agentSkills/`    | កាតាឡុក + កម្មវិធីបង្កើត Agent Skills៖ `catalog.ts` (getCatalog/getSkillById/filterCatalog/computeCoverage), `generator.ts` (generateAgentSkills → សរសេរទៅ `skills/{id}/SKILL.md`), `openapiParser.ts` (ស្រង់ endpoint REST ពីលក្ខណៈបច្ចេកទេស OpenAPI), `cliRegistryParser.ts` (ស្រង់ពាក្យបញ្ជារង CLI ពី bin/cli-registry), `schemas.ts` (Zod៖ AgentSkillSchema, SkillCoverageSchema, ListQuerySchema, GenerateBodySchema), `types.ts` (AgentSkill, SkillCoverage, SkillMarkdown, GeneratorReport)។ ត្រូវបានប្រើប្រាស់ដោយផ្លូវ REST (`/api/agent-skills/*`), ឧបករណ៍ MCP (`agentproxy_agent_skills_*`) និងជំនាញ A2A `list-capabilities`។ សូមមើល [AGENT-SKILLS.md](../frameworks/AGENT-SKILLS.md)។ |
 | `skills/`         | ក្របខណ្ឌជំនាញ៖ `registry.ts`, `executor.ts`, `interception.ts`, `injection.ts`, `sandbox.ts`, `custom.ts`, `hybrid.ts`, `builtins.ts`, `a2a.ts`, `providerSettings.ts`, `schemas.ts`, `skillssh.ts`, `types.ts` ព្រមទាំង `builtin/browser.ts`                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
 | `spend/`          | `batchWriter.ts` (សតិបណ្ដោះអាសន្ន write-behind)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
 | `sync/`           | `bundle.ts`, `tokens.ts` (Cloud Sync)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
@@ -384,7 +384,7 @@ Route → ការត្រួតពិនិត្យជាមុន CORS → 
 | `degradation.ts`                           | ការផ្លាស់ប្ដូរទៅកាន់ degraded-mode              |
 | `providerExpiration.ts`                    | ការរកឃើញ account/key ដែលផុតកំណត់                |
 | `quotaCache.ts`                            | ការសម្រេចចិត្តលើ quota ដែលបាន cache             |
-| `responses.ts`, `omnirouteResponseMeta.ts` | ឧបករណ៍ជំនួយសម្រាប់ទម្រង់ response               |
+| `responses.ts`, `agentproxyesponseMeta.ts` | ឧបករណ៍ជំនួយសម្រាប់ទម្រង់ response               |
 | `configAudit.ts`                           | ការធ្វើសវនកម្មលើការផ្លាស់ប្ដូរ config           |
 | `assessment/`                              | ការវាយតម្លៃ model (តាម RFC, បានអនុវត្តមួយផ្នែក) |
 | `types.ts`                                 | ប្រភេទ domain ដែលប្រើរួមគ្នា                    |
@@ -436,7 +436,7 @@ server/
 
 ## 4. `open-sse/` — Workspace សម្រាប់ម៉ាស៊ីន Streaming
 
-ជា npm workspace ដាច់ដោយឡែក ដែលបានបោះពុម្ពជា `@omniroute/open-sse`។ វាគ្រប់គ្រងការដំណើរការសំណើ, executors, translators, services, transformer និង MCP server។
+ជា npm workspace ដាច់ដោយឡែក ដែលបានបោះពុម្ពជា `@agentproxy/open-sse`។ វាគ្រប់គ្រងការដំណើរការសំណើ, executors, translators, services, transformer និង MCP server។
 
 ```
 open-sse/
@@ -598,7 +598,7 @@ electron/
 
 ```
 bin/
-├── omniroute.mjs           ចំណុចចូល CLI មេ (Node ESM)
+├── agentproxy.mjs           ចំណុចចូល CLI មេ (Node ESM)
 ├── reset-password.mjs      កំណត់ពាក្យសម្ងាត់គ្រប់គ្រងឡើងវិញពី CLI
 ├── mcp-server.mjs          កម្មវិធីបើកដំណើរការ MCP server (stdio)
 ├── nodeRuntimeSupport.mjs  ឧបករណ៍ត្រួតពិនិត្យកំណែ Node
@@ -621,8 +621,8 @@ bin/
 
 Binary ចំនួនពីរត្រូវបានបង្ហាញនៅក្នុង `package.json` → `bin`៖
 
-- `omniroute` → `bin/omniroute.mjs`
-- `omniroute-reset-password` → `bin/reset-password.mjs`
+- `agentproxy` → `bin/agentproxy.mjs`
+- `agentproxy-reset-password` → `bin/reset-password.mjs`
 
 ---
 
@@ -778,7 +778,7 @@ Command ដែលប្រើជាទូទៅ៖
 
 - **រចនាប័ទ្មកូដ**៖ ចូលបន្ទាត់ដោយ 2 space, ប្រើ double quotes, ទទឹង 100 តួអក្សរ, ប្រើ semicolons,
   និង `es5` trailing commas — ត្រូវបានអនុវត្តដោយ Prettier តាមរយៈ `lint-staged`។
-- **Imports**៖ ខាងក្រៅ → ខាងក្នុង (`@/`, `@omniroute/open-sse`) → relative។
+- **Imports**៖ ខាងក្រៅ → ខាងក្នុង (`@/`, `@agentproxy/open-sse`) → relative។
 - **ការដាក់ឈ្មោះ**៖ ឯកសារប្រើ `camelCase` ឬ `kebab-case`, components ប្រើ `PascalCase`,
   constants ប្រើ `UPPER_SNAKE`។
 - **ESLint**៖ `no-eval`, `no-implied-eval`, `no-new-func` = `error` គ្រប់ទីកន្លែង;

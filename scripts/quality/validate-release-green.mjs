@@ -414,7 +414,7 @@ export const PACK_ARTIFACT_ENV = Object.freeze({
   AGENTPROXY_USE_TURBOPACK: "0",
   AGENTPROXY_NEXT_BUILD_CPUS: "1",
 });
-const PACK_GATE_ENV = { OMNIROUTE_RELEASE_REF: "HEAD" };
+const PACK_GATE_ENV = { AGENTPROXY_RELEASE_REF: "HEAD" };
 
 let hermetic = false;
 function buildGateEnv(extra) {

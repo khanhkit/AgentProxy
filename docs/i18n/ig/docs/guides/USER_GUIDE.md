@@ -189,7 +189,7 @@ Ogwe njikwa → Ndị na-enye ọrụ → Jikọọ GitHub
 
 #### Kimi K2 ($9/ọnwa n'ọnụ ahịa kwụ ọtọ)
 
-1. Debanye aha na ọrụ ahụ: [Moonshot AI](https://platform.kimi.ai?aff=omniroute)
+1. Debanye aha na ọrụ ahụ: [Moonshot AI](https://platform.kimi.ai)
 2. Nweta igodo API → Ogwe njikwa → Tinye Igodo API
 
 **Ojiji:** `kimi/kimi-k2.5` — **Ndụmọdụ Ọkachamara:** $9/ọnwa kwụ ọtọ maka token 10M = ọnụ ahịa dị irè nke $0.90/1M!
@@ -265,7 +265,7 @@ Aha: free-combo
 ```
 Ntọala → Ụdị → Nke Di Elu:
   OpenAI API Base URL: http://localhost:20128/v1
-  OpenAI API Key: [si na dashboard omniroute]
+  OpenAI API Key: [si na dashboard agentproxy]
   Ụdị: cc/claude-opus-4-7
 ```
 
@@ -281,7 +281,7 @@ Dezie `~/.claude/settings.json`:
 {
   "env": {
     "ANTHROPIC_BASE_URL": "http://localhost:20128",
-    "ANTHROPIC_AUTH_TOKEN": "your-omniroute-api-key"
+    "ANTHROPIC_AUTH_TOKEN": "your-agentproxy-api-key"
   }
 }
 ```
@@ -292,7 +292,7 @@ Jiri root endpoint kwekọrọ na Claude ebe a. Etinyekwala `/v1` na `ANTHROPIC_
 
 ```bash
 export OPENAI_BASE_URL="http://localhost:20128"
-export OPENAI_API_KEY="your-omniroute-api-key"
+export OPENAI_API_KEY="your-agentproxy-api-key"
 codex "your prompt"
 ```
 
@@ -304,14 +304,14 @@ Dezie `~/.openclaw/openclaw.json`:
 {
   "agents": {
     "defaults": {
-      "model": { "primary": "omniroute/if/kimi-k2.7-code" }
+      "model": { "primary": "agentproxy/if/kimi-k2.7-code" }
     }
   },
   "models": {
     "providers": {
-      "omniroute": {
+      "agentproxy": {
         "baseUrl": "http://localhost:20128/v1",
-        "apiKey": "your-omniroute-api-key",
+        "apiKey": "your-agentproxy-api-key",
         "api": "openai-completions",
         "models": [{ "id": "if/kimi-k2.7-code", "name": "Kimi K2.7 Code" }]
       }
@@ -338,28 +338,28 @@ API Key: [si na dashboard]
 ### Nwụnye npm zuru ụwa ọnụ (A tụrụ aro)
 
 ```bash
-npm install -g omniroute
+npm install -g agentproxy
 
 # Mepụta ndekọ nhazi
-mkdir -p ~/.omniroute
+mkdir -p ~/.agentproxy
 
 # Mepụta faịlụ .env (lee .env.example)
-cp .env.example ~/.omniroute/.env
+cp .env.example ~/.agentproxy/.env
 
 # Bido sava
-omniroute
+agentproxy
 # Ma ọ bụ jiri ọdụ ụgbọ mmiri nke gị:
-omniroute --port 3000
+agentproxy --port 3000
 ```
 
-CLI na-ebunye `.env` na-akpaghị aka site na `~/.omniroute/.env` ma ọ bụ `./.env`.
+CLI na-ebunye `.env` na-akpaghị aka site na `~/.agentproxy/.env` ma ọ bụ `./.env`.
 
 ### Ọnọdụ tray
 
 Bido AgentProxy na tray sistemụ:
 
 ```bash
-omniroute serve --tray
+agentproxy serve --tray
 ```
 
 Iwu ahụ ga-akwụsị mgbe sava na tray dị njikere.
@@ -386,7 +386,7 @@ Ejikọla `--tray` na nhọrọ ndị a:
 Kwado ka ọ malite n'oge nbanye kọmputa na-esote:
 
 ```bash
-omniroute autostart enable
+agentproxy autostart enable
 ```
 
 Mbido akpaka na-eji ọnọdụ tray na macOS, Windows, na nnọkọ Linux nwere eserese. Linux na-enweghị interface eserese na-eji ọrụ onye ọrụ systemd dịbu adị.
@@ -394,7 +394,7 @@ Mbido akpaka na-eji ọnọdụ tray na macOS, Windows, na nnọkọ Linux nwere
 Gbanyụọ mbido n'oge nbanye:
 
 ```bash
-omniroute autostart disable
+agentproxy autostart disable
 ```
 
 ### Iwepụ Nwụnye
@@ -403,10 +403,10 @@ Mgbe ị chọghịzi AgentProxy, anyị na-enye script abụọ ngwa ngwa maka 
 
 | Iwu                      | Omume                                                                                    |
 | ------------------------ | ---------------------------------------------------------------------------------------- |
-| `npm run uninstall`      | Na-ewepụ ngwa sistemụ ahụ mana **na-edobe DB na nhazi gị** na `~/.omniroute`.            |
+| `npm run uninstall`      | Na-ewepụ ngwa sistemụ ahụ mana **na-edobe DB na nhazi gị** na `~/.agentproxy`.            |
 | `npm run uninstall:full` | Na-ewepụ ngwa ahụ MA na-adịgide adịgide **na-ehichapụ nhazi, igodo, na database niile**. |
 
-> Rịba ama: Iji mee iwu ndị a, gaa na folda ọrụ AgentProxy (ọ bụrụ na i mere clone ya) wee mee ha. N’ụzọ ọzọ, ọ bụrụ na arụnyere ya n’ụwa niile, ị nwere ike naanị ime `npm uninstall -g omniroute`.
+> Rịba ama: Iji mee iwu ndị a, gaa na folda ọrụ AgentProxy (ọ bụrụ na i mere clone ya) wee mee ha. N’ụzọ ọzọ, ọ bụrụ na arụnyere ya n’ụwa niile, ị nwere ike naanị ime `npm uninstall -g agentproxy`.
 
 ### Mbugharị VPS
 
@@ -416,7 +416,7 @@ cd AgentProxy && npm install && npm run build
 
 export JWT_SECRET="your-secure-secret-change-this"
 export INITIAL_PASSWORD="your-password"
-export DATA_DIR="/var/lib/omniroute"
+export DATA_DIR="/var/lib/agentproxy"
 export PORT="20128"
 export HOSTNAME="0.0.0.0"
 export NODE_ENV="production"
@@ -424,7 +424,7 @@ export NEXT_PUBLIC_BASE_URL="http://localhost:20128"
 export API_KEY_SECRET="endpoint-proxy-api-key-secret"
 
 npm run start
-# Ma ọ bụ: pm2 start npm --name omniroute -- start
+# Ma ọ bụ: pm2 start npm --name agentproxy -- start
 ```
 
 ### Mbugharị PM2 (Nchekwa Dị Ala)
@@ -433,10 +433,10 @@ Maka sava nwere RAM pere mpe, jiri nhọrọ oke nchekwa:
 
 ```bash
 # Jiri oke 512MB (ndabara)
-pm2 start npm --name omniroute -- start
+pm2 start npm --name agentproxy -- start
 
 # Ma ọ bụ jiri oke nchekwa nke gị
-OMNIROUTE_MEMORY_MB=512 pm2 start npm --name omniroute -- start
+AGENTPROXY_MEMORY_MB=512 pm2 start npm --name agentproxy -- start
 
 # Ma ọ bụ jiri ecosystem.config.js
 pm2 start ecosystem.config.js
@@ -448,12 +448,12 @@ Mepụta `ecosystem.config.js`:
 module.exports = {
   apps: [
     {
-      name: "omniroute",
+      name: "agentproxy",
       script: "npm",
       args: "start",
       env: {
         NODE_ENV: "production",
-        OMNIROUTE_MEMORY_MB: "512",
+        AGENTPROXY_MEMORY_MB: "512",
         JWT_SECRET: "your-secret",
         INITIAL_PASSWORD: "your-password",
       },
@@ -468,10 +468,10 @@ module.exports = {
 
 ```bash
 # Wuo image (ndabara = runner-cli nke etinyerela codex/claude/droid)
-docker build -t omniroute:cli .
+docker build -t agentproxy:cli .
 
 # Ọnọdụ enwere ike ibugharị (a tụrụ aro)
-docker run -d --name omniroute -p 20128:20128 --env-file ./.env -v omniroute-data:/app/data omniroute:cli
+docker run -d --name agentproxy -p 20128:20128 --env-file ./.env -v agentproxy-data:/app/data agentproxy:cli
 ```
 
 Maka ọnọdụ ejikọtara na host nke nwere binary CLI, lee ngalaba Docker na akwụkwọ ndu ndị bụ isi.
@@ -484,8 +484,8 @@ Ndị ọrụ Void Linux nwere ike ịkwakọba ma wụnye AgentProxy n'ụzọ 
 <summary><b>Lee template xbps-src</b></summary>
 
 ```bash
-# Faịlụ template maka 'omniroute'
-pkgname=omniroute
+# Faịlụ template maka 'agentproxy'
+pkgname=agentproxy
 version=3.8.0
 revision=1
 hostmakedepends="nodejs python3 make"
@@ -496,8 +496,8 @@ license="MIT"
 homepage="https://github.com/diegosouzapw/AgentProxy"
 distfiles="https://github.com/diegosouzapw/AgentProxy/archive/refs/tags/v${version}.tar.gz"
 checksum=009400afee90a9f32599d8fe734145cfd84098140b7287990183dde45ae2245b
-system_accounts="_omniroute"
-omniroute_homedir="/var/lib/omniroute"
+system_accounts="_agentproxy"
+agentproxy_homedir="/var/lib/agentproxy"
 export NODE_ENV=production
 export npm_config_engine_strict=false
 export npm_config_loglevel=error
@@ -547,26 +547,26 @@ do_check() {
 }
 
 do_install() {
-	vmkdir usr/lib/omniroute/.next
-	vcopy .next/standalone/. usr/lib/omniroute/.next/standalone
+	vmkdir usr/lib/agentproxy/.next
+	vcopy .next/standalone/. usr/lib/agentproxy/.next/standalone
 
 	# Gbochie post-install hook ihichapụ directories Next.js app router ndị tọgbọ chakoo
 	for _d in \
 		.next/standalone/.next/server/app/dashboard \
 		.next/standalone/.next/server/app/dashboard/settings \
 		.next/standalone/.next/server/app/dashboard/providers; do
-		touch "${DESTDIR}/usr/lib/omniroute/${_d}/.keep"
+		touch "${DESTDIR}/usr/lib/agentproxy/${_d}/.keep"
 	done
 
-	cat > "${WRKDIR}/omniroute" <<'EOF'
+	cat > "${WRKDIR}/agentproxy" <<'EOF'
 #!/bin/sh
 export PORT="${PORT:-20128}"
-export DATA_DIR="${DATA_DIR:-${XDG_DATA_HOME:-${HOME}/.local/share}/omniroute}"
+export DATA_DIR="${DATA_DIR:-${XDG_DATA_HOME:-${HOME}/.local/share}/agentproxy}"
 export APP_LOG_TO_FILE="${APP_LOG_TO_FILE:-false}"
 mkdir -p "${DATA_DIR}"
-exec node /usr/lib/omniroute/.next/standalone/server.js "$@"
+exec node /usr/lib/agentproxy/.next/standalone/server.js "$@"
 EOF
-	vbin "${WRKDIR}/omniroute"
+	vbin "${WRKDIR}/agentproxy"
 }
 
 post_install() {
@@ -580,14 +580,14 @@ post_install() {
 
 | Mgbanwe                                 | Ndabara                              | Nkọwa                                                                                                       |
 | --------------------------------------- | ------------------------------------ | ----------------------------------------------------------------------------------------------------------- |
-| `JWT_SECRET`                            | `omniroute-default-secret-change-me` | Ihe nzuzo e ji abịanye aka na JWT (**gbanwee ya na production**)                                            |
+| `JWT_SECRET`                            | `agentproxy-default-secret-change-me` | Ihe nzuzo e ji abịanye aka na JWT (**gbanwee ya na production**)                                            |
 | `INITIAL_PASSWORD`                      | `CHANGEME`                           | Okwuntughe nbanye mbụ                                                                                       |
-| `DATA_DIR`                              | `~/.omniroute`                       | Ndekọ data (db, ojiji, ndekọ ihe omume)                                                                     |
+| `DATA_DIR`                              | `~/.agentproxy`                       | Ndekọ data (db, ojiji, ndekọ ihe omume)                                                                     |
 | `PORT`                                  | ndabara framework                    | Port ọrụ (`20128` n'ihe atụ)                                                                                |
 | `HOSTNAME`                              | ndabara framework                    | Host a ga-ejikọta na ya (ndabara Docker bụ `0.0.0.0`)                                                       |
 | `NODE_ENV`                              | ndabara runtime                      | Tọọ `production` maka mbugote                                                                               |
 | `NEXT_PUBLIC_BASE_URL`                  | `http://localhost:20128`             | URL ntọala ọha egosiri na dashboard ma mee ka sava nweta ya (na-anọchi `BASE_URL` ochie)                    |
-| `NEXT_PUBLIC_CLOUD_URL`                 | `https://omniroute.dev`              | URL ntọala endpoint maka mmekọrịta cloud (na-anọchi `CLOUD_URL` ochie)                                      |
+| `NEXT_PUBLIC_CLOUD_URL`                 | `https://agentproxy.online`              | URL ntọala endpoint maka mmekọrịta cloud (na-anọchi `CLOUD_URL` ochie)                                      |
 | `API_KEY_SECRET`                        | `endpoint-proxy-api-key-secret`      | Ihe nzuzo HMAC maka igodo API ndị emepụtara                                                                 |
 | `REQUIRE_API_KEY`                       | `false`                              | Manye igodo API Bearer na `/v1/*`                                                                           |
 | `ALLOW_API_KEY_REVEAL`                  | `false`                              | Kwe ka ndị ọrụ dashboard akwadoro kpughee ụkpụrụ igodo API zuru ezu echekwara mgbe ha chọrọ                 |
@@ -597,7 +597,7 @@ post_install() {
 | `AUTH_COOKIE_SECURE`                    | `false`                              | Manye cookie nkwenye `Secure` (n'azụ HTTPS reverse proxy)                                                   |
 | `CLOUDFLARED_BIN`                       | edoghị ya                            | Jiri binary `cloudflared` dị adị kama nbudata a na-achịkwa                                                  |
 | `CLOUDFLARED_PROTOCOL`                  | `http2`                              | Ụzọ mbufe maka Quick Tunnels a na-achịkwa (`http2`, `quic`, ma ọ bụ `auto`)                                 |
-| `OMNIROUTE_MEMORY_MB`                   | `512`                                | Oke heap Node.js na MB                                                                                      |
+| `AGENTPROXY_MEMORY_MB`                   | `512`                                | Oke heap Node.js na MB                                                                                      |
 | `PROMPT_CACHE_MAX_SIZE`                 | `50`                                 | Ọnụọgụ ndenye kachasị na cache prompt                                                                       |
 | `SEMANTIC_CACHE_MAX_SIZE`               | `100`                                | Ọnụọgụ ndenye kachasị na cache semantic                                                                     |
 
@@ -658,7 +658,7 @@ Maka ntụaka zuru ezu gbasara mgbanwe gburugburu, lee [README](../README.md).
 
 **Ndị ọzọ na-eweta ọrụ dakọtara** (ndị ahọpụtara): `cohere`, `databricks`, `snowflake`, `together`, `vertex`, `alibaba`, `alibaba-cn`, `bedrock` (site na `aws-bedrock`), `azure-ai`, `openrouter` (katalọgụ a na-ebufe ozugbo), `siliconflow`, `hyperbolic`, `huggingface`, `featherless-ai`, `cloudflare-ai`, `scaleway`, `deepinfra`, `vercel-ai-gateway`, `bazaarlink`, `friendliai`, `nous-research`, `reka`, `volcengine`, `ai21`, `gigachat`. Onye ọ bụla na-edobe ndepụta ụdịdị nke ya na `providerRegistry.ts`, a pụkwara ịmekọrịta ya n'ụzọ akpaaka mgbe onye na-eweta ọrụ gosipụtara njedebe `/models`.
 
-**Nkọwa gbasara ID ụdịdị:** AgentProxy na-eji ID ndị sitere n'aka onye na-eweta ọrụ (`claude-opus-4-8`, `gpt-5.5`, `glm-5.1`, `MiniMax-M2.7`, `kimi-k2.5`, `grok-4.20-0309-reasoning`). Ụfọdụ ID nwere ụdị mbipụta nwere ntụpọ n'ihi na ọ bụ otu API nke isi mmalite si atụ anya ha. Ọ bụrụ na edepụtaghị otu ụdịdị n'elu, gbaa `omniroute models --search <term>` ma ọ bụ kpọọ `GET /api/models/catalog` iji kwado na ọ dịnụ.
+**Nkọwa gbasara ID ụdịdị:** AgentProxy na-eji ID ndị sitere n'aka onye na-eweta ọrụ (`claude-opus-4-8`, `gpt-5.5`, `glm-5.1`, `MiniMax-M2.7`, `kimi-k2.5`, `grok-4.20-0309-reasoning`). Ụfọdụ ID nwere ụdị mbipụta nwere ntụpọ n'ihi na ọ bụ otu API nke isi mmalite si atụ anya ha. Ọ bụrụ na edepụtaghị otu ụdịdị n'elu, gbaa `agentproxy models --search <term>` ma ọ bụ kpọọ `GET /api/models/catalog` iji kwado na ọ dịnụ.
 
 </details>
 
@@ -695,16 +695,16 @@ Maka njikọ na-agaghachi ibe ha ma ọ bụ njikọ nwere ọtụtụ nzọụk
 
 ```bash
 # gateway-a
-OMNIROUTE_INSTANCE_ID=gateway-a
-OMNIROUTE_PEER_URLS=http://gateway-b:20128/v1
-OMNIROUTE_PEER_MAX_HOPS=4
+AGENTPROXY_INSTANCE_ID=gateway-a
+AGENTPROXY_PEER_URLS=http://gateway-b:20128/v1
+AGENTPROXY_PEER_MAX_HOPS=4
 ```
 
 ```bash
 # gateway-b
-OMNIROUTE_INSTANCE_ID=gateway-b
-OMNIROUTE_PEER_URLS=http://gateway-a:20128/v1
-OMNIROUTE_PEER_MAX_HOPS=4
+AGENTPROXY_INSTANCE_ID=gateway-b
+AGENTPROXY_PEER_URLS=http://gateway-a:20128/v1
+AGENTPROXY_PEER_MAX_HOPS=4
 ```
 
 Ọ bụ naanị arịrịọ ezitere na URL peer e tinyere kpọmkwem na ndepụta ikike na-enweta header
@@ -1097,7 +1097,7 @@ AgentProxy nwere **auto-router nke akara na-achịkwa** nke na-ahọrọ model k
 
 ```bash
 curl -X POST http://localhost:20128/v1/chat/completions \
-  -H "Authorization: Bearer $OMNIROUTE_KEY" \
+  -H "Authorization: Bearer $AGENTPROXY_KEY" \
   -H "Content-Type: application/json" \
   -d '{
     "model": "auto/coding",
@@ -1118,7 +1118,7 @@ AgentProxy bụ ma **MCP server** (Model Context Protocol) ma **A2A server** (Ag
 
 - **SSE**: `http://localhost:20128/api/mcp/sse`
 - **HTTP nwere ike ịkwasa data**: `http://localhost:20128/api/mcp/stream`
-- **stdio**: `omniroute --mcp` (maka plugin IDE ndị na-ahọrọ stdio)
+- **stdio**: `agentproxy --mcp` (maka plugin IDE ndị na-ahọrọ stdio)
 
 ### Jikọọ Claude Desktop
 
@@ -1127,8 +1127,8 @@ Dezie `~/Library/Application Support/Claude/claude_desktop_config.json` (macOS) 
 ```json
 {
   "mcpServers": {
-    "omniroute": {
-      "command": "omniroute",
+    "agentproxy": {
+      "command": "agentproxy",
       "args": ["--mcp"]
     }
   }
@@ -1204,23 +1204,23 @@ Mepụta igodo ahụ na **Dashboard → API Keys → New Key → Scope: manage**
 ```bash
 # Depụta ndị provider
 curl http://localhost:20128/api/providers \
-  -H "Authorization: Bearer $OMNIROUTE_MANAGE_KEY"
+  -H "Authorization: Bearer $AGENTPROXY_MANAGE_KEY"
 
 # Tinye njikọ provider
 curl -X POST http://localhost:20128/api/providers \
-  -H "Authorization: Bearer $OMNIROUTE_MANAGE_KEY" \
+  -H "Authorization: Bearer $AGENTPROXY_MANAGE_KEY" \
   -H "Content-Type: application/json" \
   -d '{ "provider": "openai", "apiKey": "sk-...", "name": "main" }'
 
 # Mepụta combo
 curl -X POST http://localhost:20128/api/combos \
-  -H "Authorization: Bearer $OMNIROUTE_MANAGE_KEY" \
+  -H "Authorization: Bearer $AGENTPROXY_MANAGE_KEY" \
   -H "Content-Type: application/json" \
   -d '{ "name": "premium", "strategy": "priority", "models": [{ "model": "cc/claude-opus-4-7" }, { "model": "glm/glm-5.1" }] }'
 
 # Depụta/mepụta igodo API
-curl http://localhost:20128/api/keys -H "Authorization: Bearer $OMNIROUTE_MANAGE_KEY"
-curl -X POST http://localhost:20128/api/keys -H "Authorization: Bearer $OMNIROUTE_MANAGE_KEY" \
+curl http://localhost:20128/api/keys -H "Authorization: Bearer $AGENTPROXY_MANAGE_KEY"
+curl -X POST http://localhost:20128/api/keys -H "Authorization: Bearer $AGENTPROXY_MANAGE_KEY" \
   -d '{ "name": "ci-bot", "scopes": ["chat"] }'
 ```
 
@@ -1230,32 +1230,32 @@ Lee [API_REFERENCE.md](../reference/API_REFERENCE.md) maka katalọgụ endpoint
 
 ## 💻 CLI Dị N'ime
 
-AgentProxy na-abịa na CLI dị n'ime (`omniroute …`) maka nhazi, nchọpụta nsogbu, na njikwa oge ọ na-arụ ọrụ. Nke a **dị iche na ibe "CLI Tools" dị na dashboard**, nke na-ahazi CLI nke ndị ọzọ (Claude Code, Cursor, Codex, Cline, …) ka ha nwee ike ịkparịta ụka na AgentProxy.
+AgentProxy na-abịa na CLI dị n'ime (`agentproxy …`) maka nhazi, nchọpụta nsogbu, na njikwa oge ọ na-arụ ọrụ. Nke a **dị iche na ibe "CLI Tools" dị na dashboard**, nke na-ahazi CLI nke ndị ọzọ (Claude Code, Cursor, Codex, Cline, …) ka ha nwee ike ịkparịta ụka na AgentProxy.
 
 ```bash
-omniroute setup                    # Ọkachamara nhazi mmekọrịta (paswọọdụ, ndị na-eweta ọrụ, ngwakọta)
-omniroute setup --non-interactive  # Kwesịrị ekwesị maka CI
-omniroute doctor                   # Nchọpụta ọnọdụ ọrụ (ebe data dị, DB, ndị na-eweta ọrụ, ọdụ ụgbọ)
-omniroute providers available      # Depụta ndị na-eweta ọrụ a na-akwado
-omniroute providers list           # Depụta njikọ ndị ahaziri
-omniroute providers test <id>      # Nwalee njikọ onye na-eweta ọrụ ozugbo
-omniroute combos list              # Depụta ngwakọta
-omniroute combos switch <name>     # Tọọ ngwakọta ndabara
-omniroute models                   # Depụta ụdịdị dị (--json, --search)
-omniroute keys add | list | remove # Jikwaa igodo API site na terminal
-omniroute backup                   # Mepụta snapshot nke nhazi + DB
-omniroute restore [<timestamp>]    # Weghachite site na snapshot
-omniroute health                   # Ọnọdụ ọrụ zuru ezu (ndị nkwụsị, cache, ebe nchekwa)
-omniroute quota                    # Ojiji oke onye na-eweta ọrụ
-omniroute mcp status               # Ọnọdụ sava MCP
-omniroute a2a status               # Ọnọdụ sava A2A
-omniroute tunnel list|create|stop  # Ọwara Cloudflare/Tailscale/ngrok
-omniroute reset-password           # Tọgharịa paswọọdụ onye nchịkwa
-omniroute --mcp                    # Malite sava MCP site na stdio
-omniroute --port 3000              # Malite sava na ọdụ ụgbọ ahaziri iche
+agentproxy setup                    # Ọkachamara nhazi mmekọrịta (paswọọdụ, ndị na-eweta ọrụ, ngwakọta)
+agentproxy setup --non-interactive  # Kwesịrị ekwesị maka CI
+agentproxy doctor                   # Nchọpụta ọnọdụ ọrụ (ebe data dị, DB, ndị na-eweta ọrụ, ọdụ ụgbọ)
+agentproxy providers available      # Depụta ndị na-eweta ọrụ a na-akwado
+agentproxy providers list           # Depụta njikọ ndị ahaziri
+agentproxy providers test <id>      # Nwalee njikọ onye na-eweta ọrụ ozugbo
+agentproxy combos list              # Depụta ngwakọta
+agentproxy combos switch <name>     # Tọọ ngwakọta ndabara
+agentproxy models                   # Depụta ụdịdị dị (--json, --search)
+agentproxy keys add | list | remove # Jikwaa igodo API site na terminal
+agentproxy backup                   # Mepụta snapshot nke nhazi + DB
+agentproxy restore [<timestamp>]    # Weghachite site na snapshot
+agentproxy health                   # Ọnọdụ ọrụ zuru ezu (ndị nkwụsị, cache, ebe nchekwa)
+agentproxy quota                    # Ojiji oke onye na-eweta ọrụ
+agentproxy mcp status               # Ọnọdụ sava MCP
+agentproxy a2a status               # Ọnọdụ sava A2A
+agentproxy tunnel list|create|stop  # Ọwara Cloudflare/Tailscale/ngrok
+agentproxy reset-password           # Tọgharịa paswọọdụ onye nchịkwa
+agentproxy --mcp                    # Malite sava MCP site na stdio
+agentproxy --port 3000              # Malite sava na ọdụ ụgbọ ahaziri iche
 ```
 
-Ndụmọdụ: jikọta `omniroute doctor --json` na ngwa nlekota gị iji nye ọkwa mgbe njikọ onye na-eweta ọrụ adịghị mma.
+Ndụmọdụ: jikọta `agentproxy doctor --json` na ngwa nlekota gị iji nye ọkwa mgbe njikọ onye na-eweta ọrụ adịghị mma.
 
 ---
 
@@ -1304,7 +1304,7 @@ Nsonaazụ → `electron/dist-electron/`
 
 | Mgbanwe               | Ndabara | Nkọwa                          |
 | --------------------- | ------- | ------------------------------ |
-| `OMNIROUTE_PORT`      | `20128` | Ọdụ ụgbọ sava                  |
-| `OMNIROUTE_MEMORY_MB` | `512`   | Oke heap Node.js (64–16384 MB) |
+| `AGENTPROXY_PORT`      | `20128` | Ọdụ ụgbọ sava                  |
+| `AGENTPROXY_MEMORY_MB` | `512`   | Oke heap Node.js (64–16384 MB) |
 
 📖 Akwụkwọ nkọwa zuru ezu: [`electron/README.md`](../../electron/README.md)

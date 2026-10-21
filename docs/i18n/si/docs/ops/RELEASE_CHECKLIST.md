@@ -44,7 +44,7 @@ npm run test:e2e           # විකල්ප නමුත් නිර්ද�
 එය WS1.3 සහතිකය රඳවා ගනිමින් ව්යාපෘතියට v3.8.48 දක්වා තිබූ
 සම්පූර්ණයෙන්ම ස්වයංක්රීය ප්රවාහය නැවත ලබා දෙයි (කාන්දු වූ ටෝකනයකට තනිව ප්රකාශනය කළ නොහැක — ටෝකනයක්ම නොමැත).
 
-**එක් වරක් පමණක් සිදු කරන සැකසුම (හිමිකරු):** npmjs.com → `omniroute` පැකේජය → Settings → _Trusted
+**එක් වරක් පමණක් සිදු කරන සැකසුම (හිමිකරු):** npmjs.com → `agentproxy` පැකේජය → Settings → _Trusted
 Publisher_ → GitHub: හිමිකරු `diegosouzapw`, ගබඩාව `AgentProxy`, කාර්ය ප්රවාහය `npm-publish.yml`
 (පරිසරය: කිසිවක් නැත). එය පවතින තෙක් ස්වයංක්රීය පියවර `ENEEDAUTH` සමඟ අසාර්ථක වේ:
 `publish_mode=staged` (පහත) හෝ `direct` සමඟ නැවත dispatch කරන්න.
@@ -58,7 +58,7 @@ npm-publish කාර්ය ප්රවාහය තවදුරටත් ස�
 
 **කාර්ය ප්රවාහය හරිත වූ පසු හිමිකරුගේ ප්රවාහය:**
 
-1. `npm stage list omniroute` — අදියර id එක සොයා ගන්න (එය කාර්ය ප්රවාහ සාරාංශයේද මුද්රණය වේ).
+1. `npm stage list agentproxy` — අදියර id එක සොයා ගන්න (එය කාර්ය ප්රවාහ සාරාංශයේද මුද්රණය වේ).
 2. අදියරගත bytes තහවුරු කරන්න (නිර්දේශිතයි): `npm stage download <id>`, ඉන්පසු බාගත කළ
    tarball එක තාවකාලික prefix එකකට ස්ථාපනය කර එය ආරම්භ කරන්න (`npm run check:pack-boot` මඟින්
    CI තුළ එම pack→install→boot තීන්දුවම ස්වයංක්රීය කරයි).
@@ -69,11 +69,11 @@ npm-publish කාර්ය ප්රවාහය තවදුරටත් ස�
 **හදිසි විකල්ප ක්රමය:** `publish_mode=direct` සමඟ `workflow_dispatch` භාවිත කිරීමෙන්
 පැරණි ක්ෂණික `npm publish` ක්රමය නැවත ලබා ගත හැක (අදියරගත කිරීමම නිසි ලෙස ක්රියා නොකරන්නේ නම් පමණක් භාවිත කර හේතුව සටහන් කරන්න).
 
-**එක් වරක් පමණක් සිදු කරන ශක්තිමත් කිරීම (හිමිකරු, npmjs.com):** `omniroute` සඳහා Trusted Publisher එක
+**එක් වරක් පමණක් සිදු කරන ශක්තිමත් කිරීම (හිමිකරු, npmjs.com):** `agentproxy` සඳහා Trusted Publisher එක
 stage-only ප්රකාරයෙන් වින්යාස කරන්න, එවිට කාන්දු වූ දිගුකාලීන ටෝකනයකට කිසිදු ස්ථානයකින් සෘජුව `npm publish`
 කළ නොහැක — CI හට අදියරගත කිරීම පමණක් කළ හැකි අතර, නිකුතුව කළ හැක්කේ හිමිකරුගේ 2FA මඟින් පමණි.
 
-**බිඳුණු කෞතුකය සඳහා ක්රියාමාර්ග මාර්ගෝපදේශය (වෙනස් කර නැත):** පෙරනිමි ප්රතිචාරය ලෙස `npm deprecate omniroute@<bad> "<reason> — use <fixed>"`
+**බිඳුණු කෞතුකය සඳහා ක්රියාමාර්ග මාර්ගෝපදේශය (වෙනස් කර නැත):** පෙරනිමි ප්රතිචාරය ලෙස `npm deprecate agentproxy@<bad> "<reason> — use <fixed>"`
 භාවිත කරන්න (මිනිත්තු කිහිපයක් ගනී, ආපසු හැරවිය හැක); `npm unpublish` භාවිත කළ යුත්තේ පැය 72/යැපෙන්නන්-නොමැති
 කාල කවුළුව තුළ පමණක් වන අතර කිසිවිටෙකත් පළමු පියවර ලෙස නොවේ. Docker: අනුවාද ටැගයක් කිසිවිටෙක නැවත ලියන්න එපා — ආපසු හැරවීම යනු
 `latest` අවසන් හොඳ digest එක වෙත නැවත යොමු කිරීමයි.
@@ -192,7 +192,7 @@ hook එකක් අසමත් වුවහොත්: මූලික ගැ�
 - [ ] `npm run i18n:check` 0 සමඟ අවසන් වේ — පරිවර්තන තත්ත්වය (`.i18n-state.json`) මූලාශ්ර ලේඛන සමඟ සමමුහුර්තව ඇත (strict mode තුළ වෙනස්වී ඇති මූලාශ්ර නොමැත; අවසන් මොහොතේ ලේඛන සංශෝධන සඳහා warn-mode උපදේශනය පිළිගත හැකි නමුත් tag කිරීමට පෙර එය 0 විය යුතුය)
 - [ ] `npm run i18n:check-ui-coverage` 0 සමඟ අවසන් වේ — සෑම UI locale එකක්ම 80% ආවරණ අවම සීමාවට හෝ ඊට ඉහළින් ඇත
 - [ ] `npm run i18n:sync-ui:dry` locale 42 සියල්ල පුරා අස්ථානගත keys 0ක් වාර්තා කරයි
-- [ ] මූලාශ්ර ඉංග්රීසි ලේඛන වෙනස් වූයේ නම්, tag කිරීමට පෙර `npm run i18n:run` ධාවනය කරන්න (`.env` තුළ `OMNIROUTE_TRANSLATION_API_KEY` අවශ්ය වේ)
+- [ ] මූලාශ්ර ඉංග්රීසි ලේඛන වෙනස් වූයේ නම්, tag කිරීමට පෙර `npm run i18n:run` ධාවනය කරන්න (`.env` තුළ `AGENTPROXY_TRANSLATION_API_KEY` අවශ්ය වේ)
 - [ ] සුළු වෙනස්කම් නම් පරිවර්තන දායකත්ව ඊළඟ නිකුතුව දක්වා කල් දැමිය හැකිය (CHANGELOG තුළ සටහන් කරන්න)
 
 ### දත්ත සමුදා සංක්රමණ
@@ -201,7 +201,7 @@ hook එකක් අසමත් වුවහොත්: මූලික ගැ�
   - [ ] සෑම migration එකක්ම idempotent වේ (`CREATE TABLE IF NOT EXISTS`, ආදිය)
   - [ ] Migrations transactions තුළ ආවරණය කර ඇත
   - [ ] නිවැරදිව අංකනය කර ඇත (අනුපිළිවෙළේ හිඩැස් නොමැත)
-- [ ] නැවුම් ස්ථාපනයක පරීක්ෂා කරන්න: `~/.omniroute/omniroute.db` මකා `npm run dev` ධාවනය කරන්න
+- [ ] නැවුම් ස්ථාපනයක පරීක්ෂා කරන්න: `~/.agentproxy/agentproxy.db` මකා `npm run dev` ධාවනය කරන්න
 - [ ] පවතින ස්ථාපනයක පරීක්ෂා කරන්න: DB උපස්ථ කර, migration එක ධාවනය කර, schema එක සත්යාපනය කරන්න
 - [ ] migration එක tables නැවත ලියන්නේ නම් WAL ගොනු (`-wal`, `-shm`) නිවැරදිව හසුරුවා ඇත
 
@@ -236,7 +236,7 @@ Repository එක එකිනෙකට වෙනස් output directories ත�
 | `.build/` | Build අතරමැදි ගොනු — `next build` output (`distDir`)               | නැත (gitignored) |
 | `dist/`   | බෙදාහැරිය හැකි npm bundle එක — `assembleStandalone` මඟින් සකසන ලදී | නැත (gitignored) |
 
-> **මෙහෙයුම්කරුගේ සටහන:** දුරස්ථ VPS image directory එක `/usr/lib/node_modules/omniroute/app/` ලෙසම පවතී.
+> **මෙහෙයුම්කරුගේ සටහන:** දුරස්ථ VPS image directory එක `/usr/lib/node_modules/agentproxy/app/` ලෙසම පවතී.
 > වෙනස් වූයේ repository එක **තුළ ඇති** build output එක පමණි (`app/` → `dist/`). Deploy skills මඟින්
 > `dist/` හි අන්තර්ගතය දුරස්ථ `app/` dir එක වෙත rsync කරයි — VPS path වෙනස්කම් අවශ්ය නොවේ.
 
@@ -356,12 +356,12 @@ Embedded services වෙනස්කම් ඇතුළත් ඕනෑම න�
 
 ඕනෑම v3.8.x නිකුතුවක් නිකුත් කිරීමට පෙර, මෙම අතිරේක අයිතම තහවුරු කරන්න:
 
-- [ ] `omniroute --tray` macOS මත ආරම්භ වේ (systray2 `~/.omniroute/runtime/` තුළ ස්ථාපනය කර ඇත)
-- [ ] `omniroute --tray` Linux මත ආරම්භ වේ (DISPLAY අවශ්යයි; එය සකසා නොමැති නම් සුමට දෝෂයක්)
-- [ ] `omniroute --tray` Windows මත ආරම්භ වේ (PowerShell NotifyIcon, අමතර binaries නොමැත)
-- [ ] `omniroute config tray enable` මඟින් ස්වයංක්රීය ආරම්භක ඇතුළත් කිරීමක් සාදයි; disable කිරීමෙන් එය ඉවත් කරයි
-- [ ] `npm install -g omniroute@<this-version>` මාරාන්තික පිටවීමකින් තොරව postinstall ධාවනය කරයි
-- [ ] යාවත්කාලීන කිරීමේ මාර්ගය විකල්ප dependencies රඳවා ගනී: `omniroute update --apply` සහ ස්වයංක්රීය යාවත්කාලීනකරණය
+- [ ] `agentproxy --tray` macOS මත ආරම්භ වේ (systray2 `~/.agentproxy/runtime/` තුළ ස්ථාපනය කර ඇත)
+- [ ] `agentproxy --tray` Linux මත ආරම්භ වේ (DISPLAY අවශ්යයි; එය සකසා නොමැති නම් සුමට දෝෂයක්)
+- [ ] `agentproxy --tray` Windows මත ආරම්භ වේ (PowerShell NotifyIcon, අමතර binaries නොමැත)
+- [ ] `agentproxy config tray enable` මඟින් ස්වයංක්රීය ආරම්භක ඇතුළත් කිරීමක් සාදයි; disable කිරීමෙන් එය ඉවත් කරයි
+- [ ] `npm install -g agentproxy@<this-version>` මාරාන්තික පිටවීමකින් තොරව postinstall ධාවනය කරයි
+- [ ] යාවත්කාලීන කිරීමේ මාර්ගය විකල්ප dependencies රඳවා ගනී: `agentproxy update --apply` සහ ස්වයංක්රීය යාවත්කාලීනකරණය
       `npm install -g … --include=optional` ධාවනය කරන බැවින් `optionalDependencies` (better-sqlite3,
       keytar, tls-client, සහ llmlingua SLM stack එක: `@atjsh/llmlingua-2@2.0.5`,
       `js-tiktoken`) යාවත්කාලීනයකින් පසුවත් පවතී. ultra `modelPath` SLM tier එකටද
@@ -371,13 +371,13 @@ Embedded services වෙනස්කම් ඇතුළත් ඕනෑම න�
       instance එකක් resolve කරයි — ස්වාධීන trace bundles තුළ අඩංගු වන්නේ transformers පමණක් වන අතර, ගතිකව import කරන ලද
       optionals අඩංගු නොවේ. එබැවින් මෙය නොමැතිව worker එක root එකේ transformers සමඟ llmlingua-2 පූරණය කරන
       අතර SLM tier එක නිහඬව fail-open වේ.
-- [ ] `.env` නොමැතිව `omniroute status` ක්රියා කරයි (CLI token මාර්ගය, loopback පමණි)
+- [ ] `.env` නොමැතිව `agentproxy status` ක්රියා කරයි (CLI token මාර්ගය, loopback පමණි)
 - [ ] `curl http://localhost:20128/api/shutdown` මඟින් 401 ආපසු ලබා දෙයි (සැමවිටම ආරක්ෂිත route එක)
 - [ ] `curl -H "host: evil.com" http://localhost:20128/api/mcp/sse` මඟින් 401 ආපසු ලබා දෙයි (loopback ආරක්ෂකය)
 - [ ] පළමු ධාවනයේදී SQLite runtime එක `bundled` වෙත resolve වේ (bundled binary එක platform එක සඳහා වලංගුය)
 - [ ] `node_modules/better-sqlite3` මකා දැමූ විට SQLite runtime එක `runtime` වෙත fallback වේ
 - [ ] Smart MCP filter එක සත්ය `playwright-mcp browser_snapshot` ප්රතිදානය සම්පීඩනය කරයි (≥50% අඩු කිරීමක්)
-- [ ] `skills/omniroute*/SKILL.md` ගොනු 10ම raw GitHub URL හරහා පොදු ලෙස ලබාගත හැක
+- [ ] `skills/agentproxy*/SKILL.md` ගොනු 10ම raw GitHub URL හරහා පොදු ලෙස ලබාගත හැක
 - [ ] නව සැකසුමකදී onboarding wizard එක "එය ක්රියා කරන ආකාරය" tier සංචාර පියවර පෙන්වයි
 - [ ] මුල් dashboard එකේ tier coverage widget එක වින්යාස කළ/සක්රිය ගණන පෙන්වයි
 

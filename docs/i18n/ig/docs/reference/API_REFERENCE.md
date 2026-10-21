@@ -64,7 +64,7 @@ Content-Type: application/json
 | Header                   | Ntụziaka  | Nkọwa                                                                                                                                                                                                              |
 | ------------------------ | --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | `X-AgentProxy-No-Cache`   | Arịrịọ    | Tọọ ya ka ọ bụrụ `true` iji gafere cache                                                                                                                                                                           |
-| `x-omniroute-no-memory`  | Arịrịọ    | Tọọ ya ka ọ bụrụ `true` iji kwụsị itinye ebe ncheta + nkà maka arịrịọ a (ọ na-eme ka no-cache; ọ na-ezere mgbakwunye token/ọnụahịa nke oku ọ bụla)                                                                 |
+| `x-agentproxy-no-memory`  | Arịrịọ    | Tọọ ya ka ọ bụrụ `true` iji kwụsị itinye ebe ncheta + nkà maka arịrịọ a (ọ na-eme ka no-cache; ọ na-ezere mgbakwunye token/ọnụahịa nke oku ọ bụla)                                                                 |
 | `X-AgentProxy-Progress`   | Arịrịọ    | Tọọ ya ka ọ bụrụ `true` maka mmemme ọganihu                                                                                                                                                                        |
 | `X-Session-Id`           | Arịrịọ    | Igodo nnọkọ na-adịgide maka njikọ nnọkọ mpụga                                                                                                                                                                      |
 | `x_session_id`           | Arịrịọ    | A na-anabatakwa ụdị nwere akara underscore (HTTP ozugbo)                                                                                                                                                           |
@@ -159,7 +159,7 @@ Esemokwu nwa oge na-eweghachi HTTP `429` yana `Retry-After` na:
 
 Nzaghachi a pụtara naanị na usoro tozuru oke nkịtị abụghị nke efu na onye ọ bụla nwere ike ịbụ onye nwe lease ọzọ na-arụ ọrụ na-ejide ya. Model/provider anaghị akwado, enweghị nkwekọrịta iwu, oge izu ike (cooldown), quota, ahụike, na ọdịda ntozu nkịtị ndị ọzọ na-ejigide nzaghachi AgentProxy ha dị adị.
 
-### `x-omniroute-compression`
+### `x-agentproxy-compression`
 
 Nkagbu atụmatụ mkpakọ (compression plan) maka arịrịọ ọ bụla. Ibu ụzọ kachasị elu — ọ na-emeri nkagbu routing-combo, profile na-arụ ọrụ, auto-trigger, na Default nke panel. Uru ndị a:
 
@@ -393,10 +393,10 @@ Client ndị na-egosipụta ihe nhọpụta ụdịdị kwesịrị ịrịọ `
 
 ### Ụdịdị dị iche iche na-enweghị echiche
 
-Maka ụdịdị Claude nwere ikike iche echiche, `/v1/models` na-egosipụtakwa ụdị **na-enweghị echiche** nke id ya nwere nganiihu `claude-3-omniroute-no-thinking/`:
+Maka ụdịdị Claude nwere ikike iche echiche, `/v1/models` na-egosipụtakwa ụdị **na-enweghị echiche** nke id ya nwere nganiihu `claude-3-agentproxy-no-thinking/`:
 
 ```
-claude-3-omniroute-no-thinking/<provider>/<model>
+claude-3-agentproxy-no-thinking/<provider>/<model>
 ```
 
 Ịhọrọ id a (dịka ọmụmaatụ, na nhazi Claude Code nke na-etinye block `thinking` mgbe niile) na-eme ka ọ laghachi na ezigbo `<provider>/<model>` ma gbanyụọ ịtụgharị uche — `thinking:{type:"disabled"}` n'ụzọ `/v1/messages`, ma ọ bụ iwepụ field `reasoning`/`reasoning_effort` n'ụzọ `/v1/chat/completions`. A na-edepụta ụdị a naanị maka ụdịdị ezinụlọ Claude ndị na-akwado iche echiche **ma** na-asọpụrụ `disabled` (ya mere, dịka ọmụmaatụ, a naghị etinye ụdịdị adaptive-only ndị na-ajụ `disabled`). Ndị na-ahụ maka sistemụ nwere ike ịmanye ụdị a ka ọ dị ma ọ bụ ghara ịdị maka ụdịdị ọ bụla site na `ModelSpec.noThinkingAlias`.
@@ -482,7 +482,7 @@ POST /v1/music/generations  { "model": "suno/v3.5",   "prompt": "..." }
 > (`localhost`, `127.0.0.1`, `172.16.0.0/12`) tozuru etozu mgbe niile. Node dị na host ọ bụla ọzọ
 > — igbe LAN ma ọ bụ onye mmekọ Tailscale — na-etozu naanị mgbe onye nchịkwa mere ka ọkọlọtọ atụmatụ
 > `RERANK_REMOTE_PROVIDER_NODES` rụọ ọrụ **ma** URL ntọala node ahụ gafere iwu URL ọpụpụ nke onye na-eweta
-> (`OMNIROUTE_ALLOW_LOCAL_PROVIDER_URLS` / `OMNIROUTE_ALLOW_PRIVATE_PROVIDER_URLS`);
+> (`AGENTPROXY_ALLOW_LOCAL_PROVIDER_URLS` / `AGENTPROXY_ALLOW_PRIVATE_PROVIDER_URLS`);
 > a naghị eziga arịrịọ na host metadata igwe ojii ma ọlị. Nzọụkwụ nhazigharị ọkwa nke injin ebe nchekwa na-akpọ ụzọ a site na
 > loopback, ya mere otu iwu ahụ na-achịkwa `rerankProviderModel` na ntọala Ebe Nchekwa.
 >
@@ -606,8 +606,8 @@ Na-enyocha handshake nkwalite WebSocket ma weghachite ozi atụ nke protocol wir
 
 ```bash
 # Otu host:port ahụ nke HTTP API (ndabara 20128); kwalite njikọ ahụ:
-wscat -c "ws://localhost:20128/v1/responses?api_key=<OMNIROUTE_API_KEY>"
-# (ma ọ bụ: -H "Authorization: Bearer <OMNIROUTE_API_KEY>")
+wscat -c "ws://localhost:20128/v1/responses?api_key=<AGENTPROXY_API_KEY>"
+# (ma ọ bụ: -H "Authorization: Bearer <AGENTPROXY_API_KEY>")
 
 # Frame mbụ GA-ABỤRỊRỊ response.create:
 { "type": "response.create", "model": "gpt-5.5", "input": [ { "role": "user", "content": "hi" } ] }
@@ -643,18 +643,18 @@ config dị ugbu a aka):
 
 ```toml
 model = "gpt-5.5"                 # NJ nkịtị — Ọ BỤGHỊ "codex/gpt-5.5"
-model_provider = "omniroute"
+model_provider = "agentproxy"
 
-[model_providers.omniroute]
+[model_providers.agentproxy]
 name = "AgentProxy (WS)"
 base_url = "http://localhost:20128/v1"   # enweghị slash n’azụ; a na-ewepụta URL WS site na ya (jiri https/wss na production)
 wire_api = "responses"                    # naanị value a na-akwado kemgbe Feb 2026
 supports_websockets = true                # na-eme ka transport Responses-over-WS rụọ ọrụ
-env_key = "OMNIROUTE_API_KEY"             # na-ejide igodo API AgentProxy (Bearer)
+env_key = "AGENTPROXY_API_KEY"             # na-ejide igodo API AgentProxy (Bearer)
 ```
 
 ```bash
-export OMNIROUTE_API_KEY=sk-...           # igodo API AgentProxy (igodo ọ bụla ma ọ bụrụ na REQUIRE_API_KEY=false)
+export AGENTPROXY_API_KEY=sk-...           # igodo API AgentProxy (igodo ọ bụla ma ọ bụrụ na REQUIRE_API_KEY=false)
 codex exec "Responda apenas: PONG"
 ```
 
@@ -1016,7 +1016,7 @@ Na-arụzi mgbanwe gburugburu ebe obibi OAuth ndị na-efu efu ma ọ bụ ndị
 {
   "success": true,
   "repaired": ["CLAUDE_CODE_OAUTH_CLIENT_ID", "CLAUDE_CODE_OAUTH_CLIENT_SECRET"],
-  "backupPath": "/home/user/.omniroute/backups/env-repair-2026-04-11.bak"
+  "backupPath": "/home/user/.agentproxy/backups/env-repair-2026-04-11.bak"
 }
 ```
 
@@ -1390,7 +1390,7 @@ AgentProxy na-ewepụta endpoint A2A (Agent-to-Agent) JSON-RPC 2.0 yana ihe mkpu
 
 ```bash
 POST /a2a
-Authorization: Bearer your-api-key   # nhọrọ ma ọ bụrụ na edoghị OMNIROUTE_API_KEY
+Authorization: Bearer your-api-key   # nhọrọ ma ọ bụrụ na edoghị AGENTPROXY_API_KEY
 Content-Type: application/json
 
 {
@@ -1433,7 +1433,7 @@ Na-eweghachi kaadị agent A2A ọhaneze (aha, nkọwa, ikike, katalọgụ nka,
 | GET  | `/api/a2a/tasks/[id]`        | Nweta otu ọrụ                                                                                                   |
 | POST | `/api/a2a/tasks/[id]/cancel` | Kagbuo ọrụ                                                                                                      |
 
-**Auth:** ndị enyemaka REST na-arụ ọrụ na-enweghị auth njikwa (dashboard nwere ike ịgụ ha); ụzọ JSON-RPC `/a2a` na-eji Bearer `OMNIROUTE_API_KEY` ma ọ bụrụ na ahaziri ya.
+**Auth:** ndị enyemaka REST na-arụ ọrụ na-enweghị auth njikwa (dashboard nwere ike ịgụ ha); ụzọ JSON-RPC `/a2a` na-eji Bearer `AGENTPROXY_API_KEY` ma ọ bụrụ na ahaziri ya.
 
 ---
 
@@ -1747,7 +1747,7 @@ Ntụnyere Shadow / A-B nke providers **abụghị REST surface kwụụrụ onw
 
 ## Guardrails
 
-Nyochaa guardrails nke runtime (nchọpụta PII, nchọpụta prompt injection, vision bridging). Guardrails na-arụ ọrụ na arịrịọ ọ bụla; ịpụ na ya maka otu ọkpụkpọ bụ site na request header `x-omniroute-disabled-guardrails` — enweghị ebe echekwara maka ịgbanye/ịgbanyụọ ya.
+Nyochaa guardrails nke runtime (nchọpụta PII, nchọpụta prompt injection, vision bridging). Guardrails na-arụ ọrụ na arịrịọ ọ bụla; ịpụ na ya maka otu ọkpụkpọ bụ site na request header `x-agentproxy-disabled-guardrails` — enweghị ebe echekwara maka ịgbanye/ịgbanyụọ ya.
 
 | Usoro | Ụzọ                    | Nkọwa                                                                                            |
 | ----- | ---------------------- | ------------------------------------------------------------------------------------------------ |

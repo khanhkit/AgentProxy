@@ -89,13 +89,13 @@ ufw enable
 ### 2.1 Konfiguratsiya katalogini yaratish
 
 ```bash
-mkdir -p /opt/omniroute
+mkdir -p /opt/agentproxy
 ```
 
 ### 2.2 Muhit oʻzgaruvchilari faylini yaratish
 
 ```bash
-cat > /opt/omniroute/.env << 'EOF'
+cat > /opt/agentproxy/.env << 'EOF'
 # === Xavfsizlik ===
 JWT_SECRET=CHANGE-TO-A-UNIQUE-64-CHAR-SECRET-KEY
 INITIAL_PASSWORD=YourSecurePassword123!
@@ -103,7 +103,7 @@ API_KEY_SECRET=REPLACE-WITH-ANOTHER-SECRET-KEY
 STORAGE_ENCRYPTION_KEY=REPLACE-WITH-THIRD-SECRET-KEY
 STORAGE_ENCRYPTION_KEY_VERSION=v1
 MACHINE_ID_SALT=CHANGE-TO-A-UNIQUE-SALT
-OMNIROUTE_WS_BRIDGE_SECRET=REPLACE-WITH-WS-BRIDGE-SECRET  # Ishlab chiqarish muhitida TALAB QILINADI: Codex Responses WS koʻprigi tomonidan ishlatiladi
+AGENTPROXY_WS_BRIDGE_SECRET=REPLACE-WITH-WS-BRIDGE-SECRET  # Ishlab chiqarish muhitida TALAB QILINADI: Codex Responses WS koʻprigi tomonidan ishlatiladi
 
 # === Ilova ===
 PORT=20128
@@ -120,11 +120,11 @@ BASE_URL=http://127.0.0.1:20128
 # OAuth qayta chaqiruvlari, boshqaruv paneli havolalari va yaratilgan ommaviy URL manzillari uchun ishlatiladigan brauzerga moʻljallangan URL.
 NEXT_PUBLIC_BASE_URL=https://llms.seudominio.com
 # Yaratilgan ommaviy resurs URL manzillari uchun ixtiyoriy aniq ommaviy manba qiymatini qayta belgilash.
-# OMNIROUTE_PUBLIC_BASE_URL=https://llms.seudominio.com
+# AGENTPROXY_PUBLIC_BASE_URL=https://llms.seudominio.com
 
 # === Bulutli sinxronlash (ixtiyoriy) ===
-# CLOUD_URL=https://cloud.omniroute.online
-# NEXT_PUBLIC_CLOUD_URL=https://cloud.omniroute.online
+# CLOUD_URL=https://agentproxy.online
+# NEXT_PUBLIC_CLOUD_URL=https://agentproxy.online
 EOF
 ```
 
@@ -133,22 +133,22 @@ EOF
 ### 2.3 Konteynerni ishga tushirish
 
 ```bash
-docker pull diegosouzapw/omniroute:latest
+docker pull diegosouzapw/agentproxy:latest
 
 docker run -d \
-  --name omniroute \
+  --name agentproxy \
   --restart unless-stopped \
-  --env-file /opt/omniroute/.env \
+  --env-file /opt/agentproxy/.env \
   -p 20128:20128 \
-  -v omniroute-data:/app/data \
-  diegosouzapw/omniroute:latest
+  -v agentproxy-data:/app/data \
+  diegosouzapw/agentproxy:latest
 ```
 
 ### 2.4 Uning ishlayotganini tekshirish
 
 ```bash
-docker ps | grep omniroute
-docker logs omniroute --tail 20
+docker ps | grep agentproxy
+docker logs agentproxy --tail 20
 ```
 
 Quyidagilar koʻrsatilishi kerak: `[DB] SQLite database ready` va `listening on port 20128`.
@@ -181,7 +181,7 @@ chmod 600 /etc/nginx/ssl/origin.key
 ### 3.2 Nginx konfiguratsiyasi
 
 ```bash
-cat > /etc/nginx/sites-available/omniroute << 'NGINX'
+cat > /etc/nginx/sites-available/agentproxy << 'NGINX'
 # Standart server — IP orqali to‘g‘ridan-to‘g‘ri kirishni bloklaydi
 server {
     listen 80 default_server;
@@ -241,7 +241,7 @@ Teskari proksi oqimining kutish vaqtlarini AgentProxy kutish vaqti muhit o‘zga
 `FETCH_TIMEOUT_MS` / `STREAM_IDLE_TIMEOUT_MS` qiymatlarini oshirsangiz, `proxy_read_timeout` / `proxy_send_timeout`
 qiymatlarini ham xuddi shu chegaradan yuqoriga oshiring.
 
-AgentProxy OAuth qayta chaqiruvlari va yaratiladigan ochiq havolalar uchun brauzerga yo‘naltirilgan asosiy manzil sifatida `NEXT_PUBLIC_BASE_URL` dan foydalanadi. Autentifikatsiyadan o‘tgan boshqaruv panelidagi yozuv amallari bir xil manbali so‘rovlardan hamda seansga bog‘langan CSRF himoyasidan foydalanadi, shuning uchun ular statik ochiq asosiy URL manzilini talab qilmaydi. Yuqoridagi `X-Forwarded-*` sarlavhalari marshrutlash uchun foydali metama’lumot bo‘lib qoladi, biroq OAuth yoki brauzer uchun yaratiladigan havolalar talab qilganda ular aniq ochiq URL manzilini sozlash o‘rnini bosa olmaydi. `OMNIROUTE_TRUST_PROXY` parametrini faqat AgentProxy mijozlar uchun to‘g‘ridan-to‘g‘ri ochiq bo‘lmasa va proksingiz kiruvchi uzatilgan sarlavhalarni olib tashlab, qayta yaratsa yoqing.
+AgentProxy OAuth qayta chaqiruvlari va yaratiladigan ochiq havolalar uchun brauzerga yo‘naltirilgan asosiy manzil sifatida `NEXT_PUBLIC_BASE_URL` dan foydalanadi. Autentifikatsiyadan o‘tgan boshqaruv panelidagi yozuv amallari bir xil manbali so‘rovlardan hamda seansga bog‘langan CSRF himoyasidan foydalanadi, shuning uchun ular statik ochiq asosiy URL manzilini talab qilmaydi. Yuqoridagi `X-Forwarded-*` sarlavhalari marshrutlash uchun foydali metama’lumot bo‘lib qoladi, biroq OAuth yoki brauzer uchun yaratiladigan havolalar talab qilganda ular aniq ochiq URL manzilini sozlash o‘rnini bosa olmaydi. `AGENTPROXY_TRUST_PROXY` parametrini faqat AgentProxy mijozlar uchun to‘g‘ridan-to‘g‘ri ochiq bo‘lmasa va proksingiz kiruvchi uzatilgan sarlavhalarni olib tashlab, qayta yaratsa yoqing.
 
 ### 3.3 Yoqish va sinash
 
@@ -250,7 +250,7 @@ AgentProxy OAuth qayta chaqiruvlari va yaratiladigan ochiq havolalar uchun brauz
 rm -f /etc/nginx/sites-enabled/default
 
 # AgentProxy'ni yoqing
-ln -sf /etc/nginx/sites-available/omniroute /etc/nginx/sites-enabled/omniroute
+ln -sf /etc/nginx/sites-available/agentproxy /etc/nginx/sites-enabled/agentproxy
 
 # Tekshiring va qayta yuklang
 nginx -t && systemctl reload nginx
@@ -294,40 +294,40 @@ curl -sI https://llms.seudominio.com/health
 ### Yangi versiyaga yangilash
 
 ```bash
-docker pull diegosouzapw/omniroute:latest
-docker stop omniroute && docker rm omniroute
-docker run -d --name omniroute --restart unless-stopped \
-  --env-file /opt/omniroute/.env \
+docker pull diegosouzapw/agentproxy:latest
+docker stop agentproxy && docker rm agentproxy
+docker run -d --name agentproxy --restart unless-stopped \
+  --env-file /opt/agentproxy/.env \
   -p 20128:20128 \
-  -v omniroute-data:/app/data \
-  diegosouzapw/omniroute:latest
+  -v agentproxy-data:/app/data \
+  diegosouzapw/agentproxy:latest
 ```
 
 ### Jurnallarni koʻrish
 
 ```bash
-docker logs -f omniroute          # Real vaqt rejimidagi oqim
-docker logs omniroute --tail 50   # Oxirgi 50 ta satr
+docker logs -f agentproxy          # Real vaqt rejimidagi oqim
+docker logs agentproxy --tail 50   # Oxirgi 50 ta satr
 ```
 
 ### Maʼlumotlar bazasini qoʻlda zaxiralash
 
 ```bash
 # Maʼlumotlarni jilddan xostga nusxalash
-docker cp omniroute:/app/data ./backup-$(date +%F)
+docker cp agentproxy:/app/data ./backup-$(date +%F)
 
 # Yoki butun jildni siqish
-docker run --rm -v omniroute-data:/data -v $(pwd):/backup \
-  alpine tar czf /backup/omniroute-data-$(date +%F).tar.gz /data
+docker run --rm -v agentproxy-data:/data -v $(pwd):/backup \
+  alpine tar czf /backup/agentproxy-data-$(date +%F).tar.gz /data
 ```
 
 ### Zaxira nusxasidan tiklash
 
 ```bash
-docker stop omniroute
-docker run --rm -v omniroute-data:/data -v $(pwd):/backup \
-  alpine sh -c "rm -rf /data/* && tar xzf /backup/omniroute-data-YYYY-MM-DD.tar.gz -C /"
-docker start omniroute
+docker stop agentproxy
+docker run --rm -v agentproxy-data:/data -v $(pwd):/backup \
+  alpine sh -c "rm -rf /data/* && tar xzf /backup/agentproxy-data-YYYY-MM-DD.tar.gz -C /"
+docker start agentproxy
 ```
 
 ---
@@ -396,13 +396,13 @@ Cloudflare Workers orqali masofadan kirish uchun (VM'ni toʻgʻridan-toʻgʻri o
 
 ```bash
 # Mahalliy repozitoriyda
-cd omnirouteCloud
+cd agentproxyCloud
 npm install
 npx wrangler login
 npx wrangler deploy
 ```
 
-Repozitoriy ichidagi Cloudflare Tunnel qoʻllanmasi uchun [TUNNELS_GUIDE.md](./TUNNELS_GUIDE.md) fayliga ham qarang. Mustaqil `omnirouteCloud/` workeri alohida yordamchi repozitoriyda joylashgan.
+Repozitoriy ichidagi Cloudflare Tunnel qoʻllanmasi uchun [TUNNELS_GUIDE.md](./TUNNELS_GUIDE.md) fayliga ham qarang. Mustaqil `agentproxyCloud/` workeri alohida yordamchi repozitoriyda joylashgan.
 
 ---
 
@@ -419,9 +419,9 @@ Repozitoriy ichidagi Cloudflare Tunnel qoʻllanmasi uchun [TUNNELS_GUIDE.md](./T
 
 Kichik VPS nusxalarida (1 GB RAM yoki kamroq) joylashtirish uchun:
 
-- **Fon xizmatlarini oʻchiring** — rejalashtiruvchi, MCP serveri va davriy texnik xizmat vazifalarini oʻtkazib yuborish uchun `OMNIROUTE_DISABLE_BACKGROUND_SERVICES=1` ni oʻrnating. `docs/reference/ENVIRONMENT.md` ga qarang.
+- **Fon xizmatlarini oʻchiring** — rejalashtiruvchi, MCP serveri va davriy texnik xizmat vazifalarini oʻtkazib yuborish uchun `AGENTPROXY_DISABLE_BACKGROUND_SERVICES=1` ni oʻrnating. `docs/reference/ENVIRONMENT.md` ga qarang.
 - **SQLite WAL rejimidan foydalaning** — sukut boʻyicha yoqilgan va bir vaqtdagi oʻqishlar paytida xotiraning eng yuqori sarfini kamaytiradi.
-- **V8 uyumini cheklang** — bajarilish muhiti VM hajmidan kattaroq chegarani hisoblamasligi uchun `OMNIROUTE_MEMORY_MB` ni (masalan, `512`) oʻrnating. `docs/reference/ENVIRONMENT.md` ga qarang.
-- **Ogʻir soʻrovlarni qabul qilish uyum chegarasiga qarab avtomatik masshtablanadi** -- yuqorida `OMNIROUTE_MEMORY_MB` oʻrnatilgach, qabul qilinuvchi baytlar byudjeti (`OMNIROUTE_CHAT_MAX_INFLIGHT_BYTES`) ayni shu chegaradan kelib chiqadi, shu sababli xotirasi cheklangan VM hech qanday qoʻshimcha sozlashsiz bir vaqtdagi soʻrovlar uchun kichikroq byudjetga ega boʻladi; ortiqcha soʻrovlar xotira uchun raqobatlashish oʻrniga `Retry-After` bilan qayta urinish mumkin boʻlgan `503` javobini oladi. Bunga qoʻshimcha ravishda qatʼiy chegara kerak boʻlsagina eski `OMNIROUTE_CHAT_MAX_HEAVY_IN_FLIGHT` soʻrovlar soni chegarasini oʻrnating.
+- **V8 uyumini cheklang** — bajarilish muhiti VM hajmidan kattaroq chegarani hisoblamasligi uchun `AGENTPROXY_MEMORY_MB` ni (masalan, `512`) oʻrnating. `docs/reference/ENVIRONMENT.md` ga qarang.
+- **Ogʻir soʻrovlarni qabul qilish uyum chegarasiga qarab avtomatik masshtablanadi** -- yuqorida `AGENTPROXY_MEMORY_MB` oʻrnatilgach, qabul qilinuvchi baytlar byudjeti (`AGENTPROXY_CHAT_MAX_INFLIGHT_BYTES`) ayni shu chegaradan kelib chiqadi, shu sababli xotirasi cheklangan VM hech qanday qoʻshimcha sozlashsiz bir vaqtdagi soʻrovlar uchun kichikroq byudjetga ega boʻladi; ortiqcha soʻrovlar xotira uchun raqobatlashish oʻrniga `Retry-After` bilan qayta urinish mumkin boʻlgan `503` javobini oladi. Bunga qoʻshimcha ravishda qatʼiy chegara kerak boʻlsagina eski `AGENTPROXY_CHAT_MAX_HEAVY_IN_FLIGHT` soʻrovlar soni chegarasini oʻrnating.
 - **VPS da `next build` dan foydalanmang** — loyihani mahalliy muhitda yigʻing va mustaqil natijani (`.next/standalone/`) joylashtiring.
 - **`top` / `free -m` orqali kuzating** — AgentProxy odatda 1 GB li VM da boʻsh turganida 200-400 MB RSS ishlatadi.

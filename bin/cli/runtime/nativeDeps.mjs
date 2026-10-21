@@ -81,7 +81,7 @@ export function ensureRuntimeDir() {
     );
   } else {
     // #14355: retrofit `allowScripts` into a runtime dir created by an older
-    // OmniRoute version, so an existing install picks up the fix on the next
+    // AgentProxy version, so an existing install picks up the fix on the next
     // repair/runtime-check without the user having to delete the directory.
     try {
       const pkg = JSON.parse(readFileSync(pkgPath, "utf8"));

@@ -64,7 +64,7 @@ Content-Type: application/json
 | Վերնագիր                 | Ուղղություն | Նկարագրություն                                                                                                                                                                                                                                           |
 | ------------------------ | ----------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `X-AgentProxy-No-Cache`   | Հարցում     | Քեշը շրջանցելու համար սահմանեք `true`                                                                                                                                                                                                                    |
-| `x-omniroute-no-memory`  | Հարցում     | Այս հարցման համար հիշողության և հմտությունների ներարկումը բաց թողնելու նպատակով սահմանեք `true` (արտացոլում է no-cache-ը և խուսափում յուրաքանչյուր կանչի տոկենների/արժեքի լրացուցիչ ծախսից)                                                              |
+| `x-agentproxy-no-memory`  | Հարցում     | Այս հարցման համար հիշողության և հմտությունների ներարկումը բաց թողնելու նպատակով սահմանեք `true` (արտացոլում է no-cache-ը և խուսափում յուրաքանչյուր կանչի տոկենների/արժեքի լրացուցիչ ծախսից)                                                              |
 | `X-AgentProxy-Progress`   | Հարցում     | Առաջընթացի իրադարձությունների համար սահմանեք `true`                                                                                                                                                                                                      |
 | `X-Session-Id`           | Հարցում     | Կպչուն աշխատաշրջանի բանալի՝ արտաքին աշխատաշրջանային համապատասխանության համար                                                                                                                                                                             |
 | `x_session_id`           | Հարցում     | Ընդունվում է նաև ընդգծման նշանով տարբերակը (ուղղակի HTTP)                                                                                                                                                                                                |
@@ -159,7 +159,7 @@ X-AgentProxy-Lease-Generation: 1
 
 Այս պատասխանը միայն նշանակում է, որ սովորական համապատասխանող հավաքածուն ոչ դատարկ էր, և յուրաքանչյուր ազատ թեկնածու պահվում էր օտար ակտիվ վարձակալության կողմից: Անաջակցվող մոդելները/մատակարարները, քաղաքականության անհամապատասխանությունը, սառեցումը, քվոտան, առողջությունը և այլ սովորական համապատասխանության ձախողումները պահպանում են իրենց գոյություն ունեցող AgentProxy պատասխանները:
 
-### `x-omniroute-compression`
+### `x-agentproxy-compression`
 
 Սեղմման պլանի յուրաքանչյուր հարցման վերագրում: Ամենաբարձր առաջնահերթությունը՝ գերազանցում է երթուղային-կոմբոյի վերագրումը, ակտիվ պրոֆիլը, ավտոմատ գործարկումը և վահանակի լռելյայնը: Արժեքներ.
 
@@ -397,10 +397,10 @@ GET /v1/models?prefix=canonical    # միայն մատակարարի ամբող�
 
 ### Առանց մտածողության մոդելային տարբերակներ
 
-Մտածողության հնարավորություն ունեցող Claude մոդելների համար `/v1/models`-ը նաև ներկայացնում է **առանց մտածողության** տարբերակ, որի id-ն սկսվում է `claude-3-omniroute-no-thinking/` նախածանցով․
+Մտածողության հնարավորություն ունեցող Claude մոդելների համար `/v1/models`-ը նաև ներկայացնում է **առանց մտածողության** տարբերակ, որի id-ն սկսվում է `claude-3-agentproxy-no-thinking/` նախածանցով․
 
 ```
-claude-3-omniroute-no-thinking/<provider>/<model>
+claude-3-agentproxy-no-thinking/<provider>/<model>
 ```
 
 Այս id-ն ընտրելու դեպքում (օրինակ՝ Claude Code-ի այն կարգավորման մեջ, որը միշտ կցում է `thinking` բլոկ) այն վերածվում է իրական `<provider>/<model>`-ի՝ ճնշված reasoning-ով․ `/v1/messages` ուղու վրա՝ `thinking:{type:"disabled"}`, իսկ `/v1/chat/completions` ուղու վրա՝ հեռացված `reasoning`/`reasoning_effort` դաշտեր։ Այս տարբերակը ցուցակվում է միայն Claude ընտանիքի այն մոդելների համար, որոնք աջակցում են thinking-ին **և** ընդունում են `disabled`-ը (այսինքն՝ օրինակ միայն adaptive ռեժիմով աշխատող և `disabled`-ը մերժող մոդելները բացառվում են)։ Օպերատորները կարող են յուրաքանչյուր մոդելի համար հարկադրաբար միացնել կամ անջատել այս տարբերակը՝ `ModelSpec.noThinkingAlias`-ի միջոցով։
@@ -486,7 +486,7 @@ POST /v1/music/generations  { "model": "suno/v3.5",   "prompt": "..." }
 > հանգույցները (`localhost`, `127.0.0.1`, `172.16.0.0/12`) միշտ հասանելի են: Ցանկացած այլ հոսթի վրա գտնվող հանգույցները՝
 > LAN սարք կամ Tailscale հանգույց, հասանելի են միայն այն դեպքում, երբ օպերատորը միացնում է
 > `RERANK_REMOTE_PROVIDER_NODES` ֆունկցիոնալ դրոշը **և** հանգույցի հիմնական URL-ն անցնում է մատակարարի
-> արտաքին URL քաղաքականությունը (`OMNIROUTE_ALLOW_LOCAL_PROVIDER_URLS` / `OMNIROUTE_ALLOW_PRIVATE_PROVIDER_URLS`):
+> արտաքին URL քաղաքականությունը (`AGENTPROXY_ALLOW_LOCAL_PROVIDER_URLS` / `AGENTPROXY_ALLOW_PRIVATE_PROVIDER_URLS`):
 > Cloud-metadata հոսթերին երբեք հարցումներ չեն ուղղվում: Հիշողության շարժիչի (memory engine) rerank քայլը կանչում է այս երթուղին
 > loopback-ի միջոցով, ուստի նույն կանոնը կարգավորում է նաև `rerankProviderModel`-ը Memory կարգավորումներում:
 >
@@ -609,8 +609,8 @@ GET /v1/ws?handshake=1
 
 ```bash
 # Նույն հոսթը և պորտը, ինչ HTTP API-ի համար է (լռելյայն՝ 20128)․ արդիականացրեք կապը.
-wscat -c "ws://localhost:20128/v1/responses?api_key=<OMNIROUTE_API_KEY>"
-# (կամ՝ -H "Authorization: Bearer <OMNIROUTE_API_KEY>")
+wscat -c "ws://localhost:20128/v1/responses?api_key=<AGENTPROXY_API_KEY>"
+# (կամ՝ -H "Authorization: Bearer <AGENTPROXY_API_KEY>")
 
 # Առաջին ֆրեյմը ՊԵՏՔ Է լինի response.create.
 { "type": "response.create", "model": "gpt-5.5", "input": [ { "role": "user", "content": "hi" } ] }
@@ -646,18 +646,18 @@ a ChatGPT account`)։ Ուղարկեք **պարզ** id-ն (օրինակ՝ `gpt-5
 
 ```toml
 model = "gpt-5.5"                 # պարզ id — ՈՉ ԹԵ "codex/gpt-5.5"
-model_provider = "omniroute"
+model_provider = "agentproxy"
 
-[model_providers.omniroute]
+[model_providers.agentproxy]
 name = "AgentProxy (WS)"
 base_url = "http://localhost:20128/v1"   # առանց վերջավոր շեղագծի․ WS URL-ը ստացվում է սրանից (արտադրական միջավայրում օգտագործեք https/wss)
 wire_api = "responses"                    # միակ աջակցվող արժեքը՝ 2026 թ. փետրվարից ի վեր
 supports_websockets = true                # միացնում է Responses-over-WS փոխադրամիջոցը
-env_key = "OMNIROUTE_API_KEY"             # պարունակում է AgentProxy API բանալին (Bearer)
+env_key = "AGENTPROXY_API_KEY"             # պարունակում է AgentProxy API բանալին (Bearer)
 ```
 
 ```bash
-export OMNIROUTE_API_KEY=sk-...           # AgentProxy API բանալի (ցանկացած բանալի, եթե REQUIRE_API_KEY=false)
+export AGENTPROXY_API_KEY=sk-...           # AgentProxy API բանալի (ցանկացած բանալի, եթե REQUIRE_API_KEY=false)
 codex exec "Responda apenas: PONG"
 ```
 
@@ -1018,7 +1018,7 @@ Content-Type: application/json
 {
   "success": true,
   "repaired": ["CLAUDE_CODE_OAUTH_CLIENT_ID", "CLAUDE_CODE_OAUTH_CLIENT_SECRET"],
-  "backupPath": "/home/user/.omniroute/backups/env-repair-2026-04-11.bak"
+  "backupPath": "/home/user/.agentproxy/backups/env-repair-2026-04-11.bak"
 }
 ```
 
@@ -1392,7 +1392,7 @@ AgentProxy-ը տրամադրում է A2A (Agent-to-Agent) JSON-RPC 2.0 վերջ
 
 ```bash
 POST /a2a
-Authorization: Bearer your-api-key   # պարտադիր չէ, եթե OMNIROUTE_API_KEY-ը սահմանված չէ
+Authorization: Bearer your-api-key   # պարտադիր չէ, եթե AGENTPROXY_API_KEY-ը սահմանված չէ
 Content-Type: application/json
 
 {
@@ -1435,7 +1435,7 @@ GET /.well-known/agent.json
 | GET   | `/api/a2a/tasks/[id]`        | Ստանալ մեկ առաջադրանք                                                                                                    |
 | POST  | `/api/a2a/tasks/[id]/cancel` | Չեղարկել առաջադրանքը                                                                                                     |
 
-**Նույնականացում․** REST օժանդակ վերջնակետերն աշխատում են առանց կառավարման նույնականացման (ընթեռնելի են վահանակից), իսկ JSON-RPC `/a2a` երթուղին օգտագործում է Bearer `OMNIROUTE_API_KEY`, եթե այն կազմաձևված է։
+**Նույնականացում․** REST օժանդակ վերջնակետերն աշխատում են առանց կառավարման նույնականացման (ընթեռնելի են վահանակից), իսկ JSON-RPC `/a2a` երթուղին օգտագործում է Bearer `AGENTPROXY_API_KEY`, եթե այն կազմաձևված է։
 
 ---
 
@@ -1749,7 +1749,7 @@ devin-cli և այլն)։ Ամբողջական ցանկը տեսեք [Մատակ�
 
 ## Պաշտպանական սահմանափակումներ
 
-Դիտարկեք կատարման միջավայրի պաշտպանական սահմանափակումները (PII-ի հայտնաբերում, պրոմփթի ներարկման հայտնաբերում, տեսողական կապակցում)։ Պաշտպանական սահմանափակումները գործարկվում են յուրաքանչյուր հարցման ժամանակ։ Յուրաքանչյուր կանչի համար դրանցից հրաժարումը կատարվում է հարցման `x-omniroute-disabled-guardrails` վերնագրի միջոցով. միացման/անջատման պահպանվող մակերես չկա։
+Դիտարկեք կատարման միջավայրի պաշտպանական սահմանափակումները (PII-ի հայտնաբերում, պրոմփթի ներարկման հայտնաբերում, տեսողական կապակցում)։ Պաշտպանական սահմանափակումները գործարկվում են յուրաքանչյուր հարցման ժամանակ։ Յուրաքանչյուր կանչի համար դրանցից հրաժարումը կատարվում է հարցման `x-agentproxy-disabled-guardrails` վերնագրի միջոցով. միացման/անջատման պահպանվող մակերես չկա։
 
 | Մեթոդ | Ուղի                   | Նկարագրություն                                                                                                     |
 | ----- | ---------------------- | ------------------------------------------------------------------------------------------------------------------ |

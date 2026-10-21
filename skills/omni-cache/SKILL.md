@@ -20,7 +20,7 @@ Get cache statistics
 
 ```bash
 curl https://localhost:20128/api/cache \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
+  -H "Authorization: Bearer $AGENTPROXY_TOKEN"
 ```
 
 ### DELETE /api/cache
@@ -29,7 +29,7 @@ Clear all caches
 
 ```bash
 curl -X DELETE https://localhost:20128/api/cache \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
+  -H "Authorization: Bearer $AGENTPROXY_TOKEN"
 ```
 
 ### GET /api/cache/stats
@@ -40,7 +40,7 @@ Returns detailed statistics for all cache layers.
 
 ```bash
 curl https://localhost:20128/api/cache/stats \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
+  -H "Authorization: Bearer $AGENTPROXY_TOKEN"
 ```
 
 ### DELETE /api/cache/stats
@@ -49,7 +49,7 @@ Clear cache statistics
 
 ```bash
 curl -X DELETE https://localhost:20128/api/cache/stats \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
+  -H "Authorization: Bearer $AGENTPROXY_TOKEN"
 ```
 
 ### GET /api/cache/entries
@@ -58,7 +58,7 @@ GET cache › entries
 
 ```bash
 curl https://localhost:20128/api/cache/entries \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
+  -H "Authorization: Bearer $AGENTPROXY_TOKEN"
 ```
 
 ### DELETE /api/cache/entries
@@ -67,7 +67,7 @@ DELETE cache › entries
 
 ```bash
 curl -X DELETE https://localhost:20128/api/cache/entries \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
+  -H "Authorization: Bearer $AGENTPROXY_TOKEN"
 ```
 
 ### GET /api/cache/reasoning
@@ -76,7 +76,7 @@ GET cache › reasoning
 
 ```bash
 curl https://localhost:20128/api/cache/reasoning \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
+  -H "Authorization: Bearer $AGENTPROXY_TOKEN"
 ```
 
 ### DELETE /api/cache/reasoning
@@ -85,7 +85,7 @@ DELETE cache › reasoning
 
 ```bash
 curl -X DELETE https://localhost:20128/api/cache/reasoning \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
+  -H "Authorization: Bearer $AGENTPROXY_TOKEN"
 ```
 
 ## Payloads

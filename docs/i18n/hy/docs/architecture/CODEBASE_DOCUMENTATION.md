@@ -37,11 +37,11 @@
 Ուղիների կեղծանուններ (`tsconfig.json`)՝
 
 - `@/*` → `src/*`
-- `@omniroute/open-sse` → `open-sse/index.ts`
-- `@omniroute/open-sse/*` → `open-sse/*`
+- `@agentproxy/open-sse` → `open-sse/index.ts`
+- `@agentproxy/open-sse/*` → `open-sse/*`
 
 Լռելյայն HTTP պորտը՝ **`20128`** (API-ն և կառավարման վահանակն օգտագործում են նույն գործընթացը)։ Տվյալների
-գրացուցակը սահմանվում է `DATA_DIR` միջավայրի փոփոխականով, իսկ լռելյայն արժեքը `~/.omniroute/` է։
+գրացուցակը սահմանվում է `DATA_DIR` միջավայրի փոփոխականով, իսկ լռելյայն արժեքը `~/.agentproxy/` է։
 
 ---
 
@@ -50,9 +50,9 @@
 ```
 AgentProxy/
 ├── src/                  Next.js հավելված (App Router, գրադարաններ, տիրույթ, սերվեր, համօգտագործվող բաղադրիչներ)
-├── open-sse/             Հոսքային մշակման շարժիչի աշխատանքային տարածք (@omniroute/open-sse)
+├── open-sse/             Հոսքային մշակման շարժիչի աշխատանքային տարածք (@agentproxy/open-sse)
 ├── electron/             Սեղանադիր պատյան (Electron 41-ի հիմնական գործընթաց + preload)
-├── bin/                  CLI մուտքի կետեր (omniroute, reset-password)
+├── bin/                  CLI մուտքի կետեր (agentproxy, reset-password)
 ├── tests/                Մոդուլային, ինտեգրացիոն, e2e, protocols-e2e, թարգմանիչի, անվտանգության թեստեր և ֆիքստուրաներ
 ├── scripts/              Կառուցման, համաժամացման, ստուգման, միգրացիայի և կատարման միջավայրի օժանդակ սկրիպտներ
 ├── docs/                 Հանրային փաստաթղթեր (այս գրացուցակը)
@@ -298,7 +298,7 @@ v1/
 | `runtime/`        | Կատարման միջավայրի հնարավորությունների հայտնաբերում                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
 | `search/`         | `executeWebSearch.ts`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
 | `services/`       | Ներկառուցված ծառայությունների ֆրեյմվորք՝ `ServiceSupervisor.ts` (ենթագործընթացների ընդհանրացված վերահսկիչ՝ գործողության կողպմամբ, օղակաձև բուֆերով և վիճակի ստուգիչով), `bootstrap.ts` (գործընթացի մակարդակի գրանցում և ինքնաշխատ մեկնարկ), `registry.ts` (գործիք → վերահսկիչ քարտեզ), `apiKey.ts` (AES-256-GCM բանալիների պահոց), `modelSync.ts` (մոդելների պարբերական համաժամացում), `ringBuffer.ts` (5 MB օղակաձև մատյանային բուֆեր), `healthCheck.ts` (HTTP վիճակի զոնդ), `types.ts`, `embedWsProxy.ts` (WebSocket պրոքսի), `installers/{ninerouter,cliproxy}.ts`։ Տե՛ս `docs/frameworks/EMBEDDED-SERVICES.md`                                                                                                                          |
-| `agentSkills/`    | Գործակալների հմտությունների կատալոգ + գեներատոր՝ `catalog.ts` (getCatalog/getSkillById/filterCatalog/computeCoverage), `generator.ts` (generateAgentSkills → գրում է `skills/{id}/SKILL.md`), `openapiParser.ts` (OpenAPI բնութագրից արդյունահանում է REST վերջնակետերը), `cliRegistryParser.ts` (bin/cli-registry-ից արդյունահանում է CLI ենթահրամանները), `schemas.ts` (Zod՝ AgentSkillSchema, SkillCoverageSchema, ListQuerySchema, GenerateBodySchema), `types.ts` (AgentSkill, SkillCoverage, SkillMarkdown, GeneratorReport)։ Օգտագործվում է REST երթուղիների (`/api/agent-skills/*`), MCP գործիքների (`omniroute_agent_skills_*`) և A2A `list-capabilities` հմտության կողմից։ Տե՛ս [AGENT-SKILLS.md](../frameworks/AGENT-SKILLS.md)։ |
+| `agentSkills/`    | Գործակալների հմտությունների կատալոգ + գեներատոր՝ `catalog.ts` (getCatalog/getSkillById/filterCatalog/computeCoverage), `generator.ts` (generateAgentSkills → գրում է `skills/{id}/SKILL.md`), `openapiParser.ts` (OpenAPI բնութագրից արդյունահանում է REST վերջնակետերը), `cliRegistryParser.ts` (bin/cli-registry-ից արդյունահանում է CLI ենթահրամանները), `schemas.ts` (Zod՝ AgentSkillSchema, SkillCoverageSchema, ListQuerySchema, GenerateBodySchema), `types.ts` (AgentSkill, SkillCoverage, SkillMarkdown, GeneratorReport)։ Օգտագործվում է REST երթուղիների (`/api/agent-skills/*`), MCP գործիքների (`agentproxy_agent_skills_*`) և A2A `list-capabilities` հմտության կողմից։ Տե՛ս [AGENT-SKILLS.md](../frameworks/AGENT-SKILLS.md)։ |
 | `skills/`         | Հմտությունների ֆրեյմվորք՝ `registry.ts`, `executor.ts`, `interception.ts`, `injection.ts`, `sandbox.ts`, `custom.ts`, `hybrid.ts`, `builtins.ts`, `a2a.ts`, `providerSettings.ts`, `schemas.ts`, `skillssh.ts`, `types.ts`, ինչպես նաև `builtin/browser.ts`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
 | `spend/`          | `batchWriter.ts` (հետաձգված գրանցման բուֆեր)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
 | `sync/`           | `bundle.ts`, `tokens.ts` (Cloud Sync)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
@@ -384,7 +384,7 @@ SQLite տվյալների բազայի մեկ օրինակ (`getDbInstance()`՝ 
 | `degradation.ts`                           | Դեգրադացված ռեժիմի անցումներ                     |
 | `providerExpiration.ts`                    | Ժամկետանց հաշիվների/բանալիների հայտնաբերում      |
 | `quotaCache.ts`                            | Քվոտայի քեշավորված որոշումներ                    |
-| `responses.ts`, `omnirouteResponseMeta.ts` | Պատասխանի կառուցվածքի օժանդակ գործառույթներ      |
+| `responses.ts`, `agentproxyesponseMeta.ts` | Պատասխանի կառուցվածքի օժանդակ գործառույթներ      |
 | `configAudit.ts`                           | Կազմաձևի փոփոխությունների աուդիտ                 |
 | `assessment/`                              | Մոդելի գնահատում (ըստ RFC-ի, մասամբ իրականացված) |
 | `types.ts`                                 | Համօգտագործվող տիրույթային տիպեր                 |
@@ -436,7 +436,7 @@ server/
 
 ## 4. `open-sse/` — Հոսքային շարժիչի աշխատանքային տարածք
 
-Առանձին npm աշխատանքային տարածք, որը հրապարակվում է որպես `@omniroute/open-sse`։ Պարունակում է հարցումների մշակումը, կատարիչները, թարգմանիչները, ծառայությունները, փոխակերպիչը և MCP սերվերը։
+Առանձին npm աշխատանքային տարածք, որը հրապարակվում է որպես `@agentproxy/open-sse`։ Պարունակում է հարցումների մշակումը, կատարիչները, թարգմանիչները, ծառայությունները, փոխակերպիչը և MCP սերվերը։
 
 ```
 open-sse/
@@ -598,7 +598,7 @@ electron/
 
 ```
 bin/
-├── omniroute.mjs           Հիմնական CLI մուտքային կետ (Node ESM)
+├── agentproxy.mjs           Հիմնական CLI մուտքային կետ (Node ESM)
 ├── reset-password.mjs      Կառավարման գաղտնաբառի վերակայում CLI-ից
 ├── mcp-server.mjs          MCP սերվերի գործարկիչ (stdio)
 ├── nodeRuntimeSupport.mjs  Node-ի տարբերակի ստուգիչ
@@ -621,8 +621,8 @@ bin/
 
 `package.json` → `bin` բաժնում հասանելի են երկու գործարկվող ֆայլեր՝
 
-- `omniroute` → `bin/omniroute.mjs`
-- `omniroute-reset-password` → `bin/reset-password.mjs`
+- `agentproxy` → `bin/agentproxy.mjs`
+- `agentproxy-reset-password` → `bin/reset-password.mjs`
 
 ---
 
@@ -778,7 +778,7 @@ bin/
 
 - **Կոդի ոճ**: 2 բացատով նահանջ, կրկնակի չակերտներ, 100 նիշ լայնություն, կետ-ստորակետեր,
   `es5` վերջնային ստորակետեր՝ կիրառվում է Prettier-ի կողմից՝ `lint-staged`-ի միջոցով։
-- **Ներմուծումներ**: արտաքին → ներքին (`@/`, `@omniroute/open-sse`) → հարաբերական։
+- **Ներմուծումներ**: արտաքին → ներքին (`@/`, `@agentproxy/open-sse`) → հարաբերական։
 - **Անվանումներ**: ֆայլերը՝ `camelCase` կամ `kebab-case`, բաղադրիչները՝ `PascalCase`,
   հաստատունները՝ `UPPER_SNAKE`։
 - **ESLint**: `no-eval`, `no-implied-eval`, `no-new-func` = `error` ամենուրեք,

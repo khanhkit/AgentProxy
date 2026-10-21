@@ -10,7 +10,7 @@ import path from "node:path";
 // that just failed, so the request lands on the first useful try. With the flag
 // off (the default) the order stays exactly the plain rotation.
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-pool-rank-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-pool-rank-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 process.env.API_KEY_SECRET = "test-secret";
 

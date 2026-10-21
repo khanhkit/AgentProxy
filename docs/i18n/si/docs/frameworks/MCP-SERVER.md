@@ -6,21 +6,21 @@
 
 > මාර්ගගත කිරීම, හැඹිලිය, සම්පීඩනය, මතකය, කුසලතා, ප්රොක්සි, සංචිතය, Radar සහ සන්දර්භ මූලාශ්ර මෙහෙයුම් හරහා මෙවලම් 110ක් සහිත Model Context Protocol සේවාදායකයකි.
 >
-> සත්යයේ මූලාශ්රය: `open-sse/mcp-server/server.ts` මඟින් `countUniqueMcpTools()` භාවිතයෙන් **අනන්ය මෙවලම් 110ක්** ගණනය කරයි: සම්මත අර්ථදැක්වීම් 45ක් (CCR ජීවන චක්ර මෙවලම් හය, agent-skills ත්රිත්වය, `omniroute_radar_catalog`, සහ `omniroute_x_search` ඇතුළුව), එයට අමතරව මතකය (3), කුසලතා (4), GitHub කුසලතා (3), සංචිතය (6), ක්රීඩාකරණය (8), ප්ලගීන (8), Notion (6), Obsidian (22), දේශීය කෝපස් එකතුව (3), සහ RTK සඳහා පමණක් වන සම්පීඩන මෙවලම් දෙකක් ඇතුළත් වේ.
+> සත්යයේ මූලාශ්රය: `open-sse/mcp-server/server.ts` මඟින් `countUniqueMcpTools()` භාවිතයෙන් **අනන්ය මෙවලම් 110ක්** ගණනය කරයි: සම්මත අර්ථදැක්වීම් 45ක් (CCR ජීවන චක්ර මෙවලම් හය, agent-skills ත්රිත්වය, `agentproxy_radar_catalog`, සහ `agentproxy_x_search` ඇතුළුව), එයට අමතරව මතකය (3), කුසලතා (4), GitHub කුසලතා (3), සංචිතය (6), ක්රීඩාකරණය (8), ප්ලගීන (8), Notion (6), Obsidian (22), දේශීය කෝපස් එකතුව (3), සහ RTK සඳහා පමණක් වන සම්පීඩන මෙවලම් දෙකක් ඇතුළත් වේ.
 
 ## ස්ථාපනය
 
 AgentProxy MCP අන්තර්ගතව ඇත. පහත විධානයෙන් එය ආරම්භ කරන්න:
 
 ```bash
-omniroute --mcp
+agentproxy --mcp
 ```
 
 නැතහොත් open-sse ප්රවාහනය හරහා:
 
 ```bash
 # HTTP ප්රවාහ කළ හැකි ප්රවාහනය (port 20130)
-omniroute --dev  # MCP /mcp endpoint මත ස්වයංක්රීයව ආරම්භ වේ
+agentproxy --dev  # MCP /mcp endpoint මත ස්වයංක්රීයව ආරම්භ වේ
 ```
 
 HTTP ප්රවාහන (`sse` / `streamable-http`, dashboard server මඟින් එම process එක තුළම සපයනු ලැබේ)
@@ -28,10 +28,10 @@ HTTP ප්රවාහන (`sse` / `streamable-http`, dashboard server මඟ�
 CLI වෙතද සමාන හැකියාවන් ඇත:
 
 ```bash
-omniroute mcp status                                  # සක්රිය/මාර්ගගත තත්ත්වය, ප්රවාහනය, මෙවලම් ගණන
-omniroute mcp enable [--transport stdio|sse|streamable-http]
-omniroute mcp disable
-omniroute mcp restart                                 # සක්රිය sse/streamable-http සැසි යළි සකසයි
+agentproxy mcp status                                  # සක්රිය/මාර්ගගත තත්ත්වය, ප්රවාහනය, මෙවලම් ගණන
+agentproxy mcp enable [--transport stdio|sse|streamable-http]
+agentproxy mcp disable
+agentproxy mcp restart                                 # සක්රිය sse/streamable-http සැසි යළි සකසයි
 ```
 
 `mcp enable`/`mcp disable`, dashboard එක `/api/settings` හරහා මාරු කරන එම `mcpEnabled`
@@ -82,61 +82,61 @@ Claude Desktop, Cursor, Cline සහ අනුකූල MCP සේවාලා�
 
 | මෙවලම                           | විෂය පථ               | විස්තරය                                                                                                                    |
 | :------------------------------ | :-------------------- | :------------------------------------------------------------------------------------------------------------------------- |
-| `omniroute_get_health`          | `read:health`         | ක්රියාකාරී කාලය, මතකය, පරිපථ බිඳුම්කාරක, අනුපාත සීමා, හැඹිලි සංඛ්යාලේඛන                                                    |
-| `omniroute_list_combos`         | `read:combos`         | උපායමාර්ග සහිත සියලු වින්යාස කළ combos (විකල්ප ප්රමිතික සමඟ)                                                               |
-| `omniroute_get_combo_metrics`   | `read:combos`         | නිශ්චිත combo එකක් සඳහා කාර්යසාධන ප්රමිතික                                                                                 |
-| `omniroute_switch_combo`        | `write:combos`        | combo එකක් සක්රිය හෝ අක්රිය කිරීම                                                                                          |
-| `omniroute_create_combo`        | `write:combos`        | පවතින combo API හරහා වලංගු කළ combo එකක් නිර්මාණය කිරීම                                                                    |
-| `omniroute_check_quota`         | `read:quota`          | භාවිත කළ/මුළු කෝටාව, ඉතිරි ප්රතිශතය, යළි සැකසීමේ වේලාව, token සෞඛ්යය                                                       |
-| `omniroute_route_request`       | `execute:completions` | AgentProxy මාර්ගගත කිරීම හරහා chat completion එකක් යැවීම                                                                    |
-| `omniroute_cost_report`         | `read:usage`          | කාලසීමාව අනුව පිරිවැය වාර්තාව (සැසිය/දිනය/සතිය/මාසය)                                                                       |
-| `omniroute_list_models_catalog` | `read:models`         | හැකියාවන්, තත්ත්වය සහ මිල ගණන් සහිත සම්පූර්ණ model නාමාවලිය                                                                |
-| `omniroute_radar_catalog`       | `read:radar`          | දේශීයව අත්සන් කළ Radar නාමාවලිය; විකල්ප provider/family පෙරහන්                                                             |
-| `omniroute_tool_search`         | `read:tools`          | ලියාපදිංචි MCP නාමාවලියෙන් මෙවලම් සොයාගැනීම                                                                                |
-| `omniroute_web_search`          | `execute:search`      | වින්යාස කළ සෙවුම් සපයන්නන් හරහා වෙබ් සෙවීම. X/Twitter නොවේ.                                                                |
-| `omniroute_x_search`            | `execute:search`      | xAI/SuperGrok හරහා X සොයන්න, නැතහොත් Xquik API ප්රතිඵල සඳහා `xquik-search` තෝරන්න. තෝරාගත් backend සඳහා අක්තපත්ර අවශ්ය වේ. |
-| `omniroute_web_fetch`           | `execute:search`      | වින්යාස කළ fetch සපයන්නන් හරහා වෙබ් අන්තර්ගතය ලබාගැනීම                                                                     |
+| `agentproxy_get_health`          | `read:health`         | ක්රියාකාරී කාලය, මතකය, පරිපථ බිඳුම්කාරක, අනුපාත සීමා, හැඹිලි සංඛ්යාලේඛන                                                    |
+| `agentproxy_list_combos`         | `read:combos`         | උපායමාර්ග සහිත සියලු වින්යාස කළ combos (විකල්ප ප්රමිතික සමඟ)                                                               |
+| `agentproxy_get_combo_metrics`   | `read:combos`         | නිශ්චිත combo එකක් සඳහා කාර්යසාධන ප්රමිතික                                                                                 |
+| `agentproxy_switch_combo`        | `write:combos`        | combo එකක් සක්රිය හෝ අක්රිය කිරීම                                                                                          |
+| `agentproxy_create_combo`        | `write:combos`        | පවතින combo API හරහා වලංගු කළ combo එකක් නිර්මාණය කිරීම                                                                    |
+| `agentproxy_check_quota`         | `read:quota`          | භාවිත කළ/මුළු කෝටාව, ඉතිරි ප්රතිශතය, යළි සැකසීමේ වේලාව, token සෞඛ්යය                                                       |
+| `agentproxy_route_request`       | `execute:completions` | AgentProxy මාර්ගගත කිරීම හරහා chat completion එකක් යැවීම                                                                    |
+| `agentproxy_cost_report`         | `read:usage`          | කාලසීමාව අනුව පිරිවැය වාර්තාව (සැසිය/දිනය/සතිය/මාසය)                                                                       |
+| `agentproxy_list_models_catalog` | `read:models`         | හැකියාවන්, තත්ත්වය සහ මිල ගණන් සහිත සම්පූර්ණ model නාමාවලිය                                                                |
+| `agentproxy_radar_catalog`       | `read:radar`          | දේශීයව අත්සන් කළ Radar නාමාවලිය; විකල්ප provider/family පෙරහන්                                                             |
+| `agentproxy_tool_search`         | `read:tools`          | ලියාපදිංචි MCP නාමාවලියෙන් මෙවලම් සොයාගැනීම                                                                                |
+| `agentproxy_web_search`          | `execute:search`      | වින්යාස කළ සෙවුම් සපයන්නන් හරහා වෙබ් සෙවීම. X/Twitter නොවේ.                                                                |
+| `agentproxy_x_search`            | `execute:search`      | xAI/SuperGrok හරහා X සොයන්න, නැතහොත් Xquik API ප්රතිඵල සඳහා `xquik-search` තෝරන්න. තෝරාගත් backend සඳහා අක්තපත්ර අවශ්ය වේ. |
+| `agentproxy_web_fetch`           | `execute:search`      | වින්යාස කළ fetch සපයන්නන් හරහා වෙබ් අන්තර්ගතය ලබාගැනීම                                                                     |
 
 ## උසස් මෙවලම් (11) — අදියර 2
 
 | මෙවලම                              | විෂය පථ                              | විස්තරය                                                                                                       |
 | :--------------------------------- | :----------------------------------- | :------------------------------------------------------------------------------------------------------------ |
-| `omniroute_simulate_route`         | `read:health`, `read:combos`         | පසුබැසීමේ ගසක් සහිත, සැබෑ ඉල්ලීමක් නොයවන මාර්ගගත කිරීමේ අනුකරණය                                               |
-| `omniroute_set_budget_guard`       | `write:budget`                       | තත්ත්වය පහත හෙළීමේ/අවහිර කිරීමේ/අනතුරු ඇඟවීමේ ක්රියාව සහිත සැසි අයවැය                                         |
-| `omniroute_set_routing_strategy`   | `write:combos`                       | ධාවන කාලයේදී සංයෝජන උපායමාර්ගය යාවත්කාලීන කිරීම (ප්රමුඛතා/බර තැබූ/ස්වයංක්රීය/ආදිය)                            |
-| `omniroute_set_resilience_profile` | `write:resilience`                   | `aggressive` / `balanced` / `conservative` ප්රත්යස්ථතා පෙරසැකසුම යෙදීම                                        |
-| `omniroute_test_combo`             | `execute:completions`, `read:combos` | සැබෑ upstream ඇමතුමක් භාවිතයෙන් සංයෝජනයක සෑම සැපයුම්කරුවෙකුම සජීවීව පරීක්ෂා කිරීම                             |
-| `omniroute_get_provider_metrics`   | `read:health`                        | p50/p95/p99 ප්රමාදය සහ circuit breaker තත්ත්වය සහිත සැපයුම්කරු-අනුව ප්රමිතික                                  |
-| `omniroute_best_combo_for_task`    | `read:combos`, `read:health`         | අයවැය/ප්රමාද සීමා සහිතව කාර්ය වර්ගය අනුව සංයෝජනයක් නිර්දේශ කිරීම                                              |
-| `omniroute_explain_route`          | `read:health`, `read:usage`          | ඉල්ලීමක් සැපයුම්කරුවෙකු වෙත මාර්ගගත කළේ ඇයි දැයි පැහැදිලි කිරීම (ලකුණුකරණ සාධක + පසුබැසීම්)                   |
-| `omniroute_get_session_snapshot`   | `read:usage`                         | පූර්ණ සැසි සැණරුව: පිරිවැය, ටෝකන, ප්රමුඛ ආකෘති/සැපයුම්කරුවන්, දෝෂ, අයවැය ආරක්ෂකය                              |
-| `omniroute_db_health_check`        | `read:health`, `write:resilience`    | බිඳුණු සංයෝජන යොමු / අනාථ පේළි වැනි දත්ත සමුදා අපගමනය නිර්ණය කිරීම (සහ විකල්පව ස්වයංක්රීයව අලුත්වැඩියා කිරීම) |
-| `omniroute_sync_pricing`           | `pricing:write`                      | බාහිර මූලාශ්රවලින් (LiteLLM) මිල දත්ත සමමුහුර්ත කිරීම; `dryRun` සඳහා සහාය දක්වයි                              |
+| `agentproxy_simulate_route`         | `read:health`, `read:combos`         | පසුබැසීමේ ගසක් සහිත, සැබෑ ඉල්ලීමක් නොයවන මාර්ගගත කිරීමේ අනුකරණය                                               |
+| `agentproxy_set_budget_guard`       | `write:budget`                       | තත්ත්වය පහත හෙළීමේ/අවහිර කිරීමේ/අනතුරු ඇඟවීමේ ක්රියාව සහිත සැසි අයවැය                                         |
+| `agentproxy_set_routing_strategy`   | `write:combos`                       | ධාවන කාලයේදී සංයෝජන උපායමාර්ගය යාවත්කාලීන කිරීම (ප්රමුඛතා/බර තැබූ/ස්වයංක්රීය/ආදිය)                            |
+| `agentproxy_set_resilience_profile` | `write:resilience`                   | `aggressive` / `balanced` / `conservative` ප්රත්යස්ථතා පෙරසැකසුම යෙදීම                                        |
+| `agentproxy_test_combo`             | `execute:completions`, `read:combos` | සැබෑ upstream ඇමතුමක් භාවිතයෙන් සංයෝජනයක සෑම සැපයුම්කරුවෙකුම සජීවීව පරීක්ෂා කිරීම                             |
+| `agentproxy_get_provider_metrics`   | `read:health`                        | p50/p95/p99 ප්රමාදය සහ circuit breaker තත්ත්වය සහිත සැපයුම්කරු-අනුව ප්රමිතික                                  |
+| `agentproxy_best_combo_for_task`    | `read:combos`, `read:health`         | අයවැය/ප්රමාද සීමා සහිතව කාර්ය වර්ගය අනුව සංයෝජනයක් නිර්දේශ කිරීම                                              |
+| `agentproxy_explain_route`          | `read:health`, `read:usage`          | ඉල්ලීමක් සැපයුම්කරුවෙකු වෙත මාර්ගගත කළේ ඇයි දැයි පැහැදිලි කිරීම (ලකුණුකරණ සාධක + පසුබැසීම්)                   |
+| `agentproxy_get_session_snapshot`   | `read:usage`                         | පූර්ණ සැසි සැණරුව: පිරිවැය, ටෝකන, ප්රමුඛ ආකෘති/සැපයුම්කරුවන්, දෝෂ, අයවැය ආරක්ෂකය                              |
+| `agentproxy_db_health_check`        | `read:health`, `write:resilience`    | බිඳුණු සංයෝජන යොමු / අනාථ පේළි වැනි දත්ත සමුදා අපගමනය නිර්ණය කිරීම (සහ විකල්පව ස්වයංක්රීයව අලුත්වැඩියා කිරීම) |
+| `agentproxy_sync_pricing`           | `pricing:write`                      | බාහිර මූලාශ්රවලින් (LiteLLM) මිල දත්ත සමමුහුර්ත කිරීම; `dryRun` සඳහා සහාය දක්වයි                              |
 
 ## හැඹිලි මෙවලම් (2)
 
 | මෙවලම                   | විෂය පථ       | විස්තරය                                                  |
 | :---------------------- | :------------ | :------------------------------------------------------- |
-| `omniroute_cache_stats` | `read:cache`  | අර්ථාර්ථ හැඹිලි, ප්රේරක හැඹිලි සහ idempotency සංඛ්යාලේඛන |
-| `omniroute_cache_flush` | `write:cache` | ගෝලීයව හෝ අත්සන/ආකෘතිය අනුව හැඹිලිය හිස් කිරීම           |
+| `agentproxy_cache_stats` | `read:cache`  | අර්ථාර්ථ හැඹිලි, ප්රේරක හැඹිලි සහ idempotency සංඛ්යාලේඛන |
+| `agentproxy_cache_flush` | `write:cache` | ගෝලීයව හෝ අත්සන/ආකෘතිය අනුව හැඹිලිය හිස් කිරීම           |
 
 ## සම්පීඩන මෙවලම් (13)
 
 | මෙවලම                               | විෂය පථ             | විස්තරය                                                                                                               |
 | :---------------------------------- | :------------------ | :-------------------------------------------------------------------------------------------------------------------- |
-| `omniroute_compression_status`      | `read:compression`  | සම්පීඩන සැකසුම්, විශ්ලේෂණ සාරාංශය සහ හැඹිලි-දැනුවත් සංඛ්යාලේඛන (`analytics.mcpDescriptionCompression` පාරදත්ත ඇතුළුව) |
-| `omniroute_compression_configure`   | `write:compression` | සම්පීඩන ප්රකාරය, සීමාව, ඉලක්ක අනුපාතය, පද්ධති-ප්රේරක සංරක්ෂණය සහ MCP විස්තර සම්පීඩන ටොගලය වින්යාස කිරීම               |
-| `omniroute_set_compression_engine`  | `write:compression` | සක්රිය එන්ජිම (off/caveman/rtk/stacked) සහ Caveman/RTK තීව්රතාව තේරීම                                                 |
-| `omniroute_list_compression_combos` | `read:compression`  | නම් කළ සම්පීඩන සංයෝජන සහ ඒවායේ එන්ජින් නළමාර්ග ලැයිස්තුගත කිරීම                                                       |
-| `omniroute_compression_combo_stats` | `read:compression`  | සම්පීඩන සංයෝජනය සහ එන්ජිම අනුව කාණ්ඩගත කළ විශ්ලේෂණ                                                                    |
-| `omniroute_ccr_store`               | `write:compression` | ඇමතුම්කරු-හුදකලා අන්තර්ගතය සීමිත මතකස්ථ CCR ගබඩාවේ ගබඩා කර සලකුණක් සහ `ccr://` යොමුවක් ආපසු ලබා දීම                   |
-| `omniroute_ccr_retrieve`            | `read:compression`  | CCR අන්තර්ගතය සම්පූර්ණයෙන් හෝ ආරම්භක කොටස, අවසාන කොටස, පේළි, grep සහ සංඛ්යාලේඛන ප්රකාර මඟින් ලබා ගැනීම                |
-| `omniroute_ccr_inspect`             | `read:compression`  | අන්තර්ගතය ආපසු ලබා නොදී ඇමතුම්කරුට අයත් CCR පාරදත්ත පරීක්ෂා කිරීම                                                     |
-| `omniroute_ccr_list`                | `read:compression`  | ඇමතුම්කරුට අයත් CCR කොටස් සඳහා පිටුගත කළ පාරදත්ත ලැයිස්තුගත කිරීම                                                     |
-| `omniroute_ccr_delete`              | `write:compression` | ඇමතුම්කරුට අයත් CCR කොටසක් මකා දැමීම                                                                                  |
-| `omniroute_ccr_stats`               | `read:compression`  | ඇමතුම්කරුට සීමා වූ මතක භාවිතය, ජීවන චක්ර ගණක සහ ගබඩා සීමා වාර්තා කිරීම                                                |
-| `omniroute_rtk_discover`            | `read:compression`  | සක්රීයව තෝරාගත් RTK ප්රතිදාන නියැදිවල පුනරාවර්තන අනවශ්ය දත්ත සොයා ගැනීම                                               |
-| `omniroute_rtk_learn`               | `read:compression`  | සක්රීයව තෝරාගත් නියැදිවලින් සමාලෝචනය කළ හැකි RTK පෙරහන් කෙටුම්පතක් ජනනය කිරීම                                         |
+| `agentproxy_compression_status`      | `read:compression`  | සම්පීඩන සැකසුම්, විශ්ලේෂණ සාරාංශය සහ හැඹිලි-දැනුවත් සංඛ්යාලේඛන (`analytics.mcpDescriptionCompression` පාරදත්ත ඇතුළුව) |
+| `agentproxy_compression_configure`   | `write:compression` | සම්පීඩන ප්රකාරය, සීමාව, ඉලක්ක අනුපාතය, පද්ධති-ප්රේරක සංරක්ෂණය සහ MCP විස්තර සම්පීඩන ටොගලය වින්යාස කිරීම               |
+| `agentproxy_set_compression_engine`  | `write:compression` | සක්රිය එන්ජිම (off/caveman/rtk/stacked) සහ Caveman/RTK තීව්රතාව තේරීම                                                 |
+| `agentproxy_list_compression_combos` | `read:compression`  | නම් කළ සම්පීඩන සංයෝජන සහ ඒවායේ එන්ජින් නළමාර්ග ලැයිස්තුගත කිරීම                                                       |
+| `agentproxy_compression_combo_stats` | `read:compression`  | සම්පීඩන සංයෝජනය සහ එන්ජිම අනුව කාණ්ඩගත කළ විශ්ලේෂණ                                                                    |
+| `agentproxy_ccr_store`               | `write:compression` | ඇමතුම්කරු-හුදකලා අන්තර්ගතය සීමිත මතකස්ථ CCR ගබඩාවේ ගබඩා කර සලකුණක් සහ `ccr://` යොමුවක් ආපසු ලබා දීම                   |
+| `agentproxy_ccr_retrieve`            | `read:compression`  | CCR අන්තර්ගතය සම්පූර්ණයෙන් හෝ ආරම්භක කොටස, අවසාන කොටස, පේළි, grep සහ සංඛ්යාලේඛන ප්රකාර මඟින් ලබා ගැනීම                |
+| `agentproxy_ccr_inspect`             | `read:compression`  | අන්තර්ගතය ආපසු ලබා නොදී ඇමතුම්කරුට අයත් CCR පාරදත්ත පරීක්ෂා කිරීම                                                     |
+| `agentproxy_ccr_list`                | `read:compression`  | ඇමතුම්කරුට අයත් CCR කොටස් සඳහා පිටුගත කළ පාරදත්ත ලැයිස්තුගත කිරීම                                                     |
+| `agentproxy_ccr_delete`              | `write:compression` | ඇමතුම්කරුට අයත් CCR කොටසක් මකා දැමීම                                                                                  |
+| `agentproxy_ccr_stats`               | `read:compression`  | ඇමතුම්කරුට සීමා වූ මතක භාවිතය, ජීවන චක්ර ගණක සහ ගබඩා සීමා වාර්තා කිරීම                                                |
+| `agentproxy_rtk_discover`            | `read:compression`  | සක්රීයව තෝරාගත් RTK ප්රතිදාන නියැදිවල පුනරාවර්තන අනවශ්ය දත්ත සොයා ගැනීම                                               |
+| `agentproxy_rtk_learn`               | `read:compression`  | සක්රීයව තෝරාගත් නියැදිවලින් සමාලෝචනය කළ හැකි RTK පෙරහන් කෙටුම්පතක් ජනනය කිරීම                                         |
 
 CCR ඇතුළත් කිරීම් මතකයේ පමණක් පවතින අතර නැවත ආරම්භ කිරීමේදී අතුරුදහන් වේ. සෑම කොටසක්ම 2 MiB දක්වාත්, සෑම
 principal එකක්ම 16 MiB දක්වාත්, ගෝලීය ගබඩාව 64 MiB දක්වාත් සීමා වේ. ඇතුළත් කිරීම්වල පෙරනිමි TTL පැය 24කි (උපරිමය
@@ -145,7 +145,7 @@ principal එකක්ම 16 MiB දක්වාත්, ගෝලීය ගබ�
 සත්යාපිත API-key principal අනුව හුදකලා කර ඇත. විගණන වාර්තාවල අඩංගු වන්නේ හැෂ් සහ ප්රමාණ පාරදත්ත පමණක් වන අතර,
 කිසිවිටෙකත් අන්තර්ගතය අඩංගු නොවේ.
 
-`omniroute_compression_status` මඟින් MCP විස්තර සම්පීඩනය
+`agentproxy_compression_status` මඟින් MCP විස්තර සම්පීඩනය
 `analytics.mcpDescriptionCompression` යටතේ වෙනම වාර්තා කරයි. එම අගයන් MCP විසින් ලැයිස්තුගත කළ හැකි
 විස්තර (`tools`, `prompts`, `resources`, සහ `resourceTemplates`) සඳහා වන පාරදත්ත ප්රමාණ ඇස්තමේන්තු වේ; ඒවා සැපයුම්කරුගේ භාවිත
 ලදුපත් නොවන අතර `source: "mcp_metadata_estimate"` ලෙස සලකුණු කර ඇත.
@@ -174,9 +174,9 @@ principal එකක්ම 16 MiB දක්වාත්, ගෝලීය ගබ�
 
 | මෙවලම                       | විෂය පථ        | විස්තරය                                                                                  |
 | :-------------------------- | :------------- | :--------------------------------------------------------------------------------------- |
-| `omniroute_oneproxy_fetch`  | `read:proxies` | 1proxy වෙළඳපොළෙන් නොමිලේ ප්රොක්සි ලබාගන්න (ප්රොටෝකෝලය/රට/ගුණාත්මකභාවය/සීමාව අනුව පෙරහන්) |
-| `omniroute_oneproxy_rotate` | `read:proxies` | උපායමාර්ගය අනුව ඊළඟ ලබාගත හැකි ප්රොක්සිය ලබාගන්න (`random` / `quality` / `sequential`)   |
-| `omniroute_oneproxy_stats`  | `read:proxies` | සංචිත සංඛ්යාලේඛන, සමමුහුර්තකරණ තත්ත්වය, ප්රොටෝකෝලය සහ රට අනුව ව්යාප්තිය                  |
+| `agentproxy_oneproxy_fetch`  | `read:proxies` | 1proxy වෙළඳපොළෙන් නොමිලේ ප්රොක්සි ලබාගන්න (ප්රොටෝකෝලය/රට/ගුණාත්මකභාවය/සීමාව අනුව පෙරහන්) |
+| `agentproxy_oneproxy_rotate` | `read:proxies` | උපායමාර්ගය අනුව ඊළඟ ලබාගත හැකි ප්රොක්සිය ලබාගන්න (`random` / `quality` / `sequential`)   |
+| `agentproxy_oneproxy_stats`  | `read:proxies` | සංචිත සංඛ්යාලේඛන, සමමුහුර්තකරණ තත්ත්වය, ප්රොටෝකෝලය සහ රට අනුව ව්යාප්තිය                  |
 
 ## මතක මෙවලම් (3)
 
@@ -184,9 +184,9 @@ principal එකක්ම 16 MiB දක්වාත්, ගෝලීය ගබ�
 
 | මෙවලම                     | විෂය පථ        | විස්තරය                                                                                      |
 | :------------------------ | :------------- | :------------------------------------------------------------------------------------------- |
-| `omniroute_memory_search` | `read:memory`  | ටෝකන අයවැය බලාත්මක කරමින් විමසුම / වර්ගය / API යතුර අනුව මතකයන් සොයන්න                       |
-| `omniroute_memory_add`    | `write:memory` | නව මතක ඇතුළත් කිරීමක් එක් කරන්න (`factual` / `episodic` / `procedural` / `semantic`)         |
-| `omniroute_memory_clear`  | `write:memory` | වර්ගය හෝ `olderThan` කාලමුද්රාව අනුව විකල්ප ලෙස පෙරහන් කර, API යතුරක් සඳහා මතකයන් හිස් කරන්න |
+| `agentproxy_memory_search` | `read:memory`  | ටෝකන අයවැය බලාත්මක කරමින් විමසුම / වර්ගය / API යතුර අනුව මතකයන් සොයන්න                       |
+| `agentproxy_memory_add`    | `write:memory` | නව මතක ඇතුළත් කිරීමක් එක් කරන්න (`factual` / `episodic` / `procedural` / `semantic`)         |
+| `agentproxy_memory_clear`  | `write:memory` | වර්ගය හෝ `olderThan` කාලමුද්රාව අනුව විකල්ප ලෙස පෙරහන් කර, API යතුරක් සඳහා මතකයන් හිස් කරන්න |
 
 ## කුසලතා මෙවලම් (4)
 
@@ -194,10 +194,10 @@ principal එකක්ම 16 MiB දක්වාත්, ගෝලීය ගබ�
 
 | මෙවලම                         | විෂය පථ          | විස්තරය                                                                                        |
 | :---------------------------- | :--------------- | :--------------------------------------------------------------------------------------------- |
-| `omniroute_skills_list`       | `read:skills`    | API යතුර, නම හෝ සක්රීය තත්ත්වය අනුව විකල්ප පෙරහන් කිරීම සමඟ ලියාපදිංචි කුසලතා ලැයිස්තුගත කරන්න |
-| `omniroute_skills_enable`     | `write:skills`   | ID අනුව නිශ්චිත කුසලතාවක් සක්රීය හෝ අක්රීය කරන්න                                               |
-| `omniroute_skills_execute`    | `execute:skills` | සපයා ඇති ආදානය සමඟ කුසලතාවක් ක්රියාත්මක කර ක්රියාත්මක කිරීමේ වාර්තාව ආපසු ලබා දෙන්න            |
-| `omniroute_skills_executions` | `read:skills`    | මෑත කුසලතා ක්රියාත්මක කිරීම් ඉතිහාසය ලැයිස්තුගත කරන්න                                          |
+| `agentproxy_skills_list`       | `read:skills`    | API යතුර, නම හෝ සක්රීය තත්ත්වය අනුව විකල්ප පෙරහන් කිරීම සමඟ ලියාපදිංචි කුසලතා ලැයිස්තුගත කරන්න |
+| `agentproxy_skills_enable`     | `write:skills`   | ID අනුව නිශ්චිත කුසලතාවක් සක්රීය හෝ අක්රීය කරන්න                                               |
+| `agentproxy_skills_execute`    | `execute:skills` | සපයා ඇති ආදානය සමඟ කුසලතාවක් ක්රියාත්මක කර ක්රියාත්මක කිරීමේ වාර්තාව ආපසු ලබා දෙන්න            |
+| `agentproxy_skills_executions` | `read:skills`    | මෑත කුසලතා ක්රියාත්මක කිරීම් ඉතිහාසය ලැයිස්තුගත කරන්න                                          |
 
 ## Notion සන්දර්භ මූලාශ්රය (6)
 
@@ -233,9 +233,9 @@ curl -X DELETE http://localhost:20128/api/settings/notion
 
 | මෙවලම                             | විෂය පථ        | විස්තරය                                                                                                                                  |
 | :-------------------------------- | :------------- | :--------------------------------------------------------------------------------------------------------------------------------------- |
-| `omniroute_agent_skills_list`     | `read:catalog` | විකල්ප `category` (api\|cli) සහ `area` පෙරහන් සමඟ නියෝජිත කුසලතා 45ම ලැයිස්තුගත කරයි; පාරදත්ත + ආවරණය ආපසු ලබා දෙයි                      |
-| `omniroute_agent_skills_get`      | `read:catalog` | සම්මත `id` අනුව තනි කුසලතාවක් සඳහා සම්පූර්ණ පාරදත්ත + SKILL.md අන්තර්ගතය ලබා ගනී                                                         |
-| `omniroute_agent_skills_coverage` | `read:catalog` | ආවරණ සංඛ්යාලේඛන: API කුසලතා 23න්, CLI කුසලතා 21න් සහ config කුසලතාව 1න්, නාමාවලි එකතුවට සාපේක්ෂව ගොනු පද්ධතියේ SKILL.md ගොනු ඇති සංඛ්යාව |
+| `agentproxy_agent_skills_list`     | `read:catalog` | විකල්ප `category` (api\|cli) සහ `area` පෙරහන් සමඟ නියෝජිත කුසලතා 45ම ලැයිස්තුගත කරයි; පාරදත්ත + ආවරණය ආපසු ලබා දෙයි                      |
+| `agentproxy_agent_skills_get`      | `read:catalog` | සම්මත `id` අනුව තනි කුසලතාවක් සඳහා සම්පූර්ණ පාරදත්ත + SKILL.md අන්තර්ගතය ලබා ගනී                                                         |
+| `agentproxy_agent_skills_coverage` | `read:catalog` | ආවරණ සංඛ්යාලේඛන: API කුසලතා 23න්, CLI කුසලතා 21න් සහ config කුසලතාව 1න්, නාමාවලි එකතුවට සාපේක්ෂව ගොනු පද්ධතියේ SKILL.md ගොනු ඇති සංඛ්යාව |
 
 සම්පූර්ණ නාමාවලිය සහ බාහිර නියෝජිතයන් එය භාවිත කරන ආකාරය සඳහා [AGENT-SKILLS.md](./AGENT-SKILLS.md) බලන්න.
 
@@ -300,7 +300,7 @@ API යතුරක් මත `manage`, MCP මෙවලමක් මත `read:c
 | :------------------ | :-------------------------------------------------------------------------- | :--------------------- | :------------------------------------------------------- |
 | API-යතුරු කළමනාකරණය | `api_keys.scopes`                                                           | `hasManageScope`       | එම Bearer යතුර සඳහා කළමනාකරණ REST                        |
 | API-යතුරු ආකලන      | එකම අරාව, එක් නිශ්චිත තන්තුවක්                                              | පහත නම් කර ඇති උපකාරකය | එම එක් හැකියාව පමණි                                      |
-| MCP මෙවලම් විෂය පථ  | එකම අරාව, එසේ නොමැති නම් MCP `_meta`, එසේ නොමැති නම් `OMNIROUTE_MCP_SCOPES` | `scopeMatches`         | එම මෙවලම, බලාත්මක කිරීම ක්රියාත්මක වූ පසු                |
+| MCP මෙවලම් විෂය පථ  | එකම අරාව, එසේ නොමැති නම් MCP `_meta`, එසේ නොමැති නම් `AGENTPROXY_MCP_SCOPES` | `scopeMatches`         | එම මෙවලම, බලාත්මක කිරීම ක්රියාත්මක වූ පසු                |
 | ප්රවේශ ටෝකනය        | `oma_live_…`                                                                | `scopeSatisfies`       | එහි ක්රමය සහ මාර්ගය එම ශ්රේණිය අවශ්ය කරන කළමනාකරණ මාර්ගය |
 
 සෑම අක්තපත්රයක්ම සකස් කිරීම [කළමනාකරණ සත්යාපනය](../guides/MANAGEMENT-AUTH.md) තුළ ආවරණය කර ඇත.
@@ -332,7 +332,7 @@ API යතුරක් මත `manage`, MCP මෙවලමක් මත `read:c
 
 `["manage"]` විෂය පථ ඇති යතුරක් `read:compression` සඳහා `scopeMatches` අසමත් වේ. එම ඇමතුම `admin`, `mcp:connect`, `read`, සහ `write` සඳහා අසමත් වේ, ඒවා පමණක් ප්රදානය කරන ලද තන්තු වන විට. පසුපස `*` හැර MCP මෙවලම් විෂය පථ අතර ධූරාවලියක් නොමැත.
 
-`OMNIROUTE_MCP_ENFORCE_SCOPES=true` (පෙරනිමි `false`) නොමැති නම් බලාත්මක කිරීම අක්රිය වේ. එය අක්රියව තිබියදී, `evaluateToolScopes` ඇමතුමට ඉඩ දී නාමාවලිය මඟ හරියි. එය ක්රියාත්මකව තිබියදී, HTTP මඟින් Bearer යතුරේ `api_keys.scopes` `authInfo` ලෙස භාවිතා කරයි ([යතුරු-පදනම් HTTP විෂය පථ බන්ධනය](#per-key-http-scope-binding-7895) බලන්න). යතුරු විෂය පථ විසඳා නොගන්නා විට, ප්රදානය කරන ලද කට්ටලය MCP `_meta` වෙත, පසුව `OMNIROUTE_MCP_SCOPES` වෙත යොමු වේ.
+`AGENTPROXY_MCP_ENFORCE_SCOPES=true` (පෙරනිමි `false`) නොමැති නම් බලාත්මක කිරීම අක්රිය වේ. එය අක්රියව තිබියදී, `evaluateToolScopes` ඇමතුමට ඉඩ දී නාමාවලිය මඟ හරියි. එය ක්රියාත්මකව තිබියදී, HTTP මඟින් Bearer යතුරේ `api_keys.scopes` `authInfo` ලෙස භාවිතා කරයි ([යතුරු-පදනම් HTTP විෂය පථ බන්ධනය](#per-key-http-scope-binding-7895) බලන්න). යතුරු විෂය පථ විසඳා නොගන්නා විට, ප්රදානය කරන ලද කට්ටලය MCP `_meta` වෙත, පසුව `AGENTPROXY_MCP_SCOPES` වෙත යොමු වේ.
 
 #### ප්රවේශ-ටෝකන විෂය පථ
 
@@ -388,8 +388,8 @@ loopback CLI machine-id ටෝකනයක්, සහ `manage` හෝ `admin` �
 | `write:skills`        | `skills_enable`                                                                                                                                                                    |
 | `execute:skills`      | `skills_execute`                                                                                                                                                                   |
 | `read:catalog`        | `agent_skills_list`, `agent_skills_get`, `agent_skills_coverage`                                                                                                                   |
-| `read:tools`          | `omniroute_tool_search`                                                                                                                                                            |
-| `read:radar`          | `omniroute_radar_catalog`                                                                                                                                                          |
+| `read:tools`          | `agentproxy_tool_search`                                                                                                                                                            |
+| `read:radar`          | `agentproxy_radar_catalog`                                                                                                                                                          |
 | `read:gamification`   | `gamification_profile`, `gamification_rank`, `gamification_leaderboard`, `gamification_badges`, `gamification_servers`, `gamification_anomalies`                                   |
 | `write:gamification`  | `gamification_invite`, `gamification_transfer`                                                                                                                                     |
 | `read:plugins`        | `plugin_list`, `plugin_executions`                                                                                                                                                 |
@@ -406,7 +406,7 @@ non-loopback වෙතින් HTTP/SSE MCP ට්රාන්ස්පෝට�
 
 ### Per-key HTTP scope binding (#7895)
 
-HTTP/SSE හරහා, `open-sse/mcp-server/httpTransport.ts` දැන් `resolveMcpCallerAuthInfo()` (`open-sse/mcp-server/httpAuthContext.ts`) හරහා ඇමතුම්කරුගේ සැබෑ `api_keys.scopes` විසඳා, එය MCP SDK හි `transport.handleRequest(req, { authInfo })` වෙත යොමු කරයි, එබැවින් එක් එක් මෙවලම් ඇමතුමට ළඟා වන `extra.authInfo.scopes` මඟින් Bearer යතුරේම ස්කෝප්ස් පිළිබිඹු වේ. `scopeEnforcement.ts` හි `resolveCallerScopeContext()` දැනටමත් `_meta` සහ `OMNIROUTE_MCP_SCOPES` env fallback වලට වඩා `authInfo` ට ප්රමුඛත්වය දී ඇත — මෙය HTTP හරහා කලින් ලබා නොදුන් එම පළමු, ඉහළම ප්රමුඛතා මූලාශ්රය පමණක් පුරවයි. API යතුරක් විසඳා නොගන්නා විට (ශීර්ෂයක් නොමැති විට, වලංගු නොවන යතුරක්), `authInfo` `undefined` ලෙස පවතින අතර විසඳුම පවතින `meta`/env දාමය වෙත නොවෙනස්ව යොමු වේ. මෙය `OMNIROUTE_MCP_ENFORCE_SCOPES` හි පෙරනිමි අගය වෙනස් නොකරයි — බලාත්මක කිරීම තවමත් පැහැදිලිව සක්රිය කළ යුතුය; මෙම වෙනස මඟින් එය සක්රිය වූ පසු යතුරෙන්-යතුරට මාර්ගයට ප්රමුඛත්වය ලබා දේ. stdio හට ඇමතුම්කරුවෙකුට-විශේෂිත අනන්යතාවයක් නොමැත (`mcpCallerIdentity.ts` බලන්න) සහ එයට බලපෑමක් නැත — එය `_meta`/env fallback දාමය මත පවතී.
+HTTP/SSE හරහා, `open-sse/mcp-server/httpTransport.ts` දැන් `resolveMcpCallerAuthInfo()` (`open-sse/mcp-server/httpAuthContext.ts`) හරහා ඇමතුම්කරුගේ සැබෑ `api_keys.scopes` විසඳා, එය MCP SDK හි `transport.handleRequest(req, { authInfo })` වෙත යොමු කරයි, එබැවින් එක් එක් මෙවලම් ඇමතුමට ළඟා වන `extra.authInfo.scopes` මඟින් Bearer යතුරේම ස්කෝප්ස් පිළිබිඹු වේ. `scopeEnforcement.ts` හි `resolveCallerScopeContext()` දැනටමත් `_meta` සහ `AGENTPROXY_MCP_SCOPES` env fallback වලට වඩා `authInfo` ට ප්රමුඛත්වය දී ඇත — මෙය HTTP හරහා කලින් ලබා නොදුන් එම පළමු, ඉහළම ප්රමුඛතා මූලාශ්රය පමණක් පුරවයි. API යතුරක් විසඳා නොගන්නා විට (ශීර්ෂයක් නොමැති විට, වලංගු නොවන යතුරක්), `authInfo` `undefined` ලෙස පවතින අතර විසඳුම පවතින `meta`/env දාමය වෙත නොවෙනස්ව යොමු වේ. මෙය `AGENTPROXY_MCP_ENFORCE_SCOPES` හි පෙරනිමි අගය වෙනස් නොකරයි — බලාත්මක කිරීම තවමත් පැහැදිලිව සක්රිය කළ යුතුය; මෙම වෙනස මඟින් එය සක්රිය වූ පසු යතුරෙන්-යතුරට මාර්ගයට ප්රමුඛත්වය ලබා දේ. stdio හට ඇමතුම්කරුවෙකුට-විශේෂිත අනන්යතාවයක් නොමැත (`mcpCallerIdentity.ts` බලන්න) සහ එයට බලපෑමක් නැත — එය `_meta`/env fallback දාමය මත පවතී.
 
 ---
 
@@ -414,17 +414,17 @@ HTTP/SSE හරහා, `open-sse/mcp-server/httpTransport.ts` දැන් `reso
 
 | විචල්යය                                 | පෙරනිමිය                                | අරමුණ                                                                                                                     |
 | :-------------------------------------- | :-------------------------------------- | :------------------------------------------------------------------------------------------------------------------------ |
-| `OMNIROUTE_BASE_URL`                    | `http://localhost:20128`                | අභ්යන්තර AgentProxy API ඇමතීමේදී MCP සේවාදායකය භාවිත කරන මූලික URL එක                                                      |
-| `OMNIROUTE_API_KEY`                     | (හිස්)                                  | අභ්යන්තර API ඇමතුම් වෙත `Authorization: Bearer` ලෙස යොමු කරන API යතුර                                                     |
-| `OMNIROUTE_MCP_ENFORCE_SCOPES`          | `false` (`"true"` පමණක් එය සක්රීය කරයි) | සක්රීය කළ විට, නොමැති විෂය පථ මෙවලම් ඇමතුම් ප්රතික්ෂේප කරන අතර විගණන ලොගයෙහි `scope_denied:<reason>` සටහන් කරයි           |
-| `OMNIROUTE_MCP_SCOPES`                  | (හිස්)                                  | පෙරනිමියෙන් "ලබා ගත හැකි" ලෙස සලකන, කොමාවෙන් වෙන් කළ විෂය පථ අවසර ලැයිස්තුව (ඇමතුම්කරු තම විෂය පථ ලබා නොදෙන විට භාවිත වේ) |
-| `OMNIROUTE_MCP_COMPRESS_DESCRIPTIONS`   | (සකසා නැත = සක්රීයයි)                   | `0/false/off/no` ලෙස සැකසූ විට, ලියාපදිංචි කිරීමේ අවස්ථාවේ MCP විස්තර සම්පීඩනය අක්රීය කරයි                                |
-| `OMNIROUTE_MCP_DESCRIPTION_COMPRESSION` | (සකසා නැත = සක්රීයයි)                   | ඉහත ටොගලය සඳහා විකල්ප අන්වර්ථ නාමයකි                                                                                      |
-| `OMNIROUTE_MCP_FETCH_TIMEOUT_MS`        | `10000`                                 | අභ්යන්තර කළමනාකරණ කියවීම් සඳහා අත්හැරීමේ කාල සීමාව (සෞඛ්යය, ප්රත්යස්ථතාව, සංයෝජන, කෝටාව, භාවිතය)                          |
-| `OMNIROUTE_MCP_UPSTREAM_TIMEOUT_MS`     | `60000`                                 | සැපයුම්කරුවකු සඳහා රැඳී සිටින පියවර සඳහා අත්හැරීමේ කාල සීමාව (`route_request`, `web_search`, `web_fetch`)                 |
+| `AGENTPROXY_BASE_URL`                    | `http://localhost:20128`                | අභ්යන්තර AgentProxy API ඇමතීමේදී MCP සේවාදායකය භාවිත කරන මූලික URL එක                                                      |
+| `AGENTPROXY_API_KEY`                     | (හිස්)                                  | අභ්යන්තර API ඇමතුම් වෙත `Authorization: Bearer` ලෙස යොමු කරන API යතුර                                                     |
+| `AGENTPROXY_MCP_ENFORCE_SCOPES`          | `false` (`"true"` පමණක් එය සක්රීය කරයි) | සක්රීය කළ විට, නොමැති විෂය පථ මෙවලම් ඇමතුම් ප්රතික්ෂේප කරන අතර විගණන ලොගයෙහි `scope_denied:<reason>` සටහන් කරයි           |
+| `AGENTPROXY_MCP_SCOPES`                  | (හිස්)                                  | පෙරනිමියෙන් "ලබා ගත හැකි" ලෙස සලකන, කොමාවෙන් වෙන් කළ විෂය පථ අවසර ලැයිස්තුව (ඇමතුම්කරු තම විෂය පථ ලබා නොදෙන විට භාවිත වේ) |
+| `AGENTPROXY_MCP_COMPRESS_DESCRIPTIONS`   | (සකසා නැත = සක්රීයයි)                   | `0/false/off/no` ලෙස සැකසූ විට, ලියාපදිංචි කිරීමේ අවස්ථාවේ MCP විස්තර සම්පීඩනය අක්රීය කරයි                                |
+| `AGENTPROXY_MCP_DESCRIPTION_COMPRESSION` | (සකසා නැත = සක්රීයයි)                   | ඉහත ටොගලය සඳහා විකල්ප අන්වර්ථ නාමයකි                                                                                      |
+| `AGENTPROXY_MCP_FETCH_TIMEOUT_MS`        | `10000`                                 | අභ්යන්තර කළමනාකරණ කියවීම් සඳහා අත්හැරීමේ කාල සීමාව (සෞඛ්යය, ප්රත්යස්ථතාව, සංයෝජන, කෝටාව, භාවිතය)                          |
+| `AGENTPROXY_MCP_UPSTREAM_TIMEOUT_MS`     | `60000`                                 | සැපයුම්කරුවකු සඳහා රැඳී සිටින පියවර සඳහා අත්හැරීමේ කාල සීමාව (`route_request`, `web_search`, `web_fetch`)                 |
 | `MCP_TOOL_DENY`                         | (සකසා නැත = පෙරහනක් නැත)                | `tools/list` වෙතින් ඉවත් කළ යුතු, කොමාවෙන් වෙන් කළ මෙවලම් නම් (මෙවලම්-කාඩිනැලිටි අඩු කිරීම — පහත බලන්න)                   |
 | `MCP_TOOL_ALLOW`                        | (සකසා නැත = පෙරහනක් නැත)                | පමණක් තබාගත යුතු, කොමාවෙන් වෙන් කළ මෙවලම් නම් (අවසර-ලැයිස්තු ප්රකාරය — පහත බලන්න)                                         |
-| `DATA_DIR`                              | `~/.omniroute`                          | හෘදස්පන්දන ගොනුව `${DATA_DIR}/runtime/mcp-heartbeat.json` වෙත ලියනු ලැබේ                                                  |
+| `DATA_DIR`                              | `~/.agentproxy`                          | හෘදස්පන්දන ගොනුව `${DATA_DIR}/runtime/mcp-heartbeat.json` වෙත ලියනු ලැබේ                                                  |
 
 ---
 
@@ -434,8 +434,8 @@ HTTP/SSE හරහා, `open-sse/mcp-server/httpTransport.ts` දැන් `reso
 
 - ව්යුහාත්මක අන්තර්ගතය වෙනස් නොවන ලෙස සංරක්ෂිත-බ්ලොක් නිස්සාරණය (කේත පරාස, වැට යෙදූ බ්ලොක් ආදිය) සමඟ Caveman රීති කට්ටලය (`getRulesForContext("all", "full")`) භාවිතයෙන් විස්තර පෙළ මත සම්පීඩනය ක්රියාත්මක වේ.
 - `key_value` සැකසුම් වගුවේ `compression.mcpDescriptionCompressionEnabled` අගය හරහා එක් එක් යෙදවීම සඳහා ටොගල් කරන්න (පෙරනිමිය: සක්රීයයි) — UI තුළ **විශ්ලේෂණ → MCP විස්තර සම්පීඩනය** ලෙස පෙන්වයි.
-- `OMNIROUTE_MCP_COMPRESS_DESCRIPTIONS=false` හෝ `OMNIROUTE_MCP_DESCRIPTION_COMPRESSION=false` යන දෙකෙන් එකක් භාවිතයෙන් සමස්ත ක්රියාවලිය සඳහා ටොගල් කරන්න.
-- තත්යකාලීන සංඛ්යාලේඛන `analytics.mcpDescriptionCompression` යටතේ `omniroute_compression_status` හරහා පෙන්වන අතර, සැබෑ සැපයුම්කරු භාවිත ලදුපත්වලින් වෙන්කර හඳුනා ගැනීම සඳහා `source: "mcp_metadata_estimate"` ලෙස ටැග් කර ඇත.
+- `AGENTPROXY_MCP_COMPRESS_DESCRIPTIONS=false` හෝ `AGENTPROXY_MCP_DESCRIPTION_COMPRESSION=false` යන දෙකෙන් එකක් භාවිතයෙන් සමස්ත ක්රියාවලිය සඳහා ටොගල් කරන්න.
+- තත්යකාලීන සංඛ්යාලේඛන `analytics.mcpDescriptionCompression` යටතේ `agentproxy_compression_status` හරහා පෙන්වන අතර, සැබෑ සැපයුම්කරු භාවිත ලදුපත්වලින් වෙන්කර හඳුනා ගැනීම සඳහා `source: "mcp_metadata_estimate"` ලෙස ටැග් කර ඇත.
 
 ---
 
@@ -454,10 +454,10 @@ HTTP/SSE හරහා, `open-sse/mcp-server/httpTransport.ts` දැන් `reso
 
 ```bash
 # නාමාවලියෙන් මෙවලම් දෙකක් ඉවත් කරන්න
-MCP_TOOL_DENY="omniroute_get_health,omniroute_list_combos" omniroute --mcp
+MCP_TOOL_DENY="agentproxy_get_health,agentproxy_list_combos" agentproxy --mcp
 
 # මාර්ගගත කිරීමේ සහ කෝටා මෙවලම් පමණක් ප්රකාශයට පත් කරන්න (අවසර-ලේඛන ප්රකාරය)
-MCP_TOOL_ALLOW="omniroute_route_request,omniroute_check_quota" omniroute --mcp
+MCP_TOOL_ALLOW="agentproxy_route_request,agentproxy_check_quota" agentproxy --mcp
 ```
 
 **පෙරහන් කළ මෙවලම් ඉවත් කරන ආකාරය:** ලියාපදිංචිය සෑමවිටම සාර්ථක වේ; පැතිකඩ විසින් ප්රතික්ෂේප කරන මෙවලමක් ඉන්පසු MCP SDK හැඬලය මත `.disable()` කරනු ලැබේ. එබැවින් එය කිසිවිටෙකත් `tools/list` තුළ නොපෙන්වන නමුත් සම්බන්ධකරණය නොවෙනස්ව පවතී (පිරිසිදු සක්රිය/අක්රිය කිරීම, නැවත ලියාපදිංචි කිරීමක් නැත). පැතිකඩ විග්රහකය `readMcpToolProfileFromEnv(process.env)` වන අතර, විචල්ය දෙකම හිස් වූ විට එය `null` (පෙරහන් කිරීමක් නැත) ආපසු ලබා දෙයි.

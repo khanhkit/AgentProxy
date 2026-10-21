@@ -18,7 +18,7 @@ AgentProxy အတွက် အဖြစ်များသော ပြဿနာ�
 
 | ဤအရာကို တွေ့ရသည်                                  | ဆိုလိုသည်မှာ                                               | လုပ်ဆောင်ရန်                                                                                                                                  |
 | ------------------------------------------------- | ---------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
-| "ချိတ်ဆက်၍မရပါ"                                   | AgentProxy အလုပ်လုပ်မနေပါ                                   | `omniroute` သို့မဟုတ် `docker restart omniroute` ကို လုပ်ဆောင်ပါ                                                                              |
+| "ချိတ်ဆက်၍မရပါ"                                   | AgentProxy အလုပ်လုပ်မနေပါ                                   | `agentproxy` သို့မဟုတ် `docker restart agentproxy` ကို လုပ်ဆောင်ပါ                                                                              |
 | "မမှန်ကန်သော API key"                             | သင့် key မှားနေသည် သို့မဟုတ် သက်တမ်းကုန်နေသည်              | ဝန်ဆောင်မှုပေးသူ၏ ဝဘ်ဆိုက်မှ key ကို ပြန်လည်ကူးယူပါ                                                                                           |
 | "နှုန်းကန့်သတ်ချက် ကျော်လွန်သွားသည်"              | တောင်းဆိုမှုများ အလွန်များစွာ ပေးပို့နေသည်                 | 1 မိနစ် စောင့်ပါ၊ သို့မဟုတ် အလိုအလျောက် အစားထိုးအသုံးပြုရန် `model: "auto"` ကို သုံးပါ                                                        |
 | "ခွဲတမ်း ကျော်လွန်သွားသည်"                        | သင်၏ အခမဲ့/အခပေး ခွဲတမ်းကို ကုန်ဆုံးအောင် သုံးပြီးဖြစ်သည်  | နောက်ထပ် ဝန်ဆောင်မှုပေးသူများကို ချိတ်ဆက်ပါ၊ သို့မဟုတ် အခမဲ့ ဝန်ဆောင်မှုပေးသူများ (Kiro, Pollinations) ကို သုံးပါ                             |
@@ -26,7 +26,7 @@ AgentProxy အတွက် အဖြစ်များသော ပြဿနာ�
 | "မှားယွင်းသော ဝန်ဆောင်မှုပေးသူကို အသုံးပြုထားသည်" | `auto` က အခြား ဝန်ဆောင်မှုပေးသူတစ်ခုကို ရွေးချယ်ခဲ့သည်     | ဒါက ပုံမှန်ပါပဲ! `auto` က အကောင်းဆုံးတစ်ခုကို ရွေးချယ်ပေးသည်။ သီးခြား ဝန်ဆောင်မှုပေးသူကို အတင်းသတ်မှတ်ရန် `model: "openai/gpt-4o"` ကို သုံးပါ |
 | "502 Bad Gateway"                                 | ဝန်ဆောင်မှုပေးသူ အလုပ်မလုပ်ပါ                              | စောင့်ပြီး ပြန်လည်ကြိုးစားပါ၊ သို့မဟုတ် ဝန်ဆောင်မှုပေးသူ ပြောင်းရန် `model: "auto"` ကို သုံးပါ                                                |
 | "401 Unauthorized"                                | သင့် အထောက်အထားများ မှားယွင်းနေသည်                         | သင့် API key ကို စစ်ဆေးပါ သို့မဟုတ် OAuth ဖြင့် ပြန်လည်အထောက်အထားစိစစ်ပါ                                                                      |
-| "omniroute ကို အသိအမှတ်မပြုပါ"                    | Windows PATH တွင် global node modules မပါရှိပါ             | သင်၏ npm global prefix ကို Windows PATH ထဲသို့ ထည့်ပါ။ ၎င်းကို `npm config get prefix` ဖြင့် ရှာနိုင်သည်။                                     |
+| "agentproxy ကို အသိအမှတ်မပြုပါ"                    | Windows PATH တွင် global node modules မပါရှိပါ             | သင်၏ npm global prefix ကို Windows PATH ထဲသို့ ထည့်ပါ။ ၎င်းကို `npm config get prefix` ဖြင့် ရှာနိုင်သည်။                                     |
 | "429 Too Many Requests"                           | နှုန်းကန့်သတ်ခံထားရသည်                                     | 1 မိနစ် စောင့်ပါ၊ သို့မဟုတ် နောက်ထပ် ဝန်ဆောင်မှုပေးသူများကို ချိတ်ဆက်ပါ                                                                       |
 
 **ပြဿနာ မပြေလည်သေးပါသလား?** အောက်ရှိ [အသေးစိတ် ပြဿနာဖြေရှင်းခြင်း](#detailed-troubleshooting) ကို ကြည့်ပါ၊ သို့မဟုတ် [Discord](https://discord.gg/U47eFqAXCn) တွင် မေးမြန်းပါ။
@@ -50,14 +50,14 @@ AgentProxy အတွက် အဖြစ်များသော ပြဿနာ�
 **အတည်ပြုပြီးသော ဖြေရှင်းနည်း (အသိုင်းအဝိုင်း၏ အစီရင်ခံချက်၊ 2026-08-10)**: rotation၊ concurrency နှင့် fallback တို့က အခမဲ့အဆင့်၏ အပြောင်းအလဲများကြောင့် ရပ်တန့်မသွားဘဲ ထိန်းညှိနိုင်ရန် environment variables သုံးခုကို ချိန်ညှိပါ-
 
 ```bash
-export OMNIROUTE_ROTATE_ON_400=true           # 400/401 ဖြစ်လျှင် အခြား model/ဝန်ဆောင်မှုပေးသူထံ ပြောင်းပါ (ပျက်နေသော passthrough models များကို ကျော်သွားသည်)
-export OMNIROUTE_CHAT_MAX_HEAVY_IN_FLIGHT=4   # အလေးချိန်မြင့် တောင်းဆိုမှုများ လက်ခံနိုင်သည့် အမြင့်ဆုံးပမာဏကို အတိအလင်း သတ်မှတ်သည် (ပုံမှန်အားဖြင့် မသတ်မှတ်ထားပါ- တောင်းဆိုမှုအရေအတွက် ကန့်သတ်ချက်မရှိပါ၊ အောက်ပါမှတ်ချက်ကို ကြည့်ပါ)
-export OMNIROUTE_CHAT_ADMISSION_QUEUE_MS=5000 # ချက်ချင်း ပြန်လည်ကြိုးစားနိုင်သော 503 ကို ပြန်ပေးမည့်အစား အလေးချိန်မြင့် လုပ်ဆောင်နိုင်စွမ်းအတွက် ကန့်သတ်ထားသော စောင့်ဆိုင်းချိန်ကို ပိုရှည်စေသည်
+export AGENTPROXY_ROTATE_ON_400=true           # 400/401 ဖြစ်လျှင် အခြား model/ဝန်ဆောင်မှုပေးသူထံ ပြောင်းပါ (ပျက်နေသော passthrough models များကို ကျော်သွားသည်)
+export AGENTPROXY_CHAT_MAX_HEAVY_IN_FLIGHT=4   # အလေးချိန်မြင့် တောင်းဆိုမှုများ လက်ခံနိုင်သည့် အမြင့်ဆုံးပမာဏကို အတိအလင်း သတ်မှတ်သည် (ပုံမှန်အားဖြင့် မသတ်မှတ်ထားပါ- တောင်းဆိုမှုအရေအတွက် ကန့်သတ်ချက်မရှိပါ၊ အောက်ပါမှတ်ချက်ကို ကြည့်ပါ)
+export AGENTPROXY_CHAT_ADMISSION_QUEUE_MS=5000 # ချက်ချင်း ပြန်လည်ကြိုးစားနိုင်သော 503 ကို ပြန်ပေးမည့်အစား အလေးချိန်မြင့် လုပ်ဆောင်နိုင်စွမ်းအတွက် ကန့်သတ်ထားသော စောင့်ဆိုင်းချိန်ကို ပိုရှည်စေသည်
 ```
 
 ဤတန်ဖိုးများကို AgentProxy process environment (daemon၊ ဥပမာ LaunchAgent plist သို့မဟုတ် `systemctl edit` မှတစ်ဆင့်) တွင် သတ်မှတ်ပြီး AgentProxy ကို ပြန်လည်စတင်ပါ။ rotation flag သည် အထိရောက်ဆုံး အချက်တစ်ခုဖြစ်သည်- ၎င်းက အပြီးတိုင် မအောင်မြင်မှုကို pool အတွင်းရှိ အလုပ်လုပ်ကောင်းသော ဝန်ဆောင်မှုပေးသူတစ်ခုထံ မမြင်သာစွာ ပြန်လည်ကြိုးစားခြင်းအဖြစ် ပြောင်းလဲပေးသည်။
 
-**မှတ်ချက်**: `OMNIROUTE_CHAT_MAX_HEAVY_IN_FLIGHT` သည် အလေးချိန်မြင့်သည့် — ရှည်လျားသော context ပါဝင်သည့် — တောင်းဆိုမှု မည်မျှကို တစ်ပြိုင်နက် လုပ်ဆောင်နိုင်သည်ကို ကန့်သတ်သည်။ ဤကန့်သတ်ချက်သည် ဝင်ခွင့်ထိန်းချုပ်မှုတစ်ခုဖြစ်ပြီး ဝန်ဆောင်မှုပေးသူ၏ နှုန်းကန့်သတ်စနစ် မဟုတ်ပါ။ **#503-fanout အပ်ဒိတ်:** ယခုအခါ ဤ var ကို ပုံမှန်အားဖြင့် မသတ်မှတ်တော့ပါ (အထက်ပါအတိုင်း အတိအလင်း ပြင်ဆင်သတ်မှတ်ထားသည့်အခါမှသာ ယခု အကျိုးသက်ရောက်သည်) — ထိုအစား အလေးချိန်မြင့် တောင်းဆိုမှုများ၏ ဝင်ခွင့်ကို host ၏ အမှန်တကယ် memory ceiling အပေါ်မူတည်၍ ကိုယ်တိုင် ချဲ့ထွင်ညှိနှိုင်းသည့် အလိုအလျောက် တွက်ချက်ထားသော byte budget (`OMNIROUTE_CHAT_MAX_INFLIGHT_BYTES`) ဖြင့် ထိန်းချုပ်သည်။ ထို့ကြောင့် အသစ် deployment လုပ်ထားသော စနစ်တစ်ခုတွင် ဤ var ကို လုံးဝမသတ်မှတ်ဘဲ `503 chat_admission_busy` ငြင်းပယ်မှုများ သိသိသာသာ လျော့နည်းသင့်သည်။ ဤနေရာတွင် အတိအလင်း သတ်မှတ်ထားလျှင်လည်း မှတ်တမ်းတင်ထားသည့်အတိုင်း အတိအကျ ဆက်လက်အလုပ်လုပ်သည်။ အတိအလင်း သတ်မှတ်ထားသော byte-budget overrides များကို 8 MiB–2 GiB အတွင်း ကန့်သတ်သည်။ `413 body_exceeds_budget` သည် ယာယီအခြေအနေ မဟုတ်ပါ- အဆိုပါ byte budget ကို မြှင့်ပါ၊ `OMNIROUTE_CHAT_HARD_MAX_BODY_BYTES` ကို လျှော့ပါ၊ သို့မဟုတ် process memory ceiling ကို မြှင့်ပါ။ `inflight_bytes_budget` ကြောင့် ဖယ်ထုတ်ခြင်းသည် ယာယီ အရင်းအမြစ်ယှဉ်ပြိုင်မှုဖြစ်ပြီး ပြန်လည်ကြိုးစားနိုင်သည်။ ဝန်ဆောင်မှုပေးသူတစ်ခုချင်းစီအလိုက် နှုန်းကန့်သတ်မှု (`open-sse/services/rateLimitManager.ts`) ကို `RATE_LIMIT_MAX_WAIT_MS`၊ `RATE_LIMIT_MAX_QUEUE_DEPTH` နှင့် `RATE_LIMIT_AUTO_ENABLE` တို့က သီးခြားစီ ထိန်းချုပ်သည် — `.env.example` ကို ကြည့်ပါ။
+**မှတ်ချက်**: `AGENTPROXY_CHAT_MAX_HEAVY_IN_FLIGHT` သည် အလေးချိန်မြင့်သည့် — ရှည်လျားသော context ပါဝင်သည့် — တောင်းဆိုမှု မည်မျှကို တစ်ပြိုင်နက် လုပ်ဆောင်နိုင်သည်ကို ကန့်သတ်သည်။ ဤကန့်သတ်ချက်သည် ဝင်ခွင့်ထိန်းချုပ်မှုတစ်ခုဖြစ်ပြီး ဝန်ဆောင်မှုပေးသူ၏ နှုန်းကန့်သတ်စနစ် မဟုတ်ပါ။ **#503-fanout အပ်ဒိတ်:** ယခုအခါ ဤ var ကို ပုံမှန်အားဖြင့် မသတ်မှတ်တော့ပါ (အထက်ပါအတိုင်း အတိအလင်း ပြင်ဆင်သတ်မှတ်ထားသည့်အခါမှသာ ယခု အကျိုးသက်ရောက်သည်) — ထိုအစား အလေးချိန်မြင့် တောင်းဆိုမှုများ၏ ဝင်ခွင့်ကို host ၏ အမှန်တကယ် memory ceiling အပေါ်မူတည်၍ ကိုယ်တိုင် ချဲ့ထွင်ညှိနှိုင်းသည့် အလိုအလျောက် တွက်ချက်ထားသော byte budget (`AGENTPROXY_CHAT_MAX_INFLIGHT_BYTES`) ဖြင့် ထိန်းချုပ်သည်။ ထို့ကြောင့် အသစ် deployment လုပ်ထားသော စနစ်တစ်ခုတွင် ဤ var ကို လုံးဝမသတ်မှတ်ဘဲ `503 chat_admission_busy` ငြင်းပယ်မှုများ သိသိသာသာ လျော့နည်းသင့်သည်။ ဤနေရာတွင် အတိအလင်း သတ်မှတ်ထားလျှင်လည်း မှတ်တမ်းတင်ထားသည့်အတိုင်း အတိအကျ ဆက်လက်အလုပ်လုပ်သည်။ အတိအလင်း သတ်မှတ်ထားသော byte-budget overrides များကို 8 MiB–2 GiB အတွင်း ကန့်သတ်သည်။ `413 body_exceeds_budget` သည် ယာယီအခြေအနေ မဟုတ်ပါ- အဆိုပါ byte budget ကို မြှင့်ပါ၊ `AGENTPROXY_CHAT_HARD_MAX_BODY_BYTES` ကို လျှော့ပါ၊ သို့မဟုတ် process memory ceiling ကို မြှင့်ပါ။ `inflight_bytes_budget` ကြောင့် ဖယ်ထုတ်ခြင်းသည် ယာယီ အရင်းအမြစ်ယှဉ်ပြိုင်မှုဖြစ်ပြီး ပြန်လည်ကြိုးစားနိုင်သည်။ ဝန်ဆောင်မှုပေးသူတစ်ခုချင်းစီအလိုက် နှုန်းကန့်သတ်မှု (`open-sse/services/rateLimitManager.ts`) ကို `RATE_LIMIT_MAX_WAIT_MS`၊ `RATE_LIMIT_MAX_QUEUE_DEPTH` နှင့် `RATE_LIMIT_AUTO_ENABLE` တို့က သီးခြားစီ ထိန်းချုပ်သည် — `.env.example` ကို ကြည့်ပါ။
 
 **အလုပ်လုပ်ကြောင်း စစ်ဆေးနည်း**: သင့် agent/cron ကို အချိန်တိုအတွင်း နှစ်ကြိမ်ဆက်တိုက် run ပြီး နှစ်ကြိမ်လုံး အောင်မြင်ကြောင်း အတည်ပြုပါ။ ပြင်ဆင်မှုမတိုင်မီ ဒုတိယအကြိမ် run သည့်အခါ ပုံမှန်အားဖြင့် `429`/`401` error ဖြစ်တတ်သည်။ ပြင်ဆင်ပြီးနောက် failure များ (ရှိပါက) ကို အလိုအလျောက် retry လုပ်ပေးပြီး call ပြီးဆုံးသွားမည်။ `curl /monitoring/health` ကိုလည်း အသုံးပြုပြီး provider connection များရှိ `rateLimitedUntil` field နှင့် ထိခိုက်နေသော provider များအတွက် `circuitBreakers.providerBreakers[].state` ကို စောင့်ကြည့်နိုင်သည် — state သည် `CLOSED`, `DEGRADED`, `OPEN` သို့မဟုတ် `HALF_OPEN` တစ်ခုခုဖြစ်သည် (`src/shared/utils/circuitBreaker.ts` ကိုကြည့်ပါ)။ ဆက်တိုက် failure ဖြစ်နေသော provider သည် reset window က probe တစ်ခုကို ဖြတ်သန်းခွင့်မပြုမီ `CLOSED → DEGRADED → OPEN` သို့ ပြောင်းသွားမည် (`HALF_OPEN`)။
 
@@ -69,12 +69,12 @@ export OMNIROUTE_CHAT_ADMISSION_QUEUE_MS=5000 # ချက်ချင်း ပ�
 
 ## npm install သတိပေးချက်များ (ERESOLVE / peer / deprecated)
 
-`npm install -g omniroute` ကို လုပ်ဆောင်သည့်အခါ `npm warn ERESOLVE`၊ peer-dependency အသိပေးချက်များနှင့် `deprecated` မက်ဆေ့ချ်များကဲ့သို့ သတိပေးချက်အများအပြားကို တွေ့ရနိုင်ပါသည်။ **၎င်းတို့သည် မျှော်လင့်ထားသည့်အရာများဖြစ်ပြီး အန္တရာယ်မရှိပါ။** အထွက်တွင် `added <N> packages` ကို တွေ့ရပါက ထည့်သွင်းမှု အောင်မြင်ပါသည်။
+`npm install -g agentproxy` ကို လုပ်ဆောင်သည့်အခါ `npm warn ERESOLVE`၊ peer-dependency အသိပေးချက်များနှင့် `deprecated` မက်ဆေ့ချ်များကဲ့သို့ သတိပေးချက်အများအပြားကို တွေ့ရနိုင်ပါသည်။ **၎င်းတို့သည် မျှော်လင့်ထားသည့်အရာများဖြစ်ပြီး အန္တရာယ်မရှိပါ။** အထွက်တွင် `added <N> packages` ကို တွေ့ရပါက ထည့်သွင်းမှု အောင်မြင်ပါသည်။
 
 peer-dependency ဖြေရှင်းမှုဆိုင်ရာ သတိပေးချက်များကို မပြသစေရန် AgentProxy က ပံ့ပိုးထားသော အောက်ပါ ထည့်သွင်းမှုပုံစံကို အသုံးပြုပါ-
 
 ```bash
-npm install -g omniroute --legacy-peer-deps
+npm install -g agentproxy --legacy-peer-deps
 ```
 
 `--legacy-peer-deps` သည် `ERESOLVE` နှင့် peer-dependency အသိပေးချက်များကိုသာ မပြသစေပါ။ အသုံးမပြုတော့ကြောင်း အသိပေးချက်များသည် တစ်ဆင့်ခံ ပြင်ပ package များမှ လာသောကြောင့် ဆက်လက်မြင်တွေ့ရပါမည်။ ၎င်းတို့သည် ထည့်သွင်းမှု မအောင်မြင်ကြောင်း ဖော်ပြခြင်းမဟုတ်ပါ။
@@ -100,7 +100,7 @@ Global npm ထည့်သွင်းမှုအတွက် browser cache သ
 directory မှ Chromium ကို ထည့်သွင်းပါ-
 
 ```bash
-cd "$(npm root -g)/omniroute"
+cd "$(npm root -g)/agentproxy"
 npx playwright install chromium
 ```
 
@@ -118,10 +118,10 @@ build target) ကို အသုံးပြုပါ။ base image တွင�
 | ပထမဆုံး login ဝင်၍မရခြင်း                                  | `.env` တွင် `INITIAL_PASSWORD` ကို သတ်မှတ်ပါ (hardcoded default မရှိပါ)                                                                                                                                              |
 | Dashboard က မှားယွင်းသည့် port တွင် ပွင့်ခြင်း             | `PORT=20128` နှင့် `NEXT_PUBLIC_BASE_URL=http://localhost:20128` ကို သတ်မှတ်ပါ                                                                                                                                       |
 | Log များကို disk သို့ မရေးသားခြင်း                         | `APP_LOG_TO_FILE=true` ကို သတ်မှတ်ပြီး call log ဖမ်းယူမှုကို ဖွင့်ထားကြောင်း စစ်ဆေးပါ                                                                                                                                |
-| EACCES: ခွင့်ပြုချက် ငြင်းပယ်ခံရခြင်း                      | `~/.omniroute` ကို အစားထိုးသတ်မှတ်ရန် `DATA_DIR=/path/to/writable/dir` ကို သတ်မှတ်ပါ                                                                                                                                 |
+| EACCES: ခွင့်ပြုချက် ငြင်းပယ်ခံရခြင်း                      | `~/.agentproxy` ကို အစားထိုးသတ်မှတ်ရန် `DATA_DIR=/path/to/writable/dir` ကို သတ်မှတ်ပါ                                                                                                                                 |
 | Routing strategy ကို သိမ်းဆည်း၍မရခြင်း                     | နောက်ဆုံး v3.x release သို့ အပ်ဒိတ်လုပ်ပါ (settings persistence အတွက် Zod schema ပြင်ဆင်ချက်ကို အစောပိုင်းဗားရှင်းများတွင် ထည့်သွင်းပေးထားသည်)                                                                       |
 | Login ပြတ်တောက်ခြင်း / စာမျက်နှာအလွတ် ဖြစ်ခြင်း            | Node.js ဗားရှင်းကို စစ်ဆေးပါ — အောက်ရှိ [Node.js ကိုက်ညီမှု](#nodejs-compatibility) ကို ကြည့်ပါ                                                                                                                      |
-| `dlopen` / `slice is not valid mach-o file` (macOS)        | `cd $(npm root -g)/omniroute/app && npm rebuild better-sqlite3 && omniroute` ကို လုပ်ဆောင်ပါ — အောက်ရှိ [macOS native module ပြန်လည်တည်ဆောက်ခြင်း](#macos-native-module-rebuild) ကို ကြည့်ပါ                         |
+| `dlopen` / `slice is not valid mach-o file` (macOS)        | `cd $(npm root -g)/agentproxy/app && npm rebuild better-sqlite3 && agentproxy` ကို လုပ်ဆောင်ပါ — အောက်ရှိ [macOS native module ပြန်လည်တည်ဆောက်ခြင်း](#macos-native-module-rebuild) ကို ကြည့်ပါ                         |
 | Proxy "fetch failed"                                       | Proxy config ကို မှန်ကန်သည့်အဆင့်တွင် သတ်မှတ်ထားကြောင်း သေချာပါစေ — အောက်ရှိ [Proxy ပြဿနာများ](#proxy-issues) ကို ကြည့်ပါ                                                                                            |
 | Docker `curl: (56) Recv failure: Connection reset by peer` | သင်၏ Docker port bind သည် IPv6 ပေါ်သို့ ရောက်နေနိုင်ပါသည်။ IPv4 ကို မဖြစ်မနေအသုံးပြုရန် `-p 127.0.0.1:20128:20128` ကို သုံးပါ၊ သို့မဟုတ် `curl -4` ဖြင့် စမ်းသပ်ပါ။ အောက်ရှိ [Docker IPv6](#docker-ipv6) ကို ကြည့်ပါ |
 | Antivirus က `README.md` ကို quarantine လုပ်ခြင်း           | မှားယွင်းသော အပြုသဘောဆောင် စစ်ဆေးချက်ဖြစ်သည် — အောက်ရှိ [Antivirus မှားယွင်းသော အပြုသဘောဆောင် စစ်ဆေးချက်များ](#antivirus-false-positives) ကို ကြည့်ပါ                                                                |
@@ -137,7 +137,7 @@ build target) ကို အသုံးပြုပါ။ base image တွင�
 
 **ဤအရာသည် မှားယွင်းသတိပေးချက်တစ်ခုဖြစ်သည်။ မည်သည့်အရာမျှ ကူးစက်ခံထားရခြင်းမရှိသလို မည်သည့်လုပ်ဆောင်ချက်မျှ လုပ်ဆောင်ရန်မလိုပါ။**
 
-Avast နှင့် AVG တို့သည် HTTP request နှင့်တူသော လင့်ခ်များစွာပါဝင်သည့် plain-text/Markdown ဖိုင်များကို အန္တရာယ်ရှိသည်ဟု သတ်မှတ်သည့် heuristic တစ်ခုကို အသုံးပြုပါသည်။ AgentProxy ၏ `README.md` ကို npm package ထဲတွင် ထည့်သွင်းဖြန့်ချိထားသောကြောင့် (`package.json` → `files` တွင် စာရင်းသွင်းထားသည်) global install ပြုလုပ်သည့်အခါ `node_modules/omniroute/README.md` တွင် ရောက်ရှိသွားပြီး ၎င်းတွင် `http://localhost:20128/...` နမူနာ ~15 ခု (MCP HTTP/SSE endpoint များ၊ A2A `.well-known` URL နှင့် `curl` နမူနာများ) ပါဝင်သည်။ ထိုလင့်ခ်သိပ်သည်းဆသည် heuristic ကို သတိပေးချက်ထုတ်စေရန် လုံလောက်ပါသည်။
+Avast နှင့် AVG တို့သည် HTTP request နှင့်တူသော လင့်ခ်များစွာပါဝင်သည့် plain-text/Markdown ဖိုင်များကို အန္တရာယ်ရှိသည်ဟု သတ်မှတ်သည့် heuristic တစ်ခုကို အသုံးပြုပါသည်။ AgentProxy ၏ `README.md` ကို npm package ထဲတွင် ထည့်သွင်းဖြန့်ချိထားသောကြောင့် (`package.json` → `files` တွင် စာရင်းသွင်းထားသည်) global install ပြုလုပ်သည့်အခါ `node_modules/agentproxy/README.md` တွင် ရောက်ရှိသွားပြီး ၎င်းတွင် `http://localhost:20128/...` နမူနာ ~15 ခု (MCP HTTP/SSE endpoint များ၊ A2A `.well-known` URL နှင့် `curl` နမူနာများ) ပါဝင်သည်။ ထိုလင့်ခ်သိပ်သည်းဆသည် heuristic ကို သတိပေးချက်ထုတ်စေရန် လုံလောက်ပါသည်။
 
 ဤပြဿနာသည် မကြာသေးမီကမှ စတင်ခဲ့ပါက ဖိုင်၏အမျိုးအစား သို့မဟုတ် သဘောသဘာဝ ပြောင်းလဲသွားခြင်းမရှိပါ။ README တွင် endpoint ဇယား (MCP HTTP + SSE + A2A တို့ကို ထည့်သွင်းခဲ့သည်) နှင့် `curl` နမူနာများ ပိုမိုများပြားလာသောကြောင့် သတ်မှတ်ထားသည့် အတိုင်းအတာကို ကျော်လွန်သွားခြင်းဖြစ်သည်။
 
@@ -147,7 +147,7 @@ Avast နှင့် AVG တို့သည် HTTP request နှင့်တ�
 
 1. **အသိပေးချက်များကို ရပ်တန့်ပါ** — သင်၏ antivirus တွင် install directory ကို ဖယ်ထုတ်စာရင်းထဲ ထည့်ပါ
    (Avast: Settings → Exceptions)၊ သင်၏ global `node_modules` path နှင့်/သို့မဟုတ်
-   AgentProxy data dir (`~/.omniroute/`) ကို ထည့်သွင်းပါ။
+   AgentProxy data dir (`~/.agentproxy/`) ကို ထည့်သွင်းပါ။
 2. **မှားယွင်းသတိပေးချက်ကို တိုင်ကြားပါ** — <https://www.avast.com/false-positive-file-form.php> တွင်
    quarantine လုပ်ထားသည့် `README.md` ကို ပူးတွဲတင်ပြပါ။ ဤပြဿနာသည် vendor ၏ heuristic က text file တစ်ခုအပေါ် လွန်ကဲစွာ တုံ့ပြန်ခြင်းကြောင့် ဖြစ်သဖြင့် လူတိုင်းအတွက် အကျိုးရှိစေမည့် ဖြေရှင်းနည်းမှာ ယင်းသို့ တိုင်ကြားခြင်းဖြစ်သည်။
 
@@ -202,8 +202,8 @@ Avast နှင့် AVG တို့သည် HTTP request နှင့်တ�
    nvm use 24
    ```
 2. သင့်ဗားရှင်းကို စစ်ဆေးပါ: `node --version` သည် 24.x LTS လိုင်းတွင် `v24.0.0` သို့မဟုတ် ယင်းထက်အသစ်ကို ပြသသင့်သည်
-3. AgentProxy ကို ပြန်လည်ထည့်သွင်းပါ: `npm install -g omniroute`
-4. ပြန်လည်စတင်ပါ: `omniroute`
+3. AgentProxy ကို ပြန်လည်ထည့်သွင်းပါ: `npm install -g agentproxy`
+4. ပြန်လည်စတင်ပါ: `agentproxy`
 
 > **ပံ့ပိုးထားသော လုံခြုံသည့်ဗားရှင်းများ:** `>=22.22.2 <23` သို့မဟုတ် `>=24.0.0 <27`။ Node.js 24.x LTS (Krypton) နှင့် Node.js 26 ကို အပြည့်အဝ ပံ့ပိုးထားသည်။
 
@@ -241,7 +241,7 @@ dependencies များအတွက် install scripts များကို �
 
 <a name="macos-native-module-rebuild"></a>
 
-**အကြောင်းရင်း:** Global `npm install -g omniroute` ပြုလုပ်ပြီးနောက် package အတွင်းရှိ `better-sqlite3` native binary ကို စက်တွင်းတွင် လက်ရှိအသုံးပြုနေသည့် architecture သို့မဟုတ် Node.js ABI နှင့်မတူသော အရာအတွက် compile လုပ်ထားနိုင်သည်။ ကြိုတင် build လုပ်ထားသော binary သည် သင့် environment နှင့် မကိုက်ညီသည့်အခါ macOS (Apple Silicon နှင့် Intel နှစ်မျိုးလုံး) တွင် ဤပြဿနာ မကြာခဏ ဖြစ်ပေါ်သည်။
+**အကြောင်းရင်း:** Global `npm install -g agentproxy` ပြုလုပ်ပြီးနောက် package အတွင်းရှိ `better-sqlite3` native binary ကို စက်တွင်းတွင် လက်ရှိအသုံးပြုနေသည့် architecture သို့မဟုတ် Node.js ABI နှင့်မတူသော အရာအတွက် compile လုပ်ထားနိုင်သည်။ ကြိုတင် build လုပ်ထားသော binary သည် သင့် environment နှင့် မကိုက်ညီသည့်အခါ macOS (Apple Silicon နှင့် Intel နှစ်မျိုးလုံး) တွင် ဤပြဿနာ မကြာခဏ ဖြစ်ပေါ်သည်။
 
 **လက္ခဏာများ:**
 
@@ -250,15 +250,15 @@ dependencies များအတွက် install scripts များကို �
 - နမူနာအပြည့်အစုံ:
 
 ```
-dlopen(/Users/<user>/.nvm/versions/node/v24.14.1/lib/node_modules/omniroute/app/node_modules/better-sqlite3/build/Release/better_sqlite3.node, 0x0001): tried: '...' (slice is not valid mach-o file)
+dlopen(/Users/<user>/.nvm/versions/node/v24.14.1/lib/node_modules/agentproxy/app/node_modules/better-sqlite3/build/Release/better_sqlite3.node, 0x0001): tried: '...' (slice is not valid mach-o file)
 ```
 
 **ဖြေရှင်းနည်း — သင့်စက်တွင်း environment အတွက် ပြန်လည် build လုပ်ပါ (Node.js ဗားရှင်း လျှော့ချရန်မလိုပါ):**
 
 ```bash
-cd $(npm root -g)/omniroute/app
+cd $(npm root -g)/agentproxy/app
 npm rebuild better-sqlite3
-omniroute
+agentproxy
 ```
 
 > **မှတ်ချက်:** ဤလုပ်ဆောင်ချက်သည် သင့်စက်တွင်း Node.js ဗားရှင်းနှင့် CPU architecture အတွက် native binding ကို ပြန်လည် compile လုပ်ပေးပြီး binary မကိုက်ညီမှုကို ဖြေရှင်းပေးသည်။ တရားဝင်ပံ့ပိုးထားသော runtime အပိုင်းအခြားမှာ **`>=22.22.2 <23` သို့မဟုတ် `>=24.0.0 <27`** ဖြစ်သည် (`src/shared/utils/nodeRuntimeSupport.ts` ရှိ `SUPPORTED_NODE_RANGE`၊ `package.json` ၏ `engines` field နှင့် ကိုက်ညီသည်)။ Node.js 24.x LTS (Krypton) နှင့် Node.js 26 ကို `better-sqlite3` v12.x ဖြင့် အပြည့်အဝ ပံ့ပိုးထားသည်။
@@ -350,7 +350,7 @@ Kiro account နှစ်ခုကို ဘေးချင်းယှဉ် �
 ### Cloud Sync အမှားများ
 
 1. `BASE_URL` သည် သင်လည်ပတ်နေသော instance ကို ညွှန်ထားကြောင်း စစ်ဆေးပါ (ဥပမာ၊ `http://localhost:20128`)
-2. `CLOUD_URL` သည် သင်၏ cloud endpoint ကို ညွှန်ထားကြောင်း စစ်ဆေးပါ (ဥပမာ၊ `https://omniroute.dev`)
+2. `CLOUD_URL` သည် သင်၏ cloud endpoint ကို ညွှန်ထားကြောင်း စစ်ဆေးပါ (ဥပမာ၊ `https://agentproxy.online`)
 3. `NEXT_PUBLIC_*` တန်ဖိုးများကို server-side တန်ဖိုးများနှင့် ကိုက်ညီအောင် ထားရှိပါ
 
 ### Cloud တွင် `stream=false` က 500 ပြန်ပေးခြင်း
@@ -384,8 +384,8 @@ Kiro account နှစ်ခုကို ဘေးချင်းယှဉ် �
 1. **အမြန်စစ်ဆေးခြင်း:** `curl -4 http://localhost:20128/v1/models` ကို လုပ်ဆောင်ပါ။ `-4` ဖြင့် အလုပ်လုပ်ပြီး ၎င်းမပါဘဲ မအောင်မြင်ပါက IPv6 bind mismatch ဖြစ်နေပါသည်။
 2. **အမြဲတမ်းဖြေရှင်းနည်း:** သင်၏ `docker run` command တွင် `-p 127.0.0.1:20128:20128` ကို အသုံးပြု၍ IPv4 သို့ အတိအကျ bind လုပ်ပါ-
    ```bash
-   docker run -d --name omniroute --restart unless-stopped --stop-timeout 40 \
-     -p 127.0.0.1:20128:20128 -v omniroute-data:/app/data diegosouzapw/omniroute:latest
+   docker run -d --name agentproxy --restart unless-stopped --stop-timeout 40 \
+     -p 127.0.0.1:20128:20128 -v agentproxy-data:/app/data diegosouzapw/agentproxy:latest
    ```
    ဤနည်းသည် IPv4 bind ကို မဖြစ်မနေ အသုံးပြုစေပြီး host interface အားလုံးတွင် proxy ကို ဖွင့်ထားခြင်းကိုလည်း ရှောင်ရှားပေးသည်။
 
@@ -539,7 +539,7 @@ Format ဘာသာပြန်ခြင်းဆိုင်ရာ ပြဿန
 - chat completions endpoint က အမှားကုဒ်
   `chat_admission_busy` ပါရှိသည့် ပြန်လည်ကြိုးစားနိုင်သော `503` တုံ့ပြန်မှုကို ပြန်ပေးသည်။
 - တုံ့ပြန်မှုတွင် `Retry-After` ပါဝင်သည်။ #12135 မှစ၍ တန်ဖိုးကို လေ့လာတွေ့ရှိထားသော
-  နေရာယူမှုမှ ဆင်းသက်သတ်မှတ်သည် — တောင်းဆိုမှုက စောင့်ဆိုင်းပြီးဖြစ်သည့် `OMNIROUTE_CHAT_ADMISSION_QUEUE_MS` အချိန်ကာလနှင့် လက်ရှိ heavyweight lease များကို ထိန်းထားသည့်ကြာချိန်တို့အနက်
+  နေရာယူမှုမှ ဆင်းသက်သတ်မှတ်သည် — တောင်းဆိုမှုက စောင့်ဆိုင်းပြီးဖြစ်သည့် `AGENTPROXY_CHAT_ADMISSION_QUEUE_MS` အချိန်ကာလနှင့် လက်ရှိ heavyweight lease များကို ထိန်းထားသည့်ကြာချိန်တို့အနက်
   ပိုကြီးသည့်တန်ဖိုးကို စက္ကန့်ပြည့်သို့ အထက်ဘက် ပတ်လည်ယူကာ
   အများဆုံး 60 အထိ ကန့်သတ်ထားသည်။ အလုပ်မရှိသော gate တစ်ခုတွင် ယခင်အနည်းဆုံးတန်ဖိုးများကို ဆက်လက်ထားရှိသည်- byte အခြေပြုလမ်းကြောင်းတွင် 2 စက္ကန့်၊
   ဖွဲ့စည်းပုံအခြေပြုလမ်းကြောင်းတွင် 1 စက္ကန့် (`reason: "structure_limit"` လည်း ပါဝင်သည်)။
@@ -571,16 +571,16 @@ parse မလုပ်မီ ကန့်သတ်ထားသော heavyweight 
 တုံ့ပြန်မှု၏ သက်တမ်းတစ်လျှောက် ဆက်လက်ထိန်းထားခြင်းခံရသည်။
 
 **#503-fanout-** ဤပြင်ဆင်မှုမတိုင်မီ guard သည် host memory ကို မစဉ်းစားဘဲ တစ်ပြိုင်နက်လုပ်ဆောင်နိုင်မှုကို သတ်မှတ်ထားသော တောင်းဆိုမှု အရေအတွက်
-(`OMNIROUTE_CHAT_MAX_HEAVY_IN_FLIGHT`၊ မူလသတ်မှတ်ချက် `1`) ဖြင့် ကန့်သတ်ခဲ့သဖြင့် coding-agent
+(`AGENTPROXY_CHAT_MAX_HEAVY_IN_FLIGHT`၊ မူလသတ်မှတ်ချက် `1`) ဖြင့် ကန့်သတ်ခဲ့သဖြင့် coding-agent
 fan-out (subagent/CLI အများအပြား၊ ပုံမှန်အားဖြင့် body > 256 KB) သည် ထိရောက်သော
 တစ်ပြိုင်နက်လုပ်ဆောင်နိုင်မှု ~1 အထိ ကျဆင်းပြီး လုံးဝပုံမှန် load အောက်တွင်ပင် 503 ဖြစ်ခဲ့သည်။ ယခု guard သည် ကိုယ်တိုင်ချိန်ညှိသည်- ၎င်းကို
-process ၏ တကယ့် memory အများဆုံးကန့်သတ်ချက်မှ အရွယ်အစားသတ်မှတ်ထားသော အလိုအလျောက်ဆင်းသက်တွက်ချက်သည့် ingest BYTE budget (`OMNIROUTE_CHAT_MAX_INFLIGHT_BYTES`) က ထိန်းချုပ်ပြီး
+process ၏ တကယ့် memory အများဆုံးကန့်သတ်ချက်မှ အရွယ်အစားသတ်မှတ်ထားသော အလိုအလျောက်ဆင်းသက်တွက်ချက်သည့် ingest BYTE budget (`AGENTPROXY_CHAT_MAX_INFLIGHT_BYTES`) က ထိန်းချုပ်ပြီး
 လက်ရှိ resource-pressure signal ကိုလည်း စစ်ဆေးသည် — ထို့ကြောင့် တစ်ချိန်တည်းတွင်
 heavy request တစ်ခုထက်ပို၍ ရောက်လာရုံကြောင့်မဟုတ်ဘဲ host သည် memory pressure အောက် အမှန်တကယ်ရောက်နေသည့်အခါမှသာ load လျှော့ချသည်။
-ယခင် count cap (`OMNIROUTE_CHAT_MAX_HEAVY_IN_FLIGHT`) ကို ဆက်လက်လိုက်နာသော်လည်း သင်က ပြတ်သားစွာ သတ်မှတ်ထားမှသာ ဖြစ်သည်။
+ယခင် count cap (`AGENTPROXY_CHAT_MAX_HEAVY_IN_FLIGHT`) ကို ဆက်လက်လိုက်နာသော်လည်း သင်က ပြတ်သားစွာ သတ်မှတ်ထားမှသာ ဖြစ်သည်။
 
 capacity မအားသည့်အခါ heavyweight တောင်းဆိုမှုတစ်ခုသည် ပြန်လည်ကြိုးစားနိုင်သော `503` ဖြင့် မတုံ့ပြန်မီ
-slot တစ်ခု လွတ်လာရန် `OMNIROUTE_CHAT_ADMISSION_QUEUE_MS` (မူလသတ်မှတ်ချက် `2000`၊ `0` က စောင့်ဆိုင်းမှုကို ပိတ်သည်) အထိ ဦးစွာစောင့်သည်။
+slot တစ်ခု လွတ်လာရန် `AGENTPROXY_CHAT_ADMISSION_QUEUE_MS` (မူလသတ်မှတ်ချက် `2000`၊ `0` က စောင့်ဆိုင်းမှုကို ပိတ်သည်) အထိ ဦးစွာစောင့်သည်။
 ကန့်သတ်ထားသော စောင့်ဆိုင်းမှုရှိရခြင်းမှာ heavyweight sub-request များကို တစ်ပြိုင်နက် fan out လုပ်သည့် agent ပုံစံ client များ
 (OpenCode, Claude Code, Cursor) က ချက်ချင်းငြင်းပယ်မှုများကြောင့် retry budget တစ်ခုလုံး ကုန်ဆုံးပြီး လုပ်ငန်းအလယ်တွင် ရပ်တန့်သွားမည့်အစား burst ကို အစဉ်လိုက်လုပ်ဆောင်နိုင်ရန် ဖြစ်သည်။
 လက်ရှိ heavyweight lease နေရာယူမှု၊ ဖြေရှင်းသတ်မှတ်ထားသော byte budget နှင့် လက်ရှိ pressure severity ကို
@@ -599,7 +599,7 @@ false` နှင့် လုံလောက်ကျယ်ဝန်းသော
    ၎င်းကို admission env var ဖြင့် ဖြေရှင်း၍မရဘဲ RAM ပိုမိုလိုအပ်ခြင်း သို့မဟုတ် workload ပိုသေးရန် လိုအပ်သည်။
 3. `/api/monitoring/health` က အလိုအလျောက်ဆင်းသက်တွက်ချက်သည့် budget သည် သင့် host အတွက် အမှန်တကယ် သေးလွန်းကြောင်း
    ပြသသည့်အခါမှသာ (ရှားပါးသည် — ၎င်းသည် container မှ bare-metal အထိ တိုးချဲ့ချိန်ညှိပြီးဖြစ်သည်) ယခင် request-count cap သို့ ပြန်သွားမည့်အစား
-   `OMNIROUTE_CHAT_MAX_INFLIGHT_BYTES` ဖြင့် တိုက်ရိုက် override လုပ်ပါ။
+   `AGENTPROXY_CHAT_MAX_INFLIGHT_BYTES` ဖြင့် တိုက်ရိုက် override လုပ်ပါ။
 
 တရားဝင် admission ဆက်တင်များအတွက် [environment-variable ကိုးကားချက်](../reference/ENVIRONMENT.md#4-security--authentication)
 ကို ကြည့်ပါ။
@@ -686,7 +686,7 @@ v3.8.0 release နှင့် သီးခြားသက်ဆိုင်သ�
 
 **ပြင်ဆင်နည်း-**
 
-- OAuth flow ကို ပြန်လည်အစပျိုးရန် CLI မှ `omniroute providers` ကို လုပ်ဆောင်ပါ၊ သို့မဟုတ်
+- OAuth flow ကို ပြန်လည်အစပျိုးရန် CLI မှ `agentproxy providers` ကို လုပ်ဆောင်ပါ၊ သို့မဟုတ်
 - **Dashboard → Providers → Command Code → Reconnect** မှ OAuth ကို ပြန်လည်လုပ်ဆောင်ပါ
 
 ### ModelScope က ပြင်းထန်လွန်းသော 429 cooldown များ ပြန်ပေးခြင်း
@@ -703,19 +703,19 @@ v3.8.0 release နှင့် သီးခြားသက်ဆိုင်သ�
 - v3.8.0 သို့မဟုတ် နောက်ပိုင်း version ကို အသုံးပြုနေကြောင်း သေချာပါစေ
 - **Settings → Resilience** အောက်ရှိ `useUpstream429BreakerHints` toggle ကို ဖွင့်ထားကြောင်း စစ်ဆေးပါ
 
-### Production တွင် OMNIROUTE_WS_BRIDGE_SECRET မရှိခြင်း
+### Production တွင် AGENTPROXY_WS_BRIDGE_SECRET မရှိခြင်း
 
 **လက္ခဏာများ-**
 
 - အဝေးရှိ production host တစ်ခုပေါ်တွင် လည်ပတ်သည့်အခါ Codex/Responses WebSocket bridge request တိုင်းတွင် 401 ပြန်လာခြင်း
 - ချိတ်ဆက်ပြီးသည်နှင့် WebSocket bridge handshake ချက်ချင်း ပိတ်သွားခြင်း
 
-**အကြောင်းရင်း-** production environment တွင် `OMNIROUTE_WS_BRIDGE_SECRET` env var မရှိပါ။
+**အကြောင်းရင်း-** production environment တွင် `AGENTPROXY_WS_BRIDGE_SECRET` env var မရှိပါ။
 
 **ပြင်ဆင်နည်း-**
 
 1. ကျပန်း secret တစ်ခု ထုတ်လုပ်ပါ- `openssl rand -hex 32`
-2. production server env (နှင့် bridge နှင့် ဆက်သွယ်သည့် မည်သည့် client မဆို) တွင် `OMNIROUTE_WS_BRIDGE_SECRET=<random-secret>` ဟု သတ်မှတ်ပါ
+2. production server env (နှင့် bridge နှင့် ဆက်သွယ်သည့် မည်သည့် client မဆို) တွင် `AGENTPROXY_WS_BRIDGE_SECRET=<random-secret>` ဟု သတ်မှတ်ပါ
 3. AgentProxy ကို ပြန်လည်စတင်ပါ
 
 ### Responses API: background mode ကို synchronous အဖြစ် အဆင့်လျှော့ထားခြင်း
@@ -746,17 +746,17 @@ CLI တွင် `⚠ Server did not respond within 60s` ဟု ပြသသေ�
 
 ```bash
 # env var မှတစ်ဆင့် (စတင်မှုများအကြား ဆက်လက်သက်ရောက်သည်):
-export OMNIROUTE_READY_TIMEOUT_MS=180000   # ၃ မိနစ်
-omniroute serve
+export AGENTPROXY_READY_TIMEOUT_MS=180000   # ၃ မိနစ်
+agentproxy serve
 
 # CLI flag မှတစ်ဆင့် (တစ်ကြိမ်သာ):
-omniroute serve --ready-timeout 180000
+agentproxy serve --ready-timeout 180000
 ```
 
 မူလသတ်မှတ်ချက်မှာ 60 000 ms (60 s) ဖြစ်သည်။ သတိပေးချက်သည် အသိပေးရန်သာဖြစ်ပြီး server သည်
 နောက်ခံတွင် ဆက်လက်စတင်နေမည်ဖြစ်ကာ boot ပြီးဆုံးသည့်အခါ ချိတ်ဆက်အသုံးပြုနိုင်မည်ဖြစ်သည်။
 
-`OMNIROUTE_READY_TIMEOUT_MS` နှင့်ပတ်သက်သော အသေးစိတ်အချက်အလက်အပြည့်အစုံကို
+`AGENTPROXY_READY_TIMEOUT_MS` နှင့်ပတ်သက်သော အသေးစိတ်အချက်အလက်အပြည့်အစုံကို
 [`docs/reference/ENVIRONMENT.md`](../reference/ENVIRONMENT.md) တွင် ကြည့်ပါ။
 
 ---

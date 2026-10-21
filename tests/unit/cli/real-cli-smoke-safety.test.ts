@@ -11,7 +11,7 @@ import {
   SMOKE_TOKEN,
 } from "../../../scripts/cli/smoke-cli-integrations.mjs";
 
-const marker = "OMNIROUTE_SMOKE_OK_unpredictable_response";
+const marker = "AGENTPROXY_SMOKE_OK_unpredictable_response";
 async function waitForProcessTermination(pid: number): Promise<boolean> {
   const deadline = Date.now() + 10_000;
   while (Date.now() < deadline) {
@@ -134,7 +134,7 @@ test("smoke environment excludes inherited credentials, proxies and runtime inje
     ]) {
       assert.ok(env[key].startsWith(`${temporary}${path.sep}`));
     }
-    assert.equal(env.OMNIROUTE_SMOKE_KEY, SMOKE_TOKEN);
+    assert.equal(env.AGENTPROXY_SMOKE_KEY, SMOKE_TOKEN);
     assert.equal(env.PATH, `/fake/bin${path.delimiter}/usr/bin`);
     assert.equal(env.OPENCODE_DISABLE_MODELS_FETCH, "true");
     assert.equal(env.LITELLM_LOCAL_MODEL_COST_MAP, "True");
@@ -148,7 +148,7 @@ test("smoke environment excludes inherited credentials, proxies and runtime inje
 test("smoke marker is generated per server and never reflected from the request", async () => {
   const server = await startSmokeServer();
   try {
-    assert.match(server.marker, /^OMNIROUTE_SMOKE_OK_[a-f\d-]+$/);
+    assert.match(server.marker, /^AGENTPROXY_SMOKE_OK_[a-f\d-]+$/);
     const response = await fetch(`${server.baseUrl}/v1/responses`, {
       method: "POST",
       headers: { authorization: `Bearer ${SMOKE_TOKEN}`, "content-type": "application/json" },

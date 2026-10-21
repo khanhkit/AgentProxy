@@ -10,7 +10,7 @@
 - ପରବର୍ତ୍ତୀ କୋଡ୍ ଅପଡେଟ୍ଗୁଡ଼ିକୁ ପ୍ରକାଶ କରିବା
 - ସମାନ ଡିପ୍ଲୟମେଣ୍ଟ କାର୍ଯ୍ୟପ୍ରବାହ ଅନୁସରଣ କରୁଥିବା ନୂତନ ପ୍ରୋଜେକ୍ଟଗୁଡ଼ିକ
 
-ଏହି ମାର୍ଗଦର୍ଶିକା ବର୍ତ୍ତମାନର ପ୍ରୋଜେକ୍ଟ ପାଇଁ ଯାଞ୍ଚ କରାଯାଇଥିବା ଏକ କାର୍ଯ୍ୟକ୍ଷମ କନଫିଗରେସନ୍ ଉପରେ ଆଧାରିତ। ଆପ୍ଲିକେସନ୍ର ନାମ ହେଉଛି `omniroute`।
+ଏହି ମାର୍ଗଦର୍ଶିକା ବର୍ତ୍ତମାନର ପ୍ରୋଜେକ୍ଟ ପାଇଁ ଯାଞ୍ଚ କରାଯାଇଥିବା ଏକ କାର୍ଯ୍ୟକ୍ଷମ କନଫିଗରେସନ୍ ଉପରେ ଆଧାରିତ। ଆପ୍ଲିକେସନ୍ର ନାମ ହେଉଛି `agentproxy`।
 
 ---
 
@@ -20,7 +20,7 @@
 - ନିୟୋଜନ ପଦ୍ଧତି: ସ୍ଥାନୀୟ `flyctl` ସିଧାସଳଖ ପ୍ରକାଶନ
 - ରନ୍ଟାଇମ୍: ରିପୋଜିଟୋରୀରେ ଥିବା ବିଦ୍ୟମାନ `Dockerfile` ଏବଂ `fly.toml` ବ୍ୟବହାର କରି
 - ଡାଟା ସ୍ଥାୟୀତା: Fly Volume `/data` ରେ ମାଉଣ୍ଟ ହୋଇଛି
-- ଆକ୍ସେସ୍ URL: `https://omniroute.fly.dev/`
+- ଆକ୍ସେସ୍ URL: `https://agentproxy.online`
 
 ---
 
@@ -29,7 +29,7 @@
 ବର୍ତ୍ତମାନର ରିପୋଜିଟୋରୀରେ ଥିବା `fly.toml` ରେ ନିମ୍ନଲିଖିତ ମୁଖ୍ୟ ବିଷୟଗୁଡ଼ିକ ଅଛି ବୋଲି ନିଶ୍ଚିତ କରାଯାଇଛି:
 
 ```toml
-app = 'omniroute'
+app = 'agentproxy'
 primary_region = 'sin'
 
 [[mounts]]
@@ -51,7 +51,7 @@ primary_region = 'sin'
 
 ନୋଟ୍:
 
-- `app = 'omniroute'` ନିର୍ଦ୍ଧାରଣ କରେ ଯେ ନିୟୋଜନ କେଉଁ Fly ଆପ୍ଲିକେସନ୍ କୁ ଟାର୍ଗେଟ କରେ
+- `app = 'agentproxy'` ନିର୍ଦ୍ଧାରଣ କରେ ଯେ ନିୟୋଜନ କେଉଁ Fly ଆପ୍ଲିକେସନ୍ କୁ ଟାର୍ଗେଟ କରେ
 - `destination = '/data'` ସ୍ଥାୟୀ ଭଲ୍ୟୁମ୍ ମାଉଣ୍ଟ ଡିରେକ୍ଟୋରୀ ନିର୍ଦ୍ଧାରଣ କରେ
 - ଏହି ପ୍ରୋଜେକ୍ଟରେ ନିଶ୍ଚିତ ଭାବରେ `DATA_DIR=/data` ସେଟ୍ କରିବା ଆବଶ୍ୟକ, ଅନ୍ୟଥା ଡାଟାବେସ୍ ଏବଂ କି ଗୁଡ଼ିକ କଣ୍ଟେନରର ଅସ୍ଥାୟୀ ଡିରେକ୍ଟୋରୀରେ ଲେଖାଯିବ
 
@@ -98,29 +98,29 @@ cd AgentProxy
 `fly.toml` ଖୋଲି ନିମ୍ନଲିଖିତ ଧାଡ଼ି ଯାଞ୍ଚ କରନ୍ତୁ:
 
 ```toml
-app = 'omniroute'
+app = 'agentproxy'
 ```
 
 ଯଦି ଆପଣ ନିଜର ନୂତନ ଆପ୍ଲିକେସନ୍ ରେ ନିୟୋଜନ କରୁଛନ୍ତି, ଆପଣ ଏହାକୁ ଏକ ବିଶ୍ୱସ୍ତରୀୟ ଅନନ୍ୟ ନାମରେ ପରିବର୍ତ୍ତନ କରିପାରିବେ, ଉଦାହରଣ ସ୍ୱରୂପ:
 
 ```toml
-app = 'omniroute-yourname'
+app = 'agentproxy-yourname'
 ```
 
 ନୋଟ୍:
 
 - ନିଶ୍ଚିତ କରନ୍ତୁ ଯେ କନସୋଲରେ ଦେଖାଯାଉଥିବା ଆପ୍ଲିକେସନ୍ `fly.toml` ର `app` ମୂଲ୍ୟ ସହିତ ମେଳ ଖାଏ
-- ଯଦି ଆପଣ ପୂର୍ବରୁ `oroute` ପରି ଏକ ଭିନ୍ନ ନାମ ବ୍ୟବହାର କରିଥିଲେ, ଏହାକୁ `omniroute` ସହିତ ଦ୍ୱନ୍ଦ୍ୱରେ ପକାନ୍ତୁ ନାହିଁ
+- ଯଦି ଆପଣ ପୂର୍ବରୁ `oroute` ପରି ଏକ ଭିନ୍ନ ନାମ ବ୍ୟବହାର କରିଥିଲେ, ଏହାକୁ `agentproxy` ସହିତ ଦ୍ୱନ୍ଦ୍ୱରେ ପକାନ୍ତୁ ନାହିଁ
 
 ### 4.3 ଆପ୍ଲିକେସନ୍ ସୃଷ୍ଟି କରନ୍ତୁ
 
 ଯଦି ଆପ୍ଲିକେସନ୍ ଏପର୍ଯ୍ୟନ୍ତ ବିଦ୍ୟମାନ ନାହିଁ:
 
 ```powershell
-flyctl apps create omniroute
+flyctl apps create agentproxy
 ```
 
-ଯଦି ଆପଣ ଆପ୍ଲିକେସନ୍ ନାମ ପରିବର୍ତ୍ତନ କରିଛନ୍ତି, `omniroute` ସ୍ଥାନରେ ଆପଣଙ୍କ ଚୟନ କରାଯାଇଥିବା ନାମ ବ୍ୟବହାର କରନ୍ତୁ।
+ଯଦି ଆପଣ ଆପ୍ଲିକେସନ୍ ନାମ ପରିବର୍ତ୍ତନ କରିଛନ୍ତି, `agentproxy` ସ୍ଥାନରେ ଆପଣଙ୍କ ଚୟନ କରାଯାଇଥିବା ନାମ ବ୍ୟବହାର କରନ୍ତୁ।
 
 ### 4.4 ପ୍ରଥମ ନିୟୋଜନ
 
@@ -136,14 +136,14 @@ flyctl deploy
 
 ### 5.1 ଯାଞ୍ଚ କରାଯାଇଥିବା ପାରାମିଟରଗୁଡ଼ିକ
 
-ଏହି ପାରାମିଟରଗୁଡ଼ିକ ବର୍ତ୍ତମାନର `omniroute` ଆପ୍ଲିକେସନ୍ ରେ ପ୍ରକୃତ ନିୟୋଜନରେ ବ୍ୟବହୃତ ହୋଇଛି:
+ଏହି ପାରାମିଟରଗୁଡ଼ିକ ବର୍ତ୍ତମାନର `agentproxy` ଆପ୍ଲିକେସନ୍ ରେ ପ୍ରକୃତ ନିୟୋଜନରେ ବ୍ୟବହୃତ ହୋଇଛି:
 
 - `API_KEY_SECRET`
 - `DATA_DIR`
 - `JWT_SECRET`
 - `MACHINE_ID_SALT`
 - `NEXT_PUBLIC_BASE_URL`
-- `OMNIROUTE_WS_BRIDGE_SECRET` (ଉତ୍ପାଦନରେ ଆବଶ୍ୟକ — WebSocket ବ୍ରିଜ୍ ପ୍ରାମାଣିକରଣ ପାଇଁ ବ୍ୟବହୃତ)
+- `AGENTPROXY_WS_BRIDGE_SECRET` (ଉତ୍ପାଦନରେ ଆବଶ୍ୟକ — WebSocket ବ୍ରିଜ୍ ପ୍ରାମାଣିକରଣ ପାଇଁ ବ୍ୟବହୃତ)
 - `STORAGE_ENCRYPTION_KEY`
 
 ### 5.2 `INITIAL_PASSWORD` ବିଷୟରେ
@@ -171,7 +171,7 @@ Fly ସିକ୍ରେଟ୍ସ୍ ପାଇଁ ନିମ୍ନଲିଖିତ �
 | ------------------------------ | -------------------- | ---------------------------------------------- |
 | `API_KEY_SECRET`               | ଆବଶ୍ୟକ               | API କି ଜେନରେସନ୍ ଏବଂ ଭାଲିଡେସନ୍ ପାଇଁ ବ୍ୟବହୃତ     |
 | `JWT_SECRET`                   | ଆବଶ୍ୟକ               | ଲଗିନ୍ ସେସନ୍ ଏବଂ JWT ସାଇନିଂ ପାଇଁ ବ୍ୟବହୃତ        |
-| `OMNIROUTE_WS_BRIDGE_SECRET`   | ଉତ୍ପାଦନରେ ଆବଶ୍ୟକ     | WebSocket ବ୍ରିଜ୍ ପ୍ରମାଣୀକରଣ ସିକ୍ରେଟ୍           |
+| `AGENTPROXY_WS_BRIDGE_SECRET`   | ଉତ୍ପାଦନରେ ଆବଶ୍ୟକ     | WebSocket ବ୍ରିଜ୍ ପ୍ରମାଣୀକରଣ ସିକ୍ରେଟ୍           |
 | `STORAGE_ENCRYPTION_KEY`       | ଦୃଢ଼ ଭାବରେ ପରାମର୍ଶିତ | ଅବସାଦରେ ସମ୍ବେଦନଶୀଳ ସଂଯୋଗ ସୂଚନାକୁ ଏନକ୍ରିପ୍ଟ କରେ |
 | `MACHINE_ID_SALT`              | ପରାମର୍ଶିତ            | ଏକ ସ୍ଥିର ମେସିନ୍ ପରିଚୟକାରୀ ସୃଷ୍ଟି କରେ           |
 | `INITIAL_PASSWORD`             | ଐଚ୍ଛିକ               | ପ୍ରଥମ ସ୍ଥାପନରେ ବ୍ୟାକେଣ୍ଡ ପାସୱାର୍ଡ ସେଟ୍ କରେ     |
@@ -182,7 +182,7 @@ Fly ସିକ୍ରେଟ୍ସ୍ ପାଇଁ ନିମ୍ନଲିଖିତ �
 | ଭେରିଏବଲ୍               | ପରାମର୍ଶିତ ମୂଲ୍ୟ             |
 | ---------------------- | --------------------------- |
 | `DATA_DIR`             | `/data`                     |
-| `NEXT_PUBLIC_BASE_URL` | `https://omniroute.fly.dev` |
+| `NEXT_PUBLIC_BASE_URL` | `https://agentproxy.online` |
 
 ନୋଟ୍:
 
@@ -196,10 +196,10 @@ Fly ସିକ୍ରେଟ୍ସ୍ ପାଇଁ ନିମ୍ନଲିଖିତ �
 1. **`NEXT_PUBLIC_BASE_URL` କୁ ଆପଣଙ୍କ ସାର୍ବଜନୀନ HTTPS ଡୋମେନ୍ ସେଟ୍ କରନ୍ତୁ**
 
    ```powershell
-   flyctl secrets set NEXT_PUBLIC_BASE_URL=https://omniroute.fly.dev -a omniroute
+   flyctl secrets set NEXT_PUBLIC_BASE_URL=https://agentproxy.online -a agentproxy
    ```
 
-   ଯଦି ଆପଣ ଏକ କଷ୍ଟମ୍ ଡୋମେନ୍ ବ୍ୟବହାର କରୁଛନ୍ତି, ତେବେ ସଂଗଳ ଡୋମେନ୍ ଦ୍ୱାରା ଏହାକୁ ପ୍ରତିସ୍ଥାପିତ କରନ୍ତୁ (ଉଦାହରଣ `https://omniroute.yourdomain.com`).
+   ଯଦି ଆପଣ ଏକ କଷ୍ଟମ୍ ଡୋମେନ୍ ବ୍ୟବହାର କରୁଛନ୍ତି, ତେବେ ସଂଗଳ ଡୋମେନ୍ ଦ୍ୱାରା ଏହାକୁ ପ୍ରତିସ୍ଥାପିତ କରନ୍ତୁ (ଉଦାହରଣ `https://agentproxy.example.com`).
 
 2. **ପ୍ରଦାନକାରୀ କନସୋଲରେ କଲବ୍ୟାକ୍ URL କନଫିଗର କରନ୍ତୁ**
 
@@ -210,7 +210,7 @@ Fly ସିକ୍ରେଟ୍ସ୍ ପାଇଁ ନିମ୍ନଲିଖିତ �
    ```
 
    ଉଦାହରଣ ସ୍ୱରୂପ, Gemini, Antigravity, Cursor କିମ୍ବା GitLab Duo ହେଉ ନା କାହିଁକି:
-   - `https://omniroute.fly.dev/callback`
+   - `https://agentproxy.online`
 
    ଯଦି `NEXT_PUBLIC_BASE_URL` ପ୍ରଦାନକାରୀ ସହ ପଞ୍ଜିକୃତ କଲବ୍ୟାକ୍ URL ସହ ମେଳ ଖାଏ ନାହିଁ, ତେବେ ବ୍ରାଉଜର୍ ରିଡାଇରେକ୍ଟ୍ ପଦକ୍ଷେପରେ OAuth ପ୍ରବାହ ବିଫଳ ହେବ।
 
@@ -223,7 +223,7 @@ Fly ସିକ୍ରେଟ୍ସ୍ ପାଇଁ ନିମ୍ନଲିଖିତ �
 ନୋଟ୍:
 
 - `INITIAL_PASSWORD` ଅନ୍ତର୍ଭୁକ୍ତ ନୁହେଁ
-- ବର୍ତ୍ତମାନ ପ୍ରକଳ୍ପ `omniroute` ପାଇଁ ଉଦ୍ଦିଷ୍ଟ
+- ବର୍ତ୍ତମାନ ପ୍ରକଳ୍ପ `agentproxy` ପାଇଁ ଉଦ୍ଦିଷ୍ଟ
 
 ```powershell
 $apiKeySecret = [Convert]::ToHexString((1..32 | ForEach-Object { Get-Random -Minimum 0 -Maximum 256 })).ToLower()
@@ -237,26 +237,26 @@ flyctl secrets set `
   JWT_SECRET=$jwtSecret `
   MACHINE_ID_SALT=$machineIdSalt `
   STORAGE_ENCRYPTION_KEY=$storageKey `
-  OMNIROUTE_WS_BRIDGE_SECRET=$wsBridgeSecret `
+  AGENTPROXY_WS_BRIDGE_SECRET=$wsBridgeSecret `
   DATA_DIR=/data `
-  NEXT_PUBLIC_BASE_URL=https://omniroute.fly.dev `
-  -a omniroute
+  NEXT_PUBLIC_BASE_URL=https://agentproxy.online `
+  -a agentproxy
 ```
 
 Linux / macOS ରେ, ଆପଣ `openssl rand -hex 32` ମଧ୍ୟ ବ୍ୟବହାର କରିପାରିବେ:
 
 ```bash
-flyctl secrets set OMNIROUTE_WS_BRIDGE_SECRET=$(openssl rand -hex 32) -a omniroute
+flyctl secrets set AGENTPROXY_WS_BRIDGE_SECRET=$(openssl rand -hex 32) -a agentproxy
 ```
 
 ନୋଟ୍:
 
-- `OMNIROUTE_WS_BRIDGE_SECRET` ଉତ୍ପାଦନରେ ଆବଶ୍ୟକ; ଏହା ଅନୁପସ୍ଥିତ ଥିଲେ WebSocket ବ୍ରିଜ୍ ହ୍ୟାଣ୍ଡସେକ୍ ଭାଙ୍ଗିବ
+- `AGENTPROXY_WS_BRIDGE_SECRET` ଉତ୍ପାଦନରେ ଆବଶ୍ୟକ; ଏହା ଅନୁପସ୍ଥିତ ଥିଲେ WebSocket ବ୍ରିଜ୍ ହ୍ୟାଣ୍ଡସେକ୍ ଭାଙ୍ଗିବ
 
 ଯଦି ଆପଣ ଏକ ଆରମ୍ଭିକ ପାସୱାର୍ଡ ସେଟ୍ କରିବାକୁ ଚାହାଁନ୍ତି:
 
 ```powershell
-flyctl secrets set INITIAL_PASSWORD=your-strong-password -a omniroute
+flyctl secrets set INITIAL_PASSWORD=your-strong-password -a agentproxy
 ```
 
 ---
@@ -264,12 +264,12 @@ flyctl secrets set INITIAL_PASSWORD=your-strong-password -a omniroute
 ## ୮. ବର୍ତ୍ତମାନର ପ୍ରାଚଳଗୁଡ଼ିକୁ ଦେଖିବା
 
 ```powershell
-flyctl secrets list -a omniroute
+flyctl secrets list -a agentproxy
 ```
 
 ଯଦି କନସୋଲରେ `Secrets` ପୃଷ୍ଠାରେ ଅପେକ୍ଷିତ ଭେରିଏବଲଗୁଡ଼ିକ ଦେଖାଯାଉନାହିଁ, ତେବେ ଯାଞ୍ଚ କରନ୍ତୁ:
 
-- ଆପଣ `omniroute` ଆପ୍ଲିକେସନ୍ ଦେଖୁଛନ୍ତି କି
+- ଆପଣ `agentproxy` ଆପ୍ଲିକେସନ୍ ଦେଖୁଛନ୍ତି କି
 - `fly.toml` ରେ `app` ମୂଲ୍ୟ କନସୋଲରେ ଥିବା ଆପ୍ଲିକେସନ୍ ସହ ମେଳ ଖାଉଛି କି
 
 ---
@@ -286,7 +286,7 @@ flyctl deploy
 ଯଦି ଆପଣ କୋଡ୍ ପରିବର୍ତ୍ତନ ନ କରି କେବଳ ପ୍ରାଚଳଗୁଡ଼ିକୁ ଅପଡେଟ୍ କରିବାକୁ ଚାହାଁନ୍ତି:
 
 ```powershell
-flyctl secrets set KEY=value -a omniroute
+flyctl secrets set KEY=value -a agentproxy
 ```
 
 Fly ସ୍ୱୟଂଚାଳିତ ଭାବରେ ମେସିନ୍ ଗୁଡ଼ିକର ରୋଲିଙ୍ଗ୍ ଅପଡେଟ୍ ପ୍ରଦାନ କରିବ।
@@ -361,8 +361,8 @@ git merge-base --is-ancestor v3.4.7 upstream/main
 3. ଫୋର୍କର `fly.toml` ପୁନରୁଦ୍ଧାର କରନ୍ତୁ
 4. `git push origin main`
 5. `flyctl deploy`
-6. `flyctl status -a omniroute`
-7. `flyctl logs --no-tail -a omniroute`
+6. `flyctl status -a agentproxy`
+7. `flyctl logs --no-tail -a agentproxy`
 
 ଏହା ବର୍ତ୍ତମାନର ପ୍ରୋଜେକ୍ଟକୁ `v3.4.7` (ଉଦାହରଣ ଏକ ଐତିହାସିକ ସଂସ୍କରଣକୁ ସନ୍ଦର୍ଭ କରୁଛି; ବର୍ତ୍ତମାନର ପ୍ରକୃତ ସଂସ୍କରଣ `v3.8.0`) ରେ ଅପଗ୍ରେଡ୍ କରିବା ସମୟରେ ବ୍ୟବହୃତ ପ୍ରକୃତ କାର୍ଯ୍ୟକ୍ରମ।
 
@@ -373,20 +373,20 @@ git merge-base --is-ancestor v3.4.7 upstream/main
 ### 10.1 ଆପ୍ଲିକେସନ୍ ସ୍ଥିତି ଯାଞ୍ଚ କରନ୍ତୁ
 
 ```powershell
-flyctl status -a omniroute
+flyctl status -a agentproxy
 ```
 
 ### 10.2 ଷ୍ଟାର୍ଟଅପ୍ ଲଗ୍ ଦେଖନ୍ତୁ
 
 ```powershell
-flyctl logs --no-tail -a omniroute
+flyctl logs --no-tail -a agentproxy
 ```
 
 ### 10.3 ସାଇଟ୍ ପ୍ରାପ୍ତିଯୋଗ୍ୟତା ଯାଞ୍ଚ କରନ୍ତୁ
 
 ```powershell
 try {
-  (Invoke-WebRequest -Uri "https://omniroute.fly.dev" -MaximumRedirection 5 -UseBasicParsing).StatusCode
+  (Invoke-WebRequest -Uri "https://agentproxy.online" -MaximumRedirection 5 -UseBasicParsing).StatusCode
 } catch {
   if ($_.Exception.Response) {
     $_.Exception.Response.StatusCode.value__
@@ -425,14 +425,14 @@ try {
 ସାଧାରଣତଃ ଦୁଇଟି କାରଣ ଅଛି:
 
 - ଆପଣ ଏପର୍ଯ୍ୟନ୍ତ `flyctl secrets set` ଚଳାଇ ନାହାଁନ୍ତି
-- ଆପଣ ଏକ ଭିନ୍ନ ଆପ୍ଲିକେସନ୍ ଦେଖୁଛନ୍ତି (ଯେପରିକି `omniroute` ପରିବର୍ତ୍ତେ `oroute`)
+- ଆପଣ ଏକ ଭିନ୍ନ ଆପ୍ଲିକେସନ୍ ଦେଖୁଛନ୍ତି (ଯେପରିକି `agentproxy` ପରିବର୍ତ୍ତେ `oroute`)
 
 ### 12.2 `flyctl deploy` `app not found` ରିପୋର୍ଟ କରୁଛି
 
 ପ୍ରଥମେ ଆପ୍ଲିକେସନ୍ ସୃଷ୍ଟି କରନ୍ତୁ:
 
 ```powershell
-flyctl apps create omniroute
+flyctl apps create agentproxy
 ```
 
 ### 12.3 `fly.toml` ପାର୍ସିଂ ବିଫଳ ହେଉଛି
@@ -475,10 +475,10 @@ flyctl apps create omniroute
 
 ```powershell
 flyctl auth whoami
-flyctl status -a omniroute
-flyctl secrets list -a omniroute
+flyctl status -a agentproxy
+flyctl secrets list -a agentproxy
 flyctl deploy
-flyctl logs --no-tail -a omniroute
+flyctl logs --no-tail -a agentproxy
 ```
 
 ଏକ ସାଧାରଣ ରିଲିଜ୍ ପାଇଁ, ମୂଳ କମାଣ୍ଡ କେବଳ:
@@ -490,7 +490,7 @@ flyctl deploy
 ଏକ ନୂତନ ପରିବେଶରେ ପ୍ରଥମ ଥର ଡିପ୍ଲାଏମେଣ୍ଟ ପାଇଁ, ମୂଳ ପଦକ୍ଷେପଗୁଡ଼ିକ ହେଉଛି:
 
 1. `flyctl auth login`
-2. `flyctl apps create omniroute`
-3. `flyctl secrets set ... -a omniroute`
+2. `flyctl apps create agentproxy`
+3. `flyctl secrets set ... -a agentproxy`
 4. `flyctl deploy`
-5. `flyctl logs --no-tail -a omniroute`
+5. `flyctl logs --no-tail -a agentproxy`

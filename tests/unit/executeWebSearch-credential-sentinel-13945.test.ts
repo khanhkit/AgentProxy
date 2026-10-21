@@ -20,7 +20,7 @@ import path from "node:path";
 // back to the valid "perplexity" credentials and complete the search.
 
 const TEST_DATA_DIR = fs.mkdtempSync(
-  path.join(os.tmpdir(), "omniroute-executeWebSearch-credential-sentinel-13945-")
+  path.join(os.tmpdir(), "agentproxy-executeWebSearch-credential-sentinel-13945-")
 );
 process.env.DATA_DIR = TEST_DATA_DIR;
 
@@ -94,7 +94,7 @@ test("executeWebSearch falls back to the configured credential fallback when the
     // immediately (never tries the "perplexity" fallback), and the search
     // handler rejects it with "No credentials for search provider:
     // perplexity-search" (401) before ever calling fetch.
-    const result = await executeWebSearch({ provider: "perplexity-search", query: "omniroute" });
+    const result = await executeWebSearch({ provider: "perplexity-search", query: "agentproxy" });
 
     assert.equal(result.data.results.length, 1);
     assert.equal(result.data.results[0].title, "Perplexity result");

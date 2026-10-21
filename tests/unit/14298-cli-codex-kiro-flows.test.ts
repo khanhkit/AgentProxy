@@ -1,6 +1,6 @@
 // Repro/regression test for issue #14298 (findings 4-5, CLI side).
 //
-// `omniroute oauth start --provider codex` failed with "Failed to start
+// `agentproxy oauth start --provider codex` failed with "Failed to start
 // device flow: 404": the CLI labeled codex as a device flow and called
 // GET /api/oauth/codex/device-code, but the server registers codex as
 // authorization_code_pkce (src/lib/oauth/providers/codex.ts) and the
@@ -10,7 +10,7 @@
 // redirect lands (src/shared/components/OAuthModal.tsx,
 // PKCE_CALLBACK_SERVER_PROVIDERS).
 //
-// `omniroute oauth start --provider kiro --social google` failed with
+// `agentproxy oauth start --provider kiro --social google` failed with
 // "Failed: 405": runSocialFlow POSTed /api/oauth/kiro/social-authorize and
 // then GET-polled /api/oauth/kiro/social-exchange, but the routes are
 // registered the other way around (social-authorize exports GET only,
@@ -30,8 +30,8 @@ import path from "node:path";
 
 const repoRoot = path.join(path.dirname(new URL(import.meta.url).pathname), "..", "..");
 
-process.env.DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-14298f-"));
-process.env.OMNIROUTE_API_KEY = "***";
+process.env.DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-14298f-"));
+process.env.AGENTPROXY_API_KEY = "***";
 process.env.NODE_ENV = "test";
 
 const { runOAuthStart } = await import(path.join(repoRoot, "bin/cli/commands/oauth.mjs"));

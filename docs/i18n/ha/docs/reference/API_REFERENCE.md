@@ -64,7 +64,7 @@ Content-Type: application/json
 | Header                   | Alkibla | Bayani                                                                                                                                                                                                                                                 |
 | ------------------------ | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | `X-AgentProxy-No-Cache`   | Buƙata  | Saita zuwa `true` don tsallake cache                                                                                                                                                                                                                   |
-| `x-omniroute-no-memory`  | Buƙata  | Saita zuwa `true` don tsallake shigar da ƙwaƙwalwa + ƙwarewa ga wannan buƙatar (yana kwaikwayon no-cache; yana kauce wa ƙarin token/farashi na kowane kira)                                                                                            |
+| `x-agentproxy-no-memory`  | Buƙata  | Saita zuwa `true` don tsallake shigar da ƙwaƙwalwa + ƙwarewa ga wannan buƙatar (yana kwaikwayon no-cache; yana kauce wa ƙarin token/farashi na kowane kira)                                                                                            |
 | `X-AgentProxy-Progress`   | Buƙata  | Saita zuwa `true` don abubuwan da ke nuna ci gaba                                                                                                                                                                                                      |
 | `X-Session-Id`           | Buƙata  | Maɓallin sticky session don daidaita zaman waje                                                                                                                                                                                                        |
 | `x_session_id`           | Buƙata  | Ana kuma karɓar nau’in da ke da underscore (HTTP kai tsaye)                                                                                                                                                                                            |
@@ -159,7 +159,7 @@ Rigima na ɗan lokaci yana dawo da HTTP `429` tare da `Retry-After` da:
 
 Wannan martani yana nufin kawai cewa saitin da ya cancanta na yau da kullun ba shi da komai kuma kowane ɗan takara kyauta an riƙe shi ta hanyar yarjejeniya mai aiki na waje. Samfurori/masu bayarwa marasa goyan baya, rashin daidaituwar manufofi, sanyaya, ƙayyadaddun adadi, lafiya, da sauran gazawar cancanta na yau da kullun suna riƙe da martanin AgentProxy da ke akwai.
 
-### `x-omniroute-compression`
+### `x-agentproxy-compression`
 
 Override na shirin matsa lamba na kowane buƙata. Mafi girman fifiko — yana doke override na haɗin hanyar, bayanin martaba mai aiki, auto-trigger, da Default na panel. Darajoji:
 
@@ -384,10 +384,10 @@ Abokan hulɗa da ke nuna na'urar zaɓen samfuri ya kamata su nemi `?prefix=alias
 
 ### Bambance-bambancen samfuri marasa tunani
 
-Ga samfuran Claude masu iya tunani, `/v1/models` yana kuma tallata bambancin **mara tunani** wanda id ɗinsa yake da farkon `claude-3-omniroute-no-thinking/`:
+Ga samfuran Claude masu iya tunani, `/v1/models` yana kuma tallata bambancin **mara tunani** wanda id ɗinsa yake da farkon `claude-3-agentproxy-no-thinking/`:
 
 ```
-claude-3-omniroute-no-thinking/<provider>/<model>
+claude-3-agentproxy-no-thinking/<provider>/<model>
 ```
 
 Zaɓen wannan id (misali, a cikin saitin Claude Code wanda koyaushe yake haɗa tubalin `thinking`) yana mayar da shi zuwa ainihin `<provider>/<model>` tare da dakile yin dalilai — `thinking:{type:"disabled"}` a kan hanyar `/v1/messages`, ko kuma a cire filayen `reasoning`/`reasoning_effort` a kan hanyar `/v1/chat/completions`. Ana jera wannan bambancin ne kawai ga samfuran dangin Claude waɗanda ke goyon bayan tunani **kuma** suke mutunta `disabled` (don haka, misali, ana cire samfuran adaptive-only waɗanda ke ƙin `disabled`). Masu gudanarwa za su iya tilasta kunna ko kashe bambancin ga kowane samfuri ta hanyar `ModelSpec.noThinkingAlias`.
@@ -476,7 +476,7 @@ POST /v1/music/generations  { "model": "suno/v3.5",   "prompt": "..." }
 > (`localhost`, `127.0.0.1`, `172.16.0.0/12`) koyaushe sun cancanta. Nodes da ke kan kowane host dabam
 > — na'ura a LAN ko takwarar Tailscale — suna cancanta ne kawai idan mai gudanarwa ya kunna
 > alamar fasalin `RERANK_REMOTE_PROVIDER_NODES` **kuma** tushen URL na node ɗin ya tsallake manufar URL mai fita ta mai bayarwa
-> (`OMNIROUTE_ALLOW_LOCAL_PROVIDER_URLS` / `OMNIROUTE_ALLOW_PRIVATE_PROVIDER_URLS`);
+> (`AGENTPROXY_ALLOW_LOCAL_PROVIDER_URLS` / `AGENTPROXY_ALLOW_PRIVATE_PROVIDER_URLS`);
 > ba a taɓa tura buƙata zuwa hosts na metadata na cloud. Matakin sake jeri na injin ƙwaƙwalwa yana kiran wannan route ta
 > loopback, don haka ƙa'ida ɗaya ce ke sarrafa `rerankProviderModel` a cikin saitunan Memory.
 >
@@ -598,8 +598,8 @@ Yana tantance handshake na haɓakawa zuwa WebSocket kuma yana mayar da saƙonnin
 
 ```bash
 # Host:port iri ɗaya da HTTP API (default 20128); haɓaka haɗin:
-wscat -c "ws://localhost:20128/v1/responses?api_key=<OMNIROUTE_API_KEY>"
-# (ko: -H "Authorization: Bearer <OMNIROUTE_API_KEY>")
+wscat -c "ws://localhost:20128/v1/responses?api_key=<AGENTPROXY_API_KEY>"
+# (ko: -H "Authorization: Bearer <AGENTPROXY_API_KEY>")
 
 # Frame na farko DOLE ya zama response.create:
 { "type": "response.create", "model": "gpt-5.5", "input": [ { "role": "user", "content": "hi" } ] }
@@ -635,18 +635,18 @@ config da ke akwai):
 
 ```toml
 model = "gpt-5.5"                 # id kai tsaye — BA "codex/gpt-5.5" BA
-model_provider = "omniroute"
+model_provider = "agentproxy"
 
-[model_providers.omniroute]
+[model_providers.agentproxy]
 name = "AgentProxy (WS)"
 base_url = "http://localhost:20128/v1"   # babu slash a ƙarshe; ana samar da URL na WS daga gare shi (yi amfani da https/wss a production)
 wire_api = "responses"                    # ƙima ɗaya tilo da ake goyon baya tun Feb 2026
 supports_websockets = true                # yana kunna transport na Responses-over-WS
-env_key = "OMNIROUTE_API_KEY"             # yana riƙe da maɓallin API na AgentProxy (Bearer)
+env_key = "AGENTPROXY_API_KEY"             # yana riƙe da maɓallin API na AgentProxy (Bearer)
 ```
 
 ```bash
-export OMNIROUTE_API_KEY=sk-...           # maɓallin API na AgentProxy (kowane maɓalli idan REQUIRE_API_KEY=false)
+export AGENTPROXY_API_KEY=sk-...           # maɓallin API na AgentProxy (kowane maɓalli idan REQUIRE_API_KEY=false)
 codex exec "Responda apenas: PONG"
 ```
 
@@ -1008,7 +1008,7 @@ Yana gyara masu canjin muhalli na OAuth da suka ɓace ko suka lalace domin takam
 {
   "success": true,
   "repaired": ["CLAUDE_CODE_OAUTH_CLIENT_ID", "CLAUDE_CODE_OAUTH_CLIENT_SECRET"],
-  "backupPath": "/home/user/.omniroute/backups/env-repair-2026-04-11.bak"
+  "backupPath": "/home/user/.agentproxy/backups/env-repair-2026-04-11.bak"
 }
 ```
 
@@ -1380,7 +1380,7 @@ AgentProxy yana samar da mashigar A2A (Agent-to-Agent) ta JSON-RPC 2.0 tare da m
 
 ```bash
 POST /a2a
-Authorization: Bearer your-api-key   # na zaɓi ne sai dai idan an saita OMNIROUTE_API_KEY
+Authorization: Bearer your-api-key   # na zaɓi ne sai dai idan an saita AGENTPROXY_API_KEY
 Content-Type: application/json
 
 {
@@ -1423,7 +1423,7 @@ Yana dawo da katin wakilin A2A na jama'a (suna, bayani, iyawa, kundin ƙwarewa, 
 | GET   | `/api/a2a/tasks/[id]`        | Ɗauko aiki guda ɗaya                                                                                             |
 | POST  | `/api/a2a/tasks/[id]/cancel` | Soke aiki                                                                                                        |
 
-**Tantancewa:** mataimakan REST suna aiki ba tare da tantancewar gudanarwa ba (dashboard na iya karantawa); hanyar JSON-RPC `/a2a` tana amfani da Bearer `OMNIROUTE_API_KEY` idan an saita shi.
+**Tantancewa:** mataimakan REST suna aiki ba tare da tantancewar gudanarwa ba (dashboard na iya karantawa); hanyar JSON-RPC `/a2a` tana amfani da Bearer `AGENTPROXY_API_KEY` idan an saita shi.
 
 ---
 
@@ -1739,7 +1739,7 @@ Kwatanta masu samarwa ta hanyar Shadow / A-B **ba keɓantacciyar hanyar REST ba 
 
 ## Guardrails
 
-Bincika guardrails na lokacin aiki (gano PII, gano shigar da umarni na ɓarna, haɗa damar gani). Guardrails suna aiki a kan kowace buƙata; ana iya janyewa ga kowane kira ta hanyar request header na `x-omniroute-disabled-guardrails` — babu hanyar kunna/kashewa da ake adanawa.
+Bincika guardrails na lokacin aiki (gano PII, gano shigar da umarni na ɓarna, haɗa damar gani). Guardrails suna aiki a kan kowace buƙata; ana iya janyewa ga kowane kira ta hanyar request header na `x-agentproxy-disabled-guardrails` — babu hanyar kunna/kashewa da ake adanawa.
 
 | Hanya | Path                   | Bayani                                                                                                         |
 | ----- | ---------------------- | -------------------------------------------------------------------------------------------------------------- |

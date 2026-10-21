@@ -6,21 +6,21 @@
 
 > Sabar Model Context Protocol mai kayan aiki 110 da suka shafi sarrafa hanyoyi, cache, matsawa, ƙwaƙwalwa, ƙwarewa, proxy, pool, Radar, da ayyukan tushen mahallin.
 >
-> Madogarar gaskiya: `open-sse/mcp-server/server.ts` yana ƙididdige **kayan aiki na musamman guda 110** ta amfani da `countUniqueMcpTools()`: ma’anoni na asali guda 45 (ciki har da kayan aikin zagayen rayuwar CCR guda shida, rukuni na uku na agent-skills, `omniroute_radar_catalog`, da `omniroute_x_search`), tare da ƙwaƙwalwa (3), ƙwarewa (4), ƙwarewar GitHub (3), pool (6), tsarin mayar da aiki tamkar wasa (8), plugins (8), Notion (6), Obsidian (22), kundin bayanai na gida (3), da kayan aikin matsawa guda biyu na RTK kawai.
+> Madogarar gaskiya: `open-sse/mcp-server/server.ts` yana ƙididdige **kayan aiki na musamman guda 110** ta amfani da `countUniqueMcpTools()`: ma’anoni na asali guda 45 (ciki har da kayan aikin zagayen rayuwar CCR guda shida, rukuni na uku na agent-skills, `agentproxy_radar_catalog`, da `agentproxy_x_search`), tare da ƙwaƙwalwa (3), ƙwarewa (4), ƙwarewar GitHub (3), pool (6), tsarin mayar da aiki tamkar wasa (8), plugins (8), Notion (6), Obsidian (22), kundin bayanai na gida (3), da kayan aikin matsawa guda biyu na RTK kawai.
 
 ## Shigarwa
 
 An riga an haɗa AgentProxy MCP a ciki. Fara shi da:
 
 ```bash
-omniroute --mcp
+agentproxy --mcp
 ```
 
 Ko ta hanyar jigilar open-sse:
 
 ```bash
 # Jigilar HTTP mai gudana (tashar 20130)
-omniroute --dev  # MCP yana farawa ta atomatik a maƙurar /mcp
+agentproxy --dev  # MCP yana farawa ta atomatik a maƙurar /mcp
 ```
 
 Jigilar HTTP (`sse` / `streamable-http`, waɗanda sabar dashboard ke samarwa a cikin tsari guda) a
@@ -28,10 +28,10 @@ kashe suke ta tsohuwa, kuma a baya ana iya kunna ko kashe su ne kawai daga shafi
 CLI yana da daidaitattun fasaloli:
 
 ```bash
-omniroute mcp status                                  # an kunna/kan layi, jigila, adadin kayan aiki
-omniroute mcp enable [--transport stdio|sse|streamable-http]
-omniroute mcp disable
-omniroute mcp restart                                 # yana sake saita zaman sse/streamable-http masu aiki
+agentproxy mcp status                                  # an kunna/kan layi, jigila, adadin kayan aiki
+agentproxy mcp enable [--transport stdio|sse|streamable-http]
+agentproxy mcp disable
+agentproxy mcp restart                                 # yana sake saita zaman sse/streamable-http masu aiki
 ```
 
 `mcp enable`/`mcp disable` suna aika PATCH ga saitin `mcpEnabled` ɗaya (da kuma `mcpTransport` idan an zaɓa)
@@ -83,61 +83,61 @@ Cursor, Cline, da abokan cinikin MCP masu jituwa.
 
 | Kayan aiki                      | Iyakokin izini        | Bayani                                                                                                                                |
 | :------------------------------ | :-------------------- | :------------------------------------------------------------------------------------------------------------------------------------ |
-| `omniroute_get_health`          | `read:health`         | Lokacin aiki, ƙwaƙwalwa, masu katse da'ira, iyakokin ƙima, ƙididdigar ma'ajiyar wucin gadi                                            |
-| `omniroute_list_combos`         | `read:combos`         | Duk combos da aka saita tare da dabaru (ma'aunai na zaɓi)                                                                             |
-| `omniroute_get_combo_metrics`   | `read:combos`         | Ma'aunan aiki na wani takamaiman combo                                                                                                |
-| `omniroute_switch_combo`        | `write:combos`        | Kunna ko kashe combo                                                                                                                  |
-| `omniroute_create_combo`        | `write:combos`        | Ƙirƙiri ingantaccen combo ta hanyar combo API da ke akwai                                                                             |
-| `omniroute_check_quota`         | `read:quota`          | Adadin kaso da aka yi amfani da shi/jimilla, kashi da ya rage, lokacin sake saiti, lafiyar token                                      |
-| `omniroute_route_request`       | `execute:completions` | Aika kammalawar taɗi ta hanyar tsarin zaɓin hanya na AgentProxy                                                                        |
-| `omniroute_cost_report`         | `read:usage`          | Rahoton kuɗi bisa lokaci (zama/rana/mako/wata)                                                                                        |
-| `omniroute_list_models_catalog` | `read:models`         | Cikakken kundin model tare da iyawa, matsayi, farashi                                                                                 |
-| `omniroute_radar_catalog`       | `read:radar`          | Kundin Radar na gida mai sa hannu; matatun provider/family na zaɓi                                                                    |
-| `omniroute_tool_search`         | `read:tools`          | Gano kayan aiki daga kundin MCP da aka yi wa rajista                                                                                  |
-| `omniroute_web_search`          | `execute:search`      | Binciken yanar gizo ta hanyar search providers da aka saita. Ba X/Twitter ba.                                                         |
-| `omniroute_x_search`            | `execute:search`      | Bincika X ta hanyar xAI/SuperGrok, ko zaɓi `xquik-search` don sakamakon Xquik API. Yana buƙatar bayanan shiga na backend da aka zaɓa. |
-| `omniroute_web_fetch`           | `execute:search`      | Ɗauko abun cikin yanar gizo ta hanyar fetch providers da aka saita                                                                    |
+| `agentproxy_get_health`          | `read:health`         | Lokacin aiki, ƙwaƙwalwa, masu katse da'ira, iyakokin ƙima, ƙididdigar ma'ajiyar wucin gadi                                            |
+| `agentproxy_list_combos`         | `read:combos`         | Duk combos da aka saita tare da dabaru (ma'aunai na zaɓi)                                                                             |
+| `agentproxy_get_combo_metrics`   | `read:combos`         | Ma'aunan aiki na wani takamaiman combo                                                                                                |
+| `agentproxy_switch_combo`        | `write:combos`        | Kunna ko kashe combo                                                                                                                  |
+| `agentproxy_create_combo`        | `write:combos`        | Ƙirƙiri ingantaccen combo ta hanyar combo API da ke akwai                                                                             |
+| `agentproxy_check_quota`         | `read:quota`          | Adadin kaso da aka yi amfani da shi/jimilla, kashi da ya rage, lokacin sake saiti, lafiyar token                                      |
+| `agentproxy_route_request`       | `execute:completions` | Aika kammalawar taɗi ta hanyar tsarin zaɓin hanya na AgentProxy                                                                        |
+| `agentproxy_cost_report`         | `read:usage`          | Rahoton kuɗi bisa lokaci (zama/rana/mako/wata)                                                                                        |
+| `agentproxy_list_models_catalog` | `read:models`         | Cikakken kundin model tare da iyawa, matsayi, farashi                                                                                 |
+| `agentproxy_radar_catalog`       | `read:radar`          | Kundin Radar na gida mai sa hannu; matatun provider/family na zaɓi                                                                    |
+| `agentproxy_tool_search`         | `read:tools`          | Gano kayan aiki daga kundin MCP da aka yi wa rajista                                                                                  |
+| `agentproxy_web_search`          | `execute:search`      | Binciken yanar gizo ta hanyar search providers da aka saita. Ba X/Twitter ba.                                                         |
+| `agentproxy_x_search`            | `execute:search`      | Bincika X ta hanyar xAI/SuperGrok, ko zaɓi `xquik-search` don sakamakon Xquik API. Yana buƙatar bayanan shiga na backend da aka zaɓa. |
+| `agentproxy_web_fetch`           | `execute:search`      | Ɗauko abun cikin yanar gizo ta hanyar fetch providers da aka saita                                                                    |
 
 ## Kayan Aiki na Ci-gaba (11) — Mataki na 2
 
 | Kayan aiki                         | Izini                                | Bayani                                                                                                 |
 | :--------------------------------- | :----------------------------------- | :----------------------------------------------------------------------------------------------------- |
-| `omniroute_simulate_route`         | `read:health`, `read:combos`         | Kwaikwayon zaɓin hanya ba tare da aiwatarwa ba tare da bishiyar hanyoyin madadin                       |
-| `omniroute_set_budget_guard`       | `write:budget`                       | Kasafin zaman tare da matakin rage aiki/toshewa/faɗakarwa                                              |
-| `omniroute_set_routing_strategy`   | `write:combos`                       | Sabunta dabarar haɗin a lokacin aiki (fifiko/mai nauyi/atomatik/da sauransu)                           |
-| `omniroute_set_resilience_profile` | `write:resilience`                   | Aiwatar da saitin juriya na `aggressive` / `balanced` / `conservative`                                 |
-| `omniroute_test_combo`             | `execute:completions`, `read:combos` | Gwada kowane mai samarwa kai tsaye a cikin haɗi ta amfani da ainihin kira na upstream                  |
-| `omniroute_get_provider_metrics`   | `read:health`                        | Ma'aunin kowane mai samarwa tare da jinkirin p50/p95/p99 da yanayin circuit breaker                    |
-| `omniroute_best_combo_for_task`    | `read:combos`, `read:health`         | Ba da shawarar haɗi bisa nau'in aiki tare da ƙuntatawar kasafi/jinkiri                                 |
-| `omniroute_explain_route`          | `read:health`, `read:usage`          | Bayyana dalilin da ya sa aka tura buƙata zuwa wani mai samarwa (abubuwan ƙididdigewa + madadin)        |
-| `omniroute_get_session_snapshot`   | `read:usage`                         | Cikakken hoton zaman: kuɗi, tokens, manyan models/masu samarwa, kurakurai, mai gadin kasafi            |
-| `omniroute_db_health_check`        | `read:health`, `write:resilience`    | Gano (kuma bisa zaɓi gyara ta atomatik) kaucewar bayanai kamar gurɓatattun combo refs / layukan marayu |
-| `omniroute_sync_pricing`           | `pricing:write`                      | Daidaita bayanan farashi daga tushe na waje (LiteLLM); yana goyan bayan `dryRun`                       |
+| `agentproxy_simulate_route`         | `read:health`, `read:combos`         | Kwaikwayon zaɓin hanya ba tare da aiwatarwa ba tare da bishiyar hanyoyin madadin                       |
+| `agentproxy_set_budget_guard`       | `write:budget`                       | Kasafin zaman tare da matakin rage aiki/toshewa/faɗakarwa                                              |
+| `agentproxy_set_routing_strategy`   | `write:combos`                       | Sabunta dabarar haɗin a lokacin aiki (fifiko/mai nauyi/atomatik/da sauransu)                           |
+| `agentproxy_set_resilience_profile` | `write:resilience`                   | Aiwatar da saitin juriya na `aggressive` / `balanced` / `conservative`                                 |
+| `agentproxy_test_combo`             | `execute:completions`, `read:combos` | Gwada kowane mai samarwa kai tsaye a cikin haɗi ta amfani da ainihin kira na upstream                  |
+| `agentproxy_get_provider_metrics`   | `read:health`                        | Ma'aunin kowane mai samarwa tare da jinkirin p50/p95/p99 da yanayin circuit breaker                    |
+| `agentproxy_best_combo_for_task`    | `read:combos`, `read:health`         | Ba da shawarar haɗi bisa nau'in aiki tare da ƙuntatawar kasafi/jinkiri                                 |
+| `agentproxy_explain_route`          | `read:health`, `read:usage`          | Bayyana dalilin da ya sa aka tura buƙata zuwa wani mai samarwa (abubuwan ƙididdigewa + madadin)        |
+| `agentproxy_get_session_snapshot`   | `read:usage`                         | Cikakken hoton zaman: kuɗi, tokens, manyan models/masu samarwa, kurakurai, mai gadin kasafi            |
+| `agentproxy_db_health_check`        | `read:health`, `write:resilience`    | Gano (kuma bisa zaɓi gyara ta atomatik) kaucewar bayanai kamar gurɓatattun combo refs / layukan marayu |
+| `agentproxy_sync_pricing`           | `pricing:write`                      | Daidaita bayanan farashi daga tushe na waje (LiteLLM); yana goyan bayan `dryRun`                       |
 
 ## Kayan Aikin Cache (2)
 
 | Kayan aiki              | Izini         | Bayani                                                  |
 | :---------------------- | :------------ | :------------------------------------------------------ |
-| `omniroute_cache_stats` | `read:cache`  | Ƙididdigar semantic cache, prompt-cache, da idempotency |
-| `omniroute_cache_flush` | `write:cache` | Share cache gaba ɗaya ko bisa signature/model           |
+| `agentproxy_cache_stats` | `read:cache`  | Ƙididdigar semantic cache, prompt-cache, da idempotency |
+| `agentproxy_cache_flush` | `write:cache` | Share cache gaba ɗaya ko bisa signature/model           |
 
 ## Kayan Aikin Matsawa (13)
 
 | Kayan aiki                          | Izini               | Bayani                                                                                                                                       |
 | :---------------------------------- | :------------------ | :------------------------------------------------------------------------------------------------------------------------------------------- |
-| `omniroute_compression_status`      | `read:compression`  | Saitunan matsawa, taƙaitaccen nazari, da ƙididdigar da ke la'akari da cache (ya haɗa da metadata na `analytics.mcpDescriptionCompression`)   |
-| `omniroute_compression_configure`   | `write:compression` | Saita yanayin matsawa, iyaka, adadin da ake nufi, adana system-prompt, da kunnawa/kashe matsawar bayanin MCP                                 |
-| `omniroute_set_compression_engine`  | `write:compression` | Zaɓi engine mai aiki (off/caveman/rtk/stacked) da tsananin Caveman/RTK                                                                       |
-| `omniroute_list_compression_combos` | `read:compression`  | Jera combos na matsawa masu suna da jerin engines ɗinsu                                                                                      |
-| `omniroute_compression_combo_stats` | `read:compression`  | Nazari da aka rarraba bisa combo na matsawa da engine                                                                                        |
-| `omniroute_ccr_store`               | `write:compression` | Adana abun ciki da aka ware wa mai kira a cikin ma'ajiyar CCR mai iyaka da ke cikin ƙwaƙwalwa, sannan dawo da alama tare da mahaɗin `ccr://` |
-| `omniroute_ccr_retrieve`            | `read:compression`  | Dawo da abun cikin CCR gaba ɗaya ko ta hanyoyin head, tail, lines, grep, da stats                                                            |
-| `omniroute_ccr_inspect`             | `read:compression`  | Duba metadata na CCR mallakin mai kira ba tare da dawo da abun ciki ba                                                                       |
-| `omniroute_ccr_list`                | `read:compression`  | Jera metadata mai shafuka na tubalan CCR mallakin mai kira                                                                                   |
-| `omniroute_ccr_delete`              | `write:compression` | Share tubalin CCR mallakin mai kira                                                                                                          |
-| `omniroute_ccr_stats`               | `read:compression`  | Bayar da rahoton amfani da ƙwaƙwalwa na mai kira, ƙididdigar zagayowar rayuwa, da iyakokin ma'ajiya                                          |
-| `omniroute_rtk_discover`            | `read:compression`  | Gano hayaniya mai maimaituwa a cikin samfuran fitarwar RTK da aka amince da tattarawa                                                        |
-| `omniroute_rtk_learn`               | `read:compression`  | Samar da daftarin tacewar RTK da za a iya dubawa daga samfuran da aka amince da tattarawa                                                    |
+| `agentproxy_compression_status`      | `read:compression`  | Saitunan matsawa, taƙaitaccen nazari, da ƙididdigar da ke la'akari da cache (ya haɗa da metadata na `analytics.mcpDescriptionCompression`)   |
+| `agentproxy_compression_configure`   | `write:compression` | Saita yanayin matsawa, iyaka, adadin da ake nufi, adana system-prompt, da kunnawa/kashe matsawar bayanin MCP                                 |
+| `agentproxy_set_compression_engine`  | `write:compression` | Zaɓi engine mai aiki (off/caveman/rtk/stacked) da tsananin Caveman/RTK                                                                       |
+| `agentproxy_list_compression_combos` | `read:compression`  | Jera combos na matsawa masu suna da jerin engines ɗinsu                                                                                      |
+| `agentproxy_compression_combo_stats` | `read:compression`  | Nazari da aka rarraba bisa combo na matsawa da engine                                                                                        |
+| `agentproxy_ccr_store`               | `write:compression` | Adana abun ciki da aka ware wa mai kira a cikin ma'ajiyar CCR mai iyaka da ke cikin ƙwaƙwalwa, sannan dawo da alama tare da mahaɗin `ccr://` |
+| `agentproxy_ccr_retrieve`            | `read:compression`  | Dawo da abun cikin CCR gaba ɗaya ko ta hanyoyin head, tail, lines, grep, da stats                                                            |
+| `agentproxy_ccr_inspect`             | `read:compression`  | Duba metadata na CCR mallakin mai kira ba tare da dawo da abun ciki ba                                                                       |
+| `agentproxy_ccr_list`                | `read:compression`  | Jera metadata mai shafuka na tubalan CCR mallakin mai kira                                                                                   |
+| `agentproxy_ccr_delete`              | `write:compression` | Share tubalin CCR mallakin mai kira                                                                                                          |
+| `agentproxy_ccr_stats`               | `read:compression`  | Bayar da rahoton amfani da ƙwaƙwalwa na mai kira, ƙididdigar zagayowar rayuwa, da iyakokin ma'ajiya                                          |
+| `agentproxy_rtk_discover`            | `read:compression`  | Gano hayaniya mai maimaituwa a cikin samfuran fitarwar RTK da aka amince da tattarawa                                                        |
+| `agentproxy_rtk_learn`               | `read:compression`  | Samar da daftarin tacewar RTK da za a iya dubawa daga samfuran da aka amince da tattarawa                                                    |
 
 Shigarwar CCR suna cikin ƙwaƙwalwa ne kawai kuma suna ɓacewa idan an sake farawa. An iyakance kowane tubali zuwa 2 MiB, kowane
 principal zuwa 16 MiB, kuma ma'ajiyar gaba ɗaya zuwa 64 MiB. Ta asali, shigarwa suna da TTL na awa 24 (mafi yawa
@@ -145,7 +145,7 @@ kwanaki bakwai). An iyakance cikakken dawo da MCP zuwa 256 KiB; manyan tubala su
 ranged da grep. Adanawa, dawo da bayanai, jera bayanai, dubawa, sharewa, da stats duk an ware su bisa
 principal na API-key da aka tabbatar da sahihancinsa. Bayanan audit suna ƙunshe da hashes da metadata na girma kawai, ba su taɓa ƙunsar abun ciki ba.
 
-`omniroute_compression_status` yana ba da rahoton matse bayanin MCP daban a ƙarƙashin
+`agentproxy_compression_status` yana ba da rahoton matse bayanin MCP daban a ƙarƙashin
 `analytics.mcpDescriptionCompression`. Waɗannan ƙimomin kimantawa ne na girman metadata don bayanan MCP da za a iya jera su
 (`tools`, `prompts`, `resources`, da `resourceTemplates`); ba rasitocin amfani na mai samarwa ba ne
 kuma an yi musu alama da `source: "mcp_metadata_estimate"`.
@@ -175,9 +175,9 @@ samfurin matsewa na lokacin gudana da ke bayan waɗannan kayan aikin.
 
 | Kayan aiki                  | Iyakokin izini | Bayani                                                                             |
 | :-------------------------- | :------------- | :--------------------------------------------------------------------------------- |
-| `omniroute_oneproxy_fetch`  | `read:proxies` | Dauko proxies na kyauta daga kasuwar 1proxy (matatun protocol/ƙasa/inganci/iyaka)  |
-| `omniroute_oneproxy_rotate` | `read:proxies` | Sami proxy na gaba da ake da shi bisa dabara (`random` / `quality` / `sequential`) |
-| `omniroute_oneproxy_stats`  | `read:proxies` | Ƙididdigar pool, matsayin daidaitawa, da rarrabawa bisa protocol da ƙasa           |
+| `agentproxy_oneproxy_fetch`  | `read:proxies` | Dauko proxies na kyauta daga kasuwar 1proxy (matatun protocol/ƙasa/inganci/iyaka)  |
+| `agentproxy_oneproxy_rotate` | `read:proxies` | Sami proxy na gaba da ake da shi bisa dabara (`random` / `quality` / `sequential`) |
+| `agentproxy_oneproxy_stats`  | `read:proxies` | Ƙididdigar pool, matsayin daidaitawa, da rarrabawa bisa protocol da ƙasa           |
 
 ## Kayan Aikin Ƙwaƙwalwa (3)
 
@@ -185,9 +185,9 @@ An ayyana su a cikin `open-sse/mcp-server/tools/memoryTools.ts`. Ana aiwatar da 
 
 | Kayan aiki                | Iyakokin izini | Bayani                                                                                         |
 | :------------------------ | :------------- | :--------------------------------------------------------------------------------------------- |
-| `omniroute_memory_search` | `read:memory`  | Bincika abubuwan ƙwaƙwalwa bisa tambaya / nau'i / API key tare da tilasta iyakar kasafin token |
-| `omniroute_memory_add`    | `write:memory` | Ƙara sabon bayanin ƙwaƙwalwa (`factual` / `episodic` / `procedural` / `semantic`)              |
-| `omniroute_memory_clear`  | `write:memory` | Goge ƙwaƙwalwar API key, tare da zaɓin tacewa bisa nau'i ko timestamp na `olderThan`           |
+| `agentproxy_memory_search` | `read:memory`  | Bincika abubuwan ƙwaƙwalwa bisa tambaya / nau'i / API key tare da tilasta iyakar kasafin token |
+| `agentproxy_memory_add`    | `write:memory` | Ƙara sabon bayanin ƙwaƙwalwa (`factual` / `episodic` / `procedural` / `semantic`)              |
+| `agentproxy_memory_clear`  | `write:memory` | Goge ƙwaƙwalwar API key, tare da zaɓin tacewa bisa nau'i ko timestamp na `olderThan`           |
 
 ## Kayan Aikin Ƙwarewa (4)
 
@@ -195,10 +195,10 @@ An ayyana su a cikin `open-sse/mcp-server/tools/skillTools.ts`. Suna samun goyon
 
 | Kayan aiki                    | Iyakokin izini   | Bayani                                                                                          |
 | :---------------------------- | :--------------- | :---------------------------------------------------------------------------------------------- |
-| `omniroute_skills_list`       | `read:skills`    | Jera ƙwarewar da aka yi wa rajista tare da zaɓin tacewa bisa API key, suna, ko matsayin kunnawa |
-| `omniroute_skills_enable`     | `write:skills`   | Kunna ko kashe takamaiman ƙwarewa bisa ID                                                       |
-| `omniroute_skills_execute`    | `execute:skills` | Gudanar da ƙwarewa da shigarwar da aka bayar sannan a dawo da rikodin gudanarwar                |
-| `omniroute_skills_executions` | `read:skills`    | Jera tarihin gudanar da ƙwarewa na baya-bayan nan                                               |
+| `agentproxy_skills_list`       | `read:skills`    | Jera ƙwarewar da aka yi wa rajista tare da zaɓin tacewa bisa API key, suna, ko matsayin kunnawa |
+| `agentproxy_skills_enable`     | `write:skills`   | Kunna ko kashe takamaiman ƙwarewa bisa ID                                                       |
+| `agentproxy_skills_execute`    | `execute:skills` | Gudanar da ƙwarewa da shigarwar da aka bayar sannan a dawo da rikodin gudanarwar                |
+| `agentproxy_skills_executions` | `read:skills`    | Jera tarihin gudanar da ƙwarewa na baya-bayan nan                                               |
 
 ## Tushen Mahallin Notion (6)
 
@@ -234,9 +234,9 @@ An ayyana su a cikin `open-sse/mcp-server/tools/agentSkillTools.ts`. Ana tallafa
 
 | Kayan aiki                        | Iyakoki        | Bayani                                                                                                                                                     |
 | :-------------------------------- | :------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `omniroute_agent_skills_list`     | `read:catalog` | Jera dukkan ƙwarewar wakili 45 tare da matatun `category` (api\|cli) da `area` na zaɓi; yana dawo da metadata + ɗaukar bayani                              |
-| `omniroute_agent_skills_get`      | `read:catalog` | Samo cikakken metadata + abun cikin SKILL.md na ƙwarewa guda ta amfani da `id` na hukuma                                                                   |
-| `omniroute_agent_skills_coverage` | `read:catalog` | Ƙididdigar ɗaukar bayani: nawa daga cikin ƙwarewar API 23, CLI 21 da config 1 ke da fayilolin SKILL.md a tsarin fayil idan aka kwatanta da jimillar kasida |
+| `agentproxy_agent_skills_list`     | `read:catalog` | Jera dukkan ƙwarewar wakili 45 tare da matatun `category` (api\|cli) da `area` na zaɓi; yana dawo da metadata + ɗaukar bayani                              |
+| `agentproxy_agent_skills_get`      | `read:catalog` | Samo cikakken metadata + abun cikin SKILL.md na ƙwarewa guda ta amfani da `id` na hukuma                                                                   |
+| `agentproxy_agent_skills_coverage` | `read:catalog` | Ƙididdigar ɗaukar bayani: nawa daga cikin ƙwarewar API 23, CLI 21 da config 1 ke da fayilolin SKILL.md a tsarin fayil idan aka kwatanta da jimillar kasida |
 
 Duba [AGENT-SKILLS.md](./AGENT-SKILLS.md) don cikakkiyar kasida da yadda wakilai na waje ke amfani da ita.
 
@@ -301,7 +301,7 @@ Kayan aikin MCP yana kiran igiyoyin iyakoki daga mai kira. Wannan binciken yana 
 | :--------------------- | :------------------------------------------------------------------------- | :-------------------------- | :-------------------------------------------------------------------- |
 | Gudanarwar API-key     | `api_keys.scopes`                                                          | `hasManageScope`            | Gudanarwar REST don wannan maɓallin Bearer                            |
 | API-key mai ƙari       | jeri ɗaya, igiya ɗaya daidai                                               | mai taimako mai suna a ƙasa | Wannan damar ɗaya kawai                                               |
-| Iyakar kayan aikin MCP | jeri ɗaya, in ba haka ba MCP `_meta`, in ba haka ba `OMNIROUTE_MCP_SCOPES` | `scopeMatches`              | Wannan kayan aikin, da zarar an kunna tilastawa                       |
+| Iyakar kayan aikin MCP | jeri ɗaya, in ba haka ba MCP `_meta`, in ba haka ba `AGENTPROXY_MCP_SCOPES` | `scopeMatches`              | Wannan kayan aikin, da zarar an kunna tilastawa                       |
 | Alamar shiga           | `oma_live_…`                                                               | `scopeSatisfies`            | Hanyar gudanarwa wacce hanyarta da hanyarta ke buƙatar wannan matsayi |
 
 An rufe buga kowace takardar shaidar a cikin [Tabbatarwar Gudanarwa](../guides/MANAGEMENT-AUTH.md).
@@ -333,7 +333,7 @@ Kasidar shine teburin da ke ƙarƙashin [Iyakar kayan aikin MCP](#iyakar-kayan-a
 
 Maɓalli wanda iyakokinsa sune `["manage"]` yana kasa `scopeMatches` don `read:compression`. Kiran ɗaya yana kasa don `admin`, `mcp:connect`, `read`, da `write` lokacin da waɗannan sune kawai igiyoyin da aka bayar. Babu matsayi tsakanin iyakokin kayan aikin MCP fiye da `*` mai bi.
 
-An kashe tilastawa sai dai idan `OMNIROUTE_MCP_ENFORCE_SCOPES=true` (default `false`). Yayin da aka kashe shi, `evaluateToolScopes` yana ba da izini ga kiran kuma yana tsallake kasidar. Yayin da aka kunna shi, HTTP yana amfani da `api_keys.scopes` na maɓallin Bearer a matsayin `authInfo` (duba [Haɗin iyakar HTTP na kowane maɓalli](#per-key-http-scope-binding-7895)). Lokacin da babu iyakokin maɓalli da suka warware, saitin da aka bayar yana faɗuwa zuwa MCP `_meta`, sannan `OMNIROUTE_MCP_SCOPES`.
+An kashe tilastawa sai dai idan `AGENTPROXY_MCP_ENFORCE_SCOPES=true` (default `false`). Yayin da aka kashe shi, `evaluateToolScopes` yana ba da izini ga kiran kuma yana tsallake kasidar. Yayin da aka kunna shi, HTTP yana amfani da `api_keys.scopes` na maɓallin Bearer a matsayin `authInfo` (duba [Haɗin iyakar HTTP na kowane maɓalli](#per-key-http-scope-binding-7895)). Lokacin da babu iyakokin maɓalli da suka warware, saitin da aka bayar yana faɗuwa zuwa MCP `_meta`, sannan `AGENTPROXY_MCP_SCOPES`.
 
 #### Iyakar alamar shiga
 
@@ -382,8 +382,8 @@ Aiwatar da iko yana tsakiya a cikin `open-sse/mcp-server/scopeEnforcement.ts`. K
 | `write:skills`         | `skills_enable`                                                                                                                                                                         |
 | `execute:skills`       | `skills_execute`                                                                                                                                                                        |
 | `read:catalog`         | `agent_skills_list`, `agent_skills_get`, `agent_skills_coverage`                                                                                                                        |
-| `read:tools`           | `omniroute_tool_search`                                                                                                                                                                 |
-| `read:radar`           | `omniroute_radar_catalog`                                                                                                                                                               |
+| `read:tools`           | `agentproxy_tool_search`                                                                                                                                                                 |
+| `read:radar`           | `agentproxy_radar_catalog`                                                                                                                                                               |
 | `read:gamification`    | `gamification_profile`, `gamification_rank`, `gamification_leaderboard`, `gamification_badges`, `gamification_servers`, `gamification_anomalies`                                        |
 | `rubuta:gamification`  | `gamification_invite`, `gamification_transfer`                                                                                                                                          |
 | `karanta:plugins`      | `plugin_list`, `plugin_executions`                                                                                                                                                      |
@@ -414,10 +414,10 @@ Ta hanyar HTTP/SSE, `open-sse/mcp-server/httpTransport.ts` yanzu yana warware ai
 kuma yana wuce shi zuwa `transport.handleRequest(req, { authInfo })` na MCP SDK, don haka
 `extra.authInfo.scopes` da ke isa kowane kiran kayan aiki yana nuna iyakokin maɓallin Bearer.
 `scopeEnforcement.ts`'s `resolveCallerScopeContext()` tuni ya ba da fifiko ga `authInfo` akan
-`_meta` da `OMNIROUTE_MCP_SCOPES` env fallback — wannan kawai yana cika wannan farkon,
+`_meta` da `AGENTPROXY_MCP_SCOPES` env fallback — wannan kawai yana cika wannan farkon,
 mafi girman tushen fifiko, wanda a baya ba a ciyar da shi ta hanyar HTTP ba. Lokacin da babu maɓallin API da ya warware
 (babu header, maɓalli mara inganci), `authInfo` yana kasancewa `undefined` kuma warwarewa yana faɗuwa zuwa
-sarkar `meta`/env da ke akwai ba tare da canji ba. Wannan baya canza tsoho na `OMNIROUTE_MCP_ENFORCE_SCOPES` —
+sarkar `meta`/env da ke akwai ba tare da canji ba. Wannan baya canza tsoho na `AGENTPROXY_MCP_ENFORCE_SCOPES` —
 har yanzu dole ne a kunna tilastawa a fili; wannan canjin kawai yana sa
 hanyar kowane maɓalli ta ɗauki fifiko da zarar an kunna ta. Stdio ba shi da ainihin mai kira (duba
 `mcpCallerIdentity.ts`) kuma ba a shafa shi ba — yana kasancewa a kan sarkar `_meta`/env fallback.
@@ -428,17 +428,17 @@ hanyar kowane maɓalli ta ɗauki fifiko da zarar an kunna ta. Stdio ba shi da ai
 
 | Sauyi                                   | Tsoho                                 | Manufa                                                                                                                                           |
 | :-------------------------------------- | :------------------------------------ | :----------------------------------------------------------------------------------------------------------------------------------------------- |
-| `OMNIROUTE_BASE_URL`                    | `http://localhost:20128`              | Babban URL da sabar MCP ke amfani da shi lokacin kiran API na cikin gida na AgentProxy                                                            |
-| `OMNIROUTE_API_KEY`                     | (babu komai)                          | Mabudin API da ake turawa a matsayin `Authorization: Bearer` zuwa kiraye-kirayen API na cikin gida                                               |
-| `OMNIROUTE_MCP_ENFORCE_SCOPES`          | `false` (`"true"` kaɗai ke kunna shi) | Idan an kunna, rashin scopes zai hana kiran kayan aiki kuma ya rubuta `scope_denied:<reason>` a kundin binciken tsaro                            |
-| `OMNIROUTE_MCP_SCOPES`                  | (babu komai)                          | Jerin scopes da aka raba da waƙafi waɗanda ake ɗauka a matsayin “akwai” ta tsohuwa (ana amfani da shi idan mai kira bai bayar da nasa scopes ba) |
-| `OMNIROUTE_MCP_COMPRESS_DESCRIPTIONS`   | (ba a saita ba = a kunne)             | Idan aka saita zuwa `0/false/off/no`, yana kashe matse bayanin MCP a lokacin rajista                                                             |
-| `OMNIROUTE_MCP_DESCRIPTION_COMPRESSION` | (ba a saita ba = a kunne)             | Wani madadin suna na wannan maɓallin da ke sama                                                                                                  |
-| `OMNIROUTE_MCP_FETCH_TIMEOUT_MS`        | `10000`                               | Iyakar lokacin sokewa don karatun gudanarwa na cikin gida (lafiya, juriya, haɗe-haɗe, ƙayyadadden amfani, amfani)                                |
-| `OMNIROUTE_MCP_UPSTREAM_TIMEOUT_MS`     | `60000`                               | Iyakar lokacin sokewa don matakan da ke jiran mai samarwa (`route_request`, `web_search`, `web_fetch`)                                           |
+| `AGENTPROXY_BASE_URL`                    | `http://localhost:20128`              | Babban URL da sabar MCP ke amfani da shi lokacin kiran API na cikin gida na AgentProxy                                                            |
+| `AGENTPROXY_API_KEY`                     | (babu komai)                          | Mabudin API da ake turawa a matsayin `Authorization: Bearer` zuwa kiraye-kirayen API na cikin gida                                               |
+| `AGENTPROXY_MCP_ENFORCE_SCOPES`          | `false` (`"true"` kaɗai ke kunna shi) | Idan an kunna, rashin scopes zai hana kiran kayan aiki kuma ya rubuta `scope_denied:<reason>` a kundin binciken tsaro                            |
+| `AGENTPROXY_MCP_SCOPES`                  | (babu komai)                          | Jerin scopes da aka raba da waƙafi waɗanda ake ɗauka a matsayin “akwai” ta tsohuwa (ana amfani da shi idan mai kira bai bayar da nasa scopes ba) |
+| `AGENTPROXY_MCP_COMPRESS_DESCRIPTIONS`   | (ba a saita ba = a kunne)             | Idan aka saita zuwa `0/false/off/no`, yana kashe matse bayanin MCP a lokacin rajista                                                             |
+| `AGENTPROXY_MCP_DESCRIPTION_COMPRESSION` | (ba a saita ba = a kunne)             | Wani madadin suna na wannan maɓallin da ke sama                                                                                                  |
+| `AGENTPROXY_MCP_FETCH_TIMEOUT_MS`        | `10000`                               | Iyakar lokacin sokewa don karatun gudanarwa na cikin gida (lafiya, juriya, haɗe-haɗe, ƙayyadadden amfani, amfani)                                |
+| `AGENTPROXY_MCP_UPSTREAM_TIMEOUT_MS`     | `60000`                               | Iyakar lokacin sokewa don matakan da ke jiran mai samarwa (`route_request`, `web_search`, `web_fetch`)                                           |
 | `MCP_TOOL_DENY`                         | (ba a saita ba = babu tacewa)         | Sunayen kayan aiki da aka raba da waƙafi waɗanda za a cire daga `tools/list` (rage yawan nau'ikan kayan aiki — duba ƙasa)                        |
 | `MCP_TOOL_ALLOW`                        | (ba a saita ba = babu tacewa)         | Sunayen kayan aiki da aka raba da waƙafi waɗanda za a riƙe su kaɗai (yanayin jerin-izini — duba ƙasa)                                            |
-| `DATA_DIR`                              | `~/.omniroute`                        | Ana rubuta fayil ɗin heartbeat zuwa `${DATA_DIR}/runtime/mcp-heartbeat.json`                                                                     |
+| `DATA_DIR`                              | `~/.agentproxy`                        | Ana rubuta fayil ɗin heartbeat zuwa `${DATA_DIR}/runtime/mcp-heartbeat.json`                                                                     |
 
 ---
 
@@ -448,8 +448,8 @@ Rijistocin kayan aiki, prompt, da albarkatun MCP za su iya matse bayanai a lokac
 
 - Ana gudanar da matsewa a kan rubutun bayanin ta amfani da ƙa'idojin Caveman (`getRulesForContext("all", "full")`) tare da cire tubalan da za a kiyaye (sassan lamba, tubalan da aka kewaye da shinge, da sauransu) domin kada a sauya tsarin abun ciki.
 - Ana kunna ko kashewa ga kowane turawa ta hanyar ƙimar `compression.mcpDescriptionCompressionEnabled` a cikin teburin saituna na `key_value` (tsoho: a kunne) — ana nuna shi a UI a matsayin **Analytics → Matse bayanin MCP**.
-- Ana kunna ko kashewa ga dukkan tsarin aiki ta hanyar `OMNIROUTE_MCP_COMPRESS_DESCRIPTIONS=false` ko `OMNIROUTE_MCP_DESCRIPTION_COMPRESSION=false`.
-- Ana nuna ƙididdiga na ainihin lokaci ta hanyar `omniroute_compression_status` a ƙarƙashin `analytics.mcpDescriptionCompression`, kuma ana yi musu alamar `source: "mcp_metadata_estimate"` domin bambanta su da ainihin bayanan amfani daga masu samarwa.
+- Ana kunna ko kashewa ga dukkan tsarin aiki ta hanyar `AGENTPROXY_MCP_COMPRESS_DESCRIPTIONS=false` ko `AGENTPROXY_MCP_DESCRIPTION_COMPRESSION=false`.
+- Ana nuna ƙididdiga na ainihin lokaci ta hanyar `agentproxy_compression_status` a ƙarƙashin `analytics.mcpDescriptionCompression`, kuma ana yi musu alamar `source: "mcp_metadata_estimate"` domin bambanta su da ainihin bayanan amfani daga masu samarwa.
 
 ---
 
@@ -468,10 +468,10 @@ Matse bayanai yana rage girman metadata na kowane kayan aiki; **rage yawan kayan
 
 ```bash
 # Cire kayan aiki biyu daga kundin
-MCP_TOOL_DENY="omniroute_get_health,omniroute_list_combos" omniroute --mcp
+MCP_TOOL_DENY="agentproxy_get_health,agentproxy_list_combos" agentproxy --mcp
 
 # Sanar da kayan aikin routing + quota kaɗai (yanayin jerin izini)
-MCP_TOOL_ALLOW="omniroute_route_request,omniroute_check_quota" omniroute --mcp
+MCP_TOOL_ALLOW="agentproxy_route_request,agentproxy_check_quota" agentproxy --mcp
 ```
 
 **Yadda ake cire kayan aikin da aka tace:** rajista yana yin nasara koyaushe; daga nan sai a yi `.disable()` ga kayan aikin da profile ya ƙi a kan MCP SDK handle, don haka ba zai taɓa bayyana a cikin `tools/list` ba amma haɗin yana nan daram (sauƙin kunna/kashewa, babu sake rajista). Mai nazarin profile shi ne `readMcpToolProfileFromEnv(process.env)`, wanda ke dawo da `null` (babu tacewa) idan dukkan vars ɗin biyu babu komai.

@@ -1,6 +1,6 @@
 /**
  * Model lockout scope by status: a 5xx (transport failure, upstream server error,
- * or OmniRoute's own synthesized 502 from quality validation) locks the exact
+ * or AgentProxy's own synthesized 502 from quality validation) locks the exact
  * provider/connection/model tuple, never the quota family — a single bad stream
  * on one codex model must not remove every `gpt-5*` model of the connection from
  * routing. Quota / entitlement statuses (429/403/402) keep the family scope.

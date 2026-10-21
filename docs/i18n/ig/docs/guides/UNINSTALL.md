@@ -20,7 +20,7 @@ AgentProxy nwere skript abụọ arụnyere n'ime ya maka iwepụ ngwa nke ọma
 npm run uninstall
 ```
 
-Nke a na-ewepụ ngwa AgentProxy mana ọ **na-echekwa** nchekwa data gị, nhazi, igodo API, na ntọala ndị na-eweta ọrụ dị na `~/.omniroute/`. Jiri nke a ma ọ bụrụ na ị na-eme atụmatụ ịwụnye ya ọzọ ma chọọ idobe ntọala gị.
+Nke a na-ewepụ ngwa AgentProxy mana ọ **na-echekwa** nchekwa data gị, nhazi, igodo API, na ntọala ndị na-eweta ọrụ dị na `~/.agentproxy/`. Jiri nke a ma ọ bụrụ na ị na-eme atụmatụ ịwụnye ya ọzọ ma chọọ idobe ntọala gị.
 
 ### Mwepụ Zuru Ezu
 
@@ -34,7 +34,7 @@ Nke a na-ewepụ ngwa ahụ **ma hichapụ data niile kpamkpam**:
 - Nhazi ndị na-eweta ọrụ na igodo API
 - Faịlụ ndabere
 - Faịlụ ndekọ
-- Faịlụ niile dị na ndekọ `~/.omniroute/`
+- Faịlụ niile dị na ndekọ `~/.agentproxy/`
 
 > ⚠️ **Ịdọ aka ná ntị:** A pụghị ịtụgharị `npm run uninstall:full` azụ. A ga-ehichapụ njikọ ndị na-eweta ọrụ gị, ngwakọta, igodo API, na akụkọ ojiji gị kpamkpam.
 
@@ -46,31 +46,31 @@ Nke a na-ewepụ ngwa ahụ **ma hichapụ data niile kpamkpam**:
 
 ```bash
 # Wepụ package global ahụ
-npm uninstall -g omniroute
+npm uninstall -g agentproxy
 
 # (Nhọrọ) Wepụ ndekọ data
-rm -rf ~/.omniroute
+rm -rf ~/.agentproxy
 ```
 
 ### Nwụnye pnpm Global
 
 ```bash
-pnpm uninstall -g omniroute
-rm -rf ~/.omniroute
+pnpm uninstall -g agentproxy
+rm -rf ~/.agentproxy
 ```
 
 ### Docker
 
 ```bash
 # Kwụsị ma wepụ container ahụ
-docker stop omniroute
-docker rm omniroute
+docker stop agentproxy
+docker rm agentproxy
 
 # Wepụ volume ahụ (na-ehichapụ data niile)
-docker volume rm omniroute-data
+docker volume rm agentproxy-data
 
 # (Nhọrọ) Wepụ image ahụ
-docker rmi diegosouzapw/omniroute:latest
+docker rmi diegosouzapw/agentproxy:latest
 ```
 
 ### Docker Compose
@@ -93,21 +93,21 @@ docker compose down -v
 **macOS:**
 
 - Dọrọ `AgentProxy.app` site na `/Applications` gaa na Trash
-- Wepụ data: `rm -rf ~/Library/Application Support/omniroute`
+- Wepụ data: `rm -rf ~/Library/Application Support/agentproxy`
 
 **Linux:**
 
 - Wepụ faịlụ AppImage
-- Wepụ data: `rm -rf ~/.omniroute`
+- Wepụ data: `rm -rf ~/.agentproxy`
 
 ### Nwụnye Site na Source (git clone)
 
 ```bash
 # Wepụ ndekọ e mere clone
-rm -rf /path/to/omniroute
+rm -rf /path/to/agentproxy
 
 # (Nhọrọ) Wepụ ndekọ data
-rm -rf ~/.omniroute
+rm -rf ~/.agentproxy
 ```
 
 ---
@@ -118,11 +118,11 @@ Na ndabara, AgentProxy na-echekwa data n'ebe ndị a:
 
 | Platform           | Ụzọ Ndabara                      | Mgbanwe                   |
 | ------------------ | -------------------------------- | ------------------------- |
-| Linux              | `~/.omniroute/`                  | env var `DATA_DIR`        |
-| macOS              | `~/.omniroute/`                  | env var `DATA_DIR`        |
-| Windows            | `%APPDATA%/omniroute/`           | env var `DATA_DIR`        |
+| Linux              | `~/.agentproxy/`                  | env var `DATA_DIR`        |
+| macOS              | `~/.agentproxy/`                  | env var `DATA_DIR`        |
+| Windows            | `%APPDATA%/agentproxy/`           | env var `DATA_DIR`        |
 | Docker             | `/app/data/` (volume e jikọtara) | env var `DATA_DIR`        |
-| Nke kwekọrọ na XDG | `$XDG_CONFIG_HOME/omniroute/`    | env var `XDG_CONFIG_HOME` |
+| Nke kwekọrọ na XDG | `$XDG_CONFIG_HOME/agentproxy/`    | env var `XDG_CONFIG_HOME` |
 
 ### Faịlụ ndị dị na ndekọ data
 
@@ -143,17 +143,17 @@ Mgbe i wepụchara ya, nyochaa na ọ dịghị faịlụ ọ bụla fọdụr�
 
 ```bash
 # Lelee ma ngwugwu npm zuru ụwa ọnụ ọ̀ dị
-npm list -g omniroute 2>/dev/null
+npm list -g agentproxy 2>/dev/null
 
 # Lelee ma ndekọ data ọ̀ dị
-ls -la ~/.omniroute/ 2>/dev/null
+ls -la ~/.agentproxy/ 2>/dev/null
 
 # Lelee ma e nwere usoro ndị na-arụ ọrụ
-pgrep -f omniroute
+pgrep -f agentproxy
 ```
 
 Ọ bụrụ na usoro ọ bụla ka na-arụ ọrụ, kwụsị ya:
 
 ```bash
-pkill -f omniroute
+pkill -f agentproxy
 ```

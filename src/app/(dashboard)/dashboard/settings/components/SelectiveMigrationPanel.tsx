@@ -237,7 +237,7 @@ export default function SelectiveMigrationPanel() {
         <div>
           <p className="text-sm font-medium">Selective migration</p>
           <p className="mt-1 text-xs text-text-muted">
-            Preview 9Router or OmniRoute data, choose individual portable items, then migrate
+            Preview 9Router or AgentProxy data, choose individual portable items, then migrate
             without replacing the current AgentProxy database.
           </p>
         </div>

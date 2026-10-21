@@ -38,7 +38,7 @@ Ciklus v3.7.x → v3.8.0 uveo je automatsko rutiranje bez konfiguracije (zero-co
 - 🚦 **Per-provider 429 klasifikacija** + `useUpstream429BreakerHints` prekidač — preciznije ponašanje breaker-a koristeći upstream hintove za ograničenje brzine (rate-limit)
 - 🩺 **Model cooldowns dashboard** — pratite zaključavanja po modelu i ručno ih ponovo omogućite putem UI-ja
 - 🔒 **MITM dinamička detekcija Linux certifikata** — radi na Debian/Ubuntu, Fedora/RHEL, Arch i drugim distribucijama
-- 💻 **CLI enhancement suite** — preko 20 komandi uključujući `omniroute providers`, `omniroute combos`, `omniroute doctor`, `omniroute setup`
+- 💻 **CLI enhancement suite** — preko 20 komandi uključujući `agentproxy providers`, `agentproxy combos`, `agentproxy doctor`, `agentproxy setup`
 - 🔍 **Qdrant embedding model discovery** — automatska provjera modela vektorske pohrane
 - 🔑 **API Keys / Bearer keys sa `manage` scope-om** — izvršavanje administratorskih operacija programski putem API-ja
 - 🏥 **Combo target health analytics** + **struktuirani combo builder** — zdravlje po cilju i UI builder za sastavljanje `(provider, model, connection)` koraka
@@ -225,7 +225,7 @@ Skripte za čisto uklanjanje za sve metode instalacije:
 
 | Komanda                  | Akcija                                                                                  |
 | ------------------------ | --------------------------------------------------------------------------------------- |
-| `npm run uninstall`      | Uklanja sistemsku aplikaciju ali **zadržava vašu DB i konfiguracije** u `~/.omniroute`. |
+| `npm run uninstall`      | Uklanja sistemsku aplikaciju ali **zadržava vašu DB i konfiguracije** u `~/.agentproxy`. |
 | `npm run uninstall:full` | Uklanja aplikaciju I trajno **briše sve konfiguracije, ključeve i baze podataka**.      |
 
 ---

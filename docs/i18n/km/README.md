@@ -37,14 +37,14 @@
 
 <h3>
 
-⭐ ដាក់ផ្កាយឱ្យ repo ប្រសិនបើ OMNIROUTE បានជួយអ្នកសន្សំប្រាក់ និងធ្វើឱ្យការងាររបស់អ្នកកាន់តែងាយស្រួល។
+⭐ ដាក់ផ្កាយឱ្យ repo ប្រសិនបើ AGENTPROXY បានជួយអ្នកសន្សំប្រាក់ និងធ្វើឱ្យការងាររបស់អ្នកកាន់តែងាយស្រួល។
 
 </h3>
 
 [![ផ្កាយ](https://img.shields.io/github/stars/diegosouzapw/AgentProxy?style=social)](https://github.com/diegosouzapw/AgentProxy)
 <a href="https://trendshift.io/repositories/23589" target="_blank"><img src="https://trendshift.io/api/badge/repositories/23589" alt="diegosouzapw%2FAgentProxy | Trendshift" style="width: 250px; height: 55px;" width="250" height="55"/></a>
-[![ចំណាត់ថ្នាក់ប្រវត្តិផ្កាយ](https://api.star-history.com/badge?repo=diegosouzapw/AgentProxy&theme=dark)](https://www.star-history.com/diegosouzapw/omniroute)
-[![olud.ai](https://olud.ai/badge.php?tool=diegosouzapw-omniroute)](https://olud.ai/project/diegosouzapw-omniroute.html)
+[![ចំណាត់ថ្នាក់ប្រវត្តិផ្កាយ](https://api.star-history.com/badge?repo=diegosouzapw/AgentProxy&theme=dark)](https://www.star-history.com/#khanhkit/AgentProxy&Date)
+[![olud.ai](https://github.com/khanhkit/AgentProxy)](https://github.com/khanhkit/AgentProxy)
 
 ### 💬 ចូលរួមជាមួយសហគមន៍
 
@@ -54,12 +54,12 @@
 [![តាមដាន @diegosouzapw នៅលើ GitHub](https://img.shields.io/github/followers/diegosouzapw?style=for-the-badge&logo=github&logoColor=white&label=Follow%20on%20GitHub&color=181717)](https://github.com/diegosouzapw)
 
 [![Discord](https://img.shields.io/badge/Discord-5865F2?style=for-the-badge&logo=discord&logoColor=white)](https://discord.gg/U47eFqAXCn)
-[![Telegram](https://img.shields.io/badge/Telegram-26A5E4?style=for-the-badge&logo=telegram&logoColor=white)](https://t.me/omnirouteOficial)
+[![Telegram](https://img.shields.io/badge/Telegram-26A5E4?style=for-the-badge&logo=telegram&logoColor=white)](https://github.com/khanhkit/AgentProxy/discussions)
 [![WhatsApp សកល](https://img.shields.io/badge/WhatsApp_Global-25D366?style=for-the-badge&logo=whatsapp&logoColor=white)](https://chat.whatsapp.com/FvuCbrpZmQ6I85n2vW5QIC?s=cl&p=a&mlu=4)
 [![WhatsApp ប្រេស៊ីល](https://img.shields.io/badge/WhatsApp_Brasil-25D366?style=for-the-badge&logo=whatsapp&logoColor=white)](https://chat.whatsapp.com/KWgatljAjmbELQory59Oti?s=cl&p=a&mlu=4)
-[![គេហទំព័រ](https://img.shields.io/badge/Website-omniroute.online-blue?logo=google-chrome&logoColor=white)](https://omniroute.online)
+[![គេហទំព័រ](https://img.shields.io/badge/Website-agentproxy.online-blue?logo=google-chrome&logoColor=white)](https://agentproxy.online)
 
-**សំណួរ គន្លឹះអំពីអ្នកផ្តល់សេវា ផែនការអភិវឌ្ឍន៍ និងជំនួយ → [Discord](https://discord.gg/U47eFqAXCn) · [Telegram](https://t.me/omnirouteOficial) · WhatsApp [🌍 សកល](https://chat.whatsapp.com/FvuCbrpZmQ6I85n2vW5QIC?s=cl&p=a&mlu=4) / [🇧🇷 ប្រេស៊ីល](https://chat.whatsapp.com/KWgatljAjmbELQory59Oti?s=cl&p=a&mlu=4) / [វិបផតថល](https://portal.sthub.com.br/communities/groups/st-hub/channels/Omniroute-World-8kRjmK)**
+**សំណួរ គន្លឹះអំពីអ្នកផ្តល់សេវា ផែនការអភិវឌ្ឍន៍ និងជំនួយ → [Discord](https://discord.gg/U47eFqAXCn) · [Telegram](https://github.com/khanhkit/AgentProxy/discussions) · WhatsApp [🌍 សកល](https://chat.whatsapp.com/FvuCbrpZmQ6I85n2vW5QIC?s=cl&p=a&mlu=4) / [🇧🇷 ប្រេស៊ីល](https://chat.whatsapp.com/KWgatljAjmbELQory59Oti?s=cl&p=a&mlu=4) / [វិបផតថល](https://github.com/khanhkit/AgentProxy/discussions)**
 
 <br/>
 
@@ -84,12 +84,12 @@
 
 ## 🧩 អាចប្រើបាន
 
-[![កំណែ npm](https://img.shields.io/npm/v/omniroute?color=cb3837&logo=npm)](https://www.npmjs.com/package/omniroute)
-![NPM ប្រចាំខែ](https://img.shields.io/npm/dm/omniroute?label=npm/month&color=cb3837&logo=npm)
-[![Docker Hub](https://img.shields.io/docker/v/diegosouzapw/omniroute?label=Docker%20Hub&logo=docker&color=2496ED)](https://hub.docker.com/r/diegosouzapw/omniroute)
+[![កំណែ npm](https://img.shields.io/npm/v/agentproxy?color=cb3837&logo=npm)](https://www.npmjs.com/package/agentproxy)
+![NPM ប្រចាំខែ](https://img.shields.io/npm/dm/agentproxy?label=npm%2Fmonth&color=cb3837&logo=npm)
+[![Docker Hub](https://img.shields.io/docker/v/khanhkit/agentproxy?label=Docker+Hub&logo=docker&color=2496ED)](https://hub.docker.com/r/khanhkit/agentproxy)
 [![អាជ្ញាបណ្ណ៖ MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=flat-square)](LICENSE)
-![ចំនួនទាញយក Docker](https://img.shields.io/docker/pulls/diegosouzapw/omniroute?label=docker%20pulls&logo=docker&color=2496ED)
-![ចំនួនទាញយក Electron](https://img.shields.io/github/downloads/diegosouzapw/omniroute/total?style=flat&label=electron%20downloads&logo=electron&color=47848F)
+![ចំនួនទាញយក Docker](https://img.shields.io/docker/pulls/khanhkit/agentproxy?label=docker+pulls&logo=docker&color=2496ED)
+![ចំនួនទាញយក Electron](https://img.shields.io/github/downloads/khanhkit/agentproxy/total?style=flat&label=electron+downloads&logo=electron&color=47848F)
 
 <table>
   <tr>
@@ -101,8 +101,8 @@
   <tr>
     <td align="right"><b>💡 ស្វែងយល់</b></td>
     <td align="center"><a href="#-the-promise">💥 ការសន្យា</a></td>
-    <td align="center"><a href="#-why-omniroute">🤔 ហេតុអ្វីជ្រើសរើស AgentProxy</a></td>
-    <td align="center"><a href="#-what-sets-omniroute-apart">🏆 អ្វីដែលធ្វើឱ្យវាខុសប្លែក</a></td>
+    <td align="center"><a href="#-why-agentproxy">🤔 ហេតុអ្វីជ្រើសរើស AgentProxy</a></td>
+    <td align="center"><a href="#-what-sets-agentproxy-apart">🏆 អ្វីដែលធ្វើឱ្យវាខុសប្លែក</a></td>
   </tr>
   <tr>
     <td align="right"><b>⚙️ មុខងារ</b></td>
@@ -113,18 +113,18 @@
   <tr>
     <td align="right"></td>
     <td align="center"><a href="#%EF%B8%8F-save-1595-tokens--automatically">🗜️ ការបង្ហាប់</a></td>
-    <td align="center"><a href="#%EF%B8%8F-where-omniroute-runs--anywhere">🖥️ ទីតាំងដែលវាដំណើរការ</a></td>
+    <td align="center"><a href="#%EF%B8%8F-where-agentproxy-runs--anywhere">🖥️ ទីតាំងដែលវាដំណើរការ</a></td>
     <td align="center"><a href="#-private--local-first">🔒 ឯកជន</a></td>
   </tr>
   <tr>
     <td align="right"><b>👀 មើលវា</b></td>
-    <td align="center"><a href="#-omniroute-in-action">🎬 កំពុងដំណើរការជាក់ស្តែង</a></td>
+    <td align="center"><a href="#-agentproxy-in-action">🎬 កំពុងដំណើរការជាក់ស្តែង</a></td>
     <td align="center"><a href="#-whats-new">✨ អ្វីដែលថ្មី</a></td>
     <td align="center"><a href="#-compatible-clis--coding-agents">🤖 CLI ដែលត្រូវគ្នា</a></td>
   </tr>
   <tr>
     <td align="right"><b>💚 គាំទ្រ</b></td>
-    <td align="center"><a href="#-support-omniroute">💚 គាំទ្រ / បរិច្ចាគ</a></td>
+    <td align="center"><a href="#-support-agentproxy">💚 គាំទ្រ / បរិច្ចាគ</a></td>
     <td align="center"><a href="#-community--help">💬 សហគមន៍</a></td>
     <td align="center"><a href="#-sponsors">💖 អ្នកឧបត្ថម្ភ</a></td>
   </tr>
@@ -210,7 +210,7 @@
 
 </div>
 
-<img src="./docs/diagrams/works-zero-config.svg" width="100%" alt="ដំណើរការភ្លាមៗនៅពេលអ្នកដំឡើងវា — មិនត្រូវការការកំណត់រចនាសម្ព័ន្ធ។ បីជំហាន៖ 1. ដំឡើង — npm i -g omniroute ហើយម៉ាស៊ីនមេនឹងចាប់ផ្ដើមនៅលើ localhost:20128។ 2. តម្រង់ឧបករណ៍របស់អ្នកទៅកាន់ http://localhost:20128/v1 — ឧបករណ៍ណាមួយដែលឆបគ្នាជាមួយ OpenAI (Claude Code, Cursor, Cline)។ 3. វាឆ្លើយតប — ហៅម៉ូដែល auto ដើម្បីទទួលបានចម្លើយភ្លាមៗ ដោយមិនត្រូវការ API key មិនត្រូវចុះឈ្មោះ និងមិនត្រូវការការកំណត់រចនាសម្ព័ន្ធ។ អ្នកផ្ដល់សេវាដែលមិនត្រូវការសោ OpenCode Free ត្រូវបានភ្ជាប់ជាមុនទៅក្នុងការរួមបញ្ចូល auto ដូច្នេះការដំឡើងថ្មីអាចឆ្លើយតបបានភ្លាមៗតាំងពីដំបូង។"/>
+<img src="./docs/diagrams/works-zero-config.svg" width="100%" alt="ដំណើរការភ្លាមៗនៅពេលអ្នកដំឡើងវា — មិនត្រូវការការកំណត់រចនាសម្ព័ន្ធ។ បីជំហាន៖ 1. ដំឡើង — npm i -g agentproxy ហើយម៉ាស៊ីនមេនឹងចាប់ផ្ដើមនៅលើ localhost:20128។ 2. តម្រង់ឧបករណ៍របស់អ្នកទៅកាន់ http://localhost:20128/v1 — ឧបករណ៍ណាមួយដែលឆបគ្នាជាមួយ OpenAI (Claude Code, Cursor, Cline)។ 3. វាឆ្លើយតប — ហៅម៉ូដែល auto ដើម្បីទទួលបានចម្លើយភ្លាមៗ ដោយមិនត្រូវការ API key មិនត្រូវចុះឈ្មោះ និងមិនត្រូវការការកំណត់រចនាសម្ព័ន្ធ។ អ្នកផ្ដល់សេវាដែលមិនត្រូវការសោ OpenCode Free ត្រូវបានភ្ជាប់ជាមុនទៅក្នុងការរួមបញ្ចូល auto ដូច្នេះការដំឡើងថ្មីអាចឆ្លើយតបបានភ្លាមៗតាំងពីដំបូង។"/>
 
 ```bash
 # ការដំឡើងថ្មី ដោយមិនត្រូវការព័ត៌មានសម្ងាត់ — `auto` ដំណើរការរួចជាស្រេច៖
@@ -259,7 +259,7 @@ curl http://localhost:20128/v1/chat/completions \
 </div>
 
 <p align="center">
-  <a href="https://platform.kimi.ai?track_id=track-8197581fdd7d4139a0f562e4a03c3798&aff=omniroute">
+  <a href="https://platform.kimi.ai?track_id=track-8197581fdd7d4139a0f562e4a03c3798">
     <img src="public/sponsors/kimi-k3-banner.png" width="100%" alt="Kimi K3 — បញ្ញាជួរមុខបើកចំហ · 2.8T ប៉ារ៉ាម៉ែត្រ · បរិបទ 1M-token"/>
   </a>
 </p>
@@ -269,7 +269,7 @@ curl http://localhost:20128/v1/chat/completions \
 <table>
   <tr>
     <td align="center" width="150">
-      <a href="https://platform.kimi.ai?track_id=track-8197581fdd7d4139a0f562e4a03c3798&aff=omniroute">
+      <a href="https://platform.kimi.ai?track_id=track-8197581fdd7d4139a0f562e4a03c3798">
         <picture>
           <source media="(prefers-color-scheme: dark)" srcset="public/providers/kimi-logomark-dark.svg">
           <img src="public/providers/kimi-logomark-light.svg" width="64" alt="Kimi (Moonshot AI)"/>
@@ -281,12 +281,12 @@ curl http://localhost:20128/v1/chat/completions \
     <td>
       សូមអរគុណដល់ <b>Kimi (Moonshot AI)</b> ដែលជាមិត្តភក្តិប្រភពបើកចំហស្ថាបនិករបស់យើង សម្រាប់ការគាំទ្រគម្រោងនេះ! Kimi គឺជាមន្ទីរពិសោធន៍ AI នៅពីក្រោយគ្រួសារម៉ូដែល open-weight K2 និង K3 — <b>Kimi K3</b> ផ្តល់នូវបង្អួចបរិបទ 1M-token, សមត្ថភាពមើលឃើញដើម និងសមត្ថភាពសរសេរកូដកម្រិតជួរមុខក្នុងតម្លៃមួយចំណែកតូចនៃម៉ូដែលបិទ ព្រមទាំងអាចដំណើរការបានភ្លាមៗជាមួយ Claude Code, Codex និងគ្រប់ឧបករណ៍សរសេរកូដដែល AgentProxy បម្រើ។
       <br/><br/>
-      <b>អ្វីដែលការគាំទ្ររបស់ Kimi ផ្តល់ថាមពលឱ្យ៖</b> ឥណទាន API របស់ Kimi ផ្តល់ថាមពលដល់បំពង់ដំណើរការចេញផ្សាយដែលផ្ទៀងផ្ទាត់ដោយ AI របស់ AgentProxy — ដំណាក់កាល <i>ផ្ទៀងផ្ទាត់ការបញ្ចូលបញ្ចូលគ្នាដោយប្រើ Kimi K3</i> ដែលពិនិត្យគ្រប់ pull request មុនពេលចេញផ្សាយ — រួមទាំងការអភិវឌ្ឍមុខងារប្រចាំថ្ងៃ។ ការគាំទ្រកម្រិតទីមួយសម្រាប់ Kimi ត្រូវបានផ្តល់ជូនតាមផ្លូវទាំងពីរ៖ <a href="https://platform.kimi.ai?track_id=track-8197581fdd7d4139a0f562e4a03c3798&aff=omniroute">Kimi API</a> ដោយផ្ទាល់ (<code>kimi-k3</code>) និង <a href="https://www.kimi.com/code?aff=omniroute">គម្រោងសរសេរកូដ Kimi Code</a> (OAuth និង API key)។ AgentProxy ក៏ជាគម្រោងប្រភពបើកចំហរបស់ប្រេស៊ីលដំបូងគេក្នុងកម្មវិធីគាំទ្ររបស់ Kimi ផងដែរ។ <a href="https://platform.kimi.ai?track_id=track-8197581fdd7d4139a0f562e4a03c3798&aff=omniroute"><b>ទទួលយក Kimi API key ជាមួយឥណទានបន្ថែម 15% →</b></a>
+      <b>អ្វីដែលការគាំទ្ររបស់ Kimi ផ្តល់ថាមពលឱ្យ៖</b> ឥណទាន API របស់ Kimi ផ្តល់ថាមពលដល់បំពង់ដំណើរការចេញផ្សាយដែលផ្ទៀងផ្ទាត់ដោយ AI របស់ AgentProxy — ដំណាក់កាល <i>ផ្ទៀងផ្ទាត់ការបញ្ចូលបញ្ចូលគ្នាដោយប្រើ Kimi K3</i> ដែលពិនិត្យគ្រប់ pull request មុនពេលចេញផ្សាយ — រួមទាំងការអភិវឌ្ឍមុខងារប្រចាំថ្ងៃ។ ការគាំទ្រកម្រិតទីមួយសម្រាប់ Kimi ត្រូវបានផ្តល់ជូនតាមផ្លូវទាំងពីរ៖ <a href="https://platform.kimi.ai?track_id=track-8197581fdd7d4139a0f562e4a03c3798">Kimi API</a> ដោយផ្ទាល់ (<code>kimi-k3</code>) និង <a href="https://www.kimi.com/code">គម្រោងសរសេរកូដ Kimi Code</a> (OAuth និង API key)។ AgentProxy ក៏ជាគម្រោងប្រភពបើកចំហរបស់ប្រេស៊ីលដំបូងគេក្នុងកម្មវិធីគាំទ្ររបស់ Kimi ផងដែរ។ <a href="https://platform.kimi.ai?track_id=track-8197581fdd7d4139a0f562e4a03c3798"><b>ទទួលយក Kimi API key ជាមួយឥណទានបន្ថែម 15% →</b></a>
     </td>
   </tr>
   <tr>
     <td align="center" width="150">
-      <a href="https://cheaperinference.com/?utm_source=omniroute">
+      <a href="https://cheaperinference.com">
         <img src="./public/providers/cli-generic.svg" width="64" alt="Cheaper Inference"/>
       </a>
       <br/><b>Cheaper Inference</b><br/><sub>cheaperinference.com</sub><br/><br/>
@@ -295,12 +295,12 @@ curl http://localhost:20128/v1/chat/completions \
     <td>
       សូមអរគុណដល់ <b>Cheaper Inference</b> ដែលជាមិត្តភក្តិប្រភពបើកចំហរបស់ AgentProxy សម្រាប់ការគាំទ្រគម្រោងនេះ! Cheaper Inference គឺជា gateway ដែលចាត់ថ្នាក់តាមតម្លៃ ហើយលក់បន្តម៉ូដែលជួរមុខចំនួន 42 — Claude, GPT-5.x, Gemini, Kimi K3, GLM, DeepSeek, Grok និង MiniMax — នៅពីក្រោយ endpoint តែមួយដែលឆបគ្នាជាមួយ OpenAI ដោយបញ្ជូនសំណើនីមួយៗទៅកាន់អ្នកផ្តល់សេវាដែលមានតម្លៃថោកបំផុត និងមានសិទ្ធិ ដោយមិនដែលគិតថ្លៃលើសពីតម្លៃរាយរបស់អ្នកបង្កើតម៉ូដែលឡើយ។
       <br/><br/>
-      <b>ការគាំទ្រកម្រិតទីមួយក្នុង AgentProxy៖</b> Chat Completions, endpoint ដើម <code>/v1/responses</code>, សមត្ថភាពមើលឃើញ, ការហៅឧបករណ៍ និងម៉ូដែលរូបភាពចំនួន 3 (<code>grok-imagine</code>, <code>nano-banana-pro</code>, <code>nano-banana-2</code> ដែលអាចចូលប្រើជា <code>cheaperinference/&lt;model&gt;</code>)។ <a href="https://cheaperinference.com/?utm_source=omniroute"><b>ទទួលយក API key →</b></a>
+      <b>ការគាំទ្រកម្រិតទីមួយក្នុង AgentProxy៖</b> Chat Completions, endpoint ដើម <code>/v1/responses</code>, សមត្ថភាពមើលឃើញ, ការហៅឧបករណ៍ និងម៉ូដែលរូបភាពចំនួន 3 (<code>grok-imagine</code>, <code>nano-banana-pro</code>, <code>nano-banana-2</code> ដែលអាចចូលប្រើជា <code>cheaperinference/&lt;model&gt;</code>)។ <a href="https://cheaperinference.com"><b>ទទួលយក API key →</b></a>
     </td>
   </tr>
 </table>
 
-<sub>តំណដែលមានស្លាក <code>aff=omniroute</code> គឺជាតំណដៃគូ។ តំណទាំងនេះជួយផ្តល់មូលនិធិដល់គម្រោងដោយមិនបន្ថែមការចំណាយណាមួយសម្រាប់អ្នកឡើយ។</sub>
+<sub>តំណដែលមានស្លាក <code>aff=agentproxy</code> គឺជាតំណដៃគូ។ តំណទាំងនេះជួយផ្តល់មូលនិធិដល់គម្រោងដោយមិនបន្ថែមការចំណាយណាមួយសម្រាប់អ្នកឡើយ។</sub>
 
 <br/>
 
@@ -486,7 +486,7 @@ curl http://localhost:20128/v1/chat/completions \
 
 <img src="./docs/diagrams/comparison-table.svg" width="100%" alt="អ្វីដែលធ្វើឱ្យ AgentProxy លេចធ្លោខុសពីគេ — រូបថតសង្ខេបមុខងារតាមកាលបរិច្ឆេទ ប្រៀបធៀបជាមួយ 9router, OpenRouter, CLIProxyAPI និង LiteLLM លើសមត្ថភាពចំនួន 13។ AgentProxy៖ អ្នកផ្តល់សេវា 356, កម្រិតប្រើប្រាស់ឥតគិតថ្លៃជាង 150 ដែលបានរួមបញ្ចូលស្រាប់, យុទ្ធសាស្ត្រកំណត់ផ្លូវ 19, ការបង្ហាប់ token ដោយម៉ាស៊ីន 12, ម៉ាស៊ីនមេ MCP ដែលមានឧបករណ៍ 110 ស្រាប់, ពិធីការ agent A2A, អង្គចងចាំអចិន្ត្រៃយ៍, របាំងការពារ, cloud agents, ការលាក់ស្នាមផ្តិត TLS, Desktop/Termux/PWA និងភាសាតំបន់ចំណុចប្រទាក់អ្នកប្រើ i18n ចំនួន 42។ AgentProxy មានអាជ្ញាបណ្ណ MIT និងអាចបង្ហោះដោយខ្លួនឯងបាន។ សមត្ថភាព និងចំនួនរបស់គូប្រកួតប្រជែងអាចផ្លាស់ប្តូរ សូមមើលវិធីសាស្ត្រដែលបានភ្ជាប់។"/>
 
-<sub>📊 វិធីសាស្ត្រពេញលេញ &amp; ព័ត៌មានលម្អិតតាមមុខងារនីមួយៗ ប្រៀបធៀបជាមួយ 9router, OpenRouter, CLIProxyAPI &amp; LiteLLM → [`docs/comparison/OMNIROUTE_VS_ALTERNATIVES.md`](docs/comparison/OMNIROUTE_VS_ALTERNATIVES.md)</sub>
+<sub>📊 វិធីសាស្ត្រពេញលេញ &amp; ព័ត៌មានលម្អិតតាមមុខងារនីមួយៗ ប្រៀបធៀបជាមួយ 9router, OpenRouter, CLIProxyAPI &amp; LiteLLM → [`docs/comparison/AGENTPROXY_VS_ALTERNATIVES.md`](docs/comparison/AGENTPROXY_VS_ALTERNATIVES.md)</sub>
 
 <br/>
 
@@ -513,7 +513,7 @@ AgentProxy មានអាជ្ញាបណ្ណ MIT និងត្រូវ�
 Pix copia-e-cola៖
 
 ```
-00020101021126580014br.gov.bcb.pix01365d865059-bc44-483a-962d-43ceb80126eb5204000053039865802BR5922OMNIROUTE CONTRIBUICAO6006BRASIL62070503***630475DD
+00020101021126580014br.gov.bcb.pix01365d865059-bc44-483a-962d-43ceb80126eb5204000053039865802BR5922AGENTPROXY CONTRIBUICAO6006BRASIL62070503***630475DD
 ```
 
 <br clear="right"/>
@@ -544,7 +544,7 @@ Pix copia-e-cola៖
 
 អ្នកគាំទ្រអាចទទួលបានកាតាឡុកបច្ចុប្បន្នផ្ទាល់ និងឱកាសបន្ថែមពីអ្នកផ្តល់សេវា។ កម្រិតអតិបរមាដាច់ដោយឡែក និងអាចផ្លាស់ប្តូរបានរបស់វាគឺ **ប្រហែល 3B tokens/ខែ យ៉ាងច្រើនបំផុត** ដោយអាស្រ័យលើភាពអាចប្រើបានរបស់អ្នកផ្តល់សេវា។ កម្រិតអតិបរមានោះមិនមែនជាការធានាទេ៖ អ្នកផ្តល់សេវាអាចផ្លាស់ប្តូរកូតា លក្ខខណ្ឌសិទ្ធិ ម៉ូដែល ឬតំបន់បានគ្រប់ពេល។
 
-Radar ត្រូវការការជ្រើសរើសចូលប្រើ និងប្រើតែ GET ប៉ុណ្ណោះ។ កម្មវិធី client របស់ AgentProxy មិនផ្ទុកឡើងនូវ prompt ចរាចរណ៍ ការកំណត់រចនាសម្ព័ន្ធអ្នកផ្តល់សេវា ទិន្នន័យ telemetry អំពីការប្រើប្រាស់ ឬស្ថានភាពបិទការប្រកាសនៅក្នុងម៉ាស៊ីនមូលដ្ឋានឡើយ។ ស្វែងយល់អំពីលក្ខខណ្ឌសិទ្ធិ និងកាតាឡុកបច្ចុប្បន្ននៅ **[radar.omniroute.online/planos](https://radar.omniroute.online/planos)**។
+Radar ត្រូវការការជ្រើសរើសចូលប្រើ និងប្រើតែ GET ប៉ុណ្ណោះ។ កម្មវិធី client របស់ AgentProxy មិនផ្ទុកឡើងនូវ prompt ចរាចរណ៍ ការកំណត់រចនាសម្ព័ន្ធអ្នកផ្តល់សេវា ទិន្នន័យ telemetry អំពីការប្រើប្រាស់ ឬស្ថានភាពបិទការប្រកាសនៅក្នុងម៉ាស៊ីនមូលដ្ឋានឡើយ។ ស្វែងយល់អំពីលក្ខខណ្ឌសិទ្ធិ និងកាតាឡុកបច្ចុប្បន្ននៅ **[radar.agentproxy.online/planos](https://agentproxy.online)**។
 
 <br/>
 
@@ -562,13 +562,13 @@ Radar ត្រូវការការជ្រើសរើសចូលប្�
 - **🗜️ ការពង្រឹង compression** — inflation guard ដែលបើកតាមលំនាំដើម, Caveman packs សម្រាប់ DE / FR / JA + Chinese (wényán), និង RTK filters សម្រាប់ Gradle & .NET។ → [Compression](docs/compression/COMPRESSION_ENGINES.md)
 - **💸 តម្លៃថេរដែលបង្ហាញត្រឹមត្រូវ** — provider ប្រភេទ subscription / coding-plan បង្ហាញថ្លៃ **$0** ក្នុងការវិភាគថ្លៃចំណាយ ខណៈ budget, quota និង routing នៅតែបន្តប៉ាន់ស្មាន។ → [ឯកសារយោង API](docs/reference/API_REFERENCE.md)
 - **⚖️ ការកំណត់ផ្លូវតាមចំណែក Quota** — បែងចែក quota របស់ account រួមដោយយុត្តិធម៌រវាង keys ដែលបានដាក់ជាក្រុម និងរក្សាការប្រើប្រាស់ឱ្យមានប្រសិទ្ធភាព ដោយផ្តល់ចំណែកទំនេរឱ្យខ្ចីទៅកន្លែងផ្សេង។ → [មគ្គុទ្ទេសក៍ភាពធន់](docs/architecture/RESILIENCE_GUIDE.md)
-- **🤖 ការដំឡើង CLI/agent ដោយពាក្យបញ្ជាតែមួយ** — ពាក្យបញ្ជា `setup-*` ដែលបានចុះបញ្ជីចំនួន 13; `omniroute run` ដំណើរការ CLI ចំនួន 7 (Claude Code, Codex, Aider, Goose, OpenCode, Qwen Code, Gemini CLI); `omniroute configure` គាំទ្រ target ចំនួន 10 ដោយមានឧបករណ៍ជ្រើស provider+model បែបអន្តរកម្ម និង favorites តាម context នីមួយៗ។ → [ការរួមបញ្ចូល CLI](docs/guides/CLI-INTEGRATIONS.md)
+- **🤖 ការដំឡើង CLI/agent ដោយពាក្យបញ្ជាតែមួយ** — ពាក្យបញ្ជា `setup-*` ដែលបានចុះបញ្ជីចំនួន 13; `agentproxy run` ដំណើរការ CLI ចំនួន 7 (Claude Code, Codex, Aider, Goose, OpenCode, Qwen Code, Gemini CLI); `agentproxy configure` គាំទ្រ target ចំនួន 10 ដោយមានឧបករណ៍ជ្រើស provider+model បែបអន្តរកម្ម និង favorites តាម context នីមួយៗ។ → [ការរួមបញ្ចូល CLI](docs/guides/CLI-INTEGRATIONS.md)
 - **🛰️ មុខងារពីចម្ងាយ** — គ្រប់គ្រង AgentProxy ពីចម្ងាយដោយប្រើ token ដែលកំណត់ scope (`connect` / `contexts` / `tokens`) + OAuth helper `antigravity` សម្រាប់ការដំឡើងលើ VPS។ → [មុខងារពីចម្ងាយ](docs/guides/REMOTE-MODE.md)
 - **🧭 ការកំណត់ផ្លូវស្វ័យប្រវត្តិដែលឆ្លាតវៃជាងមុន** — combos `auto/<category>:<tier>`, **Fusion** (model panel + judge), ការកំណត់ផ្លូវដែលយល់ដឹងអំពី task និងការកំណត់ជំនួស model / mode / USD-budget តាមសំណើនីមួយៗ។ → [Auto-Combo](docs/routing/AUTO-COMBO.md)
 - **🗜️ Compression ដែលអាចដោតបន្ថែមបាន** — engine ដែលអាចផ្សំគ្នាបានចំនួន 12 + Compression Studios៖ LLMLingua-2, Ultra ពីរថ្នាក់, omniglyph, fidelity gate តាមជំហាននីមួយៗ, GCF v3.2 និង editor ដែលអាចអូសដើម្បីរៀបលំដាប់ឡើងវិញ។ → [Compression](docs/compression/COMPRESSION_ENGINES.md)
 - **🕵️ ការឌិគ្រីប MITM ដោយតម្លាភាព (TPROXY)** — ចាប់យក CLI ដែលមិនអើពើនឹង proxy env vars ដោយមាន CA តាម SNI នីមួយៗ + trust-store installer។ → [MITM/TPROXY](docs/security/MITM-TPROXY-DECRYPT.md)
 - **💸 ទិន្នន័យ telemetry អំពីថ្លៃចំណាយនៅគ្រប់ទីកន្លែង** — headers ថ្លៃចំណាយ/ការប្រើប្រាស់ `X-AgentProxy-*` នៅលើ endpoint នីមួយៗ, header សន្សំសំចៃពី cache-HIT និង quota ចំណាយជា USD តាម key នីមួយៗ។ → [ឯកសារយោង API](docs/reference/API_REFERENCE.md)
-- **🧠 Memory ដែលអ្នកគ្រប់គ្រងបាន** — បិទតាមលំនាំដើម, int8 vector quantization + typed decay ដែលត្រូវជ្រើសបើក និង `x-omniroute-no-memory` តាមសំណើនីមួយៗ។ → [Memory](docs/frameworks/MEMORY.md)
+- **🧠 Memory ដែលអ្នកគ្រប់គ្រងបាន** — បិទតាមលំនាំដើម, int8 vector quantization + typed decay ដែលត្រូវជ្រើសបើក និង `x-agentproxy-no-memory` តាមសំណើនីមួយៗ។ → [Memory](docs/frameworks/MEMORY.md)
 - **🛡️ សុវត្ថិភាព** — prompt-injection guard នៅលើគ្រប់ LLM route (red-team suite), credential-masking guardrail ដែលត្រូវជ្រើសបើក (លាក់ API keys/secrets ដែលលេចធ្លាយក្នុងទិសដៅទាំងពីរ), ការស្វែងរកលើបណ្ដាញ DuckDuckGo ឥតគិតថ្លៃជាជម្រើសចុងក្រោយ និង OIDC login gate ជាជម្រើសសម្រាប់ dashboard (ការចូលដោយ password នៅតែអាចប្រើបានជានិច្ច)។ → [Guardrails](docs/security/GUARDRAILS.md)
 - **🖼️ Endpoints ថ្មី** — `/v1/ocr` (Mistral OCR) និង `/v1/audio/translations` (បែប Whisper) បំពេញសមត្ថភាព media ឱ្យកាន់តែគ្រប់ជ្រុងជ្រោយ។ → [ឯកសារយោង API](docs/reference/API_REFERENCE.md)
 - **🎨 ការបង្កើតរូបភាព / វីដេអូ / សំឡេង** — API តែមួយសម្រាប់ media៖ xAI Grok Imagine & Novita AI video, ComfyUI, Magnific, Adobe Firefly, Segmind និង provider សំឡេងដូចជា ElevenLabs។ → [ឯកសារយោង API](docs/reference/API_REFERENCE.md)
@@ -627,7 +627,7 @@ Radar ត្រូវការការជ្រើសរើសចូលប្�
 <b>＋ ក៏ដំណើរការជាមួយ</b> · Kiro · Command Code · Antigravity · Windsurf · AMP · <b>ឧបករណ៍ណាមួយដែលឆបគ្នាជាមួយ OpenAI</b>
 </div>
 
-<sub>📖 ការដំឡើងតាមឧបករណ៍សម្រាប់ឧបករណ៍ទាំង 36 (CLI Code ចំនួន 26 + CLI Agents ចំនួន 10) → [`docs/reference/CLI-TOOLS.md`](docs/reference/CLI-TOOLS.md) · 🧩 កម្មវិធីជំនួយ OpenCode → [`@omniroute/opencode-provider`](https://www.npmjs.com/package/@omniroute/opencode-provider)</sub>
+<sub>📖 ការដំឡើងតាមឧបករណ៍សម្រាប់ឧបករណ៍ទាំង 36 (CLI Code ចំនួន 26 + CLI Agents ចំនួន 10) → [`docs/reference/CLI-TOOLS.md`](docs/reference/CLI-TOOLS.md) · 🧩 កម្មវិធីជំនួយ OpenCode → [`@agentproxy/opencode-provider`](https://www.npmjs.com/package/@agentproxy/opencode-provider)</sub>
 
 </div>
 
@@ -637,19 +637,19 @@ Radar ត្រូវការការជ្រើសរើសចូលប្�
 ព័ត៌មានសម្ងាត់ត្រូវបានបញ្ចូលដាច់ដោយឡែកសម្រាប់ដំណើរការនីមួយៗ ហើយ Qwen/Gemini ទទួលបានថត home ដាច់ដោយឡែកដែលប្រើបណ្ដោះអាសន្ន៖
 
 ```bash
-omniroute run claude   --model openai/gpt-5.4          # Claude Code
-omniroute run codex    --model glm/glm-5.2             # OpenAI Codex CLI
-omniroute run aider    --model glm/glm-5.2 -- --message "reply OK"
-omniroute run goose    --model glm/glm-5.2
-omniroute run opencode --model glm/glm-5.2 -- run "reply OK"
-omniroute run qwen     --model glm/glm-5.2 -- -p "reply OK"
-omniroute run gemini   --model glm/glm-5.2 -- --skip-trust -p "reply OK"
+agentproxy run claude   --model openai/gpt-5.4          # Claude Code
+agentproxy run codex    --model glm/glm-5.2             # OpenAI Codex CLI
+agentproxy run aider    --model glm/glm-5.2 -- --message "reply OK"
+agentproxy run goose    --model glm/glm-5.2
+agentproxy run opencode --model glm/glm-5.2 -- run "reply OK"
+agentproxy run qwen     --model glm/glm-5.2 -- -p "reply OK"
+agentproxy run gemini   --model glm/glm-5.2 -- --skip-trust -p "reply OK"
 
 # ឬជ្រើសរើស provider+model តាមរបៀបអន្តរកម្ម ហើយសរសេរការកំណត់រចនាសម្ព័ន្ធផ្ទាល់របស់ឧបករណ៍៖
-omniroute configure codex          # ក៏មាន៖ claude opencode qwen aider goose gemini cline continue kilo
+agentproxy configure codex          # ក៏មាន៖ claude opencode qwen aider goose gemini cline continue kilo
 ```
 
-ពាក្យបញ្ជានីមួយៗគោរពតាមបរិបទពីចម្ងាយដែលកំពុងសកម្ម (`omniroute connect <host>`), `--dry-run`
+ពាក្យបញ្ជានីមួយៗគោរពតាមបរិបទពីចម្ងាយដែលកំពុងសកម្ម (`agentproxy connect <host>`), `--dry-run`
 បង្ហាញ env/args ពិតប្រាកដជាមុនដោយមិនប្រតិបត្តិ ហើយ `--api-key-env NAME` រក្សាព័ត៌មានសម្ងាត់មិនឱ្យបង្ហាញ
 ក្នុងប្រវត្តិ shell របស់អ្នក។ → [ការរួមបញ្ចូល CLI](docs/guides/CLI-INTEGRATIONS.md)
 
@@ -734,19 +734,19 @@ omniroute configure codex          # ក៏មាន៖ claude opencode qwen aid
 
 <table>
   <tr><th align="left">វេទិកា</th><th align="left">ការដំឡើង</th><th align="left">ចំណុចលេចធ្លោ</th></tr>
-  <tr><td align="left" nowrap>📦 <b>npm (ជាសកល)</b></td><td align="left" nowrap><code>npm install -g omniroute</code></td><td align="left">ពាក្យបញ្ជាតែមួយ ប្រើបានលើ OS ណាមួយ</td></tr>
-  <tr><td align="left" nowrap>🐳 <b>Docker</b></td><td align="left" nowrap><code>docker run … diegosouzapw/omniroute</code></td><td align="left">ស្ថាបត្យកម្មច្រើន <b>AMD64 + ARM64</b></td></tr>
+  <tr><td align="left" nowrap>📦 <b>npm (ជាសកល)</b></td><td align="left" nowrap><code>npm install -g agentproxy</code></td><td align="left">ពាក្យបញ្ជាតែមួយ ប្រើបានលើ OS ណាមួយ</td></tr>
+  <tr><td align="left" nowrap>🐳 <b>Docker</b></td><td align="left" nowrap><code>docker run … diegosouzapw/agentproxy</code></td><td align="left">ស្ថាបត្យកម្មច្រើន <b>AMD64 + ARM64</b></td></tr>
   <tr><td align="left" nowrap>🖥️ <b>កុំព្យូទ័រលើតុ (Electron)</b></td><td align="left" nowrap><code>npm run electron:build</code></td><td align="left">ផ្ទាំង native + ថាសប្រព័ន្ធ — <b>Windows / macOS / Linux</b></td></tr>
-  <tr><td align="left" nowrap>🎩 <b>របារម៉ឺនុយ (AgentProxyTray)</b></td><td align="left" nowrap><code>brew install --cask zoispag/tap/omniroute-tray</code></td><td align="left">ត្រួតពិនិត្យ និងធ្វើបច្ចុប្បន្នភាពម៉ាស៊ីនមេដោយស្វ័យប្រវត្តិ — <b>macOS</b></td></tr>
+  <tr><td align="left" nowrap>🎩 <b>របារម៉ឺនុយ (AgentProxyTray)</b></td><td align="left" nowrap><code>brew install --cask zoispag/tap/agentproxy-tray</code></td><td align="left">ត្រួតពិនិត្យ និងធ្វើបច្ចុប្បន្នភាពម៉ាស៊ីនមេដោយស្វ័យប្រវត្តិ — <b>macOS</b></td></tr>
   <tr><td align="left" nowrap>💪 <b>ARM</b></td><td align="left" nowrap>native <code>arm64</code></td><td align="left">Raspberry Pi, ម៉ាស៊ីនមេ ARM, Apple Silicon</td></tr>
-  <tr><td align="left" nowrap>📱 <b>Android (Termux)</b></td><td align="left" nowrap><code>pkg install nodejs && npx -y omniroute</code></td><td align="left">ដំណើរការ <b>នៅលើទូរសព្ទរបស់អ្នក</b> 24/7 ដោយមិនត្រូវការ root</td></tr>
+  <tr><td align="left" nowrap>📱 <b>Android (Termux)</b></td><td align="left" nowrap><code>pkg install nodejs && npx -y agentproxy</code></td><td align="left">ដំណើរការ <b>នៅលើទូរសព្ទរបស់អ្នក</b> 24/7 ដោយមិនត្រូវការ root</td></tr>
   <tr><td align="left" nowrap>📲 <b>PWA</b></td><td align="left" nowrap>"បន្ថែមទៅអេក្រង់ដើម"</td><td align="left">ពេញអេក្រង់ ប្រើក្រៅបណ្តាញ និងអាចដំឡើងពីកម្មវិធីរុករកបាន</td></tr>
-  <tr><td align="left" nowrap>🧩 <b>កម្មវិធីជំនួយ OpenCode</b></td><td align="left" nowrap><code>@omniroute/opencode-provider</code></td><td align="left">ការរួមបញ្ចូល native ជាមួយ OpenCode</td></tr>
+  <tr><td align="left" nowrap>🧩 <b>កម្មវិធីជំនួយ OpenCode</b></td><td align="left" nowrap><code>@agentproxy/opencode-provider</code></td><td align="left">ការរួមបញ្ចូល native ជាមួយ OpenCode</td></tr>
   <tr><td align="left" nowrap>🤖 <b>VS Code Copilot Chat</b></td><td align="left" nowrap>ដំឡើងផ្នែកបន្ថែម <b>OmniCopilot</b></td><td align="left">គ្រប់ម៉ូដែល AgentProxy នៅក្នុងឧបករណ៍ជ្រើសរើស Copilot Chat native — កំណែ stable និង Insiders</td></tr>
   <tr><td align="left" nowrap>🛠️ <b>ពីកូដប្រភព</b></td><td align="left" nowrap><code>npm install && npm run dev</code></td><td align="left">កែសម្រួលវា និងចូលរួមចំណែក</td></tr>
 </table>
 
-<sub>📖 [មគ្គុទ្ទេសក៍ Docker](docs/guides/DOCKER_GUIDE.md) · [កុំព្យូទ័រលើតុ](electron/README.md) · [ថាសរបារម៉ឺនុយ](https://github.com/zoispag/omniroute-tray) · [Termux](docs/guides/TERMUX_GUIDE.md) · [PWA](docs/guides/PWA_GUIDE.md) · [OpenCode](docs/frameworks/OPENCODE.md)</sub>
+<sub>📖 [មគ្គុទ្ទេសក៍ Docker](docs/guides/DOCKER_GUIDE.md) · [កុំព្យូទ័រលើតុ](electron/README.md) · [ថាសរបារម៉ឺនុយ](https://github.com/zoispag/agentproxy-tray) · [Termux](docs/guides/TERMUX_GUIDE.md) · [PWA](docs/guides/PWA_GUIDE.md) · [OpenCode](docs/frameworks/OPENCODE.md)</sub>
 
 <br/>
 
@@ -785,19 +785,19 @@ omniroute configure codex          # ក៏មាន៖ claude opencode qwen aid
 
 </div>
 
-> `omniroute serve` ដំណើរការបានល្អបំផុតនៅពេលវាបើកជានិច្ច។ **[AgentProxyTray](https://github.com/zoispag/omniroute-tray)**
+> `agentproxy serve` ដំណើរការបានល្អបំផុតនៅពេលវាបើកជានិច្ច។ **[AgentProxyTray](https://github.com/zoispag/agentproxy-tray)**
 > ប្រែក្លាយវាទៅជាកម្មវិធីរបារម៉ឺនុយសម្រាប់ macOS ដែលរៀបចំម្តងហើយលែងបារម្ភ៖ វាចាប់ផ្ដើមម៉ាស៊ីនមេ រក្សាវាឱ្យដំណើរការ
 > ឆ្លងកាត់ការចាប់ផ្ដើមម៉ាស៊ីនឡើងវិញ ធ្វើបច្ចុប្បន្នភាពនៅនឹងកន្លែង និងធ្វើឱ្យអ្នកអាចមើលកញ្ចប់កំណត់ token ផ្ទាល់របស់អ្នកបានដោយចុចតែមួយដង — **មិនចាំបាច់
-> ទុកផ្ទាំង terminal ឱ្យបើក និងមិនចាំបាច់តាមមើលថែ `npm install -g omniroute` ទេ។**
+> ទុកផ្ទាំង terminal ឱ្យបើក និងមិនចាំបាច់តាមមើលថែ `npm install -g agentproxy` ទេ។**
 
 បង្កើតឡើងជាមួយ [Tauri v2](https://v2.tauri.app/) (ស្នូល Rust ដែលតូចស្ទើរតែអាចមិនគិតដល់) វាភ្ជាប់មកជាមួយ
 Node 24 runtime ដែលបានចុះហត្ថលេខារបស់ខ្លួន និងគ្រប់គ្រងការដំឡើង AgentProxy ដែលជាកម្មសិទ្ធិរបស់កម្មវិធី ដូច្នេះវាមិនដែលប៉ះទង្គិចជាមួយ
-`node`/`bun` ជាសកលរបស់អ្នកទេ។ វា **ចែករំលែកការកំណត់រចនាសម្ព័ន្ធ និងមូលដ្ឋានទិន្នន័យ `~/.omniroute/` ដែលមានស្រាប់របស់អ្នក** — ដូច្នេះវាជា
+`node`/`bun` ជាសកលរបស់អ្នកទេ។ វា **ចែករំលែកការកំណត់រចនាសម្ព័ន្ធ និងមូលដ្ឋានទិន្នន័យ `~/.agentproxy/` ដែលមានស្រាប់របស់អ្នក** — ដូច្នេះវាជា
 AgentProxy ដដែលដែលអ្នកកំពុងដំណើរការ គ្រាន់តែពាក់មួកប៉ុណ្ណោះ។ 🎩
 
 <table>
   <tr><th align="left">អ្វីដែលវាធ្វើ</th><th align="left">របៀបធ្វើ</th></tr>
-  <tr><td align="left" nowrap>🟢 <b>ត្រួតពិនិត្យម៉ាស៊ីនមេ</b></td><td align="left">បង្កើតដំណើរការ <code>omniroute serve</code> និងប្រើ instance ដែលកំពុងដំណើរការស្រាប់ ជំនួសឱ្យការបង្កើតវាស្ទួន</td></tr>
+  <tr><td align="left" nowrap>🟢 <b>ត្រួតពិនិត្យម៉ាស៊ីនមេ</b></td><td align="left">បង្កើតដំណើរការ <code>agentproxy serve</code> និងប្រើ instance ដែលកំពុងដំណើរការស្រាប់ ជំនួសឱ្យការបង្កើតវាស្ទួន</td></tr>
   <tr><td align="left" nowrap>📊 <b>ការប្រើប្រាស់ផ្ទាល់ ដែលអាចមើលឃើញភ្លាមៗ</b></td><td align="left">របារកូតារបស់អ្នកផ្តល់សេវា ដែនកំណត់ប្រចាំសម័យ/ប្រចាំសប្ដាហ៍របស់ Claude ជាមួយការរាប់ថយក្រោយរហូតដល់កំណត់ឡើងវិញ និងការបែងចែកចំណាយរយៈពេល 30 ថ្ងៃ</td></tr>
   <tr><td align="left" nowrap>🔄 <b>ធ្វើបច្ចុប្បន្នភាពនៅនឹងកន្លែងដោយស្វ័យប្រវត្តិ</b></td><td align="left">ការដំឡើងជាដំណាក់កាល ការប្តូរបែប atomic និងត្រឡប់ទៅកំណែមុននៅពេលបរាជ័យ — តែងតែប្រើកំណែចេញផ្សាយថ្មីបំផុត</td></tr>
   <tr><td align="left" nowrap>🚀 <b>ចាប់ផ្ដើមពេលចូលប្រព័ន្ធ</b></td><td align="left">អាចជ្រើសរើសឱ្យដំណើរការពេលចូលប្រព័ន្ធបាន; មានតែក្នុងថាសប៉ុណ្ណោះ គ្មានរូបតំណាងក្នុង dock</td></tr>
@@ -805,12 +805,12 @@ AgentProxy ដដែលដែលអ្នកកំពុងដំណើរកា
 </table>
 
 ```sh
-brew install --cask zoispag/tap/omniroute-tray
+brew install --cask zoispag/tap/agentproxy-tray
 ```
 
 <sub>ចូលចិត្តទាញយកមែនទេ? យកឯកសារ <code>.dmg</code> ចុងក្រោយបំផុតពី
-<a href="https://github.com/zoispag/omniroute-tray/releases">ការចេញផ្សាយ</a>។ កូដប្រភព បញ្ហា និងឯកសារ
-ណែនាំអំពីការបង្កើត មាននៅ <a href="https://github.com/zoispag/omniroute-tray">zoispag/omniroute-tray</a>។
+<a href="https://github.com/zoispag/agentproxy-tray/releases">ការចេញផ្សាយ</a>។ កូដប្រភព បញ្ហា និងឯកសារ
+ណែនាំអំពីការបង្កើត មាននៅ <a href="https://github.com/zoispag/agentproxy-tray">zoispag/agentproxy-tray</a>។
 <br/>💛 គម្រោងសហគមន៍ដោយ <a href="https://github.com/zoispag">@zoispag</a> — មិនមែនជាការចេញផ្សាយ AgentProxy ផ្លូវការទេ។</sub>
 
 <br/>
@@ -838,10 +838,10 @@ brew install --cask zoispag/tap/omniroute-tray
 ### ⌨️ CLI ពិតប្រាកដមួយ (មិនមែនត្រឹមតែ `start` ទេ)
 
 ```bash
-omniroute               # បើកបម្រើ gateway + dashboard (ច្រក 20128)
-omniroute chat          # កម្មវិធីជជែក TUI អន្តរកម្ម (slash: /model /combo /skill /memory)
-omniroute setup         # អ្នកជំនួយការណែនាំសម្រាប់ការដំណើរការលើកដំបូង
-omniroute doctor        # វិនិច្ឆ័យអ្នកផ្តល់សេវា ច្រក និង dependency ដើម
+agentproxy               # បើកបម្រើ gateway + dashboard (ច្រក 20128)
+agentproxy chat          # កម្មវិធីជជែក TUI អន្តរកម្ម (slash: /model /combo /skill /memory)
+agentproxy setup         # អ្នកជំនួយការណែនាំសម្រាប់ការដំណើរការលើកដំបូង
+agentproxy doctor        # វិនិច្ឆ័យអ្នកផ្តល់សេវា ច្រក និង dependency ដើម
 ```
 
 ### 🛰️ របៀបពីចម្ងាយ — ដំណើរការ CLI នៅទីនេះ និង AgentProxy លើ VPS
@@ -850,11 +850,11 @@ omniroute doctor        # វិនិច្ឆ័យអ្នកផ្តល់
 ដោយប្រើ access token ដែលមានវិសាលភាពកំណត់; បន្ទាប់មក ពាក្យបញ្ជាទាំងអស់នឹងកំណត់គោលដៅទៅម៉ាស៊ីនពីចម្ងាយ។
 
 ```bash
-omniroute connect 192.168.0.15            # ពាក្យសម្ងាត់ → token មានវិសាលភាពកំណត់ ដែលត្រូវបានរក្សាទុកជា context
-omniroute models list                     # ← ដំណើរការទល់នឹង server ពីចម្ងាយ
-omniroute configure codex                 # ← ជ្រើសរើស model ពីចម្ងាយ ហើយសរសេរ profile Codex ក្នុងម៉ាស៊ីន
-omniroute tokens create --name ci --scope read   # បង្កើត token ដែលមានវិសាលភាពតូចជាងសម្រាប់ម៉ាស៊ីនផ្សេងទៀត
-omniroute contexts use default            # ← ប្តូរត្រឡប់ទៅ server ក្នុងម៉ាស៊ីន
+agentproxy connect 192.168.0.15            # ពាក្យសម្ងាត់ → token មានវិសាលភាពកំណត់ ដែលត្រូវបានរក្សាទុកជា context
+agentproxy models list                     # ← ដំណើរការទល់នឹង server ពីចម្ងាយ
+agentproxy configure codex                 # ← ជ្រើសរើស model ពីចម្ងាយ ហើយសរសេរ profile Codex ក្នុងម៉ាស៊ីន
+agentproxy tokens create --name ci --scope read   # បង្កើត token ដែលមានវិសាលភាពតូចជាងសម្រាប់ម៉ាស៊ីនផ្សេងទៀត
+agentproxy contexts use default            # ← ប្តូរត្រឡប់ទៅ server ក្នុងម៉ាស៊ីន
 ```
 
 Tokens ត្រូវបានកំណត់វិសាលភាពជា `read` / `write` / `admin`; routes ដែលបង្កើត process នៅតែអនុញ្ញាតតែតាម loopback ប៉ុណ្ណោះ។
@@ -862,7 +862,7 @@ Tokens ត្រូវបានកំណត់វិសាលភាពជា `re
 
 <div align="left">
 
-<img src="./docs/diagrams/cli-terminal.svg" width="50%" alt="ការបង្ហាញ terminal មានចលនាដែលបង្ហាញ AgentProxy CLI — omniroute providers list, omniroute combo list និង omniroute health — ដោយប្តូរវេនតាមផ្ទៃពាក្យបញ្ជាកម្រិតកំពូលចំនួន 86៖ providers · oauth · keys · combo · nodes · models · cache · compression · cost · usage · quota · health · resilience · telemetry · logs · audit · mcp · a2a · cloud · memory · skills · eval · tunnel · backup · sync · webhooks · policy · pricing · translator · simulate …"/>
+<img src="./docs/diagrams/cli-terminal.svg" width="50%" alt="ការបង្ហាញ terminal មានចលនាដែលបង្ហាញ AgentProxy CLI — agentproxy providers list, agentproxy combo list និង agentproxy health — ដោយប្តូរវេនតាមផ្ទៃពាក្យបញ្ជាកម្រិតកំពូលចំនួន 86៖ providers · oauth · keys · combo · nodes · models · cache · compression · cost · usage · quota · health · resilience · telemetry · logs · audit · mcp · a2a · cloud · memory · skills · eval · tunnel · backup · sync · webhooks · policy · pricing · translator · simulate …"/>
 
 </div>
 
@@ -872,18 +872,18 @@ Tokens ត្រូវបានកំណត់វិសាលភាពជា `re
 
 <table>
   <tr><th align="left">ចំណុចប្រទាក់</th><th align="left">Endpoint / ពាក្យបញ្ជា</th><th align="left">ប្រើវាសម្រាប់</th></tr>
-  <tr><td align="left" nowrap>🧰 <b>MCP (stdio)</b></td><td align="left" nowrap><code>omniroute --mcp</code></td><td align="left">ភ្ជាប់ទៅ Claude Desktop, Cursor ឬ MCP client ណាមួយ</td></tr>
+  <tr><td align="left" nowrap>🧰 <b>MCP (stdio)</b></td><td align="left" nowrap><code>agentproxy --mcp</code></td><td align="left">ភ្ជាប់ទៅ Claude Desktop, Cursor ឬ MCP client ណាមួយ</td></tr>
   <tr><td align="left" nowrap>🌊 <b>MCP (HTTP)</b></td><td align="left" nowrap><code>/api/mcp/stream</code></td><td align="left">MCP ពីចម្ងាយ — <b>ឧបករណ៍ 110</b>, វិសាលភាព 33 (ការអនុវត្តត្រូវជ្រើសបើក), កំណត់ត្រាសវនកម្មពេញលេញ</td></tr>
   <tr><td align="left" nowrap>📡 <b>MCP (SSE)</b></td><td align="left" nowrap><code>/api/mcp/sse</code></td><td align="left">មធ្យោបាយបញ្ជូន MCP បែប streaming</td></tr>
   <tr><td align="left" nowrap>🤝 <b>A2A</b></td><td align="left" nowrap><code>/.well-known/agent.json</code></td><td align="left">ភ្នាក់ងារទៅភ្នាក់ងារ, <b>JSON-RPC 2.0</b> + SSE, ជំនាញ 6</td></tr>
   <tr><td align="left" nowrap>🌐 <b>REST API</b></td><td align="left" nowrap><code>/v1/*</code></td><td align="left">ឆបគ្នាជាមួយ OpenAI — ការជជែក, embeddings, រូបភាព, សំឡេង, OCR</td></tr>
   <tr><td align="left" nowrap>🔔 <b>Webhooks</b></td><td align="left" nowrap><code>/api/webhooks</code></td><td align="left">បញ្ជូនព្រឹត្តិការណ៍សំណើ / quota ទៅ Slack, Discord, Telegram ឬ URL ណាមួយ</td></tr>
-  <tr><td align="left" nowrap>🛰️ <b>CLI ពីចម្ងាយ</b></td><td align="left" nowrap><code>omniroute connect <host></code></td><td align="left">បញ្ជា instance ពីចម្ងាយដោយប្រើ access token ដែលមានវិសាលភាពកំណត់</td></tr>
+  <tr><td align="left" nowrap>🛰️ <b>CLI ពីចម្ងាយ</b></td><td align="left" nowrap><code>agentproxy connect <host></code></td><td align="left">បញ្ជា instance ពីចម្ងាយដោយប្រើ access token ដែលមានវិសាលភាពកំណត់</td></tr>
 </table>
 
 ```bash
 # ផ្តល់សំណុំឧបករណ៍ AgentProxy ពេញលេញទៅ Claude Code តាមរយៈ MCP៖
-claude mcp add-server omniroute --type http --url http://localhost:20128/api/mcp/stream
+claude mcp add-server agentproxy --type http --url http://localhost:20128/api/mcp/stream
 ```
 
 <sub>📖 [MCP Server](docs/frameworks/MCP-SERVER.md) · [A2A Server](docs/frameworks/A2A-SERVER.md) · [ពិធីការភ្នាក់ងារ](docs/frameworks/AGENT_PROTOCOLS_GUIDE.md)</sub>
@@ -973,7 +973,7 @@ engines ទាំង 12 ខាងលើបង្រួមអ្វីដែល�
   - **ខ្ញុំមាន ADHD (សកម្មភាពមុន)** — ចាប់ផ្តើមដោយសកម្មភាពបន្ទាប់, ដាក់លេខជំហាន, ផ្តល់ជំហានបន្ទាប់ជាក់លាក់តែមួយ និងគ្មានសេចក្តីផ្តើម។
   - **CJK ខ្លីរឹតត្បិត (文言)** — រចនាប័ទ្មភាសាចិនបុរាណខ្លីបំផុត (កំណត់តាម locale ជា `zh`)។
 - **🎯 ថវិកា context បែប adaptive** _(ប៊ូតុងលៃតម្រូវ)_ — ជំនួសឱ្យកម្រិត token បើក/បិទតែមួយ វាបង្កើនការប្រើ engines ដែលថោកបំផុត និងបាត់បង់ព័ត៌មានតិចបំផុត ត្រឹមកម្រិតចាំបាច់ដើម្បី **ឱ្យសមនឹង context window របស់ model**។ គោលការណ៍៖ `reserve-output` (លំនាំដើម យល់ដឹងអំពី model) · `percentage` · `absolute`។ របៀប៖ `floor` (ធានាថាសម) · `replace-autotrigger` (ជម្រើសច្បាស់លាស់របស់អ្នកមានអាទិភាព) · `off` (កម្រិតចាស់)។
-- **🎛️ ទីតាំងដែលការបង្ហាប់ត្រូវបានសម្រេច** _(លំដាប់អាទិភាព ខ្ពស់ → ទាប)_ — header `x-omniroute-compression` តាម request › routing-combo override › profile ដែលមានឈ្មោះ និងកំពុងសកម្ម › adaptive / auto-trigger › លំនាំដើមរបស់ panel › បិទ។ ផែនការដែលបានអនុវត្តត្រូវបានឆ្លុះត្រឡប់ក្នុង response header `X-AgentProxy-Compression: <mode>; source=<source>`។
+- **🎛️ ទីតាំងដែលការបង្ហាប់ត្រូវបានសម្រេច** _(លំដាប់អាទិភាព ខ្ពស់ → ទាប)_ — header `x-agentproxy-compression` តាម request › routing-combo override › profile ដែលមានឈ្មោះ និងកំពុងសកម្ម › adaptive / auto-trigger › លំនាំដើមរបស់ panel › បិទ។ ផែនការដែលបានអនុវត្តត្រូវបានឆ្លុះត្រឡប់ក្នុង response header `X-AgentProxy-Compression: <mode>; source=<source>`។
 
 កំណត់ auto-trigger តាមកម្រិត token, បើកប៊ូតុងលៃតម្រូវ adaptive, ខ្ទាស់ profile ដែលមានឈ្មោះ, កំណត់ការប្រើមួយលើកតាម request ឬផ្តល់ pipeline មួយតាម routing combo — ជ្រើសរើសអ្វីដែលសមនឹង workload។ **eval harness** offline ដែលត្រូវជ្រើសរើសបើកប្រើ (`npm run eval:compression`) វាយតម្លៃភាពស្មោះត្រង់ធៀបនឹងការសន្សំលើ corpus ដែលបានខ្ទាស់ មុនពេលអ្នកដាក់ការផ្លាស់ប្តូរឱ្យប្រើប្រាស់។
 
@@ -990,8 +990,8 @@ engines ទាំង 12 ខាងលើបង្រួមអ្វីដែល�
 **1) ដំឡើង និងដំណើរការ**
 
 ```bash
-npm install -g omniroute
-omniroute
+npm install -g agentproxy
+agentproxy
 ```
 
 > 💡 ឃើញ `npm warn ERESOLVE` ឬការព្រមាន peer-dep មែនទេ? [វាមិនបង្កបញ្ហាទេ](docs/guides/TROUBLESHOOTING.md#npm-install-warnings-eresolve--peer--deprecated)។
@@ -1038,39 +1038,39 @@ tags Ollama៖      http://localhost:20128/vscode/YOUR_KEY/api/tags
 **🐳 Docker**
 
 ```bash
-docker run -d --name omniroute --restart unless-stopped --stop-timeout 40 \
-  -p 127.0.0.1:20128:20128 -v omniroute-data:/app/data diegosouzapw/omniroute:latest
+docker run -d --name agentproxy --restart unless-stopped --stop-timeout 40 \
+  -p 127.0.0.1:20128:20128 -v agentproxy-data:/app/data diegosouzapw/agentproxy:latest
 ```
 
-`:latest` ប្រើតាមកំណែ SemVer ស្ថិរភាពខ្ពស់បំផុតដែលបាន **ចេញផ្សាយ**។ វាមិនតាមដាន git `main` ទេ។ កំណត់ជាប់នឹង `:X.Y.Z` សម្រាប់ GitOps។ សូមមើល [ឆានែលចេញផ្សាយ Docker](docs/guides/DOCKER_GUIDE.md#release-channels)។ Image នេះកំណត់ **`OMNIROUTE_MEMORY_MB=1024`** ជាស្រេច។ ទំហំនេះគ្រប់គ្រាន់សម្រាប់ផ្ទាំងគ្រប់គ្រង និងការជជែកកម្រិតស្រាល។ **ភ្នាក់ងារសរសេរកូដ** (`POST /v1/responses` ពី Claude Code, Codex, Grok, …) ត្រូវការ V8 heap ធំជាងនេះខ្លាំង បើមិនដូច្នោះទេ process នឹងជួប `FATAL ERROR` នៅប្រហែល 12 GiB នៅពេលមាន context វែងពីរត្រួតស៊ីគ្នា។ កំណត់ទំហំ container ឱ្យធំជាង heap (native buffers ស្ថិតនៅខាងក្រៅ V8)៖
+`:latest` ប្រើតាមកំណែ SemVer ស្ថិរភាពខ្ពស់បំផុតដែលបាន **ចេញផ្សាយ**។ វាមិនតាមដាន git `main` ទេ។ កំណត់ជាប់នឹង `:X.Y.Z` សម្រាប់ GitOps។ សូមមើល [ឆានែលចេញផ្សាយ Docker](docs/guides/DOCKER_GUIDE.md#release-channels)។ Image នេះកំណត់ **`AGENTPROXY_MEMORY_MB=1024`** ជាស្រេច។ ទំហំនេះគ្រប់គ្រាន់សម្រាប់ផ្ទាំងគ្រប់គ្រង និងការជជែកកម្រិតស្រាល។ **ភ្នាក់ងារសរសេរកូដ** (`POST /v1/responses` ពី Claude Code, Codex, Grok, …) ត្រូវការ V8 heap ធំជាងនេះខ្លាំង បើមិនដូច្នោះទេ process នឹងជួប `FATAL ERROR` នៅប្រហែល 12 GiB នៅពេលមាន context វែងពីរត្រួតស៊ីគ្នា។ កំណត់ទំហំ container ឱ្យធំជាង heap (native buffers ស្ថិតនៅខាងក្រៅ V8)៖
 
-| បន្ទុកការងារ                              | Heap (`-e OMNIROUTE_MEMORY_MB`)  | Container (`--memory`) |
+| បន្ទុកការងារ                              | Heap (`-e AGENTPROXY_MEMORY_MB`)  | Container (`--memory`) |
 | ----------------------------------------- | -------------------------------- | ---------------------- |
 | ផ្ទាំងគ្រប់គ្រង / ការជជែកកម្រិតស្រាល      | `1024` (តម្លៃលំនាំដើមរបស់ image) | ≥2 g                   |
 | ភ្នាក់ងារសរសេរកូដមួយ                      | `8192`                           | ≥10 g                  |
 | `/v1/responses` វែងពីរដែលដំណើរការព្រមគ្នា | `10240`–`12288`                  | ≥12–16 g               |
 
 ```bash
-docker run -d --name omniroute --restart unless-stopped --stop-timeout 40 \
-  -e OMNIROUTE_MEMORY_MB=8192 --memory=10g \
-  -p 127.0.0.1:20128:20128 -v omniroute-data:/app/data diegosouzapw/omniroute:latest
+docker run -d --name agentproxy --restart unless-stopped --stop-timeout 40 \
+  -e AGENTPROXY_MEMORY_MB=8192 --memory=10g \
+  -p 127.0.0.1:20128:20128 -v agentproxy-data:/app/data diegosouzapw/agentproxy:latest
 ```
 
 តារាងពេញលេញ៖ [មគ្គុទ្ទេសក៍ Docker — RAM ពេលដំណើរការ](docs/guides/DOCKER_GUIDE.md#runtime-ram-for-coding-agents)។
 
-> **ឆានែល Docker មុនចេញផ្សាយ៖** `diegosouzapw/omniroute:next` និង
-> `diegosouzapw/omniroute:next-web` ប្រើតាម branch លំនាំដើមបច្ចុប្បន្ន `release/v*`។
+> **ឆានែល Docker មុនចេញផ្សាយ៖** `diegosouzapw/agentproxy:next` និង
+> `diegosouzapw/agentproxy:next-web` ប្រើតាម branch លំនាំដើមបច្ចុប្បន្ន `release/v*`។
 > tag ដែលអាចផ្លាស់ប្តូរទាំងនេះមានគោលបំណងសម្រាប់តែការសាកល្បងការកែតម្រូវដែលមិនទាន់ចេញផ្សាយប៉ុណ្ណោះ ហើយ
 > **មិនត្រូវបានគាំទ្រសម្រាប់ production ទេ**។ សូមមើល
 > [ឆានែលចេញផ្សាយ Docker](docs/guides/DOCKER_GUIDE.md#release-channels)។
 
 **🥟 Bun**
 
-ការដំឡើងស្តង់ដារដោយ `bun install` និងការដំឡើង global (`bun install -g omniroute`) ត្រូវបានគាំទ្រតាមរយៈការរកឃើញ Bun runtime៖
+ការដំឡើងស្តង់ដារដោយ `bun install` និងការដំឡើង global (`bun install -g agentproxy`) ត្រូវបានគាំទ្រតាមរយៈការរកឃើញ Bun runtime៖
 
 - **`bun:sqlite` ដែលភ្ជាប់មកស្រាប់**៖ AgentProxy ប្រើ driver `bun:sqlite` ដែលភ្ជាប់មកស្រាប់របស់ Bun នៅពេលដំណើរការក្រោម Bun ហើយប្តូរទៅប្រើ `better-sqlite3` នៅលើ Node.js ឬ `sql.js` ជាជម្រើសបម្រុង។
-- **ការជ្រើសរើស Webpack bundler ដោយស្វ័យប្រវត្តិក្នុង dev**៖ បរិស្ថានអភិវឌ្ឍន៍ (`bun run dev`) រកឃើញ Bun ដោយស្វ័យប្រវត្តិ និងបិទ Turbopack ដើម្បីប្រើ Webpack ជំនួស ក្នុងគោលបំណងទប់ស្កាត់បញ្ហាមិនត្រូវគ្នាជាមួយ native V8 binding។ ការ build សម្រាប់ production (`bun run build`) អនុវត្តតាម `OMNIROUTE_USE_TURBOPACK` ដូចនៅលើ Node យ៉ាងពិតប្រាកដ៖ ប្រើ Turbopack តាមលំនាំដើម និងប្រើ `OMNIROUTE_USE_TURBOPACK=0` ដើម្បី build ជាមួយ Webpack (`Dockerfile.bun` បង្ហាញវាជា `--build-arg`)។
-- **Bun Dockerfile ដាច់ដោយឡែក**៖ `Dockerfile.bun` ពហុដំណាក់កាល សម្រាប់ការដាក់ឱ្យដំណើរការ native Bun ក្នុង production (`docker build -f Dockerfile.bun -t omniroute:bun .`)។
+- **ការជ្រើសរើស Webpack bundler ដោយស្វ័យប្រវត្តិក្នុង dev**៖ បរិស្ថានអភិវឌ្ឍន៍ (`bun run dev`) រកឃើញ Bun ដោយស្វ័យប្រវត្តិ និងបិទ Turbopack ដើម្បីប្រើ Webpack ជំនួស ក្នុងគោលបំណងទប់ស្កាត់បញ្ហាមិនត្រូវគ្នាជាមួយ native V8 binding។ ការ build សម្រាប់ production (`bun run build`) អនុវត្តតាម `AGENTPROXY_USE_TURBOPACK` ដូចនៅលើ Node យ៉ាងពិតប្រាកដ៖ ប្រើ Turbopack តាមលំនាំដើម និងប្រើ `AGENTPROXY_USE_TURBOPACK=0` ដើម្បី build ជាមួយ Webpack (`Dockerfile.bun` បង្ហាញវាជា `--build-arg`)។
+- **Bun Dockerfile ដាច់ដោយឡែក**៖ `Dockerfile.bun` ពហុដំណាក់កាល សម្រាប់ការដាក់ឱ្យដំណើរការ native Bun ក្នុង production (`docker build -f Dockerfile.bun -t agentproxy:bun .`)។
 
 ```bash
 # ដំឡើង និងដំណើរការជាមួយ Bun
@@ -1088,13 +1088,13 @@ PORT=20128 npm run dev
 **📦 pnpm**
 
 ```bash
-pnpm add -g omniroute@latest --allow-build=better-sqlite3 --allow-build=@swc/core && omniroute
+pnpm add -g agentproxy@latest --allow-build=better-sqlite3 --allow-build=@swc/core && agentproxy
 ```
 
 **🐧 Arch Linux (AUR)**
 
 ```bash
-yay -S omniroute-bin && systemctl --user enable --now omniroute.service
+yay -S agentproxy-bin && systemctl --user enable --now agentproxy.service
 ```
 
 **🔧 Nix (Flake)**
@@ -1140,7 +1140,7 @@ global មិនដែលត្រូវរង់ចាំការចងក្�
 ដើម្បីរំលង native warm-up ក្រោយការដំឡើងទាំងស្រុង (CI, headless ឬម៉ាស៊ីនយឺត)៖
 
 ```bash
-OMNIROUTE_SKIP_POSTINSTALL=1 npm install -g omniroute   # CI=1 ក៏រំលងវាដែរ
+AGENTPROXY_SKIP_POSTINSTALL=1 npm install -g agentproxy   # CI=1 ក៏រំលងវាដែរ
 ```
 
 ដើម្បីទទួលបានការដំឡើងលឿនបំផុត សូមជ្រើសប្រើ **pnpm** (ឃ្លាំងផ្អែកលើអាសយដ្ឋានមាតិកា + hard links — សូមមើលខាងលើ)។
@@ -1231,15 +1231,15 @@ process ដូចគ្នានៅលើ port តែមួយ ដូច្ន�
 | 💼 **LinkedIn** — តាមដានអ្នកថែទាំ                  | [linkedin.com/in/diegosouzapw](https://www.linkedin.com/in/diegosouzapw/)                                                    |
 | 🐙 **GitHub** — តាមដានសម្រាប់ការចេញផ្សាយ និងគន្លឹះ | [@diegosouzapw](https://github.com/diegosouzapw)                                                                             |
 | 💬 **Discord**                                     | [discord.gg/U47eFqAXCn](https://discord.gg/U47eFqAXCn)                                                                       |
-| ✈️ **Telegram**                                    | [t.me/omnirouteOficial](https://t.me/omnirouteOficial)                                                                       |
+| ✈️ **Telegram**                                    | [t.me/agentproxyOficial](https://github.com/khanhkit/AgentProxy/discussions)                                                                       |
 | 🟢 **WhatsApp — 🌍 សកល**                           | [ចូលរួមក្រុម](https://chat.whatsapp.com/FvuCbrpZmQ6I85n2vW5QIC?s=cl&p=a&mlu=4)                                               |
 | 🟢 **WhatsApp — 🇧🇷 ប្រេស៊ីល**                      | [ចូលរួមក្រុម](https://chat.whatsapp.com/KWgatljAjmbELQory59Oti?s=cl&p=a&mlu=4)                                               |
-| 🌍 **គេហទំព័រ**                                    | [omniroute.online](https://omniroute.online)                                                                                 |
-| 🌍 **🌍សហគមន៍ StHub AgentProxy (ឥតគិតថ្លៃ)**        | [វិបផតថល StHub](https://portal.sthub.com.br/communities/groups/st-hub/channels/Omniroute-World-8kRjmK)                       |
+| 🌍 **គេហទំព័រ**                                    | [agentproxy.online](https://agentproxy.online)                                                                                 |
+| 🌍 **🌍សហគមន៍ StHub AgentProxy (ឥតគិតថ្លៃ)**        | [វិបផតថល StHub](https://github.com/khanhkit/AgentProxy/discussions)                       |
 | 📦 **កូដប្រភព**                                    | [github.com/diegosouzapw/AgentProxy](https://github.com/diegosouzapw/AgentProxy)                                               |
 | 🐛 **រាយការណ៍កំហុស**                               | [បើក issue មួយ](https://github.com/diegosouzapw/AgentProxy/issues) — ភ្ជាប់លទ្ធផលពី `npm run system-info`                     |
 | 🤝 **ចូលរួមចំណែក**                                 | [CONTRIBUTING.md](CONTRIBUTING.md) · [គំរូ Branching និង Release](docs/ops/BRANCHING_MODEL.md) · ជ្រើសរើស `good first issue` |
-| 💚 **គាំទ្រគម្រោង**                                | [វិធីគាំទ្រ ↑](#-support-omniroute) · [GitHub Sponsors](https://github.com/sponsors/diegosouzapw)                            |
+| 💚 **គាំទ្រគម្រោង**                                | [វិធីគាំទ្រ ↑](#-support-agentproxy) · [GitHub Sponsors](https://github.com/sponsors/diegosouzapw)                            |
 
 </div>
 
@@ -1270,7 +1270,7 @@ process ដូចគ្នានៅលើ port តែមួយ ដូច្ន�
   <tr><td nowrap><b>ការធ្វើតេស្ត</b></td><td>កម្មវិធីដំណើរការតេស្តរបស់ Node.js + Vitest — <b>សេចក្ដីប្រកាសតេស្តឋិតិវន្ត 39,000+</b> នៅទូទាំងឯកសារតេស្តដែលបានតាមដាន 5,100+ (unit, integration, E2E, security, ecosystem)</td></tr>
   <tr><td nowrap><b>វេទិកា</b></td><td>កុំព្យូទ័រលើតុ (Electron) · Android (Termux) · PWA (កម្មវិធីរុករកណាមួយ)</td></tr>
   <tr><td nowrap><b>CI/CD</b></td><td>GitHub Actions — បោះផ្សាយទៅ npm ដោយស្វ័យប្រវត្តិ + Docker Hub នៅពេលចេញកំណែ</td></tr>
-  <tr><td nowrap><b>តំណភ្ជាប់</b></td><td><a href="https://omniroute.online">គេហទំព័រ</a> · <a href="https://www.npmjs.com/package/omniroute">npm</a> · <a href="https://hub.docker.com/r/diegosouzapw/omniroute">Docker Hub</a></td></tr>
+  <tr><td nowrap><b>តំណភ្ជាប់</b></td><td><a href="https://agentproxy.online">គេហទំព័រ</a> · <a href="https://www.npmjs.com/package/agentproxy">npm</a> · <a href="https://hub.docker.com/r/khanhkit/agentproxy">Docker Hub</a></td></tr>
 </table>
 
 <div align="center">
@@ -1588,11 +1588,11 @@ gh release create "v${VERSION}" --title "v${VERSION}" --generate-notes
 
 ## 🌍 StarMapper
 
-<a href="https://starmapper.bruniaux.com/diegosouzapw/omniroute">
+<a href="https://starmapper.bruniaux.com">
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="https://starmapper.bruniaux.com/api/map-image/diegosouzapw/omniroute?theme=dark" />
-    <source media="(prefers-color-scheme: light)" srcset="https://starmapper.bruniaux.com/api/map-image/diegosouzapw/omniroute?theme=light" />
-    <img alt="StarMapper" src="https://starmapper.bruniaux.com/api/map-image/diegosouzapw/omniroute" />
+    <source media="(prefers-color-scheme: dark)" srcset="https://starmapper.bruniaux.com" />
+    <source media="(prefers-color-scheme: light)" srcset="https://starmapper.bruniaux.com" />
+    <img alt="StarMapper" src="https://starmapper.bruniaux.com" />
   </picture>
 </a>
 </div>
@@ -1719,9 +1719,9 @@ AgentProxy ឈរនៅលើស្មារបស់អ្នកជំនាញ
 
 <div align="center">
 
-**[⬆ ត្រឡប់ទៅផ្នែកខាងលើ](#-omniroute)** · បង្កើតឡើងដោយ ❤️ សម្រាប់សហគមន៍ AI ប្រភពបើកចំហ។
+**[⬆ ត្រឡប់ទៅផ្នែកខាងលើ](#-agentproxy)** · បង្កើតឡើងដោយ ❤️ សម្រាប់សហគមន៍ AI ប្រភពបើកចំហ។
 
-<sub>AgentProxy v3.8.51 · Node ≥22.22.2 · អាជ្ញាបណ្ណ MIT · <a href="https://omniroute.online">omniroute.online</a></sub>
+<sub>AgentProxy v3.8.51 · Node ≥22.22.2 · អាជ្ញាបណ្ណ MIT · <a href="https://agentproxy.online">agentproxy.online</a></sub>
 
 </div>
 <!-- បានបើកដំណើរការ GitHub Discussions សម្រាប់សំណួរ និងចម្លើយរបស់សហគមន៍ -->

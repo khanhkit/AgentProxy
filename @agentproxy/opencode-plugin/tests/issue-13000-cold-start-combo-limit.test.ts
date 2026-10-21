@@ -19,34 +19,34 @@ import assert from "node:assert/strict";
 import type { Config } from "@opencode-ai/plugin";
 
 import {
-  createOmniRouteConfigHook,
+  createAgentProxyConfigHook,
   _resetInflightRefresh,
-  type OmniRouteAutoCombosFetcher,
-  type OmniRouteCombosFetcher,
-  type OmniRouteCompressionMetaFetcher,
-  type OmniRouteEnrichmentFetcher,
-  type OmniRouteFetchCache,
-  type OmniRouteModelsFetcher,
-  type OmniRouteProvidersFetcher,
-  type OmniRouteRawCombo,
-  type OmniRouteRawModelEntry,
-  type OmniRouteReadAuthJson,
-  type OmniRouteStaticProviderEntry,
-  type OmniRouteDiskSnapshotReader,
-  type OmniRouteDiskSnapshotWriter,
+  type AgentProxyAutoCombosFetcher,
+  type AgentProxyCombosFetcher,
+  type AgentProxyCompressionMetaFetcher,
+  type AgentProxyEnrichmentFetcher,
+  type AgentProxyFetchCache,
+  type AgentProxyModelsFetcher,
+  type AgentProxyProvidersFetcher,
+  type AgentProxyRawCombo,
+  type AgentProxyRawModelEntry,
+  type AgentProxyReadAuthJson,
+  type AgentProxyStaticProviderEntry,
+  type AgentProxyDiskSnapshotReader,
+  type AgentProxyDiskSnapshotWriter,
 } from "../src/index.js";
 
 test.beforeEach(() => {
   _resetInflightRefresh();
 });
 
-function stubReadAuthJson(value: Record<string, unknown>): OmniRouteReadAuthJson {
+function stubReadAuthJson(value: Record<string, unknown>): AgentProxyReadAuthJson {
   return async () => value as never;
 }
 
 function authStub() {
   return stubReadAuthJson({
-    "opencode-omniroute": {
+    "opencode-agentproxy": {
       type: "api",
       key: "sk-test",
       baseURL: "https://or.example.com/v1",
@@ -59,7 +59,7 @@ function makeInput(): Config {
 }
 
 // The two members resolvable in the degraded live /v1/models response.
-const MEMBER_DEEPSEEK: OmniRouteRawModelEntry = {
+const MEMBER_DEEPSEEK: AgentProxyRawModelEntry = {
   id: "deepseek-v4-pro",
   capabilities: { tool_calling: true, reasoning: true, vision: false, thinking: false },
   context_length: 163_840,
@@ -68,7 +68,7 @@ const MEMBER_DEEPSEEK: OmniRouteRawModelEntry = {
   output_modalities: ["text"],
 };
 
-const MEMBER_GLM: OmniRouteRawModelEntry = {
+const MEMBER_GLM: AgentProxyRawModelEntry = {
   id: "glm-5.2",
   capabilities: { tool_calling: true, reasoning: true, vision: false, thinking: false },
   context_length: 1_000_000,
@@ -78,7 +78,7 @@ const MEMBER_GLM: OmniRouteRawModelEntry = {
 };
 
 // The other member that IS present once the server is fully warm.
-const MEMBER_GLM_53_HIGH: OmniRouteRawModelEntry = {
+const MEMBER_GLM_53_HIGH: AgentProxyRawModelEntry = {
   id: "GLM-5.3-high",
   capabilities: { tool_calling: true, reasoning: true, vision: false, thinking: false },
   context_length: 245_000,
@@ -87,14 +87,14 @@ const MEMBER_GLM_53_HIGH: OmniRouteRawModelEntry = {
   output_modalities: ["text"],
 };
 
-const COMBO_MODELS: OmniRouteRawCombo["models"] = [
+const COMBO_MODELS: AgentProxyRawCombo["models"] = [
   { kind: "model", model: "deepseek-v4-pro", weight: 25 },
   { kind: "model", model: "glm-5.2", weight: 25 },
   { kind: "model", model: "GLM-5.3-high", weight: 50 },
 ];
 
 test("issue #13000: warm combo limit (245000) survives a degraded post-restart refresh instead of downgrading to Math.min(member)", async () => {
-  const warmSnapshot: Omit<import("../src/index.js").OmniRouteFetchCacheEntry, "expiresAt"> = {
+  const warmSnapshot: Omit<import("../src/index.js").AgentProxyFetchCacheEntry, "expiresAt"> = {
     rawModels: [MEMBER_DEEPSEEK, MEMBER_GLM, MEMBER_GLM_53_HIGH],
     rawCombos: [
       {
@@ -110,8 +110,8 @@ test("issue #13000: warm combo limit (245000) survives a degraded post-restart r
     rawConnections: [],
   };
 
-  const fetcher: OmniRouteModelsFetcher = async () => [MEMBER_DEEPSEEK, MEMBER_GLM];
-  const combosFetcher: OmniRouteCombosFetcher = async () => [
+  const fetcher: AgentProxyModelsFetcher = async () => [MEMBER_DEEPSEEK, MEMBER_GLM];
+  const combosFetcher: AgentProxyCombosFetcher = async () => [
     {
       id: "orchestrator",
       name: "orchestrator",
@@ -119,18 +119,18 @@ test("issue #13000: warm combo limit (245000) survives a degraded post-restart r
       // computed_context_length intentionally omitted.
     },
   ];
-  const autoCombosFetcher: OmniRouteAutoCombosFetcher = async () => [];
-  const enrichmentFetcher: OmniRouteEnrichmentFetcher = async () => new Map();
-  const compressionMetaFetcher: OmniRouteCompressionMetaFetcher = async () => [];
-  const providersFetcher: OmniRouteProvidersFetcher = async () => [];
+  const autoCombosFetcher: AgentProxyAutoCombosFetcher = async () => [];
+  const enrichmentFetcher: AgentProxyEnrichmentFetcher = async () => new Map();
+  const compressionMetaFetcher: AgentProxyCompressionMetaFetcher = async () => [];
+  const providersFetcher: AgentProxyProvidersFetcher = async () => [];
 
-  const diskSnapshotReader: OmniRouteDiskSnapshotReader = async () => warmSnapshot;
-  const diskSnapshotWriter: OmniRouteDiskSnapshotWriter = async () => {};
+  const diskSnapshotReader: AgentProxyDiskSnapshotReader = async () => warmSnapshot;
+  const diskSnapshotWriter: AgentProxyDiskSnapshotWriter = async () => {};
 
-  const sharedCache: OmniRouteFetchCache = new Map();
+  const sharedCache: AgentProxyFetchCache = new Map();
 
-  const hook = createOmniRouteConfigHook(
-    { providerId: "omniroute", modelCacheTtl: 60_000 },
+  const hook = createAgentProxyConfigHook(
+    { providerId: "agentproxy", modelCacheTtl: 60_000 },
     {
       readAuthJson: authStub(),
       fetcher,
@@ -152,8 +152,8 @@ test("issue #13000: warm combo limit (245000) survives a degraded post-restart r
   // republish the block.
   await new Promise((r) => setTimeout(r, 100));
 
-  const entryAfter = (input as { provider: Record<string, OmniRouteStaticProviderEntry> }).provider[
-    "opencode-omniroute"
+  const entryAfter = (input as { provider: Record<string, AgentProxyStaticProviderEntry> }).provider[
+    "opencode-agentproxy"
   ];
   const comboModelAfter = entryAfter.models["orchestrator"];
   assert.ok(comboModelAfter, "combo model still published after refresh");
@@ -167,8 +167,8 @@ test("issue #13000: warm combo limit (245000) survives a degraded post-restart r
 });
 
 test("issue #13000 (control): no warm snapshot exists — Math.min(member) fallback is still used (expected, documented behavior)", async () => {
-  const fetcher: OmniRouteModelsFetcher = async () => [MEMBER_DEEPSEEK, MEMBER_GLM];
-  const combosFetcher: OmniRouteCombosFetcher = async () => [
+  const fetcher: AgentProxyModelsFetcher = async () => [MEMBER_DEEPSEEK, MEMBER_GLM];
+  const combosFetcher: AgentProxyCombosFetcher = async () => [
     {
       id: "orchestrator",
       name: "orchestrator",
@@ -176,19 +176,19 @@ test("issue #13000 (control): no warm snapshot exists — Math.min(member) fallb
       // computed_context_length intentionally omitted.
     },
   ];
-  const autoCombosFetcher: OmniRouteAutoCombosFetcher = async () => [];
-  const enrichmentFetcher: OmniRouteEnrichmentFetcher = async () => new Map();
-  const compressionMetaFetcher: OmniRouteCompressionMetaFetcher = async () => [];
-  const providersFetcher: OmniRouteProvidersFetcher = async () => [];
+  const autoCombosFetcher: AgentProxyAutoCombosFetcher = async () => [];
+  const enrichmentFetcher: AgentProxyEnrichmentFetcher = async () => new Map();
+  const compressionMetaFetcher: AgentProxyCompressionMetaFetcher = async () => [];
+  const providersFetcher: AgentProxyProvidersFetcher = async () => [];
 
   // No prior snapshot on disk.
-  const diskSnapshotReader: OmniRouteDiskSnapshotReader = async () => undefined;
-  const diskSnapshotWriter: OmniRouteDiskSnapshotWriter = async () => {};
+  const diskSnapshotReader: AgentProxyDiskSnapshotReader = async () => undefined;
+  const diskSnapshotWriter: AgentProxyDiskSnapshotWriter = async () => {};
 
-  const sharedCache: OmniRouteFetchCache = new Map();
+  const sharedCache: AgentProxyFetchCache = new Map();
 
-  const hook = createOmniRouteConfigHook(
-    { providerId: "omniroute", modelCacheTtl: 60_000 },
+  const hook = createAgentProxyConfigHook(
+    { providerId: "agentproxy", modelCacheTtl: 60_000 },
     {
       readAuthJson: authStub(),
       fetcher,
@@ -206,8 +206,8 @@ test("issue #13000 (control): no warm snapshot exists — Math.min(member) fallb
   const input = makeInput();
   await hook(input);
 
-  const entryAfter = (input as { provider: Record<string, OmniRouteStaticProviderEntry> }).provider[
-    "opencode-omniroute"
+  const entryAfter = (input as { provider: Record<string, AgentProxyStaticProviderEntry> }).provider[
+    "opencode-agentproxy"
   ];
   const comboModelAfter = entryAfter.models["orchestrator"];
   assert.ok(comboModelAfter, "combo model published on cold first run");

@@ -7,7 +7,7 @@ import path from "node:path";
 // The pending-request tracker receives the full provider body at every stage of
 // a request. It must protect only the bounded preview it keeps, never the whole
 // body, while still redacting credentials and parsing JSON string payloads.
-const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-test-pending-preview-"));
+const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-test-pending-preview-"));
 process.env.DATA_DIR = tmpDir;
 
 const { trackPendingRequest, updatePendingRequestById, getPendingById, clearPendingRequests } =

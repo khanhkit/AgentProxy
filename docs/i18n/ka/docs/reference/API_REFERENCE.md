@@ -64,7 +64,7 @@ Content-Type: application/json
 | სათაური                  | მიმართულება | აღწერა                                                                                                                                                                                                                                             |
 | ------------------------ | ----------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `X-AgentProxy-No-Cache`   | მოთხოვნა    | კეშის გვერდის ასავლელად დააყენეთ `true`                                                                                                                                                                                                            |
-| `x-omniroute-no-memory`  | მოთხოვნა    | ამ მოთხოვნისთვის მეხსიერებისა და უნარების ჩასმის გამოსატოვებლად დააყენეთ `true` (`no-cache`-ის ანალოგია; თავიდან აგაცილებთ თითოეული გამოძახების ტოკენებისა და ღირებულების ზედნადებ ხარჯებს)                                                        |
+| `x-agentproxy-no-memory`  | მოთხოვნა    | ამ მოთხოვნისთვის მეხსიერებისა და უნარების ჩასმის გამოსატოვებლად დააყენეთ `true` (`no-cache`-ის ანალოგია; თავიდან აგაცილებთ თითოეული გამოძახების ტოკენებისა და ღირებულების ზედნადებ ხარჯებს)                                                        |
 | `X-AgentProxy-Progress`   | მოთხოვნა    | პროგრესის მოვლენების მისაღებად დააყენეთ `true`                                                                                                                                                                                                     |
 | `X-Session-Id`           | მოთხოვნა    | მუდმივი სესიის გასაღები გარე სესიურ მიჯაჭვულობასთან თავსებადობისთვის                                                                                                                                                                               |
 | `x_session_id`           | მოთხოვნა    | ასევე მიიღება ქვედა ტირილის მქონე ვარიანტი (პირდაპირი HTTP)                                                                                                                                                                                        |
@@ -159,7 +159,7 @@ X-AgentProxy-Lease-Generation: 1
 
 ეს პასუხი მხოლოდ იმას ნიშნავს, რომ ჩვეულებრივი შესაბამისი ნაკრები არ იყო ცარიელი და ყოველი თავისუფალი კანდიდატი დაკავებული იყო უცხო აქტიური იჯარით. მხარდაუჭერელი მოდელები/პროვაიდერები, პოლიტიკის შეუსაბამობა, გაგრილება, კვოტა, ჯანმრთელობა და სხვა ჩვეულებრივი შესაბამისობის შეცდომები ინარჩუნებენ თავიანთ არსებულ AgentProxy პასუხებს.
 
-### `x-omniroute-compression`
+### `x-agentproxy-compression`
 
 შეკუმშვის გეგმის მოთხოვნის მიხედვით გადაწერა. უმაღლესი პრიორიტეტი — სჯობს მარშრუტიზაციის კომბინაციის გადაწერას, აქტიურ პროფილს, ავტო-გამშვებს და პანელის ნაგულისხმევს. მნიშვნელობები:
 
@@ -382,10 +382,10 @@ GET /v1/models?prefix=canonical    # მხოლოდ სრული provider
 
 ### მოდელების no-thinking ვარიანტები
 
-აზროვნების უნარის მქონე Claude მოდელებისთვის `/v1/models` ასევე წარმოადგენს **no-thinking** ვარიანტს, რომლის id-ს აქვს პრეფიქსი `claude-3-omniroute-no-thinking/`:
+აზროვნების უნარის მქონე Claude მოდელებისთვის `/v1/models` ასევე წარმოადგენს **no-thinking** ვარიანტს, რომლის id-ს აქვს პრეფიქსი `claude-3-agentproxy-no-thinking/`:
 
 ```
-claude-3-omniroute-no-thinking/<provider>/<model>
+claude-3-agentproxy-no-thinking/<provider>/<model>
 ```
 
 ამ id-ის არჩევისას (მაგ., Claude Code-ის კონფიგურაციაში, რომელიც ყოველთვის ურთავს `thinking` ბლოკს), ის კვლავ რეალურ `<provider>/<model>`-ად გარდაიქმნება, თუმცა მსჯელობა ჩახშობილია — `/v1/messages` მარშრუტზე გამოიყენება `thinking:{type:"disabled"}`, ხოლო `/v1/chat/completions` მარშრუტზე `reasoning`/`reasoning_effort` ველები გამოიტოვება. ვარიანტი ჩამონათვალში შედის მხოლოდ Claude-ის ოჯახის იმ მოდელებისთვის, რომლებსაც აქვთ აზროვნების მხარდაჭერა **და** ითვალისწინებენ `disabled`-ს (ამიტომ, მაგალითად, adaptive-only მოდელები, რომლებიც `disabled`-ს უარყოფენ, გამორიცხულია). ოპერატორებს შეუძლიათ თითოეული მოდელისთვის ამ ვარიანტის იძულებით ჩართვა ან გამორთვა `ModelSpec.noThinkingAlias`-ის მეშვეობით.
@@ -474,7 +474,7 @@ POST /v1/music/generations  { "model": "suno/v3.5",   "prompt": "..." }
 > კვანძები (`localhost`, `127.0.0.1`, `172.16.0.0/12`) ყოველთვის დაშვებულია. ნებისმიერ სხვა
 > ჰოსტზე განთავსებული კვანძები — LAN კომპიუტერი ან Tailscale-ის პირი — დაშვებულია მხოლოდ მაშინ, როდესაც ოპერატორი ჩართავს
 > `RERANK_REMOTE_PROVIDER_NODES` ფუნქციის ალამს **და** კვანძის საბაზო URL აკმაყოფილებს პროვაიდერის
-> გამავალი URL-ების პოლიტიკას (`OMNIROUTE_ALLOW_LOCAL_PROVIDER_URLS` / `OMNIROUTE_ALLOW_PRIVATE_PROVIDER_URLS`);
+> გამავალი URL-ების პოლიტიკას (`AGENTPROXY_ALLOW_LOCAL_PROVIDER_URLS` / `AGENTPROXY_ALLOW_PRIVATE_PROVIDER_URLS`);
 > ღრუბლოვანი მეტამონაცემების ჰოსტებზე მოთხოვნები არასოდეს გადაიმისამართება. მეხსიერების ძრავის რერანჟირების ეტაპი ამ მარშრუტს
 > უკუმარყუჟის საშუალებით იძახებს, ამიტომ იგივე წესი მართავს `rerankProviderModel`-ს Memory-ის პარამეტრებში.
 >
@@ -596,8 +596,8 @@ GET /v1/ws?handshake=1
 
 ```bash
 # იგივე host:port, რაც HTTP API-ს აქვს (ნაგულისხმევად 20128); განაახლეთ კავშირი:
-wscat -c "ws://localhost:20128/v1/responses?api_key=<OMNIROUTE_API_KEY>"
-# (ან: -H "Authorization: Bearer <OMNIROUTE_API_KEY>")
+wscat -c "ws://localhost:20128/v1/responses?api_key=<AGENTPROXY_API_KEY>"
+# (ან: -H "Authorization: Bearer <AGENTPROXY_API_KEY>")
 
 # პირველი frame აუცილებლად response.create უნდა იყოს:
 { "type": "response.create", "model": "gpt-5.5", "input": [ { "role": "user", "content": "hi" } ] }
@@ -632,18 +632,18 @@ a ChatGPT account`). გაგზავნეთ **უშუალო** id (მ�
 
 ```toml
 model = "gpt-5.5"                 # უშუალო id — არა "codex/gpt-5.5"
-model_provider = "omniroute"
+model_provider = "agentproxy"
 
-[model_providers.omniroute]
+[model_providers.agentproxy]
 name = "AgentProxy (WS)"
 base_url = "http://localhost:20128/v1"   # ბოლოში დახრილი ხაზი არ უნდა იყოს; WS URL მისგან წარმოიქმნება (production-ში გამოიყენეთ https/wss)
 wire_api = "responses"                    # ერთადერთი მხარდაჭერილი მნიშვნელობა 2026 წლის თებერვლიდან
 supports_websockets = true                # ააქტიურებს Responses-over-WS transport-ს
-env_key = "OMNIROUTE_API_KEY"             # შეიცავს AgentProxy API გასაღებს (Bearer)
+env_key = "AGENTPROXY_API_KEY"             # შეიცავს AgentProxy API გასაღებს (Bearer)
 ```
 
 ```bash
-export OMNIROUTE_API_KEY=sk-...           # AgentProxy API გასაღები (ნებისმიერი გასაღები, თუ REQUIRE_API_KEY=false)
+export AGENTPROXY_API_KEY=sk-...           # AgentProxy API გასაღები (ნებისმიერი გასაღები, თუ REQUIRE_API_KEY=false)
 codex exec "Responda apenas: PONG"
 ```
 
@@ -999,7 +999,7 @@ Content-Type: application/json
 {
   "success": true,
   "repaired": ["CLAUDE_CODE_OAUTH_CLIENT_ID", "CLAUDE_CODE_OAUTH_CLIENT_SECRET"],
-  "backupPath": "/home/user/.omniroute/backups/env-repair-2026-04-11.bak"
+  "backupPath": "/home/user/.agentproxy/backups/env-repair-2026-04-11.bak"
 }
 ```
 
@@ -1373,7 +1373,7 @@ AgentProxy უზრუნველყოფს A2A (აგენტიდან
 
 ```bash
 POST /a2a
-Authorization: Bearer your-api-key   # არასავალდებულოა, თუ OMNIROUTE_API_KEY დაყენებული არ არის
+Authorization: Bearer your-api-key   # არასავალდებულოა, თუ AGENTPROXY_API_KEY დაყენებული არ არის
 Content-Type: application/json
 
 {
@@ -1416,7 +1416,7 @@ GET /.well-known/agent.json
 | GET    | `/api/a2a/tasks/[id]`        | ერთი ამოცანის მიღება                                                                                                |
 | POST   | `/api/a2a/tasks/[id]/cancel` | ამოცანის გაუქმება                                                                                                   |
 
-**ავთენტიფიკაცია:** REST დამხმარე მექანიზმები მართვის ავთენტიფიკაციის გარეშე მუშაობს (წაკითხვადია საინფორმაციო პანელიდან); JSON-RPC `/a2a` მარშრუტი იყენებს Bearer `OMNIROUTE_API_KEY`-ს, თუ ის კონფიგურირებულია.
+**ავთენტიფიკაცია:** REST დამხმარე მექანიზმები მართვის ავთენტიფიკაციის გარეშე მუშაობს (წაკითხვადია საინფორმაციო პანელიდან); JSON-RPC `/a2a` მარშრუტი იყენებს Bearer `AGENTPROXY_API_KEY`-ს, თუ ის კონფიგურირებულია.
 
 ---
 
@@ -1732,7 +1732,7 @@ devin-cli და სხვ.). სრული სიისთვის იხი
 
 ## დამცავი მექანიზმები
 
-შეამოწმეთ შესრულების გარემოს დამცავი მექანიზმები (PII-ის გამოვლენა, პრომპტ-ინექციის გამოვლენა, ხედვის მოდელებთან დაკავშირება). დამცავი მექანიზმები სრულდება ყოველ მოთხოვნაზე; თითოეული გამოძახებისთვის მათი გამოტოვება შესაძლებელია მოთხოვნის `x-omniroute-disabled-guardrails` სათაურის მეშვეობით — მუდმივი ჩართვის/გამორთვის ინტერფეისი არ არსებობს.
+შეამოწმეთ შესრულების გარემოს დამცავი მექანიზმები (PII-ის გამოვლენა, პრომპტ-ინექციის გამოვლენა, ხედვის მოდელებთან დაკავშირება). დამცავი მექანიზმები სრულდება ყოველ მოთხოვნაზე; თითოეული გამოძახებისთვის მათი გამოტოვება შესაძლებელია მოთხოვნის `x-agentproxy-disabled-guardrails` სათაურის მეშვეობით — მუდმივი ჩართვის/გამორთვის ინტერფეისი არ არსებობს.
 
 | მეთოდი | გზა                    | აღწერა                                                                                                                |
 | ------ | ---------------------- | --------------------------------------------------------------------------------------------------------------------- |

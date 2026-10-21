@@ -86,7 +86,7 @@ List CLI tool backups
 
 ```bash
 curl https://localhost:20128/api/cli-tools/backups \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
+  -H "Authorization: Bearer $AGENTPROXY_TOKEN"
 ```
 
 ### POST /api/cli-tools/backups
@@ -95,7 +95,7 @@ Create CLI tool backup
 
 ```bash
 curl -X POST https://localhost:20128/api/cli-tools/backups \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN" \
+  -H "Authorization: Bearer $AGENTPROXY_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{}'
 ```
@@ -106,7 +106,7 @@ Get runtime status for a CLI tool
 
 ```bash
 curl https://localhost:20128/api/cli-tools/runtime/{toolId} \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
+  -H "Authorization: Bearer $AGENTPROXY_TOKEN"
 ```
 
 ### GET /api/cli-tools/guide-settings/{toolId}
@@ -115,7 +115,7 @@ Get guide settings for a tool
 
 ```bash
 curl https://localhost:20128/api/cli-tools/guide-settings/{toolId} \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
+  -H "Authorization: Bearer $AGENTPROXY_TOKEN"
 ```
 
 ### GET /api/cli-tools/antigravity-mitm
@@ -124,7 +124,7 @@ Get Antigravity MITM proxy settings
 
 ```bash
 curl https://localhost:20128/api/cli-tools/antigravity-mitm \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
+  -H "Authorization: Bearer $AGENTPROXY_TOKEN"
 ```
 
 ### POST /api/cli-tools/antigravity-mitm
@@ -133,7 +133,7 @@ Update Antigravity MITM proxy settings
 
 ```bash
 curl -X POST https://localhost:20128/api/cli-tools/antigravity-mitm \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN" \
+  -H "Authorization: Bearer $AGENTPROXY_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{}'
 ```
@@ -144,7 +144,7 @@ Reset Antigravity MITM proxy settings
 
 ```bash
 curl -X DELETE https://localhost:20128/api/cli-tools/antigravity-mitm \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
+  -H "Authorization: Bearer $AGENTPROXY_TOKEN"
 ```
 
 ### GET /api/cli-tools/antigravity-mitm/alias
@@ -153,7 +153,7 @@ Get Antigravity MITM alias configuration
 
 ```bash
 curl https://localhost:20128/api/cli-tools/antigravity-mitm/alias \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
+  -H "Authorization: Bearer $AGENTPROXY_TOKEN"
 ```
 
 ### PUT /api/cli-tools/antigravity-mitm/alias
@@ -162,7 +162,7 @@ Update Antigravity MITM alias configuration
 
 ```bash
 curl -X PUT https://localhost:20128/api/cli-tools/antigravity-mitm/alias \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN" \
+  -H "Authorization: Bearer $AGENTPROXY_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{}'
 ```
@@ -173,7 +173,7 @@ Get Claude CLI settings
 
 ```bash
 curl https://localhost:20128/api/cli-tools/claude-settings \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
+  -H "Authorization: Bearer $AGENTPROXY_TOKEN"
 ```
 
 ### POST /api/cli-tools/claude-settings
@@ -182,7 +182,7 @@ Apply Claude CLI settings
 
 ```bash
 curl -X POST https://localhost:20128/api/cli-tools/claude-settings \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN" \
+  -H "Authorization: Bearer $AGENTPROXY_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{}'
 ```
@@ -193,7 +193,7 @@ Reset Claude CLI settings
 
 ```bash
 curl -X DELETE https://localhost:20128/api/cli-tools/claude-settings \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
+  -H "Authorization: Bearer $AGENTPROXY_TOKEN"
 ```
 
 ### GET /api/cli-tools/cline-settings
@@ -202,7 +202,7 @@ Get Cline CLI settings
 
 ```bash
 curl https://localhost:20128/api/cli-tools/cline-settings \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
+  -H "Authorization: Bearer $AGENTPROXY_TOKEN"
 ```
 
 ### POST /api/cli-tools/cline-settings
@@ -211,7 +211,7 @@ Apply Cline CLI settings
 
 ```bash
 curl -X POST https://localhost:20128/api/cli-tools/cline-settings \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN" \
+  -H "Authorization: Bearer $AGENTPROXY_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{}'
 ```
@@ -222,7 +222,7 @@ Reset Cline CLI settings
 
 ```bash
 curl -X DELETE https://localhost:20128/api/cli-tools/cline-settings \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
+  -H "Authorization: Bearer $AGENTPROXY_TOKEN"
 ```
 
 ### GET /api/cli-tools/codex-profiles
@@ -231,7 +231,7 @@ Get Codex profiles
 
 ```bash
 curl https://localhost:20128/api/cli-tools/codex-profiles \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
+  -H "Authorization: Bearer $AGENTPROXY_TOKEN"
 ```
 
 ### POST /api/cli-tools/codex-profiles
@@ -240,7 +240,7 @@ Create Codex profile
 
 ```bash
 curl -X POST https://localhost:20128/api/cli-tools/codex-profiles \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN" \
+  -H "Authorization: Bearer $AGENTPROXY_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{}'
 ```
@@ -251,7 +251,7 @@ Update Codex profile
 
 ```bash
 curl -X PUT https://localhost:20128/api/cli-tools/codex-profiles \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN" \
+  -H "Authorization: Bearer $AGENTPROXY_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{}'
 ```
@@ -262,7 +262,7 @@ Delete Codex profile
 
 ```bash
 curl -X DELETE https://localhost:20128/api/cli-tools/codex-profiles \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
+  -H "Authorization: Bearer $AGENTPROXY_TOKEN"
 ```
 
 ### GET /api/cli-tools/codex-settings
@@ -271,7 +271,7 @@ Get Codex CLI settings
 
 ```bash
 curl https://localhost:20128/api/cli-tools/codex-settings \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
+  -H "Authorization: Bearer $AGENTPROXY_TOKEN"
 ```
 
 ### POST /api/cli-tools/codex-settings
@@ -280,7 +280,7 @@ Apply Codex CLI settings
 
 ```bash
 curl -X POST https://localhost:20128/api/cli-tools/codex-settings \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN" \
+  -H "Authorization: Bearer $AGENTPROXY_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{}'
 ```
@@ -291,7 +291,7 @@ Reset Codex CLI settings
 
 ```bash
 curl -X DELETE https://localhost:20128/api/cli-tools/codex-settings \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
+  -H "Authorization: Bearer $AGENTPROXY_TOKEN"
 ```
 
 ### GET /api/cli-tools/droid-settings
@@ -300,7 +300,7 @@ Get Droid CLI settings
 
 ```bash
 curl https://localhost:20128/api/cli-tools/droid-settings \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
+  -H "Authorization: Bearer $AGENTPROXY_TOKEN"
 ```
 
 ### POST /api/cli-tools/droid-settings
@@ -309,7 +309,7 @@ Apply Droid CLI settings
 
 ```bash
 curl -X POST https://localhost:20128/api/cli-tools/droid-settings \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN" \
+  -H "Authorization: Bearer $AGENTPROXY_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{}'
 ```
@@ -320,7 +320,7 @@ Reset Droid CLI settings
 
 ```bash
 curl -X DELETE https://localhost:20128/api/cli-tools/droid-settings \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
+  -H "Authorization: Bearer $AGENTPROXY_TOKEN"
 ```
 
 ### GET /api/cli-tools/kilo-settings
@@ -329,7 +329,7 @@ Get Kilo CLI settings
 
 ```bash
 curl https://localhost:20128/api/cli-tools/kilo-settings \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
+  -H "Authorization: Bearer $AGENTPROXY_TOKEN"
 ```
 
 ### POST /api/cli-tools/kilo-settings
@@ -338,7 +338,7 @@ Apply Kilo CLI settings
 
 ```bash
 curl -X POST https://localhost:20128/api/cli-tools/kilo-settings \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN" \
+  -H "Authorization: Bearer $AGENTPROXY_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{}'
 ```
@@ -349,7 +349,7 @@ Reset Kilo CLI settings
 
 ```bash
 curl -X DELETE https://localhost:20128/api/cli-tools/kilo-settings \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
+  -H "Authorization: Bearer $AGENTPROXY_TOKEN"
 ```
 
 ### GET /api/cli-tools/openclaw-settings
@@ -358,7 +358,7 @@ Get OpenClaw CLI settings
 
 ```bash
 curl https://localhost:20128/api/cli-tools/openclaw-settings \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
+  -H "Authorization: Bearer $AGENTPROXY_TOKEN"
 ```
 
 ### POST /api/cli-tools/openclaw-settings
@@ -367,7 +367,7 @@ Apply OpenClaw CLI settings
 
 ```bash
 curl -X POST https://localhost:20128/api/cli-tools/openclaw-settings \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN" \
+  -H "Authorization: Bearer $AGENTPROXY_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{}'
 ```
@@ -378,7 +378,7 @@ Reset OpenClaw CLI settings
 
 ```bash
 curl -X DELETE https://localhost:20128/api/cli-tools/openclaw-settings \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
+  -H "Authorization: Bearer $AGENTPROXY_TOKEN"
 ```
 
 ### GET /api/cli-tools/crush-settings
@@ -389,7 +389,7 @@ Local-only. Reads the AgentProxy provider block in Crush's config.
 
 ```bash
 curl https://localhost:20128/api/cli-tools/crush-settings \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
+  -H "Authorization: Bearer $AGENTPROXY_TOKEN"
 ```
 
 ### POST /api/cli-tools/crush-settings
@@ -400,7 +400,7 @@ Local-only. Registers AgentProxy as an `openai-compat` provider in Crush's confi
 
 ```bash
 curl -X POST https://localhost:20128/api/cli-tools/crush-settings \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN" \
+  -H "Authorization: Bearer $AGENTPROXY_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{}'
 ```
@@ -413,7 +413,7 @@ Local-only. Removes the AgentProxy provider block from Crush's config.
 
 ```bash
 curl -X DELETE https://localhost:20128/api/cli-tools/crush-settings \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
+  -H "Authorization: Bearer $AGENTPROXY_TOKEN"
 ```
 
 ### GET /api/cli-tools/codewhale-settings
@@ -424,7 +424,7 @@ Local-only. Reads the AgentProxy config block from `~/.codewhale/config.toml` (w
 
 ```bash
 curl https://localhost:20128/api/cli-tools/codewhale-settings \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
+  -H "Authorization: Bearer $AGENTPROXY_TOKEN"
 ```
 
 ### POST /api/cli-tools/codewhale-settings
@@ -435,7 +435,7 @@ Local-only. Writes the AgentProxy config block in CodeWhale TOML format.
 
 ```bash
 curl -X POST https://localhost:20128/api/cli-tools/codewhale-settings \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN" \
+  -H "Authorization: Bearer $AGENTPROXY_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{}'
 ```
@@ -448,7 +448,7 @@ Local-only. Removes the AgentProxy config block from CodeWhale's config.
 
 ```bash
 curl -X DELETE https://localhost:20128/api/cli-tools/codewhale-settings \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
+  -H "Authorization: Bearer $AGENTPROXY_TOKEN"
 ```
 
 ### GET /api/cli-tools/all-statuses
@@ -457,7 +457,7 @@ GET cli tools › all statuses
 
 ```bash
 curl https://localhost:20128/api/cli-tools/all-statuses \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
+  -H "Authorization: Bearer $AGENTPROXY_TOKEN"
 ```
 
 ### POST /api/cli-tools/apply
@@ -468,7 +468,7 @@ Submit the original toolId, apiKey, optional baseUrl/model and optional dryRun i
 
 ```bash
 curl -X POST https://localhost:20128/api/cli-tools/apply \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN" \
+  -H "Authorization: Bearer $AGENTPROXY_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{"toolId":"claude","apiKey":"<configuration-api-key>","dryRun":true}'
 ```
@@ -477,11 +477,11 @@ curl -X POST https://localhost:20128/api/cli-tools/apply \
 
 GET cli tools › config
 
-Returns redacted, non-cacheable previews. Send the configuration API key in x-agentproxy-config-api-key, separate from management authentication. The legacy x-omniroute-config-api-key header remains a migration alias. API keys in query strings are rejected. Preview content must not be copied into a credential-bearing configuration or submitted as an apply payload.
+Returns redacted, non-cacheable previews. Send the configuration API key in x-agentproxy-config-api-key, separate from management authentication. The legacy x-agentproxy-config-api-key header remains a migration alias. API keys in query strings are rejected. Preview content must not be copied into a credential-bearing configuration or submitted as an apply payload.
 
 ```bash
 curl https://localhost:20128/api/cli-tools/config \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN" \
+  -H "Authorization: Bearer $AGENTPROXY_TOKEN" \
   -H "x-agentproxy-config-api-key: <configuration-api-key>"
 ```
 
@@ -493,7 +493,7 @@ Submit toolId, apiKey and optional baseUrl/model as JSON. Unknown fields are rej
 
 ```bash
 curl -X POST https://localhost:20128/api/cli-tools/config \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN" \
+  -H "Authorization: Bearer $AGENTPROXY_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{"toolId":"claude","apiKey":"<configuration-api-key>"}'
 ```
@@ -504,7 +504,7 @@ GET cli tools › deepseek tui settings
 
 ```bash
 curl https://localhost:20128/api/cli-tools/deepseek-tui-settings \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
+  -H "Authorization: Bearer $AGENTPROXY_TOKEN"
 ```
 
 ### POST /api/cli-tools/deepseek-tui-settings
@@ -513,7 +513,7 @@ POST cli tools › deepseek tui settings
 
 ```bash
 curl -X POST https://localhost:20128/api/cli-tools/deepseek-tui-settings \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN" \
+  -H "Authorization: Bearer $AGENTPROXY_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{}'
 ```
@@ -524,7 +524,7 @@ DELETE cli tools › deepseek tui settings
 
 ```bash
 curl -X DELETE https://localhost:20128/api/cli-tools/deepseek-tui-settings \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
+  -H "Authorization: Bearer $AGENTPROXY_TOKEN"
 ```
 
 ### GET /api/cli-tools/detect
@@ -533,7 +533,7 @@ GET cli tools › detect
 
 ```bash
 curl https://localhost:20128/api/cli-tools/detect \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
+  -H "Authorization: Bearer $AGENTPROXY_TOKEN"
 ```
 
 ### GET /api/cli-tools/forge-settings
@@ -542,7 +542,7 @@ GET cli tools › forge settings
 
 ```bash
 curl https://localhost:20128/api/cli-tools/forge-settings \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
+  -H "Authorization: Bearer $AGENTPROXY_TOKEN"
 ```
 
 ### POST /api/cli-tools/forge-settings
@@ -551,7 +551,7 @@ POST cli tools › forge settings
 
 ```bash
 curl -X POST https://localhost:20128/api/cli-tools/forge-settings \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN" \
+  -H "Authorization: Bearer $AGENTPROXY_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{}'
 ```
@@ -562,7 +562,7 @@ DELETE cli tools › forge settings
 
 ```bash
 curl -X DELETE https://localhost:20128/api/cli-tools/forge-settings \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
+  -H "Authorization: Bearer $AGENTPROXY_TOKEN"
 ```
 
 ### GET /api/cli-tools/grok-build-settings
@@ -571,7 +571,7 @@ GET cli tools › grok build settings
 
 ```bash
 curl https://localhost:20128/api/cli-tools/grok-build-settings \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
+  -H "Authorization: Bearer $AGENTPROXY_TOKEN"
 ```
 
 ### POST /api/cli-tools/grok-build-settings
@@ -580,7 +580,7 @@ POST cli tools › grok build settings
 
 ```bash
 curl -X POST https://localhost:20128/api/cli-tools/grok-build-settings \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN" \
+  -H "Authorization: Bearer $AGENTPROXY_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{}'
 ```
@@ -591,7 +591,7 @@ DELETE cli tools › grok build settings
 
 ```bash
 curl -X DELETE https://localhost:20128/api/cli-tools/grok-build-settings \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
+  -H "Authorization: Bearer $AGENTPROXY_TOKEN"
 ```
 
 ### GET /api/cli-tools/hermes-agent-settings
@@ -600,7 +600,7 @@ GET cli tools › hermes agent settings
 
 ```bash
 curl https://localhost:20128/api/cli-tools/hermes-agent-settings \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
+  -H "Authorization: Bearer $AGENTPROXY_TOKEN"
 ```
 
 ### POST /api/cli-tools/hermes-agent-settings
@@ -609,7 +609,7 @@ POST cli tools › hermes agent settings
 
 ```bash
 curl -X POST https://localhost:20128/api/cli-tools/hermes-agent-settings \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN" \
+  -H "Authorization: Bearer $AGENTPROXY_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{}'
 ```
@@ -620,7 +620,7 @@ GET cli tools › jcode settings
 
 ```bash
 curl https://localhost:20128/api/cli-tools/jcode-settings \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
+  -H "Authorization: Bearer $AGENTPROXY_TOKEN"
 ```
 
 ### POST /api/cli-tools/jcode-settings
@@ -629,7 +629,7 @@ POST cli tools › jcode settings
 
 ```bash
 curl -X POST https://localhost:20128/api/cli-tools/jcode-settings \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN" \
+  -H "Authorization: Bearer $AGENTPROXY_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{}'
 ```
@@ -640,7 +640,7 @@ DELETE cli tools › jcode settings
 
 ```bash
 curl -X DELETE https://localhost:20128/api/cli-tools/jcode-settings \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
+  -H "Authorization: Bearer $AGENTPROXY_TOKEN"
 ```
 
 ### GET /api/cli-tools/keys
@@ -649,7 +649,7 @@ GET cli tools › keys
 
 ```bash
 curl https://localhost:20128/api/cli-tools/keys \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
+  -H "Authorization: Bearer $AGENTPROXY_TOKEN"
 ```
 
 ### GET /api/cli-tools/letta-settings
@@ -658,7 +658,7 @@ GET cli tools › letta settings
 
 ```bash
 curl https://localhost:20128/api/cli-tools/letta-settings \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
+  -H "Authorization: Bearer $AGENTPROXY_TOKEN"
 ```
 
 ### POST /api/cli-tools/letta-settings
@@ -667,7 +667,7 @@ POST cli tools › letta settings
 
 ```bash
 curl -X POST https://localhost:20128/api/cli-tools/letta-settings \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN" \
+  -H "Authorization: Bearer $AGENTPROXY_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{}'
 ```
@@ -678,7 +678,7 @@ DELETE cli tools › letta settings
 
 ```bash
 curl -X DELETE https://localhost:20128/api/cli-tools/letta-settings \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
+  -H "Authorization: Bearer $AGENTPROXY_TOKEN"
 ```
 
 ### GET /api/cli-tools/logs
@@ -687,7 +687,7 @@ GET cli tools › logs
 
 ```bash
 curl https://localhost:20128/api/cli-tools/logs \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
+  -H "Authorization: Bearer $AGENTPROXY_TOKEN"
 ```
 
 ### GET /api/cli-tools/omp-settings
@@ -696,7 +696,7 @@ GET cli tools › omp settings
 
 ```bash
 curl https://localhost:20128/api/cli-tools/omp-settings \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
+  -H "Authorization: Bearer $AGENTPROXY_TOKEN"
 ```
 
 ### POST /api/cli-tools/omp-settings
@@ -705,7 +705,7 @@ POST cli tools › omp settings
 
 ```bash
 curl -X POST https://localhost:20128/api/cli-tools/omp-settings \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN" \
+  -H "Authorization: Bearer $AGENTPROXY_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{}'
 ```
@@ -716,7 +716,7 @@ DELETE cli tools › omp settings
 
 ```bash
 curl -X DELETE https://localhost:20128/api/cli-tools/omp-settings \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
+  -H "Authorization: Bearer $AGENTPROXY_TOKEN"
 ```
 
 ### GET /api/cli-tools/openclaw/auto-order
@@ -725,7 +725,7 @@ GET cli tools › openclaw › auto order
 
 ```bash
 curl https://localhost:20128/api/cli-tools/openclaw/auto-order \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
+  -H "Authorization: Bearer $AGENTPROXY_TOKEN"
 ```
 
 ### GET /api/cli-tools/pi-settings
@@ -734,7 +734,7 @@ GET cli tools › pi settings
 
 ```bash
 curl https://localhost:20128/api/cli-tools/pi-settings \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
+  -H "Authorization: Bearer $AGENTPROXY_TOKEN"
 ```
 
 ### POST /api/cli-tools/pi-settings
@@ -743,7 +743,7 @@ POST cli tools › pi settings
 
 ```bash
 curl -X POST https://localhost:20128/api/cli-tools/pi-settings \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN" \
+  -H "Authorization: Bearer $AGENTPROXY_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{}'
 ```
@@ -754,7 +754,7 @@ DELETE cli tools › pi settings
 
 ```bash
 curl -X DELETE https://localhost:20128/api/cli-tools/pi-settings \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
+  -H "Authorization: Bearer $AGENTPROXY_TOKEN"
 ```
 
 ### GET /api/cli-tools/qwen-settings
@@ -763,7 +763,7 @@ GET cli tools › qwen settings
 
 ```bash
 curl https://localhost:20128/api/cli-tools/qwen-settings \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
+  -H "Authorization: Bearer $AGENTPROXY_TOKEN"
 ```
 
 ### POST /api/cli-tools/qwen-settings
@@ -772,7 +772,7 @@ POST cli tools › qwen settings
 
 ```bash
 curl -X POST https://localhost:20128/api/cli-tools/qwen-settings \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN" \
+  -H "Authorization: Bearer $AGENTPROXY_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{}'
 ```
@@ -783,7 +783,7 @@ DELETE cli tools › qwen settings
 
 ```bash
 curl -X DELETE https://localhost:20128/api/cli-tools/qwen-settings \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
+  -H "Authorization: Bearer $AGENTPROXY_TOKEN"
 ```
 
 ### GET /api/cli-tools/smelt-settings
@@ -792,7 +792,7 @@ GET cli tools › smelt settings
 
 ```bash
 curl https://localhost:20128/api/cli-tools/smelt-settings \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
+  -H "Authorization: Bearer $AGENTPROXY_TOKEN"
 ```
 
 ### POST /api/cli-tools/smelt-settings
@@ -801,7 +801,7 @@ POST cli tools › smelt settings
 
 ```bash
 curl -X POST https://localhost:20128/api/cli-tools/smelt-settings \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN" \
+  -H "Authorization: Bearer $AGENTPROXY_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{}'
 ```
@@ -812,7 +812,7 @@ DELETE cli tools › smelt settings
 
 ```bash
 curl -X DELETE https://localhost:20128/api/cli-tools/smelt-settings \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
+  -H "Authorization: Bearer $AGENTPROXY_TOKEN"
 ```
 
 ### GET /api/cli-tools/status
@@ -821,5 +821,5 @@ GET cli tools › status
 
 ```bash
 curl https://localhost:20128/api/cli-tools/status \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
+  -H "Authorization: Bearer $AGENTPROXY_TOKEN"
 ```

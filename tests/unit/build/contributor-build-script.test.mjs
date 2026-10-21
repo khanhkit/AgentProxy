@@ -57,10 +57,10 @@ test("shouldBuildStandalone disables standalone output for contributor and fast 
   assert.equal(shouldBuildStandalone({ AGENTPROXY_BUILD_PROFILE: "backend" }), true);
   assert.equal(shouldBuildStandalone({ AGENTPROXY_BUILD_PROFILE: "minimal" }), true);
   assert.equal(shouldBuildStandalone({ AGENTPROXY_BUILD_PROFILE: "contributor" }), false);
-  assert.equal(shouldBuildStandalone({ OMNIROUTE_SKIP_STANDALONE: "1" }), false);
-  assert.match(packageJson.scripts["build:fast"], /OMNIROUTE_SKIP_STANDALONE=1/);
+  assert.equal(shouldBuildStandalone({ AGENTPROXY_SKIP_STANDALONE: "1" }), false);
+  assert.match(packageJson.scripts["build:fast"], /AGENTPROXY_SKIP_STANDALONE=1/);
   assert.match(packageJson.scripts["prebuild:fast"], /check:native-deps/);
-  assert.match(packageJson.scripts["start:fast"], /OMNIROUTE_SKIP_STANDALONE=1/);
+  assert.match(packageJson.scripts["start:fast"], /AGENTPROXY_SKIP_STANDALONE=1/);
   assert.match(nextConfigSource, /shouldBuildStandalone/);
   assert.match(
     nextConfigSource,

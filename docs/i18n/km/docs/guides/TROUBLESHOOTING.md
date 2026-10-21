@@ -18,7 +18,7 @@
 
 | ខ្ញុំឃើញសារនេះ            | អត្ថន័យរបស់វា                                    | អ្វីដែលត្រូវធ្វើ                                                                                                |
 | ------------------------- | ------------------------------------------------ | --------------------------------------------------------------------------------------------------------------- |
-| "មិនអាចតភ្ជាប់បាន"        | AgentProxy មិនកំពុងដំណើរការ                       | ដំណើរការ `omniroute` ឬ `docker restart omniroute`                                                               |
+| "មិនអាចតភ្ជាប់បាន"        | AgentProxy មិនកំពុងដំណើរការ                       | ដំណើរការ `agentproxy` ឬ `docker restart agentproxy`                                                               |
 | "API key មិនត្រឹមត្រូវ"   | key របស់អ្នកមិនត្រឹមត្រូវ ឬផុតកំណត់              | ចម្លង key ម្តងទៀតពីគេហទំព័ររបស់អ្នកផ្តល់សេវា                                                                    |
 | "លើសដែនកំណត់អត្រា"        | អ្នកកំពុងផ្ញើសំណើច្រើនពេក                        | រង់ចាំ 1 នាទី ឬប្រើ `model: "auto"` សម្រាប់ការប្តូរជំនួសដោយស្វ័យប្រវត្តិ                                        |
 | "លើសកូតា"                 | អ្នកបានប្រើកូតាឥតគិតថ្លៃ/បង់ប្រាក់របស់អ្នកអស់ហើយ | ភ្ជាប់អ្នកផ្តល់សេវាបន្ថែម ឬប្រើអ្នកផ្តល់សេវាឥតគិតថ្លៃ (Kiro, Pollinations)                                      |
@@ -26,7 +26,7 @@
 | "បានប្រើអ្នកផ្តល់សេវាខុស" | `auto` បានជ្រើសរើសអ្នកផ្តល់សេវាផ្សេង             | វាជារឿងធម្មតា! `auto` ជ្រើសរើសជម្រើសល្អបំផុត។ បង្ខំឱ្យប្រើអ្នកផ្តល់សេវាជាក់លាក់ដោយប្រើ `model: "openai/gpt-4o"` |
 | "502 Bad Gateway"         | អ្នកផ្តល់សេវាមិនដំណើរការ                         | រង់ចាំ ហើយព្យាយាមម្តងទៀត ឬប្រើ `model: "auto"` ដើម្បីប្តូរអ្នកផ្តល់សេវា                                         |
 | "401 Unauthorized"        | ព័ត៌មានសម្គាល់អត្តសញ្ញាណរបស់អ្នកមិនត្រឹមត្រូវ    | ពិនិត្យ API key របស់អ្នក ឬផ្ទៀងផ្ទាត់អត្តសញ្ញាណម្តងទៀតតាម OAuth                                                 |
-| "មិនស្គាល់ omniroute"     | Windows PATH ខ្វះម៉ូឌុល node សកល                 | បន្ថែម npm global prefix របស់អ្នកទៅក្នុង Windows PATH។ ស្វែងរកវាដោយប្រើ `npm config get prefix`។                |
+| "មិនស្គាល់ agentproxy"     | Windows PATH ខ្វះម៉ូឌុល node សកល                 | បន្ថែម npm global prefix របស់អ្នកទៅក្នុង Windows PATH។ ស្វែងរកវាដោយប្រើ `npm config get prefix`។                |
 | "429 Too Many Requests"   | ត្រូវបានកំណត់អត្រា                               | រង់ចាំ 1 នាទី ឬភ្ជាប់អ្នកផ្តល់សេវាបន្ថែម                                                                        |
 
 **នៅតែមិនអាចដោះស្រាយបានមែនទេ?** សូមមើល [ការដោះស្រាយបញ្ហាលម្អិត](#detailed-troubleshooting) ខាងក្រោម ឬសួរនៅលើ [Discord](https://discord.gg/U47eFqAXCn)។
@@ -50,14 +50,14 @@
 **ដំណោះស្រាយដែលបានផ្ទៀងផ្ទាត់ (រាយការណ៍ដោយសហគមន៍, 2026-08-10)**៖ កែតម្រូវ environment variable ចំនួនបី ដើម្បីឱ្យការបង្វិល សំណើស្របពេល និងការប្តូរជំនួស អាចទប់ទល់នឹងការប្រែប្រួលនៃកម្រិតប្រើប្រាស់ឥតគិតថ្លៃ ជំនួសឱ្យបរាជ័យដោយសារវា៖
 
 ```bash
-export OMNIROUTE_ROTATE_ON_400=true           # ប្តូរទៅម៉ូដែល/អ្នកផ្តល់សេវាផ្សេងនៅពេលមាន 400/401 (រំលងម៉ូដែលបញ្ជូនផ្ទាល់ដែលខូច)
-export OMNIROUTE_CHAT_MAX_HEAVY_IN_FLIGHT=4   # កម្រិតអតិបរមាច្បាស់លាស់សម្រាប់ការទទួលយកសំណើដែលប្រើធនធានច្រើន (តាមលំនាំដើមមិនបានកំណត់៖ មិនមានដែនកំណត់ចំនួនសំណើទេ សូមមើលកំណត់សម្គាល់ខាងក្រោម)
-export OMNIROUTE_CHAT_ADMISSION_QUEUE_MS=5000 # រង់ចាំក្នុងដែនកំណត់យូរជាងមុន ដើម្បីឱ្យមានសមត្ថភាពសម្រាប់សំណើដែលប្រើធនធានច្រើន ជំនួសឱ្យ 503 ដែលអាចសាកល្បងឡើងវិញភ្លាមៗ
+export AGENTPROXY_ROTATE_ON_400=true           # ប្តូរទៅម៉ូដែល/អ្នកផ្តល់សេវាផ្សេងនៅពេលមាន 400/401 (រំលងម៉ូដែលបញ្ជូនផ្ទាល់ដែលខូច)
+export AGENTPROXY_CHAT_MAX_HEAVY_IN_FLIGHT=4   # កម្រិតអតិបរមាច្បាស់លាស់សម្រាប់ការទទួលយកសំណើដែលប្រើធនធានច្រើន (តាមលំនាំដើមមិនបានកំណត់៖ មិនមានដែនកំណត់ចំនួនសំណើទេ សូមមើលកំណត់សម្គាល់ខាងក្រោម)
+export AGENTPROXY_CHAT_ADMISSION_QUEUE_MS=5000 # រង់ចាំក្នុងដែនកំណត់យូរជាងមុន ដើម្បីឱ្យមានសមត្ថភាពសម្រាប់សំណើដែលប្រើធនធានច្រើន ជំនួសឱ្យ 503 ដែលអាចសាកល្បងឡើងវិញភ្លាមៗ
 ```
 
 កំណត់តម្លៃទាំងនេះក្នុង environment របស់ process AgentProxy (daemon ឧ. តាមរយៈ LaunchAgent plist ឬ `systemctl edit`) បន្ទាប់មកចាប់ផ្តើម AgentProxy ឡើងវិញ។ rotation flag គឺជាយន្តការដែលមានឥទ្ធិពលខ្ពស់បំផុត៖ វាបម្លែងការបរាជ័យទាំងស្រុងទៅជាការសាកល្បងម្តងទៀតដោយស្វ័យប្រវត្តិជាមួយអ្នកផ្តល់សេវាដែលដំណើរការល្អនៅក្នុង pool។
 
-**កំណត់សម្គាល់**៖ `OMNIROUTE_CHAT_MAX_HEAVY_IN_FLIGHT` កំណត់ចំនួនសំណើដែលប្រើធនធានច្រើន — មាន context វែង — ដែលអាចដំណើរការក្នុងពេលតែមួយ។ ដែនកំណត់នេះជាច្រកត្រួតពិនិត្យការទទួលយក មិនមែនជាឧបករណ៍កំណត់អត្រារបស់អ្នកផ្តល់សេវាទេ។ **បច្ចុប្បន្នភាព #503-fanout៖** var នេះលែងត្រូវបានកំណត់តាមលំនាំដើមទៀតហើយ (ឥឡូវនេះវាអនុវត្តតែនៅពេលត្រូវបានកំណត់យ៉ាងច្បាស់ ដូចខាងលើ) — ផ្ទុយទៅវិញ ការទទួលយកសំណើដែលប្រើធនធានច្រើនត្រូវបានគ្រប់គ្រងដោយថវិកា byte ដែលបានគណនាដោយស្វ័យប្រវត្តិ (`OMNIROUTE_CHAT_MAX_INFLIGHT_BYTES`) ហើយវាកែសម្រួលទំហំរបស់ខ្លួនដោយផ្អែកលើកម្រិតអង្គចងចាំពិតប្រាកដរបស់ host។ ដូច្នេះ deployment ថ្មីគួរតែជួបការបដិសេធ `503 chat_admission_busy` តិចជាងមុនយ៉ាងច្រើន ដោយមិនចាំបាច់កំណត់ var នេះទាល់តែសោះ។ ការកំណត់វាយ៉ាងច្បាស់នៅទីនេះនៅតែដំណើរការត្រឹមត្រូវដូចដែលបានចងក្រងជាឯកសារ។ ការកំណត់ជំនួសថវិកា byte យ៉ាងច្បាស់ត្រូវបានកម្រិតនៅចន្លោះ 8 MiB–2 GiB។ `413 body_exceeds_budget` មិនមែនជាបញ្ហាបណ្តោះអាសន្នទេ៖ បង្កើនថវិកា byte នោះ បន្ថយ `OMNIROUTE_CHAT_HARD_MAX_BODY_BYTES` ឬបង្កើនកម្រិតអង្គចងចាំរបស់ process។ ការកាត់បន្ថយ `inflight_bytes_budget` គឺជាការប្រជែងធនធានបណ្តោះអាសន្ន ហើយនៅតែអាចសាកល្បងឡើងវិញបាន។ ការកំណត់អត្រាសម្រាប់អ្នកផ្តល់សេវានីមួយៗ (`open-sse/services/rateLimitManager.ts`) ត្រូវបានគ្រប់គ្រងដាច់ដោយឡែកដោយ `RATE_LIMIT_MAX_WAIT_MS`, `RATE_LIMIT_MAX_QUEUE_DEPTH` និង `RATE_LIMIT_AUTO_ENABLE` — សូមមើល `.env.example`។
+**កំណត់សម្គាល់**៖ `AGENTPROXY_CHAT_MAX_HEAVY_IN_FLIGHT` កំណត់ចំនួនសំណើដែលប្រើធនធានច្រើន — មាន context វែង — ដែលអាចដំណើរការក្នុងពេលតែមួយ។ ដែនកំណត់នេះជាច្រកត្រួតពិនិត្យការទទួលយក មិនមែនជាឧបករណ៍កំណត់អត្រារបស់អ្នកផ្តល់សេវាទេ។ **បច្ចុប្បន្នភាព #503-fanout៖** var នេះលែងត្រូវបានកំណត់តាមលំនាំដើមទៀតហើយ (ឥឡូវនេះវាអនុវត្តតែនៅពេលត្រូវបានកំណត់យ៉ាងច្បាស់ ដូចខាងលើ) — ផ្ទុយទៅវិញ ការទទួលយកសំណើដែលប្រើធនធានច្រើនត្រូវបានគ្រប់គ្រងដោយថវិកា byte ដែលបានគណនាដោយស្វ័យប្រវត្តិ (`AGENTPROXY_CHAT_MAX_INFLIGHT_BYTES`) ហើយវាកែសម្រួលទំហំរបស់ខ្លួនដោយផ្អែកលើកម្រិតអង្គចងចាំពិតប្រាកដរបស់ host។ ដូច្នេះ deployment ថ្មីគួរតែជួបការបដិសេធ `503 chat_admission_busy` តិចជាងមុនយ៉ាងច្រើន ដោយមិនចាំបាច់កំណត់ var នេះទាល់តែសោះ។ ការកំណត់វាយ៉ាងច្បាស់នៅទីនេះនៅតែដំណើរការត្រឹមត្រូវដូចដែលបានចងក្រងជាឯកសារ។ ការកំណត់ជំនួសថវិកា byte យ៉ាងច្បាស់ត្រូវបានកម្រិតនៅចន្លោះ 8 MiB–2 GiB។ `413 body_exceeds_budget` មិនមែនជាបញ្ហាបណ្តោះអាសន្នទេ៖ បង្កើនថវិកា byte នោះ បន្ថយ `AGENTPROXY_CHAT_HARD_MAX_BODY_BYTES` ឬបង្កើនកម្រិតអង្គចងចាំរបស់ process។ ការកាត់បន្ថយ `inflight_bytes_budget` គឺជាការប្រជែងធនធានបណ្តោះអាសន្ន ហើយនៅតែអាចសាកល្បងឡើងវិញបាន។ ការកំណត់អត្រាសម្រាប់អ្នកផ្តល់សេវានីមួយៗ (`open-sse/services/rateLimitManager.ts`) ត្រូវបានគ្រប់គ្រងដាច់ដោយឡែកដោយ `RATE_LIMIT_MAX_WAIT_MS`, `RATE_LIMIT_MAX_QUEUE_DEPTH` និង `RATE_LIMIT_AUTO_ENABLE` — សូមមើល `.env.example`។
 
 **របៀបផ្ទៀងផ្ទាត់ថាវាដំណើរការ**៖ ដំណើរការ agent/cron របស់អ្នកពីរដងជាប់ៗគ្នាក្នុងរយៈពេលខ្លី ហើយបញ្ជាក់ថាទាំងពីរដំណើរការដោយជោគជ័យ។ មុនពេលកែបញ្ហា ការដំណើរការលើកទីពីរជាធម្មតានឹងបញ្ចេញកំហុស `429`/`401`។ បន្ទាប់ពីកែបញ្ហា ការបរាជ័យ (ប្រសិនបើមាន) នឹងត្រូវបានព្យាយាមឡើងវិញដោយស្វ័យប្រវត្តិដោយមិនរំខាន ហើយការហៅនឹងបញ្ចប់ដោយជោគជ័យ។ អ្នកក៏អាចប្រើ `curl /monitoring/health` ហើយតាមដាន field `rateLimitedUntil` នៅលើការតភ្ជាប់របស់ provider និង `circuitBreakers.providerBreakers[].state` សម្រាប់ provider ដែលរងផលប៉ះពាល់ផងដែរ — state នឹងជាតម្លៃមួយក្នុងចំណោម `CLOSED`, `DEGRADED`, `OPEN` ឬ `HALF_OPEN` (សូមមើល `src/shared/utils/circuitBreaker.ts`) ហើយ provider ដែលបន្តបរាជ័យនឹងប្ដូរស្ថានភាពពី `CLOSED → DEGRADED → OPEN` មុនពេលចន្លោះពេលកំណត់ឡើងវិញអនុញ្ញាតឱ្យការសាកល្បងមួយឆ្លងកាត់ (`HALF_OPEN`)។
 
@@ -69,12 +69,12 @@ export OMNIROUTE_CHAT_ADMISSION_QUEUE_MS=5000 # រង់ចាំក្នុ�
 
 ## ការព្រមានពេល npm install (ERESOLVE / peer / deprecated)
 
-នៅពេលអ្នកដំណើរការ `npm install -g omniroute` អ្នកអាចឃើញការព្រមានជាច្រើនដូចជា `npm warn ERESOLVE` សេចក្តីជូនដំណឹងអំពី peer dependency និងសារ `deprecated`។ **ទាំងនេះជាអ្វីដែលបានរំពឹងទុក និងមិនបង្កគ្រោះថ្នាក់ទេ។** ការដំឡើងរបស់អ្នកបានជោគជ័យ ប្រសិនបើអ្នកឃើញ `added <N> packages` នៅក្នុងលទ្ធផល។
+នៅពេលអ្នកដំណើរការ `npm install -g agentproxy` អ្នកអាចឃើញការព្រមានជាច្រើនដូចជា `npm warn ERESOLVE` សេចក្តីជូនដំណឹងអំពី peer dependency និងសារ `deprecated`។ **ទាំងនេះជាអ្វីដែលបានរំពឹងទុក និងមិនបង្កគ្រោះថ្នាក់ទេ។** ការដំឡើងរបស់អ្នកបានជោគជ័យ ប្រសិនបើអ្នកឃើញ `added <N> packages` នៅក្នុងលទ្ធផល។
 
 ដើម្បីលាក់ការព្រមានអំពីការដោះស្រាយ peer dependency សូមប្រើទម្រង់ដំឡើងដែល AgentProxy គាំទ្រ៖
 
 ```bash
-npm install -g omniroute --legacy-peer-deps
+npm install -g agentproxy --legacy-peer-deps
 ```
 
 `--legacy-peer-deps` លាក់តែ `ERESOLVE` និងសេចក្តីជូនដំណឹងអំពី peer dependency ប៉ុណ្ណោះ។ សេចក្តីជូនដំណឹងអំពីការឈប់គាំទ្រនៅតែបង្ហាញ ព្រោះវាមកពីកញ្ចប់ភាគីទីបីដែលជាភាពអាស្រ័យបន្តបន្ទាប់។ វាមិនមានន័យថាការដំឡើងបានបរាជ័យនោះទេ។
@@ -101,7 +101,7 @@ Playwright មានចេតនារក្សាការទាញយក brows
 ដើម្បីឱ្យ browser cache ជាកម្មសិទ្ធិរបស់ការដំឡើង Playwright ដូចគ្នា៖
 
 ```bash
-cd "$(npm root -g)/omniroute"
+cd "$(npm root -g)/agentproxy"
 npx playwright install chromium
 ```
 
@@ -119,10 +119,10 @@ npx playwright install chromium
 | ការចូលប្រើលើកដំបូងមិនដំណើរការ                              | កំណត់ `INITIAL_PASSWORD` នៅក្នុង `.env` (មិនមានតម្លៃលំនាំដើមដែល hardcode ទេ)                                                                                                    |
 | Dashboard បើកនៅលើ port ខុស                                 | កំណត់ `PORT=20128` និង `NEXT_PUBLIC_BASE_URL=http://localhost:20128`                                                                                                            |
 | គ្មាន log ត្រូវបានសរសេរទៅ disk                             | កំណត់ `APP_LOG_TO_FILE=true` ហើយផ្ទៀងផ្ទាត់ថាការចាប់យក call log ត្រូវបានបើក                                                                                                     |
-| EACCES: សិទ្ធិត្រូវបានបដិសេធ                               | កំណត់ `DATA_DIR=/path/to/writable/dir` ដើម្បីជំនួស `~/.omniroute`                                                                                                               |
+| EACCES: សិទ្ធិត្រូវបានបដិសេធ                               | កំណត់ `DATA_DIR=/path/to/writable/dir` ដើម្បីជំនួស `~/.agentproxy`                                                                                                               |
 | យុទ្ធសាស្ត្រ routing មិនត្រូវបានរក្សាទុក                   | ធ្វើបច្ចុប្បន្នភាពទៅកំណែ v3.x ចុងក្រោយបំផុត (ការកែ schema របស់ Zod សម្រាប់ការរក្សាទុក settings ត្រូវបានដាក់ឱ្យប្រើក្នុងកំណែមុនៗ)                                                |
 | ការចូលប្រើគាំង / ទំព័រទទេ                                  | ពិនិត្យកំណែ Node.js — សូមមើល [ភាពឆបគ្នាជាមួយ Node.js](#nodejs-compatibility) ខាងក្រោម                                                                                           |
-| `dlopen` / `slice is not valid mach-o file` (macOS)        | ដំណើរការ `cd $(npm root -g)/omniroute/app && npm rebuild better-sqlite3 && omniroute` — សូមមើល [ការស្ថាបនា native module ឡើងវិញលើ macOS](#macos-native-module-rebuild) ខាងក្រោម |
+| `dlopen` / `slice is not valid mach-o file` (macOS)        | ដំណើរការ `cd $(npm root -g)/agentproxy/app && npm rebuild better-sqlite3 && agentproxy` — សូមមើល [ការស្ថាបនា native module ឡើងវិញលើ macOS](#macos-native-module-rebuild) ខាងក្រោម |
 | Proxy "fetch failed"                                       | ត្រូវប្រាកដថាការកំណត់ proxy ត្រូវបានដាក់នៅកម្រិតត្រឹមត្រូវ — សូមមើល [បញ្ហា Proxy](#proxy-issues) ខាងក្រោម                                                                       |
 | Docker `curl: (56) Recv failure: Connection reset by peer` | ការចង port របស់ Docker អាចកំពុងភ្ជាប់ទៅ IPv6។ ប្រើ `-p 127.0.0.1:20128:20128` ដើម្បីបង្ខំឱ្យប្រើ IPv4 ឬសាកល្បងជាមួយ `curl -4`។ សូមមើល [Docker IPv6](#docker-ipv6) ខាងក្រោម      |
 | Antivirus ដាក់ `README.md` នៅដាច់ដោយឡែក                    | ជាការរកឃើញខុស — សូមមើល [ការរកឃើញខុសរបស់ Antivirus](#antivirus-false-positives) ខាងក្រោម                                                                                         |
@@ -138,7 +138,7 @@ npx playwright install chromium
 
 **នេះជាលទ្ធផលវិជ្ជមានក្លែងក្លាយ។ គ្មានអ្វីត្រូវបានឆ្លងមេរោគទេ ហើយក៏មិនចាំបាច់ធ្វើសកម្មភាពអ្វីដែរ។**
 
-Avast និង AVG ដំណើរការវិធីសាស្ត្រសន្និដ្ឋានដែលដាក់ទង់សម្គាល់ឯកសារអត្ថបទធម្មតា/Markdown ដែលមានតំណភ្ជាប់ជាច្រើនមើលទៅដូចជាសំណើ HTTP។ `README.md` របស់ AgentProxy ត្រូវបានដាក់បញ្ចូលក្នុងកញ្ចប់ npm (វាត្រូវបានរាយក្នុង `package.json` → `files`) ដូច្នេះ នៅពេលដំឡើងជាសកល វានឹងស្ថិតនៅ `node_modules/omniroute/README.md` — ហើយវាមានឧទាហរណ៍ `http://localhost:20128/...` ប្រហែល 15 (ចំណុចបញ្ចប់ HTTP/SSE របស់ MCP, URL `.well-known` របស់ A2A និងអត្ថបទខ្លីៗប្រើ `curl`)។ ដង់ស៊ីតេតំណភ្ជាប់នេះគ្រប់គ្រាន់ឱ្យវិធីសាស្ត្រសន្និដ្ឋាននោះបញ្ចេញការព្រមាន។
+Avast និង AVG ដំណើរការវិធីសាស្ត្រសន្និដ្ឋានដែលដាក់ទង់សម្គាល់ឯកសារអត្ថបទធម្មតា/Markdown ដែលមានតំណភ្ជាប់ជាច្រើនមើលទៅដូចជាសំណើ HTTP។ `README.md` របស់ AgentProxy ត្រូវបានដាក់បញ្ចូលក្នុងកញ្ចប់ npm (វាត្រូវបានរាយក្នុង `package.json` → `files`) ដូច្នេះ នៅពេលដំឡើងជាសកល វានឹងស្ថិតនៅ `node_modules/agentproxy/README.md` — ហើយវាមានឧទាហរណ៍ `http://localhost:20128/...` ប្រហែល 15 (ចំណុចបញ្ចប់ HTTP/SSE របស់ MCP, URL `.well-known` របស់ A2A និងអត្ថបទខ្លីៗប្រើ `curl`)។ ដង់ស៊ីតេតំណភ្ជាប់នេះគ្រប់គ្រាន់ឱ្យវិធីសាស្ត្រសន្និដ្ឋាននោះបញ្ចេញការព្រមាន។
 
 ប្រសិនបើបញ្ហានេះទើបតែចាប់ផ្ដើមកើតឡើងថ្មីៗ៖ ប្រភេទនៃឯកសារនេះមិនបានផ្លាស់ប្ដូរទេ។ README បានពង្រីកតារាងចំណុចបញ្ចប់របស់វា (MCP HTTP + SSE + A2A ត្រូវបានបន្ថែម) និងបន្ថែមឧទាហរណ៍ `curl` ជាច្រើនទៀត ដែលធ្វើឱ្យវាលើសកម្រិតកំណត់។
 
@@ -148,7 +148,7 @@ Avast និង AVG ដំណើរការវិធីសាស្ត្រស
 
 1. **បញ្ឈប់ការជូនដំណឹង** — ដាក់ថតដំឡើងក្នុងបញ្ជីលើកលែងរបស់កម្មវិធីកម្ចាត់មេរោគរបស់អ្នក
    (Avast៖ Settings → Exceptions) ដោយបន្ថែមផ្លូវ `node_modules` សកលរបស់អ្នក និង/ឬ
-   ថតទិន្នន័យ AgentProxy (`~/.omniroute/`)។
+   ថតទិន្នន័យ AgentProxy (`~/.agentproxy/`)។
 2. **រាយការណ៍លទ្ធផលវិជ្ជមានក្លែងក្លាយ** — <https://www.avast.com/false-positive-file-form.php>
    ដោយភ្ជាប់ `README.md` ដែលត្រូវបានដាក់ឱ្យនៅដាច់ដោយឡែក។ នេះជាដំណោះស្រាយដែលជួយដល់អ្នកគ្រប់គ្នា ព្រោះវាជាវិធីសាស្ត្រសន្និដ្ឋានរបស់ក្រុមហ៊ុនផ្គត់ផ្គង់ដែលមានប្រតិកម្មហួសហេតុចំពោះឯកសារអត្ថបទ។
 
@@ -205,8 +205,8 @@ Avast និង AVG ដំណើរការវិធីសាស្ត្រស
    nvm use 24
    ```
 2. ផ្ទៀងផ្ទាត់កំណែរបស់អ្នក៖ `node --version` គួរតែបង្ហាញ `v24.0.0` ឬថ្មីជាងនេះក្នុងខ្សែ LTS 24.x
-3. ដំឡើង AgentProxy ឡើងវិញ៖ `npm install -g omniroute`
-4. ចាប់ផ្ដើមឡើងវិញ៖ `omniroute`
+3. ដំឡើង AgentProxy ឡើងវិញ៖ `npm install -g agentproxy`
+4. ចាប់ផ្ដើមឡើងវិញ៖ `agentproxy`
 
 > **កំណែសុវត្ថិភាពដែលគាំទ្រ:** `>=22.22.2 <23` ឬ `>=24.0.0 <27`។ Node.js 24.x LTS (Krypton) និង Node.js 26 ត្រូវបានគាំទ្រយ៉ាងពេញលេញ។
 
@@ -244,7 +244,7 @@ Avast និង AVG ដំណើរការវិធីសាស្ត្រស
 
 <a name="macos-native-module-rebuild"></a>
 
-**មូលហេតុ:** បន្ទាប់ពីការដំឡើង global ដោយ `npm install -g omniroute` ឯកសារ binary native របស់ `better-sqlite3` នៅក្នុងកញ្ចប់អាចត្រូវបាន compile សម្រាប់ architecture ឬ Node.js ABI ផ្សេងពីអ្វីដែលកំពុងដំណើរការនៅលើម៉ាស៊ីនមូលដ្ឋាន។ បញ្ហានេះកើតឡើងជាទូទៅនៅលើ macOS (ទាំង Apple Silicon និង Intel) នៅពេលឯកសារ binary ដែលបាន build ជាមុនមិនត្រូវគ្នានឹង environment របស់អ្នក។
+**មូលហេតុ:** បន្ទាប់ពីការដំឡើង global ដោយ `npm install -g agentproxy` ឯកសារ binary native របស់ `better-sqlite3` នៅក្នុងកញ្ចប់អាចត្រូវបាន compile សម្រាប់ architecture ឬ Node.js ABI ផ្សេងពីអ្វីដែលកំពុងដំណើរការនៅលើម៉ាស៊ីនមូលដ្ឋាន។ បញ្ហានេះកើតឡើងជាទូទៅនៅលើ macOS (ទាំង Apple Silicon និង Intel) នៅពេលឯកសារ binary ដែលបាន build ជាមុនមិនត្រូវគ្នានឹង environment របស់អ្នក។
 
 **រោគសញ្ញា:**
 
@@ -253,15 +253,15 @@ Avast និង AVG ដំណើរការវិធីសាស្ត្រស
 - ឧទាហរណ៍ពេញលេញ៖
 
 ```
-dlopen(/Users/<user>/.nvm/versions/node/v24.14.1/lib/node_modules/omniroute/app/node_modules/better-sqlite3/build/Release/better_sqlite3.node, 0x0001): tried: '...' (slice is not valid mach-o file)
+dlopen(/Users/<user>/.nvm/versions/node/v24.14.1/lib/node_modules/agentproxy/app/node_modules/better-sqlite3/build/Release/better_sqlite3.node, 0x0001): tried: '...' (slice is not valid mach-o file)
 ```
 
 **ដំណោះស្រាយ — build ឡើងវិញសម្រាប់ environment មូលដ្ឋានរបស់អ្នក (មិនតម្រូវឱ្យបន្ទាបកំណែ Node.js ទេ):**
 
 ```bash
-cd $(npm root -g)/omniroute/app
+cd $(npm root -g)/agentproxy/app
 npm rebuild better-sqlite3
-omniroute
+agentproxy
 ```
 
 > **ចំណាំ:** វានឹង compile native binding ឡើងវិញដោយផ្អែកលើកំណែ Node.js និង CPU architecture មូលដ្ឋានរបស់អ្នក ដើម្បីដោះស្រាយភាពមិនត្រូវគ្នានៃឯកសារ binary។ ចន្លោះ runtime ដែលគាំទ្រជាផ្លូវការគឺ **`>=22.22.2 <23` ឬ `>=24.0.0 <27`** (`SUPPORTED_NODE_RANGE` នៅក្នុង `src/shared/utils/nodeRuntimeSupport.ts` ដែលត្រូវគ្នានឹង field `engines` ក្នុង `package.json`)។ Node.js 24.x LTS (Krypton) និង Node.js 26 ត្រូវបានគាំទ្រយ៉ាងពេញលេញជាមួយ `better-sqlite3` v12.x។
@@ -353,7 +353,7 @@ Connections ដែលបាន import _មុន_ v3.8.0 មិនមាន clie
 ### កំហុស Cloud Sync
 
 1. ផ្ទៀងផ្ទាត់ថា `BASE_URL` ចង្អុលទៅ instance ដែលកំពុងដំណើរការរបស់អ្នក (ឧ., `http://localhost:20128`)
-2. ផ្ទៀងផ្ទាត់ថា `CLOUD_URL` ចង្អុលទៅ cloud endpoint របស់អ្នក (ឧ., `https://omniroute.dev`)
+2. ផ្ទៀងផ្ទាត់ថា `CLOUD_URL` ចង្អុលទៅ cloud endpoint របស់អ្នក (ឧ., `https://agentproxy.online`)
 3. រក្សាតម្លៃ `NEXT_PUBLIC_*` ឱ្យស្របគ្នាជាមួយតម្លៃនៅផ្នែក server
 
 ### Cloud `stream=false` ត្រឡប់ 500
@@ -387,8 +387,8 @@ Connections ដែលបាន import _មុន_ v3.8.0 មិនមាន clie
 1. **ការវិនិច្ឆ័យរហ័ស:** ដំណើរការ `curl -4 http://localhost:20128/v1/models`។ ប្រសិនបើវាដំណើរការជាមួយ `-4` ប៉ុន្តែបរាជ័យដោយគ្មានវា នោះអ្នកមានបញ្ហាការចង IPv6 មិនស៊ីគ្នា។
 2. **ការកែសម្រួលអចិន្ត្រៃយ៍:** ចងទៅ IPv4 ដោយជាក់លាក់ តាមរយៈការប្រើ `-p 127.0.0.1:20128:20128` ក្នុង command `docker run` របស់អ្នក៖
    ```bash
-   docker run -d --name omniroute --restart unless-stopped --stop-timeout 40 \
-     -p 127.0.0.1:20128:20128 -v omniroute-data:/app/data diegosouzapw/omniroute:latest
+   docker run -d --name agentproxy --restart unless-stopped --stop-timeout 40 \
+     -p 127.0.0.1:20128:20128 -v agentproxy-data:/app/data diegosouzapw/agentproxy:latest
    ```
    វាបង្ខំឱ្យចង IPv4 ហើយក៏ជៀសវាងការបង្ហាញ proxy នៅលើ interface ទាំងអស់របស់ host ផងដែរ។
 
@@ -543,7 +543,7 @@ curl http://localhost:20128/api/monitoring/health
 - endpoint សម្រាប់ chat completions បញ្ជូនការឆ្លើយតប `503` ដែលអាចព្យាយាមម្តងទៀតបាន ហើយមានកូដកំហុស
   `chat_admission_busy`។
 - ការឆ្លើយតបរួមបញ្ចូល `Retry-After`។ ចាប់តាំងពី #12135 តម្លៃនេះត្រូវបានគណនាចេញពី
-  កម្រិតប្រើប្រាស់ដែលបានសង្កេត — ដោយយកតម្លៃធំជាងរវាងរយៈពេល `OMNIROUTE_CHAT_ADMISSION_QUEUE_MS` ដែលសំណើបាន
+  កម្រិតប្រើប្រាស់ដែលបានសង្កេត — ដោយយកតម្លៃធំជាងរវាងរយៈពេល `AGENTPROXY_CHAT_ADMISSION_QUEUE_MS` ដែលសំណើបាន
   រង់ចាំរួចហើយ និងរយៈពេលដែល heavyweight leases បច្ចុប្បន្នត្រូវបានកាន់កាប់ — ដោយបង្គត់ឡើងទៅជា
   វិនាទីពេញ និងកំណត់អតិបរមាត្រឹម 60។ នៅពេល gate ទំនេរ វារក្សាកម្រិតអប្បបរមាដើម៖ 2 វិនាទីនៅលើ
   ផ្លូវដែលផ្អែកលើ byte និង 1 វិនាទីនៅលើផ្លូវដែលផ្អែកលើរចនាសម្ព័ន្ធ (ដែលរួមបញ្ចូលផងដែរ
@@ -575,17 +575,17 @@ process នីមួយៗប្រើ guard មូលដ្ឋានក្ន�
 និងញែកតួសំណើធំមួយ។ heavyweight lease នៅតែត្រូវបានកាន់កាប់ពេញមួយអាយុកាលនៃការឆ្លើយតប SSE។
 
 **#503-fanout៖** មុនពេលការកែបញ្ហានេះ guard បានកំណត់ concurrency ត្រឹមចំនួនសំណើថេរ
-(`OMNIROUTE_CHAT_MAX_HEAVY_IN_FLIGHT`, លំនាំដើម `1`) ដោយមិនគិតពី memory របស់ host ដូច្នេះ fan-out របស់ coding-agent
+(`AGENTPROXY_CHAT_MAX_HEAVY_IN_FLIGHT`, លំនាំដើម `1`) ដោយមិនគិតពី memory របស់ host ដូច្នេះ fan-out របស់ coding-agent
 (subagent/CLI ច្រើន ហើយតួសំណើជាប្រចាំ > 256 KB) បានធ្លាក់ចុះទៅ concurrency ជាក់ស្តែង
 ប្រហែល 1 និងទទួលបាន 503 ក្រោមបន្ទុកធម្មតាទាំងស្រុង។ ឥឡូវនេះ guard កែតម្រូវដោយខ្លួនឯង៖ វាត្រូវបានគ្រប់គ្រង
-ដោយថវិកា BYTE សម្រាប់ ingest ដែលគណនាដោយស្វ័យប្រវត្តិ (`OMNIROUTE_CHAT_MAX_INFLIGHT_BYTES`) និងកំណត់ទំហំតាម
+ដោយថវិកា BYTE សម្រាប់ ingest ដែលគណនាដោយស្វ័យប្រវត្តិ (`AGENTPROXY_CHAT_MAX_INFLIGHT_BYTES`) និងកំណត់ទំហំតាម
 កម្រិត memory ពិតប្រាកដរបស់ process ហើយវាក៏ពិនិត្យសញ្ញាសម្ពាធធនធានបច្ចុប្បន្នផងដែរ — ដូច្នេះវា
 កាត់បន្ថយបន្ទុកតែនៅពេល host កំពុងស្ថិតក្រោមសម្ពាធ memory ពិតប្រាកដប៉ុណ្ណោះ មិនមែនគ្រាន់តែដោយសារសំណើធ្ងន់ច្រើនជាងមួយ
-បានមកដល់ក្នុងពេលតែមួយនោះទេ។ កម្រិតចំនួនចាស់ (`OMNIROUTE_CHAT_MAX_HEAVY_IN_FLIGHT`) នៅតែ
+បានមកដល់ក្នុងពេលតែមួយនោះទេ។ កម្រិតចំនួនចាស់ (`AGENTPROXY_CHAT_MAX_HEAVY_IN_FLIGHT`) នៅតែ
 ត្រូវបានគោរព ប៉ុន្តែតែនៅពេលអ្នកកំណត់វាដោយច្បាស់លាស់ប៉ុណ្ណោះ។
 
 នៅពេលសមត្ថភាពកំពុងជាប់រវល់ សំណើ heavyweight នឹងរង់ចាំជាមុនរហូតដល់
-`OMNIROUTE_CHAT_ADMISSION_QUEUE_MS` (លំនាំដើម `2000`, `0` បិទការរង់ចាំ) ដើម្បីឱ្យ slot មួយទំនេរ
+`AGENTPROXY_CHAT_ADMISSION_QUEUE_MS` (លំនាំដើម `2000`, `0` បិទការរង់ចាំ) ដើម្បីឱ្យ slot មួយទំនេរ
 មុនពេលឆ្លើយតបដោយ `503` ដែលអាចព្យាយាមម្តងទៀតបាន។ ការរង់ចាំដែលមានដែនកំណត់នេះមានឡើងដើម្បីឱ្យ client រចនាប័ទ្ម agent
 (OpenCode, Claude Code, Cursor) ដែលបំបែកសំណើរងធ្ងន់ៗឱ្យដំណើរការដំណាលគ្នា អាចតម្រៀបការកើនឡើងភ្លាមៗនេះ
 ជំនួសឱ្យការប្រើអស់ថវិកាព្យាយាមឡើងវិញទាំងមូលលើការបដិសេធភ្លាមៗ ហើយឈប់ដំណើរការកណ្តាលកិច្ចការ។
@@ -605,7 +605,7 @@ false` និង `maxInflightBytes` ដែលមានទំហំគ្រប�
    បញ្ហានោះមិនអាចដោះស្រាយដោយ admission env var បានទេ វាត្រូវការ RAM ច្រើនជាងមុន ឬ workload តូចជាងមុន។
 3. លុះត្រាតែ `/api/monitoring/health` បង្ហាញថាថវិកាដែលគណនាដោយស្វ័យប្រវត្តិពិតជាតូចពេកសម្រាប់
    host របស់អ្នក (កម្រណាស់ — វាធ្វើមាត្រដ្ឋានរួចហើយពី container ទៅ bare-metal) សូម override វាដោយផ្ទាល់ជាមួយ
-   `OMNIROUTE_CHAT_MAX_INFLIGHT_BYTES` ជំនួសឱ្យការត្រឡប់ទៅប្រើកម្រិតចំនួនសំណើចាស់។
+   `AGENTPROXY_CHAT_MAX_INFLIGHT_BYTES` ជំនួសឱ្យការត្រឡប់ទៅប្រើកម្រិតចំនួនសំណើចាស់។
 
 សូមមើល [ឯកសារយោងអថេរបរិស្ថាន](../reference/ENVIRONMENT.md#4-security--authentication)
 សម្រាប់ការកំណត់ admission ផ្លូវការ។
@@ -692,7 +692,7 @@ false` និង `maxInflightBytes` ដែលមានទំហំគ្រប�
 
 **ដំណោះស្រាយ៖**
 
-- ដំណើរការ `omniroute providers` ពី CLI ដើម្បីចាប់ផ្តើមលំហូរ OAuth ឡើងវិញ ឬ
+- ដំណើរការ `agentproxy providers` ពី CLI ដើម្បីចាប់ផ្តើមលំហូរ OAuth ឡើងវិញ ឬ
 - ដំណើរការ OAuth ឡើងវិញពី **Dashboard → Providers → Command Code → តភ្ជាប់ឡើងវិញ**
 
 ### ModelScope ផ្តល់ cooldowns 429 យ៉ាងខ្លាំង
@@ -709,19 +709,19 @@ false` និង `maxInflightBytes` ដែលមានទំហំគ្រប�
 - ត្រូវប្រាកដថាអ្នកកំពុងប្រើ v3.8.0 ឬកំណែក្រោយ
 - ផ្ទៀងផ្ទាត់ថា toggle `useUpstream429BreakerHints` ត្រូវបានបើកនៅក្រោម **ការកំណត់ → ភាពធន់**
 
-### បាត់ OMNIROUTE_WS_BRIDGE_SECRET ក្នុង production
+### បាត់ AGENTPROXY_WS_BRIDGE_SECRET ក្នុង production
 
 **រោគសញ្ញា៖**
 
 - ទទួលបាន 401 លើគ្រប់សំណើ Codex/Responses WebSocket bridge នៅពេលដំណើរការលើ remote production host
 - WebSocket bridge handshake បិទភ្លាមៗបន្ទាប់ពីតភ្ជាប់
 
-**មូលហេតុ៖** env var `OMNIROUTE_WS_BRIDGE_SECRET` បាត់ពី production environment។
+**មូលហេតុ៖** env var `AGENTPROXY_WS_BRIDGE_SECRET` បាត់ពី production environment។
 
 **ដំណោះស្រាយ៖**
 
 1. បង្កើត secret ចៃដន្យមួយ៖ `openssl rand -hex 32`
-2. កំណត់ `OMNIROUTE_WS_BRIDGE_SECRET=<random-secret>` ក្នុង env របស់ production server (និង client ណាមួយដែលទាក់ទងជាមួយ bridge)
+2. កំណត់ `AGENTPROXY_WS_BRIDGE_SECRET=<random-secret>` ក្នុង env របស់ production server (និង client ណាមួយដែលទាក់ទងជាមួយ bridge)
 3. ចាប់ផ្តើម AgentProxy ឡើងវិញ
 
 ### Responses API៖ background mode ត្រូវបានបន្ថយទៅជា synchronous
@@ -750,16 +750,16 @@ false` និង `maxInflightBytes` ដែលមានទំហំគ្រប�
 
 ```bash
 # តាមរយៈអថេរបរិស្ថាន (បន្តមានប្រសិទ្ធភាពនៅរាល់ការចាប់ផ្ដើម)៖
-export OMNIROUTE_READY_TIMEOUT_MS=180000   # 3 នាទី
-omniroute serve
+export AGENTPROXY_READY_TIMEOUT_MS=180000   # 3 នាទី
+agentproxy serve
 
 # តាមរយៈទង់ CLI (ប្រើតែម្ដង)៖
-omniroute serve --ready-timeout 180000
+agentproxy serve --ready-timeout 180000
 ```
 
 តម្លៃលំនាំដើមគឺ 60 000 ms (60 s)។ ការព្រមាននេះគ្រាន់តែជាព័ត៌មានប៉ុណ្ណោះ; ម៉ាស៊ីនមេនឹងបន្តចាប់ផ្ដើមនៅផ្ទៃខាងក្រោយ ហើយនឹងអាចចូលប្រើបាននៅពេលការចាប់ផ្ដើមបានបញ្ចប់។
 
-សូមមើល [`docs/reference/ENVIRONMENT.md`](../reference/ENVIRONMENT.md) សម្រាប់ព័ត៌មានលម្អិតទាំងស្រុងអំពី `OMNIROUTE_READY_TIMEOUT_MS`។
+សូមមើល [`docs/reference/ENVIRONMENT.md`](../reference/ENVIRONMENT.md) សម្រាប់ព័ត៌មានលម្អិតទាំងស្រុងអំពី `AGENTPROXY_READY_TIMEOUT_MS`។
 
 ---
 

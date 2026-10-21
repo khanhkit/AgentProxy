@@ -65,7 +65,7 @@ const pluginOptionsSchema = z
 export type PluginOptions = z.infer<typeof pluginOptionsSchema>;
 
 /** Environment source for the management token (option wins over this). */
-export const MANAGEMENT_TOKEN_ENV_VAR = "OMNIROUTE_MANAGEMENT_API_KEY";
+export const MANAGEMENT_TOKEN_ENV_VAR = "AGENTPROXY_MANAGEMENT_API_KEY";
 
 /**
  * Resolve the management token: a non-empty option wins, then a non-empty

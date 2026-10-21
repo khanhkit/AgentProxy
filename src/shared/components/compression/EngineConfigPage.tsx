@@ -179,7 +179,7 @@ export function EngineConfigPage({ engineId }: { engineId: string }) {
           defaults[field.key] = field.defaultValue;
         }
         // Do not seed lite.maxToolLength from the schema default. Persisting 2000
-        // would freeze the cap in settings and hide OMNIROUTE_LITE_MAX_TOOL_LENGTH.
+        // would freeze the cap in settings and hide AGENTPROXY_LITE_MAX_TOOL_LENGTH.
         // The form still shows 2000 via field.defaultValue until the operator edits it.
         if (engineId === "lite" && currentConfig.maxToolLength === undefined) {
           delete defaults.maxToolLength;

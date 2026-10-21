@@ -44,7 +44,7 @@ test("DB bridge enables vector caching only when master and vector toggles are b
   assert.equal(resolveSemanticCacheConfig().enabled, false);
 });
 
-test("AgentProxy cache headers are canonical and OmniRoute headers remain migration aliases", async () => {
+test("AgentProxy cache headers are canonical and AgentProxy headers remain migration aliases", async () => {
   const manager = new SemanticCacheManager(
     { enabled: true, requireZeroTemperature: false },
     new MemoryVectorStore(),
@@ -67,10 +67,10 @@ test("AgentProxy cache headers are canonical and OmniRoute headers remain migrat
   });
   assert.equal(agent.hit, true);
 
-  await manager.store({ ...base, headers: { "x-omniroute-cache-key": "legacy" } });
+  await manager.store({ ...base, headers: { "x-agentproxy-cache-key": "legacy" } });
   const legacy = await manager.lookup({
     body: base.body,
-    headers: { "x-omniroute-cache-key": "legacy", "x-omniroute-cache-type": "direct" },
+    headers: { "x-agentproxy-cache-key": "legacy", "x-agentproxy-cache-type": "direct" },
     model: base.model,
     provider: base.provider,
     stream: false,

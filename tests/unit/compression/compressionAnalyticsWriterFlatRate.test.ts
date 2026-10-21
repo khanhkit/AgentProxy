@@ -15,7 +15,7 @@ import { mkdtempSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 
-const tmpDir = mkdtempSync(join(tmpdir(), "omniroute-caw-"));
+const tmpDir = mkdtempSync(join(tmpdir(), "agentproxy-caw-"));
 process.env.DATA_DIR = tmpDir;
 
 const core = await import("../../../src/lib/db/core.ts");

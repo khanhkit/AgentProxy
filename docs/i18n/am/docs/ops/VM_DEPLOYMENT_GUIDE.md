@@ -89,13 +89,13 @@ ufw enable
 ### 2.1 የውቅር ማውጫ ይፍጠሩ
 
 ```bash
-mkdir -p /opt/omniroute
+mkdir -p /opt/agentproxy
 ```
 
 ### 2.2 የአካባቢ ተለዋዋጮች ፋይል ይፍጠሩ
 
 ```bash
-cat > /opt/omniroute/.env << 'EOF'
+cat > /opt/agentproxy/.env << 'EOF'
 # === ደህንነት ===
 JWT_SECRET=CHANGE-TO-A-UNIQUE-64-CHAR-SECRET-KEY
 INITIAL_PASSWORD=YourSecurePassword123!
@@ -103,7 +103,7 @@ API_KEY_SECRET=REPLACE-WITH-ANOTHER-SECRET-KEY
 STORAGE_ENCRYPTION_KEY=REPLACE-WITH-THIRD-SECRET-KEY
 STORAGE_ENCRYPTION_KEY_VERSION=v1
 MACHINE_ID_SALT=CHANGE-TO-A-UNIQUE-SALT
-OMNIROUTE_WS_BRIDGE_SECRET=REPLACE-WITH-WS-BRIDGE-SECRET  # በምርት አካባቢ ያስፈልጋል፦ በCodex Responses WS bridge ጥቅም ላይ ይውላል
+AGENTPROXY_WS_BRIDGE_SECRET=REPLACE-WITH-WS-BRIDGE-SECRET  # በምርት አካባቢ ያስፈልጋል፦ በCodex Responses WS bridge ጥቅም ላይ ይውላል
 
 # === መተግበሪያ ===
 PORT=20128
@@ -120,11 +120,11 @@ BASE_URL=http://127.0.0.1:20128
 # ለOAuth callbacks፣ dashboard links እና ለሚፈጠሩ ይፋዊ URLs የሚያገለግል ለbrowser የሚታይ URL።
 NEXT_PUBLIC_BASE_URL=https://llms.seudominio.com
 # ለሚፈጠሩ ይፋዊ የasset URLs አማራጭ ግልጽ የpublic origin መተኪያ።
-# OMNIROUTE_PUBLIC_BASE_URL=https://llms.seudominio.com
+# AGENTPROXY_PUBLIC_BASE_URL=https://llms.seudominio.com
 
 # === Cloud Sync (አማራጭ) ===
-# CLOUD_URL=https://cloud.omniroute.online
-# NEXT_PUBLIC_CLOUD_URL=https://cloud.omniroute.online
+# CLOUD_URL=https://agentproxy.online
+# NEXT_PUBLIC_CLOUD_URL=https://agentproxy.online
 EOF
 ```
 
@@ -133,22 +133,22 @@ EOF
 ### 2.3 Containerውን ያስጀምሩ
 
 ```bash
-docker pull diegosouzapw/omniroute:latest
+docker pull diegosouzapw/agentproxy:latest
 
 docker run -d \
-  --name omniroute \
+  --name agentproxy \
   --restart unless-stopped \
-  --env-file /opt/omniroute/.env \
+  --env-file /opt/agentproxy/.env \
   -p 20128:20128 \
-  -v omniroute-data:/app/data \
-  diegosouzapw/omniroute:latest
+  -v agentproxy-data:/app/data \
+  diegosouzapw/agentproxy:latest
 ```
 
 ### 2.4 እየሰራ መሆኑን ያረጋግጡ
 
 ```bash
-docker ps | grep omniroute
-docker logs omniroute --tail 20
+docker ps | grep agentproxy
+docker logs agentproxy --tail 20
 ```
 
 የሚከተሉትን ማሳየት አለበት፦ `[DB] SQLite database ready` እና `listening on port 20128`።
@@ -181,7 +181,7 @@ chmod 600 /etc/nginx/ssl/origin.key
 ### 3.2 የNginx ውቅር
 
 ```bash
-cat > /etc/nginx/sites-available/omniroute << 'NGINX'
+cat > /etc/nginx/sites-available/agentproxy << 'NGINX'
 # ነባሪ ሰርቨር — በIP በኩል በቀጥታ መድረስን ያግዳል
 server {
     listen 80 default_server;
@@ -247,7 +247,7 @@ AgentProxy `NEXT_PUBLIC_BASE_URL`ን ለOAuth የመልስ ጥሪዎች እና �
 `X-Forwarded-*` headers አሁንም ጠቃሚ የማዘዋወሪያ metadata ናቸው፣ ነገር ግን OAuth ወይም የሚፈጠሩ የአሳሽ አገናኞች ሲያስፈልጉ
 ግልጽ የሆነውን ይፋዊ URL ከማዘጋጀት አይተኩም። AgentProxy በደንበኞች በቀጥታ ሊደረስበት የማይችል ከሆነ እና ፕሮክሲዎ
 ወደ ውስጥ የሚገቡ forwarded headersን የሚያስወግድ/እንደገና የሚገነባ ከሆነ ብቻ
-`OMNIROUTE_TRUST_PROXY`ን ያንቁ።
+`AGENTPROXY_TRUST_PROXY`ን ያንቁ።
 
 ### 3.3 ያንቁ እና ይፈትሹ
 
@@ -256,7 +256,7 @@ AgentProxy `NEXT_PUBLIC_BASE_URL`ን ለOAuth የመልስ ጥሪዎች እና �
 rm -f /etc/nginx/sites-enabled/default
 
 # AgentProxyን ያንቁ
-ln -sf /etc/nginx/sites-available/omniroute /etc/nginx/sites-enabled/omniroute
+ln -sf /etc/nginx/sites-available/agentproxy /etc/nginx/sites-enabled/agentproxy
 
 # ይፈትሹ እና እንደገና ይጫኑ
 nginx -t && systemctl reload nginx
@@ -300,40 +300,40 @@ curl -sI https://llms.seudominio.com/health
 ### ወደ አዲስ ስሪት ማሻሻል
 
 ```bash
-docker pull diegosouzapw/omniroute:latest
-docker stop omniroute && docker rm omniroute
-docker run -d --name omniroute --restart unless-stopped \
-  --env-file /opt/omniroute/.env \
+docker pull diegosouzapw/agentproxy:latest
+docker stop agentproxy && docker rm agentproxy
+docker run -d --name agentproxy --restart unless-stopped \
+  --env-file /opt/agentproxy/.env \
   -p 20128:20128 \
-  -v omniroute-data:/app/data \
-  diegosouzapw/omniroute:latest
+  -v agentproxy-data:/app/data \
+  diegosouzapw/agentproxy:latest
 ```
 
 ### ምዝግቦችን ይመልከቱ
 
 ```bash
-docker logs -f omniroute          # ቅጽበታዊ ዥረት
-docker logs omniroute --tail 50   # የመጨረሻዎቹ 50 መስመሮች
+docker logs -f agentproxy          # ቅጽበታዊ ዥረት
+docker logs agentproxy --tail 50   # የመጨረሻዎቹ 50 መስመሮች
 ```
 
 ### በእጅ የውሂብ ጎታ ምትኬ መውሰድ
 
 ```bash
 # ውሂቡን ከድምጽ መጠኑ ወደ አስተናጋጁ ይቅዱ
-docker cp omniroute:/app/data ./backup-$(date +%F)
+docker cp agentproxy:/app/data ./backup-$(date +%F)
 
 # ወይም ሙሉውን ድምጽ መጠን ይጨመቁ
-docker run --rm -v omniroute-data:/data -v $(pwd):/backup \
-  alpine tar czf /backup/omniroute-data-$(date +%F).tar.gz /data
+docker run --rm -v agentproxy-data:/data -v $(pwd):/backup \
+  alpine tar czf /backup/agentproxy-data-$(date +%F).tar.gz /data
 ```
 
 ### ከምትኬ መልሶ ማግኘት
 
 ```bash
-docker stop omniroute
-docker run --rm -v omniroute-data:/data -v $(pwd):/backup \
-  alpine sh -c "rm -rf /data/* && tar xzf /backup/omniroute-data-YYYY-MM-DD.tar.gz -C /"
-docker start omniroute
+docker stop agentproxy
+docker run --rm -v agentproxy-data:/data -v $(pwd):/backup \
+  alpine sh -c "rm -rf /data/* && tar xzf /backup/agentproxy-data-YYYY-MM-DD.tar.gz -C /"
+docker start agentproxy
 ```
 
 ---
@@ -402,13 +402,13 @@ VMን በቀጥታ ሳያጋልጡ በCloudflare Workers በኩል ለርቀት 
 
 ```bash
 # በአካባቢያዊው ማከማቻ ውስጥ
-cd omnirouteCloud
+cd agentproxyCloud
 npm install
 npx wrangler login
 npx wrangler deploy
 ```
 
-በማከማቻው ውስጥ ላለው የCloudflare Tunnel ደረጃ በደረጃ መመሪያ [TUNNELS_GUIDE.md](./TUNNELS_GUIDE.md)ንም ይመልከቱ። ራሱን የቻለው `omnirouteCloud/` worker በተለየ ተጓዳኝ ማከማቻ ውስጥ ይገኛል።
+በማከማቻው ውስጥ ላለው የCloudflare Tunnel ደረጃ በደረጃ መመሪያ [TUNNELS_GUIDE.md](./TUNNELS_GUIDE.md)ንም ይመልከቱ። ራሱን የቻለው `agentproxyCloud/` worker በተለየ ተጓዳኝ ማከማቻ ውስጥ ይገኛል።
 
 ---
 
@@ -425,9 +425,9 @@ npx wrangler deploy
 
 በአነስተኛ VPS ኢንስታንሶች (1 GB RAM ወይም ከዚያ በታች) ላይ ለሚደረጉ ስምሪቶች፦
 
-- **የጀርባ አገልግሎቶችን ያሰናክሉ** — መርሐግብር አስኪያጁን፣ MCP አገልጋዩን እና ወቅታዊ የጥገና ተግባራትን ለመዝለል `OMNIROUTE_DISABLE_BACKGROUND_SERVICES=1` ያዘጋጁ። `docs/reference/ENVIRONMENT.md`ን ይመልከቱ።
+- **የጀርባ አገልግሎቶችን ያሰናክሉ** — መርሐግብር አስኪያጁን፣ MCP አገልጋዩን እና ወቅታዊ የጥገና ተግባራትን ለመዝለል `AGENTPROXY_DISABLE_BACKGROUND_SERVICES=1` ያዘጋጁ። `docs/reference/ENVIRONMENT.md`ን ይመልከቱ።
 - **የSQLite WAL ሁነታን ይጠቀሙ** — በነባሪ የነቃ ሲሆን፣ በተመሳሳይ ጊዜ በሚከናወኑ ንባቦች ወቅት ከፍተኛውን የማህደረ ትውስታ አጠቃቀም ይቀንሳል።
-- **የV8 heap ገደብ ያስቀምጡ** — runtime ከVM የሚበልጥ ከፍተኛ ገደብ እንዳያሰላ `OMNIROUTE_MEMORY_MB`ን (ለምሳሌ `512`) ያዘጋጁ። `docs/reference/ENVIRONMENT.md`ን ይመልከቱ።
-- **ከባድ ጭነቶችን የመቀበል አቅም ከheap ገደቡ ጋር በራስ-ሰር ይመጣጠናል** -- `OMNIROUTE_MEMORY_MB` ከላይ አንዴ ከተዋቀረ፣ የግብዓት ባይት በጀቱ (`OMNIROUTE_CHAT_MAX_INFLIGHT_BYTES`) ከዚያው ገደብ ራሱን ያመነጫል፤ ስለዚህ የማህደረ ትውስታ ገደብ ያለበት VM ያለ ተጨማሪ ማስተካከያ አነስተኛ የተመሳሳይ ጊዜ ጥያቄዎች በጀት ያገኛል፤ ከመጠን በላይ የሆኑ ጥያቄዎች ለማህደረ ትውስታ ከመፎካከር ይልቅ እንደገና ሊሞከር የሚችል `503` ከ`Retry-After` ጋር ያገኛሉ። ከዚያ በተጨማሪ ጥብቅ ከፍተኛ ገደብ ካስፈለገዎት ብቻ የቀድሞውን `OMNIROUTE_CHAT_MAX_HEAVY_IN_FLIGHT` የጥያቄ-ብዛት ገደብ ያዘጋጁ።
+- **የV8 heap ገደብ ያስቀምጡ** — runtime ከVM የሚበልጥ ከፍተኛ ገደብ እንዳያሰላ `AGENTPROXY_MEMORY_MB`ን (ለምሳሌ `512`) ያዘጋጁ። `docs/reference/ENVIRONMENT.md`ን ይመልከቱ።
+- **ከባድ ጭነቶችን የመቀበል አቅም ከheap ገደቡ ጋር በራስ-ሰር ይመጣጠናል** -- `AGENTPROXY_MEMORY_MB` ከላይ አንዴ ከተዋቀረ፣ የግብዓት ባይት በጀቱ (`AGENTPROXY_CHAT_MAX_INFLIGHT_BYTES`) ከዚያው ገደብ ራሱን ያመነጫል፤ ስለዚህ የማህደረ ትውስታ ገደብ ያለበት VM ያለ ተጨማሪ ማስተካከያ አነስተኛ የተመሳሳይ ጊዜ ጥያቄዎች በጀት ያገኛል፤ ከመጠን በላይ የሆኑ ጥያቄዎች ለማህደረ ትውስታ ከመፎካከር ይልቅ እንደገና ሊሞከር የሚችል `503` ከ`Retry-After` ጋር ያገኛሉ። ከዚያ በተጨማሪ ጥብቅ ከፍተኛ ገደብ ካስፈለገዎት ብቻ የቀድሞውን `AGENTPROXY_CHAT_MAX_HEAVY_IN_FLIGHT` የጥያቄ-ብዛት ገደብ ያዘጋጁ።
 - **በVPS ላይ `next build`ን ያስወግዱ** — በአካባቢዎ ይገንቡና ራሱን የቻለውን ውጤት (`.next/standalone/`) ያሰማሩ።
 - **በ`top` / `free -m` ይቆጣጠሩ** — AgentProxy በተለምዶ በ1 GB VM ላይ ስራ ፈት በሚሆንበት ጊዜ 200-400 MB RSS ይጠቀማል።

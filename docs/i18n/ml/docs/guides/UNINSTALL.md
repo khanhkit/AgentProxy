@@ -20,7 +20,7 @@
 npm run uninstall
 ```
 
-ഇത് AgentProxy ആപ്ലിക്കേഷൻ നീക്കംചെയ്യുന്നു, എന്നാൽ `~/.omniroute/`-ലുള്ള നിങ്ങളുടെ ഡാറ്റാബേസ്, കോൺഫിഗറേഷനുകൾ, API കീകൾ, പ്രൊവൈഡർ ക്രമീകരണങ്ങൾ എന്നിവ **നിലനിർത്തുന്നു**. പിന്നീട് വീണ്ടും ഇൻസ്റ്റാൾ ചെയ്യാൻ ഉദ്ദേശിക്കുന്നുവെന്നും നിലവിലെ സജ്ജീകരണം നിലനിർത്താൻ ആഗ്രഹിക്കുന്നുവെന്നും ആണെങ്കിൽ ഇത് ഉപയോഗിക്കുക.
+ഇത് AgentProxy ആപ്ലിക്കേഷൻ നീക്കംചെയ്യുന്നു, എന്നാൽ `~/.agentproxy/`-ലുള്ള നിങ്ങളുടെ ഡാറ്റാബേസ്, കോൺഫിഗറേഷനുകൾ, API കീകൾ, പ്രൊവൈഡർ ക്രമീകരണങ്ങൾ എന്നിവ **നിലനിർത്തുന്നു**. പിന്നീട് വീണ്ടും ഇൻസ്റ്റാൾ ചെയ്യാൻ ഉദ്ദേശിക്കുന്നുവെന്നും നിലവിലെ സജ്ജീകരണം നിലനിർത്താൻ ആഗ്രഹിക്കുന്നുവെന്നും ആണെങ്കിൽ ഇത് ഉപയോഗിക്കുക.
 
 ### പൂർണ്ണമായി നീക്കംചെയ്യൽ
 
@@ -34,7 +34,7 @@ npm run uninstall:full
 - പ്രൊവൈഡർ കോൺഫിഗറേഷനുകളും API കീകളും
 - ബാക്കപ്പ് ഫയലുകൾ
 - ലോഗ് ഫയലുകൾ
-- `~/.omniroute/` ഡയറക്ടറിയിലെ എല്ലാ ഫയലുകളും
+- `~/.agentproxy/` ഡയറക്ടറിയിലെ എല്ലാ ഫയലുകളും
 
 > ⚠️ **മുന്നറിയിപ്പ്:** `npm run uninstall:full` പഴയപടിയാക്കാനാകില്ല. നിങ്ങളുടെ എല്ലാ പ്രൊവൈഡർ കണക്ഷനുകളും കോംബോകളും API കീകളും ഉപയോഗ ചരിത്രവും ശാശ്വതമായി ഇല്ലാതാക്കപ്പെടും.
 
@@ -46,31 +46,31 @@ npm run uninstall:full
 
 ```bash
 # ഗ്ലോബൽ പാക്കേജ് നീക്കംചെയ്യുക
-npm uninstall -g omniroute
+npm uninstall -g agentproxy
 
 # (ഐച്ഛികം) ഡാറ്റാ ഡയറക്ടറി നീക്കംചെയ്യുക
-rm -rf ~/.omniroute
+rm -rf ~/.agentproxy
 ```
 
 ### pnpm ഗ്ലോബൽ ഇൻസ്റ്റാൾ
 
 ```bash
-pnpm uninstall -g omniroute
-rm -rf ~/.omniroute
+pnpm uninstall -g agentproxy
+rm -rf ~/.agentproxy
 ```
 
 ### Docker
 
 ```bash
 # കണ്ടെയ്നർ നിർത്തി നീക്കംചെയ്യുക
-docker stop omniroute
-docker rm omniroute
+docker stop agentproxy
+docker rm agentproxy
 
 # വോള്യം നീക്കംചെയ്യുക (എല്ലാ ഡാറ്റയും ഇല്ലാതാക്കുന്നു)
-docker volume rm omniroute-data
+docker volume rm agentproxy-data
 
 # (ഐച്ഛികം) ഇമേജ് നീക്കംചെയ്യുക
-docker rmi diegosouzapw/omniroute:latest
+docker rmi diegosouzapw/agentproxy:latest
 ```
 
 ### Docker Compose
@@ -93,21 +93,21 @@ docker compose down -v
 **macOS:**
 
 - `/Applications`-ൽനിന്ന് `AgentProxy.app` ട്രാഷിലേക്ക് വലിച്ചിടുക
-- ഡാറ്റ നീക്കംചെയ്യുക: `rm -rf ~/Library/Application Support/omniroute`
+- ഡാറ്റ നീക്കംചെയ്യുക: `rm -rf ~/Library/Application Support/agentproxy`
 
 **Linux:**
 
 - AppImage ഫയൽ നീക്കംചെയ്യുക
-- ഡാറ്റ നീക്കംചെയ്യുക: `rm -rf ~/.omniroute`
+- ഡാറ്റ നീക്കംചെയ്യുക: `rm -rf ~/.agentproxy`
 
 ### സോഴ്സ് ഇൻസ്റ്റാൾ (git clone)
 
 ```bash
 # ക്ലോൺ ചെയ്ത ഡയറക്ടറി നീക്കംചെയ്യുക
-rm -rf /path/to/omniroute
+rm -rf /path/to/agentproxy
 
 # (ഐച്ഛികം) ഡാറ്റാ ഡയറക്ടറി നീക്കംചെയ്യുക
-rm -rf ~/.omniroute
+rm -rf ~/.agentproxy
 ```
 
 ---
@@ -118,11 +118,11 @@ AgentProxy ഡിഫോൾട്ടായി ഇനിപ്പറയുന്�
 
 | പ്ലാറ്റ്ഫോം   | ഡിഫോൾട്ട് പാത്ത്                   | അസാധുവാക്കൽ                             |
 | ------------- | ---------------------------------- | --------------------------------------- |
-| Linux         | `~/.omniroute/`                    | `DATA_DIR` എൻവയോൺമെന്റ് വേരിയബിൾ        |
-| macOS         | `~/.omniroute/`                    | `DATA_DIR` എൻവയോൺമെന്റ് വേരിയബിൾ        |
-| Windows       | `%APPDATA%/omniroute/`             | `DATA_DIR` എൻവയോൺമെന്റ് വേരിയബിൾ        |
+| Linux         | `~/.agentproxy/`                    | `DATA_DIR` എൻവയോൺമെന്റ് വേരിയബിൾ        |
+| macOS         | `~/.agentproxy/`                    | `DATA_DIR` എൻവയോൺമെന്റ് വേരിയബിൾ        |
+| Windows       | `%APPDATA%/agentproxy/`             | `DATA_DIR` എൻവയോൺമെന്റ് വേരിയബിൾ        |
 | Docker        | `/app/data/` (മൗണ്ട് ചെയ്ത വോള്യം) | `DATA_DIR` എൻവയോൺമെന്റ് വേരിയബിൾ        |
-| XDG-അനുയോജ്യം | `$XDG_CONFIG_HOME/omniroute/`      | `XDG_CONFIG_HOME` എൻവയോൺമെന്റ് വേരിയബിൾ |
+| XDG-അനുയോജ്യം | `$XDG_CONFIG_HOME/agentproxy/`      | `XDG_CONFIG_HOME` എൻവയോൺമെന്റ് വേരിയബിൾ |
 
 ### ഡാറ്റാ ഡയറക്ടറിയിലെ ഫയലുകൾ
 
@@ -143,17 +143,17 @@ AgentProxy ഡിഫോൾട്ടായി ഇനിപ്പറയുന്�
 
 ```bash
 # ഗ്ലോബൽ npm പാക്കേജ് പരിശോധിക്കുക
-npm list -g omniroute 2>/dev/null
+npm list -g agentproxy 2>/dev/null
 
 # ഡാറ്റ ഡയറക്ടറി പരിശോധിക്കുക
-ls -la ~/.omniroute/ 2>/dev/null
+ls -la ~/.agentproxy/ 2>/dev/null
 
 # പ്രവർത്തിച്ചുകൊണ്ടിരിക്കുന്ന പ്രോസസ്സുകൾ പരിശോധിക്കുക
-pgrep -f omniroute
+pgrep -f agentproxy
 ```
 
 ഏതെങ്കിലും പ്രോസസ്സ് ഇപ്പോഴും പ്രവർത്തിക്കുന്നുണ്ടെങ്കിൽ, അത് നിർത്തുക:
 
 ```bash
-pkill -f omniroute
+pkill -f agentproxy
 ```

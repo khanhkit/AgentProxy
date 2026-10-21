@@ -191,7 +191,7 @@ Modellar:
 
 #### Kimi K2 (oyiga qatʼiy $9)
 
-1. Obuna boʻling: [Moonshot AI](https://platform.kimi.ai?aff=omniroute)
+1. Obuna boʻling: [Moonshot AI](https://platform.kimi.ai)
 2. API kalitini oling → Boshqaruv paneli → API kalitini qoʻshish
 
 **Foydalanish:** `kimi/kimi-k2.5` — **Professional maslahat:** 10M token uchun oyiga qatʼiy $9 = amalda $0.90/1M xarajat!
@@ -267,7 +267,7 @@ Narxi: hozirda $0 deb ko‘rsatilgan; shartlar va mavjudlik o‘zgarishi mumkin
 ```
 Sozlamalar → Modellar → Kengaytirilgan:
   OpenAI API asosiy URL manzili: http://localhost:20128/v1
-  OpenAI API kaliti: [omniroute boshqaruv panelidan]
+  OpenAI API kaliti: [agentproxy boshqaruv panelidan]
   Model: cc/claude-opus-4-7
 ```
 
@@ -282,7 +282,7 @@ Sozlamalar → Modellar → Kengaytirilgan:
 {
   "env": {
     "ANTHROPIC_BASE_URL": "http://localhost:20128",
-    "ANTHROPIC_AUTH_TOKEN": "your-omniroute-api-key"
+    "ANTHROPIC_AUTH_TOKEN": "your-agentproxy-api-key"
   }
 }
 ```
@@ -293,7 +293,7 @@ Bu yerda Claude bilan mos keluvchi ildiz endpointdan foydalaning. `ANTHROPIC_BAS
 
 ```bash
 export OPENAI_BASE_URL="http://localhost:20128"
-export OPENAI_API_KEY="your-omniroute-api-key"
+export OPENAI_API_KEY="your-agentproxy-api-key"
 codex "your prompt"
 ```
 
@@ -305,14 +305,14 @@ codex "your prompt"
 {
   "agents": {
     "defaults": {
-      "model": { "primary": "omniroute/if/kimi-k2.7-code" }
+      "model": { "primary": "agentproxy/if/kimi-k2.7-code" }
     }
   },
   "models": {
     "providers": {
-      "omniroute": {
+      "agentproxy": {
         "baseUrl": "http://localhost:20128/v1",
-        "apiKey": "your-omniroute-api-key",
+        "apiKey": "your-agentproxy-api-key",
         "api": "openai-completions",
         "models": [{ "id": "if/kimi-k2.7-code", "name": "Kimi K2.7 Code" }]
       }
@@ -339,28 +339,28 @@ Model: cc/claude-opus-4-7
 ### Global npm o‘rnatilishi (Tavsiya etiladi)
 
 ```bash
-npm install -g omniroute
+npm install -g agentproxy
 
 # Konfiguratsiya katalogini yarating
-mkdir -p ~/.omniroute
+mkdir -p ~/.agentproxy
 
 # .env faylini yarating (.env.example fayliga qarang)
-cp .env.example ~/.omniroute/.env
+cp .env.example ~/.agentproxy/.env
 
 # Serverni ishga tushiring
-omniroute
+agentproxy
 # Yoki maxsus port bilan:
-omniroute --port 3000
+agentproxy --port 3000
 ```
 
-CLI `.env` faylini `~/.omniroute/.env` yoki `./.env` manzilidan avtomatik yuklaydi.
+CLI `.env` faylini `~/.agentproxy/.env` yoki `./.env` manzilidan avtomatik yuklaydi.
 
 ### Tizim treyi rejimi
 
 AgentProxyʼni tizim treyida ishga tushiring:
 
 ```bash
-omniroute serve --tray
+agentproxy serve --tray
 ```
 
 Server va trey tayyor bo‘lgach, buyruq yakunlanadi.
@@ -387,7 +387,7 @@ Bu rejimlar jarayonni boshqarishning turli usullarini talab qiladi.
 Kompyuterga keyingi kirishda ishga tushirishni yoqing:
 
 ```bash
-omniroute autostart enable
+agentproxy autostart enable
 ```
 
 Avtomatik ishga tushirish macOS, Windows va grafik Linux seanslarida tizim treyi rejimidan foydalanadi. Grafik interfeyssiz Linux mavjud systemd foydalanuvchi xizmatidan foydalanadi.
@@ -395,7 +395,7 @@ Avtomatik ishga tushirish macOS, Windows va grafik Linux seanslarida tizim treyi
 Tizimga kirishda ishga tushirishni o‘chiring:
 
 ```bash
-omniroute autostart disable
+agentproxy autostart disable
 ```
 
 ### O‘chirish
@@ -404,10 +404,10 @@ AgentProxy endi kerak bo‘lmasa, uni toza olib tashlash uchun ikkita tezkor skr
 
 | Buyruq                   | Amal                                                                                                                      |
 | ------------------------ | ------------------------------------------------------------------------------------------------------------------------- |
-| `npm run uninstall`      | Tizim ilovasini o‘chiradi, ammo `~/.omniroute` ichidagi **maʼlumotlar bazasi va konfiguratsiyalaringizni saqlab qoladi**. |
+| `npm run uninstall`      | Tizim ilovasini o‘chiradi, ammo `~/.agentproxy` ichidagi **maʼlumotlar bazasi va konfiguratsiyalaringizni saqlab qoladi**. |
 | `npm run uninstall:full` | Ilovani o‘chiradi VA **barcha konfiguratsiyalar, kalitlar va maʼlumotlar bazalarini butunlay yo‘q qiladi**.               |
 
-> Eslatma: Bu buyruqlarni ishga tushirish uchun AgentProxy loyihasi jildiga o‘ting (agar uni klonlagan bo‘lsangiz) va ularni bajaring. Agar u global o‘rnatilgan bo‘lsa, muqobil ravishda `npm uninstall -g omniroute` buyrug‘ini bajarishingiz mumkin.
+> Eslatma: Bu buyruqlarni ishga tushirish uchun AgentProxy loyihasi jildiga o‘ting (agar uni klonlagan bo‘lsangiz) va ularni bajaring. Agar u global o‘rnatilgan bo‘lsa, muqobil ravishda `npm uninstall -g agentproxy` buyrug‘ini bajarishingiz mumkin.
 
 ### VPSʼga joylashtirish
 
@@ -417,7 +417,7 @@ cd AgentProxy && npm install && npm run build
 
 export JWT_SECRET="your-secure-secret-change-this"
 export INITIAL_PASSWORD="your-password"
-export DATA_DIR="/var/lib/omniroute"
+export DATA_DIR="/var/lib/agentproxy"
 export PORT="20128"
 export HOSTNAME="0.0.0.0"
 export NODE_ENV="production"
@@ -425,7 +425,7 @@ export NEXT_PUBLIC_BASE_URL="http://localhost:20128"
 export API_KEY_SECRET="endpoint-proxy-api-key-secret"
 
 npm run start
-# Yoki: pm2 start npm --name omniroute -- start
+# Yoki: pm2 start npm --name agentproxy -- start
 ```
 
 ### PM2 orqali joylashtirish (Kam xotira)
@@ -434,10 +434,10 @@ Operativ xotirasi cheklangan serverlar uchun xotira chegarasi parametridan foyda
 
 ```bash
 # 512MB chegarasi bilan (standart)
-pm2 start npm --name omniroute -- start
+pm2 start npm --name agentproxy -- start
 
 # Yoki maxsus xotira chegarasi bilan
-OMNIROUTE_MEMORY_MB=512 pm2 start npm --name omniroute -- start
+AGENTPROXY_MEMORY_MB=512 pm2 start npm --name agentproxy -- start
 
 # Yoki ecosystem.config.js yordamida
 pm2 start ecosystem.config.js
@@ -449,12 +449,12 @@ pm2 start ecosystem.config.js
 module.exports = {
   apps: [
     {
-      name: "omniroute",
+      name: "agentproxy",
       script: "npm",
       args: "start",
       env: {
         NODE_ENV: "production",
-        OMNIROUTE_MEMORY_MB: "512",
+        AGENTPROXY_MEMORY_MB: "512",
         JWT_SECRET: "your-secret",
         INITIAL_PASSWORD: "your-password",
       },
@@ -469,10 +469,10 @@ module.exports = {
 
 ```bash
 # Tasvirni yarating (standart = codex/claude/droid oldindan o‘rnatilgan runner-cli)
-docker build -t omniroute:cli .
+docker build -t agentproxy:cli .
 
 # Portativ rejim (tavsiya etiladi)
-docker run -d --name omniroute -p 20128:20128 --env-file ./.env -v omniroute-data:/app/data omniroute:cli
+docker run -d --name agentproxy -p 20128:20128 --env-file ./.env -v agentproxy-data:/app/data agentproxy:cli
 ```
 
 CLI ikkilik fayllari bilan xostga integratsiyalashgan rejim uchun asosiy hujjatlardagi Docker bo‘limiga qarang.
@@ -485,8 +485,8 @@ Void Linux foydalanuvchilari AgentProxyʼni `xbps-src` kross-kompilyatsiya freym
 <summary><b>xbps-src shablonini koʻrish</b></summary>
 
 ```bash
-# 'omniroute' uchun shablon fayli
-pkgname=omniroute
+# 'agentproxy' uchun shablon fayli
+pkgname=agentproxy
 version=3.8.0
 revision=1
 hostmakedepends="nodejs python3 make"
@@ -497,8 +497,8 @@ license="MIT"
 homepage="https://github.com/diegosouzapw/AgentProxy"
 distfiles="https://github.com/diegosouzapw/AgentProxy/archive/refs/tags/v${version}.tar.gz"
 checksum=009400afee90a9f32599d8fe734145cfd84098140b7287990183dde45ae2245b
-system_accounts="_omniroute"
-omniroute_homedir="/var/lib/omniroute"
+system_accounts="_agentproxy"
+agentproxy_homedir="/var/lib/agentproxy"
 export NODE_ENV=production
 export npm_config_engine_strict=false
 export npm_config_loglevel=error
@@ -548,26 +548,26 @@ do_check() {
 }
 
 do_install() {
-	vmkdir usr/lib/omniroute/.next
-	vcopy .next/standalone/. usr/lib/omniroute/.next/standalone
+	vmkdir usr/lib/agentproxy/.next
+	vcopy .next/standalone/. usr/lib/agentproxy/.next/standalone
 
 	# Oʻrnatishdan keyingi xuk bo‘sh Next.js ilova marshrutizatori kataloglarini olib tashlashining oldini olish
 	for _d in \
 		.next/standalone/.next/server/app/dashboard \
 		.next/standalone/.next/server/app/dashboard/settings \
 		.next/standalone/.next/server/app/dashboard/providers; do
-		touch "${DESTDIR}/usr/lib/omniroute/${_d}/.keep"
+		touch "${DESTDIR}/usr/lib/agentproxy/${_d}/.keep"
 	done
 
-	cat > "${WRKDIR}/omniroute" <<'EOF'
+	cat > "${WRKDIR}/agentproxy" <<'EOF'
 #!/bin/sh
 export PORT="${PORT:-20128}"
-export DATA_DIR="${DATA_DIR:-${XDG_DATA_HOME:-${HOME}/.local/share}/omniroute}"
+export DATA_DIR="${DATA_DIR:-${XDG_DATA_HOME:-${HOME}/.local/share}/agentproxy}"
 export APP_LOG_TO_FILE="${APP_LOG_TO_FILE:-false}"
 mkdir -p "${DATA_DIR}"
-exec node /usr/lib/omniroute/.next/standalone/server.js "$@"
+exec node /usr/lib/agentproxy/.next/standalone/server.js "$@"
 EOF
-	vbin "${WRKDIR}/omniroute"
+	vbin "${WRKDIR}/agentproxy"
 }
 
 post_install() {
@@ -581,14 +581,14 @@ post_install() {
 
 | Oʻzgaruvchi                             | Standart qiymat                      | Tavsif                                                                                                                                                           |
 | --------------------------------------- | ------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `JWT_SECRET`                            | `omniroute-default-secret-change-me` | JWT imzolash siri (**ishlab chiqarish muhitida oʻzgartiring**)                                                                                                   |
+| `JWT_SECRET`                            | `agentproxy-default-secret-change-me` | JWT imzolash siri (**ishlab chiqarish muhitida oʻzgartiring**)                                                                                                   |
 | `INITIAL_PASSWORD`                      | `CHANGEME`                           | Birinchi kirish paroli                                                                                                                                           |
-| `DATA_DIR`                              | `~/.omniroute`                       | Maʼlumotlar katalogi (maʼlumotlar bazasi, foydalanish maʼlumotlari, jurnallar)                                                                                   |
+| `DATA_DIR`                              | `~/.agentproxy`                       | Maʼlumotlar katalogi (maʼlumotlar bazasi, foydalanish maʼlumotlari, jurnallar)                                                                                   |
 | `PORT`                                  | freymvork standarti                  | Xizmat porti (misollarda `20128`)                                                                                                                                |
 | `HOSTNAME`                              | freymvork standarti                  | Bogʻlanish hosti (Docker uchun standart qiymat — `0.0.0.0`)                                                                                                      |
 | `NODE_ENV`                              | bajarish muhiti standarti            | Joylashtirish uchun `production` qiymatini oʻrnating                                                                                                             |
 | `NEXT_PUBLIC_BASE_URL`                  | `http://localhost:20128`             | Boshqaruv panelida koʻrsatiladigan va serverga taqdim etiladigan ommaviy asosiy URL (eski `BASE_URL` oʻrnini bosadi)                                             |
-| `NEXT_PUBLIC_CLOUD_URL`                 | `https://omniroute.dev`              | Bulut bilan sinxronlash yakuniy nuqtasining asosiy URL manzili (eski `CLOUD_URL` oʻrnini bosadi)                                                                 |
+| `NEXT_PUBLIC_CLOUD_URL`                 | `https://agentproxy.online`              | Bulut bilan sinxronlash yakuniy nuqtasining asosiy URL manzili (eski `CLOUD_URL` oʻrnini bosadi)                                                                 |
 | `API_KEY_SECRET`                        | `endpoint-proxy-api-key-secret`      | Yaratilgan API kalitlari uchun HMAC siri                                                                                                                         |
 | `REQUIRE_API_KEY`                       | `false`                              | `/v1/*` uchun Bearer API kalitini majburiy qilish                                                                                                                |
 | `ALLOW_API_KEY_REVEAL`                  | `false`                              | Autentifikatsiyadan oʻtgan boshqaruv paneli foydalanuvchilariga saqlangan API kalitlarining toʻliq qiymatlarini koʻrishga ruxsat berish                          |
@@ -598,7 +598,7 @@ post_install() {
 | `AUTH_COOKIE_SECURE`                    | `false`                              | `Secure` autentifikatsiya cookie-faylidan majburiy foydalanish (HTTPS teskari proksisi ortida)                                                                   |
 | `CLOUDFLARED_BIN`                       | oʻrnatilmagan                        | Boshqariladigan yuklab olish oʻrniga mavjud `cloudflared` ikkilik faylidan foydalanish                                                                           |
 | `CLOUDFLARED_PROTOCOL`                  | `http2`                              | Boshqariladigan Quick Tunnels uchun transport protokoli (`http2`, `quic` yoki `auto`)                                                                            |
-| `OMNIROUTE_MEMORY_MB`                   | `512`                                | Node.js uyum xotirasi chegarasi, MB hisobida                                                                                                                     |
+| `AGENTPROXY_MEMORY_MB`                   | `512`                                | Node.js uyum xotirasi chegarasi, MB hisobida                                                                                                                     |
 | `PROMPT_CACHE_MAX_SIZE`                 | `50`                                 | Prompt keshi yozuvlarining maksimal soni                                                                                                                         |
 | `SEMANTIC_CACHE_MAX_SIZE`               | `100`                                | Semantik kesh yozuvlarining maksimal soni                                                                                                                        |
 
@@ -659,7 +659,7 @@ Muhit oʻzgaruvchilarining toʻliq maʼlumotnomasi uchun [README](../README.md) 
 
 **Boshqa mos provayderlar** (tanlangan): `cohere`, `databricks`, `snowflake`, `together`, `vertex`, `alibaba`, `alibaba-cn`, `bedrock` (`aws-bedrock` orqali), `azure-ai`, `openrouter` (katalogni to‘g‘ridan-to‘g‘ri uzatish), `siliconflow`, `hyperbolic`, `huggingface`, `featherless-ai`, `cloudflare-ai`, `scaleway`, `deepinfra`, `vercel-ai-gateway`, `bazaarlink`, `friendliai`, `nous-research`, `reka`, `volcengine`, `ai21`, `gigachat`. Har biri `providerRegistry.ts` ichida o‘z model ro‘yxatini yuritadi va provayder `/models` oxirgi nuqtasini taqdim etsa, avtomatik sinxronlanishi mumkin.
 
-**Model IDlari haqida eslatma:** AgentProxy provayderga xos IDlardan (`claude-opus-4-8`, `gpt-5.5`, `glm-5.1`, `MiniMax-M2.7`, `kimi-k2.5`, `grok-4.20-0309-reasoning`) foydalanadi. Ayrim IDlar nuqtali versiyalarni o‘z ichiga oladi, chunki yuqori darajadagi API ularni shu shaklda kutadi. Agar model yuqorida ko‘rsatilmagan bo‘lsa, mavjudligini tasdiqlash uchun `omniroute models --search <term>` buyrug‘ini ishga tushiring yoki `GET /api/models/catalog` so‘rovini yuboring.
+**Model IDlari haqida eslatma:** AgentProxy provayderga xos IDlardan (`claude-opus-4-8`, `gpt-5.5`, `glm-5.1`, `MiniMax-M2.7`, `kimi-k2.5`, `grok-4.20-0309-reasoning`) foydalanadi. Ayrim IDlar nuqtali versiyalarni o‘z ichiga oladi, chunki yuqori darajadagi API ularni shu shaklda kutadi. Agar model yuqorida ko‘rsatilmagan bo‘lsa, mavjudligini tasdiqlash uchun `agentproxy models --search <term>` buyrug‘ini ishga tushiring yoki `GET /api/models/catalog` so‘rovini yuboring.
 
 </details>
 
@@ -697,16 +697,16 @@ Oʻzaro yoki koʻp bosqichli zanjirlar uchun har bir shlyuzda ixtiyoriy sikldan 
 
 ```bash
 # gateway-a
-OMNIROUTE_INSTANCE_ID=gateway-a
-OMNIROUTE_PEER_URLS=http://gateway-b:20128/v1
-OMNIROUTE_PEER_MAX_HOPS=4
+AGENTPROXY_INSTANCE_ID=gateway-a
+AGENTPROXY_PEER_URLS=http://gateway-b:20128/v1
+AGENTPROXY_PEER_MAX_HOPS=4
 ```
 
 ```bash
 # gateway-b
-OMNIROUTE_INSTANCE_ID=gateway-b
-OMNIROUTE_PEER_URLS=http://gateway-a:20128/v1
-OMNIROUTE_PEER_MAX_HOPS=4
+AGENTPROXY_INSTANCE_ID=gateway-b
+AGENTPROXY_PEER_URLS=http://gateway-a:20128/v1
+AGENTPROXY_PEER_MAX_HOPS=4
 ```
 
 Faqat aniq ruxsat etilgan tugun URL manziliga yuborilgan soʻrovlar
@@ -1097,7 +1097,7 @@ Misol:
 
 ```bash
 curl -X POST http://localhost:20128/v1/chat/completions \
-  -H "Authorization: Bearer $OMNIROUTE_KEY" \
+  -H "Authorization: Bearer $AGENTPROXY_KEY" \
   -H "Content-Type: application/json" \
   -d '{
     "model": "auto/coding",
@@ -1118,7 +1118,7 @@ AgentProxy ham **MCP serveri** (Model konteksti protokoli), ham **A2A serveri** 
 
 - **SSE**: `http://localhost:20128/api/mcp/sse`
 - **Oqimli HTTP**: `http://localhost:20128/api/mcp/stream`
-- **stdio**: `omniroute --mcp` (stdio ishlatishni afzal koʻradigan IDE plaginlari uchun)
+- **stdio**: `agentproxy --mcp` (stdio ishlatishni afzal koʻradigan IDE plaginlari uchun)
 
 ### Claude Desktopʼni ulash
 
@@ -1127,8 +1127,8 @@ macOS tizimida `~/Library/Application Support/Claude/claude_desktop_config.json`
 ```json
 {
   "mcpServers": {
-    "omniroute": {
-      "command": "omniroute",
+    "agentproxy": {
+      "command": "agentproxy",
       "args": ["--mcp"]
     }
   }
@@ -1204,23 +1204,23 @@ Kalitni **Boshqaruv paneli → API kalitlari → Yangi kalit → Ruxsat doirasi:
 ```bash
 # Provayderlar roʻyxatini olish
 curl http://localhost:20128/api/providers \
-  -H "Authorization: Bearer $OMNIROUTE_MANAGE_KEY"
+  -H "Authorization: Bearer $AGENTPROXY_MANAGE_KEY"
 
 # Provayder ulanishini qoʻshish
 curl -X POST http://localhost:20128/api/providers \
-  -H "Authorization: Bearer $OMNIROUTE_MANAGE_KEY" \
+  -H "Authorization: Bearer $AGENTPROXY_MANAGE_KEY" \
   -H "Content-Type: application/json" \
   -d '{ "provider": "openai", "apiKey": "sk-...", "name": "main" }'
 
 # Kombinatsiya yaratish
 curl -X POST http://localhost:20128/api/combos \
-  -H "Authorization: Bearer $OMNIROUTE_MANAGE_KEY" \
+  -H "Authorization: Bearer $AGENTPROXY_MANAGE_KEY" \
   -H "Content-Type: application/json" \
   -d '{ "name": "premium", "strategy": "priority", "models": [{ "model": "cc/claude-opus-4-7" }, { "model": "glm/glm-5.1" }] }'
 
 # API kalitlarini roʻyxatlash/yaratish
-curl http://localhost:20128/api/keys -H "Authorization: Bearer $OMNIROUTE_MANAGE_KEY"
-curl -X POST http://localhost:20128/api/keys -H "Authorization: Bearer $OMNIROUTE_MANAGE_KEY" \
+curl http://localhost:20128/api/keys -H "Authorization: Bearer $AGENTPROXY_MANAGE_KEY"
+curl -X POST http://localhost:20128/api/keys -H "Authorization: Bearer $AGENTPROXY_MANAGE_KEY" \
   -d '{ "name": "ci-bot", "scopes": ["chat"] }'
 ```
 
@@ -1230,32 +1230,32 @@ Endpointlarning toʻliq katalogi hamda soʻrov/javob sxemalari uchun [API_REFERE
 
 ## 💻 Ichki CLI
 
-AgentProxy sozlash, diagnostika va ish jarayonini boshqarish uchun ichki CLI (`omniroute …`) bilan taqdim etiladi. Bu boshqaruv panelidagi uchinchi tomon CLI vositalarini (Claude Code, Cursor, Codex, Cline, …) AgentProxy bilan ishlashga sozlaydigan **“CLI Tools” sahifasidan alohida**.
+AgentProxy sozlash, diagnostika va ish jarayonini boshqarish uchun ichki CLI (`agentproxy …`) bilan taqdim etiladi. Bu boshqaruv panelidagi uchinchi tomon CLI vositalarini (Claude Code, Cursor, Codex, Cline, …) AgentProxy bilan ishlashga sozlaydigan **“CLI Tools” sahifasidan alohida**.
 
 ```bash
-omniroute setup                    # Interaktiv sozlash ustasi (parol, provayderlar, kombinatsiyalar)
-omniroute setup --non-interactive  # CI uchun qulay
-omniroute doctor                   # Tizim holati diagnostikasi (maʼlumotlar katalogi, DB, provayderlar, portlar)
-omniroute providers available      # Qoʻllab-quvvatlanadigan provayderlarni koʻrsatish
-omniroute providers list           # Sozlangan ulanishlarni koʻrsatish
-omniroute providers test <id>      # Provayder ulanishini jonli tekshirish
-omniroute combos list              # Kombinatsiyalarni koʻrsatish
-omniroute combos switch <name>     # Standart kombinatsiyani belgilash
-omniroute models                   # Mavjud modellarni koʻrsatish (--json, --search)
-omniroute keys add | list | remove # API kalitlarini terminal orqali boshqarish
-omniroute backup                   # Konfiguratsiya va DB oniy nusxasini yaratish
-omniroute restore [<timestamp>]    # Oniy nusxadan tiklash
-omniroute health                   # Batafsil tizim holati (uzgichlar, kesh, xotira)
-omniroute quota                    # Provayder kvotasidan foydalanish
-omniroute mcp status               # MCP serveri holati
-omniroute a2a status               # A2A serveri holati
-omniroute tunnel list|create|stop  # Cloudflare/Tailscale/ngrok tunnellari
-omniroute reset-password           # Administrator parolini tiklash
-omniroute --mcp                    # MCP serverini stdio orqali ishga tushirish
-omniroute --port 3000              # Serverni maxsus portda ishga tushirish
+agentproxy setup                    # Interaktiv sozlash ustasi (parol, provayderlar, kombinatsiyalar)
+agentproxy setup --non-interactive  # CI uchun qulay
+agentproxy doctor                   # Tizim holati diagnostikasi (maʼlumotlar katalogi, DB, provayderlar, portlar)
+agentproxy providers available      # Qoʻllab-quvvatlanadigan provayderlarni koʻrsatish
+agentproxy providers list           # Sozlangan ulanishlarni koʻrsatish
+agentproxy providers test <id>      # Provayder ulanishini jonli tekshirish
+agentproxy combos list              # Kombinatsiyalarni koʻrsatish
+agentproxy combos switch <name>     # Standart kombinatsiyani belgilash
+agentproxy models                   # Mavjud modellarni koʻrsatish (--json, --search)
+agentproxy keys add | list | remove # API kalitlarini terminal orqali boshqarish
+agentproxy backup                   # Konfiguratsiya va DB oniy nusxasini yaratish
+agentproxy restore [<timestamp>]    # Oniy nusxadan tiklash
+agentproxy health                   # Batafsil tizim holati (uzgichlar, kesh, xotira)
+agentproxy quota                    # Provayder kvotasidan foydalanish
+agentproxy mcp status               # MCP serveri holati
+agentproxy a2a status               # A2A serveri holati
+agentproxy tunnel list|create|stop  # Cloudflare/Tailscale/ngrok tunnellari
+agentproxy reset-password           # Administrator parolini tiklash
+agentproxy --mcp                    # MCP serverini stdio orqali ishga tushirish
+agentproxy --port 3000              # Serverni maxsus portda ishga tushirish
 ```
 
-Maslahat: nosogʻlom provayder ulanishlari haqida ogohlantirish olish uchun `omniroute doctor --json` buyrugʻini monitoring vositangiz bilan birga ishlating.
+Maslahat: nosogʻlom provayder ulanishlari haqida ogohlantirish olish uchun `agentproxy doctor --json` buyrugʻini monitoring vositangiz bilan birga ishlating.
 
 ---
 
@@ -1304,7 +1304,7 @@ Natija → `electron/dist-electron/`
 
 | Oʻzgaruvchi           | Standart | Tavsif                                        |
 | --------------------- | -------- | --------------------------------------------- |
-| `OMNIROUTE_PORT`      | `20128`  | Server porti                                  |
-| `OMNIROUTE_MEMORY_MB` | `512`    | Node.js uyum xotirasi chegarasi (64–16384 MB) |
+| `AGENTPROXY_PORT`      | `20128`  | Server porti                                  |
+| `AGENTPROXY_MEMORY_MB` | `512`    | Node.js uyum xotirasi chegarasi (64–16384 MB) |
 
 📖 Toʻliq hujjatlar: [`electron/README.md`](../../electron/README.md)

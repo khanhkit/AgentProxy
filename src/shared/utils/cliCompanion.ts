@@ -38,14 +38,14 @@ export const validCompanionModel = (value: string): boolean =>
 
 export function buildCompanionCommands(target: CompanionTarget, context: string, model: string) {
   const commands: { contexts: string; configure?: string; run?: string } = {
-    contexts: "omniroute contexts list\nomniroute contexts current",
+    contexts: "agentproxy contexts list\nagentproxy contexts current",
   };
   if (!/^[a-z0-9][a-z0-9-]*$/.test(target.id) || !validCompanionContext(context)) return commands;
   const suffix = context ? ` --context ${context}` : "";
-  if (target.configure) commands.configure = `omniroute configure ${target.id}${suffix}`;
+  if (target.configure) commands.configure = `agentproxy configure ${target.id}${suffix}`;
   if (target.run && (!target.requiresModel || validCompanionModel(model))) {
     const modelArg = target.requiresModel ? ` --model ${model}` : "";
-    commands.run = `omniroute run ${target.id}${suffix}${modelArg} --dry-run`;
+    commands.run = `agentproxy run ${target.id}${suffix}${modelArg} --dry-run`;
   }
   return commands;
 }

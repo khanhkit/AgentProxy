@@ -36,7 +36,7 @@
 - 🚦 **በየአቅራቢው የ429 ምደባ** + `useUpstream429BreakerHints` መቀያየሪያ — የላይኛውን ምንጭ የፍጥነት-ገደብ ፍንጮች በመጠቀም ይበልጥ ትክክለኛ የወረዳ ተቋራጭ ባህሪ
 - 🩺 **የሞዴል ማቀዝቀዣ ጊዜዎች ዳሽቦርድ** — በየሞዴሉ ያሉ ጊዜያዊ መቆለፊያዎችን ይመልከቱ እና ከUI በእጅ ዳግም ያንቁ
 - 🔒 **የMITM ተለዋዋጭ የLinux ሰርቲፊኬት ማወቂያ** — በDebian/Ubuntu፣ Fedora/RHEL፣ Arch እና ሌሎች ስርጭቶች ላይ ይሰራል
-- 💻 **የCLI ማሻሻያ ስብስብ** — `omniroute providers`፣ `omniroute combos`፣ `omniroute doctor`፣ `omniroute setup`ን ጨምሮ ከ20 በላይ ትዕዛዞች
+- 💻 **የCLI ማሻሻያ ስብስብ** — `agentproxy providers`፣ `agentproxy combos`፣ `agentproxy doctor`፣ `agentproxy setup`ን ጨምሮ ከ20 በላይ ትዕዛዞች
 - 🔍 **የQdrant embedding ሞዴል ፍለጋ** — ራስ-ሰር የቬክተር-ማከማቻ ሞዴል ምርመራ
 - 🔑 **የAPI ቁልፎች / የ`manage` ወሰን ያላቸው Bearer ቁልፎች** — በAPI በኩል የአስተዳደር ክንውኖችን በፕሮግራም ያከናውኑ
 - 🏥 **የCombo ዒላማ ጤና ትንታኔ** + **የተዋቀረ combo መገንቢያ** — የእያንዳንዱ ዒላማ ጤና እና `(provider, model, connection)` ደረጃዎችን ለመገጣጠም የUI መገንቢያ
@@ -226,7 +226,7 @@
 
 | ትዕዛዝ                     | ተግባር                                                                       |
 | ------------------------ | -------------------------------------------------------------------------- |
-| `npm run uninstall`      | የስርዓት መተግበሪያውን ያስወግዳል፣ ነገር ግን **DBዎን እና ውቅሮችዎን በ`~/.omniroute` ውስጥ ያቆያል**። |
+| `npm run uninstall`      | የስርዓት መተግበሪያውን ያስወግዳል፣ ነገር ግን **DBዎን እና ውቅሮችዎን በ`~/.agentproxy` ውስጥ ያቆያል**። |
 | `npm run uninstall:full` | መተግበሪያውን ያስወግዳል እና **ሁሉንም ውቅሮች፣ ቁልፎች እና የውሂብ ጎታዎች በቋሚነት ይደመስሳል**።          |
 
 ---

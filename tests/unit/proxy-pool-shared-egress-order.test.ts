@@ -13,7 +13,7 @@ import path from "node:path";
 // ranked. With either flag off (the default) or a provider outside that list
 // the order stays exactly the plain rotation.
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-shared-egress-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-shared-egress-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 process.env.API_KEY_SECRET = "test-secret";
 

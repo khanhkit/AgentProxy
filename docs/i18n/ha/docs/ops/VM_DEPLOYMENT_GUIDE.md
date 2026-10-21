@@ -89,13 +89,13 @@ ufw enable
 ### 2.1 Ƙirƙiri kundin saituna
 
 ```bash
-mkdir -p /opt/omniroute
+mkdir -p /opt/agentproxy
 ```
 
 ### 2.2 Ƙirƙiri fayil ɗin environment variables
 
 ```bash
-cat > /opt/omniroute/.env << 'EOF'
+cat > /opt/agentproxy/.env << 'EOF'
 # === Tsaro ===
 JWT_SECRET=CHANGE-TO-A-UNIQUE-64-CHAR-SECRET-KEY
 INITIAL_PASSWORD=YourSecurePassword123!
@@ -103,7 +103,7 @@ API_KEY_SECRET=REPLACE-WITH-ANOTHER-SECRET-KEY
 STORAGE_ENCRYPTION_KEY=REPLACE-WITH-THIRD-SECRET-KEY
 STORAGE_ENCRYPTION_KEY_VERSION=v1
 MACHINE_ID_SALT=CHANGE-TO-A-UNIQUE-SALT
-OMNIROUTE_WS_BRIDGE_SECRET=REPLACE-WITH-WS-BRIDGE-SECRET  # ANA BUƘATA a production: Codex Responses WS bridge ne ke amfani da shi
+AGENTPROXY_WS_BRIDGE_SECRET=REPLACE-WITH-WS-BRIDGE-SECRET  # ANA BUƘATA a production: Codex Responses WS bridge ne ke amfani da shi
 
 # === Manhaja ===
 PORT=20128
@@ -120,11 +120,11 @@ BASE_URL=http://127.0.0.1:20128
 # URL da browser ke gani wanda ake amfani da shi don OAuth callbacks, dashboard links, da public URLs da aka samar.
 NEXT_PUBLIC_BASE_URL=https://llms.seudominio.com
 # Zaɓin bayyanannen public origin override don public asset URLs da aka samar.
-# OMNIROUTE_PUBLIC_BASE_URL=https://llms.seudominio.com
+# AGENTPROXY_PUBLIC_BASE_URL=https://llms.seudominio.com
 
 # === Cloud Sync (na zaɓi) ===
-# CLOUD_URL=https://cloud.omniroute.online
-# NEXT_PUBLIC_CLOUD_URL=https://cloud.omniroute.online
+# CLOUD_URL=https://agentproxy.online
+# NEXT_PUBLIC_CLOUD_URL=https://agentproxy.online
 EOF
 ```
 
@@ -133,22 +133,22 @@ EOF
 ### 2.3 Fara container
 
 ```bash
-docker pull diegosouzapw/omniroute:latest
+docker pull diegosouzapw/agentproxy:latest
 
 docker run -d \
-  --name omniroute \
+  --name agentproxy \
   --restart unless-stopped \
-  --env-file /opt/omniroute/.env \
+  --env-file /opt/agentproxy/.env \
   -p 20128:20128 \
-  -v omniroute-data:/app/data \
-  diegosouzapw/omniroute:latest
+  -v agentproxy-data:/app/data \
+  diegosouzapw/agentproxy:latest
 ```
 
 ### 2.4 Tabbatar cewa yana aiki
 
 ```bash
-docker ps | grep omniroute
-docker logs omniroute --tail 20
+docker ps | grep agentproxy
+docker logs agentproxy --tail 20
 ```
 
 Ya kamata ya nuna: `[DB] SQLite database ready` da `listening on port 20128`.
@@ -181,7 +181,7 @@ chmod 600 /etc/nginx/ssl/origin.key
 ### 3.2 Tsarin Saitin Nginx
 
 ```bash
-cat > /etc/nginx/sites-available/omniroute << 'NGINX'
+cat > /etc/nginx/sites-available/agentproxy << 'NGINX'
 # Sabar asali — tana hana shiga kai tsaye ta hanyar IP
 server {
     listen 80 default_server;
@@ -246,7 +246,7 @@ da hanyoyin haɗin jama'a da aka samar. Rubuce-rubucen dashboard da aka tabbatar
 tare da kariyar CSRF mai alaƙa da session, saboda haka ba sa buƙatar tsayayyen URL na jama'a. Headers na
 `X-Forwarded-*` da ke sama har yanzu metadata ne masu amfani wajen routing, amma ba sa maye gurbin
 saita takamaiman URL na jama'a lokacin da OAuth ko hanyoyin haɗin browser da aka samar suke buƙatarsa. Kunna
-`OMNIROUTE_TRUST_PROXY` kawai idan clients ba za su iya isa ga AgentProxy kai tsaye ba kuma proxy ɗinka
+`AGENTPROXY_TRUST_PROXY` kawai idan clients ba za su iya isa ga AgentProxy kai tsaye ba kuma proxy ɗinka
 yana cirewa/sake gina forwarded headers masu shigowa.
 
 ### 3.3 Kunna kuma Gwada
@@ -256,7 +256,7 @@ yana cirewa/sake gina forwarded headers masu shigowa.
 rm -f /etc/nginx/sites-enabled/default
 
 # Kunna AgentProxy
-ln -sf /etc/nginx/sites-available/omniroute /etc/nginx/sites-enabled/omniroute
+ln -sf /etc/nginx/sites-available/agentproxy /etc/nginx/sites-enabled/agentproxy
 
 # Gwada kuma sake lodawa
 nginx -t && systemctl reload nginx
@@ -300,40 +300,40 @@ curl -sI https://llms.seudominio.com/health
 ### Ɗaukaka zuwa sabuwar siga
 
 ```bash
-docker pull diegosouzapw/omniroute:latest
-docker stop omniroute && docker rm omniroute
-docker run -d --name omniroute --restart unless-stopped \
-  --env-file /opt/omniroute/.env \
+docker pull diegosouzapw/agentproxy:latest
+docker stop agentproxy && docker rm agentproxy
+docker run -d --name agentproxy --restart unless-stopped \
+  --env-file /opt/agentproxy/.env \
   -p 20128:20128 \
-  -v omniroute-data:/app/data \
-  diegosouzapw/omniroute:latest
+  -v agentproxy-data:/app/data \
+  diegosouzapw/agentproxy:latest
 ```
 
 ### Duba rajistan ayyuka
 
 ```bash
-docker logs -f omniroute          # Gudanarwa kai tsaye
-docker logs omniroute --tail 50   # Layuka 50 na ƙarshe
+docker logs -f agentproxy          # Gudanarwa kai tsaye
+docker logs agentproxy --tail 50   # Layuka 50 na ƙarshe
 ```
 
 ### Ajiyar bayanai ta hannu
 
 ```bash
 # Kwafi bayanai daga volume zuwa host
-docker cp omniroute:/app/data ./backup-$(date +%F)
+docker cp agentproxy:/app/data ./backup-$(date +%F)
 
 # Ko a matse dukan volume
-docker run --rm -v omniroute-data:/data -v $(pwd):/backup \
-  alpine tar czf /backup/omniroute-data-$(date +%F).tar.gz /data
+docker run --rm -v agentproxy-data:/data -v $(pwd):/backup \
+  alpine tar czf /backup/agentproxy-data-$(date +%F).tar.gz /data
 ```
 
 ### Maidowa daga ajiyar bayanai
 
 ```bash
-docker stop omniroute
-docker run --rm -v omniroute-data:/data -v $(pwd):/backup \
-  alpine sh -c "rm -rf /data/* && tar xzf /backup/omniroute-data-YYYY-MM-DD.tar.gz -C /"
-docker start omniroute
+docker stop agentproxy
+docker run --rm -v agentproxy-data:/data -v $(pwd):/backup \
+  alpine sh -c "rm -rf /data/* && tar xzf /backup/agentproxy-data-YYYY-MM-DD.tar.gz -C /"
+docker start agentproxy
 ```
 
 ---
@@ -402,13 +402,13 @@ Don samun dama daga nesa ta hanyar Cloudflare Workers (ba tare da fallasa VM kai
 
 ```bash
 # A cikin ma'ajiyar lamba ta gida
-cd omnirouteCloud
+cd agentproxyCloud
 npm install
 npx wrangler login
 npx wrangler deploy
 ```
 
-Duba kuma [TUNNELS_GUIDE.md](./TUNNELS_GUIDE.md) don jagorar Cloudflare Tunnel da ke cikin ma'ajiyar lambar. Ma'aikacin `omnirouteCloud/` mai zaman kansa yana cikin wata ma'ajiyar lambar haɗin gwiwa ta daban.
+Duba kuma [TUNNELS_GUIDE.md](./TUNNELS_GUIDE.md) don jagorar Cloudflare Tunnel da ke cikin ma'ajiyar lambar. Ma'aikacin `agentproxyCloud/` mai zaman kansa yana cikin wata ma'ajiyar lambar haɗin gwiwa ta daban.
 
 ---
 
@@ -425,9 +425,9 @@ Duba kuma [TUNNELS_GUIDE.md](./TUNNELS_GUIDE.md) don jagorar Cloudflare Tunnel d
 
 Don turawa a kan ƙananan VPS (RAM 1 GB ko ƙasa da haka):
 
-- **Kashe sabis na bayan fage** — saita `OMNIROUTE_DISABLE_BACKGROUND_SERVICES=1` don tsallake mai tsara ayyuka, uwar garken MCP, da ayyukan kulawa na lokaci-lokaci. Duba `docs/reference/ENVIRONMENT.md`.
+- **Kashe sabis na bayan fage** — saita `AGENTPROXY_DISABLE_BACKGROUND_SERVICES=1` don tsallake mai tsara ayyuka, uwar garken MCP, da ayyukan kulawa na lokaci-lokaci. Duba `docs/reference/ENVIRONMENT.md`.
 - **Yi amfani da yanayin SQLite WAL** — ana kunna shi ta tsohuwa, kuma yana rage iyakar amfani da ƙwaƙwalwar ajiya yayin karantawa da yawa a lokaci guda.
-- **Iyakance heap na V8** — saita `OMNIROUTE_MEMORY_MB` (misali `512`) don kada runtime ya daidaita iyakar da ta fi ƙarfin VM. Duba `docs/reference/ENVIRONMENT.md`.
-- **Karɓar manyan ayyuka na daidaita kansa bisa iyakar heap** -- da zarar an saita `OMNIROUTE_MEMORY_MB` a sama, kasafin byte na shigarwa (`OMNIROUTE_CHAT_MAX_INFLIGHT_BYTES`) yana samo kansa daga wannan iyakar, don haka VM mai ƙarancin ƙwaƙwalwar ajiya zai riga ya sami ƙaramin kasafin buƙatun lokaci guda ba tare da ƙarin daidaitawa ba; buƙatun da suka wuce iyaka za su sami `503` mai yiwuwa a sake gwadawa tare da `Retry-After`, maimakon yin takara kan ƙwaƙwalwar ajiya. Saita tsohuwar iyakar ƙidayar buƙatu ta `OMNIROUTE_CHAT_MAX_HEAVY_IN_FLIGHT` kawai idan kana buƙatar tsayayyar iyaka a saman wannan.
+- **Iyakance heap na V8** — saita `AGENTPROXY_MEMORY_MB` (misali `512`) don kada runtime ya daidaita iyakar da ta fi ƙarfin VM. Duba `docs/reference/ENVIRONMENT.md`.
+- **Karɓar manyan ayyuka na daidaita kansa bisa iyakar heap** -- da zarar an saita `AGENTPROXY_MEMORY_MB` a sama, kasafin byte na shigarwa (`AGENTPROXY_CHAT_MAX_INFLIGHT_BYTES`) yana samo kansa daga wannan iyakar, don haka VM mai ƙarancin ƙwaƙwalwar ajiya zai riga ya sami ƙaramin kasafin buƙatun lokaci guda ba tare da ƙarin daidaitawa ba; buƙatun da suka wuce iyaka za su sami `503` mai yiwuwa a sake gwadawa tare da `Retry-After`, maimakon yin takara kan ƙwaƙwalwar ajiya. Saita tsohuwar iyakar ƙidayar buƙatu ta `AGENTPROXY_CHAT_MAX_HEAVY_IN_FLIGHT` kawai idan kana buƙatar tsayayyar iyaka a saman wannan.
 - **Guji `next build` a kan VPS** — yi ginin a na'urarka sannan ka tura fitarwar standalone (`.next/standalone/`).
 - **Sa ido da `top` / `free -m`** — AgentProxy yawanci yana amfani da RSS 200-400 MB lokacin da ba ya aiki a kan VM mai RAM 1 GB.

@@ -37,11 +37,11 @@
 የዱካ ተለዋጭ ስሞች (`tsconfig.json`)፦
 
 - `@/*` → `src/*`
-- `@omniroute/open-sse` → `open-sse/index.ts`
-- `@omniroute/open-sse/*` → `open-sse/*`
+- `@agentproxy/open-sse` → `open-sse/index.ts`
+- `@agentproxy/open-sse/*` → `open-sse/*`
 
 ነባሪ HTTP port፦ **`20128`** (API እና dashboard ተመሳሳዩን process ይጋራሉ)። የውሂብ
-ማውጫው `DATA_DIR` env var ሲሆን፣ ነባሪ ዋጋው `~/.omniroute/` ነው።
+ማውጫው `DATA_DIR` env var ሲሆን፣ ነባሪ ዋጋው `~/.agentproxy/` ነው።
 
 ---
 
@@ -50,9 +50,9 @@
 ```
 AgentProxy/
 ├── src/                  የNext.js መተግበሪያ (App Router፣ libs፣ domain፣ server፣ shared)
-├── open-sse/             የStreaming engine workspace (@omniroute/open-sse)
+├── open-sse/             የStreaming engine workspace (@agentproxy/open-sse)
 ├── electron/             የዴስክቶፕ wrapper (Electron 41 main + preload)
-├── bin/                  የCLI መግቢያ ነጥቦች (omniroute፣ reset-password)
+├── bin/                  የCLI መግቢያ ነጥቦች (agentproxy፣ reset-password)
 ├── tests/                Unit፣ integration፣ e2e፣ protocols-e2e፣ translator፣ security፣ fixtures
 ├── scripts/              የግንባታ፣ ማመሳሰል፣ ፍተሻ፣ migration እና የአሂድ ጊዜ አጋዥ scripts
 ├── docs/                 ይፋዊ ሰነዶች (ይህ ማውጫ)
@@ -297,7 +297,7 @@ v1/
 | `runtime/`        | የአሂድ ጊዜ ባህሪ ማወቂያ                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
 | `search/`         | `executeWebSearch.ts`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
 | `services/`       | የተካተቱ አገልግሎቶች ማዕቀፍ፦ `ServiceSupervisor.ts` (የክወና መቆለፊያ፣ የቀለበት ቋት እና የጤና ፈታሽ ያለው አጠቃላይ የልጅ-ሂደት ተቆጣጣሪ)፣ `bootstrap.ts` (በሂደት ደረጃ ምዝገባ እና ራስ-ሰር ማስጀመር)፣ `registry.ts` (መሳሪያ → ተቆጣጣሪ ካርታ)፣ `apiKey.ts` (የAES-256-GCM ቁልፍ ማከማቻ)፣ `modelSync.ts` (ወቅታዊ የሞዴል ማመሳሰል)፣ `ringBuffer.ts` (5 MB ክብ የምዝግብ ማስታወሻ ቋት)፣ `healthCheck.ts` (የHTTP ጤና መመርመሪያ)፣ `types.ts`፣ `embedWsProxy.ts` (የWebSocket ተኪ)፣ `installers/{ninerouter,cliproxy}.ts`። `docs/frameworks/EMBEDDED-SERVICES.md`ን ይመልከቱ                                                                                                                                                                                |
-| `agentSkills/`    | የወኪል ክህሎቶች ካታሎግ + አመንጪ፦ `catalog.ts` (getCatalog/getSkillById/filterCatalog/computeCoverage)፣ `generator.ts` (generateAgentSkills → ወደ `skills/{id}/SKILL.md` ይጽፋል)፣ `openapiParser.ts` (ከOpenAPI ዝርዝር መግለጫ REST መጨረሻ ነጥቦችን ያወጣል)፣ `cliRegistryParser.ts` (ከbin/cli-registry የCLI ንዑስ ትዕዛዞችን ያወጣል)፣ `schemas.ts` (Zod፦ AgentSkillSchema፣ SkillCoverageSchema፣ ListQuerySchema፣ GenerateBodySchema)፣ `types.ts` (AgentSkill፣ SkillCoverage፣ SkillMarkdown፣ GeneratorReport)። በREST መስመሮች (`/api/agent-skills/*`)፣ MCP መሳሪያዎች (`omniroute_agent_skills_*`) እና A2A ክህሎት `list-capabilities` ጥቅም ላይ ይውላል። [AGENT-SKILLS.md](../frameworks/AGENT-SKILLS.md)ን ይመልከቱ። |
+| `agentSkills/`    | የወኪል ክህሎቶች ካታሎግ + አመንጪ፦ `catalog.ts` (getCatalog/getSkillById/filterCatalog/computeCoverage)፣ `generator.ts` (generateAgentSkills → ወደ `skills/{id}/SKILL.md` ይጽፋል)፣ `openapiParser.ts` (ከOpenAPI ዝርዝር መግለጫ REST መጨረሻ ነጥቦችን ያወጣል)፣ `cliRegistryParser.ts` (ከbin/cli-registry የCLI ንዑስ ትዕዛዞችን ያወጣል)፣ `schemas.ts` (Zod፦ AgentSkillSchema፣ SkillCoverageSchema፣ ListQuerySchema፣ GenerateBodySchema)፣ `types.ts` (AgentSkill፣ SkillCoverage፣ SkillMarkdown፣ GeneratorReport)። በREST መስመሮች (`/api/agent-skills/*`)፣ MCP መሳሪያዎች (`agentproxy_agent_skills_*`) እና A2A ክህሎት `list-capabilities` ጥቅም ላይ ይውላል። [AGENT-SKILLS.md](../frameworks/AGENT-SKILLS.md)ን ይመልከቱ። |
 | `skills/`         | የክህሎት ማዕቀፍ፦ `registry.ts`፣ `executor.ts`፣ `interception.ts`፣ `injection.ts`፣ `sandbox.ts`፣ `custom.ts`፣ `hybrid.ts`፣ `builtins.ts`፣ `a2a.ts`፣ `providerSettings.ts`፣ `schemas.ts`፣ `skillssh.ts`፣ `types.ts`፣ በተጨማሪም `builtin/browser.ts`                                                                                                                                                                                                                                                                                                                                                                                                                      |
 | `spend/`          | `batchWriter.ts` (የኋላ-ጽሁፍ ቋት)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
 | `sync/`           | `bundle.ts`፣ `tokens.ts` (የደመና ማመሳሰል)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
@@ -383,7 +383,7 @@ I/O የሌለው ንጹህ የንግድ ሎጂክ። በroutes እና handlers i
 | `degradation.ts`                           | ወደ degraded-mode የሚደረጉ transitions    |
 | `providerExpiration.ts`                    | ጊዜው ያለፈበትን account/key መለየት           |
 | `quotaCache.ts`                            | Cache የተደረጉ የquota ውሳኔዎች              |
-| `responses.ts`, `omnirouteResponseMeta.ts` | የresponse shape አጋዥ መሣሪያዎች            |
+| `responses.ts`, `agentproxyesponseMeta.ts` | የresponse shape አጋዥ መሣሪያዎች            |
 | `configAudit.ts`                           | የconfig ለውጥ audit                     |
 | `assessment/`                              | የሞዴል ግምገማ (በRFC መሠረት፣ በከፊል ተተግብሯል)    |
 | `types.ts`                                 | የጋራ የdomain types                     |
@@ -435,7 +435,7 @@ server/
 
 ## 4. `open-sse/` — የዥረት ማስኬጃ የሥራ ቦታ
 
-እንደ `@omniroute/open-sse` የሚታተም የተለየ npm የሥራ ቦታ። የጥያቄ
+እንደ `@agentproxy/open-sse` የሚታተም የተለየ npm የሥራ ቦታ። የጥያቄ
 ማስኬድን፣ አስፈጻሚዎችን፣ ተርጓሚዎችን፣ አገልግሎቶችን፣ ቀያሪውን እና MCP አገልጋዩን ይይዛል።
 
 ```
@@ -598,7 +598,7 @@ electron/
 
 ```
 bin/
-├── omniroute.mjs           ዋናው የCLI መግቢያ (Node ESM)
+├── agentproxy.mjs           ዋናው የCLI መግቢያ (Node ESM)
 ├── reset-password.mjs      የአስተዳደር የይለፍ ቃልን ከCLI ዳግም ያስጀምሩ
 ├── mcp-server.mjs          የMCP አገልጋይ አስጀማሪ (stdio)
 ├── nodeRuntimeSupport.mjs  የNode ስሪት መከላከያ
@@ -621,8 +621,8 @@ bin/
 
 በ`package.json` → `bin` ውስጥ ሁለት ባይነሪዎች ቀርበዋል፦
 
-- `omniroute` → `bin/omniroute.mjs`
-- `omniroute-reset-password` → `bin/reset-password.mjs`
+- `agentproxy` → `bin/agentproxy.mjs`
+- `agentproxy-reset-password` → `bin/reset-password.mjs`
 
 ---
 
@@ -778,7 +778,7 @@ bin/
 
 - **የኮድ ቅጥ**፦ ባለ2-space indent፣ double quotes፣ 100 char width፣ semicolons፣
   `es5` trailing commas — በ`lint-staged` በኩል በPrettier ይተገበራል።
-- **Imports**፦ external → internal (`@/`, `@omniroute/open-sse`) → relative።
+- **Imports**፦ external → internal (`@/`, `@agentproxy/open-sse`) → relative።
 - **ስያሜ**፦ files `camelCase` ወይም `kebab-case`፣ components `PascalCase`፣
   constants `UPPER_SNAKE`።
 - **ESLint**፦ `no-eval`፣ `no-implied-eval`፣ `no-new-func` = `error` በሁሉም ቦታ፤

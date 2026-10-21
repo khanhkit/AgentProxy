@@ -18,7 +18,7 @@ Matsalolin da aka fi samu da hanyoyin magance su na AgentProxy.
 
 | Abin da nake gani                          | Abin da yake nufi                               | Abin da za a yi                                                                                             |
 | ------------------------------------------ | ----------------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
-| "Ba za a iya haɗawa ba"                    | AgentProxy ba ya aiki                            | Gudanar da `omniroute` ko `docker restart omniroute`                                                        |
+| "Ba za a iya haɗawa ba"                    | AgentProxy ba ya aiki                            | Gudanar da `agentproxy` ko `docker restart agentproxy`                                                        |
 | "Maɓallin API ba daidai ba"                | Maɓallinka ba daidai ba ne ko ya ƙare           | Sake kwafe maɓallin daga gidan yanar gizon mai bayarwa                                                      |
 | "An wuce iyakar buƙatu"                    | Kana aika buƙatu da yawa                        | Jira minti 1, ko amfani da `model: "auto"` don sauyawa ta atomatik                                          |
 | "An wuce ƙayyadadden kaso"                 | Ka ƙare kaso na kyauta/na biya                  | Haɗa ƙarin masu bayarwa, ko amfani da masu bayarwa na kyauta (Kiro, Pollinations)                           |
@@ -26,7 +26,7 @@ Matsalolin da aka fi samu da hanyoyin magance su na AgentProxy.
 | "An yi amfani da mai bayarwa marar dacewa" | `auto` ya zaɓi wani mai bayarwa                 | Wannan al'ada ce! `auto` yana zaɓar mafi dacewa. Tilasta takamaiman mai bayarwa da `model: "openai/gpt-4o"` |
 | "502 Ƙofar Sadarwa Mara Kyau"              | Mai bayarwa ba ya aiki                          | Jira sannan ka sake gwadawa, ko amfani da `model: "auto"` don sauya masu bayarwa                            |
 | "401 Ba a Ba da Izini ba"                  | Bayanan shaidarka ba daidai ba ne               | Duba maɓallin API ɗinka ko sake tabbatar da izini ta OAuth                                                  |
-| "ba a gane omniroute ba"                   | Windows PATH ba ya ɗauke da global node modules | Ƙara npm global prefix ɗinka zuwa Windows PATH. Nemo shi da `npm config get prefix`.                        |
+| "ba a gane agentproxy ba"                   | Windows PATH ba ya ɗauke da global node modules | Ƙara npm global prefix ɗinka zuwa Windows PATH. Nemo shi da `npm config get prefix`.                        |
 | "429 Buƙatu Sun Yi Yawa"                   | An taƙaita yawan buƙatu                         | Jira minti 1, ko haɗa ƙarin masu bayarwa                                                                    |
 
 **Har yanzu kana fuskantar matsala?** Duba [cikakken jagorar warware matsala](#detailed-troubleshooting) da ke ƙasa, ko yi tambaya a [Discord](https://discord.gg/U47eFqAXCn).
@@ -50,14 +50,14 @@ Matsalolin da aka fi samu da hanyoyin magance su na AgentProxy.
 **Tabbataccen gyara (al'umma ta bayar da rahoto, 2026-08-10)**: daidaita environment variables guda uku domin juyawa, aiki a lokaci guda, da sauyawa su shawo kan rashin daidaiton matakin kyauta maimakon tsarin ya tsaya saboda shi:
 
 ```bash
-export OMNIROUTE_ROTATE_ON_400=true           # matsa zuwa wani samfuri/mai bayarwa idan an sami 400/401 (yana tsallake samfuran passthrough marasa aiki)
-export OMNIROUTE_CHAT_MAX_HEAVY_IN_FLIGHT=4   # bayyanannen iyakar karɓar manyan ayyuka (ba a saita shi ta tsohuwa ba: babu iyakar adadin buƙatu, duba bayanin da ke ƙasa)
-export OMNIROUTE_CHAT_ADMISSION_QUEUE_MS=5000 # jira mai iyaka na tsawon lokaci domin samun ƙarfin manyan ayyuka maimakon 503 mai ba da damar sake gwadawa nan take
+export AGENTPROXY_ROTATE_ON_400=true           # matsa zuwa wani samfuri/mai bayarwa idan an sami 400/401 (yana tsallake samfuran passthrough marasa aiki)
+export AGENTPROXY_CHAT_MAX_HEAVY_IN_FLIGHT=4   # bayyanannen iyakar karɓar manyan ayyuka (ba a saita shi ta tsohuwa ba: babu iyakar adadin buƙatu, duba bayanin da ke ƙasa)
+export AGENTPROXY_CHAT_ADMISSION_QUEUE_MS=5000 # jira mai iyaka na tsawon lokaci domin samun ƙarfin manyan ayyuka maimakon 503 mai ba da damar sake gwadawa nan take
 ```
 
 Saita waɗannan a cikin muhallin aikin AgentProxy (daemon ɗin, misali ta LaunchAgent plist ko `systemctl edit`), sannan sake kunna AgentProxy. Alamar juyawa ita ce hanya guda mafi tasiri: tana sauya gazawa kai tsaye zuwa sake gwadawa ba tare da mai amfani ya lura ba, ta amfani da ingantaccen mai bayarwa a cikin tarin.
 
-**Lura**: `OMNIROUTE_CHAT_MAX_HEAVY_IN_FLIGHT` yana iyakance adadin manyan buƙatu — masu dogon mahalli — da za su gudana a lokaci guda; wannan iyaka ƙofar karɓa ce, ba mai taƙaita yawan buƙatun mai bayarwa ba. **Sabuntawar #503-fanout:** ba a ƙara saita wannan var ta tsohuwa ba (yanzu yana aiki ne kawai idan an saita shi a bayyane, kamar yadda aka yi a sama) — maimakon haka, ana sarrafa karɓar manyan ayyuka ta kasafin bytes da aka samar ta atomatik (`OMNIROUTE_CHAT_MAX_INFLIGHT_BYTES`), wanda yake daidaita kansa bisa ainihin iyakar ƙwaƙwalwar na'urar, don haka sabon deployment ya kamata ya ga raguwar ƙin buƙatu na `503 chat_admission_busy` sosai ba tare da saita wannan var kwata-kwata ba; saita shi a bayyane a nan har yanzu yana aiki daidai kamar yadda aka bayyana. Bayyanannun sauye-sauyen kasafin bytes ana taƙaita su zuwa 8 MiB–2 GiB. `413 body_exceeds_budget` ba matsala ce ta ɗan lokaci ba: ƙara wannan kasafin bytes, rage `OMNIROUTE_CHAT_HARD_MAX_BODY_BYTES`, ko ƙara iyakar ƙwaƙwalwar aikin. Watsar da buƙata saboda `inflight_bytes_budget` cunkoso ne na ɗan lokaci kuma har yanzu ana iya sake gwadawa. Ana sarrafa iyakar yawan buƙatu ta kowane mai bayarwa (`open-sse/services/rateLimitManager.ts`) daban ta `RATE_LIMIT_MAX_WAIT_MS`, `RATE_LIMIT_MAX_QUEUE_DEPTH`, da `RATE_LIMIT_AUTO_ENABLE` — duba `.env.example`.
+**Lura**: `AGENTPROXY_CHAT_MAX_HEAVY_IN_FLIGHT` yana iyakance adadin manyan buƙatu — masu dogon mahalli — da za su gudana a lokaci guda; wannan iyaka ƙofar karɓa ce, ba mai taƙaita yawan buƙatun mai bayarwa ba. **Sabuntawar #503-fanout:** ba a ƙara saita wannan var ta tsohuwa ba (yanzu yana aiki ne kawai idan an saita shi a bayyane, kamar yadda aka yi a sama) — maimakon haka, ana sarrafa karɓar manyan ayyuka ta kasafin bytes da aka samar ta atomatik (`AGENTPROXY_CHAT_MAX_INFLIGHT_BYTES`), wanda yake daidaita kansa bisa ainihin iyakar ƙwaƙwalwar na'urar, don haka sabon deployment ya kamata ya ga raguwar ƙin buƙatu na `503 chat_admission_busy` sosai ba tare da saita wannan var kwata-kwata ba; saita shi a bayyane a nan har yanzu yana aiki daidai kamar yadda aka bayyana. Bayyanannun sauye-sauyen kasafin bytes ana taƙaita su zuwa 8 MiB–2 GiB. `413 body_exceeds_budget` ba matsala ce ta ɗan lokaci ba: ƙara wannan kasafin bytes, rage `AGENTPROXY_CHAT_HARD_MAX_BODY_BYTES`, ko ƙara iyakar ƙwaƙwalwar aikin. Watsar da buƙata saboda `inflight_bytes_budget` cunkoso ne na ɗan lokaci kuma har yanzu ana iya sake gwadawa. Ana sarrafa iyakar yawan buƙatu ta kowane mai bayarwa (`open-sse/services/rateLimitManager.ts`) daban ta `RATE_LIMIT_MAX_WAIT_MS`, `RATE_LIMIT_MAX_QUEUE_DEPTH`, da `RATE_LIMIT_AUTO_ENABLE` — duba `.env.example`.
 
 **Yadda za a tabbatar ya yi aiki**: gudanar da agent/cron ɗinka sau biyu a jere cikin sauri, sannan ka tabbatar dukansu sun yi nasara. Kafin gyaran, gudu na biyu yawanci yana jefa kuskuren `429`/`401`. Bayan gyaran, za a sake gwada buƙatun da suka gaza (idan akwai) ta atomatik ba tare da an nuna maka ba, kuma kiran zai kammala. Haka kuma, za ka iya yin `curl /monitoring/health` sannan ka lura da filin `rateLimitedUntil` a haɗin masu samarwa da kuma `circuitBreakers.providerBreakers[].state` na masu samarwar da abin ya shafa — matsayin zai kasance ɗaya daga cikin `CLOSED`, `DEGRADED`, `OPEN`, ko `HALF_OPEN` (duba `src/shared/utils/circuitBreaker.ts`), kuma mai samarwar da ke ci gaba da gazawa zai sauya daga `CLOSED → DEGRADED → OPEN` kafin lokacin sake saiti ya ba da damar aika buƙatar gwaji (`HALF_OPEN`).
 
@@ -69,12 +69,12 @@ Saita waɗannan a cikin muhallin aikin AgentProxy (daemon ɗin, misali ta Launch
 
 ## Gargaɗin npm install (ERESOLVE / peer / deprecated)
 
-Lokacin da ka gudanar da `npm install -g omniroute`, za ka iya ganin tarin gargaɗi kamar `npm warn ERESOLVE`, sanarwar peer-dependency, da saƙonnin `deprecated`. **Ana tsammanin waɗannan kuma ba sa haifar da wata matsala.** Shigarwar ta yi nasara idan ka ga `added <N> packages` a cikin sakamakon.
+Lokacin da ka gudanar da `npm install -g agentproxy`, za ka iya ganin tarin gargaɗi kamar `npm warn ERESOLVE`, sanarwar peer-dependency, da saƙonnin `deprecated`. **Ana tsammanin waɗannan kuma ba sa haifar da wata matsala.** Shigarwar ta yi nasara idan ka ga `added <N> packages` a cikin sakamakon.
 
 Don ɓoye gargaɗin warware peer-dependency, yi amfani da tsarin shigarwa da AgentProxy ke goyon baya:
 
 ```bash
-npm install -g omniroute --legacy-peer-deps
+npm install -g agentproxy --legacy-peer-deps
 ```
 
 `--legacy-peer-deps` yana ɓoye `ERESOLVE` da sanarwar peer-dependency kawai. Sanarwar daina tallafawa za ta ci gaba da bayyana saboda tana fitowa ne daga fakitin wasu ɓangarori da aka gada; ba ta nuna cewa shigarwar ta gaza ba.
@@ -101,7 +101,7 @@ Don shigarwar npm ta global, shigar da Chromium daga kundin adireshin
 fakitin AgentProxy domin cache na burauzar ya kasance mallakin shigarwar Playwright ɗin nan:
 
 ```bash
-cd "$(npm root -g)/omniroute"
+cd "$(npm root -g)/agentproxy"
 npx playwright install chromium
 ```
 
@@ -119,10 +119,10 @@ wanda ya ƙunshi Chromium da dependencies ɗinsa; base image ba ya
 | Shiga na farko ba ya aiki                                  | Saita `INITIAL_PASSWORD` a cikin `.env` (babu hardcoded default)                                                                                                             |
 | Dashboard yana buɗewa a port ɗin da ba daidai ba           | Saita `PORT=20128` da `NEXT_PUBLIC_BASE_URL=http://localhost:20128`                                                                                                          |
 | Ba a rubuta logs zuwa disk                                 | Saita `APP_LOG_TO_FILE=true` sannan ka tabbatar an kunna ɗaukar call log                                                                                                     |
-| EACCES: an hana izini                                      | Saita `DATA_DIR=/path/to/writable/dir` don maye gurbin `~/.omniroute`                                                                                                        |
+| EACCES: an hana izini                                      | Saita `DATA_DIR=/path/to/writable/dir` don maye gurbin `~/.agentproxy`                                                                                                        |
 | Ba a adana tsarin routing                                  | Sabunta zuwa sabuwar sakin v3.x (an riga an haɗa gyaran Zod schema na dorewar settings a sigogin baya)                                                                       |
 | Faɗuwar shafin shiga / shafi mara komai                    | Duba sigar Node.js — duba [Dacewar Node.js](#nodejs-compatibility) a ƙasa                                                                                                    |
-| `dlopen` / `slice is not valid mach-o file` (macOS)        | Gudanar da `cd $(npm root -g)/omniroute/app && npm rebuild better-sqlite3 && omniroute` — duba [sake gina native module na macOS](#macos-native-module-rebuild) a ƙasa       |
+| `dlopen` / `slice is not valid mach-o file` (macOS)        | Gudanar da `cd $(npm root -g)/agentproxy/app && npm rebuild better-sqlite3 && agentproxy` — duba [sake gina native module na macOS](#macos-native-module-rebuild) a ƙasa       |
 | Proxy "fetch failed"                                       | Tabbatar an saita proxy config a matakin da ya dace — duba [Matsalolin Proxy](#proxy-issues) a ƙasa                                                                          |
 | Docker `curl: (56) Recv failure: Connection reset by peer` | Wataƙila port bind na Docker yana sauka a kan IPv6. Yi amfani da `-p 127.0.0.1:20128:20128` don tilasta IPv4, ko gwada da `curl -4`. Duba [Docker IPv6](#docker-ipv6) a ƙasa |
 | Antivirus yana killace `README.md`                         | False positive ne — duba [False positives na antivirus](#antivirus-false-positives) a ƙasa                                                                                   |
@@ -138,7 +138,7 @@ wanda ya ƙunshi Chromium da dependencies ɗinsa; base image ba ya
 
 **Wannan gargaɗin ƙarya ne. Babu wani abu da ya kamu, kuma ba a buƙatar ɗaukar wani mataki.**
 
-Avast da AVG suna amfani da hanyar tantancewa ta heuristic wadda ke yi wa fayilolin rubutu na yau da kullum/Markdown da ke ɗauke da hanyoyin haɗi masu yawa masu kama da buƙatun HTTP alama. Ana haɗa `README.md` na AgentProxy a cikin kunshin npm (an jera shi a `package.json` → `files`), don haka yana sauka a `node_modules/omniroute/README.md` yayin shigarwa ta global — kuma yana ɗauke da misalai kusan 15 na `http://localhost:20128/...` (endpoints na MCP HTTP/SSE, URL na A2A `.well-known`, da gutsattsarin `curl`). Yawan waɗannan hanyoyin haɗin ya isa ya kunna wannan tantancewar.
+Avast da AVG suna amfani da hanyar tantancewa ta heuristic wadda ke yi wa fayilolin rubutu na yau da kullum/Markdown da ke ɗauke da hanyoyin haɗi masu yawa masu kama da buƙatun HTTP alama. Ana haɗa `README.md` na AgentProxy a cikin kunshin npm (an jera shi a `package.json` → `files`), don haka yana sauka a `node_modules/agentproxy/README.md` yayin shigarwa ta global — kuma yana ɗauke da misalai kusan 15 na `http://localhost:20128/...` (endpoints na MCP HTTP/SSE, URL na A2A `.well-known`, da gutsattsarin `curl`). Yawan waɗannan hanyoyin haɗin ya isa ya kunna wannan tantancewar.
 
 Idan wannan ya fara faruwa kwanan nan kawai: nau'in fayil ɗin bai canza ba. README ya ƙara faɗaɗa teburin endpoints ɗinsa (an ƙara MCP HTTP + SSE + A2A) da ƙarin misalan `curl`, wanda ya sa ya wuce iyakar tantancewar.
 
@@ -148,7 +148,7 @@ Fayil ɗin takardu ne marar aiki wanda ba ya ɗauke da wani abun da za a iya aiw
 
 1. **Dakatar da sanarwar** — ware kundin shigarwar daga binciken antivirus ɗinku
    (Avast: Settings → Exceptions), ta ƙara hanyar `node_modules` ta global da/ko kundin
-   bayanan AgentProxy (`~/.omniroute/`).
+   bayanan AgentProxy (`~/.agentproxy/`).
 2. **Kai rahoton gargaɗin ƙarya** — <https://www.avast.com/false-positive-file-form.php>,
    tare da haɗa `README.md` da aka keɓe. Wannan shi ne gyaran da zai taimaki kowa, domin
    heuristic na mai samar da antivirus ne ke yin tsauraran hukunci fiye da kima kan fayil ɗin rubutu.
@@ -224,8 +224,8 @@ hannu ta lamba; har sai an aiwatar da shi, sabbin releases na iya maimaita wanna
    nvm use 24
    ```
 2. Tabbatar da sigarka: `node --version` ya kamata ya nuna `v24.0.0` ko mafi sabo a layin 24.x LTS
-3. Sake shigar da AgentProxy: `npm install -g omniroute`
-4. Sake farawa: `omniroute`
+3. Sake shigar da AgentProxy: `npm install -g agentproxy`
+4. Sake farawa: `agentproxy`
 
 > **Amintattun sigogin da ake tallafawa:** `>=22.22.2 <23` ko `>=24.0.0 <27`. Node.js 24.x LTS (Krypton) da Node.js 26 suna samun cikakken tallafi.
 
@@ -263,7 +263,7 @@ kuma yana buƙatar native compilation (`node-gyp rebuild`), npm yana tsallake sh
 
 <a name="macos-native-module-rebuild"></a>
 
-**Dalili:** Bayan yin `npm install -g omniroute` na gama-gari, wataƙila an compile native binary na `better-sqlite3` da ke cikin package ɗin don wani architecture ko Node.js ABI daban da wanda yake aiki a na'urar. Wannan ya zama ruwan dare a macOS (Apple Silicon da Intel) idan pre-built binary bai dace da yanayinka ba.
+**Dalili:** Bayan yin `npm install -g agentproxy` na gama-gari, wataƙila an compile native binary na `better-sqlite3` da ke cikin package ɗin don wani architecture ko Node.js ABI daban da wanda yake aiki a na'urar. Wannan ya zama ruwan dare a macOS (Apple Silicon da Intel) idan pre-built binary bai dace da yanayinka ba.
 
 **Alamomi:**
 
@@ -272,15 +272,15 @@ kuma yana buƙatar native compilation (`node-gyp rebuild`), npm yana tsallake sh
 - Cikakken misali:
 
 ```
-dlopen(/Users/<user>/.nvm/versions/node/v24.14.1/lib/node_modules/omniroute/app/node_modules/better-sqlite3/build/Release/better_sqlite3.node, 0x0001): tried: '...' (slice is not valid mach-o file)
+dlopen(/Users/<user>/.nvm/versions/node/v24.14.1/lib/node_modules/agentproxy/app/node_modules/better-sqlite3/build/Release/better_sqlite3.node, 0x0001): tried: '...' (slice is not valid mach-o file)
 ```
 
 **Gyara — sake ginawa don yanayin na'urarka (ba a buƙatar komawa tsohuwar sigar Node.js):**
 
 ```bash
-cd $(npm root -g)/omniroute/app
+cd $(npm root -g)/agentproxy/app
 npm rebuild better-sqlite3
-omniroute
+agentproxy
 ```
 
 > **Lura:** Wannan yana sake compile native binding ɗin bisa sigar Node.js da CPU architecture na na'urarka, yana warware rashin daidaituwar binary. Matsakaicin yanayin aikin da ake tallafawa a hukumance shi ne **`>=22.22.2 <23` ko `>=24.0.0 <27`** (`SUPPORTED_NODE_RANGE` a cikin `src/shared/utils/nodeRuntimeSupport.ts`, wanda ya yi daidai da filin `engines` na `package.json`). Node.js 24.x LTS (Krypton) da Node.js 26 suna samun cikakken tallafi tare da `better-sqlite3` v12.x.
@@ -372,7 +372,7 @@ duba [`docs/guides/KIRO_SETUP.md`](./KIRO_SETUP.md).
 ### Kurakuran Aiki Tare na Cloud
 
 1. Tabbatar cewa `BASE_URL` yana nuni zuwa instance ɗinka da ke aiki (misali, `http://localhost:20128`)
-2. Tabbatar cewa `CLOUD_URL` yana nuni zuwa endpoint na cloud ɗinka (misali, `https://omniroute.dev`)
+2. Tabbatar cewa `CLOUD_URL` yana nuni zuwa endpoint na cloud ɗinka (misali, `https://agentproxy.online`)
 3. Ka tabbatar ƙimomin `NEXT_PUBLIC_*` sun yi daidai da ƙimomin gefen server
 
 ### `stream=false` na Cloud Yana Mayar da 500
@@ -406,8 +406,8 @@ duba [`docs/guides/KIRO_SETUP.md`](./KIRO_SETUP.md).
 1. **Bincike mai sauri:** Gudanar da `curl -4 http://localhost:20128/v1/models`. Idan yana aiki da `-4` amma yana gaza ba tare da shi ba, kana da rashin daidaiton bind na IPv6.
 2. **Gyara na dindindin:** Yi bind zuwa IPv4 kai tsaye ta amfani da `-p 127.0.0.1:20128:20128` a cikin umarnin `docker run` ɗinka:
    ```bash
-   docker run -d --name omniroute --restart unless-stopped --stop-timeout 40 \
-     -p 127.0.0.1:20128:20128 -v omniroute-data:/app/data diegosouzapw/omniroute:latest
+   docker run -d --name agentproxy --restart unless-stopped --stop-timeout 40 \
+     -p 127.0.0.1:20128:20128 -v agentproxy-data:/app/data diegosouzapw/agentproxy:latest
    ```
    Wannan yana tilasta bind na IPv4 sannan kuma yana hana fallasa proxy a kan dukkan interfaces na host.
 
@@ -562,7 +562,7 @@ Lokacin da buƙatu masu yawa na lokaci guda suka isa ga mai samarwa da aka iyaka
 - Ƙarshen hanyar cika chat yana mayar da martanin `503` da za a iya sake gwadawa, wanda lambar kuskurensa ita ce
   `chat_admission_busy`.
 - Martanin yana ɗauke da `Retry-After`. Tun daga #12135 ana samo ƙimar daga yawan amfani da aka lura da shi
-  — mafi girma tsakanin taga ta `OMNIROUTE_CHAT_ADMISSION_QUEUE_MS` da buƙatar ta riga ta
+  — mafi girma tsakanin taga ta `AGENTPROXY_CHAT_ADMISSION_QUEUE_MS` da buƙatar ta riga ta
   jira da kuma tsawon lokacin da manyan leases na yanzu suka kasance a riƙe — ana zagaye ta zuwa cikakkun
   daƙiƙu kuma ana iyakance ta zuwa 60. A kan gate marar aiki tana riƙe da mafi ƙarancin ƙimomin tarihi: daƙiƙu 2 a
   hanyar da ta dogara da bytes, daƙiƙa 1 a hanyar da ta dogara da tsari (wadda kuma ta haɗa da
@@ -594,17 +594,17 @@ Kowane process yana amfani da kariya ta cikin process don tanadin iyakantacciyar
 da sarrafa babban jikin buƙata. Babban lease yana kasancewa a riƙe tsawon rayuwar martanin SSE.
 
 **#503-fanout:** kafin wannan gyaran, kariyar tana iyakance concurrency da tsayayyen ADADIN buƙatu
-(`OMNIROUTE_CHAT_MAX_HEAVY_IN_FLIGHT`, tsoho `1`) ba tare da la'akari da ƙwaƙwalwar host ba, don haka fan-out na
+(`AGENTPROXY_CHAT_MAX_HEAVY_IN_FLIGHT`, tsoho `1`) ba tare da la'akari da ƙwaƙwalwar host ba, don haka fan-out na
 coding-agent (subagents/CLIs da yawa, jikuna da a kai a kai suke > 256 KB) yana faɗuwa zuwa ingantaccen
 concurrency na kusan 1 kuma yana haifar da 503 a ƙarƙashin kaya na yau da kullum. Yanzu kariyar tana daidaita
-kanta: ana sarrafa ta da kasafin BYTES na ingest da ake samo ta atomatik (`OMNIROUTE_CHAT_MAX_INFLIGHT_BYTES`) wanda aka tsara daga
+kanta: ana sarrafa ta da kasafin BYTES na ingest da ake samo ta atomatik (`AGENTPROXY_CHAT_MAX_INFLIGHT_BYTES`) wanda aka tsara daga
 ainihin iyakar ƙwaƙwalwar process, sannan kuma tana duba alamar matsin albarkatu kai tsaye — don haka tana
 rage kaya ne kawai lokacin da host yake fuskantar matsin ƙwaƙwalwa na gaske, ba don kawai buƙatu masu nauyi fiye da ɗaya
-sun iso lokaci guda ba. Har yanzu ana mutunta tsohuwar iyakar adadi (`OMNIROUTE_CHAT_MAX_HEAVY_IN_FLIGHT`), amma
+sun iso lokaci guda ba. Har yanzu ana mutunta tsohuwar iyakar adadi (`AGENTPROXY_CHAT_MAX_HEAVY_IN_FLIGHT`), amma
 sai idan ka saita ta kai tsaye.
 
 Lokacin da damar take cike, babban buƙata da farko tana jira har zuwa
-`OMNIROUTE_CHAT_ADMISSION_QUEUE_MS` (tsoho `2000`, `0` yana kashe jiran) domin wani gurbi ya samu
+`AGENTPROXY_CHAT_ADMISSION_QUEUE_MS` (tsoho `2000`, `0` yana kashe jiran) domin wani gurbi ya samu
 kafin a mayar da `503` da za a iya sake gwadawa. An tanadi wannan iyakantaccen jira ne domin clients irin na agent
 (OpenCode, Claude Code, Cursor) waɗanda ke fan-out na manyan ƙananan buƙatu lokaci guda su jera cunkoson
 ɗaya bayan ɗaya maimakon ƙone duk kasafin sake gwadawarsu a kan ƙin karɓa nan take sannan su mutu a tsakiyar aiki.
@@ -624,7 +624,7 @@ false` da wadataccen `maxInflightBytes` suna nufin kasafin da aka samo ta atomat
    ba za a iya gyara wannan da admission env var ba, yana buƙatar ƙarin RAM ko ƙaramin workload.
 3. Sai kawai idan `/api/monitoring/health` ya nuna cewa kasafin da aka samo ta atomatik ya yi ƙanƙanta sosai ga
    host ɗinka (abu ne da ba kasafai yake faruwa ba — yana riga yana daidaitawa daga container zuwa bare-metal), ka sauya shi kai tsaye da
-   `OMNIROUTE_CHAT_MAX_INFLIGHT_BYTES` maimakon komawa ga tsohuwar iyakar adadin buƙatu.
+   `AGENTPROXY_CHAT_MAX_INFLIGHT_BYTES` maimakon komawa ga tsohuwar iyakar adadin buƙatu.
 
 Duba [manunin environment-variable](../reference/ENVIRONMENT.md#4-security--authentication)
 domin saitunan admission masu cikakken iko.
@@ -711,7 +711,7 @@ Matsalolin da suka kebanta da sakin v3.8.0 da hanyoyin wucin gadi na magance su 
 
 **Gyara:**
 
-- Gudanar da `omniroute providers` daga CLI don sake kunna OAuth flow, ko
+- Gudanar da `agentproxy providers` daga CLI don sake kunna OAuth flow, ko
 - Sake gudanar da OAuth daga **Dashboard → Providers → Command Code → Reconnect**
 
 ### ModelScope yana mayar da cooldowns na 429 masu tsauri
@@ -728,19 +728,19 @@ Matsalolin da suka kebanta da sakin v3.8.0 da hanyoyin wucin gadi na magance su 
 - Tabbatar kana amfani da v3.8.0 ko sabo
 - Tabbatar an kunna `useUpstream429BreakerHints` toggle a ƙarƙashin **Settings → Resilience**
 
-### Babu OMNIROUTE_WS_BRIDGE_SECRET a production
+### Babu AGENTPROXY_WS_BRIDGE_SECRET a production
 
 **Alamomi:**
 
 - 401 a kowane Codex/Responses WebSocket bridge request lokacin gudanarwa a remote production host
 - WebSocket bridge handshake yana rufewa nan take bayan haɗawa
 
-**Dalili:** Babu env var na `OMNIROUTE_WS_BRIDGE_SECRET` a production environment.
+**Dalili:** Babu env var na `AGENTPROXY_WS_BRIDGE_SECRET` a production environment.
 
 **Gyara:**
 
 1. Ƙirƙiri random secret: `openssl rand -hex 32`
-2. Saita `OMNIROUTE_WS_BRIDGE_SECRET=<random-secret>` a cikin env na production server (da duk wani client da ke sadarwa da bridge)
+2. Saita `AGENTPROXY_WS_BRIDGE_SECRET=<random-secret>` a cikin env na production server (da duk wani client da ke sadarwa da bridge)
 3. Sake kunna AgentProxy
 
 ### Responses API: background mode ya koma synchronous
@@ -771,18 +771,18 @@ masu nauyin ayyuka yayin farawa.
 
 ```bash
 # Ta hanyar env var (yana dorewa a duk lokacin farawa):
-export OMNIROUTE_READY_TIMEOUT_MS=180000   # mintuna 3
-omniroute serve
+export AGENTPROXY_READY_TIMEOUT_MS=180000   # mintuna 3
+agentproxy serve
 
 # Ta hanyar alamar CLI (sau ɗaya kawai):
-omniroute serve --ready-timeout 180000
+agentproxy serve --ready-timeout 180000
 ```
 
 Tsohon ƙima ita ce 60 000 ms (60 s). Gargadin na bayar da bayani ne kawai; uwar garken
 za ta ci gaba da farawa a bango kuma za a iya isa gare ta da zarar farawa ya kammala.
 
 Duba [`docs/reference/ENVIRONMENT.md`](../reference/ENVIRONMENT.md) don cikakkun
-bayanai game da `OMNIROUTE_READY_TIMEOUT_MS`.
+bayanai game da `AGENTPROXY_READY_TIMEOUT_MS`.
 
 ---
 

@@ -36,7 +36,7 @@ export async function POST(request: Request) {
         error:
           "MCP restart is not supported for the stdio transport — stdio clients spawn their " +
           "own subprocess with no in-process handle to restart. Switch to sse/streamable-http " +
-          "(`omniroute mcp enable --transport sse`) or restart the client instead.",
+          "(`agentproxy mcp enable --transport sse`) or restart the client instead.",
       },
       { status: 501 }
     );

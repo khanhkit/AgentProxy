@@ -6,21 +6,21 @@
 
 > राउटिङ, क्यास, कम्प्रेसन, मेमोरी, स्किल्स, प्रोक्सी, पूल, Radar, र कन्टेक्स्ट स्रोत सञ्चालनहरूमा फैलिएका 110 उपकरणसहितको Model Context Protocol सर्भर।
 >
-> सत्यको आधिकारिक स्रोत: `open-sse/mcp-server/server.ts` ले `countUniqueMcpTools()` मार्फत **110 अद्वितीय उपकरणहरू** गणना गर्छ: 45 आधिकारिक परिभाषाहरू (छवटा CCR जीवनचक्र उपकरणहरू, एजेन्ट-स्किल्सका तीन उपकरण, `omniroute_radar_catalog`, र `omniroute_x_search` सहित), साथै मेमोरी (3), स्किल्स (4), GitHub स्किल्स (3), पूल (6), गेमिफिकेसन (8), प्लगइनहरू (8), Notion (6), Obsidian (22), स्थानीय कर्पस (3), र RTK-मात्रका दुई कम्प्रेसन उपकरणहरू।
+> सत्यको आधिकारिक स्रोत: `open-sse/mcp-server/server.ts` ले `countUniqueMcpTools()` मार्फत **110 अद्वितीय उपकरणहरू** गणना गर्छ: 45 आधिकारिक परिभाषाहरू (छवटा CCR जीवनचक्र उपकरणहरू, एजेन्ट-स्किल्सका तीन उपकरण, `agentproxy_radar_catalog`, र `agentproxy_x_search` सहित), साथै मेमोरी (3), स्किल्स (4), GitHub स्किल्स (3), पूल (6), गेमिफिकेसन (8), प्लगइनहरू (8), Notion (6), Obsidian (22), स्थानीय कर्पस (3), र RTK-मात्रका दुई कम्प्रेसन उपकरणहरू।
 
 ## स्थापना
 
 AgentProxy MCP अन्तर्निर्मित छ। यसलाई यसरी सुरु गर्नुहोस्:
 
 ```bash
-omniroute --mcp
+agentproxy --mcp
 ```
 
 वा open-sse ट्रान्सपोर्टमार्फत:
 
 ```bash
 # HTTP स्ट्रिम गर्न मिल्ने ट्रान्सपोर्ट (पोर्ट 20130)
-omniroute --dev  # MCP /mcp एन्डपोइन्टमा स्वतः सुरु हुन्छ
+agentproxy --dev  # MCP /mcp एन्डपोइन्टमा स्वतः सुरु हुन्छ
 ```
 
 HTTP ट्रान्सपोर्टहरू (`sse` / `streamable-http`, ड्यासबोर्ड सर्भरद्वारा सोही प्रोसेसभित्र सेवा प्रदान गरिने) पूर्वनिर्धारित रूपमा
@@ -28,10 +28,10 @@ HTTP ट्रान्सपोर्टहरू (`sse` / `streamable-http`, �
 CLI मा पनि समान सुविधा उपलब्ध छ:
 
 ```bash
-omniroute mcp status                                  # सक्षम/अनलाइन, ट्रान्सपोर्ट, टुल सङ्ख्या
-omniroute mcp enable [--transport stdio|sse|streamable-http]
-omniroute mcp disable
-omniroute mcp restart                                 # सक्रिय sse/streamable-http सत्रहरू रिसेट गर्छ
+agentproxy mcp status                                  # सक्षम/अनलाइन, ट्रान्सपोर्ट, टुल सङ्ख्या
+agentproxy mcp enable [--transport stdio|sse|streamable-http]
+agentproxy mcp disable
+agentproxy mcp restart                                 # सक्रिय sse/streamable-http सत्रहरू रिसेट गर्छ
 ```
 
 `mcp enable`/`mcp disable` ले ड्यासबोर्डले `/api/settings` मार्फत टगल गर्ने उही `mcpEnabled`
@@ -82,61 +82,61 @@ Claude Desktop, Cursor, Cline, र मिल्दो MCP क्लाइन्�
 
 | उपकरण                           | स्कोपहरू              | विवरण                                                                                                                                            |
 | :------------------------------ | :-------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------- |
-| `omniroute_get_health`          | `read:health`         | अपटाइम, मेमोरी, सर्किट ब्रेकरहरू, दर सीमाहरू, क्यास तथ्याङ्कहरू                                                                                  |
-| `omniroute_list_combos`         | `read:combos`         | रणनीतिहरूसहित कन्फिगर गरिएका सबै कम्बोहरू (वैकल्पिक मेट्रिक्स)                                                                                   |
-| `omniroute_get_combo_metrics`   | `read:combos`         | कुनै निश्चित कम्बोका लागि कार्यसम्पादन मेट्रिक्स                                                                                                 |
-| `omniroute_switch_combo`        | `write:combos`        | कम्बोलाई सक्रिय वा निष्क्रिय बनाउने                                                                                                              |
-| `omniroute_create_combo`        | `write:combos`        | विद्यमान कम्बो API मार्फत प्रमाणीकरण गरिएको कम्बो सिर्जना गर्ने                                                                                  |
-| `omniroute_check_quota`         | `read:quota`          | प्रयोग भएको/कुल कोटा, बाँकी प्रतिशत, रिसेट समय, टोकनको अवस्था                                                                                    |
-| `omniroute_route_request`       | `execute:completions` | AgentProxy राउटिङमार्फत च्याट कम्प्लिसन पठाउने                                                                                                    |
-| `omniroute_cost_report`         | `read:usage`          | अवधिअनुसार लागत प्रतिवेदन (सत्र/दिन/हप्ता/महिना)                                                                                                 |
-| `omniroute_list_models_catalog` | `read:models`         | क्षमताहरू, स्थिति र मूल्य निर्धारणसहितको पूर्ण मोडेल क्याटलग                                                                                     |
-| `omniroute_radar_catalog`       | `read:radar`          | स्थानीय रूपमा हस्ताक्षरित Radar क्याटलग; वैकल्पिक प्रदायक/फ्यामिली फिल्टरहरू                                                                     |
-| `omniroute_tool_search`         | `read:tools`          | दर्ता गरिएको MCP क्याटलगबाट उपकरणहरू पत्ता लगाउने                                                                                                |
-| `omniroute_web_search`          | `execute:search`      | कन्फिगर गरिएका खोज प्रदायकहरूमार्फत वेब खोज। X/Twitter होइन।                                                                                     |
-| `omniroute_x_search`            | `execute:search`      | xAI/SuperGrok मार्फत X मा खोज्ने, वा Xquik API परिणामहरूका लागि `xquik-search` छनोट गर्ने। चयन गरिएको ब्याकएन्डका लागि प्रमाणहरू आवश्यक हुन्छन्। |
-| `omniroute_web_fetch`           | `execute:search`      | कन्फिगर गरिएका फेच प्रदायकहरूमार्फत वेब सामग्री प्राप्त गर्ने                                                                                    |
+| `agentproxy_get_health`          | `read:health`         | अपटाइम, मेमोरी, सर्किट ब्रेकरहरू, दर सीमाहरू, क्यास तथ्याङ्कहरू                                                                                  |
+| `agentproxy_list_combos`         | `read:combos`         | रणनीतिहरूसहित कन्फिगर गरिएका सबै कम्बोहरू (वैकल्पिक मेट्रिक्स)                                                                                   |
+| `agentproxy_get_combo_metrics`   | `read:combos`         | कुनै निश्चित कम्बोका लागि कार्यसम्पादन मेट्रिक्स                                                                                                 |
+| `agentproxy_switch_combo`        | `write:combos`        | कम्बोलाई सक्रिय वा निष्क्रिय बनाउने                                                                                                              |
+| `agentproxy_create_combo`        | `write:combos`        | विद्यमान कम्बो API मार्फत प्रमाणीकरण गरिएको कम्बो सिर्जना गर्ने                                                                                  |
+| `agentproxy_check_quota`         | `read:quota`          | प्रयोग भएको/कुल कोटा, बाँकी प्रतिशत, रिसेट समय, टोकनको अवस्था                                                                                    |
+| `agentproxy_route_request`       | `execute:completions` | AgentProxy राउटिङमार्फत च्याट कम्प्लिसन पठाउने                                                                                                    |
+| `agentproxy_cost_report`         | `read:usage`          | अवधिअनुसार लागत प्रतिवेदन (सत्र/दिन/हप्ता/महिना)                                                                                                 |
+| `agentproxy_list_models_catalog` | `read:models`         | क्षमताहरू, स्थिति र मूल्य निर्धारणसहितको पूर्ण मोडेल क्याटलग                                                                                     |
+| `agentproxy_radar_catalog`       | `read:radar`          | स्थानीय रूपमा हस्ताक्षरित Radar क्याटलग; वैकल्पिक प्रदायक/फ्यामिली फिल्टरहरू                                                                     |
+| `agentproxy_tool_search`         | `read:tools`          | दर्ता गरिएको MCP क्याटलगबाट उपकरणहरू पत्ता लगाउने                                                                                                |
+| `agentproxy_web_search`          | `execute:search`      | कन्फिगर गरिएका खोज प्रदायकहरूमार्फत वेब खोज। X/Twitter होइन।                                                                                     |
+| `agentproxy_x_search`            | `execute:search`      | xAI/SuperGrok मार्फत X मा खोज्ने, वा Xquik API परिणामहरूका लागि `xquik-search` छनोट गर्ने। चयन गरिएको ब्याकएन्डका लागि प्रमाणहरू आवश्यक हुन्छन्। |
+| `agentproxy_web_fetch`           | `execute:search`      | कन्फिगर गरिएका फेच प्रदायकहरूमार्फत वेब सामग्री प्राप्त गर्ने                                                                                    |
 
 ## उन्नत उपकरणहरू (11) — चरण 2
 
 | उपकरण                              | स्कोपहरू                             | विवरण                                                                                                               |
 | :--------------------------------- | :----------------------------------- | :------------------------------------------------------------------------------------------------------------------ |
-| `omniroute_simulate_route`         | `read:health`, `read:combos`         | फलब्याक ट्रीसहितको ड्राइ-रन राउटिङ सिमुलेसन                                                                         |
-| `omniroute_set_budget_guard`       | `write:budget`                       | डिग्रेड/ब्लक/अलर्ट कार्यसहितको सत्र बजेट                                                                            |
-| `omniroute_set_routing_strategy`   | `write:combos`                       | रनटाइममा कम्बो रणनीति अद्यावधिक गर्नुहोस् (प्राथमिकता/भारित/स्वतः/आदि)                                              |
-| `omniroute_set_resilience_profile` | `write:resilience`                   | `aggressive` / `balanced` / `conservative` रेजिलियन्स प्रिसेट लागू गर्नुहोस्                                        |
-| `omniroute_test_combo`             | `execute:completions`, `read:combos` | वास्तविक अपस्ट्रिम कल प्रयोग गरी कम्बोका प्रत्येक प्रदायकको प्रत्यक्ष परीक्षण                                       |
-| `omniroute_get_provider_metrics`   | `read:health`                        | p50/p95/p99 विलम्बता र सर्किट ब्रेकर अवस्थासहित प्रति-प्रदायक मेट्रिक्स                                             |
-| `omniroute_best_combo_for_task`    | `read:combos`, `read:health`         | बजेट/विलम्बता सीमाहरूका आधारमा कार्य प्रकारअनुसार कम्बो सिफारिस गर्नुहोस्                                           |
-| `omniroute_explain_route`          | `read:health`, `read:usage`          | अनुरोध किन कुनै प्रदायकतर्फ राउट गरियो भन्ने व्याख्या गर्नुहोस् (स्कोरिङ कारकहरू + फलब्याकहरू)                      |
-| `omniroute_get_session_snapshot`   | `read:usage`                         | पूर्ण सत्र स्न्यापसट: लागत, टोकनहरू, शीर्ष मोडेल/प्रदायकहरू, त्रुटिहरू, बजेट गार्ड                                  |
-| `omniroute_db_health_check`        | `read:health`, `write:resilience`    | बिग्रिएका कम्बो रेफरेन्सहरू / अनाथ पङ्क्तिहरूजस्ता डेटाबेस ड्रिफ्टको निदान (र वैकल्पिक रूपमा स्वतः-मर्मत) गर्नुहोस् |
-| `omniroute_sync_pricing`           | `pricing:write`                      | बाह्य स्रोतहरू (LiteLLM) बाट मूल्य निर्धारण डेटा सिंक गर्नुहोस्; `dryRun` समर्थित                                   |
+| `agentproxy_simulate_route`         | `read:health`, `read:combos`         | फलब्याक ट्रीसहितको ड्राइ-रन राउटिङ सिमुलेसन                                                                         |
+| `agentproxy_set_budget_guard`       | `write:budget`                       | डिग्रेड/ब्लक/अलर्ट कार्यसहितको सत्र बजेट                                                                            |
+| `agentproxy_set_routing_strategy`   | `write:combos`                       | रनटाइममा कम्बो रणनीति अद्यावधिक गर्नुहोस् (प्राथमिकता/भारित/स्वतः/आदि)                                              |
+| `agentproxy_set_resilience_profile` | `write:resilience`                   | `aggressive` / `balanced` / `conservative` रेजिलियन्स प्रिसेट लागू गर्नुहोस्                                        |
+| `agentproxy_test_combo`             | `execute:completions`, `read:combos` | वास्तविक अपस्ट्रिम कल प्रयोग गरी कम्बोका प्रत्येक प्रदायकको प्रत्यक्ष परीक्षण                                       |
+| `agentproxy_get_provider_metrics`   | `read:health`                        | p50/p95/p99 विलम्बता र सर्किट ब्रेकर अवस्थासहित प्रति-प्रदायक मेट्रिक्स                                             |
+| `agentproxy_best_combo_for_task`    | `read:combos`, `read:health`         | बजेट/विलम्बता सीमाहरूका आधारमा कार्य प्रकारअनुसार कम्बो सिफारिस गर्नुहोस्                                           |
+| `agentproxy_explain_route`          | `read:health`, `read:usage`          | अनुरोध किन कुनै प्रदायकतर्फ राउट गरियो भन्ने व्याख्या गर्नुहोस् (स्कोरिङ कारकहरू + फलब्याकहरू)                      |
+| `agentproxy_get_session_snapshot`   | `read:usage`                         | पूर्ण सत्र स्न्यापसट: लागत, टोकनहरू, शीर्ष मोडेल/प्रदायकहरू, त्रुटिहरू, बजेट गार्ड                                  |
+| `agentproxy_db_health_check`        | `read:health`, `write:resilience`    | बिग्रिएका कम्बो रेफरेन्सहरू / अनाथ पङ्क्तिहरूजस्ता डेटाबेस ड्रिफ्टको निदान (र वैकल्पिक रूपमा स्वतः-मर्मत) गर्नुहोस् |
+| `agentproxy_sync_pricing`           | `pricing:write`                      | बाह्य स्रोतहरू (LiteLLM) बाट मूल्य निर्धारण डेटा सिंक गर्नुहोस्; `dryRun` समर्थित                                   |
 
 ## क्यास उपकरणहरू (2)
 
 | उपकरण                   | स्कोपहरू      | विवरण                                                          |
 | :---------------------- | :------------ | :------------------------------------------------------------- |
-| `omniroute_cache_stats` | `read:cache`  | सिमान्टिक क्यास, प्रम्प्ट-क्यास र आइडेम्पोटेन्सी तथ्याङ्कहरू   |
-| `omniroute_cache_flush` | `write:cache` | विश्वव्यापी रूपमा वा सिग्नेचर/मोडेलअनुसार क्यास फ्लस गर्नुहोस् |
+| `agentproxy_cache_stats` | `read:cache`  | सिमान्टिक क्यास, प्रम्प्ट-क्यास र आइडेम्पोटेन्सी तथ्याङ्कहरू   |
+| `agentproxy_cache_flush` | `write:cache` | विश्वव्यापी रूपमा वा सिग्नेचर/मोडेलअनुसार क्यास फ्लस गर्नुहोस् |
 
 ## कम्प्रेसन उपकरणहरू (13)
 
 | उपकरण                               | स्कोपहरू            | विवरण                                                                                                               |
 | :---------------------------------- | :------------------ | :------------------------------------------------------------------------------------------------------------------ |
-| `omniroute_compression_status`      | `read:compression`  | कम्प्रेसन सेटिङहरू, एनालिटिक्स सारांश र क्यास-सचेत तथ्याङ्कहरू (`analytics.mcpDescriptionCompression` मेटाडेटासहित) |
-| `omniroute_compression_configure`   | `write:compression` | कम्प्रेसन मोड, थ्रेसहोल्ड, लक्षित अनुपात, सिस्टम-प्रम्प्ट संरक्षण र MCP विवरण कम्प्रेसन टगल कन्फिगर गर्नुहोस्       |
-| `omniroute_set_compression_engine`  | `write:compression` | सक्रिय इन्जिन (off/caveman/rtk/stacked) र Caveman/RTK तीव्रता चयन गर्नुहोस्                                         |
-| `omniroute_list_compression_combos` | `read:compression`  | नाम दिइएका कम्प्रेसन कम्बोहरू र तिनका इन्जिन पाइपलाइनहरू सूचीबद्ध गर्नुहोस्                                         |
-| `omniroute_compression_combo_stats` | `read:compression`  | कम्प्रेसन कम्बो र इन्जिनअनुसार समूहबद्ध एनालिटिक्स                                                                  |
-| `omniroute_ccr_store`               | `write:compression` | सीमित इन-मेमोरी CCR स्टोरमा कलर-पृथक सामग्री भण्डारण गरी मार्कर र `ccr://` रेफरेन्स फर्काउनुहोस्                    |
-| `omniroute_ccr_retrieve`            | `read:compression`  | CCR सामग्री पूर्ण रूपमा वा हेड, टेल, लाइन, grep र तथ्याङ्क मोडहरूमा पुनःप्राप्त गर्नुहोस्                           |
-| `omniroute_ccr_inspect`             | `read:compression`  | सामग्री नफर्काई कलर-स्वामित्वको CCR मेटाडेटा निरीक्षण गर्नुहोस्                                                     |
-| `omniroute_ccr_list`                | `read:compression`  | कलर-स्वामित्वका CCR ब्लकहरूको पृष्ठाङ्कित मेटाडेटा सूचीबद्ध गर्नुहोस्                                               |
-| `omniroute_ccr_delete`              | `write:compression` | कलर-स्वामित्वको CCR ब्लक मेटाउनुहोस्                                                                                |
-| `omniroute_ccr_stats`               | `read:compression`  | कलर-स्कोप गरिएको मेमोरी प्रयोग, जीवनचक्र काउन्टरहरू र स्टोर सीमाहरू रिपोर्ट गर्नुहोस्                               |
-| `omniroute_rtk_discover`            | `read:compression`  | अप्ट-इन RTK आउटपुट नमुनाहरूमा दोहोरिने न्वाइज पत्ता लगाउनुहोस्                                                      |
-| `omniroute_rtk_learn`               | `read:compression`  | अप्ट-इन नमुनाहरूबाट समीक्षा गर्न मिल्ने RTK फिल्टर मस्यौदा उत्पन्न गर्नुहोस्                                        |
+| `agentproxy_compression_status`      | `read:compression`  | कम्प्रेसन सेटिङहरू, एनालिटिक्स सारांश र क्यास-सचेत तथ्याङ्कहरू (`analytics.mcpDescriptionCompression` मेटाडेटासहित) |
+| `agentproxy_compression_configure`   | `write:compression` | कम्प्रेसन मोड, थ्रेसहोल्ड, लक्षित अनुपात, सिस्टम-प्रम्प्ट संरक्षण र MCP विवरण कम्प्रेसन टगल कन्फिगर गर्नुहोस्       |
+| `agentproxy_set_compression_engine`  | `write:compression` | सक्रिय इन्जिन (off/caveman/rtk/stacked) र Caveman/RTK तीव्रता चयन गर्नुहोस्                                         |
+| `agentproxy_list_compression_combos` | `read:compression`  | नाम दिइएका कम्प्रेसन कम्बोहरू र तिनका इन्जिन पाइपलाइनहरू सूचीबद्ध गर्नुहोस्                                         |
+| `agentproxy_compression_combo_stats` | `read:compression`  | कम्प्रेसन कम्बो र इन्जिनअनुसार समूहबद्ध एनालिटिक्स                                                                  |
+| `agentproxy_ccr_store`               | `write:compression` | सीमित इन-मेमोरी CCR स्टोरमा कलर-पृथक सामग्री भण्डारण गरी मार्कर र `ccr://` रेफरेन्स फर्काउनुहोस्                    |
+| `agentproxy_ccr_retrieve`            | `read:compression`  | CCR सामग्री पूर्ण रूपमा वा हेड, टेल, लाइन, grep र तथ्याङ्क मोडहरूमा पुनःप्राप्त गर्नुहोस्                           |
+| `agentproxy_ccr_inspect`             | `read:compression`  | सामग्री नफर्काई कलर-स्वामित्वको CCR मेटाडेटा निरीक्षण गर्नुहोस्                                                     |
+| `agentproxy_ccr_list`                | `read:compression`  | कलर-स्वामित्वका CCR ब्लकहरूको पृष्ठाङ्कित मेटाडेटा सूचीबद्ध गर्नुहोस्                                               |
+| `agentproxy_ccr_delete`              | `write:compression` | कलर-स्वामित्वको CCR ब्लक मेटाउनुहोस्                                                                                |
+| `agentproxy_ccr_stats`               | `read:compression`  | कलर-स्कोप गरिएको मेमोरी प्रयोग, जीवनचक्र काउन्टरहरू र स्टोर सीमाहरू रिपोर्ट गर्नुहोस्                               |
+| `agentproxy_rtk_discover`            | `read:compression`  | अप्ट-इन RTK आउटपुट नमुनाहरूमा दोहोरिने न्वाइज पत्ता लगाउनुहोस्                                                      |
+| `agentproxy_rtk_learn`               | `read:compression`  | अप्ट-इन नमुनाहरूबाट समीक्षा गर्न मिल्ने RTK फिल्टर मस्यौदा उत्पन्न गर्नुहोस्                                        |
 
 CCR प्रविष्टिहरू इन-मेमोरी मात्र हुन्छन् र पुनः सुरु गर्दा हराउँछन्। प्रत्येक ब्लक 2 MiB मा, प्रत्येक
 प्रिन्सिपल 16 MiB मा र ग्लोबल स्टोर 64 MiB मा सीमित हुन्छ। प्रविष्टिहरूको पूर्वनिर्धारित TTL 24 घण्टा हुन्छ (अधिकतम
@@ -144,7 +144,7 @@ CCR प्रविष्टिहरू इन-मेमोरी मात्�
 grep मोडहरूमार्फत उपलब्ध रहन्छन्। भण्डारण, पुनःप्राप्ति, सूचीकरण, निरीक्षण, मेटाउने कार्य र तथ्याङ्कहरू
 प्रमाणीकृत API-key प्रिन्सिपलद्वारा पृथक गरिएका हुन्छन्। अडिट रेकर्डहरूमा ह्यास र आकारसम्बन्धी मेटाडेटा हुन्छन्, सामग्री कहिल्यै हुँदैन।
 
-`omniroute_compression_status` ले MCP विवरण कम्प्रेसनलाई
+`agentproxy_compression_status` ले MCP विवरण कम्प्रेसनलाई
 `analytics.mcpDescriptionCompression` अन्तर्गत छुट्टै रिपोर्ट गर्छ। ती मानहरू MCP मा सूचीबद्ध गर्न मिल्ने
 विवरणहरू (`tools`, `prompts`, `resources`, र `resourceTemplates`) का मेटाडेटा-आकार अनुमान हुन्; ती प्रदायक प्रयोगका
 रसिदहरू होइनन् र `source: "mcp_metadata_estimate"` द्वारा चिन्हित गरिएका हुन्छन्।
@@ -170,9 +170,9 @@ grep मोडहरूमार्फत उपलब्ध रहन्छन�
 
 | उपकरण                       | स्कोपहरू       | विवरण                                                                                               |
 | :-------------------------- | :------------- | :-------------------------------------------------------------------------------------------------- |
-| `omniroute_oneproxy_fetch`  | `read:proxies` | 1proxy मार्केटप्लेसबाट निःशुल्क प्रोक्सीहरू प्राप्त गर्नुहोस् (प्रोटोकल/देश/गुणस्तर/सीमा फिल्टरहरू) |
-| `omniroute_oneproxy_rotate` | `read:proxies` | रणनीतिअनुसार अर्को उपलब्ध प्रोक्सी प्राप्त गर्नुहोस् (`random` / `quality` / `sequential`)          |
-| `omniroute_oneproxy_stats`  | `read:proxies` | पूल तथ्याङ्क, सिंक स्थिति, प्रोटोकल र देशअनुसार वितरण                                               |
+| `agentproxy_oneproxy_fetch`  | `read:proxies` | 1proxy मार्केटप्लेसबाट निःशुल्क प्रोक्सीहरू प्राप्त गर्नुहोस् (प्रोटोकल/देश/गुणस्तर/सीमा फिल्टरहरू) |
+| `agentproxy_oneproxy_rotate` | `read:proxies` | रणनीतिअनुसार अर्को उपलब्ध प्रोक्सी प्राप्त गर्नुहोस् (`random` / `quality` / `sequential`)          |
+| `agentproxy_oneproxy_stats`  | `read:proxies` | पूल तथ्याङ्क, सिंक स्थिति, प्रोटोकल र देशअनुसार वितरण                                               |
 
 ## मेमोरी उपकरणहरू (3)
 
@@ -180,9 +180,9 @@ grep मोडहरूमार्फत उपलब्ध रहन्छन�
 
 | उपकरण                     | स्कोपहरू       | विवरण                                                                                                         |
 | :------------------------ | :------------- | :------------------------------------------------------------------------------------------------------------ |
-| `omniroute_memory_search` | `read:memory`  | टोकन-बजेट कार्यान्वयनसहित क्वेरी / प्रकार / API कुञ्जीअनुसार मेमोरीहरू खोज्नुहोस्                             |
-| `omniroute_memory_add`    | `write:memory` | नयाँ मेमोरी प्रविष्टि थप्नुहोस् (`factual` / `episodic` / `procedural` / `semantic`)                          |
-| `omniroute_memory_clear`  | `write:memory` | API कुञ्जीका मेमोरीहरू खाली गर्नुहोस्, वैकल्पिक रूपमा प्रकार वा `olderThan` टाइमस्ट्याम्पद्वारा फिल्टर गरिएको |
+| `agentproxy_memory_search` | `read:memory`  | टोकन-बजेट कार्यान्वयनसहित क्वेरी / प्रकार / API कुञ्जीअनुसार मेमोरीहरू खोज्नुहोस्                             |
+| `agentproxy_memory_add`    | `write:memory` | नयाँ मेमोरी प्रविष्टि थप्नुहोस् (`factual` / `episodic` / `procedural` / `semantic`)                          |
+| `agentproxy_memory_clear`  | `write:memory` | API कुञ्जीका मेमोरीहरू खाली गर्नुहोस्, वैकल्पिक रूपमा प्रकार वा `olderThan` टाइमस्ट्याम्पद्वारा फिल्टर गरिएको |
 
 ## सीप उपकरणहरू (4)
 
@@ -190,10 +190,10 @@ grep मोडहरूमार्फत उपलब्ध रहन्छन�
 
 | उपकरण                         | स्कोपहरू         | विवरण                                                                                              |
 | :---------------------------- | :--------------- | :------------------------------------------------------------------------------------------------- |
-| `omniroute_skills_list`       | `read:skills`    | API कुञ्जी, नाम वा सक्षम अवस्थाअनुसार वैकल्पिक फिल्टरिङसहित दर्ता गरिएका सीपहरू सूचीबद्ध गर्नुहोस् |
-| `omniroute_skills_enable`     | `write:skills`   | ID द्वारा कुनै विशेष सीप सक्षम वा अक्षम गर्नुहोस्                                                  |
-| `omniroute_skills_execute`    | `execute:skills` | प्रदान गरिएको इनपुटसहित सीप कार्यान्वयन गर्नुहोस् र कार्यान्वयन रेकर्ड फर्काउनुहोस्                |
-| `omniroute_skills_executions` | `read:skills`    | हालैको सीप कार्यान्वयन इतिहास सूचीबद्ध गर्नुहोस्                                                   |
+| `agentproxy_skills_list`       | `read:skills`    | API कुञ्जी, नाम वा सक्षम अवस्थाअनुसार वैकल्पिक फिल्टरिङसहित दर्ता गरिएका सीपहरू सूचीबद्ध गर्नुहोस् |
+| `agentproxy_skills_enable`     | `write:skills`   | ID द्वारा कुनै विशेष सीप सक्षम वा अक्षम गर्नुहोस्                                                  |
+| `agentproxy_skills_execute`    | `execute:skills` | प्रदान गरिएको इनपुटसहित सीप कार्यान्वयन गर्नुहोस् र कार्यान्वयन रेकर्ड फर्काउनुहोस्                |
+| `agentproxy_skills_executions` | `read:skills`    | हालैको सीप कार्यान्वयन इतिहास सूचीबद्ध गर्नुहोस्                                                   |
 
 ## Notion सन्दर्भ स्रोत (6)
 
@@ -229,9 +229,9 @@ curl -X DELETE http://localhost:20128/api/settings/notion
 
 | उपकरण                             | स्कोपहरू       | विवरण                                                                                                                           |
 | :-------------------------------- | :------------- | :------------------------------------------------------------------------------------------------------------------------------ |
-| `omniroute_agent_skills_list`     | `read:catalog` | वैकल्पिक `category` (api\|cli) र `area` फिल्टरसहित सबै 45 एजेन्ट स्किलहरू सूचीबद्ध गर्छ; मेटाडेटा + कभरेज फर्काउँछ              |
-| `omniroute_agent_skills_get`      | `read:catalog` | क्यानोनिकल `id` का आधारमा एउटा स्किलको पूर्ण मेटाडेटा + SKILL.md सामग्री प्राप्त गर्छ                                           |
-| `omniroute_agent_skills_coverage` | `read:catalog` | कभरेज तथ्याङ्क: क्याटलगको कुल सङ्ख्याको तुलनामा 23 API, 21 CLI र 1 config स्किलमध्ये कतिवटाका SKILL.md फाइलहरू फाइलसिस्टममा छन् |
+| `agentproxy_agent_skills_list`     | `read:catalog` | वैकल्पिक `category` (api\|cli) र `area` फिल्टरसहित सबै 45 एजेन्ट स्किलहरू सूचीबद्ध गर्छ; मेटाडेटा + कभरेज फर्काउँछ              |
+| `agentproxy_agent_skills_get`      | `read:catalog` | क्यानोनिकल `id` का आधारमा एउटा स्किलको पूर्ण मेटाडेटा + SKILL.md सामग्री प्राप्त गर्छ                                           |
+| `agentproxy_agent_skills_coverage` | `read:catalog` | कभरेज तथ्याङ्क: क्याटलगको कुल सङ्ख्याको तुलनामा 23 API, 21 CLI र 1 config स्किलमध्ये कतिवटाका SKILL.md फाइलहरू फाइलसिस्टममा छन् |
 
 पूर्ण क्याटलग र बाह्य एजेन्टहरूले यसलाई कसरी प्रयोग गर्छन् भन्ने जानकारीका लागि [AGENT-SKILLS.md](./AGENT-SKILLS.md) हेर्नुहोस्।
 
@@ -296,7 +296,7 @@ MCP उपकरणले कलरबाट स्कोप स्ट्रि�
 | :-------------------- | :--------------------------------------------------------- | :------------------- | :-------------------------------------------------------- |
 | API-कुञ्जी व्यवस्थापन | `api_keys.scopes`                                          | `hasManageScope`     | त्यो Bearer कुञ्जीको लागि व्यवस्थापन REST                 |
 | API-कुञ्जी एडिटिभ     | उही एरे, एउटा सटीक स्ट्रिङ                                 | तल नाम दिइएको हेल्पर | त्यो एक क्षमता मात्र                                      |
-| MCP उपकरण स्कोपहरू    | उही एरे, अन्यथा MCP `_meta`, अन्यथा `OMNIROUTE_MCP_SCOPES` | `scopeMatches`       | त्यो उपकरण, एक पटक प्रवर्तन अन भएपछि                      |
+| MCP उपकरण स्कोपहरू    | उही एरे, अन्यथा MCP `_meta`, अन्यथा `AGENTPROXY_MCP_SCOPES` | `scopeMatches`       | त्यो उपकरण, एक पटक प्रवर्तन अन भएपछि                      |
 | पहुँच टोकन            | `oma_live_…`                                               | `scopeSatisfies`     | व्यवस्थापन मार्ग जसको विधि र मार्गलाई त्यो श्रेणी चाहिन्छ |
 
 प्रत्येक प्रमाण मिन्टिङ [व्यवस्थापन प्रमाणीकरण](../guides/MANAGEMENT-AUTH.md) मा कभर गरिएको छ।
@@ -328,7 +328,7 @@ MCP उपकरणले कलरबाट स्कोप स्ट्रि�
 
 `["manage"]` स्कोप भएको कुञ्जी `read:compression` को लागि `scopeMatches` असफल हुन्छ। उही कल `admin`, `mcp:connect`, `read`, र `write` को लागि असफल हुन्छ जब ती मात्र प्रदान गरिएका स्ट्रिङहरू हुन्। ट्रेलिङ `*` बाहेक MCP उपकरण स्कोपहरू बीच कुनै पदानुक्रम छैन।
 
-प्रवर्तन बन्द छ जबसम्म `OMNIROUTE_MCP_ENFORCE_SCOPES=true` (पूर्वनिर्धारित `false`)। यो बन्द हुँदा, `evaluateToolScopes` ले कललाई अनुमति दिन्छ र सूची छोड्छ। यो अन हुँदा, HTTP ले Bearer कुञ्जीको `api_keys.scopes` लाई `authInfo` को रूपमा प्रयोग गर्छ ([प्रति-कुञ्जी HTTP स्कोप बाइन्डिङ](#per-key-http-scope-binding-7895) हेर्नुहोस्)। जब कुनै कुञ्जी स्कोपहरू समाधान हुँदैनन्, प्रदान गरिएको सेट MCP `_meta` मा, त्यसपछि `OMNIROUTE_MCP_SCOPES` मा झर्छ।
+प्रवर्तन बन्द छ जबसम्म `AGENTPROXY_MCP_ENFORCE_SCOPES=true` (पूर्वनिर्धारित `false`)। यो बन्द हुँदा, `evaluateToolScopes` ले कललाई अनुमति दिन्छ र सूची छोड्छ। यो अन हुँदा, HTTP ले Bearer कुञ्जीको `api_keys.scopes` लाई `authInfo` को रूपमा प्रयोग गर्छ ([प्रति-कुञ्जी HTTP स्कोप बाइन्डिङ](#per-key-http-scope-binding-7895) हेर्नुहोस्)। जब कुनै कुञ्जी स्कोपहरू समाधान हुँदैनन्, प्रदान गरिएको सेट MCP `_meta` मा, त्यसपछि `AGENTPROXY_MCP_SCOPES` मा झर्छ।
 
 #### पहुँच-टोकन स्कोपहरू
 
@@ -377,8 +377,8 @@ MCP उपकरणले कलरबाट स्कोप स्ट्रि�
 | `write:skills`        | `skills_enable`                                                                                                                                                                      |
 | `execute:skills`      | `skills_execute`                                                                                                                                                                     |
 | `read:catalog`        | `agent_skills_list`, `agent_skills_get`, `agent_skills_coverage`                                                                                                                     |
-| `read:tools`          | `omniroute_tool_search`                                                                                                                                                              |
-| `read:radar`          | `omniroute_radar_catalog`                                                                                                                                                            |
+| `read:tools`          | `agentproxy_tool_search`                                                                                                                                                              |
+| `read:radar`          | `agentproxy_radar_catalog`                                                                                                                                                            |
 | `read:gamification`   | `gamification_profile`, `gamification_rank`, `gamification_leaderboard`, `gamification_badges`, `gamification_servers`, `gamification_anomalies`                                     |
 | `write:gamification`  | `gamification_invite`, `gamification_transfer`                                                                                                                                       |
 | `read:plugins`        | `plugin_list`, `plugin_executions`                                                                                                                                                   |
@@ -395,23 +395,23 @@ MCP उपकरणले कलरबाट स्कोप स्ट्रि�
 
 ### प्रति-कुञ्जी HTTP स्कोप बाइन्डिङ (#7895)
 
-HTTP/SSE मा, `open-sse/mcp-server/httpTransport.ts` ले अब कलरको वास्तविक `api_keys.scopes` लाई `resolveMcpCallerAuthInfo()` (`open-sse/mcp-server/httpAuthContext.ts`) मार्फत समाधान गर्दछ र यसलाई MCP SDK को `transport.handleRequest(req, { authInfo })` मा पास गर्दछ, ताकि प्रत्येक उपकरण कलमा पुग्ने `extra.authInfo.scopes` ले Bearer कुञ्जीको आफ्नै स्कोपहरू प्रतिबिम्बित गर्दछ। `scopeEnforcement.ts` को `resolveCallerScopeContext()` ले पहिले नै `_meta` र `OMNIROUTE_MCP_SCOPES` env fallback भन्दा `authInfo` लाई प्राथमिकता दिएको थियो — यसले त्यो पहिलो, उच्च-प्राथमिकता स्रोतलाई मात्र भर्दछ, जुन पहिले HTTP मा खुवाइएको थिएन। जब कुनै API कुञ्जी समाधान हुँदैन (हेडर छैन, अवैध कुञ्जी), `authInfo` `undefined` रहन्छ र समाधान अवस्थित `meta`/env चेनमा अपरिवर्तित रूपमा जान्छ। यसले `OMNIROUTE_MCP_ENFORCE_SCOPES` को पूर्वनिर्धारितलाई परिवर्तन गर्दैन — प्रवर्तन अझै स्पष्ट रूपमा सक्षम हुनुपर्छ; यो परिवर्तनले प्रति-कुञ्जी मार्गलाई प्राथमिकता दिन्छ जब यो सक्षम हुन्छ। stdio सँग प्रति-कलर पहिचान छैन (हेर्नुहोस् `mcpCallerIdentity.ts`) र यो अप्रभावित रहन्छ — यो `_meta`/env fallback चेनमा रहन्छ।
+HTTP/SSE मा, `open-sse/mcp-server/httpTransport.ts` ले अब कलरको वास्तविक `api_keys.scopes` लाई `resolveMcpCallerAuthInfo()` (`open-sse/mcp-server/httpAuthContext.ts`) मार्फत समाधान गर्दछ र यसलाई MCP SDK को `transport.handleRequest(req, { authInfo })` मा पास गर्दछ, ताकि प्रत्येक उपकरण कलमा पुग्ने `extra.authInfo.scopes` ले Bearer कुञ्जीको आफ्नै स्कोपहरू प्रतिबिम्बित गर्दछ। `scopeEnforcement.ts` को `resolveCallerScopeContext()` ले पहिले नै `_meta` र `AGENTPROXY_MCP_SCOPES` env fallback भन्दा `authInfo` लाई प्राथमिकता दिएको थियो — यसले त्यो पहिलो, उच्च-प्राथमिकता स्रोतलाई मात्र भर्दछ, जुन पहिले HTTP मा खुवाइएको थिएन। जब कुनै API कुञ्जी समाधान हुँदैन (हेडर छैन, अवैध कुञ्जी), `authInfo` `undefined` रहन्छ र समाधान अवस्थित `meta`/env चेनमा अपरिवर्तित रूपमा जान्छ। यसले `AGENTPROXY_MCP_ENFORCE_SCOPES` को पूर्वनिर्धारितलाई परिवर्तन गर्दैन — प्रवर्तन अझै स्पष्ट रूपमा सक्षम हुनुपर्छ; यो परिवर्तनले प्रति-कुञ्जी मार्गलाई प्राथमिकता दिन्छ जब यो सक्षम हुन्छ। stdio सँग प्रति-कलर पहिचान छैन (हेर्नुहोस् `mcpCallerIdentity.ts`) र यो अप्रभावित रहन्छ — यो `_meta`/env fallback चेनमा रहन्छ।
 
 ## वातावरण चरहरू
 
 | चर                                      | पूर्वनिर्धारित                               | उद्देश्य                                                                                                                           |
 | :-------------------------------------- | :------------------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------- |
-| `OMNIROUTE_BASE_URL`                    | `http://localhost:20128`                     | आन्तरिक AgentProxy API हरू कल गर्दा MCP सर्भरले प्रयोग गर्ने आधार URL                                                               |
-| `OMNIROUTE_API_KEY`                     | (खाली)                                       | आन्तरिक API कलहरूमा `Authorization: Bearer` का रूपमा फर्वार्ड गरिने API कुञ्जी                                                     |
-| `OMNIROUTE_MCP_ENFORCE_SCOPES`          | `false` (`"true"` ले मात्र यसलाई सक्षम गर्छ) | सक्षम हुँदा, छुटेका स्कोपहरूले उपकरण कलहरू अस्वीकार गर्छन् र अडिट लगमा `scope_denied:<reason>` लेख्छन्                             |
-| `OMNIROUTE_MCP_SCOPES`                  | (खाली)                                       | पूर्वनिर्धारित रूपमा "उपलब्ध" मानिने स्कोपहरूको अल्पविरामद्वारा छुट्याइएको अनुमति-सूची (कलरले आफ्नै स्कोपहरू नदिँदा प्रयोग गरिन्छ) |
-| `OMNIROUTE_MCP_COMPRESS_DESCRIPTIONS`   | (सेट नगरिएको = सक्रिय)                       | `0/false/off/no` मा सेट गर्दा, दर्ता गर्ने समयमा MCP विवरण सङ्कुचन असक्षम गर्छ                                                     |
-| `OMNIROUTE_MCP_DESCRIPTION_COMPRESSION` | (सेट नगरिएको = सक्रिय)                       | माथिको जस्तै टगलका लागि वैकल्पिक उपनाम                                                                                             |
-| `OMNIROUTE_MCP_FETCH_TIMEOUT_MS`        | `10000`                                      | आन्तरिक व्यवस्थापन रिडहरू (स्वास्थ्य, लचिलोपन, संयोजनहरू, कोटा, प्रयोग) का लागि रद्द गर्ने समयसीमा                                 |
-| `OMNIROUTE_MCP_UPSTREAM_TIMEOUT_MS`     | `60000`                                      | प्रदायकलाई पर्खने हपहरू (`route_request`, `web_search`, `web_fetch`) का लागि रद्द गर्ने समयसीमा                                    |
+| `AGENTPROXY_BASE_URL`                    | `http://localhost:20128`                     | आन्तरिक AgentProxy API हरू कल गर्दा MCP सर्भरले प्रयोग गर्ने आधार URL                                                               |
+| `AGENTPROXY_API_KEY`                     | (खाली)                                       | आन्तरिक API कलहरूमा `Authorization: Bearer` का रूपमा फर्वार्ड गरिने API कुञ्जी                                                     |
+| `AGENTPROXY_MCP_ENFORCE_SCOPES`          | `false` (`"true"` ले मात्र यसलाई सक्षम गर्छ) | सक्षम हुँदा, छुटेका स्कोपहरूले उपकरण कलहरू अस्वीकार गर्छन् र अडिट लगमा `scope_denied:<reason>` लेख्छन्                             |
+| `AGENTPROXY_MCP_SCOPES`                  | (खाली)                                       | पूर्वनिर्धारित रूपमा "उपलब्ध" मानिने स्कोपहरूको अल्पविरामद्वारा छुट्याइएको अनुमति-सूची (कलरले आफ्नै स्कोपहरू नदिँदा प्रयोग गरिन्छ) |
+| `AGENTPROXY_MCP_COMPRESS_DESCRIPTIONS`   | (सेट नगरिएको = सक्रिय)                       | `0/false/off/no` मा सेट गर्दा, दर्ता गर्ने समयमा MCP विवरण सङ्कुचन असक्षम गर्छ                                                     |
+| `AGENTPROXY_MCP_DESCRIPTION_COMPRESSION` | (सेट नगरिएको = सक्रिय)                       | माथिको जस्तै टगलका लागि वैकल्पिक उपनाम                                                                                             |
+| `AGENTPROXY_MCP_FETCH_TIMEOUT_MS`        | `10000`                                      | आन्तरिक व्यवस्थापन रिडहरू (स्वास्थ्य, लचिलोपन, संयोजनहरू, कोटा, प्रयोग) का लागि रद्द गर्ने समयसीमा                                 |
+| `AGENTPROXY_MCP_UPSTREAM_TIMEOUT_MS`     | `60000`                                      | प्रदायकलाई पर्खने हपहरू (`route_request`, `web_search`, `web_fetch`) का लागि रद्द गर्ने समयसीमा                                    |
 | `MCP_TOOL_DENY`                         | (सेट नगरिएको = फिल्टर छैन)                   | `tools/list` बाट हटाइने उपकरण नामहरूको अल्पविरामद्वारा छुट्याइएको सूची (उपकरण-कार्डिनालिटी न्यूनीकरण — तल हेर्नुहोस्)              |
 | `MCP_TOOL_ALLOW`                        | (सेट नगरिएको = फिल्टर छैन)                   | विशेष रूपमा राखिने उपकरण नामहरूको अल्पविरामद्वारा छुट्याइएको सूची (अनुमति-सूची मोड — तल हेर्नुहोस्)                                |
-| `DATA_DIR`                              | `~/.omniroute`                               | हार्टबिट फाइल `${DATA_DIR}/runtime/mcp-heartbeat.json` मा लेखिन्छ                                                                  |
+| `DATA_DIR`                              | `~/.agentproxy`                               | हार्टबिट फाइल `${DATA_DIR}/runtime/mcp-heartbeat.json` मा लेखिन्छ                                                                  |
 
 ---
 
@@ -421,8 +421,8 @@ MCP उपकरण, प्रम्प्ट र स्रोत रजिस�
 
 - संरचनात्मक सामग्री परिवर्तन नहोस् भनेर सुरक्षित-ब्लक निष्कर्षण (कोड स्प्यानहरू, फेन्स गरिएका ब्लकहरू आदि) सहित Caveman नियमसमूह (`getRulesForContext("all", "full")`) प्रयोग गरी विवरण पाठमा सङ्कुचन चल्छ।
 - `key_value` सेटिङ तालिकाको `compression.mcpDescriptionCompressionEnabled` मानमार्फत प्रत्येक डिप्लोयमेन्टका लागि टगल गर्नुहोस् (पूर्वनिर्धारित: सक्षम) — UI मा **विश्लेषण → MCP विवरण सङ्कुचन** का रूपमा उपलब्ध छ।
-- `OMNIROUTE_MCP_COMPRESS_DESCRIPTIONS=false` वा `OMNIROUTE_MCP_DESCRIPTION_COMPRESSION=false` मध्ये कुनै एकमार्फत सम्पूर्ण प्रक्रियाका लागि टगल गर्नुहोस्।
-- वास्तविक-समयका तथ्याङ्कहरू `analytics.mcpDescriptionCompression` अन्तर्गत `omniroute_compression_status` मार्फत देखाइन्छन् र वास्तविक प्रदायक प्रयोग रसिदहरूबाट छुट्याउन `source: "mcp_metadata_estimate"` ट्याग गरिन्छ।
+- `AGENTPROXY_MCP_COMPRESS_DESCRIPTIONS=false` वा `AGENTPROXY_MCP_DESCRIPTION_COMPRESSION=false` मध्ये कुनै एकमार्फत सम्पूर्ण प्रक्रियाका लागि टगल गर्नुहोस्।
+- वास्तविक-समयका तथ्याङ्कहरू `analytics.mcpDescriptionCompression` अन्तर्गत `agentproxy_compression_status` मार्फत देखाइन्छन् र वास्तविक प्रदायक प्रयोग रसिदहरूबाट छुट्याउन `source: "mcp_metadata_estimate"` ट्याग गरिन्छ।
 
 ---
 
@@ -441,10 +441,10 @@ MCP उपकरण, प्रम्प्ट र स्रोत रजिस�
 
 ```bash
 # क्याटलगबाट दुई उपकरण हटाउनुहोस्
-MCP_TOOL_DENY="omniroute_get_health,omniroute_list_combos" omniroute --mcp
+MCP_TOOL_DENY="agentproxy_get_health,agentproxy_list_combos" agentproxy --mcp
 
 # राउटिङ + कोटा उपकरणहरू मात्र घोषणा गर्नुहोस् (अनुमति-सूची मोड)
-MCP_TOOL_ALLOW="omniroute_route_request,omniroute_check_quota" omniroute --mcp
+MCP_TOOL_ALLOW="agentproxy_route_request,agentproxy_check_quota" agentproxy --mcp
 ```
 
 **फिल्टर गरिएका उपकरणहरू कसरी हटाइन्छन्:** दर्ता सधैँ सफल हुन्छ; त्यसपछि प्रोफाइलले अस्वीकार गरेको उपकरणलाई MCP SDK ह्यान्डलमा `.disable()` गरिन्छ, त्यसैले त्यो `tools/list` मा कहिल्यै देखा पर्दैन तर जडान यथावत् रहन्छ (सफा रूपमा सक्षम/अक्षम गर्ने, पुनःदर्ता आवश्यक नपर्ने)। प्रोफाइल पार्सर `readMcpToolProfileFromEnv(process.env)` हो, जसले दुवै चर खाली हुँदा `null` (फिल्टरिङ नगर्ने) फर्काउँछ।

@@ -44,7 +44,7 @@ alákòókò-kúkúrú fún ìṣiṣẹ́ yẹn — kò sí token npm alákòó
 ó mú ìṣàn aládàáṣiṣẹ́ pátápátá tí iṣẹ́ náà ní títí dé v3.8.48 padà, nígbà tí ó ń pa
 ìdánilójú WS1.3 mọ́ (token tí ó ti tú jáde kò lè tẹ̀jáde ní òun nìkan — kò sí token).
 
-**Ètò ẹ̀ẹ̀kan ṣoṣo (onílé):** npmjs.com → package `omniroute` → Settings → _Trusted
+**Ètò ẹ̀ẹ̀kan ṣoṣo (onílé):** npmjs.com → package `agentproxy` → Settings → _Trusted
 Publisher_ → GitHub: owner `diegosouzapw`, repo `AgentProxy`, workflow `npm-publish.yml`
 (environment: none). Títí tí èyí yóò fi wà, ìgbésẹ̀ aládàáṣiṣẹ́ náà yóò kùnà pẹ̀lú `ENEEDAUTH`:
 tún firánṣẹ́ pẹ̀lú `publish_mode=staged` (ní ìsàlẹ̀) tàbí `direct`.
@@ -58,7 +58,7 @@ ti kúrò ní ṢÁÁJÚ ẹ̀rí sí LẸ́YÌN rẹ̀.
 
 **Ìṣàn onílé lẹ́yìn tí workflow bá di àwọ̀ ewé:**
 
-1. `npm stage list omniroute` — wá stage id náà (a tún tẹ̀ ẹ́ jáde nínú àkótán workflow).
+1. `npm stage list agentproxy` — wá stage id náà (a tún tẹ̀ ẹ́ jáde nínú àkótán workflow).
 2. Ṣàyẹ̀wò àwọn byte tí a fi sí ìpele (a dábàá rẹ̀): `npm stage download <id>`, lẹ́yìn náà fi
    tarball tí a gba sílẹ̀ wọ inú prefix ìgbà díẹ̀ kí o sì tan án (`npm run check:pack-boot` ń ṣe
    ìdájọ́ pack→install→boot kan náà ní CI ní aládàáṣiṣẹ́).
@@ -70,10 +70,10 @@ ti kúrò ní ṢÁÁJÚ ẹ̀rí sí LẸ́YÌN rẹ̀.
 `npm publish` lẹ́sẹ̀kẹsẹ̀ ti àtijọ́ padà (lò ó nìkan bí fífi sí ìpele fúnra rẹ̀ kò bá ṣiṣẹ́ dáadáa; ṣàkọsílẹ̀ ìdí).
 
 **Ìmúle ẹ̀ẹ̀kan ṣoṣo (onílé, npmjs.com):** ṣètò Trusted Publisher fún
-`omniroute` ní ipo stage-only kí token alákòókò-gígùn tí ó tú jáde má baà lè ṣe `npm publish`
+`agentproxy` ní ipo stage-only kí token alákòókò-gígùn tí ó tú jáde má baà lè ṣe `npm publish`
 tààrà láti ibikíbi — CI lè fi sí ìpele nìkan; 2FA onílé nìkan ló lè tú u jáde.
 
-**Ìtọ́sọ́nà fún artifact tó bàjẹ́ (kò yípadà):** `npm deprecate omniroute@<bad> "<reason> — use <fixed>"`
+**Ìtọ́sọ́nà fún artifact tó bàjẹ́ (kò yípadà):** `npm deprecate agentproxy@<bad> "<reason> — use <fixed>"`
 gẹ́gẹ́ bí ìgbésẹ̀ àkọ́kọ́ àìyípadà (ìṣẹ́jú díẹ̀, a lè yí i padà); `npm unpublish` nìkan láàárín àkókò 72h/no-dependents
 kì í sì í ṣe ìgbésẹ̀ àkọ́kọ́ láé. Docker: má ṣe tún tag ẹ̀yà kọ láé — rollback ni
 títọ́ka `latest` padà sí digest tó dára kẹ́yìn.
@@ -192,7 +192,7 @@ Gbogbo commit tí yóò wọ release gbọ́dọ̀ tẹ̀lé fọ́ọ̀mù `typ
 - [ ] `npm run i18n:check` jáde pẹ̀lú 0 — ipò ìtumọ̀ (`.i18n-state.json`) bá àwọn docs orísun mu (kò sí àwọn orísun tí ó yapa ní strict mode; ìkìlọ̀ warn-mode ṣeé gbà fún àwọn àtúnṣe docs ìṣẹ́jú tó gbẹ̀yìn, ṣùgbọ́n ó yẹ kí ó jẹ́ 0 kí a tó fi tag sí i)
 - [ ] `npm run i18n:check-ui-coverage` jáde pẹ̀lú 0 — gbogbo locale UI wà ní tàbí lókè ìwọ̀n ìborí 80%
 - [ ] `npm run i18n:sync-ui:dry` jàbọ̀ pé kò sí key tí ó sọnù kọjá gbogbo locale 42
-- [ ] Bí docs Gẹ̀ẹ́sì orísun bá yí padà, ṣiṣẹ́ `npm run i18n:run` (ó nílò `OMNIROUTE_TRANSLATION_API_KEY` nínú `.env`) kí a tó fi tag sí i
+- [ ] Bí docs Gẹ̀ẹ́sì orísun bá yí padà, ṣiṣẹ́ `npm run i18n:run` (ó nílò `AGENTPROXY_TRANSLATION_API_KEY` nínú `.env`) kí a tó fi tag sí i
 - [ ] A lè sún àwọn àfikún ìtumọ̀ sí ìtújáde tó kàn bí wọ́n bá kéré (tọ́pinpin nínú CHANGELOG)
 
 ### Àwọn Ìṣíkiri Database
@@ -201,7 +201,7 @@ Gbogbo commit tí yóò wọ release gbọ́dọ̀ tẹ̀lé fọ́ọ̀mù `typ
   - [ ] Ìṣíkiri kọ̀ọ̀kan jẹ́ idempotent (`CREATE TABLE IF NOT EXISTS`, àti bẹ́ẹ̀ bẹ́ẹ̀ lọ.)
   - [ ] A fi transactions yí àwọn ìṣíkiri ká
   - [ ] A to nọ́ńbà wọn lọ́nà tó tọ́ (kò sí àlàfo nínú ọ̀wọ́ọ̀wọ́)
-- [ ] Dán an wò lórí ìfìsí tuntun: pa `~/.omniroute/omniroute.db` rẹ́, kí o sì ṣiṣẹ́ `npm run dev`
+- [ ] Dán an wò lórí ìfìsí tuntun: pa `~/.agentproxy/agentproxy.db` rẹ́, kí o sì ṣiṣẹ́ `npm run dev`
 - [ ] Dán an wò lórí ìfìsí tó ti wà: ṣe àfipamọ́ DB, ṣiṣẹ́ ìṣíkiri, kí o sì jẹ́rìí schema
 - [ ] Ṣàbójútó àwọn fáìlì WAL (`-wal`, `-shm`) lọ́nà tó tọ́ bí ìṣíkiri bá tún àwọn table kọ
 
@@ -236,7 +236,7 @@ Repository náà ń lo directory àbájáde mẹ́ta ọ̀tọ̀ọ̀tọ̀ — 
 | `.build/` | Àwọn ohun àárín build — àbájáde `next build` (`distDir`)    | Rárá (gitignored) |
 | `dist/`   | Bundle npm tí a lè fi ránṣẹ́ — tí `assembleStandalone` kó jọ | Rárá (gitignored) |
 
-> **Àkọsílẹ̀ fún olùdarí:** directory image VPS jíjìn ṣì jẹ́ `/usr/lib/node_modules/omniroute/app/`.
+> **Àkọsílẹ̀ fún olùdarí:** directory image VPS jíjìn ṣì jẹ́ `/usr/lib/node_modules/agentproxy/app/`.
 > Àbájáde build **inú repo** nìkan ló ṣí (`app/` → `dist/`). Àwọn skill deploy máa ń fi rsync gbe
 > àwọn àkóónú `dist/` sínú dir `app/` jíjìn — kò sí ìyípadà path VPS tí a nílò.
 
@@ -356,12 +356,12 @@ lẹ́yìn tí ẹ̀rí bá wà fún gbogbo ohun tó wà nísàlẹ̀:
 
 Ṣáájú fífi ìtújáde v3.8.x èyíkéyìí jáde, ṣàyẹ̀wò àwọn nǹkan àfikún wọ̀nyí:
 
-- [ ] `omniroute --tray` bẹ̀rẹ̀ lórí macOS (a fi systray2 sí inú `~/.omniroute/runtime/`)
-- [ ] `omniroute --tray` bẹ̀rẹ̀ lórí Linux (ó nílò DISPLAY; àṣìṣe tó bójú mu tí a kò bá ṣètò rẹ̀)
-- [ ] `omniroute --tray` bẹ̀rẹ̀ lórí Windows (PowerShell NotifyIcon, kò sí binaries àfikún)
-- [ ] `omniroute config tray enable` ṣẹ̀dá entry autostart; disable yọ ọ́ kúrò
-- [ ] `npm install -g omniroute@<this-version>` ṣiṣẹ́ postinstall láìjáde nítorí àṣìṣe tó burú
-- [ ] Ọ̀nà update pa àwọn deps àṣàyàn mọ́: `omniroute update --apply` àti auto-updater
+- [ ] `agentproxy --tray` bẹ̀rẹ̀ lórí macOS (a fi systray2 sí inú `~/.agentproxy/runtime/`)
+- [ ] `agentproxy --tray` bẹ̀rẹ̀ lórí Linux (ó nílò DISPLAY; àṣìṣe tó bójú mu tí a kò bá ṣètò rẹ̀)
+- [ ] `agentproxy --tray` bẹ̀rẹ̀ lórí Windows (PowerShell NotifyIcon, kò sí binaries àfikún)
+- [ ] `agentproxy config tray enable` ṣẹ̀dá entry autostart; disable yọ ọ́ kúrò
+- [ ] `npm install -g agentproxy@<this-version>` ṣiṣẹ́ postinstall láìjáde nítorí àṣìṣe tó burú
+- [ ] Ọ̀nà update pa àwọn deps àṣàyàn mọ́: `agentproxy update --apply` àti auto-updater
       ń ṣiṣẹ́ `npm install -g … --include=optional` kí `optionalDependencies` (better-sqlite3,
       keytar, tls-client, àti stack SLM llmlingua: `@atjsh/llmlingua-2@2.0.5`,
       `js-tiktoken`) lè yè lẹ́yìn update. Tier SLM ultra `modelPath` tún nílò model
@@ -371,13 +371,13 @@ lẹ́yìn tí ẹ̀rí bá wà fún gbogbo ohun tó wà nísàlẹ̀:
       KAN ṢOṢO — trace adádúró náà máa ń bundle transformers nìkan, kì í bundle àwọn optionals
       tí a import ní ìgbà ìṣiṣẹ́, nítorí náà láìsí èyí worker yóò load llmlingua-2 pẹ̀lú transformers
       ti root, tier SLM yóò sì fail-open ní ìdákẹ́jẹ́.
-- [ ] `omniroute status` ṣiṣẹ́ láìsí `.env` (ọ̀nà token CLI, loopback nìkan)
+- [ ] `agentproxy status` ṣiṣẹ́ láìsí `.env` (ọ̀nà token CLI, loopback nìkan)
 - [ ] `curl http://localhost:20128/api/shutdown` dá 401 padà (route tí a máa ń dáàbò bo nígbà gbogbo)
 - [ ] `curl -H "host: evil.com" http://localhost:20128/api/mcp/sse` dá 401 padà (loopback guard)
 - [ ] Runtime SQLite resolve sí `bundled` ní ìṣiṣẹ́ àkọ́kọ́ (binary bundled wúlò fún platform náà)
 - [ ] Runtime SQLite padà sí `runtime` nígbà tí a bá pa `node_modules/better-sqlite3` rẹ́
 - [ ] Filter Smart MCP compress output gidi `playwright-mcp browser_snapshot` (ìdínkù ≥50%)
-- [ ] Gbogbo files `skills/omniroute*/SKILL.md` mẹ́wàá ṣeé fetch fún gbogbo ènìyàn nípasẹ̀ raw GitHub URL
+- [ ] Gbogbo files `skills/agentproxy*/SKILL.md` mẹ́wàá ṣeé fetch fún gbogbo ènìyàn nípasẹ̀ raw GitHub URL
 - [ ] Wizard onboarding fi ìgbésẹ̀ ìrìnàjò tier "Bí Ó Ṣe Ń Ṣiṣẹ́" hàn lórí setup tuntun
 - [ ] Widget tier coverage lórí dashboard Home fi iye tí a ti configure àti iye active hàn
 

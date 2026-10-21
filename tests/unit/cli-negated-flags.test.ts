@@ -23,16 +23,16 @@ const FAKE_RESPONSE = {
 async function withDataDir(prefix: string, fn: (dir: string) => Promise<void>) {
   const dir = mkdtempSync(join(tmpdir(), prefix));
   const prevDataDir = process.env.DATA_DIR;
-  const prevKeychain = process.env.OMNIROUTE_KEYCHAIN_DISABLED;
+  const prevKeychain = process.env.AGENTPROXY_KEYCHAIN_DISABLED;
   process.env.DATA_DIR = dir;
-  process.env.OMNIROUTE_KEYCHAIN_DISABLED = "1";
+  process.env.AGENTPROXY_KEYCHAIN_DISABLED = "1";
   try {
     await fn(dir);
   } finally {
     if (prevDataDir === undefined) delete process.env.DATA_DIR;
     else process.env.DATA_DIR = prevDataDir;
-    if (prevKeychain === undefined) delete process.env.OMNIROUTE_KEYCHAIN_DISABLED;
-    else process.env.OMNIROUTE_KEYCHAIN_DISABLED = prevKeychain;
+    if (prevKeychain === undefined) delete process.env.AGENTPROXY_KEYCHAIN_DISABLED;
+    else process.env.AGENTPROXY_KEYCHAIN_DISABLED = prevKeychain;
     rmSync(dir, { recursive: true, force: true, maxRetries: 5, retryDelay: 100 });
   }
 }
@@ -90,7 +90,7 @@ async function exportContexts(dir: string, args: string[]) {
     currentContext: "remote",
     contexts: {
       remote: {
-        baseUrl: "https://omniroute.example",
+        baseUrl: "https://agentproxy.example",
         accessToken: "oma_SECRET_TOKEN",
         apiKey: "sk-SECRET-KEY",
       },
@@ -110,7 +110,7 @@ test("contexts export --no-secrets leaves the token and API key out", async () =
   await withDataDir("ctx-no-secrets-", async (dir) => {
     const json = await exportContexts(dir, ["--no-secrets"]);
     assert.doesNotMatch(json, /oma_SECRET_TOKEN|sk-SECRET-KEY/);
-    assert.equal(JSON.parse(json).contexts.remote.baseUrl, "https://omniroute.example");
+    assert.equal(JSON.parse(json).contexts.remote.baseUrl, "https://agentproxy.example");
   });
 });
 
@@ -118,7 +118,7 @@ test("contexts export without flags omits credentials by default", async () => {
   await withDataDir("ctx-default-secrets-", async (dir) => {
     const json = await exportContexts(dir, []);
     assert.doesNotMatch(json, /oma_SECRET_TOKEN|sk-SECRET-KEY/);
-    assert.equal(JSON.parse(json).contexts.remote.baseUrl, "https://omniroute.example");
+    assert.equal(JSON.parse(json).contexts.remote.baseUrl, "https://agentproxy.example");
   });
 });
 

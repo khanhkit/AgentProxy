@@ -463,14 +463,14 @@ test("config: fetchers throw → warn + emit stub entry with models: {}", async 
 
 test("config: features.combos=false skips /api/combos fetch", async () => {
   const readAuthJson = stubReadAuthJson({
-    "opencode-omniroute": { type: "api", key: "sk-test", baseURL: "https://or.example/v1" },
+    "opencode-agentproxy": { type: "api", key: "sk-test", baseURL: "https://or.example/v1" },
   });
   const fetcher = stubModelsFetcher([MODEL_CLAUDE]);
   const combosFetcher = stubCombosFetcher([COMBO_CLAUDE_TIER]);
   const logger = captureWarn();
 
-  const hook = createOmniRouteConfigHook(
-    { providerId: "omniroute", features: { combos: false } },
+  const hook = createAgentProxyConfigHook(
+    { providerId: "agentproxy", features: { combos: false } },
     { readAuthJson, fetcher, combosFetcher, logger }
   );
   const input = makeInput();
@@ -478,8 +478,8 @@ test("config: features.combos=false skips /api/combos fetch", async () => {
 
   assert.equal(fetcher.callCount(), 1, "models fetch still runs");
   assert.equal(combosFetcher.callCount(), 0, "combos fetch suppressed by feature flag");
-  const entry = (input as { provider: Record<string, OmniRouteStaticProviderEntry> }).provider[
-    "opencode-omniroute"
+  const entry = (input as { provider: Record<string, AgentProxyStaticProviderEntry> }).provider[
+    "opencode-agentproxy"
   ];
   assert.ok(entry);
   assert.equal(entry.models["claude-tier"], undefined, "no combo entry when combos are off");
@@ -1321,7 +1321,7 @@ function emptyThenSnapshotReader(
 
 test("config: stale-fallback warning reports the disk snapshot age in hours", async () => {
   const readAuthJson = stubReadAuthJson({
-    "opencode-omniroute": { type: "api", key: "sk-test", baseURL: "https://or.example/v1" },
+    "opencode-agentproxy": { type: "api", key: "sk-test", baseURL: "https://or.example/v1" },
   });
   const fetcher = throwingModelsFetcher();
   const combosFetcher = stubCombosFetcher([]);
@@ -1337,8 +1337,8 @@ test("config: stale-fallback warning reports the disk snapshot age in hours", as
     writtenAt,
   });
 
-  const hook = createOmniRouteConfigHook(
-    { providerId: "omniroute", features: { diskCache: true } },
+  const hook = createAgentProxyConfigHook(
+    { providerId: "agentproxy", features: { diskCache: true } },
     { readAuthJson, fetcher, combosFetcher, diskSnapshotReader, logger }
   );
 
@@ -1352,7 +1352,7 @@ test("config: stale-fallback warning reports the disk snapshot age in hours", as
 
 test('config: stale-fallback warning falls back to "unknown" age without writtenAt', async () => {
   const readAuthJson = stubReadAuthJson({
-    "opencode-omniroute": { type: "api", key: "sk-test", baseURL: "https://or.example/v1" },
+    "opencode-agentproxy": { type: "api", key: "sk-test", baseURL: "https://or.example/v1" },
   });
   const fetcher = throwingModelsFetcher();
   const combosFetcher = stubCombosFetcher([]);
@@ -1366,8 +1366,8 @@ test('config: stale-fallback warning falls back to "unknown" age without written
     rawConnections: [],
   });
 
-  const hook = createOmniRouteConfigHook(
-    { providerId: "omniroute", features: { diskCache: true } },
+  const hook = createAgentProxyConfigHook(
+    { providerId: "agentproxy", features: { diskCache: true } },
     { readAuthJson, fetcher, combosFetcher, diskSnapshotReader, logger }
   );
 
@@ -1383,7 +1383,7 @@ test('config: stale-fallback warning falls back to "unknown" age without written
 
 test("config: diskCacheMaxAgeMs escalates the fallback log but still serves the snapshot", async () => {
   const readAuthJson = stubReadAuthJson({
-    "opencode-omniroute": { type: "api", key: "sk-test", baseURL: "https://or.example/v1" },
+    "opencode-agentproxy": { type: "api", key: "sk-test", baseURL: "https://or.example/v1" },
   });
   const fetcher = throwingModelsFetcher();
   const combosFetcher = stubCombosFetcher([]);
@@ -1407,8 +1407,8 @@ test("config: diskCacheMaxAgeMs escalates the fallback log but still serves the 
     writtenAt,
   });
 
-  const hook = createOmniRouteConfigHook(
-    { providerId: "omniroute", features: { diskCache: true, diskCacheMaxAgeMs: maxAgeMs } },
+  const hook = createAgentProxyConfigHook(
+    { providerId: "agentproxy", features: { diskCache: true, diskCacheMaxAgeMs: maxAgeMs } },
     {
       readAuthJson,
       fetcher,
@@ -1421,8 +1421,8 @@ test("config: diskCacheMaxAgeMs escalates the fallback log but still serves the 
   const input = makeInput();
   await hook(input);
 
-  const entry = (input as { provider: Record<string, OmniRouteStaticProviderEntry> }).provider[
-    "opencode-omniroute"
+  const entry = (input as { provider: Record<string, AgentProxyStaticProviderEntry> }).provider[
+    "opencode-agentproxy"
   ];
   assert.ok(entry.models["claude-sonnet-4-6"], "snapshot past the bound is still served");
   assert.ok(

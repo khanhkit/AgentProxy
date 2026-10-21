@@ -116,7 +116,7 @@ dashboard UI fajlove tokom build-a, zadržava API route handlere i vraća origin
 nakon build-a. Koristite `npm run build` za promjene koje utiču na dashboard UI ili za potpunu
 validaciju release-a; contributor profil nije zamjena za release build.
 
-> **Napomena za VPS deploy:** udaljeni direktorijum slika `/usr/lib/node_modules/omniroute/app/`
+> **Napomena za VPS deploy:** udaljeni direktorijum slika `/usr/lib/node_modules/agentproxy/app/`
 > ostaje nepromijenjen. Deploy skill-ovi rsync-uju sadržaj `dist/` u njega.
 > Samo je putanja build izlaza unutar repozitorijuma promijenjena (`app/` → `dist/`).
 
@@ -316,7 +316,7 @@ src/                        # TypeScript (.ts / .tsx)
 │   └── validation/         # Zod v4 sheme
 └── sse/                    # SSE proxy pipeline
 
-open-sse/                   # @omniroute/open-sse workspace
+open-sse/                   # @agentproxy/open-sse workspace
 ├── executors/              # 89 modula za implementaciju executora
 ├── handlers/               # 11 handlera za zahtjeve (chat, responses, embeddings, images, itd.)
 ├── mcp-server/             # MCP server (110 jedinstvenih alata, 3 transporta, 33 scope-a)

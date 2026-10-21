@@ -30,7 +30,7 @@ Agent Card-ലെ `version` ഫീൽഡ് `process.env.npm_package_version`-�
 എല്ലാ `/a2a` അഭ്യർത്ഥനകൾക്കും `Authorization` ഹെഡർ വഴി ഒരു API കീ ആവശ്യമാണ്:
 
 ```
-Authorization: Bearer YOUR_OMNIROUTE_API_KEY
+Authorization: Bearer YOUR_AGENTPROXY_API_KEY
 ```
 
 സെർവറിൽ API കീ കോൺഫിഗർ ചെയ്തിട്ടില്ലെങ്കിൽ, ഓതന്റിക്കേഷൻ ഒഴിവാക്കപ്പെടും.
@@ -187,7 +187,7 @@ JSON-RPC എൻഡ്പോയിന്റായ `/a2a` ആണ് ഔദ്യ�
 | `/api/a2a/tasks/[id]`        | GET      | ID ഉപയോഗിച്ച് ടാസ്ക് നേടുക                                            | മാനേജ്മെന്റ്                                                                  |
 | `/api/a2a/tasks/[id]/cancel` | POST     | പ്രവർത്തിച്ചുകൊണ്ടിരിക്കുന്ന ടാസ്ക് റദ്ദാക്കുക                        | മാനേജ്മെന്റ്                                                                  |
 | `/.well-known/agent.json`    | GET      | ഏജന്റ് കാർഡ് (A2A കണ്ടെത്തൽ)                                          | (പൊതുവായത്, 3600s കാഷ് ചെയ്തത്)                                               |
-| `/api/a2a/tasks`             | POST     | OmniConductor ഫ്ലീറ്റിലേക്കുള്ള ഇൻബൗണ്ട് ഡെലിഗേഷൻ (Conductor PRD RF5) | Bearer-നെ `OMNIROUTE_API_KEY` + `a2aEnabled` എന്നിവയുമായി താരതമ്യം ചെയ്യുന്നു |
+| `/api/a2a/tasks`             | POST     | OmniConductor ഫ്ലീറ്റിലേക്കുള്ള ഇൻബൗണ്ട് ഡെലിഗേഷൻ (Conductor PRD RF5) | Bearer-നെ `AGENTPROXY_API_KEY` + `a2aEnabled` എന്നിവയുമായി താരതമ്യം ചെയ്യുന്നു |
 
 **ഇൻബൗണ്ട് Conductor ഡെലിഗേഷൻ (`POST /api/a2a/tasks`):** ബാഹ്യ A2A ഏജന്റുകൾ AgentProxy വഴി കോഡിങ് ജോലികൾ OmniConductor ഫ്ലീറ്റിന് ഡെലിഗേറ്റ് ചെയ്യുന്നു. ബോഡി: `{ skill: "conductor" | "conductor-cli-<profile>", messages: [{role, content}], metadata: { conductor: { repo: { url, base_ref? }, mode?, cli?, model? } } }` — Conductor ഫ്ലീറ്റ് സ്കില്ലുകൾ (ഏജന്റ് കാർഡിൽ പ്രഖ്യാപിച്ചവ) മാത്രമേ ഡെലിഗേറ്റ് ചെയ്യാനാകൂ; `metadata.conductor.repo.url` നിർബന്ധമാണ് (ഫ്ലീറ്റ് git റിപ്പോകളിലാണ് പ്രവർത്തിക്കുന്നത്). സെർവർ-സൈഡ് `CONDUCTOR_ORCHESTRATOR_TOKEN` (ഫോൾബാക്ക് `CONDUCTOR_HUB_TOKEN`) ഉപയോഗിച്ച് റൂട്ട് ഹബ്ബിന്റെ `POST /v1/tasks`-ലേക്ക് വിവർത്തനം ചെയ്യുകയും `201 { conductor_task_id, state: "submitted" }` തിരികെ നൽകുകയും ചെയ്യുന്നു; ടാസ്ക് നിലകൾ SSE→A2A മിറർ (RF1) വഴി തിരികെ പ്രവഹിക്കുകയും `GET /api/a2a/tasks?skill=conductor` വഴി കാണാനാകുകയും ചെയ്യുന്നു.
 

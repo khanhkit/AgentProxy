@@ -116,7 +116,7 @@ test("provider JSON output redacts raw credentials recursively", () => {
       id: "conn-1",
       apiKey: "provider-secret",
       providerSpecificData: { client_secret: "oauth-secret" },
-      credentialRef: "omniroute-cli:context:remote",
+      credentialRef: "agentproxy-cli:context:remote",
       awsSecretAccessKey: "aws-secret",
       privateKey: "private-key-material",
       secret_key: "snake-secret",
@@ -131,7 +131,7 @@ test("provider JSON output redacts raw credentials recursively", () => {
       id: "conn-1",
       apiKey: { present: true, length: 15 },
       providerSpecificData: { client_secret: { present: true, length: 12 } },
-      credentialRef: "omniroute-cli:context:remote",
+      credentialRef: "agentproxy-cli:context:remote",
       awsSecretAccessKey: { present: true, length: 10 },
       privateKey: { present: true, length: 20 },
       secret_key: { present: true, length: 12 },
@@ -200,7 +200,7 @@ test("provider import cannot override the management target or authentication", 
     response.writeHead(201, { "content-type": "application/json" });
     response.end(JSON.stringify({ connection: { id: "attacker" } }));
   });
-  const directory = mkdtempSync(join(tmpdir(), "omniroute-provider-import-"));
+  const directory = mkdtempSync(join(tmpdir(), "agentproxy-provider-import-"));
 
   try {
     const managementUrl = await listen(managementServer);
@@ -282,7 +282,7 @@ test("provider import is idempotent and reports an existing connection without m
       })
     );
   });
-  const directory = mkdtempSync(join(tmpdir(), "omniroute-provider-idempotent-"));
+  const directory = mkdtempSync(join(tmpdir(), "agentproxy-provider-idempotent-"));
   const output: string[] = [];
   const originalLog = console.log;
 

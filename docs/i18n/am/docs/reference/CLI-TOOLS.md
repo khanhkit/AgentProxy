@@ -51,11 +51,11 @@ ACP Agents (የተቃራኒ ማስጀመሪያ ፍሰት):
 ትዕዛዝ ይዞ ይመጣል፦
 
 ```bash
-omniroute setup-codex        omniroute setup-claude       omniroute setup-opencode
-omniroute setup-cline        omniroute setup-kilo         omniroute setup-continue
-omniroute setup-cursor       omniroute setup-roo          omniroute setup-crush
-omniroute setup-goose        omniroute setup-qwen         omniroute setup-aider
-omniroute setup-5dive
+agentproxy setup-codex        agentproxy setup-claude       agentproxy setup-opencode
+agentproxy setup-cline        agentproxy setup-kilo         agentproxy setup-continue
+agentproxy setup-cursor       agentproxy setup-roo          agentproxy setup-crush
+agentproxy setup-goose        agentproxy setup-qwen         agentproxy setup-aider
+agentproxy setup-5dive
 ```
 
 እያንዳንዱ `--remote <url> --api-key <key>` (አካባቢያዊ መሣሪያን ከርቀት
@@ -66,10 +66,10 @@ AgentProxy ጋር ማዋቀር)፣ `--dry-run` (ሳይጻፍ ቅድመ-ዕይታ
 በroot ባለቤትነት የተያዘ የማረጋገጫ መገለጫ በመጻፍ የ5dive ወኪል መንጋን
 ያዋቅራል፤ ስለዚህ በ`sudo` በኩል ራሱን እንደገና ያስኬዳል እና የራሱ የርቀት
 ሁነታ የለውም። ትክክለኛው env ተካቶ ምንም ውቅር ሳይጻፍ CLIን ለማስጀመር፣ አጠቃላዩን
-`omniroute run <target>` ማስጀመሪያ ይጠቀሙ (claude፣ codex፣ aider፣ goose፣ opencode፣ qwen፣
+`agentproxy run <target>` ማስጀመሪያ ይጠቀሙ (claude፣ codex፣ aider፣ goose፣ opencode፣ qwen፣
 gemini — ዒላማዎችና ተለዋጭ ስሞች ከ`bin/cli/cli-manifest.mjs` ይመጣሉ)፤ የቆዩት
-ለየመሣሪያው የተዘጋጁ ማስጀመሪያዎች `omniroute launch` (Claude Code) እና `omniroute launch-codex`
-(Codex) አሁንም ይገኛሉ። Gemini CLI ለማስጀመር ብቻ ነው፦ የ`omniroute run`
+ለየመሣሪያው የተዘጋጁ ማስጀመሪያዎች `agentproxy launch` (Claude Code) እና `agentproxy launch-codex`
+(Codex) አሁንም ይገኛሉ። Gemini CLI ለማስጀመር ብቻ ነው፦ የ`agentproxy run`
 ዒላማ ነው፣ ነገር ግን የ`setup-*`/`configure` አሠራር የለውም።
 
 > **ሙሉ ማጣቀሻ፦** ዋናው ሰንጠረዥ — እያንዳንዱ ትዕዛዝ ምን እንደሚጽፍ፣ ሁሉም ጥቆማዎች፣
@@ -82,18 +82,18 @@ gemini — ዒላማዎችና ተለዋጭ ስሞች ከ`bin/cli/cli-manifest.mj
 ኮንቴይነሩ የራሱ home ይጽፋል፤ ምንም የአስተናጋጅ CLI ይህን አያነበውም፣ እንዲሁም ከ
 ኮንቴይነሩ ጋር ይጠፋል። AgentProxy ይህን ፈልጎ ያውቅና ከመጻፍ ይልቅ
 ከመመሪያዎች ጋር በ`2` ይወጣል። ሁለት የሚደገፉ የቀጣይ እርምጃ መንገዶች አሉ — CLIን በአስተናጋጁ ላይ ጭነው
-`omniroute connect`ን ወደ ኮንቴይነሩ መጠቀም፣ ወይም የውቅር ማውጫዎቹን bind-mount አድርጎ
+`agentproxy connect`ን ወደ ኮንቴይነሩ መጠቀም፣ ወይም የውቅር ማውጫዎቹን bind-mount አድርጎ
 `CLI_CONFIG_HOME`ን ማዘጋጀት (የcompose `host` መገለጫ)። እያንዳንዱ የ`setup-*` ትዕዛዝ፣ ከ
-`omniroute configure` እና `omniroute config set` ጋር፣ በእርግጥ ያሰቡት
+`agentproxy configure` እና `agentproxy config set` ጋር፣ በእርግጥ ያሰቡት
 የኮንቴይነሩን የራሱን CLIዎች ማዋቀር ከሆነ `--allow-container-write`ን ይቀበላል፤
-`OMNIROUTE_ALLOW_CONTAINER_CONFIG_WRITE=true` ለአገልጋዩ ተመሳሳይ ነገር ያደርጋል።
-[የDocker መመሪያ → የአስተናጋጅ CLI መሣሪያዎችን ማዋቀር](../guides/DOCKER_GUIDE.md#configuring-host-cli-tools-when-omniroute-runs-in-docker)ን ይመልከቱ።
+`AGENTPROXY_ALLOW_CONTAINER_CONFIG_WRITE=true` ለአገልጋዩ ተመሳሳይ ነገር ያደርጋል።
+[የDocker መመሪያ → የአስተናጋጅ CLI መሣሪያዎችን ማዋቀር](../guides/DOCKER_GUIDE.md#configuring-host-cli-tools-when-agentproxy-runs-in-docker)ን ይመልከቱ።
 
 የዳሽቦርዱ **የተግባራዊነት መጨረሻ ነጥብ** (`POST /api/cli-tools/apply`) ተመሳሳዩን
 ጥበቃ ያስገድዳል፦ በኮንቴይነር ውስጥ፣ ዒላማው ከአስተናጋጁ bind-mount ያልተደረገ
 የመጻፍ ሙከራ **`422`**ን ከ`containerEphemeralTarget: true`፣ ከአስተማማኙ የስህተት
 ጽሑፍ እና — የአስተናጋጅ አሠራር ላላቸው መሣሪያዎች (claude፣ codex፣ opencode፣ cline፣
-kilo፣ continue) — በአስተናጋጁ ላይ የሚኬድ `hostSetupCommand` (ለምሳሌ `omniroute setup-opencode`)
+kilo፣ continue) — በአስተናጋጁ ላይ የሚኬድ `hostSetupCommand` (ለምሳሌ `agentproxy setup-opencode`)
 ጋር ይመልሳል፤ ምንም ነገር አይጻፍም። `dryRun: true` በኮንቴይነር
 ሁነታ ውስጥ መሥራቱን ይቀጥላል፣ እና ዲስኩን ሳይነካ የተፈጠረውን ይዘት + የዒላማ ዱካ ይመልሳል፤ በዚህም
 ከዳሽቦርዱ ቅድመ-ዕይታ ማድረግና በአስተናጋጁ ላይ ተግባራዊ ማድረግ ይችላሉ። ይህ ባህሪ
@@ -129,8 +129,8 @@ kilo፣ continue) — በአስተናጋጁ ላይ የሚኬድ `hostSetupComman
 | -------------- | ------------------------------------------------------- | -------------------------------------------------------------- |
 | **ካታሎግ የተደረገ** | በዳሽቦርድ ካታሎግ ውስጥ ይታያል (ስም፣ አቅራቢ፣ ሰነዶች፣ የውቅረት ዓይነት)       | `src/shared/constants/cliTools.ts` (`CLI_TOOLS`)               |
 | **ሊገኝ የሚችል**   | የባይነሪ/ውቅረት ማግኘት፣ የጤና ፍተሻዎች፣ የውቅረት ዱካዎች                  | `src/shared/services/cliRuntime.ts` (`CLI_TOOLS` የአሂድ ጊዜ ካታሎግ) |
-| **ሊዋቀር የሚችል**  | በ`omniroute configure <cli>` የተደገፈ (የማዋቀሪያ አሰራር አለ)     | `bin/cli/cli-manifest.mjs` (`configure: true`)                 |
-| **ሊጀመር የሚችል**  | በ`omniroute run <target>` የተደገፈ (የenv/args ማስገባት ተገልጿል) | `bin/cli/cli-manifest.mjs` (`run: true`)                       |
+| **ሊዋቀር የሚችል**  | በ`agentproxy configure <cli>` የተደገፈ (የማዋቀሪያ አሰራር አለ)     | `bin/cli/cli-manifest.mjs` (`configure: true`)                 |
+| **ሊጀመር የሚችል**  | በ`agentproxy run <target>` የተደገፈ (የenv/args ማስገባት ተገልጿል) | `bin/cli/cli-manifest.mjs` (`run: true`)                       |
 
 `bin/cli/cli-manifest.mjs` ለCLI ትዕዛዝ በይነገጾች መደበኛው ተፈጻሚ ማኒፌስት ነው፦
 `run`፣ `configure` እና የshell-completion አመንጪዎች ሁሉ የዒላማ ዝርዝሮቻቸውን፣
@@ -264,7 +264,7 @@ interface ToolBatchStatus {
 | `POST /api/cli-tools/codewhale-settings`    | CodeWhale (OPENAI_BASE_URL፣ ዋና + የቆየ `~/.deepseek` ማመሳሰል) |
 | `POST /api/cli-tools/smelt-settings`        | Smelt                                                     |
 | `POST /api/cli-tools/pi-settings`           | Pi የኮድ ወኪል                                                |
-| `POST /api/cli-tools/grok-build-settings`   | Grok Build (~/.grok/config.toml፣ `[model.omniroute]`)     |
+| `POST /api/cli-tools/grok-build-settings`   | Grok Build (~/.grok/config.toml፣ `[model.agentproxy]`)     |
 | `POST /api/cli-tools/qwen-settings`         | Qwen Code (`~/.qwen/settings.json` + የተለየ `.env` ቁልፍ)     |
 
 ሁሉም መስመሮች ለስህተት ምላሾች `sanitizeErrorMessage()`ን ይጠቀማሉ (ጥብቅ ደንብ #12)።
@@ -359,7 +359,7 @@ npm install -g kilocode
 # Qwen Code
 npm install -g @qwen-code/qwen-code
 
-# Google Gemini CLI (በ`omniroute run gemini` ሊጀመር የሚችል → /v1beta surface)
+# Google Gemini CLI (በ`agentproxy run gemini` ሊጀመር የሚችል → /v1beta surface)
 npm install -g @google/gemini-cli
 
 # Aider
@@ -392,12 +392,12 @@ cargo install smelt  # በRust ላይ የተመሠረተ
 ```bash
 # AgentProxy ሁለንተናዊ Endpoint
 export OPENAI_BASE_URL="http://localhost:20128/v1"
-export OPENAI_API_KEY="sk-your-omniroute-key"
+export OPENAI_API_KEY="sk-your-agentproxy-key"
 export ANTHROPIC_BASE_URL="http://localhost:20128"
-export ANTHROPIC_AUTH_TOKEN="sk-your-omniroute-key"
+export ANTHROPIC_AUTH_TOKEN="sk-your-agentproxy-key"
 # Gemini CLI GOOGLE_GEMINI_BASE_URLን ከROOT ያነባል (የእሱ SDK /v1beta/...ን ራሱ ይጨምራል)
 export GOOGLE_GEMINI_BASE_URL="http://localhost:20128"
-export GEMINI_API_KEY="sk-your-omniroute-key"
+export GEMINI_API_KEY="sk-your-agentproxy-key"
 ```
 
 > ለ**ርቀት server** `localhost:20128`ን በserver IP ወይም domain ይተኩ፣
@@ -415,7 +415,7 @@ mkdir -p ~/.claude && cat > ~/.claude/settings.json << EOF
 {
   "env": {
     "ANTHROPIC_BASE_URL": "http://localhost:20128",
-    "ANTHROPIC_AUTH_TOKEN": "sk-your-omniroute-key"
+    "ANTHROPIC_AUTH_TOKEN": "sk-your-agentproxy-key"
   }
 }
 EOF
@@ -431,20 +431,20 @@ EOF
 
 ዘመናዊው Codex (v0.137+) `~/.codex/config.toml`ን ብቻ ያነባል — የቀድሞው
 `config.yaml` የlegacy npm CLI ነው እና ያለምንም ማስጠንቀቂያ ችላ ይባላል። የAPI
-ቁልፉ ሁልጊዜ በ`OMNIROUTE_API_KEY` environment variable (`env_key`) ውስጥ ይቆያል፤
+ቁልፉ ሁልጊዜ በ`AGENTPROXY_API_KEY` environment variable (`env_key`) ውስጥ ይቆያል፤
 በፋይሉ ውስጥ ፈጽሞ አይቀመጥም፦
 
 ```bash
 mkdir -p ~/.codex && cat > ~/.codex/config.toml << EOF
-model_provider = "omniroute"
+model_provider = "agentproxy"
 
-[model_providers.omniroute]
+[model_providers.agentproxy]
 name                 = "AgentProxy"
 base_url             = "http://localhost:20128/v1"
-env_key              = "OMNIROUTE_API_KEY"
+env_key              = "AGENTPROXY_API_KEY"
 requires_openai_auth = false
 EOF
-export OMNIROUTE_API_KEY="sk-your-omniroute-key"
+export AGENTPROXY_API_KEY="sk-your-agentproxy-key"
 ```
 
 ሙሉ ማጣቀሻ (profiles፣ `wire_api`፣ context windows)፦ [CODEX-CLI-CONFIGURATION.md](../guides/CODEX-CLI-CONFIGURATION.md)።
@@ -460,12 +460,12 @@ mkdir -p ~/.config/opencode && cat > ~/.config/opencode/opencode.json << EOF
 {
   "\$schema": "https://opencode.ai/config.json",
   "provider": {
-    "omniroute": {
+    "agentproxy": {
       "npm": "@ai-sdk/openai-compatible",
       "name": "AgentProxy",
       "options": {
         "baseURL": "http://localhost:20128/v1",
-        "apiKey": "sk-your-omniroute-key"
+        "apiKey": "sk-your-agentproxy-key"
       },
       "models": {
         "claude-sonnet-4-5": { "name": "claude-sonnet-4-5" },
@@ -480,7 +480,7 @@ EOF
 
 **ሙከራ፦** `opencode`
 
-> የthinking variantsን ለመላክ `opencode run "your prompt" --model omniroute/claude-sonnet-4-5-thinking --variant high`
+> የthinking variantsን ለመላክ `opencode run "your prompt" --model agentproxy/claude-sonnet-4-5-thinking --variant high`
 > ይጠቀሙ።
 
 ---
@@ -494,7 +494,7 @@ mkdir -p ~/.cline/data && cat > ~/.cline/data/globalState.json << EOF
 {
   "apiProvider": "openai",
   "openAiBaseUrl": "http://localhost:20128/v1",
-  "openAiApiKey": "sk-your-omniroute-key"
+  "openAiApiKey": "sk-your-agentproxy-key"
 }
 EOF
 ```
@@ -511,7 +511,7 @@ EOF
 **የCLI ሁነታ፦**
 
 ```bash
-kilocode --api-base http://localhost:20128/v1 --api-key sk-your-omniroute-key
+kilocode --api-base http://localhost:20128/v1 --api-key sk-your-agentproxy-key
 ```
 
 **የVS Code ቅንብሮች፦**
@@ -519,7 +519,7 @@ kilocode --api-base http://localhost:20128/v1 --api-key sk-your-omniroute-key
 ```json
 {
   "kilo-code.openAiBaseUrl": "http://localhost:20128/v1",
-  "kilo-code.apiKey": "sk-your-omniroute-key"
+  "kilo-code.apiKey": "sk-your-agentproxy-key"
 }
 ```
 
@@ -537,7 +537,7 @@ models:
     provider: openai
     model: auto
     apiBase: http://localhost:20128/v1
-    apiKey: sk-your-omniroute-key
+    apiKey: sk-your-agentproxy-key
     default: true
 ```
 
@@ -564,8 +564,8 @@ VS Code Insiders ለብጁ endpoint models ሲዋቀር እና AgentProxy ያለ
     "name": "AgentProxy Auto",
     "family": "gpt-4",
     "version": "1.0.0",
-    "url": "http://localhost:20128/api/v1/vscode/sk-your-omniroute-key/chat/completions",
-    "modelsUrl": "http://localhost:20128/api/v1/vscode/sk-your-omniroute-key/models",
+    "url": "http://localhost:20128/api/v1/vscode/sk-your-agentproxy-key/chat/completions",
+    "modelsUrl": "http://localhost:20128/api/v1/vscode/sk-your-agentproxy-key/models",
     "requestFormat": "openai-chat-completions",
     "contextWindow": 256000,
     "maxOutputTokens": 32768,
@@ -578,7 +578,7 @@ VS Code Insiders ለብጁ endpoint models ሲዋቀር እና AgentProxy ያለ
 
 **ማስታወሻዎች፦**
 
-- `sk-your-omniroute-key`ን በAgentProxy ውስጥ በተፈጠረ API ቁልፍ ይተኩ።
+- `sk-your-agentproxy-key`ን በAgentProxy ውስጥ በተፈጠረ API ቁልፍ ይተኩ።
 - የ`url` መስክ ወደ `/api/v1/vscode/{token}/chat/completions` ማመልከት አለበት።
 - የ`modelsUrl` መስክ ወደ `/api/v1/vscode/{token}/models` ማመልከት አለበት።
 - ደንበኛው ብጁ ራስጌዎችን የሚደግፍ ከሆነ፣ መደበኛውን `/v1` + Bearer ራስጌ ፍሰት ይምረጡ።
@@ -604,28 +604,28 @@ kiro-cli status
 
 ## 10. ውስጣዊ AgentProxy CLI
 
-የ`omniroute` ባይነሪ ለሰርቨር የሕይወት ዑደት፣ ማዋቀር፣ ምርመራ እና የአቅራቢ አስተዳደር ትዕዛዞችን ያቀርባል። የመግቢያ ነጥብ፦ `bin/omniroute.mjs`።
+የ`agentproxy` ባይነሪ ለሰርቨር የሕይወት ዑደት፣ ማዋቀር፣ ምርመራ እና የአቅራቢ አስተዳደር ትዕዛዞችን ያቀርባል። የመግቢያ ነጥብ፦ `bin/agentproxy.mjs`።
 
 ```bash
-omniroute                              # ሰርቨሩን አስጀምር (ነባሪ ፖርት 20128)
-omniroute setup                        # በይነተገናኝ የማዋቀር አዋቂ
-omniroute doctor                       # ውቅርን፣ DBን፣ ፖርቶችን እና runtimeን ፈትሽ
-omniroute providers list               # የተዋቀሩ የአቅራቢ ግንኙነቶች
-omniroute providers test-all           # እያንዳንዱን ንቁ ግንኙነት ፈትሽ
-omniroute reset-password               # የአስተዳዳሪ የይለፍ ቃልን ዳግም አስጀምር
-omniroute logs                         # የጥያቄ ምዝግቦችን በቀጥታ አሳይ
-omniroute health                       # ዝርዝር የጤና ሁኔታ (breakers፣ cache፣ memory)
-omniroute --version                    # ስሪቱን አትም
-omniroute --help                       # ሁሉንም ትዕዛዞች አሳይ
+agentproxy                              # ሰርቨሩን አስጀምር (ነባሪ ፖርት 20128)
+agentproxy setup                        # በይነተገናኝ የማዋቀር አዋቂ
+agentproxy doctor                       # ውቅርን፣ DBን፣ ፖርቶችን እና runtimeን ፈትሽ
+agentproxy providers list               # የተዋቀሩ የአቅራቢ ግንኙነቶች
+agentproxy providers test-all           # እያንዳንዱን ንቁ ግንኙነት ፈትሽ
+agentproxy reset-password               # የአስተዳዳሪ የይለፍ ቃልን ዳግም አስጀምር
+agentproxy logs                         # የጥያቄ ምዝግቦችን በቀጥታ አሳይ
+agentproxy health                       # ዝርዝር የጤና ሁኔታ (breakers፣ cache፣ memory)
+agentproxy --version                    # ስሪቱን አትም
+agentproxy --help                       # ሁሉንም ትዕዛዞች አሳይ
 ```
 
 ### ማዋቀር እና ማስጀመር
 
 ```bash
-omniroute setup                        # በይነተገናኝ የማዋቀር አዋቂ
-omniroute setup --non-interactive      # የCI/አውቶሜሽን ሁነታ (የአካባቢ ተለዋዋጮችን + flagsን ያነባል)
-omniroute setup --password '<value>'   # የአስተዳዳሪ የይለፍ ቃልን በቀጥታ አዘጋጅ
-omniroute setup --add-provider \
+agentproxy setup                        # በይነተገናኝ የማዋቀር አዋቂ
+agentproxy setup --non-interactive      # የCI/አውቶሜሽን ሁነታ (የአካባቢ ተለዋዋጮችን + flagsን ያነባል)
+agentproxy setup --password '<value>'   # የአስተዳዳሪ የይለፍ ቃልን በቀጥታ አዘጋጅ
+agentproxy setup --add-provider \
   --provider openai \
   --api-key '<value>' \
   --test-provider                      # አቅራቢን በአንድ ጊዜ ጨምር እና ፈትሽ
@@ -635,21 +635,21 @@ omniroute setup --add-provider \
 
 | ተለዋዋጭ               | ዓላማ                                                           |
 | ------------------- | ------------------------------------------------------------- |
-| `OMNIROUTE_API_KEY` | የአቅራቢ API ቁልፍ (በCommander `.env()` በኩል ከ`--api-key` ጋር የተሳሰረ) |
+| `AGENTPROXY_API_KEY` | የአቅራቢ API ቁልፍ (በCommander `.env()` በኩል ከ`--api-key` ጋር የተሳሰረ) |
 | `DATA_DIR`          | የAgentProxy ውሂብ ማውጫን ተካ                                        |
 
 ሌሎች በይነተገናኝ ያልሆኑ ግብዓቶች እንደ የአካባቢ ተለዋዋጮች ሳይሆን እንደ flags ይተላለፋሉ፦
 `--password`፣ `--provider`፣ `--provider-name`፣ `--provider-base-url`፣ `--default-model`
-(ከላይ ያሉትን የ`omniroute setup` አማራጮች ይመልከቱ)።
+(ከላይ ያሉትን የ`agentproxy setup` አማራጮች ይመልከቱ)።
 
 ### ምርመራ
 
 ```bash
-omniroute doctor                       # ውቅርን፣ DBን፣ ፖርቶችን፣ runtimeን፣ memoryን እና livenessን ፈትሽ
-omniroute doctor --json                # በማሽን ሊነበብ የሚችል JSON
-omniroute doctor --no-liveness         # የHTTP ጤና ፍተሻውን ዝለል
-omniroute doctor --host 0.0.0.0        # የliveness hostን ተካ
-omniroute doctor --liveness-url <url>  # ሙሉውን የጤና endpoint URL ተካ
+agentproxy doctor                       # ውቅርን፣ DBን፣ ፖርቶችን፣ runtimeን፣ memoryን እና livenessን ፈትሽ
+agentproxy doctor --json                # በማሽን ሊነበብ የሚችል JSON
+agentproxy doctor --no-liveness         # የHTTP ጤና ፍተሻውን ዝለል
+agentproxy doctor --host 0.0.0.0        # የliveness hostን ተካ
+agentproxy doctor --liveness-url <url>  # ሙሉውን የጤና endpoint URL ተካ
 ```
 
 doctor እነዚህን ፍተሻዎች ያካሂዳል፦ `Config`፣ `Database`፣ `Storage/encryption`፣
@@ -659,22 +659,22 @@ doctor እነዚህን ፍተሻዎች ያካሂዳል፦ `Config`፣ `Database`
 ### የአቅራቢ አስተዳደር
 
 ```bash
-omniroute providers available                       # የAgentProxy አቅራቢ ካታሎግ
-omniroute providers available --search openai       # ካታሎጉን በid/name/alias/category አጣራ
-omniroute providers available --category api-key    # በምድብ አጣራ (api-key፣ oauth፣ free፣ ...)
-omniroute providers available --json                # በማሽን ሊነበብ የሚችል JSON
+agentproxy providers available                       # የAgentProxy አቅራቢ ካታሎግ
+agentproxy providers available --search openai       # ካታሎጉን በid/name/alias/category አጣራ
+agentproxy providers available --category api-key    # በምድብ አጣራ (api-key፣ oauth፣ free፣ ...)
+agentproxy providers available --json                # በማሽን ሊነበብ የሚችል JSON
 
-omniroute providers list                            # የተዋቀሩ የአቅራቢ ግንኙነቶች
-omniroute providers list --json
+agentproxy providers list                            # የተዋቀሩ የአቅራቢ ግንኙነቶች
+agentproxy providers list --json
 
-omniroute providers test <id|name>                  # አንድ የተዋቀረ ግንኙነት ፈትሽ
-omniroute providers test-all                        # እያንዳንዱን ንቁ ግንኙነት ፈትሽ
-omniroute providers validate                        # አካባቢያዊ-ብቻ መዋቅራዊ ማረጋገጫ
-omniroute providers add <provider> --credential-env PROVIDER_KEY
-omniroute providers import ./providers.json --dry-run --json
-omniroute providers auth <provider>                 # ነባር የOAuth ሂደት
-omniroute providers edit <id|name> --default-model <model>
-omniroute providers remove <id|name> --yes
+agentproxy providers test <id|name>                  # አንድ የተዋቀረ ግንኙነት ፈትሽ
+agentproxy providers test-all                        # እያንዳንዱን ንቁ ግንኙነት ፈትሽ
+agentproxy providers validate                        # አካባቢያዊ-ብቻ መዋቅራዊ ማረጋገጫ
+agentproxy providers add <provider> --credential-env PROVIDER_KEY
+agentproxy providers import ./providers.json --dry-run --json
+agentproxy providers auth <provider>                 # ነባር የOAuth ሂደት
+agentproxy providers edit <id|name> --default-model <model>
+agentproxy providers remove <id|name> --yes
 ```
 
 `providers add/import/auth/edit/remove` API-ቀዳሚ ናቸው፤ ስለዚህም ንቁ በሆነው
@@ -687,19 +687,19 @@ omniroute providers remove <id|name> --yes
 ### መልሶ ማግኘት እና ዳግም ማስጀመር
 
 ```bash
-omniroute reset-password                # የአስተዳዳሪ የይለፍ ቃልን ዳግም አስጀምር (እንዲሁም፦ omniroute-reset-password)
-omniroute reset-encrypted-columns       # ለተመሰጠሩ የማረጋገጫ መረጃዎች ዳግም ማስጀመር ማስጠንቀቂያ + dry-run አሳይ
-omniroute reset-encrypted-columns --force  # በSQLite ውስጥ የተመሰጠሩ የማረጋገጫ መረጃዎችን በእውነት null አድርግ
+agentproxy reset-password                # የአስተዳዳሪ የይለፍ ቃልን ዳግም አስጀምር (እንዲሁም፦ agentproxy-reset-password)
+agentproxy reset-encrypted-columns       # ለተመሰጠሩ የማረጋገጫ መረጃዎች ዳግም ማስጀመር ማስጠንቀቂያ + dry-run አሳይ
+agentproxy reset-encrypted-columns --force  # በSQLite ውስጥ የተመሰጠሩ የማረጋገጫ መረጃዎችን በእውነት null አድርግ
 ```
 
 ### የማረጋገጫ መረጃ ወደ ውጭ መላክ (⚠ በጥንቃቄ ይያዙ)
 
 ```bash
-omniroute auth export                                 # ማስጠንቀቂያ + የማረጋገጫ ደረጃ አሳይ — የDB መዳረሻ የለም
-omniroute auth export --force                          # የሁሉንም ግንኙነቶች የተፈቱ የማረጋገጫ መረጃዎች እንደ JSON ወደ stdout ላክ
-omniroute auth export --force --id <id>                 # የሚዛመደውን ግንኙነት ብቻ ወደ ውጭ ላክ
-omniroute auth export --force --format env               # የOMNIROUTE_<PROVIDER>_<FIELD>=<value> መስመሮችን አውጣ
-omniroute auth export --force --out creds.json           # ወደ ፋይል ጻፍ (በ0600 ፈቃዶች ይፈጠራል)
+agentproxy auth export                                 # ማስጠንቀቂያ + የማረጋገጫ ደረጃ አሳይ — የDB መዳረሻ የለም
+agentproxy auth export --force                          # የሁሉንም ግንኙነቶች የተፈቱ የማረጋገጫ መረጃዎች እንደ JSON ወደ stdout ላክ
+agentproxy auth export --force --id <id>                 # የሚዛመደውን ግንኙነት ብቻ ወደ ውጭ ላክ
+agentproxy auth export --force --format env               # የAGENTPROXY_<PROVIDER>_<FIELD>=<value> መስመሮችን አውጣ
+agentproxy auth export --force --out creds.json           # ወደ ፋይል ጻፍ (በ0600 ፈቃዶች ይፈጠራል)
 ```
 
 `auth export` **አካባቢያዊ-ብቻ** ነው (ቀጥተኛ የSQLite ንባብ፣ የHTTP route የለም) እና ሆን ብሎ
@@ -714,33 +714,33 @@ omniroute auth export --force --out creds.json           # ወደ ፋይል ጻ�
 ሌላ ማስታወሻ ካልተሰጠ በስተቀር፣ እነዚህ እየሠራ ያለ AgentProxy ሰርቨር እንዳለ ይገምታሉ፦
 
 ```bash
-omniroute status                       # ዝርዝር የአሂድ ጊዜ ሁኔታ
-omniroute logs                         # የጥያቄ ምዝግቦችን በቀጥታ አሳይ (--json, --search, --follow)
-omniroute config list                  # የተዋቀሩ የCLI መሣሪያዎችን አሳይ
+agentproxy status                       # ዝርዝር የአሂድ ጊዜ ሁኔታ
+agentproxy logs                         # የጥያቄ ምዝግቦችን በቀጥታ አሳይ (--json, --search, --follow)
+agentproxy config list                  # የተዋቀሩ የCLI መሣሪያዎችን አሳይ
 
-omniroute provider list                # የሚገኙ አቅራቢዎችን ዘርዝር (የproviders list ተለዋጭ ስም)
-omniroute provider add                 # AgentProxyን በአንድ መሣሪያ ላይ እንደ አቅራቢ መዝግብ
-omniroute keys add | list | remove     # የAPI ቁልፎችን አስተዳድር
-omniroute models [provider]            # ሞዴሎችን ዘርዝር (--json, --search)
-omniroute combo list | switch | create | delete
+agentproxy provider list                # የሚገኙ አቅራቢዎችን ዘርዝር (የproviders list ተለዋጭ ስም)
+agentproxy provider add                 # AgentProxyን በአንድ መሣሪያ ላይ እንደ አቅራቢ መዝግብ
+agentproxy keys add | list | remove     # የAPI ቁልፎችን አስተዳድር
+agentproxy models [provider]            # ሞዴሎችን ዘርዝር (--json, --search)
+agentproxy combo list | switch | create | delete
 
-omniroute backup                       # የውቅር + DB ቅጽበታዊ ቅጂ
-omniroute restore                      # ከቀዳሚ ቅጽበታዊ ቅጂ ወደነበረበት መልስ
+agentproxy backup                       # የውቅር + DB ቅጽበታዊ ቅጂ
+agentproxy restore                      # ከቀዳሚ ቅጽበታዊ ቅጂ ወደነበረበት መልስ
 
-omniroute health                       # ዝርዝር የጤና ሁኔታ (መቆራረጫዎች፣ መሸጎጫ፣ ማህደረ ትውስታ)
-omniroute quota                        # የአቅራቢ ኮታ አጠቃቀም
-omniroute cache                        # የመሸጎጫ ሁኔታ
-omniroute cache clear                  # የትርጉም + የፊርማ መሸጎጫዎችን አጽዳ
+agentproxy health                       # ዝርዝር የጤና ሁኔታ (መቆራረጫዎች፣ መሸጎጫ፣ ማህደረ ትውስታ)
+agentproxy quota                        # የአቅራቢ ኮታ አጠቃቀም
+agentproxy cache                        # የመሸጎጫ ሁኔታ
+agentproxy cache clear                  # የትርጉም + የፊርማ መሸጎጫዎችን አጽዳ
 
-omniroute mcp status | restart         # የMCP አገልጋይ ሁኔታ / ዳግም ማስጀመር
-omniroute a2a status | card            # የA2A አገልጋይ ሁኔታ / የወኪል ካርድ
+agentproxy mcp status | restart         # የMCP አገልጋይ ሁኔታ / ዳግም ማስጀመር
+agentproxy a2a status | card            # የA2A አገልጋይ ሁኔታ / የወኪል ካርድ
 
-omniroute tunnel list | create | stop  # ቱነሎችን አስተዳድር (cloudflare/tailscale/ngrok)
-omniroute env show | get <k> | set <k> <v>  # የአካባቢ ተለዋዋጮችን መርምር / አዘጋጅ (ጊዜያዊ)
+agentproxy tunnel list | create | stop  # ቱነሎችን አስተዳድር (cloudflare/tailscale/ngrok)
+agentproxy env show | get <k> | set <k> <v>  # የአካባቢ ተለዋዋጮችን መርምር / አዘጋጅ (ጊዜያዊ)
 
-omniroute test                         # የአቅራቢ ግንኙነት መሠረታዊ ሙከራ
-omniroute update                       # ዝማኔዎችን ፈትሽ
-omniroute completion                   # የሼል ማጠናቀቂያ አመንጭ
+agentproxy test                         # የአቅራቢ ግንኙነት መሠረታዊ ሙከራ
+agentproxy update                       # ዝማኔዎችን ፈትሽ
+agentproxy completion                   # የሼል ማጠናቀቂያ አመንጭ
 ```
 
 ### የተለመዱ አማራጮች
@@ -788,7 +788,7 @@ omniroute completion                   # የሼል ማጠናቀቂያ አመን�
 
 | ስህተት                             | ምክንያት                  | መፍትሔ                                          |
 | -------------------------------- | ---------------------- | --------------------------------------------- |
-| `Connection refused`             | AgentProxy እየሄደ አይደለም   | `omniroute serve`                             |
+| `Connection refused`             | AgentProxy እየሄደ አይደለም   | `agentproxy serve`                             |
 | `401 Unauthorized`               | የተሳሳተ API key          | በ`/dashboard/api-manager` ውስጥ ያረጋግጡ           |
 | `No combo configured`            | ንቁ የማዘዋወሪያ combo የለም   | በ`/dashboard/combos` ውስጥ ያዋቅሩ                 |
 | CLI «አልተጫነም» ያሳያል                | Binary በPATH ውስጥ የለም   | `which <command>`ን ያረጋግጡ                      |

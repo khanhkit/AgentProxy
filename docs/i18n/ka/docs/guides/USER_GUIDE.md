@@ -189,7 +189,7 @@ Claude-თან და Claude Code-თან თავსებადი მა
 
 #### Kimi K2 (ფიქსირებული $9/თვე)
 
-1. გამოიწერეთ: [Moonshot AI](https://platform.kimi.ai?aff=omniroute)
+1. გამოიწერეთ: [Moonshot AI](https://platform.kimi.ai)
 2. მიიღეთ API-გასაღები → მართვის პანელი → API-გასაღების დამატება
 
 **გამოყენება:** `kimi/kimi-k2.5` — **პროფესიონალური რჩევა:** ფიქსირებული $9/თვე 10M ტოკენისთვის = ეფექტური ღირებულება $0.90/1M!
@@ -280,7 +280,7 @@ CLI-ში გამოყენება: premium-coding
 {
   "env": {
     "ANTHROPIC_BASE_URL": "http://localhost:20128",
-    "ANTHROPIC_AUTH_TOKEN": "your-omniroute-api-key"
+    "ANTHROPIC_AUTH_TOKEN": "your-agentproxy-api-key"
   }
 }
 ```
@@ -291,7 +291,7 @@ CLI-ში გამოყენება: premium-coding
 
 ```bash
 export OPENAI_BASE_URL="http://localhost:20128"
-export OPENAI_API_KEY="your-omniroute-api-key"
+export OPENAI_API_KEY="your-agentproxy-api-key"
 codex "your prompt"
 ```
 
@@ -303,14 +303,14 @@ codex "your prompt"
 {
   "agents": {
     "defaults": {
-      "model": { "primary": "omniroute/if/kimi-k2.7-code" }
+      "model": { "primary": "agentproxy/if/kimi-k2.7-code" }
     }
   },
   "models": {
     "providers": {
-      "omniroute": {
+      "agentproxy": {
         "baseUrl": "http://localhost:20128/v1",
-        "apiKey": "your-omniroute-api-key",
+        "apiKey": "your-agentproxy-api-key",
         "api": "openai-completions",
         "models": [{ "id": "if/kimi-k2.7-code", "name": "Kimi K2.7 Code" }]
       }
@@ -337,28 +337,28 @@ API-ის გასაღები: [მართვის პანელი�
 ### გლობალური npm-ინსტალაცია (რეკომენდებული)
 
 ```bash
-npm install -g omniroute
+npm install -g agentproxy
 
 # შექმენით კონფიგურაციის დირექტორია
-mkdir -p ~/.omniroute
+mkdir -p ~/.agentproxy
 
 # შექმენით .env ფაილი (იხილეთ .env.example)
-cp .env.example ~/.omniroute/.env
+cp .env.example ~/.agentproxy/.env
 
 # გაუშვით სერვერი
-omniroute
+agentproxy
 # ან მორგებული პორტით:
-omniroute --port 3000
+agentproxy --port 3000
 ```
 
-CLI ავტომატურად ტვირთავს `.env`-ს `~/.omniroute/.env`-დან ან `./.env`-დან.
+CLI ავტომატურად ტვირთავს `.env`-ს `~/.agentproxy/.env`-დან ან `./.env`-დან.
 
 ### სისტემურ პანელში მუშაობის რეჟიმი
 
 გაუშვით AgentProxy სისტემურ პანელში:
 
 ```bash
-omniroute serve --tray
+agentproxy serve --tray
 ```
 
 ბრძანება მუშაობას ასრულებს მას შემდეგ, რაც სერვერი და სისტემური პანელის ხატულა მზად იქნება.
@@ -385,7 +385,7 @@ omniroute serve --tray
 ჩართეთ ავტომატური გაშვება სისტემაში მომდევნო შესვლისას:
 
 ```bash
-omniroute autostart enable
+agentproxy autostart enable
 ```
 
 ავტომატური გაშვება macOS-ზე, Windows-ზე და გრაფიკულ Linux-სესიებში სისტემურ პანელში მუშაობის რეჟიმს იყენებს. გრაფიკული გარემოს გარეშე Linux იყენებს არსებულ systemd-ის მომხმარებლის სერვისს.
@@ -393,7 +393,7 @@ omniroute autostart enable
 გამორთეთ სისტემაში შესვლისას ავტომატური გაშვება:
 
 ```bash
-omniroute autostart disable
+agentproxy autostart disable
 ```
 
 ### დეინსტალაცია
@@ -402,10 +402,10 @@ omniroute autostart disable
 
 | ბრძანება                 | მოქმედება                                                                                                    |
 | ------------------------ | ------------------------------------------------------------------------------------------------------------ |
-| `npm run uninstall`      | შლის სისტემურ აპლიკაციას, მაგრამ `~/.omniroute`-ში **ინარჩუნებს თქვენს მონაცემთა ბაზასა და კონფიგურაციებს**. |
+| `npm run uninstall`      | შლის სისტემურ აპლიკაციას, მაგრამ `~/.agentproxy`-ში **ინარჩუნებს თქვენს მონაცემთა ბაზასა და კონფიგურაციებს**. |
 | `npm run uninstall:full` | შლის აპლიკაციას და სამუდამოდ **შლის ყველა კონფიგურაციას, გასაღებსა და მონაცემთა ბაზას**.                     |
 
-> შენიშვნა: ამ ბრძანებების გასაშვებად გადადით AgentProxy-ის პროექტის საქაღალდეში (თუ მისი კლონირება მოახდინეთ) და გაუშვით ისინი. ალტერნატიულად, თუ ის გლობალურადაა დაინსტალირებული, შეგიძლიათ უბრალოდ გაუშვათ `npm uninstall -g omniroute`.
+> შენიშვნა: ამ ბრძანებების გასაშვებად გადადით AgentProxy-ის პროექტის საქაღალდეში (თუ მისი კლონირება მოახდინეთ) და გაუშვით ისინი. ალტერნატიულად, თუ ის გლობალურადაა დაინსტალირებული, შეგიძლიათ უბრალოდ გაუშვათ `npm uninstall -g agentproxy`.
 
 ### VPS-ზე განთავსება
 
@@ -415,7 +415,7 @@ cd AgentProxy && npm install && npm run build
 
 export JWT_SECRET="your-secure-secret-change-this"
 export INITIAL_PASSWORD="your-password"
-export DATA_DIR="/var/lib/omniroute"
+export DATA_DIR="/var/lib/agentproxy"
 export PORT="20128"
 export HOSTNAME="0.0.0.0"
 export NODE_ENV="production"
@@ -423,7 +423,7 @@ export NEXT_PUBLIC_BASE_URL="http://localhost:20128"
 export API_KEY_SECRET="endpoint-proxy-api-key-secret"
 
 npm run start
-# ან: pm2 start npm --name omniroute -- start
+# ან: pm2 start npm --name agentproxy -- start
 ```
 
 ### PM2-ით განთავსება (მეხსიერების მცირე მოხმარება)
@@ -432,10 +432,10 @@ npm run start
 
 ```bash
 # 512MB ლიმიტით (ნაგულისხმევი)
-pm2 start npm --name omniroute -- start
+pm2 start npm --name agentproxy -- start
 
 # ან მორგებული მეხსიერების ლიმიტით
-OMNIROUTE_MEMORY_MB=512 pm2 start npm --name omniroute -- start
+AGENTPROXY_MEMORY_MB=512 pm2 start npm --name agentproxy -- start
 
 # ან ecosystem.config.js-ის გამოყენებით
 pm2 start ecosystem.config.js
@@ -447,12 +447,12 @@ pm2 start ecosystem.config.js
 module.exports = {
   apps: [
     {
-      name: "omniroute",
+      name: "agentproxy",
       script: "npm",
       args: "start",
       env: {
         NODE_ENV: "production",
-        OMNIROUTE_MEMORY_MB: "512",
+        AGENTPROXY_MEMORY_MB: "512",
         JWT_SECRET: "your-secret",
         INITIAL_PASSWORD: "your-password",
       },
@@ -467,10 +467,10 @@ module.exports = {
 
 ```bash
 # ააგეთ იმიჯი (ნაგულისხმევი = runner-cli წინასწარ დაინსტალირებული codex/claude/droid-ით)
-docker build -t omniroute:cli .
+docker build -t agentproxy:cli .
 
 # პორტატიული რეჟიმი (რეკომენდებული)
-docker run -d --name omniroute -p 20128:20128 --env-file ./.env -v omniroute-data:/app/data omniroute:cli
+docker run -d --name agentproxy -p 20128:20128 --env-file ./.env -v agentproxy-data:/app/data agentproxy:cli
 ```
 
 CLI-ის ბინარულ ფაილებთან ჰოსტში ინტეგრირებული რეჟიმის შესახებ იხილეთ Docker-ის განყოფილება ძირითად დოკუმენტაციაში.
@@ -483,8 +483,8 @@ Void Linux-ის მომხმარებლებს შეუძლია�
 <summary><b>xbps-src-ის შაბლონის ნახვა</b></summary>
 
 ```bash
-# შაბლონის ფაილი 'omniroute'-ისთვის
-pkgname=omniroute
+# შაბლონის ფაილი 'agentproxy'-ისთვის
+pkgname=agentproxy
 version=3.8.0
 revision=1
 hostmakedepends="nodejs python3 make"
@@ -495,8 +495,8 @@ license="MIT"
 homepage="https://github.com/diegosouzapw/AgentProxy"
 distfiles="https://github.com/diegosouzapw/AgentProxy/archive/refs/tags/v${version}.tar.gz"
 checksum=009400afee90a9f32599d8fe734145cfd84098140b7287990183dde45ae2245b
-system_accounts="_omniroute"
-omniroute_homedir="/var/lib/omniroute"
+system_accounts="_agentproxy"
+agentproxy_homedir="/var/lib/agentproxy"
 export NODE_ENV=production
 export npm_config_engine_strict=false
 export npm_config_loglevel=error
@@ -546,26 +546,26 @@ do_check() {
 }
 
 do_install() {
-	vmkdir usr/lib/omniroute/.next
-	vcopy .next/standalone/. usr/lib/omniroute/.next/standalone
+	vmkdir usr/lib/agentproxy/.next
+	vcopy .next/standalone/. usr/lib/agentproxy/.next/standalone
 
 	# ინსტალაციის შემდგომი ჰუკის მიერ Next.js-ის აპის როუტერის ცარიელი დირექტორიების წაშლის თავიდან აცილება
 	for _d in \
 		.next/standalone/.next/server/app/dashboard \
 		.next/standalone/.next/server/app/dashboard/settings \
 		.next/standalone/.next/server/app/dashboard/providers; do
-		touch "${DESTDIR}/usr/lib/omniroute/${_d}/.keep"
+		touch "${DESTDIR}/usr/lib/agentproxy/${_d}/.keep"
 	done
 
-	cat > "${WRKDIR}/omniroute" <<'EOF'
+	cat > "${WRKDIR}/agentproxy" <<'EOF'
 #!/bin/sh
 export PORT="${PORT:-20128}"
-export DATA_DIR="${DATA_DIR:-${XDG_DATA_HOME:-${HOME}/.local/share}/omniroute}"
+export DATA_DIR="${DATA_DIR:-${XDG_DATA_HOME:-${HOME}/.local/share}/agentproxy}"
 export APP_LOG_TO_FILE="${APP_LOG_TO_FILE:-false}"
 mkdir -p "${DATA_DIR}"
-exec node /usr/lib/omniroute/.next/standalone/server.js "$@"
+exec node /usr/lib/agentproxy/.next/standalone/server.js "$@"
 EOF
-	vbin "${WRKDIR}/omniroute"
+	vbin "${WRKDIR}/agentproxy"
 }
 
 post_install() {
@@ -579,14 +579,14 @@ post_install() {
 
 | ცვლადი                                  | ნაგულისხმევი მნიშვნელობა                    | აღწერა                                                                                                                                                  |
 | --------------------------------------- | ------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `JWT_SECRET`                            | `omniroute-default-secret-change-me`        | JWT-ის ხელმოწერის საიდუმლო გასაღები (**შეცვალეთ საწარმოო გარემოში**)                                                                                    |
+| `JWT_SECRET`                            | `agentproxy-default-secret-change-me`        | JWT-ის ხელმოწერის საიდუმლო გასაღები (**შეცვალეთ საწარმოო გარემოში**)                                                                                    |
 | `INITIAL_PASSWORD`                      | `CHANGEME`                                  | პირველი შესვლის პაროლი                                                                                                                                  |
-| `DATA_DIR`                              | `~/.omniroute`                              | მონაცემთა დირექტორია (მონაცემთა ბაზა, გამოყენების მონაცემები, ჟურნალები)                                                                                |
+| `DATA_DIR`                              | `~/.agentproxy`                              | მონაცემთა დირექტორია (მონაცემთა ბაზა, გამოყენების მონაცემები, ჟურნალები)                                                                                |
 | `PORT`                                  | ფრეიმვორკის ნაგულისხმევი მნიშვნელობა        | სერვისის პორტი (მაგალითებში — `20128`)                                                                                                                  |
 | `HOSTNAME`                              | ფრეიმვორკის ნაგულისხმევი მნიშვნელობა        | მისაბმელი ჰოსტი (Docker-ის ნაგულისხმევი მნიშვნელობაა `0.0.0.0`)                                                                                         |
 | `NODE_ENV`                              | შესრულების გარემოს ნაგულისხმევი მნიშვნელობა | განთავსებისთვის მიუთითეთ `production`                                                                                                                   |
 | `NEXT_PUBLIC_BASE_URL`                  | `http://localhost:20128`                    | საჯარო საბაზისო URL, რომელიც აისახება მართვის პანელზე და ხელმისაწვდომია სერვერისთვის (ანაცვლებს მოძველებულ `BASE_URL`-ს)                                |
-| `NEXT_PUBLIC_CLOUD_URL`                 | `https://omniroute.dev`                     | ღრუბელთან სინქრონიზაციის ბოლო წერტილის საბაზისო URL (ანაცვლებს მოძველებულ `CLOUD_URL`-ს)                                                                |
+| `NEXT_PUBLIC_CLOUD_URL`                 | `https://agentproxy.online`                     | ღრუბელთან სინქრონიზაციის ბოლო წერტილის საბაზისო URL (ანაცვლებს მოძველებულ `CLOUD_URL`-ს)                                                                |
 | `API_KEY_SECRET`                        | `endpoint-proxy-api-key-secret`             | HMAC-ის საიდუმლო გასაღები გენერირებული API გასაღებებისთვის                                                                                              |
 | `REQUIRE_API_KEY`                       | `false`                                     | `/v1/*`-ზე Bearer API გასაღების სავალდებულო გამოყენება                                                                                                  |
 | `ALLOW_API_KEY_REVEAL`                  | `false`                                     | ავტორიზებულ მართვის პანელის მომხმარებლებს მოთხოვნისამებრ შენახული API გასაღებების სრული მნიშვნელობების ნახვის უფლება                                    |
@@ -596,7 +596,7 @@ post_install() {
 | `AUTH_COOKIE_SECURE`                    | `false`                                     | ავტორიზაციის ქუქის `Secure` ატრიბუტის იძულებით გამოყენება (HTTPS უკუ-პროქსის უკან)                                                                      |
 | `CLOUDFLARED_BIN`                       | არ არის დაყენებული                          | მართული ჩამოტვირთვის ნაცვლად არსებული `cloudflared` ბინარული ფაილის გამოყენება                                                                          |
 | `CLOUDFLARED_PROTOCOL`                  | `http2`                                     | მართული Quick Tunnels-ის ტრანსპორტი (`http2`, `quic` ან `auto`)                                                                                         |
-| `OMNIROUTE_MEMORY_MB`                   | `512`                                       | Node.js-ის heap-ის ლიმიტი MB-ში                                                                                                                         |
+| `AGENTPROXY_MEMORY_MB`                   | `512`                                       | Node.js-ის heap-ის ლიმიტი MB-ში                                                                                                                         |
 | `PROMPT_CACHE_MAX_SIZE`                 | `50`                                        | მოთხოვნების კეშის ჩანაწერების მაქსიმალური რაოდენობა                                                                                                     |
 | `SEMANTIC_CACHE_MAX_SIZE`               | `100`                                       | სემანტიკური კეშის ჩანაწერების მაქსიმალური რაოდენობა                                                                                                     |
 
@@ -657,7 +657,7 @@ post_install() {
 
 **სხვა თავსებადი პროვაიდერები** (შერჩეული): `cohere`, `databricks`, `snowflake`, `together`, `vertex`, `alibaba`, `alibaba-cn`, `bedrock` (`aws-bedrock`-ის მეშვეობით), `azure-ai`, `openrouter` (გამჭოლი კატალოგი), `siliconflow`, `hyperbolic`, `huggingface`, `featherless-ai`, `cloudflare-ai`, `scaleway`, `deepinfra`, `vercel-ai-gateway`, `bazaarlink`, `friendliai`, `nous-research`, `reka`, `volcengine`, `ai21`, `gigachat`. თითოეული საკუთარ მოდელების სიას ინახავს `providerRegistry.ts`-ში და შეიძლება ავტომატურად სინქრონდეს, როდესაც პროვაიდერი `/models` საბოლოო წერტილს ხელმისაწვდომს ხდის.
 
-**შენიშვნა მოდელის ID-ების შესახებ:** AgentProxy იყენებს პროვაიდერის ნატიურ ID-ებს (`claude-opus-4-8`, `gpt-5.5`, `glm-5.1`, `MiniMax-M2.7`, `kimi-k2.5`, `grok-4.20-0309-reasoning`). ზოგიერთი ID შეიცავს წერტილით გამოყოფილ ვერსიებს, რადგან გარე API მათ სწორედ ამ ფორმატით მოითხოვს. თუ მოდელი ზემოთ არ არის ჩამოთვლილი, ხელმისაწვდომობის დასადასტურებლად გაუშვით `omniroute models --search <term>` ან მიმართეთ `GET /api/models/catalog`-ს.
+**შენიშვნა მოდელის ID-ების შესახებ:** AgentProxy იყენებს პროვაიდერის ნატიურ ID-ებს (`claude-opus-4-8`, `gpt-5.5`, `glm-5.1`, `MiniMax-M2.7`, `kimi-k2.5`, `grok-4.20-0309-reasoning`). ზოგიერთი ID შეიცავს წერტილით გამოყოფილ ვერსიებს, რადგან გარე API მათ სწორედ ამ ფორმატით მოითხოვს. თუ მოდელი ზემოთ არ არის ჩამოთვლილი, ხელმისაწვდომობის დასადასტურებლად გაუშვით `agentproxy models --search <term>` ან მიმართეთ `GET /api/models/catalog`-ს.
 
 </details>
 
@@ -695,16 +695,16 @@ curl -X POST http://localhost:20128/api/provider-models \
 
 ```bash
 # gateway-a
-OMNIROUTE_INSTANCE_ID=gateway-a
-OMNIROUTE_PEER_URLS=http://gateway-b:20128/v1
-OMNIROUTE_PEER_MAX_HOPS=4
+AGENTPROXY_INSTANCE_ID=gateway-a
+AGENTPROXY_PEER_URLS=http://gateway-b:20128/v1
+AGENTPROXY_PEER_MAX_HOPS=4
 ```
 
 ```bash
 # gateway-b
-OMNIROUTE_INSTANCE_ID=gateway-b
-OMNIROUTE_PEER_URLS=http://gateway-a:20128/v1
-OMNIROUTE_PEER_MAX_HOPS=4
+AGENTPROXY_INSTANCE_ID=gateway-b
+AGENTPROXY_PEER_URLS=http://gateway-a:20128/v1
+AGENTPROXY_PEER_MAX_HOPS=4
 ```
 
 `X-AgentProxy-Peer-Trace` სათაურს მხოლოდ აშკარად ნებადართული კვანძის URL-ზე გაგზავნილი მოთხოვნები იღებს. კარიბჭე განმეორებულ ინსტანციის ID-ს ან ამოწურულ გადასვლათა
@@ -1095,7 +1095,7 @@ AgentProxy-ს მოჰყვება **შეფასებებზე დ�
 
 ```bash
 curl -X POST http://localhost:20128/v1/chat/completions \
-  -H "Authorization: Bearer $OMNIROUTE_KEY" \
+  -H "Authorization: Bearer $AGENTPROXY_KEY" \
   -H "Content-Type: application/json" \
   -d '{
     "model": "auto/coding",
@@ -1116,7 +1116,7 @@ AgentProxy ერთდროულად არის **MCP სერვერ�
 
 - **SSE**: `http://localhost:20128/api/mcp/sse`
 - **ნაკადური HTTP**: `http://localhost:20128/api/mcp/stream`
-- **stdio**: `omniroute --mcp` (IDE-ის დანამატებისთვის, რომლებიც stdio-ს ამჯობინებენ)
+- **stdio**: `agentproxy --mcp` (IDE-ის დანამატებისთვის, რომლებიც stdio-ს ამჯობინებენ)
 
 ### Claude Desktop-ის დაკავშირება
 
@@ -1125,8 +1125,8 @@ AgentProxy ერთდროულად არის **MCP სერვერ�
 ```json
 {
   "mcpServers": {
-    "omniroute": {
-      "command": "omniroute",
+    "agentproxy": {
+      "command": "agentproxy",
       "args": ["--mcp"]
     }
   }
@@ -1202,23 +1202,23 @@ AgentProxy ინტეგრირდება ღრუბლოვან პ�
 ```bash
 # პროვაიდერების სიის ჩვენება
 curl http://localhost:20128/api/providers \
-  -H "Authorization: Bearer $OMNIROUTE_MANAGE_KEY"
+  -H "Authorization: Bearer $AGENTPROXY_MANAGE_KEY"
 
 # პროვაიდერთან კავშირის დამატება
 curl -X POST http://localhost:20128/api/providers \
-  -H "Authorization: Bearer $OMNIROUTE_MANAGE_KEY" \
+  -H "Authorization: Bearer $AGENTPROXY_MANAGE_KEY" \
   -H "Content-Type: application/json" \
   -d '{ "provider": "openai", "apiKey": "sk-...", "name": "main" }'
 
 # კომბინაციის შექმნა
 curl -X POST http://localhost:20128/api/combos \
-  -H "Authorization: Bearer $OMNIROUTE_MANAGE_KEY" \
+  -H "Authorization: Bearer $AGENTPROXY_MANAGE_KEY" \
   -H "Content-Type: application/json" \
   -d '{ "name": "premium", "strategy": "priority", "models": [{ "model": "cc/claude-opus-4-7" }, { "model": "glm/glm-5.1" }] }'
 
 # API გასაღებების სიის ჩვენება/შექმნა
-curl http://localhost:20128/api/keys -H "Authorization: Bearer $OMNIROUTE_MANAGE_KEY"
-curl -X POST http://localhost:20128/api/keys -H "Authorization: Bearer $OMNIROUTE_MANAGE_KEY" \
+curl http://localhost:20128/api/keys -H "Authorization: Bearer $AGENTPROXY_MANAGE_KEY"
+curl -X POST http://localhost:20128/api/keys -H "Authorization: Bearer $AGENTPROXY_MANAGE_KEY" \
   -d '{ "name": "ci-bot", "scopes": ["chat"] }'
 ```
 
@@ -1228,32 +1228,32 @@ curl -X POST http://localhost:20128/api/keys -H "Authorization: Bearer $OMNIROUT
 
 ## 💻 შიდა CLI
 
-AgentProxy-ს მოჰყვება შიდა CLI (`omniroute …`) კონფიგურაციისთვის, დიაგნოსტიკისა და გაშვების პროცესის მართვისთვის. ეს **განსხვავდება მართვის პანელში არსებული „CLI Tools“ გვერდისგან**, რომელიც აკონფიგურირებს მესამე მხარის CLI-ებს (Claude Code, Cursor, Codex, Cline, …), რათა მათ AgentProxy-თან კომუნიკაცია შეძლონ.
+AgentProxy-ს მოჰყვება შიდა CLI (`agentproxy …`) კონფიგურაციისთვის, დიაგნოსტიკისა და გაშვების პროცესის მართვისთვის. ეს **განსხვავდება მართვის პანელში არსებული „CLI Tools“ გვერდისგან**, რომელიც აკონფიგურირებს მესამე მხარის CLI-ებს (Claude Code, Cursor, Codex, Cline, …), რათა მათ AgentProxy-თან კომუნიკაცია შეძლონ.
 
 ```bash
-omniroute setup                    # ინტერაქტიული ოსტატი (პაროლი, პროვაიდერები, კომბინაციები)
-omniroute setup --non-interactive  # მოსახერხებელია CI-სთვის
-omniroute doctor                   # მდგომარეობის დიაგნოსტიკა (მონაცემთა დირექტორია, DB, პროვაიდერები, პორტები)
-omniroute providers available      # მხარდაჭერილი პროვაიდერების სიის ჩვენება
-omniroute providers list           # კონფიგურირებული კავშირების სიის ჩვენება
-omniroute providers test <id>      # პროვაიდერის კავშირის რეალურ დროში შემოწმება
-omniroute combos list              # კომბინაციების სიის ჩვენება
-omniroute combos switch <name>     # ნაგულისხმევი კომბინაციის დაყენება
-omniroute models                   # ხელმისაწვდომი მოდელების სიის ჩვენება (--json, --search)
-omniroute keys add | list | remove # API გასაღებების მართვა ტერმინალიდან
-omniroute backup                   # კონფიგურაციისა და DB-ის სარეზერვო ასლის შექმნა
-omniroute restore [<timestamp>]    # სარეზერვო ასლიდან აღდგენა
-omniroute health                   # მდგომარეობის დეტალური ინფორმაცია (ამომრთველები, კეში, მეხსიერება)
-omniroute quota                    # პროვაიდერის კვოტის გამოყენება
-omniroute mcp status               # MCP სერვერის სტატუსი
-omniroute a2a status               # A2A სერვერის სტატუსი
-omniroute tunnel list|create|stop  # Cloudflare/Tailscale/ngrok გვირაბები
-omniroute reset-password           # ადმინისტრატორის პაროლის გადაყენება
-omniroute --mcp                    # MCP სერვერის გაშვება stdio-ს მეშვეობით
-omniroute --port 3000              # სერვერის გაშვება მორგებულ პორტზე
+agentproxy setup                    # ინტერაქტიული ოსტატი (პაროლი, პროვაიდერები, კომბინაციები)
+agentproxy setup --non-interactive  # მოსახერხებელია CI-სთვის
+agentproxy doctor                   # მდგომარეობის დიაგნოსტიკა (მონაცემთა დირექტორია, DB, პროვაიდერები, პორტები)
+agentproxy providers available      # მხარდაჭერილი პროვაიდერების სიის ჩვენება
+agentproxy providers list           # კონფიგურირებული კავშირების სიის ჩვენება
+agentproxy providers test <id>      # პროვაიდერის კავშირის რეალურ დროში შემოწმება
+agentproxy combos list              # კომბინაციების სიის ჩვენება
+agentproxy combos switch <name>     # ნაგულისხმევი კომბინაციის დაყენება
+agentproxy models                   # ხელმისაწვდომი მოდელების სიის ჩვენება (--json, --search)
+agentproxy keys add | list | remove # API გასაღებების მართვა ტერმინალიდან
+agentproxy backup                   # კონფიგურაციისა და DB-ის სარეზერვო ასლის შექმნა
+agentproxy restore [<timestamp>]    # სარეზერვო ასლიდან აღდგენა
+agentproxy health                   # მდგომარეობის დეტალური ინფორმაცია (ამომრთველები, კეში, მეხსიერება)
+agentproxy quota                    # პროვაიდერის კვოტის გამოყენება
+agentproxy mcp status               # MCP სერვერის სტატუსი
+agentproxy a2a status               # A2A სერვერის სტატუსი
+agentproxy tunnel list|create|stop  # Cloudflare/Tailscale/ngrok გვირაბები
+agentproxy reset-password           # ადმინისტრატორის პაროლის გადაყენება
+agentproxy --mcp                    # MCP სერვერის გაშვება stdio-ს მეშვეობით
+agentproxy --port 3000              # სერვერის გაშვება მორგებულ პორტზე
 ```
 
-რჩევა: გამოიყენეთ `omniroute doctor --json` თქვენს მონიტორინგის ხელსაწყოსთან ერთად, რათა მიიღოთ შეტყობინებები პროვაიდერების გაუმართავი კავშირების შესახებ.
+რჩევა: გამოიყენეთ `agentproxy doctor --json` თქვენს მონიტორინგის ხელსაწყოსთან ერთად, რათა მიიღოთ შეტყობინებები პროვაიდერების გაუმართავი კავშირების შესახებ.
 
 ---
 
@@ -1302,7 +1302,7 @@ npm run build:linux    # Linux (.AppImage)
 
 | ცვლადი                | ნაგულისხმევი | აღწერა                                  |
 | --------------------- | ------------ | --------------------------------------- |
-| `OMNIROUTE_PORT`      | `20128`      | სერვერის პორტი                          |
-| `OMNIROUTE_MEMORY_MB` | `512`        | Node.js-ის heap-ის ლიმიტი (64–16384 MB) |
+| `AGENTPROXY_PORT`      | `20128`      | სერვერის პორტი                          |
+| `AGENTPROXY_MEMORY_MB` | `512`        | Node.js-ის heap-ის ლიმიტი (64–16384 MB) |
 
 📖 სრული დოკუმენტაცია: [`electron/README.md`](../../electron/README.md)

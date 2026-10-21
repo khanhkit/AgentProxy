@@ -77,7 +77,7 @@ AgentProxy ਤਰਜੀਹ ਅਨੁਸਾਰ ਕ੍ਰਮਬੱਧ 3 ਬਿਲ�
 | `pii-masker`       | 10    | ਕਾਲ ਤੋਂ ਪਹਿਲਾਂ+ਬਾਅਦ PII ਸੰਪਾਦਨ (ਈਮੇਲ, ਫ਼ੋਨ, CPF, CNPJ, ਕ੍ਰੈਡਿਟ ਕਾਰਡ, SSN)         |
 | `prompt-injection` | 20    | ਓਵਰਰਾਈਡ/ਭੂਮਿਕਾ-ਹਾਈਜੈਕ/ਜੇਲਬ੍ਰੇਕ/ਲੀਕ ਪੈਟਰਨਾਂ ਦਾ ਪਤਾ ਲਗਾਉਂਦਾ ਹੈ                      |
 
-ਕਸਟਮ ਸੁਰੱਖਿਆ ਪਾਬੰਦੀਆਂ `registerGuardrail(new MyGuardrail())` ਰਾਹੀਂ ਰਜਿਸਟਰ ਹੁੰਦੀਆਂ ਹਨ। ਮਾਡਲ ਫੇਲ-ਓਪਨ ਹੈ (ਅਪਵਾਦ ਕਦੇ ਵੀ ਟ੍ਰੈਫਿਕ ਨੂੰ ਬਲੌਕ ਨਹੀਂ ਕਰਦੇ)। ਹਰ ਬੇਨਤੀ ਲਈ `x-omniroute-disabled-guardrails` ਹੈਡਰ ਰਾਹੀਂ ਬਾਹਰ ਰਹਿਣ ਦੀ ਚੋਣ। → [`docs/security/GUARDRAILS.md`](docs/security/GUARDRAILS.md) ਵੇਖੋ।
+ਕਸਟਮ ਸੁਰੱਖਿਆ ਪਾਬੰਦੀਆਂ `registerGuardrail(new MyGuardrail())` ਰਾਹੀਂ ਰਜਿਸਟਰ ਹੁੰਦੀਆਂ ਹਨ। ਮਾਡਲ ਫੇਲ-ਓਪਨ ਹੈ (ਅਪਵਾਦ ਕਦੇ ਵੀ ਟ੍ਰੈਫਿਕ ਨੂੰ ਬਲੌਕ ਨਹੀਂ ਕਰਦੇ)। ਹਰ ਬੇਨਤੀ ਲਈ `x-agentproxy-disabled-guardrails` ਹੈਡਰ ਰਾਹੀਂ ਬਾਹਰ ਰਹਿਣ ਦੀ ਚੋਣ। → [`docs/security/GUARDRAILS.md`](docs/security/GUARDRAILS.md) ਵੇਖੋ।
 
 ### 🧠 ਪ੍ਰੌਂਪਟ ਇੰਜੈਕਸ਼ਨ ਗਾਰਡ
 
@@ -182,15 +182,15 @@ STORAGE_ENCRYPTION_KEY=$(openssl rand -hex 32)
 
 ```bash
 docker run -d \
-  --name omniroute \
+  --name agentproxy \
   --restart unless-stopped \
   --read-only \
   -p 20128:20128 \
-  -v omniroute-data:/app/data \
+  -v agentproxy-data:/app/data \
   -e JWT_SECRET="$(openssl rand -base64 48)" \
   -e API_KEY_SECRET="$(openssl rand -hex 32)" \
   -e STORAGE_ENCRYPTION_KEY="$(openssl rand -hex 32)" \
-  diegosouzapw/omniroute:latest
+  diegosouzapw/agentproxy:latest
 ```
 
 ---
@@ -224,7 +224,7 @@ docker run -d \
 
 > **ਦਾਇਰਾ ਨੋਟ:** ਰਿਪੋਜ਼ਟਰੀ ਰੂਟ ਵਿੱਚ ਮੌਜੂਦ `socket.yml` ਸਿਰਫ਼ ਪ੍ਰਕਾਸ਼ਿਤ npm ਆਰਟੀਫੈਕਟ ਦੇ Socket.dev ਦੇ ਰਜਿਸਟਰੀ-ਪਾਸੇ ਪੋਸਟ-ਪਬਲਿਸ਼ ਸਕੈਨ ਲਈ `projectIgnorePaths` ਨੂੰ ਆਕਾਰ ਦਿੰਦੀ ਹੈ — ਇਹ ਲਾਗੂ ਕੀਤਾ ਗਿਆ CI/PR ਮਰਜ ਗੇਟ ਨਹੀਂ ਹੈ। `.github/workflows` ਵਿੱਚ ਕੋਈ ਵਰਕਫਲੋ, ਕੋਈ `package.json` ਸਕ੍ਰਿਪਟ, ਅਤੇ ਕੋਈ `Makefile` ਟਾਰਗੇਟ Socket.dev ਨੂੰ ਇਨਵੋਕ ਨਹੀਂ ਕਰਦਾ।
 
-ਪ੍ਰਕਾਸ਼ਿਤ `omniroute` npm ਆਰਟੀਫੈਕਟ Next.js `output: "standalone"`
+ਪ੍ਰਕਾਸ਼ਿਤ `agentproxy` npm ਆਰਟੀਫੈਕਟ Next.js `output: "standalone"`
 ਬਿਲਡ ਨੂੰ ਬੰਡਲ ਕਰਦਾ ਹੈ, ਜਿਸਦਾ ਅਰਥ ਹੈ ਕਿ ਹਰ ਰੂਟ ਹੈਂਡਲਰ — ਦਸਤਾਵੇਜ਼ਬੱਧ ਵਿਸ਼ੇਸ਼ ਅਧਿਕਾਰਾਂ ਵਾਲੀਆਂ
 ਵਿਸ਼ੇਸ਼ਤਾਵਾਂ (MITM, Zed ਇੰਪੋਰਟ, Cloud Sync, ਐਂਬੈਡਿਡ ਸਰਵਿਸ ਸੁਪਰਵਾਈਜ਼ਰ) ਸਮੇਤ — ਅੰਤ ਵਿੱਚ
 `.next/server/*.js` ਮਿਨੀਫਾਈਡ ਚੰਕਾਂ ਵਿੱਚ ਪਹੁੰਚ ਜਾਂਦਾ ਹੈ। ਹਿਊਰਿਸਟਿਕ ਸਪਲਾਈ-ਚੇਨ ਸਕੈਨਰ
@@ -247,7 +247,7 @@ GitHub App ਦੁਆਰਾ ਚਲਾਇਆ ਜਾਂਦਾ ਹੈ, ਨਾ ਕਿ
   ਉਸੇ ਦਸਤਾਵੇਜ਼ ਵੱਲ ਵਾਪਸ ਸੰਕੇਤ ਕਰਦੇ ਹਨ।
 
 ਉਹਨਾਂ ਵਰਤੋਂਕਾਰਾਂ ਲਈ ਜਿਨ੍ਹਾਂ ਦੀ ਪਾਈਪਲਾਈਨ ਚੇਤਾਵਨੀ ਨੂੰ ਢਿੱਲ ਨਹੀਂ ਦੇ ਸਕਦੀ: ਇਸ ਨਾਲ ਬਿਲਡ ਕਰੋ
-`OMNIROUTE_BUILD_PROFILE=minimal npm run build`। ਇਹ ਚਾਰ ਸੰਵੇਦਨਸ਼ੀਲ
+`AGENTPROXY_BUILD_PROFILE=minimal npm run build`। ਇਹ ਚਾਰ ਸੰਵੇਦਨਸ਼ੀਲ
 ਮੋਡੀਊਲਾਂ ਨੂੰ ਅਜਿਹੇ ਸਟੱਬਾਂ ਨਾਲ ਬਦਲ ਦਿੰਦਾ ਹੈ ਜੋ ਰਨਟਾਈਮ 'ਤੇ HTTP 503 `feature-disabled`
 ਵਾਪਸ ਕਰਦੇ ਹਨ, ਇਸ ਲਈ ਵਿਸ਼ੇਸ਼ ਅਧਿਕਾਰਾਂ ਵਾਲੇ ਕੋਡ ਪਾਥ ਬੰਡਲ ਵਿੱਚ ਭੌਤਿਕ ਤੌਰ 'ਤੇ ਮੌਜੂਦ ਨਹੀਂ ਹੁੰਦੇ।
 ਪਬਲਿਸ਼ ਕਰਨ ਦੀ ਵਿਧੀ ਲਈ [`docs/security/SOCKET_DEV_FINDINGS.md`](docs/security/SOCKET_DEV_FINDINGS.md)

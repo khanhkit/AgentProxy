@@ -44,7 +44,7 @@ npm run test:e2e           # አማራጭ ነው፣ ግን ይመከራል
 የWS1.3 ዋስትናን እየጠበቀ (የወጣ token ብቻውን ማተም አይችልም — token የለም) ፕሮጀክቱ እስከ v3.8.48
 ድረስ የነበረውን ሙሉ በሙሉ ራስ-ሰር ሂደት ይመልሳል።
 
-**የአንድ ጊዜ ቅንብር (ባለቤት):** npmjs.com → package `omniroute` → Settings → _Trusted
+**የአንድ ጊዜ ቅንብር (ባለቤት):** npmjs.com → package `agentproxy` → Settings → _Trusted
 Publisher_ → GitHub: owner `diegosouzapw`, repo `AgentProxy`, workflow `npm-publish.yml`
 (environment: የለም)። ይህ እስኪኖር ድረስ ራስ-ሰር ደረጃው በ`ENEEDAUTH` ይወድቃል፦
 በ`publish_mode=staged` (ከታች) ወይም `direct` እንደገና ያስጀምሩ።
@@ -58,7 +58,7 @@ Publisher_ → GitHub: owner `diegosouzapw`, repo `AgentProxy`, workflow `npm-pu
 
 **workflow አረንጓዴ ከሆነ በኋላ የባለቤቱ ሂደት:**
 
-1. `npm stage list omniroute` — የstage idውን ያግኙ (በworkflow ማጠቃለያ ውስጥም ይታተማል)።
+1. `npm stage list agentproxy` — የstage idውን ያግኙ (በworkflow ማጠቃለያ ውስጥም ይታተማል)።
 2. በደረጃ የተቀመጡትን bytes ያረጋግጡ (ይመከራል)፦ `npm stage download <id>`፣ ከዚያ የወረደውን
    tarball በጊዜያዊ prefix ውስጥ ጭነው ያስነሱት (`npm run check:pack-boot` በCI ውስጥ
    ተመሳሳዩን pack→install→boot ውሳኔ በራስ-ሰር ያከናውናል)።
@@ -70,10 +70,10 @@ Publisher_ → GitHub: owner `diegosouzapw`, repo `AgentProxy`, workflow `npm-pu
 ፈጣን `npm publish` ይመልሳል (ይህን በደረጃ ማተሙ ራሱ በትክክል ካልሠራ ብቻ ይጠቀሙ፤ ምክንያቱን ይመዝግቡ)።
 
 **የአንድ ጊዜ ማጠናከሪያ (ባለቤት፣ npmjs.com):** የወጣ ረጅም ዕድሜ ያለው token ከየትኛውም ቦታ
-በቀጥታ `npm publish` ማድረግ እንዳይችል፣ Trusted Publisherን ለ`omniroute`
+በቀጥታ `npm publish` ማድረግ እንዳይችል፣ Trusted Publisherን ለ`agentproxy`
 በstage-only ሁነታ ያዋቅሩ — CI በደረጃ ማስቀመጥ ብቻ ይችላል፤ የሚለቀቀው በባለቤቱ 2FA ብቻ ነው።
 
-**የተበላሸ artifact መመሪያ (ያልተቀየረ):** `npm deprecate omniroute@<bad> "<reason> — use <fixed>"`
+**የተበላሸ artifact መመሪያ (ያልተቀየረ):** `npm deprecate agentproxy@<bad> "<reason> — use <fixed>"`
 እንደ ነባሪ ፈጣን እርምጃ ይጠቀሙ (ደቂቃዎች፣ ሊቀለበስ የሚችል)፤ `npm unpublish`ን በ72h/no-dependents
 መስኮት ውስጥ ብቻ ይጠቀሙ፣ እንዲሁም ፈጽሞ እንደ መጀመሪያ እርምጃ አይጠቀሙት። Docker፦ የስሪት tagን ፈጽሞ እንደገና አይጻፉ — rollback ማለት
 `latest`ን ወደ መጨረሻው ጥሩ digest እንደገና ማመልከት ነው።
@@ -192,7 +192,7 @@ Breaking changes፦ የ`BREAKING CHANGE:` footer ወይም ከscope በኋላ `!
 - [ ] `npm run i18n:check` በ 0 ይወጣል — የትርጉም ሁኔታው (`.i18n-state.json`) ከምንጭ ሰነዶች ጋር ተመሳስሏል (በ strict mode የተለያዩ ምንጮች የሉም፤ ለመጨረሻ ደቂቃ የሰነድ ማስተካከያዎች የ warn-mode ምክር ተቀባይነት አለው፣ ነገር ግን tag ከማድረግ በፊት 0 መሆን አለበት)
 - [ ] `npm run i18n:check-ui-coverage` በ 0 ይወጣል — እያንዳንዱ UI locale ቢያንስ 80% የሽፋን ወለል ላይ ወይም ከዚያ በላይ ነው
 - [ ] `npm run i18n:sync-ui:dry` በሁሉም 42 locales ውስጥ 0 የጎደሉ keys እንዳሉ ሪፖርት ያደርጋል
-- [ ] የእንግሊዝኛ ምንጭ ሰነዶች ከተቀየሩ፣ tag ከማድረግ በፊት `npm run i18n:run` ያሂዱ (በ `.env` ውስጥ `OMNIROUTE_TRANSLATION_API_KEY` ያስፈልጋል)
+- [ ] የእንግሊዝኛ ምንጭ ሰነዶች ከተቀየሩ፣ tag ከማድረግ በፊት `npm run i18n:run` ያሂዱ (በ `.env` ውስጥ `AGENTPROXY_TRANSLATION_API_KEY` ያስፈልጋል)
 - [ ] የትርጉም አስተዋጽኦዎች አነስተኛ ከሆኑ ወደ ቀጣዩ release ሊራዘሙ ይችላሉ (በ CHANGELOG ውስጥ ይከታተሉ)
 
 ### የውሂብ ጎታ ፍልሰቶች
@@ -201,7 +201,7 @@ Breaking changes፦ የ`BREAKING CHANGE:` footer ወይም ከscope በኋላ `!
   - [ ] እያንዳንዱ migration idempotent ነው (`CREATE TABLE IF NOT EXISTS`፣ ወዘተ)
   - [ ] Migrations በ transactions ውስጥ ተጠቃለዋል
   - [ ] በትክክል ተቆጥረዋል (በቅደም ተከተሉ ውስጥ ክፍተት የለም)
-- [ ] በአዲስ ጭነት ላይ ይፈትሹ፦ `~/.omniroute/omniroute.db`ን ሰርዘው `npm run dev`ን ያሂዱ
+- [ ] በአዲስ ጭነት ላይ ይፈትሹ፦ `~/.agentproxy/agentproxy.db`ን ሰርዘው `npm run dev`ን ያሂዱ
 - [ ] በነባር ጭነት ላይ ይፈትሹ፦ DBን ምትኬ ያስቀምጡ፣ migrationን ያሂዱ፣ schemaውን ያረጋግጡ
 - [ ] Migration ሰንጠረዦችን እንደገና የሚጽፍ ከሆነ WAL ፋይሎች (`-wal`፣ `-shm`) በትክክል ተይዘዋል
 
@@ -236,7 +236,7 @@ Repositoryው ሦስት የተለያዩ የውጤት directories ይጠቀማል
 | `.build/` | የBuild መካከለኛ ውጤቶች — የ`next build` ውጤት (`distDir`) | አይ (gitignored) |
 | `dist/`   | ለመላክ ዝግጁ የnpm ጥቅል — በ`assembleStandalone` የሚዋቀር   | አይ (gitignored) |
 
-> **የኦፕሬተር ማስታወሻ፦** የርቀት VPS image directory አሁንም `/usr/lib/node_modules/omniroute/app/` ነው።
+> **የኦፕሬተር ማስታወሻ፦** የርቀት VPS image directory አሁንም `/usr/lib/node_modules/agentproxy/app/` ነው።
 > የተንቀሳቀሰው **በrepository ውስጥ ያለው** የbuild ውጤት ብቻ ነው (`app/` → `dist/`)። የdeploy skills
 > የ`dist/` ይዘቶችን ወደ ርቀት `app/` dir በrsync ያስተላልፋሉ — የVPS path ለውጥ አያስፈልግም።
 
@@ -356,12 +356,12 @@ npm run build:release
 
 ማንኛውንም የv3.8.x ልቀት ከማሰራጨትዎ በፊት እነዚህን ተጨማሪ ንጥሎች ያረጋግጡ፦
 
-- [ ] `omniroute --tray` በmacOS ላይ ይነሳል (systray2 ወደ `~/.omniroute/runtime/` ተጭኗል)
-- [ ] `omniroute --tray` በLinux ላይ ይነሳል (DISPLAY ያስፈልጋል፤ ካልተዋቀረ ተገቢ የስህተት መልዕክት ይሰጣል)
-- [ ] `omniroute --tray` በWindows ላይ ይነሳል (PowerShell NotifyIcon፣ ምንም ተጨማሪ ባይነሪዎች የሉም)
-- [ ] `omniroute config tray enable` ራስ-ሰር የመነሻ ግቤት ይፈጥራል፤ ማሰናከል ያስወግደዋል
-- [ ] `npm install -g omniroute@<this-version>` ከጫና በኋላ ያለ ከባድ መውጫ ይሰራል
-- [ ] የማዘመኛ ዱካው አማራጭ ጥገኞችን ይይዛል፦ `omniroute update --apply` እና ራስ-ሰር አዘማኙ
+- [ ] `agentproxy --tray` በmacOS ላይ ይነሳል (systray2 ወደ `~/.agentproxy/runtime/` ተጭኗል)
+- [ ] `agentproxy --tray` በLinux ላይ ይነሳል (DISPLAY ያስፈልጋል፤ ካልተዋቀረ ተገቢ የስህተት መልዕክት ይሰጣል)
+- [ ] `agentproxy --tray` በWindows ላይ ይነሳል (PowerShell NotifyIcon፣ ምንም ተጨማሪ ባይነሪዎች የሉም)
+- [ ] `agentproxy config tray enable` ራስ-ሰር የመነሻ ግቤት ይፈጥራል፤ ማሰናከል ያስወግደዋል
+- [ ] `npm install -g agentproxy@<this-version>` ከጫና በኋላ ያለ ከባድ መውጫ ይሰራል
+- [ ] የማዘመኛ ዱካው አማራጭ ጥገኞችን ይይዛል፦ `agentproxy update --apply` እና ራስ-ሰር አዘማኙ
       `npm install -g … --include=optional`ን ያስኬዳሉ፣ ስለዚህ `optionalDependencies` (better-sqlite3,
       keytar, tls-client፣ እና llmlingua SLM ስብስብ፦ `@atjsh/llmlingua-2@2.0.5`,
       `js-tiktoken`) ከማዘመኛ በኋላ እንደተጠበቁ ይቆያሉ። የultra `modelPath` SLM ደረጃ tinybert
@@ -371,13 +371,13 @@ npm run build:release
       ኢንስታንስ ይፈታል — ራሱን የቻለው የመከታተያ ጥቅል transformersን ብቻ ያካትታል፣ በተለዋዋጭ ሁኔታ የሚገቡትን
       አማራጮች ግን አያካትትም፤ ስለዚህ ይህ ከሌለ workerው llmlingua-2ን ከroot transformers ጋር
       ይጭናል፣ እና የSLM ደረጃው ያለማሳወቂያ ክፍት ሆኖ ይወድቃል።
-- [ ] `omniroute status` ያለ `.env` ይሰራል (የCLI ቶከን ዱካ፣ loopback ብቻ)
+- [ ] `agentproxy status` ያለ `.env` ይሰራል (የCLI ቶከን ዱካ፣ loopback ብቻ)
 - [ ] `curl http://localhost:20128/api/shutdown` 401 ይመልሳል (ሁልጊዜ የተጠበቀ መስመር)
 - [ ] `curl -H "host: evil.com" http://localhost:20128/api/mcp/sse` 401 ይመልሳል (የloopback ጥበቃ)
 - [ ] የSQLite runtime በመጀመሪያው አሂድ ወደ `bundled` ይፈታል (የታሸገው ባይነሪ ለመድረኩ ትክክለኛ ነው)
 - [ ] `node_modules/better-sqlite3` ሲሰረዝ የSQLite runtime ወደ `runtime` ይመለሳል
 - [ ] ብልህ የMCP ማጣሪያ እውነተኛ `playwright-mcp browser_snapshot` ውጤትን ይጨምቃል (≥50% ቅነሳ)
-- [ ] ሁሉም 10 `skills/omniroute*/SKILL.md` ፋይሎች በጥሬ GitHub URL በይፋ ሊደረስባቸው ይችላል
+- [ ] ሁሉም 10 `skills/agentproxy*/SKILL.md` ፋይሎች በጥሬ GitHub URL በይፋ ሊደረስባቸው ይችላል
 - [ ] የመጀመሪያ ማዋቀሪያ አዋቂው በአዲስ ማዋቀር ላይ "እንዴት እንደሚሰራ" የደረጃ ጉብኝት ደረጃን ያሳያል
 - [ ] የመነሻ ዳሽቦርድ የደረጃ ሽፋን መግብር የተዋቀሩ/ንቁ ብዛቶችን ያሳያል
 

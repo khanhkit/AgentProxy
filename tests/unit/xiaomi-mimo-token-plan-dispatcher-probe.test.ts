@@ -13,7 +13,7 @@ import path from "node:path";
 // getUsageForProvider reaches the monthly usage aggregation (getDbInstance), so
 // DATA_DIR must point at a throwaway dir BEFORE any module that opens the DB is
 // imported, and the handle must be released in test.after — otherwise a
-// standalone run writes under ~/.omniroute and never exits (open DB handle).
+// standalone run writes under ~/.agentproxy and never exits (open DB handle).
 const TMP_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omni-xiaomi-probe-"));
 process.env.DATA_DIR = TMP_DATA_DIR;
 

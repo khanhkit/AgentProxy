@@ -36,7 +36,7 @@ Zagayen v3.7.x → v3.8.0 ya ƙara sarrafa hanya ta atomatik ba tare da saiti ba
 - 🚦 **Rarraba 429 na kowane mai samarwa** + maɓallin `useUpstream429BreakerHints` — ingantaccen halayen mai katsewa ta amfani da alamun iyakance ƙimar tushe na sama
 - 🩺 **Dashboard na lokutan dakatar da samfura** — lura da kullewar kowane samfuri da sake kunna shi da hannu daga UI
 - 🔒 **Gano takardar shaidar Linux ta MITM mai sauyawa** — yana aiki a Debian/Ubuntu, Fedora/RHEL, Arch, da sauran distros
-- 💻 **Rukunin ingantawa na CLI** — umarni sama da 20, ciki har da `omniroute providers`, `omniroute combos`, `omniroute doctor`, `omniroute setup`
+- 💻 **Rukunin ingantawa na CLI** — umarni sama da 20, ciki har da `agentproxy providers`, `agentproxy combos`, `agentproxy doctor`, `agentproxy setup`
 - 🔍 **Gano samfurin embedding na Qdrant** — binciken samfurin ma'ajiyar vector ta atomatik
 - 🔑 **API Keys / Bearer keys masu ikon `manage`** — gudanar da ayyukan mai gudanarwa ta hanyar shirye-shirye ta API
 - 🏥 **Nazarin lafiyar makasudin combo** + **tsararren maginin combo** — lafiyar kowane makasudi da maginin UI don haɗa matakan `(provider, model, connection)`
@@ -226,7 +226,7 @@ Rubutun umarni na cirewa cikin tsabta don duk hanyoyin shigarwa:
 
 | Umarni                   | Aiki                                                                                       |
 | ------------------------ | ------------------------------------------------------------------------------------------ |
-| `npm run uninstall`      | Yana cire manhajar tsarin amma **yana riƙe DB da saitunanku** a cikin `~/.omniroute`.      |
+| `npm run uninstall`      | Yana cire manhajar tsarin amma **yana riƙe DB da saitunanku** a cikin `~/.agentproxy`.      |
 | `npm run uninstall:full` | Yana cire manhajar KUMA yana **goge duk saituna, maɓallai, da ma'ajin bayanai har abada**. |
 
 ---

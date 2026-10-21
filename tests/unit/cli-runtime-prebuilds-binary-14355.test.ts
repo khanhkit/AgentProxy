@@ -15,7 +15,7 @@ import { join } from "node:path";
 const originalDataDir = process.env.DATA_DIR;
 
 async function withFakeDataDir(fn: (dataDir: string) => Promise<void> | void) {
-  const dataDir = mkdtempSync(join(tmpdir(), "omniroute-prebuilds-valid-"));
+  const dataDir = mkdtempSync(join(tmpdir(), "agentproxy-prebuilds-valid-"));
   process.env.DATA_DIR = dataDir;
   try {
     await fn(dataDir);

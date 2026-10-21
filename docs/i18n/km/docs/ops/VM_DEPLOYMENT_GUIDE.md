@@ -89,13 +89,13 @@ ufw enable
 ### 2.1 បង្កើតថតកំណត់រចនាសម្ព័ន្ធ
 
 ```bash
-mkdir -p /opt/omniroute
+mkdir -p /opt/agentproxy
 ```
 
 ### 2.2 បង្កើតឯកសារ environment variables
 
 ```bash
-cat > /opt/omniroute/.env << 'EOF'
+cat > /opt/agentproxy/.env << 'EOF'
 # === សុវត្ថិភាព ===
 JWT_SECRET=CHANGE-TO-A-UNIQUE-64-CHAR-SECRET-KEY
 INITIAL_PASSWORD=YourSecurePassword123!
@@ -103,7 +103,7 @@ API_KEY_SECRET=REPLACE-WITH-ANOTHER-SECRET-KEY
 STORAGE_ENCRYPTION_KEY=REPLACE-WITH-THIRD-SECRET-KEY
 STORAGE_ENCRYPTION_KEY_VERSION=v1
 MACHINE_ID_SALT=CHANGE-TO-A-UNIQUE-SALT
-OMNIROUTE_WS_BRIDGE_SECRET=REPLACE-WITH-WS-BRIDGE-SECRET  # តម្រូវឱ្យមានក្នុង production៖ ប្រើដោយ Codex Responses WS bridge
+AGENTPROXY_WS_BRIDGE_SECRET=REPLACE-WITH-WS-BRIDGE-SECRET  # តម្រូវឱ្យមានក្នុង production៖ ប្រើដោយ Codex Responses WS bridge
 
 # === កម្មវិធី ===
 PORT=20128
@@ -120,11 +120,11 @@ BASE_URL=http://127.0.0.1:20128
 # URL ដែលបង្ហាញដល់ browser និងប្រើសម្រាប់ OAuth callbacks, តំណ dashboard និង URL សាធារណៈដែលបានបង្កើត។
 NEXT_PUBLIC_BASE_URL=https://llms.seudominio.com
 # ជម្រើសកំណត់ជាក់លាក់នូវ public origin ជំនួស សម្រាប់ URL ទ្រព្យសកម្មសាធារណៈដែលបានបង្កើត។
-# OMNIROUTE_PUBLIC_BASE_URL=https://llms.seudominio.com
+# AGENTPROXY_PUBLIC_BASE_URL=https://llms.seudominio.com
 
 # === Cloud Sync (ជាជម្រើស) ===
-# CLOUD_URL=https://cloud.omniroute.online
-# NEXT_PUBLIC_CLOUD_URL=https://cloud.omniroute.online
+# CLOUD_URL=https://agentproxy.online
+# NEXT_PUBLIC_CLOUD_URL=https://agentproxy.online
 EOF
 ```
 
@@ -133,22 +133,22 @@ EOF
 ### 2.3 ចាប់ផ្តើម container
 
 ```bash
-docker pull diegosouzapw/omniroute:latest
+docker pull diegosouzapw/agentproxy:latest
 
 docker run -d \
-  --name omniroute \
+  --name agentproxy \
   --restart unless-stopped \
-  --env-file /opt/omniroute/.env \
+  --env-file /opt/agentproxy/.env \
   -p 20128:20128 \
-  -v omniroute-data:/app/data \
-  diegosouzapw/omniroute:latest
+  -v agentproxy-data:/app/data \
+  diegosouzapw/agentproxy:latest
 ```
 
 ### 2.4 ផ្ទៀងផ្ទាត់ថាវាកំពុងដំណើរការ
 
 ```bash
-docker ps | grep omniroute
-docker logs omniroute --tail 20
+docker ps | grep agentproxy
+docker logs agentproxy --tail 20
 ```
 
 វាគួរតែបង្ហាញ៖ `[DB] SQLite database ready` និង `listening on port 20128`។
@@ -181,7 +181,7 @@ chmod 600 /etc/nginx/ssl/origin.key
 ### 3.2 ការកំណត់រចនាសម្ព័ន្ធ Nginx
 
 ```bash
-cat > /etc/nginx/sites-available/omniroute << 'NGINX'
+cat > /etc/nginx/sites-available/agentproxy << 'NGINX'
 # ម៉ាស៊ីនមេលំនាំដើម — ទប់ស្កាត់ការចូលប្រើដោយផ្ទាល់តាមរយៈ IP
 server {
     listen 80 default_server;
@@ -246,7 +246,7 @@ callbacks និងតំណសាធារណៈដែលបានបង្ក�
 រួមជាមួយការការពារ CSRF ដែលភ្ជាប់នឹង session ដូច្នេះវាមិនត្រូវការ URL មូលដ្ឋានសាធារណៈថេរទេ។ Headers
 `X-Forwarded-*` ខាងលើនៅតែជាទិន្នន័យមេតាសម្រាប់ការកំណត់ផ្លូវដែលមានប្រយោជន៍ ប៉ុន្តែវាមិនមែនជាការជំនួស
 សម្រាប់ការកំណត់ URL សាធារណៈជាក់លាក់នោះទេ នៅពេលដែល OAuth ឬតំណកម្មវិធីរុករកដែលបានបង្កើតត្រូវការវា។ បើកតែ
-`OMNIROUTE_TRUST_PROXY` ប៉ុណ្ណោះ ប្រសិនបើអតិថិជនមិនអាចចូលប្រើ AgentProxy ដោយផ្ទាល់បាន ហើយ proxy របស់អ្នក
+`AGENTPROXY_TRUST_PROXY` ប៉ុណ្ណោះ ប្រសិនបើអតិថិជនមិនអាចចូលប្រើ AgentProxy ដោយផ្ទាល់បាន ហើយ proxy របស់អ្នក
 ដកចេញ/បង្កើតឡើងវិញនូវ headers ដែលបានបញ្ជូនបន្តចូលមក។
 
 ### 3.3 បើកដំណើរការ និងសាកល្បង
@@ -256,7 +256,7 @@ callbacks និងតំណសាធារណៈដែលបានបង្ក�
 rm -f /etc/nginx/sites-enabled/default
 
 # បើកដំណើរការ AgentProxy
-ln -sf /etc/nginx/sites-available/omniroute /etc/nginx/sites-enabled/omniroute
+ln -sf /etc/nginx/sites-available/agentproxy /etc/nginx/sites-enabled/agentproxy
 
 # សាកល្បង និងផ្ទុកឡើងវិញ
 nginx -t && systemctl reload nginx
@@ -300,40 +300,40 @@ curl -sI https://llms.seudominio.com/health
 ### ដំឡើងកំណែថ្មី
 
 ```bash
-docker pull diegosouzapw/omniroute:latest
-docker stop omniroute && docker rm omniroute
-docker run -d --name omniroute --restart unless-stopped \
-  --env-file /opt/omniroute/.env \
+docker pull diegosouzapw/agentproxy:latest
+docker stop agentproxy && docker rm agentproxy
+docker run -d --name agentproxy --restart unless-stopped \
+  --env-file /opt/agentproxy/.env \
   -p 20128:20128 \
-  -v omniroute-data:/app/data \
-  diegosouzapw/omniroute:latest
+  -v agentproxy-data:/app/data \
+  diegosouzapw/agentproxy:latest
 ```
 
 ### មើលកំណត់ហេតុ
 
 ```bash
-docker logs -f omniroute          # ការផ្សាយតាមពេលវេលាជាក់ស្តែង
-docker logs omniroute --tail 50   # 50 បន្ទាត់ចុងក្រោយ
+docker logs -f agentproxy          # ការផ្សាយតាមពេលវេលាជាក់ស្តែង
+docker logs agentproxy --tail 50   # 50 បន្ទាត់ចុងក្រោយ
 ```
 
 ### បម្រុងទុកមូលដ្ឋានទិន្នន័យដោយដៃ
 
 ```bash
 # ចម្លងទិន្នន័យពី volume ទៅ host
-docker cp omniroute:/app/data ./backup-$(date +%F)
+docker cp agentproxy:/app/data ./backup-$(date +%F)
 
 # ឬបង្ហាប់ volume ទាំងមូល
-docker run --rm -v omniroute-data:/data -v $(pwd):/backup \
-  alpine tar czf /backup/omniroute-data-$(date +%F).tar.gz /data
+docker run --rm -v agentproxy-data:/data -v $(pwd):/backup \
+  alpine tar czf /backup/agentproxy-data-$(date +%F).tar.gz /data
 ```
 
 ### ស្ដារឡើងវិញពីឯកសារបម្រុងទុក
 
 ```bash
-docker stop omniroute
-docker run --rm -v omniroute-data:/data -v $(pwd):/backup \
-  alpine sh -c "rm -rf /data/* && tar xzf /backup/omniroute-data-YYYY-MM-DD.tar.gz -C /"
-docker start omniroute
+docker stop agentproxy
+docker run --rm -v agentproxy-data:/data -v $(pwd):/backup \
+  alpine sh -c "rm -rf /data/* && tar xzf /backup/agentproxy-data-YYYY-MM-DD.tar.gz -C /"
+docker start agentproxy
 ```
 
 ---
@@ -402,13 +402,13 @@ netfilter-persistent save
 
 ```bash
 # នៅក្នុង repository មូលដ្ឋាន
-cd omnirouteCloud
+cd agentproxyCloud
 npm install
 npx wrangler login
 npx wrangler deploy
 ```
 
-សូមមើលផងដែរ [TUNNELS_GUIDE.md](./TUNNELS_GUIDE.md) សម្រាប់ការណែនាំជាជំហានៗអំពី Cloudflare Tunnel នៅក្នុង repository។ worker ដាច់ដោយឡែក `omnirouteCloud/` ស្ថិតនៅក្នុង repository ដៃគូផ្សេងមួយ។
+សូមមើលផងដែរ [TUNNELS_GUIDE.md](./TUNNELS_GUIDE.md) សម្រាប់ការណែនាំជាជំហានៗអំពី Cloudflare Tunnel នៅក្នុង repository។ worker ដាច់ដោយឡែក `agentproxyCloud/` ស្ថិតនៅក្នុង repository ដៃគូផ្សេងមួយ។
 
 ---
 
@@ -425,9 +425,9 @@ npx wrangler deploy
 
 សម្រាប់ការដាក់ឱ្យប្រើប្រាស់លើ VPS ទំហំតូច (RAM 1 GB ឬតិចជាងនេះ)៖
 
-- **បិទសេវាផ្ទៃខាងក្រោយ** — កំណត់ `OMNIROUTE_DISABLE_BACKGROUND_SERVICES=1` ដើម្បីរំលងកម្មវិធីកំណត់កាលវិភាគ ម៉ាស៊ីនមេ MCP និងភារកិច្ចថែទាំតាមកាលកំណត់។ សូមមើល `docs/reference/ENVIRONMENT.md`។
+- **បិទសេវាផ្ទៃខាងក្រោយ** — កំណត់ `AGENTPROXY_DISABLE_BACKGROUND_SERVICES=1` ដើម្បីរំលងកម្មវិធីកំណត់កាលវិភាគ ម៉ាស៊ីនមេ MCP និងភារកិច្ចថែទាំតាមកាលកំណត់។ សូមមើល `docs/reference/ENVIRONMENT.md`។
 - **ប្រើរបៀប SQLite WAL** — ត្រូវបានបើកតាមលំនាំដើម ហើយកាត់បន្ថយការប្រើអង្គចងចាំអតិបរមាក្នុងពេលអានទិន្នន័យព្រមគ្នា។
-- **កំណត់ព្រំដែន heap របស់ V8** — កំណត់ `OMNIROUTE_MEMORY_MB` (ឧ. `512`) ដើម្បីកុំឱ្យ runtime កំណត់ព្រំដែនដែលធំជាង VM។ សូមមើល `docs/reference/ENVIRONMENT.md`។
-- **ការទទួលយកសំណើធ្ងន់ៗធ្វើមាត្រដ្ឋានដោយស្វ័យប្រវត្តិតាមព្រំដែន heap** -- នៅពេលដែល `OMNIROUTE_MEMORY_MB` ខាងលើត្រូវបានកំណត់ ថវិកាបៃសម្រាប់ការបញ្ចូល (`OMNIROUTE_CHAT_MAX_INFLIGHT_BYTES`) នឹងកំណត់ខ្លួនឯងដោយផ្អែកលើព្រំដែនដូចគ្នានោះ ដូច្នេះ VM ដែលមានអង្គចងចាំមានកម្រិតនឹងទទួលបានថវិកាតូចជាងសម្រាប់សំណើព្រមគ្នាដោយស្វ័យប្រវត្តិ ដោយមិនចាំបាច់កែសម្រួលបន្ថែម។ សំណើលើសកំណត់នឹងទទួលបាន `503` ដែលអាចព្យាយាមឡើងវិញបាន ជាមួយ `Retry-After` ជំនួសឱ្យការប្រកួតប្រជែងប្រើអង្គចងចាំ។ កំណត់ព្រំដែនចំនួនសំណើចាស់ `OMNIROUTE_CHAT_MAX_HEAVY_IN_FLIGHT` តែក្នុងករណីដែលអ្នកត្រូវការព្រំដែនរឹងបន្ថែមពីលើនេះប៉ុណ្ណោះ។
+- **កំណត់ព្រំដែន heap របស់ V8** — កំណត់ `AGENTPROXY_MEMORY_MB` (ឧ. `512`) ដើម្បីកុំឱ្យ runtime កំណត់ព្រំដែនដែលធំជាង VM។ សូមមើល `docs/reference/ENVIRONMENT.md`។
+- **ការទទួលយកសំណើធ្ងន់ៗធ្វើមាត្រដ្ឋានដោយស្វ័យប្រវត្តិតាមព្រំដែន heap** -- នៅពេលដែល `AGENTPROXY_MEMORY_MB` ខាងលើត្រូវបានកំណត់ ថវិកាបៃសម្រាប់ការបញ្ចូល (`AGENTPROXY_CHAT_MAX_INFLIGHT_BYTES`) នឹងកំណត់ខ្លួនឯងដោយផ្អែកលើព្រំដែនដូចគ្នានោះ ដូច្នេះ VM ដែលមានអង្គចងចាំមានកម្រិតនឹងទទួលបានថវិកាតូចជាងសម្រាប់សំណើព្រមគ្នាដោយស្វ័យប្រវត្តិ ដោយមិនចាំបាច់កែសម្រួលបន្ថែម។ សំណើលើសកំណត់នឹងទទួលបាន `503` ដែលអាចព្យាយាមឡើងវិញបាន ជាមួយ `Retry-After` ជំនួសឱ្យការប្រកួតប្រជែងប្រើអង្គចងចាំ។ កំណត់ព្រំដែនចំនួនសំណើចាស់ `AGENTPROXY_CHAT_MAX_HEAVY_IN_FLIGHT` តែក្នុងករណីដែលអ្នកត្រូវការព្រំដែនរឹងបន្ថែមពីលើនេះប៉ុណ្ណោះ។
 - **ជៀសវាងការប្រើ `next build` នៅលើ VPS** — build នៅលើម៉ាស៊ីនរបស់អ្នក រួចដាក់ឱ្យប្រើប្រាស់នូវលទ្ធផល standalone (`.next/standalone/`)។
 - **ត្រួតពិនិត្យដោយប្រើ `top` / `free -m`** — ជាទូទៅ AgentProxy ប្រើ RSS ប្រហែល 200-400 MB នៅពេលទំនេរ លើ VM ទំហំ 1 GB។

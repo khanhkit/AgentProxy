@@ -16,7 +16,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-combo-hidden-12836-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-combo-hidden-12836-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 
 const { updateComboSchema } = await import("../../src/shared/validation/schemas.ts");

@@ -20,7 +20,7 @@ AgentProxy පිරිසිදුව ඉවත් කිරීම සඳහා
 npm run uninstall
 ```
 
-මෙය AgentProxy යෙදුම ඉවත් කරන නමුත් `~/.omniroute/` තුළ ඇති ඔබගේ දත්ත සමුදාය, වින්යාස, API යතුරු සහ සැපයුම්කරු සැකසුම් **සුරැකේ**. ඔබ පසුව නැවත ස්ථාපනය කිරීමට සැලසුම් කරන්නේ නම් සහ ඔබගේ සැකසුම තබා ගැනීමට අවශ්ය නම් මෙය භාවිත කරන්න.
+මෙය AgentProxy යෙදුම ඉවත් කරන නමුත් `~/.agentproxy/` තුළ ඇති ඔබගේ දත්ත සමුදාය, වින්යාස, API යතුරු සහ සැපයුම්කරු සැකසුම් **සුරැකේ**. ඔබ පසුව නැවත ස්ථාපනය කිරීමට සැලසුම් කරන්නේ නම් සහ ඔබගේ සැකසුම තබා ගැනීමට අවශ්ය නම් මෙය භාවිත කරන්න.
 
 ### සම්පූර්ණයෙන් ඉවත් කිරීම
 
@@ -34,7 +34,7 @@ npm run uninstall:full
 - සැපයුම්කරු වින්යාස සහ API යතුරු
 - උපස්ථ ගොනු
 - ලොග් ගොනු
-- `~/.omniroute/` නාමාවලිය තුළ ඇති සියලුම ගොනු
+- `~/.agentproxy/` නාමාවලිය තුළ ඇති සියලුම ගොනු
 
 > ⚠️ **අවවාදයයි:** `npm run uninstall:full` ක්රියාව ආපසු හැරවිය නොහැක. ඔබගේ සියලුම සැපයුම්කරු සම්බන්ධතා, සංයෝජන, API යතුරු සහ භාවිත ඉතිහාසය ස්ථිරවම මකා දමනු ඇත.
 
@@ -46,31 +46,31 @@ npm run uninstall:full
 
 ```bash
 # ගෝලීය පැකේජය ඉවත් කරන්න
-npm uninstall -g omniroute
+npm uninstall -g agentproxy
 
 # (විකල්ප) දත්ත නාමාවලිය ඉවත් කරන්න
-rm -rf ~/.omniroute
+rm -rf ~/.agentproxy
 ```
 
 ### pnpm ගෝලීය ස්ථාපනය
 
 ```bash
-pnpm uninstall -g omniroute
-rm -rf ~/.omniroute
+pnpm uninstall -g agentproxy
+rm -rf ~/.agentproxy
 ```
 
 ### Docker
 
 ```bash
 # කන්ටේනරය නවත්වා ඉවත් කරන්න
-docker stop omniroute
-docker rm omniroute
+docker stop agentproxy
+docker rm agentproxy
 
 # පරිමාව ඉවත් කරන්න (සියලු දත්ත මකා දමයි)
-docker volume rm omniroute-data
+docker volume rm agentproxy-data
 
 # (විකල්ප) ඉමේජය ඉවත් කරන්න
-docker rmi diegosouzapw/omniroute:latest
+docker rmi diegosouzapw/agentproxy:latest
 ```
 
 ### Docker Compose
@@ -93,21 +93,21 @@ docker compose down -v
 **macOS:**
 
 - `/Applications` වෙතින් `AgentProxy.app` කුණු කූඩයට ඇද දමන්න
-- දත්ත ඉවත් කරන්න: `rm -rf ~/Library/Application Support/omniroute`
+- දත්ත ඉවත් කරන්න: `rm -rf ~/Library/Application Support/agentproxy`
 
 **Linux:**
 
 - AppImage ගොනුව ඉවත් කරන්න
-- දත්ත ඉවත් කරන්න: `rm -rf ~/.omniroute`
+- දත්ත ඉවත් කරන්න: `rm -rf ~/.agentproxy`
 
 ### මූලාශ්ර ස්ථාපනය (git clone)
 
 ```bash
 # ක්ලෝන කළ නාමාවලිය ඉවත් කරන්න
-rm -rf /path/to/omniroute
+rm -rf /path/to/agentproxy
 
 # (විකල්ප) දත්ත නාමාවලිය ඉවත් කරන්න
-rm -rf ~/.omniroute
+rm -rf ~/.agentproxy
 ```
 
 ---
@@ -118,11 +118,11 @@ AgentProxy පෙරනිමියෙන් පහත ස්ථානවල ද
 
 | වේදිකාව    | පෙරනිමි මාර්ගය                   | අතික්රමණය                       |
 | ---------- | -------------------------------- | ------------------------------- |
-| Linux      | `~/.omniroute/`                  | `DATA_DIR` පරිසර විචල්යය        |
-| macOS      | `~/.omniroute/`                  | `DATA_DIR` පරිසර විචල්යය        |
-| Windows    | `%APPDATA%/omniroute/`           | `DATA_DIR` පරිසර විචල්යය        |
+| Linux      | `~/.agentproxy/`                  | `DATA_DIR` පරිසර විචල්යය        |
+| macOS      | `~/.agentproxy/`                  | `DATA_DIR` පරිසර විචල්යය        |
+| Windows    | `%APPDATA%/agentproxy/`           | `DATA_DIR` පරිසර විචල්යය        |
 | Docker     | `/app/data/` (මවුන්ට් කළ පරිමාව) | `DATA_DIR` පරිසර විචල්යය        |
-| XDG-අනුකූල | `$XDG_CONFIG_HOME/omniroute/`    | `XDG_CONFIG_HOME` පරිසර විචල්යය |
+| XDG-අනුකූල | `$XDG_CONFIG_HOME/agentproxy/`    | `XDG_CONFIG_HOME` පරිසර විචල්යය |
 
 ### දත්ත නාමාවලිය තුළ ඇති ගොනු
 
@@ -143,17 +143,17 @@ AgentProxy පෙරනිමියෙන් පහත ස්ථානවල ද
 
 ```bash
 # ගෝලීය npm පැකේජය පරීක්ෂා කරන්න
-npm list -g omniroute 2>/dev/null
+npm list -g agentproxy 2>/dev/null
 
 # දත්ත නාමාවලිය පරීක්ෂා කරන්න
-ls -la ~/.omniroute/ 2>/dev/null
+ls -la ~/.agentproxy/ 2>/dev/null
 
 # ක්රියාත්මක වන ක්රියාවලි පරීක්ෂා කරන්න
-pgrep -f omniroute
+pgrep -f agentproxy
 ```
 
 කිසියම් ක්රියාවලියක් තවමත් ක්රියාත්මක වන්නේ නම්, එය නවත්වන්න:
 
 ```bash
-pkill -f omniroute
+pkill -f agentproxy
 ```

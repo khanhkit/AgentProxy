@@ -4,7 +4,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 
-const dataDir = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-fable-usage-"));
+const dataDir = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-fable-usage-"));
 process.env.DATA_DIR = dataDir;
 process.env.API_KEY_SECRET = "fable-usage-test-secret";
 

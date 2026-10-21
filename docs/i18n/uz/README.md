@@ -37,14 +37,14 @@
 
 <h3>
 
-⭐ Agar OMNIROUTE pul tejashingizga va ishingizni osonlashtirishga yordam bergan bo‘lsa, repozitoriyga yulduzcha bering.
+⭐ Agar AGENTPROXY pul tejashingizga va ishingizni osonlashtirishga yordam bergan bo‘lsa, repozitoriyga yulduzcha bering.
 
 </h3>
 
 [![Yulduzlar](https://img.shields.io/github/stars/diegosouzapw/AgentProxy?style=social)](https://github.com/diegosouzapw/AgentProxy)
 <a href="https://trendshift.io/repositories/23589" target="_blank"><img src="https://trendshift.io/api/badge/repositories/23589" alt="diegosouzapw%2FAgentProxy | Trendshift" style="width: 250px; height: 55px;" width="250" height="55"/></a>
-[![Yulduzlar tarixi reytingi](https://api.star-history.com/badge?repo=diegosouzapw/AgentProxy&theme=dark)](https://www.star-history.com/diegosouzapw/omniroute)
-[![olud.ai](https://olud.ai/badge.php?tool=diegosouzapw-omniroute)](https://olud.ai/project/diegosouzapw-omniroute.html)
+[![Yulduzlar tarixi reytingi](https://api.star-history.com/badge?repo=diegosouzapw/AgentProxy&theme=dark)](https://www.star-history.com/#khanhkit/AgentProxy&Date)
+[![olud.ai](https://github.com/khanhkit/AgentProxy)](https://github.com/khanhkit/AgentProxy)
 
 ### 💬 Hamjamiyatga qo‘shiling
 
@@ -54,12 +54,12 @@
 [![@diegosouzapw’ni GitHub’da kuzating](https://img.shields.io/github/followers/diegosouzapw?style=for-the-badge&logo=github&logoColor=white&label=Follow%20on%20GitHub&color=181717)](https://github.com/diegosouzapw)
 
 [![Discord](https://img.shields.io/badge/Discord-5865F2?style=for-the-badge&logo=discord&logoColor=white)](https://discord.gg/U47eFqAXCn)
-[![Telegram](https://img.shields.io/badge/Telegram-26A5E4?style=for-the-badge&logo=telegram&logoColor=white)](https://t.me/omnirouteOficial)
+[![Telegram](https://img.shields.io/badge/Telegram-26A5E4?style=for-the-badge&logo=telegram&logoColor=white)](https://github.com/khanhkit/AgentProxy/discussions)
 [![WhatsApp Global](https://img.shields.io/badge/WhatsApp_Global-25D366?style=for-the-badge&logo=whatsapp&logoColor=white)](https://chat.whatsapp.com/FvuCbrpZmQ6I85n2vW5QIC?s=cl&p=a&mlu=4)
 [![WhatsApp Brasil](https://img.shields.io/badge/WhatsApp_Brasil-25D366?style=for-the-badge&logo=whatsapp&logoColor=white)](https://chat.whatsapp.com/KWgatljAjmbELQory59Oti?s=cl&p=a&mlu=4)
-[![Veb-sayt](https://img.shields.io/badge/Website-omniroute.online-blue?logo=google-chrome&logoColor=white)](https://omniroute.online)
+[![Veb-sayt](https://img.shields.io/badge/Website-agentproxy.online-blue?logo=google-chrome&logoColor=white)](https://agentproxy.online)
 
-**Savollar, provayderlar bo‘yicha maslahatlar, rivojlanish rejasi va yordam → [Discord](https://discord.gg/U47eFqAXCn) · [Telegram](https://t.me/omnirouteOficial) · WhatsApp [🌍 Global](https://chat.whatsapp.com/FvuCbrpZmQ6I85n2vW5QIC?s=cl&p=a&mlu=4) / [🇧🇷 Brasil](https://chat.whatsapp.com/KWgatljAjmbELQory59Oti?s=cl&p=a&mlu=4) / [Portal](https://portal.sthub.com.br/communities/groups/st-hub/channels/Omniroute-World-8kRjmK)**
+**Savollar, provayderlar bo‘yicha maslahatlar, rivojlanish rejasi va yordam → [Discord](https://discord.gg/U47eFqAXCn) · [Telegram](https://github.com/khanhkit/AgentProxy/discussions) · WhatsApp [🌍 Global](https://chat.whatsapp.com/FvuCbrpZmQ6I85n2vW5QIC?s=cl&p=a&mlu=4) / [🇧🇷 Brasil](https://chat.whatsapp.com/KWgatljAjmbELQory59Oti?s=cl&p=a&mlu=4) / [Portal](https://github.com/khanhkit/AgentProxy/discussions)**
 
 <br/>
 
@@ -84,12 +84,12 @@
 
 ## 🧩 Mavjud
 
-[![npm versiyasi](https://img.shields.io/npm/v/omniroute?color=cb3837&logo=npm)](https://www.npmjs.com/package/omniroute)
-![NPM oylik yuklab olishlari](https://img.shields.io/npm/dm/omniroute?label=npm/month&color=cb3837&logo=npm)
-[![Docker Hub](https://img.shields.io/docker/v/diegosouzapw/omniroute?label=Docker%20Hub&logo=docker&color=2496ED)](https://hub.docker.com/r/diegosouzapw/omniroute)
+[![npm versiyasi](https://img.shields.io/npm/v/agentproxy?color=cb3837&logo=npm)](https://www.npmjs.com/package/agentproxy)
+![NPM oylik yuklab olishlari](https://img.shields.io/npm/dm/agentproxy?label=npm%2Fmonth&color=cb3837&logo=npm)
+[![Docker Hub](https://img.shields.io/docker/v/khanhkit/agentproxy?label=Docker+Hub&logo=docker&color=2496ED)](https://hub.docker.com/r/khanhkit/agentproxy)
 [![Litsenziya: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=flat-square)](LICENSE)
-![Docker yuklab olishlari](https://img.shields.io/docker/pulls/diegosouzapw/omniroute?label=docker%20pulls&logo=docker&color=2496ED)
-![Electron yuklab olishlari](https://img.shields.io/github/downloads/diegosouzapw/omniroute/total?style=flat&label=electron%20downloads&logo=electron&color=47848F)
+![Docker yuklab olishlari](https://img.shields.io/docker/pulls/khanhkit/agentproxy?label=docker+pulls&logo=docker&color=2496ED)
+![Electron yuklab olishlari](https://img.shields.io/github/downloads/khanhkit/agentproxy/total?style=flat&label=electron+downloads&logo=electron&color=47848F)
 
 <table>
   <tr>
@@ -101,8 +101,8 @@
   <tr>
     <td align="right"><b>💡 O‘rganish</b></td>
     <td align="center"><a href="#-the-promise">💥 Va’da</a></td>
-    <td align="center"><a href="#-why-omniroute">🤔 Nega AgentProxy</a></td>
-    <td align="center"><a href="#-what-sets-omniroute-apart">🏆 Ajralib turadigan jihatlari</a></td>
+    <td align="center"><a href="#-why-agentproxy">🤔 Nega AgentProxy</a></td>
+    <td align="center"><a href="#-what-sets-agentproxy-apart">🏆 Ajralib turadigan jihatlari</a></td>
   </tr>
   <tr>
     <td align="right"><b>⚙️ Imkoniyatlar</b></td>
@@ -113,18 +113,18 @@
   <tr>
     <td align="right"></td>
     <td align="center"><a href="#%EF%B8%8F-save-1595-tokens--automatically">🗜️ Siqish</a></td>
-    <td align="center"><a href="#%EF%B8%8F-where-omniroute-runs--anywhere">🖥️ Qayerda ishlaydi</a></td>
+    <td align="center"><a href="#%EF%B8%8F-where-agentproxy-runs--anywhere">🖥️ Qayerda ishlaydi</a></td>
     <td align="center"><a href="#-private--local-first">🔒 Maxfiy</a></td>
   </tr>
   <tr>
     <td align="right"><b>👀 Ko‘rish</b></td>
-    <td align="center"><a href="#-omniroute-in-action">🎬 Ish jarayonida</a></td>
+    <td align="center"><a href="#-agentproxy-in-action">🎬 Ish jarayonida</a></td>
     <td align="center"><a href="#-whats-new">✨ Yangiliklar</a></td>
     <td align="center"><a href="#-compatible-clis--coding-agents">🤖 Mos CLI vositalari</a></td>
   </tr>
   <tr>
     <td align="right"><b>💚 Qo‘llab-quvvatlash</b></td>
-    <td align="center"><a href="#-support-omniroute">💚 Qo‘llab-quvvatlash / Xayriya</a></td>
+    <td align="center"><a href="#-support-agentproxy">💚 Qo‘llab-quvvatlash / Xayriya</a></td>
     <td align="center"><a href="#-community--help">💬 Hamjamiyat</a></td>
     <td align="center"><a href="#-sponsors">💖 Homiylar</a></td>
   </tr>
@@ -215,7 +215,7 @@
 
 </div>
 
-<img src="./docs/diagrams/works-zero-config.svg" width="100%" alt="Oʻrnatishingiz bilanoq ishlaydi — hech qanday sozlashsiz. Uch qadam: 1. Oʻrnating — npm i -g omniroute, server localhost:20128 manzilida ishga tushadi. 2. Vosita manzilini http://localhost:20128/v1 ga yoʻnaltiring — OpenAI bilan mos keluvchi istalgan vosita (Claude Code, Cursor, Cline). 3. U javob beradi — API kalitisiz, roʻyxatdan oʻtmasdan va hech qanday sozlashsiz darhol javob olish uchun auto modelini chaqiring. Kalitsiz OpenCode Free provayderi auto kombinatsiyasiga oldindan ulangan, shu sababli yangi oʻrnatilgan tizim darhol javob beradi."/>
+<img src="./docs/diagrams/works-zero-config.svg" width="100%" alt="Oʻrnatishingiz bilanoq ishlaydi — hech qanday sozlashsiz. Uch qadam: 1. Oʻrnating — npm i -g agentproxy, server localhost:20128 manzilida ishga tushadi. 2. Vosita manzilini http://localhost:20128/v1 ga yoʻnaltiring — OpenAI bilan mos keluvchi istalgan vosita (Claude Code, Cursor, Cline). 3. U javob beradi — API kalitisiz, roʻyxatdan oʻtmasdan va hech qanday sozlashsiz darhol javob olish uchun auto modelini chaqiring. Kalitsiz OpenCode Free provayderi auto kombinatsiyasiga oldindan ulangan, shu sababli yangi oʻrnatilgan tizim darhol javob beradi."/>
 
 ```bash
 # Yangi o‘rnatish, hisob ma’lumotlarisiz — `auto` allaqachon ishlaydi:
@@ -264,7 +264,7 @@ curl http://localhost:20128/v1/chat/completions \
 </div>
 
 <p align="center">
-  <a href="https://platform.kimi.ai?track_id=track-8197581fdd7d4139a0f562e4a03c3798&aff=omniroute">
+  <a href="https://platform.kimi.ai?track_id=track-8197581fdd7d4139a0f562e4a03c3798">
     <img src="public/sponsors/kimi-k3-banner.png" width="100%" alt="Kimi K3 — Ochiq ilgʻor intellekt · 2.8T parametr · 1M-tokenli kontekst"/>
   </a>
 </p>
@@ -274,7 +274,7 @@ curl http://localhost:20128/v1/chat/completions \
 <table>
   <tr>
     <td align="center" width="150">
-      <a href="https://platform.kimi.ai?track_id=track-8197581fdd7d4139a0f562e4a03c3798&aff=omniroute">
+      <a href="https://platform.kimi.ai?track_id=track-8197581fdd7d4139a0f562e4a03c3798">
         <picture>
           <source media="(prefers-color-scheme: dark)" srcset="public/providers/kimi-logomark-dark.svg">
           <img src="public/providers/kimi-logomark-light.svg" width="64" alt="Kimi (Moonshot AI)"/>
@@ -286,12 +286,12 @@ curl http://localhost:20128/v1/chat/completions \
     <td>
       Ushbu loyihani qoʻllab-quvvatlagani uchun asoschi ochiq kodli doʻstimiz <b>Kimi (Moonshot AI)</b>ga rahmat! Kimi — ochiq vaznli K2 va K3 model oilalarini yaratgan sunʼiy intellekt laboratoriyasi. <b>Kimi K3</b> yopiq modellar narxining bir qismiga 1M-tokenli kontekst oynasi, mahalliy tasvirni qayta ishlash va ilgʻor darajadagi dasturlash imkoniyatlarini taqdim etadi hamda Claude Code, Codex va AgentProxy xizmat koʻrsatadigan barcha dasturlash vositalari bilan darhol ishlaydi.
       <br/><br/>
-      <b>Kimi yordami nimalarni taʼminlaydi:</b> Kimi API kreditlari AgentProxy’ning sunʼiy intellekt tomonidan tekshiriladigan reliz konveyerini — har bir pull request chiqarilishidan oldin tekshiradigan <i>Kimi K3 asosidagi birlashtirishni tekshirish</i> bosqichini — hamda kundalik funksiyalarni ishlab chiqishni quvvatlaydi. Kimi uchun birinchi darajali qoʻllab-quvvatlash ikkala yoʻnalishda ham taqdim etiladi: toʻgʻridan-toʻgʻri <a href="https://platform.kimi.ai?track_id=track-8197581fdd7d4139a0f562e4a03c3798&aff=omniroute">Kimi API</a> (<code>kimi-k3</code>) va <a href="https://www.kimi.com/code?aff=omniroute">Kimi Code dasturlash rejasi</a> (OAuth va API kaliti). AgentProxy, shuningdek, Kimi qoʻllab-quvvatlash dasturidagi ilk Braziliya ochiq kodli loyihasidir. <a href="https://platform.kimi.ai?track_id=track-8197581fdd7d4139a0f562e4a03c3798&aff=omniroute"><b>15% qoʻshimcha kredit bilan Kimi API kalitini oling →</b></a>
+      <b>Kimi yordami nimalarni taʼminlaydi:</b> Kimi API kreditlari AgentProxy’ning sunʼiy intellekt tomonidan tekshiriladigan reliz konveyerini — har bir pull request chiqarilishidan oldin tekshiradigan <i>Kimi K3 asosidagi birlashtirishni tekshirish</i> bosqichini — hamda kundalik funksiyalarni ishlab chiqishni quvvatlaydi. Kimi uchun birinchi darajali qoʻllab-quvvatlash ikkala yoʻnalishda ham taqdim etiladi: toʻgʻridan-toʻgʻri <a href="https://platform.kimi.ai?track_id=track-8197581fdd7d4139a0f562e4a03c3798">Kimi API</a> (<code>kimi-k3</code>) va <a href="https://www.kimi.com/code">Kimi Code dasturlash rejasi</a> (OAuth va API kaliti). AgentProxy, shuningdek, Kimi qoʻllab-quvvatlash dasturidagi ilk Braziliya ochiq kodli loyihasidir. <a href="https://platform.kimi.ai?track_id=track-8197581fdd7d4139a0f562e4a03c3798"><b>15% qoʻshimcha kredit bilan Kimi API kalitini oling →</b></a>
     </td>
   </tr>
   <tr>
     <td align="center" width="150">
-      <a href="https://cheaperinference.com/?utm_source=omniroute">
+      <a href="https://cheaperinference.com">
         <img src="./public/providers/cli-generic.svg" width="64" alt="Cheaper Inference"/>
       </a>
       <br/><b>Cheaper Inference</b><br/><sub>cheaperinference.com</sub><br/><br/>
@@ -300,12 +300,12 @@ curl http://localhost:20128/v1/chat/completions \
     <td>
       Ushbu loyihani qoʻllab-quvvatlagani uchun AgentProxy’ning ochiq kodli doʻsti <b>Cheaper Inference</b>ga rahmat! Cheaper Inference — Claude, GPT-5.x, Gemini, Kimi K3, GLM, DeepSeek, Grok va MiniMax kabi 42 ta ilgʻor modelni bitta OpenAI-mos soʻnggi nuqta orqali qayta sotadigan, narx boʻyicha tartiblangan shlyuz boʻlib, har bir soʻrovni model ishlab chiqaruvchisining roʻyxat narxidan hech qachon yuqori haq olmasdan eng arzon mos provayderga yoʻnaltiradi.
       <br/><br/>
-      <b>AgentProxy’dagi birinchi darajali qoʻllab-quvvatlash:</b> Chat Completions, mahalliy <code>/v1/responses</code> soʻnggi nuqtasi, tasvirni qayta ishlash, vositalarni chaqirish va 3 ta tasvir modeli (<code>grok-imagine</code>, <code>nano-banana-pro</code>, <code>nano-banana-2</code>, ularga <code>cheaperinference/&lt;model&gt;</code> orqali murojaat qilish mumkin). <a href="https://cheaperinference.com/?utm_source=omniroute"><b>API kalitini oling →</b></a>
+      <b>AgentProxy’dagi birinchi darajali qoʻllab-quvvatlash:</b> Chat Completions, mahalliy <code>/v1/responses</code> soʻnggi nuqtasi, tasvirni qayta ishlash, vositalarni chaqirish va 3 ta tasvir modeli (<code>grok-imagine</code>, <code>nano-banana-pro</code>, <code>nano-banana-2</code>, ularga <code>cheaperinference/&lt;model&gt;</code> orqali murojaat qilish mumkin). <a href="https://cheaperinference.com"><b>API kalitini oling →</b></a>
     </td>
   </tr>
 </table>
 
-<sub><code>aff=omniroute</code> bilan belgilangan havolalar hamkorlik havolalaridir. Ular siz uchun hech qanday qoʻshimcha xarajatsiz loyihani moliyalashtiradi.</sub>
+<sub><code>aff=agentproxy</code> bilan belgilangan havolalar hamkorlik havolalaridir. Ular siz uchun hech qanday qoʻshimcha xarajatsiz loyihani moliyalashtiradi.</sub>
 
 <br/>
 
@@ -491,7 +491,7 @@ Barcha **19** strategiya — har bir kombo bosqichida aralashtirib qo‘llang:
 
 <img src="./docs/diagrams/comparison-table.svg" width="100%" alt="AgentProxy’ning o‘ziga xos jihatlari — 13 ta imkoniyat bo‘yicha 9router, OpenRouter, CLIProxyAPI va LiteLLM bilan muayyan sanadagi funksiyalar taqqoslanishi. AgentProxy: 356 ta provayder, ichki 150 dan ortiq bepul tarif, 19 ta marshrutlash strategiyasi, 12 mexanizmli token siqish, 110 ta vositaga ega o‘rnatilgan MCP serveri, A2A agent protokoli, doimiy xotira, himoya cheklovlari, bulut agentlari, TLS raqamli izi orqali yashirinlik, Desktop/Termux/PWA va foydalanuvchi interfeysi uchun 42 ta mahalliylashtirish tili. AgentProxy MIT litsenziyasiga ega va mustaqil serverda joylashtirilishi mumkin. Raqobatchilarning imkoniyatlari va miqdorlari o‘zgarishi mumkin; havola orqali metodologiya bilan tanishing."/>
 
-<sub>📊 To‘liq metodologiya va har bir imkoniyat bo‘yicha 9router, OpenRouter, CLIProxyAPI hamda LiteLLM bilan batafsil taqqoslash → [`docs/comparison/OMNIROUTE_VS_ALTERNATIVES.md`](docs/comparison/OMNIROUTE_VS_ALTERNATIVES.md)</sub>
+<sub>📊 To‘liq metodologiya va har bir imkoniyat bo‘yicha 9router, OpenRouter, CLIProxyAPI hamda LiteLLM bilan batafsil taqqoslash → [`docs/comparison/AGENTPROXY_VS_ALTERNATIVES.md`](docs/comparison/AGENTPROXY_VS_ALTERNATIVES.md)</sub>
 
 <br/>
 
@@ -518,7 +518,7 @@ Kalit (tasodifiy): `5d865059-bc44-483a-962d-43ceb80126eb`
 Pix’dan nusxalash va joylash:
 
 ```
-00020101021126580014br.gov.bcb.pix01365d865059-bc44-483a-962d-43ceb80126eb5204000053039865802BR5922OMNIROUTE CONTRIBUICAO6006BRASIL62070503***630475DD
+00020101021126580014br.gov.bcb.pix01365d865059-bc44-483a-962d-43ceb80126eb5204000053039865802BR5922AGENTPROXY CONTRIBUICAO6006BRASIL62070503***630475DD
 ```
 
 <br clear="right"/>
@@ -549,7 +549,7 @@ Asosiy bepul tarif ko‘rsatkichi yuqoridagi hujjatlashtirilgan, havzalar bo‘y
 
 Qo‘llab-quvvatlovchilar jonli katalog va provayderlarning qo‘shimcha imkoniyatlaridan foydalanishlari mumkin. Uning alohida, o‘zgaruvchan yuqori chegarasi provayderlar mavjudligiga qarab **ko‘pi bilan oyiga taxminan 3 mlrd token**ni tashkil etadi. Bu chegara kafolat emas: provayderlar istalgan vaqtda kvotalar, muvofiqlik talablari, modellar yoki hududlarni o‘zgartirishi mumkin.
 
-Radar ixtiyoriy ravishda yoqiladi va faqat GET so‘rovlaridan foydalanadi. AgentProxy mijozi promptlar, trafik, provayder konfiguratsiyasi, foydalanish telemetriyasi yoki e’lonlarni yopishning mahalliy holatini yuklamaydi. Muvofiqlik talablari va joriy katalog haqida **[radar.omniroute.online/planos](https://radar.omniroute.online/planos)** manzilida bilib oling.
+Radar ixtiyoriy ravishda yoqiladi va faqat GET so‘rovlaridan foydalanadi. AgentProxy mijozi promptlar, trafik, provayder konfiguratsiyasi, foydalanish telemetriyasi yoki e’lonlarni yopishning mahalliy holatini yuklamaydi. Muvofiqlik talablari va joriy katalog haqida **[radar.agentproxy.online/planos](https://agentproxy.online)** manzilida bilib oling.
 
 <br/>
 
@@ -567,13 +567,13 @@ Radar ixtiyoriy ravishda yoqiladi va faqat GET so‘rovlaridan foydalanadi. Agen
 - **🗜️ Siqishni mustahkamlash** — sukut bo‘yicha yoqilgan hajmni oshirish himoyasi, DE / FR / JA va xitoycha (wényán) uchun Caveman to‘plamlari, Gradle hamda .NET uchun RTK filtrlari. → [Siqish](docs/compression/COMPRESSION_ENGINES.md)
 - **💸 Halol qat’iy tarifli xarajat** — obuna / kodlash rejasi provayderlari xarajat tahlilida **$0** sifatida ko‘rsatiladi; budjet, kvota va marshrutlash esa hisoblashda davom etadi. → [API ma’lumotnomasi](docs/reference/API_REFERENCE.md)
 - **⚖️ Quota-Share marshrutlashi** — umumiy hisob kvotasini birlashtirilgan kalitlar o‘rtasida adolatli taqsimlaydi va ishni tejovchi tarzda bo‘sh ulushlarni boshqalarga beradi. → [Barqarorlik qo‘llanmasi](docs/architecture/RESILIENCE_GUIDE.md)
-- **🤖 CLI/agentni bitta buyruq bilan sozlash** — ro‘yxatdan o‘tgan 13 ta `setup-*` buyrug‘i; `omniroute run` 7 ta CLI’ni ishga tushiradi (Claude Code, Codex, Aider, Goose, OpenCode, Qwen Code, Gemini CLI); `omniroute configure` interaktiv provayder+model tanlagichi va har bir kontekst uchun sevimlilar bilan 10 ta nishonni qo‘llab-quvvatlaydi. → [CLI integratsiyalari](docs/guides/CLI-INTEGRATIONS.md)
+- **🤖 CLI/agentni bitta buyruq bilan sozlash** — ro‘yxatdan o‘tgan 13 ta `setup-*` buyrug‘i; `agentproxy run` 7 ta CLI’ni ishga tushiradi (Claude Code, Codex, Aider, Goose, OpenCode, Qwen Code, Gemini CLI); `agentproxy configure` interaktiv provayder+model tanlagichi va har bir kontekst uchun sevimlilar bilan 10 ta nishonni qo‘llab-quvvatlaydi. → [CLI integratsiyalari](docs/guides/CLI-INTEGRATIONS.md)
 - **🛰️ Masofaviy rejim** — qamrovi cheklangan tokenlar (`connect` / `contexts` / `tokens`) va VPS o‘rnatmalari uchun `antigravity` OAuth yordamchisi orqali masofaviy AgentProxy’ni boshqaring. → [Masofaviy rejim](docs/guides/REMOTE-MODE.md)
 - **🧭 Aqlliroq avtomatik marshrutlash** — `auto/<category>:<tier>` kombinatsiyalari, **Fusion** (modellar paneli + hakam), vazifani hisobga oluvchi marshrutlash, har bir so‘rov uchun model / rejim / USD-budjetni qayta belgilash. → [Auto-Combo](docs/routing/AUTO-COMBO.md)
 - **🗜️ Ulanadigan siqish** — birlashtiriladigan 12 ta dvigatel + Compression Studios: LLMLingua-2, ikki darajali Ultra, omniglyph, har bir qadam uchun aniqlik darvozasi, GCF v3.2, sudrab qayta tartiblash muharriri. → [Siqish](docs/compression/COMPRESSION_ENGINES.md)
 - **🕵️ Shaffof MITM deshifrlash (TPROXY)** — proksi muhit o‘zgaruvchilarini e’tiborsiz qoldiradigan CLI’larni har bir SNI uchun alohida CA va ishonch ombori o‘rnatuvchisi yordamida tutib oling. → [MITM/TPROXY](docs/security/MITM-TPROXY-DECRYPT.md)
 - **💸 Hamma joyda xarajat telemetriyasi** — har bir endpointda `X-AgentProxy-*` xarajat/foydalanish sarlavhalari, kesh-HIT tejash sarlavhasi va har bir kalit uchun USD xarajat kvotalari. → [API ma’lumotnomasi](docs/reference/API_REFERENCE.md)
-- **🧠 Siz boshqaradigan xotira** — sukut bo‘yicha o‘chirilgan, ixtiyoriy int8 vektor kvantlash + turlangan susayish, har bir so‘rov uchun `x-omniroute-no-memory`. → [Xotira](docs/frameworks/MEMORY.md)
+- **🧠 Siz boshqaradigan xotira** — sukut bo‘yicha o‘chirilgan, ixtiyoriy int8 vektor kvantlash + turlangan susayish, har bir so‘rov uchun `x-agentproxy-no-memory`. → [Xotira](docs/frameworks/MEMORY.md)
 - **🛡️ Xavfsizlik** — har bir LLM marshrutida prompt-inyeksiya himoyasi (red-team to‘plami), ixtiyoriy hisob ma’lumotlarini niqoblash himoyasi (har ikki yo‘nalishda sizib chiqqan API kalitlari/maxfiy ma’lumotlarni tahrirlaydi), so‘nggi chora sifatida bepul DuckDuckGo veb-qidiruvi va boshqaruv paneli uchun ixtiyoriy OIDC kirish darvozasi (parol bilan kirish doimo mavjud bo‘lib qoladi). → [Himoya vositalari](docs/security/GUARDRAILS.md)
 - **🖼️ Yangi endpointlar** — `/v1/ocr` (Mistral OCR) va `/v1/audio/translations` (Whisper uslubida) media imkoniyatlarini to‘ldiradi. → [API ma’lumotnomasi](docs/reference/API_REFERENCE.md)
 - **🎨 Tasvir / video / audio yaratish** — media uchun yagona API: xAI Grok Imagine va Novita AI video, ComfyUI, Magnific, Adobe Firefly, Segmind hamda ElevenLabs kabi nutq provayderlari. → [API ma’lumotnomasi](docs/reference/API_REFERENCE.md)
@@ -632,7 +632,7 @@ Radar ixtiyoriy ravishda yoqiladi va faqat GET so‘rovlaridan foydalanadi. Agen
 <b>＋ quyidagilar bilan ham ishlaydi</b> · Kiro · Command Code · Antigravity · Windsurf · AMP · <b>OpenAI bilan mos keluvchi istalgan vosita</b>
 </div>
 
-<sub>📖 Barcha 36 ta vosita uchun alohida sozlash (26 ta CLI Code + 10 ta CLI Agent) → [`docs/reference/CLI-TOOLS.md`](docs/reference/CLI-TOOLS.md) · 🧩 OpenCode plagini → [`@omniroute/opencode-provider`](https://www.npmjs.com/package/@omniroute/opencode-provider)</sub>
+<sub>📖 Barcha 36 ta vosita uchun alohida sozlash (26 ta CLI Code + 10 ta CLI Agent) → [`docs/reference/CLI-TOOLS.md`](docs/reference/CLI-TOOLS.md) · 🧩 OpenCode plagini → [`@agentproxy/opencode-provider`](https://www.npmjs.com/package/@agentproxy/opencode-provider)</sub>
 
 </div>
 
@@ -642,19 +642,19 @@ Radar ixtiyoriy ravishda yoqiladi va faqat GET so‘rovlaridan foydalanadi. Agen
 hisob maʼlumotlari har bir jarayonga alohida uzatiladi, Qwen/Gemini esa vaqtinchalik izolyatsiyalangan uy katalogiga ega boʻladi:
 
 ```bash
-omniroute run claude   --model openai/gpt-5.4          # Claude Code
-omniroute run codex    --model glm/glm-5.2             # OpenAI Codex CLI
-omniroute run aider    --model glm/glm-5.2 -- --message "reply OK"
-omniroute run goose    --model glm/glm-5.2
-omniroute run opencode --model glm/glm-5.2 -- run "reply OK"
-omniroute run qwen     --model glm/glm-5.2 -- -p "reply OK"
-omniroute run gemini   --model glm/glm-5.2 -- --skip-trust -p "reply OK"
+agentproxy run claude   --model openai/gpt-5.4          # Claude Code
+agentproxy run codex    --model glm/glm-5.2             # OpenAI Codex CLI
+agentproxy run aider    --model glm/glm-5.2 -- --message "reply OK"
+agentproxy run goose    --model glm/glm-5.2
+agentproxy run opencode --model glm/glm-5.2 -- run "reply OK"
+agentproxy run qwen     --model glm/glm-5.2 -- -p "reply OK"
+agentproxy run gemini   --model glm/glm-5.2 -- --skip-trust -p "reply OK"
 
 # Yoki provayder+modelni interaktiv tarzda tanlang va vositaning oʻz konfiguratsiyasini yozing:
-omniroute configure codex          # shuningdek: claude opencode qwen aider goose gemini cline continue kilo
+agentproxy configure codex          # shuningdek: claude opencode qwen aider goose gemini cline continue kilo
 ```
 
-Har bir buyruq faol masofaviy kontekstni (`omniroute connect <host>`) hisobga oladi, `--dry-run`
+Har bir buyruq faol masofaviy kontekstni (`agentproxy connect <host>`) hisobga oladi, `--dry-run`
 bajarishsiz aniq muhit oʻzgaruvchilari/argumentlarni oldindan koʻrsatadi, `--api-key-env NAME` esa maxfiy maʼlumotlarni
 shell tarixiga tushishidan saqlaydi. → [CLI integratsiyalari](docs/guides/CLI-INTEGRATIONS.md)
 
@@ -739,19 +739,19 @@ shell tarixiga tushishidan saqlaydi. → [CLI integratsiyalari](docs/guides/CLI-
 
 <table>
   <tr><th align="left">Platforma</th><th align="left">Oʻrnatish</th><th align="left">Asosiy afzalliklar</th></tr>
-  <tr><td align="left" nowrap>📦 <b>npm (global)</b></td><td align="left" nowrap><code>npm install -g omniroute</code></td><td align="left">Bitta buyruq, istalgan OS</td></tr>
-  <tr><td align="left" nowrap>🐳 <b>Docker</b></td><td align="left" nowrap><code>docker run … diegosouzapw/omniroute</code></td><td align="left">Koʻp arxitekturali: <b>AMD64 + ARM64</b></td></tr>
+  <tr><td align="left" nowrap>📦 <b>npm (global)</b></td><td align="left" nowrap><code>npm install -g agentproxy</code></td><td align="left">Bitta buyruq, istalgan OS</td></tr>
+  <tr><td align="left" nowrap>🐳 <b>Docker</b></td><td align="left" nowrap><code>docker run … diegosouzapw/agentproxy</code></td><td align="left">Koʻp arxitekturali: <b>AMD64 + ARM64</b></td></tr>
   <tr><td align="left" nowrap>🖥️ <b>Ish stoli (Electron)</b></td><td align="left" nowrap><code>npm run electron:build</code></td><td align="left">Mahalliy oyna + tizim treyi — <b>Windows / macOS / Linux</b></td></tr>
-  <tr><td align="left" nowrap>🎩 <b>Menyu paneli (AgentProxyTray)</b></td><td align="left" nowrap><code>brew install --cask zoispag/tap/omniroute-tray</code></td><td align="left">Serverni nazorat qiladi va avtomatik yangilaydi — <b>macOS</b></td></tr>
+  <tr><td align="left" nowrap>🎩 <b>Menyu paneli (AgentProxyTray)</b></td><td align="left" nowrap><code>brew install --cask zoispag/tap/agentproxy-tray</code></td><td align="left">Serverni nazorat qiladi va avtomatik yangilaydi — <b>macOS</b></td></tr>
   <tr><td align="left" nowrap>💪 <b>ARM</b></td><td align="left" nowrap>mahalliy <code>arm64</code></td><td align="left">Raspberry Pi, ARM serverlari, Apple Silicon</td></tr>
-  <tr><td align="left" nowrap>📱 <b>Android (Termux)</b></td><td align="left" nowrap><code>pkg install nodejs && npx -y omniroute</code></td><td align="left"><b>Telefoningizda</b> 24/7 ishlaydi, root talab qilinmaydi</td></tr>
+  <tr><td align="left" nowrap>📱 <b>Android (Termux)</b></td><td align="left" nowrap><code>pkg install nodejs && npx -y agentproxy</code></td><td align="left"><b>Telefoningizda</b> 24/7 ishlaydi, root talab qilinmaydi</td></tr>
   <tr><td align="left" nowrap>📲 <b>PWA</b></td><td align="left" nowrap>“Bosh ekranga qoʻshish”</td><td align="left">Toʻliq ekranli, oflayn ishlaydi, brauzerdan oʻrnatiladi</td></tr>
-  <tr><td align="left" nowrap>🧩 <b>OpenCode plagini</b></td><td align="left" nowrap><code>@omniroute/opencode-provider</code></td><td align="left">OpenCode bilan mahalliy integratsiya</td></tr>
+  <tr><td align="left" nowrap>🧩 <b>OpenCode plagini</b></td><td align="left" nowrap><code>@agentproxy/opencode-provider</code></td><td align="left">OpenCode bilan mahalliy integratsiya</td></tr>
   <tr><td align="left" nowrap>🤖 <b>VS Code Copilot Chat</b></td><td align="left" nowrap><b>OmniCopilot</b> kengaytmasini oʻrnating</td><td align="left">Barcha AgentProxy modellari mahalliy Copilot Chat tanlagichida — barqaror va Insiders versiyalarida</td></tr>
   <tr><td align="left" nowrap>🛠️ <b>Manba kodidan</b></td><td align="left" nowrap><code>npm install && npm run dev</code></td><td align="left">Oʻzgartiring, hissa qoʻshing</td></tr>
 </table>
 
-<sub>📖 [Docker qoʻllanmasi](docs/guides/DOCKER_GUIDE.md) · [Ish stoli](electron/README.md) · [Menyu paneli treyi](https://github.com/zoispag/omniroute-tray) · [Termux](docs/guides/TERMUX_GUIDE.md) · [PWA](docs/guides/PWA_GUIDE.md) · [OpenCode](docs/frameworks/OPENCODE.md)</sub>
+<sub>📖 [Docker qoʻllanmasi](docs/guides/DOCKER_GUIDE.md) · [Ish stoli](electron/README.md) · [Menyu paneli treyi](https://github.com/zoispag/agentproxy-tray) · [Termux](docs/guides/TERMUX_GUIDE.md) · [PWA](docs/guides/PWA_GUIDE.md) · [OpenCode](docs/frameworks/OPENCODE.md)</sub>
 
 <br/>
 
@@ -790,19 +790,19 @@ Muharrir ichida: **Kengaytmalar** koʻrinishini oching, **“AgentProxy”** deb
 
 </div>
 
-> `omniroute serve` doimo ishlab turganda eng yaxshi natija beradi. **[AgentProxyTray](https://github.com/zoispag/omniroute-tray)**
+> `agentproxy serve` doimo ishlab turganda eng yaxshi natija beradi. **[AgentProxyTray](https://github.com/zoispag/agentproxy-tray)**
 > uni macOS uchun bir marta sozlanadigan va keyin eʼtibor talab qilmaydigan menyu paneli ilovasiga aylantiradi: u serverni ishga tushiradi, qayta yuklashlardan
 > keyin ham ishlashini taʼminlaydi, joyida yangilaydi va amaldagi token byudjetingizni bir marta bosish orqali koʻrsatadi — **ochiq
-> terminal oynasi ham, nazorat qilib turilishi kerak boʻlgan `npm install -g omniroute` ham yoʻq.**
+> terminal oynasi ham, nazorat qilib turilishi kerak boʻlgan `npm install -g agentproxy` ham yoʻq.**
 
 [Tauri v2](https://v2.tauri.app/) bilan yaratilgan (hajmi yaxlitlash xatosidek kichik Rust yadrosi), u
 oʻzining imzolangan Node 24 ish muhitini oʻz ichiga oladi va ilovaga tegishli AgentProxy oʻrnatilishini boshqaradi, shu sababli u global
-`node`/`bun` bilan hech qachon toʻqnashmaydi. U **mavjud `~/.omniroute/` konfiguratsiyangiz va maʼlumotlar bazangizdan birgalikda foydalanadi** — yaʼni bu
+`node`/`bun` bilan hech qachon toʻqnashmaydi. U **mavjud `~/.agentproxy/` konfiguratsiyangiz va maʼlumotlar bazangizdan birgalikda foydalanadi** — yaʼni bu
 siz allaqachon ishga tushirayotgan oʻsha AgentProxy, faqat shlyapa kiygan. 🎩
 
 <table>
   <tr><th align="left">Nima qiladi</th><th align="left">Qanday</th></tr>
-  <tr><td align="left" nowrap>🟢 <b>Serverni nazorat qiladi</b></td><td align="left"><code>omniroute serve</code> jarayonini ishga tushiradi, yangi nusxa yaratish oʻrniga allaqachon ishlayotgan nusxani qabul qiladi</td></tr>
+  <tr><td align="left" nowrap>🟢 <b>Serverni nazorat qiladi</b></td><td align="left"><code>agentproxy serve</code> jarayonini ishga tushiradi, yangi nusxa yaratish oʻrniga allaqachon ishlayotgan nusxani qabul qiladi</td></tr>
   <tr><td align="left" nowrap>📊 <b>Joriy foydalanishni bir qarashda koʻrsatadi</b></td><td align="left">Provayder kvotasi panellari, qayta tiklanishgacha qolgan vaqt koʻrsatiladigan Claude seans/haftalik cheklovlari, 30 kunlik xarajatlar taqsimoti</td></tr>
   <tr><td align="left" nowrap>🔄 <b>Joyida avtomatik yangilanadi</b></td><td align="left">Bosqichma-bosqich oʻrnatish, atomar almashtirish, xatolik yuz bersa ortga qaytarish — doimo eng yangi relizda</td></tr>
   <tr><td align="left" nowrap>🚀 <b>Tizimga kirganda ishga tushadi</b></td><td align="left">Tizimga kirganda ixtiyoriy ishga tushirish; faqat treyda, dock belgisisiz</td></tr>
@@ -810,12 +810,12 @@ siz allaqachon ishga tushirayotgan oʻsha AgentProxy, faqat shlyapa kiygan. 🎩
 </table>
 
 ```sh
-brew install --cask zoispag/tap/omniroute-tray
+brew install --cask zoispag/tap/agentproxy-tray
 ```
 
 <sub>Yuklab olishni afzal ko‘rasizmi? Eng so‘nggi <code>.dmg</code> faylini
-<a href="https://github.com/zoispag/omniroute-tray/releases">Relizlar</a> sahifasidan oling. Manba kodi, muammolar va yig‘ish
-hujjatlari <a href="https://github.com/zoispag/omniroute-tray">zoispag/omniroute-tray</a> sahifasida joylashgan.
+<a href="https://github.com/zoispag/agentproxy-tray/releases">Relizlar</a> sahifasidan oling. Manba kodi, muammolar va yig‘ish
+hujjatlari <a href="https://github.com/zoispag/agentproxy-tray">zoispag/agentproxy-tray</a> sahifasida joylashgan.
 <br/>💛 <a href="https://github.com/zoispag">@zoispag</a> tomonidan yaratilgan hamjamiyat loyihasi — bu rasmiy AgentProxy relizi emas.</sub>
 
 <br/>
@@ -843,10 +843,10 @@ hujjatlari <a href="https://github.com/zoispag/omniroute-tray">zoispag/omniroute
 ### ⌨️ Haqiqiy CLI (faqat `start` emas)
 
 ```bash
-omniroute               # shlyuz + boshqaruv panelini ishga tushirish (20128-port)
-omniroute chat          # interaktiv TUI chat mijozi (slash: /model /combo /skill /memory)
-omniroute setup         # dastlabki ishga tushirish uchun yoʻnaltirilgan sozlash ustasi
-omniroute doctor        # provayderlar, portlar va mahalliy bogʻliqliklarni diagnostika qilish
+agentproxy               # shlyuz + boshqaruv panelini ishga tushirish (20128-port)
+agentproxy chat          # interaktiv TUI chat mijozi (slash: /model /combo /skill /memory)
+agentproxy setup         # dastlabki ishga tushirish uchun yoʻnaltirilgan sozlash ustasi
+agentproxy doctor        # provayderlar, portlar va mahalliy bogʻliqliklarni diagnostika qilish
 ```
 
 ### 🛰️ Masofaviy rejim — CLI’ni shu yerda, AgentProxy’ni VPS’da ishga tushiring
@@ -855,11 +855,11 @@ AgentProxy serverdami? Uni noutbukingizdan **ayni bir CLI** orqali boshqaring. Q
 shundan soʻng har bir buyruq masofaviy serverga yoʻnaltiriladi.
 
 ```bash
-omniroute connect 192.168.0.15            # parol → doirasi cheklangan token, kontekst sifatida saqlanadi
-omniroute models list                     # ← MASOFAVIY serverga qarshi ishlaydi
-omniroute configure codex                 # ← masofaviy modelni tanlaydi, mahalliy Codex profilini yozadi
-omniroute tokens create --name ci --scope read   # boshqa qurilmalar uchun doirasi torroq tokenlar yaratadi
-omniroute contexts use default            # ← mahalliy serverga qaytadi
+agentproxy connect 192.168.0.15            # parol → doirasi cheklangan token, kontekst sifatida saqlanadi
+agentproxy models list                     # ← MASOFAVIY serverga qarshi ishlaydi
+agentproxy configure codex                 # ← masofaviy modelni tanlaydi, mahalliy Codex profilini yozadi
+agentproxy tokens create --name ci --scope read   # boshqa qurilmalar uchun doirasi torroq tokenlar yaratadi
+agentproxy contexts use default            # ← mahalliy serverga qaytadi
 ```
 
 Tokenlar doirasi `read` / `write` / `admin` bilan cheklanadi; jarayonlarni ishga tushiruvchi yoʻnalishlar faqat loopback orqali ishlaydi.
@@ -867,7 +867,7 @@ Tokenlar doirasi `read` / `write` / `admin` bilan cheklanadi; jarayonlarni ishga
 
 <div align="left">
 
-<img src="./docs/diagrams/cli-terminal.svg" width="50%" alt="AgentProxy CLI’ni namoyish qiluvchi animatsiyali terminal — omniroute providers list, omniroute combo list va omniroute health — 86 buyruqli yuqori darajadagi imkoniyatlar boʻylab almashadi: providers · oauth · keys · combo · nodes · models · cache · compression · cost · usage · quota · health · resilience · telemetry · logs · audit · mcp · a2a · cloud · memory · skills · eval · tunnel · backup · sync · webhooks · policy · pricing · translator · simulate …"/>
+<img src="./docs/diagrams/cli-terminal.svg" width="50%" alt="AgentProxy CLI’ni namoyish qiluvchi animatsiyali terminal — agentproxy providers list, agentproxy combo list va agentproxy health — 86 buyruqli yuqori darajadagi imkoniyatlar boʻylab almashadi: providers · oauth · keys · combo · nodes · models · cache · compression · cost · usage · quota · health · resilience · telemetry · logs · audit · mcp · a2a · cloud · memory · skills · eval · tunnel · backup · sync · webhooks · policy · pricing · translator · simulate …"/>
 
 </div>
 
@@ -877,18 +877,18 @@ AgentProxy’ni **MCP**, **A2A**, **REST API**, **webhooklar** yoki **masofaviy 
 
 <table>
   <tr><th align="left">Interfeys</th><th align="left">Endpoint / buyruq</th><th align="left">Foydalanish maqsadi</th></tr>
-  <tr><td align="left" nowrap>🧰 <b>MCP (stdio)</b></td><td align="left" nowrap><code>omniroute --mcp</code></td><td align="left">Claude Desktop, Cursor yoki istalgan MCP mijoziga ulang</td></tr>
+  <tr><td align="left" nowrap>🧰 <b>MCP (stdio)</b></td><td align="left" nowrap><code>agentproxy --mcp</code></td><td align="left">Claude Desktop, Cursor yoki istalgan MCP mijoziga ulang</td></tr>
   <tr><td align="left" nowrap>🌊 <b>MCP (HTTP)</b></td><td align="left" nowrap><code>/api/mcp/stream</code></td><td align="left">Masofaviy MCP — <b>110 ta vosita</b>, 33 ta doira (majburiy nazorat ixtiyoriy), toʻliq audit jurnali</td></tr>
   <tr><td align="left" nowrap>📡 <b>MCP (SSE)</b></td><td align="left" nowrap><code>/api/mcp/sse</code></td><td align="left">Oqimli MCP transporti</td></tr>
   <tr><td align="left" nowrap>🤝 <b>A2A</b></td><td align="left" nowrap><code>/.well-known/agent.json</code></td><td align="left">Agentdan agentga, <b>JSON-RPC 2.0</b> + SSE, 6 ta koʻnikma</td></tr>
   <tr><td align="left" nowrap>🌐 <b>REST API</b></td><td align="left" nowrap><code>/v1/*</code></td><td align="left">OpenAI bilan mos — chat, embeddinglar, tasvirlar, audio, OCR</td></tr>
   <tr><td align="left" nowrap>🔔 <b>Webhooklar</b></td><td align="left" nowrap><code>/api/webhooks</code></td><td align="left">Soʻrov / kvota hodisalarini Slack, Discord, Telegram yoki istalgan URL’ga yuboring</td></tr>
-  <tr><td align="left" nowrap>🛰️ <b>Masofaviy CLI</b></td><td align="left" nowrap><code>omniroute connect <host></code></td><td align="left">Masofaviy nusxani doirasi cheklangan kirish tokenlari bilan boshqaring</td></tr>
+  <tr><td align="left" nowrap>🛰️ <b>Masofaviy CLI</b></td><td align="left" nowrap><code>agentproxy connect <host></code></td><td align="left">Masofaviy nusxani doirasi cheklangan kirish tokenlari bilan boshqaring</td></tr>
 </table>
 
 ```bash
 # Claude Code’ga MCP orqali toʻliq AgentProxy vositalar toʻplamini taqdim eting:
-claude mcp add-server omniroute --type http --url http://localhost:20128/api/mcp/stream
+claude mcp add-server agentproxy --type http --url http://localhost:20128/api/mcp/stream
 ```
 
 <sub>📖 [MCP serveri](docs/frameworks/MCP-SERVER.md) · [A2A serveri](docs/frameworks/A2A-SERVER.md) · [Agent protokollari](docs/frameworks/AGENT_PROTOCOLS_GUIDE.md)</sub>
@@ -978,7 +978,7 @@ Yuqoridagi 12 ta dvigatel **kiruvchi** maʼlumotni qisqartiradi. Yana uchta qatl
   - **Menda ADHD bor (avval amal)** — keyingi amal birinchi keladi, qadamlar raqamlanadi, bitta aniq keyingi qadam beriladi, kirish soʻzisiz.
   - **Qisqa CJK (文言)** — klassik xitoycha oʻta qisqa uslub (`zh` lokaligagina ruxsat etiladi).
 - **🎯 Moslashuvchan kontekst budjeti** _(sozlagich)_ — yagona yoqish/oʻchirish token chegarasi oʻrniga, modelning kontekst oynasiga **sigʻdirish** uchun zarur boʻlgan darajagacha eng arzon va eng kam yoʻqotishli dvigatellarni bosqichma-bosqich ishga tushiradi. Siyosat: `reserve-output` (standart, modelni hisobga oladi) · `percentage` · `absolute`. Rejim: `floor` (sigʻishni kafolatlaydi) · `replace-autotrigger` (aniq tanlovingiz ustun keladi) · `off` (eski chegara).
-- **🎛️ Siqish qayerda belgilanadi** _(ustuvorlik, yuqori → past)_ — har bir soʻrovdagi `x-omniroute-compression` sarlavhasi › marshrutlash kombinatsiyasining qayta belgilashi › faol nomlangan profil › moslashuvchan / avtomatik ishga tushirish › panel standarti › oʻchirilgan. Qoʻllangan reja javobdagi `X-AgentProxy-Compression: <mode>; source=<source>` sarlavhasida aks ettiriladi.
+- **🎛️ Siqish qayerda belgilanadi** _(ustuvorlik, yuqori → past)_ — har bir soʻrovdagi `x-agentproxy-compression` sarlavhasi › marshrutlash kombinatsiyasining qayta belgilashi › faol nomlangan profil › moslashuvchan / avtomatik ishga tushirish › panel standarti › oʻchirilgan. Qoʻllangan reja javobdagi `X-AgentProxy-Compression: <mode>; source=<source>` sarlavhasida aks ettiriladi.
 
 Token chegarasi boʻyicha avtomatik ishga tushirishni sozlang, moslashuvchan sozlagichni yoqing, nomlangan profilni mahkamlang, har bir soʻrov uchun bir martalik sozlama oʻrnating yoki har bir marshrutlash kombinatsiyasiga konveyer tayinlang — ish yuklamasiga mos kelganini tanlang. Rozilik asosida ishlaydigan oflayn **baholash vositasi** (`npm run eval:compression`) oʻzgarishni joriy etishdan oldin mahkamlangan korpusda aniqlik va tejamkorlik nisbatini baholaydi.
 
@@ -995,8 +995,8 @@ Token chegarasi boʻyicha avtomatik ishga tushirishni sozlang, moslashuvchan soz
 **1) Oʻrnating va ishga tushiring**
 
 ```bash
-npm install -g omniroute
-omniroute
+npm install -g agentproxy
+agentproxy
 ```
 
 > 💡 `npm warn ERESOLVE` yoki peer-dep ogohlantirishlarini koʻryapsizmi? [Ular zararsiz](docs/guides/TROUBLESHOOTING.md#npm-install-warnings-eresolve--peer--deprecated).
@@ -1043,39 +1043,39 @@ Ulardan faqat `Authorization: Bearer ...` sarlavhasini biriktira olmaydigan mijo
 **🐳 Docker**
 
 ```bash
-docker run -d --name omniroute --restart unless-stopped --stop-timeout 40 \
-  -p 127.0.0.1:20128:20128 -v omniroute-data:/app/data diegosouzapw/omniroute:latest
+docker run -d --name agentproxy --restart unless-stopped --stop-timeout 40 \
+  -p 127.0.0.1:20128:20128 -v agentproxy-data:/app/data diegosouzapw/agentproxy:latest
 ```
 
-`:latest` eng yuqori **eʼlon qilingan** barqaror SemVer versiyasiga mos keladi. U git `main` tarmogʻini kuzatmaydi. GitOps uchun `:X.Y.Z` versiyasini aniq belgilang. [Docker reliz kanallari](docs/guides/DOCKER_GUIDE.md#release-channels)ga qarang. Tasvirda **`OMNIROUTE_MEMORY_MB=1024`** qatʼiy belgilangan. Bu boshqaruv paneli va yengil chat uchun yetarli. **Kodlash agentlari** (Claude Code, Codex, Grok va boshqalardan `POST /v1/responses`) ancha katta V8 uyumini talab qiladi, aks holda bir-biriga ustma-ust tushgan ikkita uzun kontekstda, taxminan 12 GiB darajasida jarayon `FATAL ERROR` bilan yakunlanadi. Konteyner hajmini uyumdan kattaroq qilib belgilang (mahalliy buferlar V8 tashqarisida joylashadi):
+`:latest` eng yuqori **eʼlon qilingan** barqaror SemVer versiyasiga mos keladi. U git `main` tarmogʻini kuzatmaydi. GitOps uchun `:X.Y.Z` versiyasini aniq belgilang. [Docker reliz kanallari](docs/guides/DOCKER_GUIDE.md#release-channels)ga qarang. Tasvirda **`AGENTPROXY_MEMORY_MB=1024`** qatʼiy belgilangan. Bu boshqaruv paneli va yengil chat uchun yetarli. **Kodlash agentlari** (Claude Code, Codex, Grok va boshqalardan `POST /v1/responses`) ancha katta V8 uyumini talab qiladi, aks holda bir-biriga ustma-ust tushgan ikkita uzun kontekstda, taxminan 12 GiB darajasida jarayon `FATAL ERROR` bilan yakunlanadi. Konteyner hajmini uyumdan kattaroq qilib belgilang (mahalliy buferlar V8 tashqarisida joylashadi):
 
-| Ish yuklamasi                            | Uyum (`-e OMNIROUTE_MEMORY_MB`) | Konteyner (`--memory`) |
+| Ish yuklamasi                            | Uyum (`-e AGENTPROXY_MEMORY_MB`) | Konteyner (`--memory`) |
 | ---------------------------------------- | ------------------------------- | ---------------------- |
 | Boshqaruv paneli / yengil chat           | `1024` (tasvir standarti)       | ≥2 g                   |
 | Bitta kodlash agenti                     | `8192`                          | ≥10 g                  |
 | Bir vaqtdagi ikkita uzun `/v1/responses` | `10240`–`12288`                 | ≥12–16 g               |
 
 ```bash
-docker run -d --name omniroute --restart unless-stopped --stop-timeout 40 \
-  -e OMNIROUTE_MEMORY_MB=8192 --memory=10g \
-  -p 127.0.0.1:20128:20128 -v omniroute-data:/app/data diegosouzapw/omniroute:latest
+docker run -d --name agentproxy --restart unless-stopped --stop-timeout 40 \
+  -e AGENTPROXY_MEMORY_MB=8192 --memory=10g \
+  -p 127.0.0.1:20128:20128 -v agentproxy-data:/app/data diegosouzapw/agentproxy:latest
 ```
 
 Toʻliq jadval: [Docker qoʻllanmasi — bajarilish vaqtidagi RAM](docs/guides/DOCKER_GUIDE.md#runtime-ram-for-coding-agents).
 
-> **Relizoldi Docker kanali:** `diegosouzapw/omniroute:next` va
-> `diegosouzapw/omniroute:next-web` joriy standart `release/v*`
+> **Relizoldi Docker kanali:** `diegosouzapw/agentproxy:next` va
+> `diegosouzapw/agentproxy:next-web` joriy standart `release/v*`
 > tarmogʻini kuzatadi. Bu oʻzgaruvchan teglar faqat hali chiqarilmagan tuzatishlarni sinash uchun moʻljallangan va
 > **ishlab chiqarish muhiti uchun qoʻllab-quvvatlanmaydi**.
 > [Docker reliz kanallari](docs/guides/DOCKER_GUIDE.md#release-channels)ga qarang.
 
 **🥟 Bun**
 
-Standart `bun install` va global oʻrnatish (`bun install -g omniroute`) Bun bajarilish muhitini aniqlash orqali qoʻllab-quvvatlanadi:
+Standart `bun install` va global oʻrnatish (`bun install -g agentproxy`) Bun bajarilish muhitini aniqlash orqali qoʻllab-quvvatlanadi:
 
 - **Ichki `bun:sqlite`**: AgentProxy Bun muhitida ishlaganda uning ichki `bun:sqlite` drayveridan foydalanadi, Node.js muhitida esa `better-sqlite3` yoki `sql.js`ga qaytadi.
-- **Ishlab chiqishda Webpack toʻplagichini avtomatik tanlash**: Ishlab chiqish rejimi (`bun run dev`) Bunʼni avtomatik aniqlaydi va mahalliy V8 bogʻlamalaridagi nomuvofiqliklarning oldini olish uchun Turbopackʼni oʻchirib, Webpackʼdan foydalanadi. Ishlab chiqarish tuzilmalari (`bun run build`) xuddi Nodeʼdagi kabi `OMNIROUTE_USE_TURBOPACK`ga aniq amal qiladi: standart holatda Turbopack, Webpack bilan tuzish uchun `OMNIROUTE_USE_TURBOPACK=0` (`Dockerfile.bun` uni `--build-arg` sifatida taqdim etadi).
-- **Maxsus Bun Dockerfile**: Mahalliy Bun ishlab chiqarish muhitlari uchun koʻp bosqichli `Dockerfile.bun` (`docker build -f Dockerfile.bun -t omniroute:bun .`).
+- **Ishlab chiqishda Webpack toʻplagichini avtomatik tanlash**: Ishlab chiqish rejimi (`bun run dev`) Bunʼni avtomatik aniqlaydi va mahalliy V8 bogʻlamalaridagi nomuvofiqliklarning oldini olish uchun Turbopackʼni oʻchirib, Webpackʼdan foydalanadi. Ishlab chiqarish tuzilmalari (`bun run build`) xuddi Nodeʼdagi kabi `AGENTPROXY_USE_TURBOPACK`ga aniq amal qiladi: standart holatda Turbopack, Webpack bilan tuzish uchun `AGENTPROXY_USE_TURBOPACK=0` (`Dockerfile.bun` uni `--build-arg` sifatida taqdim etadi).
+- **Maxsus Bun Dockerfile**: Mahalliy Bun ishlab chiqarish muhitlari uchun koʻp bosqichli `Dockerfile.bun` (`docker build -f Dockerfile.bun -t agentproxy:bun .`).
 
 ```bash
 # Bun bilan o‘rnating va ishga tushiring
@@ -1093,13 +1093,13 @@ PORT=20128 npm run dev
 **📦 pnpm**
 
 ```bash
-pnpm add -g omniroute@latest --allow-build=better-sqlite3 --allow-build=@swc/core && omniroute
+pnpm add -g agentproxy@latest --allow-build=better-sqlite3 --allow-build=@swc/core && agentproxy
 ```
 
 **🐧 Arch Linux (AUR)**
 
 ```bash
-yay -S omniroute-bin && systemctl --user enable --now omniroute.service
+yay -S agentproxy-bin && systemctl --user enable --now agentproxy.service
 ```
 
 **🔧 Nix (Flake)**
@@ -1145,7 +1145,7 @@ oldindan tuzilgan ikkilik fayldan foydalanadi, aks holda shaffof tarzda sof JS m
 Oʻrnatishdan keyingi mahalliy tayyorlashni butunlay oʻtkazib yuborish uchun (CI, grafik interfeyssiz yoki sekin qurilmalar):
 
 ```bash
-OMNIROUTE_SKIP_POSTINSTALL=1 npm install -g omniroute   # CI=1 ham uni o‘tkazib yuboradi
+AGENTPROXY_SKIP_POSTINSTALL=1 npm install -g agentproxy   # CI=1 ham uni o‘tkazib yuboradi
 ```
 
 Eng tez oʻrnatish uchun **pnpm**dan foydalaning (kontentga asoslangan ombor + qattiq havolalar — yuqoriga qarang).
@@ -1236,15 +1236,15 @@ bitta jarayon xizmat koʻrsatadi, shu sababli hozircha faqat CLI uchun alohida p
 | 💼 **LinkedIn** — qoʻllab-quvvatlovchini kuzating      | [linkedin.com/in/diegosouzapw](https://www.linkedin.com/in/diegosouzapw/)                                                     |
 | 🐙 **GitHub** — relizlar va maslahatlar uchun kuzating | [@diegosouzapw](https://github.com/diegosouzapw)                                                                              |
 | 💬 **Discord**                                         | [discord.gg/U47eFqAXCn](https://discord.gg/U47eFqAXCn)                                                                        |
-| ✈️ **Telegram**                                        | [t.me/omnirouteOficial](https://t.me/omnirouteOficial)                                                                        |
+| ✈️ **Telegram**                                        | [t.me/agentproxyOficial](https://github.com/khanhkit/AgentProxy/discussions)                                                                        |
 | 🟢 **WhatsApp — 🌍 Global**                            | [guruhga qoʻshiling](https://chat.whatsapp.com/FvuCbrpZmQ6I85n2vW5QIC?s=cl&p=a&mlu=4)                                         |
 | 🟢 **WhatsApp — 🇧🇷 Braziliya**                         | [guruhga qoʻshiling](https://chat.whatsapp.com/KWgatljAjmbELQory59Oti?s=cl&p=a&mlu=4)                                         |
-| 🌍 **Veb-sayt**                                        | [omniroute.online](https://omniroute.online)                                                                                  |
-| 🌍 **🌍StHub AgentProxy hamjamiyati (bepul)**           | [StHub portali](https://portal.sthub.com.br/communities/groups/st-hub/channels/Omniroute-World-8kRjmK)                        |
+| 🌍 **Veb-sayt**                                        | [agentproxy.online](https://agentproxy.online)                                                                                  |
+| 🌍 **🌍StHub AgentProxy hamjamiyati (bepul)**           | [StHub portali](https://github.com/khanhkit/AgentProxy/discussions)                        |
 | 📦 **Manba kodi**                                      | [github.com/diegosouzapw/AgentProxy](https://github.com/diegosouzapw/AgentProxy)                                                |
 | 🐛 **Xato haqida xabar berish**                        | [muammo yarating](https://github.com/diegosouzapw/AgentProxy/issues) — `npm run system-info` chiqishini biriktiring            |
 | 🤝 **Hissa qoʻshish**                                  | [CONTRIBUTING.md](CONTRIBUTING.md) · [Tarmoqlanish va reliz modeli](docs/ops/BRANCHING_MODEL.md) · `good first issue` tanlang |
-| 💚 **Loyihani qoʻllab-quvvatlash**                     | [Qoʻllab-quvvatlash usullari ↑](#-support-omniroute) · [GitHub Sponsors](https://github.com/sponsors/diegosouzapw)            |
+| 💚 **Loyihani qoʻllab-quvvatlash**                     | [Qoʻllab-quvvatlash usullari ↑](#-support-agentproxy) · [GitHub Sponsors](https://github.com/sponsors/diegosouzapw)            |
 
 </div>
 
@@ -1275,7 +1275,7 @@ bitta jarayon xizmat koʻrsatadi, shu sababli hozircha faqat CLI uchun alohida p
   <tr><td nowrap><b>Sinov</b></td><td>Node.js test vositasi + Vitest — kuzatiladigan 5 100 dan ortiq test fayllari boʻylab <b>39 000 dan ortiq statik test deklaratsiyalari</b> (modul, integratsiya, E2E, xavfsizlik, ekotizim)</td></tr>
   <tr><td nowrap><b>Platformalar</b></td><td>Kompyuter (Electron) · Android (Termux) · PWA (istalgan brauzer)</td></tr>
   <tr><td nowrap><b>CI/CD</b></td><td>GitHub Actions — reliz vaqtida npm va Docker Hubʼga avtomatik nashr qilish</td></tr>
-  <tr><td nowrap><b>Havolalar</b></td><td><a href="https://omniroute.online">Veb-sayt</a> · <a href="https://www.npmjs.com/package/omniroute">npm</a> · <a href="https://hub.docker.com/r/diegosouzapw/omniroute">Docker Hub</a></td></tr>
+  <tr><td nowrap><b>Havolalar</b></td><td><a href="https://agentproxy.online">Veb-sayt</a> · <a href="https://www.npmjs.com/package/agentproxy">npm</a> · <a href="https://hub.docker.com/r/khanhkit/agentproxy">Docker Hub</a></td></tr>
 </table>
 
 <div align="center">
@@ -1593,11 +1593,11 @@ gh release create "v${VERSION}" --title "v${VERSION}" --generate-notes
 
 ## 🌍 StarMapper
 
-<a href="https://starmapper.bruniaux.com/diegosouzapw/omniroute">
+<a href="https://starmapper.bruniaux.com">
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="https://starmapper.bruniaux.com/api/map-image/diegosouzapw/omniroute?theme=dark" />
-    <source media="(prefers-color-scheme: light)" srcset="https://starmapper.bruniaux.com/api/map-image/diegosouzapw/omniroute?theme=light" />
-    <img alt="StarMapper" src="https://starmapper.bruniaux.com/api/map-image/diegosouzapw/omniroute" />
+    <source media="(prefers-color-scheme: dark)" srcset="https://starmapper.bruniaux.com" />
+    <source media="(prefers-color-scheme: light)" srcset="https://starmapper.bruniaux.com" />
+    <img alt="StarMapper" src="https://starmapper.bruniaux.com" />
   </picture>
 </a>
 </div>
@@ -1724,9 +1724,9 @@ MIT litsenziyasi — batafsil maʼlumot uchun [LICENSE](LICENSE) fayliga qarang.
 
 <div align="center">
 
-**[⬆ Yuqoriga qaytish](#-omniroute)** · Ochiq kodli sunʼiy intellekt hamjamiyati uchun ❤️ bilan yaratildi.
+**[⬆ Yuqoriga qaytish](#-agentproxy)** · Ochiq kodli sunʼiy intellekt hamjamiyati uchun ❤️ bilan yaratildi.
 
-<sub>AgentProxy v3.8.51 · Node ≥22.22.2 · MIT litsenziyasi · <a href="https://omniroute.online">omniroute.online</a></sub>
+<sub>AgentProxy v3.8.51 · Node ≥22.22.2 · MIT litsenziyasi · <a href="https://agentproxy.online">agentproxy.online</a></sub>
 
 </div>
 <!-- Hamjamiyatning savol-javoblari uchun GitHub Discussions yoqilgan -->
