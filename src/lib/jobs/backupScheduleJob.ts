@@ -1,3 +1,4 @@
+import { trackLifecycleBackgroundTask } from "@/lib/lifecycle/backgroundTasks";
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { matchesCron } from "@/lib/jobs/cronMatch";
@@ -116,7 +117,7 @@ export function startBackupScheduleJob() {
   }
 
   const run = () => {
-    runBackupScheduleTick().catch((error) => {
+    void trackLifecycleBackgroundTask("backup-schedule", runBackupScheduleTick)?.catch((error) => {
       console.error("[BackupSchedule] Tick failed:", error);
     });
   };

@@ -69,11 +69,18 @@ test("native startup and shutdown hooks drive the health lifecycle", () => {
   assert.equal(startupSource.slice(markReady).trim(), "markServerReady();\n}");
 
   const shutdownSource = fs.readFileSync("src/lib/gracefulShutdown.ts", "utf8");
-  const drainingFlag = shutdownSource.indexOf("state.shuttingDown = true;");
-  const markStopping = shutdownSource.indexOf("markServerStopping();", drainingFlag);
-  const drainAwait = shutdownSource.indexOf("await waitForDrain();", drainingFlag);
+  const admissionHook = shutdownSource.indexOf(
+    'register("server-admission", "STOP_ADMISSION", () => markServerStopping());'
+  );
+  const requestDrainHook = shutdownSource.indexOf(
+    'register("request-drain", "DRAIN_ACTIVE", waitForRequestDrain);'
+  );
 
-  assert.ok(markStopping > drainingFlag && markStopping < drainAwait);
+  assert.ok(admissionHook >= 0, "health must enter stopping during STOP_ADMISSION");
+  assert.ok(
+    requestDrainHook > admissionHook,
+    "request drain must remain a later DRAIN_ACTIVE phase"
+  );
 });
 
 test("/healthz bypasses the centralized auth proxy matcher", () => {

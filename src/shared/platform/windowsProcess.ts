@@ -32,6 +32,22 @@ export interface StopProcessGracefullyOptions {
   platform?: NodeJS.Platform;
 }
 
+const DEFAULT_APP_SHUTDOWN_TIMEOUT_MS = 30_000;
+const SHUTDOWN_EXIT_MARGIN_MS = 1_000;
+
+/**
+ * Parent launchers must not force-kill a server before the server's own lifecycle
+ * deadline expires. Keep escalation just outside that one authoritative app budget.
+ */
+export function resolveShutdownEscalationTimeoutMs(
+  env: Pick<NodeJS.ProcessEnv, "SHUTDOWN_TIMEOUT_MS"> = process.env
+): number {
+  const parsed = Number(env.SHUTDOWN_TIMEOUT_MS ?? String(DEFAULT_APP_SHUTDOWN_TIMEOUT_MS));
+  const lifecycleTimeoutMs =
+    Number.isFinite(parsed) && parsed >= 0 ? parsed : DEFAULT_APP_SHUTDOWN_TIMEOUT_MS;
+  return lifecycleTimeoutMs + SHUTDOWN_EXIT_MARGIN_MS;
+}
+
 const defaultIsPidRunning = (pid: number): boolean => {
   try {
     process.kill(pid, 0);

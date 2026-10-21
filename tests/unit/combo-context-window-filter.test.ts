@@ -542,3 +542,26 @@ test("#12273 unknown-context sole survivor does not restore hard-rejected target
     ["unit-unknown/mystery"]
   );
 });
+
+test("known-compatible catalog target outranks a near-boundary rejected override", () => {
+  saveModelsDevCapabilities({
+    "unit-override-order": {
+      capped: capabilityEntry(8_000),
+      big: capabilityEntry(1_000_000),
+    },
+  });
+  setModelContextOverride("unit-override-order", "capped", 10_000);
+  try {
+    const out = filterTargetsByRequestCompatibility(
+      [target("unit-override-order/capped"), target("unit-override-order/big")],
+      largeContextBody(),
+      noopLog
+    );
+    assert.deepEqual(
+      out.map((entry) => entry.modelStr),
+      ["unit-override-order/big", "unit-override-order/capped"]
+    );
+  } finally {
+    removeModelContextOverride("unit-override-order", "capped");
+  }
+});

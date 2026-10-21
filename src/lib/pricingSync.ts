@@ -10,6 +10,7 @@
  * Opt-in via PRICING_SYNC_ENABLED=true (default: false).
  */
 
+import { trackLifecycleBackgroundTask } from "@/lib/lifecycle/backgroundTasks";
 import { getDbInstance } from "./db/core";
 import { invalidateDbCache, getModelCatalogCacheVersion } from "./db/readCache";
 import { backupDbFile } from "./db/backup";
@@ -139,6 +140,7 @@ const LITELLM_PROVIDER_MAP: Record<string, string[]> = {
 // ─── Periodic sync state ─────────────────────────────────
 
 let syncTimer: ReturnType<typeof setInterval> | null = null;
+let syncInFlight = false;
 let lastSyncTime: string | null = null;
 let lastSyncModelCount = 0;
 let activeSyncIntervalMs = SYNC_INTERVAL_MS;
@@ -450,6 +452,16 @@ export async function syncPricingFromSources(opts?: {
 
 // ─── Periodic sync ───────────────────────────────────────
 
+async function runPeriodicPricingSync(): Promise<SyncResult | null> {
+  if (syncInFlight) return null;
+  syncInFlight = true;
+  try {
+    return await syncPricingFromSources();
+  } finally {
+    syncInFlight = false;
+  }
+}
+
 /**
  * Start periodic pricing sync (non-blocking).
  */
@@ -461,9 +473,9 @@ export function startPeriodicSync(intervalMs?: number): void {
   console.log(`[PRICING_SYNC] Starting periodic sync every ${interval / 1000}s`);
 
   // Initial sync (non-blocking)
-  syncPricingFromSources()
-    .then((result) => {
-      if (result.success) {
+  trackLifecycleBackgroundTask("pricing-sync", () => runPeriodicPricingSync())
+    ?.then((result) => {
+      if (result?.success) {
         console.log(
           `[PRICING_SYNC] Initial sync complete: ${result.modelCount} models from ${result.providerCount} providers`
         );
@@ -474,9 +486,9 @@ export function startPeriodicSync(intervalMs?: number): void {
     });
 
   syncTimer = setInterval(() => {
-    syncPricingFromSources()
-      .then((result) => {
-        if (result.success) {
+    trackLifecycleBackgroundTask("pricing-sync", () => runPeriodicPricingSync())
+      ?.then((result) => {
+        if (result?.success) {
           console.log(`[PRICING_SYNC] Periodic sync complete: ${result.modelCount} models`);
         }
       })

@@ -19,6 +19,7 @@ import path from "node:path";
 const ORIGINAL_DATA_DIR = process.env.DATA_DIR;
 const ORIGINAL_FETCH = globalThis.fetch;
 const ORIGINAL_PLATFORM = process.platform;
+const ORIGINAL_SHUTDOWN_TIMEOUT_MS = process.env.SHUTDOWN_TIMEOUT_MS;
 
 type KillByPortDeps = {
   platform?: string;
@@ -48,6 +49,7 @@ function setSupervisorPid(dataDir: string, p: number) {
 async function withEnv(fn: (dataDir: string) => Promise<void>) {
   const dataDir = createTempDataDir();
   process.env.DATA_DIR = dataDir;
+  process.env.SHUTDOWN_TIMEOUT_MS = "0";
   globalThis.fetch = (async () => {
     throw new Error("server offline");
   }) as typeof fetch;
@@ -65,6 +67,8 @@ async function withEnv(fn: (dataDir: string) => Promise<void>) {
     globalThis.fetch = ORIGINAL_FETCH;
     if (ORIGINAL_DATA_DIR === undefined) delete process.env.DATA_DIR;
     else process.env.DATA_DIR = ORIGINAL_DATA_DIR;
+    if (ORIGINAL_SHUTDOWN_TIMEOUT_MS === undefined) delete process.env.SHUTDOWN_TIMEOUT_MS;
+    else process.env.SHUTDOWN_TIMEOUT_MS = ORIGINAL_SHUTDOWN_TIMEOUT_MS;
   }
 }
 

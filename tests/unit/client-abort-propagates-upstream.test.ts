@@ -186,6 +186,8 @@ test("validateResponseQuality: peek exits promptly on client abort", async () =>
   const out = await Promise.race([p, sleep(1000).then(() => "hung")]);
   assert.notEqual(out, "hung");
   assert.ok(Date.now() - t0 < 500);
+  assert.equal((out as { valid: boolean }).valid, false);
+  assert.equal((out as { clientAborted?: boolean }).clientAborted, true);
   assert.equal(await waitFor(() => cancelled), true);
 });
 
@@ -200,6 +202,8 @@ test("validateResponseQuality: already-aborted signal returns without reading", 
     sleep(1000).then(() => "hung"),
   ]);
   assert.notEqual(out, "hung");
+  assert.equal((out as { valid: boolean }).valid, false);
+  assert.equal((out as { clientAborted?: boolean }).clientAborted, true);
 });
 
 test("validateResponseQuality: non-aborted stream with signal behaves as before", async () => {

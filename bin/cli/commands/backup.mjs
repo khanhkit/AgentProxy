@@ -292,13 +292,21 @@ async function _uploadBackupToCloud(backupPath, info) {
 
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 30000);
-    const res = await fetch(`${getBaseUrl()}/api/db-backups/cloud`, {
+    /** @type {RequestInit & { duplex: "half" }} */
+    const requestInit = {
       method: "POST",
       headers,
-      body: Readable.from(createBackupMultipartStream(backupPath, info, boundary)),
+      body: /** @type {BodyInit} */ (
+        /** @type {unknown} */ (
+          Readable.from(createBackupMultipartStream(backupPath, info, boundary))
+        )
+      ),
       duplex: "half",
       signal: controller.signal,
-    }).finally(() => clearTimeout(timeout));
+    };
+    const res = await fetch(`${getBaseUrl()}/api/db-backups/cloud`, requestInit).finally(() =>
+      clearTimeout(timeout)
+    );
     if (res.ok) {
       const data = await res.json();
       console.log(t("backup.cloudUploaded", { url: data.url || "(stored)" }));

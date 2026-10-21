@@ -196,9 +196,16 @@ async function refreshOAuthToken(connection: any) {
         update.expiresAt = refreshed.expiresAt;
         update.tokenExpiresAt = refreshed.expiresAt;
       } else if (refreshed.expiresIn) {
-        const expiresAt = new Date(Date.now() + refreshed.expiresIn * 1000).toISOString();
-        update.expiresAt = expiresAt;
-        update.tokenExpiresAt = expiresAt;
+        const expiresIn = Number(refreshed.expiresIn);
+        if (Number.isFinite(expiresIn) && expiresIn > 0) {
+          const expiresAt = new Date(Date.now() + expiresIn * 1000).toISOString();
+          update.expiresAt = expiresAt;
+          update.tokenExpiresAt = expiresAt;
+        } else {
+          const expiresAt = new Date(Date.now() + FALLBACK_REFRESH_EXPIRY_MS).toISOString();
+          update.expiresAt = expiresAt;
+          update.tokenExpiresAt = expiresAt;
+        }
       } else {
         // Upstream returned neither expiresAt nor expiresIn. Persist a
         // conservative 30-minute expiry so a NULL expiresAt (treated as
@@ -212,7 +219,7 @@ async function refreshOAuthToken(connection: any) {
       if (refreshed.providerSpecificData) {
         update.providerSpecificData = {
           ...(connection.providerSpecificData || {}),
-          ...refreshed.providerSpecificData,
+          ...(refreshed.providerSpecificData as Record<string, unknown>),
         };
       }
       await updateProviderConnection(connection.id, update);
@@ -1012,7 +1019,8 @@ export async function testSingleConnection(
   // Re-read the row after the probe: an operator may have switched it off while
   // network validation was in flight, and the stale pre-probe snapshot must not
   // turn it back on.
-  const latest = ((await getProviderConnectionById(connectionId)) ?? connection) as typeof connection;
+  const latest = ((await getProviderConnectionById(connectionId)) ??
+    connection) as typeof connection;
   const operatorDisabled = isOperatorDisabled(latest);
 
   // Unsupported validation capability is neutral: activate only when the latest

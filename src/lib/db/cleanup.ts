@@ -4,6 +4,7 @@
  * @module lib/db/cleanup
  */
 
+import { trackLifecycleBackgroundTask } from "@/lib/lifecycle/backgroundTasks";
 import { getDbInstance } from "./core";
 import { getUserDatabaseSettings } from "./databaseSettings";
 import { rollupUsageHistoryBeforeDate } from "@/lib/usage/aggregateHistory";
@@ -466,8 +467,7 @@ export async function cleanupCcrBlocks(): Promise<CleanupResult> {
 const BATCH_RETENTION_DAYS_DEFAULT = 30;
 
 function getBatchRetentionDays(): number {
-  const raw =
-    process.env.AGENTPROXY_BATCH_RETENTION_DAYS;
+  const raw = process.env.AGENTPROXY_BATCH_RETENTION_DAYS;
   if (!raw) return BATCH_RETENTION_DAYS_DEFAULT;
   const parsed = Number.parseInt(raw, 10);
   return Number.isInteger(parsed) && parsed >= 0 ? parsed : BATCH_RETENTION_DAYS_DEFAULT;
@@ -943,6 +943,7 @@ export async function cleanupProxyLogs(): Promise<CleanupResult> {
 
 const CLEANUP_INTERVAL_MS = 6 * 60 * 60 * 1000; // 6 hours
 let _cleanupSchedulerTimer: ReturnType<typeof setInterval> | null = null;
+let startupTimer: ReturnType<typeof setTimeout> | null = null;
 
 /**
  * One scheduled pass: run retention cleanup, then reclaim freed pages without
@@ -978,22 +979,26 @@ export async function runScheduledCleanupPass(phase: "startup" | "periodic"): Pr
  * are deferred to vacuumScheduler according to operator settings.
  */
 export function startCleanupScheduler(): void {
-  if (_cleanupSchedulerTimer) return;
+  if (_cleanupSchedulerTimer || startupTimer) return;
 
-  setTimeout(async () => {
-    try {
-      await runScheduledCleanupPass("startup");
-    } catch (err) {
-      console.error("[Cleanup] Startup cleanup failed:", err);
-    }
+  const launchPass = (phase: "startup" | "periodic") =>
+    trackLifecycleBackgroundTask("db-cleanup", () => runScheduledCleanupPass(phase))?.catch(
+      (err) => {
+        console.error(
+          `[Cleanup] ${phase === "startup" ? "Startup" : "Periodic"} cleanup failed:`,
+          err
+        );
+      }
+    );
+
+  startupTimer = setTimeout(() => {
+    startupTimer = null;
+    void launchPass("startup");
   }, 30_000);
+  startupTimer.unref?.();
 
-  _cleanupSchedulerTimer = setInterval(async () => {
-    try {
-      await runScheduledCleanupPass("periodic");
-    } catch (err) {
-      console.error("[Cleanup] Periodic cleanup failed:", err);
-    }
+  _cleanupSchedulerTimer = setInterval(() => {
+    void launchPass("periodic");
   }, CLEANUP_INTERVAL_MS);
 
   if (_cleanupSchedulerTimer && typeof _cleanupSchedulerTimer.unref === "function") {
@@ -1007,6 +1012,10 @@ export function startCleanupScheduler(): void {
  * Stop the background cleanup scheduler (for tests).
  */
 export function stopCleanupScheduler(): void {
+  if (startupTimer) {
+    clearTimeout(startupTimer);
+    startupTimer = null;
+  }
   if (_cleanupSchedulerTimer) {
     clearInterval(_cleanupSchedulerTimer);
     _cleanupSchedulerTimer = null;

@@ -184,6 +184,9 @@ interface LKGPRecordCache {
 }
 
 const lkgpCache = new TTLCache<LKGPRecordCache | null>(SETTINGS_TTL_MS);
+let lkgpCacheEpoch = 0;
+type LKGPActiveReadState = { readers: number; version: number };
+const lkgpActiveReads = new Map<string, LKGPActiveReadState>();
 
 export async function getCachedLKGP(
   comboName: string,
@@ -193,10 +196,32 @@ export async function getCachedLKGP(
   const cached = lkgpCache.get(cacheKey);
   if (cached !== undefined) return cached;
 
-  const { getLKGP } = await import("@/lib/db/settings");
-  const value = await getLKGP(comboName, modelId);
-  lkgpCache.set(cacheKey, value);
-  return value;
+  let readState = lkgpActiveReads.get(cacheKey);
+  if (!readState) {
+    readState = { readers: 0, version: 0 };
+    lkgpActiveReads.set(cacheKey, readState);
+  }
+  readState.readers += 1;
+  const readEpoch = lkgpCacheEpoch;
+  const readKeyVersion = readState.version;
+
+  try {
+    const { getLKGP } = await import("@/lib/db/settings");
+    const value = await getLKGP(comboName, modelId);
+    if (
+      readEpoch === lkgpCacheEpoch &&
+      lkgpActiveReads.get(cacheKey) === readState &&
+      readKeyVersion === readState.version
+    ) {
+      lkgpCache.set(cacheKey, value);
+    }
+    return value;
+  } finally {
+    readState.readers -= 1;
+    if (readState.readers === 0 && lkgpActiveReads.get(cacheKey) === readState) {
+      lkgpActiveReads.delete(cacheKey);
+    }
+  }
 }
 
 export async function setCachedLKGP(
@@ -207,7 +232,7 @@ export async function setCachedLKGP(
 ): Promise<void> {
   const { setLKGP } = await import("@/lib/db/settings");
   await setLKGP(comboName, modelId, providerId, connectionId);
-  lkgpCache.invalidate(`lkgp:${comboName}:${modelId}`);
+  invalidateCachedLKGP(`${comboName}:${modelId}`);
 }
 
 /**
@@ -218,7 +243,16 @@ export async function setCachedLKGP(
  * for the rest of the TTL window.
  */
 export function invalidateCachedLKGP(pinKey?: string): void {
-  lkgpCache.invalidate(pinKey ? `lkgp:${pinKey}` : undefined);
+  if (pinKey) {
+    const cacheKey = `lkgp:${pinKey}`;
+    const activeRead = lkgpActiveReads.get(cacheKey);
+    if (activeRead) activeRead.version += 1;
+    lkgpCache.invalidate(cacheKey);
+    return;
+  }
+  lkgpCacheEpoch += 1;
+  lkgpActiveReads.clear();
+  lkgpCache.invalidate();
 }
 
 // ──────────────── Combo Cache Invalidation Signal ────────────────

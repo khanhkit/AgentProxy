@@ -46,6 +46,7 @@ const qualitySink: RoutingEventSink = {
 };
 
 let otelSink: OtlpHttpsEventSink | null = null;
+let unregisterOtelSink: (() => void) | null = null;
 
 let initialized = false;
 
@@ -70,7 +71,7 @@ export function initRoutingObservability(env: NodeJS.ProcessEnv = process.env): 
       maxBatchSize: 64,
       flushIntervalMs: 10_000,
     });
-    registerRoutingEventSink(otelSink);
+    unregisterOtelSink = registerRoutingEventSink(otelSink);
   }
 
   return { sinks: listRoutingSinkNames(), otelEnabled: otelSink != null };
@@ -113,6 +114,21 @@ export function routingOtelStats(): { buffered: number; dropped: number } | null
   return otelSink ? otelSink.getStats() : null;
 }
 
+export async function shutdownRoutingObservability(): Promise<void> {
+  if (!otelSink) {
+    initialized = false;
+    return;
+  }
+  const sink = otelSink;
+  otelSink = null;
+  unregisterOtelSink?.();
+  unregisterOtelSink = null;
+  // Keep initialized=true while the old sink drains so concurrent emit/init
+  // calls cannot install a replacement sink during shutdown.
+  await sink.stop();
+  initialized = false;
+}
+
 function listRoutingSinkNames(): string[] {
   return listRoutingEventSinks();
 }
@@ -120,10 +136,11 @@ function listRoutingSinkNames(): string[] {
 /** Test/ops hook: full reset of the routing observability layer. */
 export function resetRoutingObservability(): void {
   clearRoutingEventSinks();
+  unregisterOtelSink = null;
   memoryStore.clear();
   resetQualityTracker();
   if (otelSink) {
-    otelSink.stop();
+    void otelSink.stop();
     otelSink = null;
   }
   initialized = false;

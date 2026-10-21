@@ -92,6 +92,10 @@ const IGNORE_FROM_CODE = new Set([
   "NEXT_DIST_DIR",
   "NEXT_PHASE",
   "NEXT_RUNTIME",
+  // Packaged standalone forces Next into manual signal mode before server.js loads
+  // so AgentProxy remains the single SIGINT/SIGTERM lifecycle/final-exit owner.
+  // This is runner-owned control-plane state, never an operator-facing setting.
+  "NEXT_MANUAL_SIG_HANDLE",
   // Set/read by Next.js's own dev server (next-dev-server.js) when the turbopack
   // bundler is active — framework-internal. The AgentProxy-facing knob is
   // AGENTPROXY_USE_TURBOPACK (scripts/dev/run-next.mjs), which IS documented.

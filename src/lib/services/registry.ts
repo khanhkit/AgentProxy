@@ -17,26 +17,20 @@ export function unregisterSupervisor(tool: string): void {
   supervisors.delete(tool);
 }
 
-async function stopAll(): Promise<void> {
-  // Drive every supervisor stop to completion before the process exits so the
-  // DB status writes inside ServiceSupervisor.stop() flush. Otherwise the
-  // event loop drains immediately on SIGTERM and rows are stuck in "running"
-  // or "starting" until the next boot.
-  await Promise.allSettled(Array.from(supervisors.values()).map((supervisor) => supervisor.stop()));
+export async function stopAllSupervisors(): Promise<void> {
+  // Supervisors persist terminal status, so the lifecycle coordinator must await
+  // them before the database close phase. Signal/final-exit ownership belongs to
+  // the process entrypoint, never this leaf registry.
+  const results = await Promise.allSettled(
+    Array.from(supervisors.values()).map((supervisor) => supervisor.stop())
+  );
+  const failures = results.filter(
+    (result): result is PromiseRejectedResult => result.status === "rejected"
+  );
+  if (failures.length > 0) {
+    throw new AggregateError(
+      failures.map((failure) => failure.reason),
+      "Supervisor shutdown failed"
+    );
+  }
 }
-
-function handleShutdownSignal(signal: NodeJS.Signals): void {
-  stopAll()
-    .catch(() => {
-      /* never throw out of a signal handler */
-    })
-    .finally(() => {
-      // Re-raise the signal with the default disposition so the process exit
-      // status reflects the original signal (128 + signal number) rather than
-      // a synthetic process.exit() code.
-      process.kill(process.pid, signal);
-    });
-}
-
-process.once("SIGINT", () => handleShutdownSignal("SIGINT"));
-process.once("SIGTERM", () => handleShutdownSignal("SIGTERM"));

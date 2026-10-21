@@ -7,6 +7,7 @@ import { join } from "node:path";
 const { createNodeSqliteAdapter } = await import("../../src/lib/db/adapters/nodeSqliteAdapter.ts");
 
 const SIGNALS = ["beforeExit", "SIGINT", "SIGTERM"] as const;
+const PROCESS_EMIT_BEFORE_ADAPTERS = process.emit;
 
 function counts(): Record<string, number> {
   return Object.fromEntries(SIGNALS.map((s) => [s, process.listenerCount(s)]));
@@ -37,27 +38,37 @@ test("closing a node:sqlite adapter releases its process listeners (#13108)", as
         `${N} open+close cycles retained ${leaked[signal]} "${signal}" listener(s) on process`
       );
     }
+    assert.equal(
+      process.emit,
+      PROCESS_EMIT_BEFORE_ADAPTERS,
+      "node:sqlite adapter create/close must not replace the process-global emit function"
+    );
   } finally {
     rmSync(dir, { recursive: true, force: true });
   }
 });
 
-test("an open node:sqlite adapter keeps its shutdown listeners registered (#13108)", async () => {
+test("an open node:sqlite adapter keeps only local beforeExit ownership (#13108)", async () => {
   const dir = mkdtempSync(join(tmpdir(), "agentproxy-dbleak-open-"));
   const before = counts();
+  const emitBefore = process.emit;
   let adapter: Awaited<ReturnType<typeof createNodeSqliteAdapter>> | null = null;
 
   try {
     adapter = await createNodeSqliteAdapter(join(dir, "open.sqlite"));
 
-    // The fix must not detach eagerly: these handlers are what checkpoint the
-    // WAL on Ctrl-C, so they have to stay armed for as long as the db is open.
     const armed = delta(before, counts());
-    for (const signal of SIGNALS) {
-      assert.equal(armed[signal], 1, `an open adapter must keep its "${signal}" handler`);
-    }
+    assert.equal(
+      armed.beforeExit,
+      1,
+      "open adapter may retain one local beforeExit checkpoint hook"
+    );
+    assert.equal(armed.SIGINT, 0, "adapter leaf must not own SIGINT");
+    assert.equal(armed.SIGTERM, 0, "adapter leaf must not own SIGTERM");
+    assert.equal(process.emit, emitBefore, "adapter leaf must not replace process.emit");
   } finally {
     adapter?.close();
+    assert.equal(process.emit, emitBefore, "closing the adapter must leave process.emit unchanged");
     rmSync(dir, { recursive: true, force: true });
   }
 });

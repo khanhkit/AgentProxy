@@ -4,14 +4,11 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 
-// Repro for #13870: the combo context-fit compat filter (filterTargetsByRequestCompatibility)
-// uses the chars/4 estimate (estimateTokens) as the sole ground truth for ranking targets.
-// On a repetitive agent-session body, chars/4 overstates the real tokenizer count by ~3-4x
-// (issue measured 276,792 estimated vs 74,679 real for the same body). A user-defined combo
-// whose primary/fallback members carry manual model_context_overrides sized for the REAL
-// window (250k) gets those overrides evaluated against the inflated estimate, fail the
-// context check, and are demoted behind the emergency (899k catalog) member -- even though
-// the real request would have fit the primary with 3x headroom.
+// Historical #13870 regression fixture: chars/4 can overstate a repetitive agent-session
+// body by several-fold. AP-ISS-0195 later tightened the safety ordering after audit finding
+// 4233318126: a target that actually fails the context check must not outrank a target whose
+// known catalog limit fits, even when the rejected target has a near-boundary manual override.
+// The rejected override remains available as an advisory fallback; it is not dropped.
 
 const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-13870-"));
 const ORIGINAL_DATA_DIR = process.env.DATA_DIR;
@@ -93,7 +90,7 @@ function repetitiveAgentBody() {
   return { messages, tools, max_tokens: 32000 };
 }
 
-test("#13870: chars/4 overestimate demotes a real-fitting override primary behind the catalog emergency member", () => {
+test("#13870/AP-ISS-0195: known-fitting catalog target leads while rejected overrides remain fallback", () => {
   saveModelsDevCapabilities({
     "unit-13870-primary": { model: capabilityEntry(null) },
     "unit-13870-fallback": { model: capabilityEntry(null) },
@@ -122,12 +119,15 @@ test("#13870: chars/4 overestimate demotes a real-fitting override primary behin
 
     const out = filterTargetsByRequestCompatibility(targets, body, noopLog);
 
-    assert.equal(
-      out[0].modelStr,
-      "unit-13870-primary/model",
-      `expected the real-fitting override primary to stay first, but the inflated ` +
-        `chars/4 estimate promoted "${out[0].modelStr}" ahead of it -- this is the ` +
-        `"collapse to the emergency member" reported in #13870`
+    assert.deepEqual(
+      out.map((entry) => entry.modelStr),
+      [
+        "unit-13870-emergency/model",
+        "unit-13870-primary/model",
+        "unit-13870-fallback/model",
+        "unit-13870-small/model",
+      ],
+      "known-fitting catalog targets must lead context-rejected overrides, while rejected overrides remain available as fallbacks"
     );
   } finally {
     removeModelContextOverride("unit-13870-primary", "model");

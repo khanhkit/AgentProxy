@@ -16,6 +16,7 @@
  * with the sweep disabled nothing is ever deleted, so the new columns are pure telemetry.
  */
 
+import { trackLifecycleBackgroundTask } from "@/lib/lifecycle/backgroundTasks";
 import { MemoryType, type Memory } from "./types";
 import { listMemoriesForDecay, deleteMemory } from "./store";
 import { logger } from "../../../open-sse/utils/logger.ts";
@@ -204,6 +205,7 @@ export async function sweepDecayedMemories(
 // --- Optional periodic sweep (mirrors startContextWindowReconcile) ---
 
 let sweepTimer: ReturnType<typeof setInterval> | null = null;
+let startupTimer: ReturnType<typeof setTimeout> | null = null;
 
 function resolveSweepIntervalMs(env: NodeJS.ProcessEnv = process.env): number {
   const raw = env.MEMORY_TYPED_DECAY_SWEEP_INTERVAL;
@@ -227,17 +229,27 @@ export function startMemoryDecaySweep(intervalMs?: number): void {
   if (!interval || interval <= 0) return;
 
   const tick = () => {
-    void sweepDecayedMemories({ config }).catch(() => {
+    void trackLifecycleBackgroundTask("memory-decay-sweep", () =>
+      sweepDecayedMemories({ config })
+    )?.catch(() => {
       // Swallow — the sweep is advisory hygiene; the next tick retries.
     });
   };
 
-  setTimeout(tick, 0);
+  startupTimer = setTimeout(() => {
+    startupTimer = null;
+    tick();
+  }, 0);
+  startupTimer.unref?.();
   sweepTimer = setInterval(tick, interval);
   sweepTimer.unref?.();
 }
 
 export function stopMemoryDecaySweep(): void {
+  if (startupTimer) {
+    clearTimeout(startupTimer);
+    startupTimer = null;
+  }
   if (sweepTimer) {
     clearInterval(sweepTimer);
     sweepTimer = null;
