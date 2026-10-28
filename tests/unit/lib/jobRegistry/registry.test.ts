@@ -592,3 +592,74 @@ test("cronGetter: throws falls back to static cron", async () => {
   assert.ok(calls >= 1, "job should fire with static cron fallback when cronGetter throws");
   reg.stop("throwing");
 });
+
+test("stopAll stops scheduling while drain waits for the active handler through terminal DB work", async () => {
+  const reg = getJobRegistry();
+  let release!: () => void;
+  const gate = new Promise<void>((resolve) => {
+    release = resolve;
+  });
+  reg.register(
+    def("shutdown-drain", async () => {
+      await gate;
+      return { success: true, recordsAffected: 1 };
+    })
+  );
+
+  assert.deepEqual(await reg.runNow("shutdown-drain"), { started: true });
+  reg.stopAll();
+
+  let drained = false;
+  const drainPromise = reg.drain().then(() => {
+    drained = true;
+  });
+  await new Promise((resolve) => setTimeout(resolve, 20));
+  assert.equal(drained, false, "drain must wait for the active handler");
+  assert.deepEqual(await reg.runNow("shutdown-drain"), {
+    started: false,
+    reason: "stopping",
+  });
+
+  release();
+  await drainPromise;
+  const runs = reg.getRuns("shutdown-drain");
+  assert.equal(runs.length, 1, "drain resolves only after terminal run record is persisted");
+  assert.equal(runs[0].status, "success");
+});
+
+test("cron scheduling refuses to re-arm after stopAll", () => {
+  const reg = getJobRegistry() as unknown as {
+    stopAll(): void;
+    scheduleNextCron(jobId: string, cronExpr: string, tz: string, envFlag?: string | null): void;
+    timers: Map<string, ReturnType<typeof setTimeout>>;
+  };
+  reg.stopAll();
+  reg.scheduleNextCron("stopped-cron", "* * * * *", "UTC");
+  const timer = reg.timers.get("stopped-cron");
+  if (timer) clearTimeout(timer);
+  assert.equal(timer, undefined, "stopping registry must never arm a replacement cron timer");
+});
+test("queued runNow resolves as stopping instead of starting new work after stopAll", async () => {
+  const reg = getJobRegistry();
+  let calls = 0;
+  let release!: () => void;
+  const gate = new Promise<void>((resolve) => {
+    release = resolve;
+  });
+  reg.register(
+    def("queued-shutdown", async () => {
+      calls++;
+      await gate;
+      return { success: true };
+    })
+  );
+
+  assert.deepEqual(await reg.runNow("queued-shutdown"), { started: true });
+  const queued = reg.runNow("queued-shutdown");
+  reg.stopAll();
+  release();
+
+  assert.deepEqual(await queued, { started: false, reason: "stopping" });
+  await reg.drain();
+  assert.equal(calls, 1, "shutdown must not admit the queued follow-up run");
+});

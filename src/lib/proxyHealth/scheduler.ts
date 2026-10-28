@@ -22,6 +22,7 @@
  *                               same threshold, not independently tunable.
  */
 
+import { trackLifecycleBackgroundTask } from "@/lib/lifecycle/backgroundTasks";
 import { deleteProxyById, listProxies, updateProxy } from "@/lib/db/proxies";
 import { isProxyLogIncludeIps } from "@/lib/proxyLogger";
 import {
@@ -109,9 +110,10 @@ export function planRecoveryProbes(
   candidates: RecoveryCandidate[],
   limits: RecoveryProbeLimits
 ): RecoveryCandidate[] {
-  const max = Number.isFinite(limits.maxCandidates) && limits.maxCandidates > 0
-    ? Math.floor(limits.maxCandidates)
-    : 0;
+  const max =
+    Number.isFinite(limits.maxCandidates) && limits.maxCandidates > 0
+      ? Math.floor(limits.maxCandidates)
+      : 0;
   if (max === 0) return [];
   return candidates
     .filter((c) => c.key !== null && c.kind === "ip_quota_429")
@@ -150,6 +152,7 @@ declare global {
   var __proxyHealthConsecutiveFailures: Map<string, number> | undefined;
   // Recovery timer handle for the opt-in pass (own timer, off by default).
   var __proxyHealthRecoveryInterval: ReturnType<typeof setInterval> | undefined;
+  var __proxyHealthStartupTimer: ReturnType<typeof setTimeout> | undefined;
 }
 
 function getFailureMap(): Map<string, number> {
@@ -299,7 +302,9 @@ async function testOneProxy(proxy: {
     // never resolves for anyone (e.g. databricks's default azuredatabricks.net host is
     // literally 16 zeros). A connection failure there says nothing about this proxy —
     // same principle as the 5xx case above, extended to connection-level errors.
-    return providerTarget ? { outcome: "inconclusive", status: null } : { outcome: "fail", status: null };
+    return providerTarget
+      ? { outcome: "inconclusive", status: null }
+      : { outcome: "fail", status: null };
   } finally {
     clearTimeout(timeout);
   }
@@ -425,11 +430,13 @@ export async function runRecoveryPass(
   const empty = { planned: 0, recovered: 0, refused: 0 };
   if (!isRecoveryEnabled(env)) return empty;
   const active = limits ?? resolveRecoveryLimits(env);
-  const entries = candidates ?? [...recoveryLedger.entries()].map(([key, { setAsideAt }]) => ({
-    key,
-    kind: "ip_quota_429" as const,
-    setAsideAt,
-  }));
+  const entries =
+    candidates ??
+    [...recoveryLedger.entries()].map(([key, { setAsideAt }]) => ({
+      key,
+      kind: "ip_quota_429" as const,
+      setAsideAt,
+    }));
   const planned = planRecoveryProbes(entries, active);
   if (planned.length === 0) return empty;
   const concurrency = Math.max(
@@ -494,13 +501,26 @@ export function __recoveryLedgerSizeForTesting(): number {
   return recoveryLedger.size;
 }
 
+let sweepInFlight = false;
+
+function launchSweep(): void {
+  if (sweepInFlight) return;
+  const task = trackLifecycleBackgroundTask("proxy-health-sweep", async () => {
+    sweepInFlight = true;
+    try {
+      await sweep();
+    } finally {
+      sweepInFlight = false;
+    }
+  });
+  void task?.catch((err) => {
+    console.error(`${LOG_PREFIX} Sweep error:`, err);
+  });
+}
+
 function scheduleSweep(): void {
   const interval = getIntervalMs();
-  globalThis.__proxyHealthInterval = setInterval(() => {
-    void sweep().catch((err) => {
-      console.error(`${LOG_PREFIX} Sweep error:`, err);
-    });
-  }, interval);
+  globalThis.__proxyHealthInterval = setInterval(launchSweep, interval);
 }
 
 function getRecoveryIntervalMs(): number {
@@ -511,27 +531,35 @@ function getRecoveryIntervalMs(): number {
 function scheduleRecoveryPass(): void {
   const interval = getRecoveryIntervalMs();
   globalThis.__proxyHealthRecoveryInterval = setInterval(() => {
-    void runRecoveryPass().catch((err) => {
-      console.error(`${LOG_PREFIX} Recovery error:`, err);
-    });
+    void trackLifecycleBackgroundTask("proxy-health-recovery", () => runRecoveryPass())?.catch(
+      (err) => {
+        console.error(`${LOG_PREFIX} Recovery error:`, err);
+      }
+    );
   }, interval);
 }
 
 export function initProxyHealthCheck(): void {
   if (!isEnabled() || isBuildProcess() || isBackgroundServicesDisabled()) return;
-  if (globalThis.__proxyHealthInterval) return;
+  if (globalThis.__proxyHealthInterval || globalThis.__proxyHealthStartupTimer) return;
 
-  setTimeout(() => {
+  globalThis.__proxyHealthStartupTimer = setTimeout(() => {
+    globalThis.__proxyHealthStartupTimer = undefined;
     console.log(`${LOG_PREFIX} Starting proxy health scheduler (interval: ${getIntervalMs()}ms)`);
-    void sweep().catch(() => {});
+    launchSweep();
     scheduleSweep();
     // The recovery pass runs on its own timer, off by default. The gate
     // lives inside runRecoveryPass, so the timer is cheap when disabled.
     if (!globalThis.__proxyHealthRecoveryInterval) scheduleRecoveryPass();
   }, INITIAL_DELAY_MS);
+  globalThis.__proxyHealthStartupTimer.unref?.();
 }
 
 export function stopProxyHealthCheck(): void {
+  if (globalThis.__proxyHealthStartupTimer) {
+    clearTimeout(globalThis.__proxyHealthStartupTimer);
+    globalThis.__proxyHealthStartupTimer = undefined;
+  }
   if (globalThis.__proxyHealthInterval) {
     clearInterval(globalThis.__proxyHealthInterval);
     globalThis.__proxyHealthInterval = undefined;

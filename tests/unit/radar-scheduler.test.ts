@@ -160,6 +160,32 @@ test("radar sync scheduler", async (t) => {
     }
   );
 
+  await t.test(
+    "ensure: skips an interval tick while the previous scheduler tick is still in flight",
+    async () => {
+      let release!: () => void;
+      const gate = new Promise<void>((resolve) => {
+        release = resolve;
+      });
+      let calls = 0;
+      const { d, timers } = deps({
+        sync: async () => {
+          calls += 1;
+          await gate;
+          return { status: "updated", version: "2026.08.06.1", tier: "live" } as const;
+        },
+      });
+      assert.equal(ensureRadarSyncScheduler(d), true);
+      await new Promise((resolve) => setImmediate(resolve));
+      assert.equal(calls, 1, "immediate tick should be in flight");
+      timers.registered[0].fn();
+      await new Promise((resolve) => setImmediate(resolve));
+      assert.equal(calls, 1, "recurring tick must not overlap the active scheduler tick");
+      release();
+      await new Promise((resolve) => setImmediate(resolve));
+    }
+  );
+
   await t.test("init: flag off => never arms (flag-off boot stays timer-free)", () => {
     const { d, timers } = deps({ getFlag: () => false });
     assert.equal(initRadarSyncScheduler(d), false);

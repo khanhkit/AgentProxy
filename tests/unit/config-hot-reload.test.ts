@@ -195,3 +195,9 @@ test("hot-reload watcher picks up external sqlite changes via polling fallback",
       getGeminiThoughtSignatureMode() === "bypass-strict"
   );
 });
+
+test("hot reload exposes separate production stop and drain lifecycle APIs", async () => {
+  const mod = await import("../../src/lib/config/hotReload.ts");
+  assert.equal(typeof mod.stopRuntimeConfigHotReload, "function");
+  assert.equal(typeof mod.drainRuntimeConfigHotReload, "function");
+});

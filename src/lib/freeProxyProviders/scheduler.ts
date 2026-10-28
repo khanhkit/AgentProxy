@@ -21,6 +21,7 @@
  *                                        sources without their own TTL guard)
  */
 
+import { trackLifecycleBackgroundTask } from "@/lib/lifecycle/backgroundTasks";
 import { getEnabledProviders } from "@/lib/freeProxyProviders";
 import { getFreeProxyStats } from "@/lib/db/freeProxies";
 import { runFreeProxySyncCycle, type FreeProxySyncCycleResult } from "./syncCycle";
@@ -33,6 +34,7 @@ const LOG_PREFIX = "[FreeProxyAutoSync]";
 declare global {
   var __freeProxyAutoSyncInterval: ReturnType<typeof setInterval> | undefined;
   var __freeProxyAutoSyncStartupTimer: ReturnType<typeof setTimeout> | undefined;
+  var __freeProxyAutoSyncEnabled: boolean | undefined;
 }
 
 let isRunning = false;
@@ -88,7 +90,7 @@ async function runCycle(): Promise<void> {
 
 function scheduleInterval(intervalMs: number): void {
   globalThis.__freeProxyAutoSyncInterval = setInterval(() => {
-    void runCycle();
+    void trackLifecycleBackgroundTask("free-proxy-sync", () => runCycle());
   }, intervalMs);
   globalThis.__freeProxyAutoSyncInterval.unref?.();
 }
@@ -116,21 +118,28 @@ export function initFreeProxyAutoSync(): void {
   }
 
   const intervalMs = getFreeProxyAutoSyncIntervalMs();
+  globalThis.__freeProxyAutoSyncEnabled = true;
   console.log(`${LOG_PREFIX} Starting scheduler (interval: ${intervalMs}ms)`);
 
-  void (async () => {
+  void trackLifecycleBackgroundTask("free-proxy-sync-bootstrap", async () => {
     const initialDelayMs = await computeInitialDelayMs(intervalMs);
+    if (!globalThis.__freeProxyAutoSyncEnabled) return;
     globalThis.__freeProxyAutoSyncStartupTimer = setTimeout(() => {
       globalThis.__freeProxyAutoSyncStartupTimer = undefined;
-      void runCycle();
+      if (!globalThis.__freeProxyAutoSyncEnabled) return;
+      void trackLifecycleBackgroundTask("free-proxy-sync", () => runCycle());
       scheduleInterval(intervalMs);
     }, initialDelayMs);
     globalThis.__freeProxyAutoSyncStartupTimer.unref?.();
-  })();
+  })?.catch((error) => {
+    globalThis.__freeProxyAutoSyncEnabled = false;
+    console.error(`${LOG_PREFIX} Scheduler bootstrap failed:`, error);
+  });
 }
 
 /** Test/shutdown seam — clears both the startup timer and the recurring interval. */
 export function stopFreeProxyAutoSync(): void {
+  globalThis.__freeProxyAutoSyncEnabled = false;
   if (globalThis.__freeProxyAutoSyncInterval) {
     clearInterval(globalThis.__freeProxyAutoSyncInterval);
     globalThis.__freeProxyAutoSyncInterval = undefined;

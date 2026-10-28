@@ -61,3 +61,11 @@ describe("sessionAccountAffinity", () => {
     assert.equal(result, null, "expired entry should return null");
   });
 });
+
+it("session affinity cleanup exposes an idempotent stop API", async () => {
+  const mod = await import("../../src/lib/db/sessionAccountAffinity.ts");
+  assert.equal(typeof mod.stopSessionAccountAffinityCleanup, "function");
+  mod.startSessionAccountAffinityCleanup();
+  assert.doesNotThrow(() => mod.stopSessionAccountAffinityCleanup());
+  assert.doesNotThrow(() => mod.stopSessionAccountAffinityCleanup());
+});

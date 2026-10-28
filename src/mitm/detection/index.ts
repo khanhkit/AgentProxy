@@ -29,6 +29,7 @@ export const DETECTORS: Record<AgentId, () => DetectionResult> = {
   "claude-code": detectClaudeCode,
   "open-code": detectOpenCode,
   trae: () => ({ installed: false }),
+  "ghe-copilot": () => ({ installed: false }),
 };
 
 export function detectAgent(id: AgentId): DetectionResult {

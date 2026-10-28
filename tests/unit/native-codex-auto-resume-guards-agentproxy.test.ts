@@ -36,6 +36,44 @@ test("tool call guard requires one matching output per call", () => {
     }),
     false
   );
+  assert.equal(
+    hasUnresolvedToolCalls({
+      messages: [
+        { role: "assistant", function_call: { name: "lookup", arguments: "{}" } },
+        { role: "function", name: "lookup", content: "ok" },
+      ],
+    }),
+    false
+  );
+  assert.equal(
+    hasUnresolvedToolCalls({
+      messages: [{ role: "assistant", function_call: { name: "lookup", arguments: "{}" } }],
+    }),
+    true
+  );
+  assert.equal(
+    hasUnresolvedToolCalls({
+      messages: [
+        { role: "assistant", function_call: { name: "lookup", arguments: "{\"q\":1}" } },
+        { role: "function", name: "lookup", content: "one" },
+        { role: "assistant", function_call: { name: "lookup", arguments: "{\"q\":2}" } },
+        { role: "function", name: "lookup", content: "two" },
+      ],
+    }),
+    false,
+    "repeated legacy function names are resolved when call and output counts match"
+  );
+  assert.equal(
+    hasUnresolvedToolCalls({
+      messages: [
+        { role: "assistant", function_call: { name: "lookup", arguments: "{\"q\":1}" } },
+        { role: "function", name: "lookup", content: "one" },
+        { role: "assistant", function_call: { name: "lookup", arguments: "{\"q\":2}" } },
+      ],
+    }),
+    true,
+    "repeated legacy function names remain unresolved when an output is missing"
+  );
 });
 
 test("provider-owned opaque continuation state blocks model switching", () => {

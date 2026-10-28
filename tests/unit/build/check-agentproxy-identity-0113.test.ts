@@ -121,3 +121,11 @@ test("AP-ISS-0171 OCR regression: Latvian CLI database recovery uses the runnabl
   const locale = JSON.parse(readFileSync("bin/cli/locales/lv.json", "utf8"));
   assert.match(locale.doctor.dbMissing, /`agentproxy setup`/u);
 });
+
+
+test("AP-ISS-0171 OCR regression: OMP endpoint never guesses an unrelated provider URL", () => {
+  const src = readFileSync("src/app/api/cli-tools/all-statuses/route.ts", "utf8");
+  const omp = src.split('case "omp": {')[1]?.split('\n      }\n      default:')[0];
+  assert.ok(omp, "OMP extractor must exist");
+  assert.doesNotMatch(omp, /\|\|\s*content\.match\(/u, "generic fallback must not misidentify other provider endpoints");
+});

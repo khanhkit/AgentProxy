@@ -84,9 +84,9 @@ async function extractEndpointFromConfig(
       case "omp": {
         const agentproxyBlock = content.match(/agentproxy:\s*\n(?:[^\n]+\n)*?\s*baseUrl:\s*["']?([^"'\r\n]+)["']?/i);
         if (agentproxyBlock) return agentproxyBlock[1].trim();
-        const match =
-          content.match(/baseUrl:\s*["']?([^"'\r\n]*(?:agentproxy|20128)[^"'\r\n]*)["']?/i) ||
-          content.match(/baseUrl:\s*["']?([^"'\r\n]+)["']?/i);
+        // Do not guess another provider's endpoint from a generic baseUrl: key.
+        // Legacy branded provider identifiers are intentionally unsupported.
+        const match = content.match(/baseUrl:\s*["']?([^"'\r\n]*(?:agentproxy|20128)[^"'\r\n]*)["']?/i);
         return match ? match[1].trim() : null;
       }
       default:

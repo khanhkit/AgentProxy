@@ -12,7 +12,10 @@ import {
   waitUntilPortFree,
 } from "./supervisorPolicy.mjs";
 import { buildNodeRuntimeArgs } from "../../../scripts/build/runtime-env.mjs";
-import { stopProcessGracefully } from "../../../src/shared/platform/windowsProcess.ts";
+import {
+  resolveShutdownEscalationTimeoutMs,
+  stopProcessGracefully,
+} from "../../../src/shared/platform/windowsProcess.ts";
 import {
   isFatalInstrumentationHookFailure,
   formatAndroidInstrumentationFailureHint,
@@ -247,14 +250,23 @@ export class ServerSupervisor {
 
   stop() {
     this.isShuttingDown = true;
-    if (this.child?.pid) {
+    const childPid = this.child?.pid;
+    if (childPid) {
       // #8045: on win32, process.kill(pid, "SIGTERM") unconditionally force-terminates
       // the target — it is never a real, interceptable signal there. The child already
       // receives the real CTRL_C_EVENT/CTRL_CLOSE_EVENT independently (it shares the
       // console) and runs its own async graceful shutdown (WAL checkpoint). Sending
       // SIGTERM immediately on win32 races and beats that cleanup. Fire-and-forget:
       // stop() itself stays sync so callers keep their existing control flow.
-      void stopProcessGracefully({ pid: this.child.pid, timeoutMs: 5000, isPidRunning });
+      void stopProcessGracefully({
+        pid: childPid,
+        timeoutMs: resolveShutdownEscalationTimeoutMs(this.env),
+        isPidRunning,
+      });
+      // Clean up siblings, but never SIGTERM the same server PID while its
+      // platform-aware graceful stop is in flight.
+      killAllSubprocesses({ excludePids: [childPid, process.pid] });
+      return;
     }
     killAllSubprocesses();
   }

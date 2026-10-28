@@ -17,6 +17,63 @@ export interface WebhookPayload {
   data: Record<string, any>;
 }
 
+interface WebhookLifecycleState {
+  pending: Set<Promise<{ failed: number }>>;
+  accepting: boolean;
+  started: number;
+  completed: number;
+  failed: number;
+}
+
+declare global {
+  var __agentproxyWebhookLifecycle: WebhookLifecycleState | undefined;
+}
+
+function getWebhookLifecycleState(): WebhookLifecycleState {
+  globalThis.__agentproxyWebhookLifecycle ??= {
+    pending: new Set(),
+    accepting: true,
+    started: 0,
+    completed: 0,
+    failed: 0,
+  };
+  return globalThis.__agentproxyWebhookLifecycle;
+}
+
+export function getWebhookDeliveryStats(): {
+  started: number;
+  completed: number;
+  failed: number;
+  pending: number;
+} {
+  const state = getWebhookLifecycleState();
+  return {
+    started: state.started,
+    completed: state.completed,
+    failed: state.failed,
+    pending: state.pending.size,
+  };
+}
+
+export async function drainPendingWebhookDeliveries(): Promise<
+  ReturnType<typeof getWebhookDeliveryStats>
+> {
+  const state = getWebhookLifecycleState();
+  state.accepting = false;
+  while (state.pending.size > 0) {
+    await Promise.allSettled(Array.from(state.pending));
+  }
+  return getWebhookDeliveryStats();
+}
+
+export function __resetWebhookLifecycleForTests(): void {
+  const state = globalThis.__agentproxyWebhookLifecycle;
+  if (state?.pending.size) {
+    throw new Error("Cannot reset webhook lifecycle with pending webhook deliveries");
+  }
+  delete globalThis.__agentproxyWebhookLifecycle;
+}
+
 function signPayload(payload: string, secret: string): string {
   return `sha256=${crypto.createHmac("sha256", secret).update(payload).digest("hex")}`;
 }
@@ -58,7 +115,10 @@ async function fetchWebhookWithValidatedRedirects(
 
     // Match fetch redirect semantics for POST on 301/302 and for 303: the
     // redirected request becomes GET and no payload signature is replayed.
-    if (response.status === 303 || ((response.status === 301 || response.status === 302) && method === "POST")) {
+    if (
+      response.status === 303 ||
+      ((response.status === 301 || response.status === 302) && method === "POST")
+    ) {
       method = "GET";
       body = undefined;
       headers.delete("content-type");
@@ -189,12 +249,25 @@ export async function deliverWebhook(
  * to await delivery (CLI/admin tooling, tests).
  */
 export function notifyWebhookEvent(event: WebhookEvent, data: Record<string, any>): void {
-  // Intentionally not awaited. Promise.allSettled inside dispatchEvent already
-  // absorbs per-delivery errors; this outer catch handles the import/loader
-  // path so a misconfigured webhook table cannot break a request.
-  dispatchEvent(event, data).catch(() => {
-    /* webhook delivery is best-effort */
-  });
+  // Intentionally not awaited by callers. Track the Promise process-wide so the
+  // lifecycle coordinator can drain delivery + DB-record work before DB close.
+  const state = getWebhookLifecycleState();
+  if (!state.accepting) return;
+  const delivery = dispatchEventDetailed(event, data);
+  state.started += 1;
+  state.pending.add(delivery);
+  void delivery.then(
+    (result) => {
+      state.completed += 1;
+      state.failed += result.failed;
+      state.pending.delete(delivery);
+    },
+    () => {
+      state.completed += 1;
+      state.failed += 1;
+      state.pending.delete(delivery);
+    }
+  );
 }
 
 /**
@@ -203,6 +276,13 @@ export function notifyWebhookEvent(event: WebhookEvent, data: Record<string, any
  * custom uses HMAC-signed deliverWebhook.
  */
 export async function dispatchEvent(event: WebhookEvent, data: Record<string, any>): Promise<void> {
+  await dispatchEventDetailed(event, data);
+}
+
+async function dispatchEventDetailed(
+  event: WebhookEvent,
+  data: Record<string, any>
+): Promise<{ failed: number }> {
   const { getEnabledWebhooks, recordWebhookDelivery, disableWebhooksWithHighFailures } =
     await import("./db/webhooks");
   const { insertDelivery } = await import("./db/webhookDeliveries");
@@ -270,6 +350,12 @@ export async function dispatchEvent(event: WebhookEvent, data: Record<string, an
       return { webhookId: wh.id, ...result };
     });
 
-  await Promise.allSettled(deliveries);
+  const settled = await Promise.allSettled(deliveries);
+  const failed = settled.reduce(
+    (count, result) =>
+      count + (result.status === "rejected" || result.value.success === false ? 1 : 0),
+    0
+  );
   disableWebhooksWithHighFailures(10);
+  return { failed };
 }

@@ -11,6 +11,7 @@ let activeCheck: Promise<void> | null = null;
 let queuedSource: string | null = null;
 let pollTimer: ReturnType<typeof setInterval> | null = null;
 let sqliteWatcher: fs.FSWatcher | null = null;
+let reloadStopped = false;
 
 function getPollIntervalMs() {
   const parsed = Number.parseInt(process.env.AGENTPROXY_CONFIG_HOT_RELOAD_MS || "", 10);
@@ -42,6 +43,7 @@ async function runHotReloadCheck(source: string) {
 }
 
 function queueHotReloadCheck(source: string) {
+  if (reloadStopped) return;
   if (activeCheck) {
     queuedSource = source;
     return;
@@ -65,6 +67,7 @@ function queueHotReloadCheck(source: string) {
 
 export function startRuntimeConfigHotReload(options: { pollIntervalMs?: number } = {}) {
   if (pollTimer || sqliteWatcher) return;
+  reloadStopped = false;
 
   const pollIntervalMs = Math.max(
     options.pollIntervalMs || getPollIntervalMs(),
@@ -81,7 +84,8 @@ export function startRuntimeConfigHotReload(options: { pollIntervalMs?: number }
   if (SQLITE_FILE) {
     try {
       sqliteWatcher = fs.watch(path.dirname(SQLITE_FILE), (_eventType, filename) => {
-        const normalizedFilename = typeof filename === "string" ? filename : filename?.toString();
+        const normalizedFilename =
+          filename === null || filename === undefined ? null : filename.toString();
         if (isRelevantSqliteChange(normalizedFilename || null)) {
           queueHotReloadCheck("hot-reload:fs-watch");
         }
@@ -103,13 +107,26 @@ export function startRuntimeConfigHotReload(options: { pollIntervalMs?: number }
   queueHotReloadCheck("hot-reload:start");
 }
 
-export function stopRuntimeConfigHotReloadForTests() {
+export function stopRuntimeConfigHotReload(): void {
+  reloadStopped = true;
   if (pollTimer) {
     clearInterval(pollTimer);
     pollTimer = null;
   }
   sqliteWatcher?.close();
   sqliteWatcher = null;
+  // Do not admit a queued follow-up after shutdown starts. An already-active
+  // DB read/apply is awaited separately by drainRuntimeConfigHotReload().
   queuedSource = null;
+}
+
+export async function drainRuntimeConfigHotReload(): Promise<void> {
+  while (activeCheck) await activeCheck;
+}
+
+export function stopRuntimeConfigHotReloadForTests() {
+  stopRuntimeConfigHotReload();
+  // Tests reset backing storage synchronously after this helper. Production
+  // shutdown uses stopRuntimeConfigHotReload()+drainRuntimeConfigHotReload().
   activeCheck = null;
 }

@@ -18,7 +18,7 @@ import { fisherYatesShuffle, getNextFromDeck } from "../../../src/shared/utils/s
 import { handleFusionChat, type FusionTuning } from "../fusion.ts";
 import { handleAgenticPipelineChat, type AgenticOrchestrationConfig } from "../agenticPipeline.ts";
 import { getResolvedModelCapabilities } from "../modelCapabilities.ts";
-import { errorResponseWithComboDiagnostics } from "../../utils/error.ts";
+import { errorResponse, errorResponseWithComboDiagnostics } from "../../utils/error.ts";
 import { parseModel } from "../model.ts";
 import { handlePipelineChat, type PipelineStep } from "../pipeline.ts";
 import type { resolveComboSetupConfig } from "../comboConfig.ts";
@@ -47,6 +47,7 @@ import {
 } from "./rrState.ts";
 import { executeRuntimeUnitCombo } from "./runtimeUnits.ts";
 import {
+  qualityValidationContext,
   releaseQualityClone,
   releaseRejectedQualityResponse,
   validateResponseQuality,
@@ -223,8 +224,10 @@ async function evaluatePinnedResponse(args: {
   clientRequestedStream: boolean;
   config: ComboSetupConfig;
   log: ComboLogger;
+  body: Record<string, unknown>;
+  signal?: AbortSignal | null;
 }): Promise<Response | null> {
-  const { pinnedResult, pinnedModel, clientRequestedStream, config, log } = args;
+  const { pinnedResult, pinnedModel, clientRequestedStream, config, log, body, signal } = args;
   if (pinnedResult.ok) {
     let pinnedClone: Response;
     try {
@@ -236,9 +239,15 @@ async function evaluatePinnedResponse(args: {
       pinnedClone,
       clientRequestedStream,
       log,
-      config.responseValidation
+      config.responseValidation,
+      signal,
+      qualityValidationContext(pinnedModel, body)
     );
     releaseQualityClone(pinnedClone, pinnedResult, pinnedQuality);
+    if (pinnedQuality.clientAborted) {
+      releaseRejectedQualityResponse(pinnedClone, pinnedResult);
+      return errorResponse(499, "Client disconnected");
+    }
     if (pinnedQuality.valid) return pinnedResult;
     releaseRejectedQualityResponse(pinnedClone, pinnedResult);
     log.warn(
@@ -273,6 +282,7 @@ export async function tryPinnedModelDispatch(args: {
   handleSingleModelWithTimeout: HandleSingleModel;
   log: ComboLogger;
   hiddenModelsByProvider?: HiddenModelsByProvider;
+  signal?: AbortSignal | null;
 }): Promise<Response | null> {
   const {
     body,
@@ -284,6 +294,7 @@ export async function tryPinnedModelDispatch(args: {
     handleSingleModelWithTimeout,
     log,
     hiddenModelsByProvider,
+    signal,
   } = args;
   // The pin is read from session_model_history (a PRIOR turn) and may name a
   // model that has since been removed from this combo, or a provider whose
@@ -355,6 +366,8 @@ export async function tryPinnedModelDispatch(args: {
         clientRequestedStream,
         config,
         log,
+        body,
+        signal,
       });
       if (accepted) return accepted;
     }

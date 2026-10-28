@@ -447,6 +447,72 @@ describe("Semantic Cache — Dual-Layer Architecture", () => {
       const stats = await store.getStats();
       assert.equal(stats.entries, 2);
     });
+    it("treats maxEntries=0 as a disabled memory cache", async () => {
+      const store = new MemoryVectorStore({ maxEntries: 0 });
+      const now = Date.now();
+      await store.set(
+        {
+          id: "disabled",
+          hash: "h0",
+          promptText: "p",
+          model: "m",
+          provider: "p",
+          response: {},
+          tokensSaved: 1,
+          createdAt: now,
+          expiresAt: now + 100000,
+        },
+        100000
+      );
+      assert.equal((await store.getStats()).entries, 0);
+      assert.equal(await store.get("disabled"), null);
+    });
+
+    it("falls back from invalid negative direct maxEntries instead of silently disabling storage", async () => {
+      for (const maxEntries of [-1, -2.5, Number.NaN, Number.POSITIVE_INFINITY]) {
+        const store = new MemoryVectorStore({ maxEntries });
+        const now = Date.now();
+        await store.set(
+          {
+            id: `entry-${String(maxEntries)}`,
+            hash: `hash-${String(maxEntries)}`,
+            promptText: "p",
+            model: "m",
+            provider: "p",
+            response: {},
+            tokensSaved: 1,
+            createdAt: now,
+            expiresAt: now + 100000,
+          },
+          100000
+        );
+        assert.equal(
+          (await store.getStats()).entries,
+          1,
+          `invalid direct maxEntries=${String(maxEntries)} must fall back to usable capacity`
+        );
+      }
+    });
+
+    it("preserves direct positive fractional maxEntries flooring to zero capacity", async () => {
+      const store = new MemoryVectorStore({ maxEntries: 0.5 });
+      const now = Date.now();
+      await store.set(
+        {
+          id: "fractional",
+          hash: "fractional-hash",
+          promptText: "p",
+          model: "m",
+          provider: "p",
+          response: {},
+          tokensSaved: 1,
+          createdAt: now,
+          expiresAt: now + 100000,
+        },
+        100000
+      );
+      assert.equal((await store.getStats()).entries, 0);
+    });
 
     it("expires entries past TTL", async () => {
       const store = new MemoryVectorStore();
@@ -608,17 +674,85 @@ describe("Semantic Cache — Dual-Layer Architecture", () => {
       assert.equal(res, null);
     });
 
-    it("times out uncooperative generators that ignore AbortSignal via Promise.race", async () => {
-      // Generator that never resolves and completely ignores AbortSignal
-      const hangingGenerator = () =>
-        new Promise<{ embedding: number[]; inputTokens: number }>(() => {});
+    it("bounds quarantine for an uncooperative timed-out generator", async () => {
+      // A provider may ignore AbortSignal forever. Fail open immediately during a bounded
+      // quarantine, then allow recovery without requiring the abandoned promise to settle.
+      let calls = 0;
+      const generator = () => {
+        calls += 1;
+        if (calls === 1) {
+          return new Promise<{ embedding: number[]; inputTokens: number }>(() => {});
+        }
+        return Promise.resolve({ embedding: [1, 0], inputTokens: 1 });
+      };
 
       const t0 = Date.now();
-      const res = await generateEmbeddingWithTimeout("hello", hangingGenerator, { timeoutMs: 50 });
+      const res = await generateEmbeddingWithTimeout("hello", generator, { timeoutMs: 50 });
       const elapsed = Date.now() - t0;
 
       assert.equal(res, null, "Should return null on timeout");
       assert.ok(elapsed >= 45 && elapsed < 500, `Should resolve around 50ms, took ${elapsed}ms`);
+
+      const secondStart = Date.now();
+      const second = await generateEmbeddingWithTimeout("hello again", generator, {
+        timeoutMs: 50,
+      });
+      assert.equal(second, null);
+      assert.equal(calls, 1, "timed-out uncooperative generator must be quarantined initially");
+      assert.ok(Date.now() - secondStart < 40, "quarantined generator must fail open immediately");
+
+      await new Promise((resolve) => setTimeout(resolve, 70));
+      const recovered = await generateEmbeddingWithTimeout("hello after bounded quarantine", generator, {
+        timeoutMs: 50,
+      });
+      assert.deepEqual(recovered, { embedding: [1, 0], inputTokens: 1 });
+      assert.equal(calls, 2, "bounded quarantine must not permanently disable embeddings");
+    });
+
+    it("scopes timeout cooldown to the embedding provider and model", async () => {
+      const calls: string[] = [];
+      const generator = async (
+        _text: string,
+        options?: { model?: string; provider?: string; signal?: AbortSignal }
+      ) => {
+        const key = `${options?.provider ?? ""}:${options?.model ?? ""}`;
+        calls.push(key);
+        if (key === "slow-provider:slow-model") {
+          return new Promise<{ embedding: number[]; inputTokens: number }>(() => {});
+        }
+        return { embedding: [1, 0], inputTokens: 1 };
+      };
+
+      assert.equal(
+        await generateEmbeddingWithTimeout("slow", generator, {
+          provider: "slow-provider",
+          model: "slow-model",
+          timeoutMs: 20,
+        }),
+        null
+      );
+
+      assert.deepEqual(
+        await generateEmbeddingWithTimeout("different model", generator, {
+          provider: "slow-provider",
+          model: "fast-model",
+          timeoutMs: 20,
+        }),
+        { embedding: [1, 0], inputTokens: 1 }
+      );
+      assert.deepEqual(
+        await generateEmbeddingWithTimeout("different provider", generator, {
+          provider: "fast-provider",
+          model: "slow-model",
+          timeoutMs: 20,
+        }),
+        { embedding: [1, 0], inputTokens: 1 }
+      );
+      assert.deepEqual(calls, [
+        "slow-provider:slow-model",
+        "slow-provider:fast-model",
+        "fast-provider:slow-model",
+      ]);
     });
   });
 

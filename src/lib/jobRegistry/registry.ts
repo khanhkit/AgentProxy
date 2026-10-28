@@ -27,6 +27,8 @@ function errMessage(err: unknown): string {
 export class JobRegistry {
   private timers = new Map<string, ReturnType<typeof setTimeout>>();
   private running = new Set<string>();
+  private activeRuns = new Set<Promise<void>>();
+  private stopping = false;
   private handlers = new Map<string, () => Promise<HandlerResult>>();
   private queued = new Set<string>();
   private waiters = new Map<string, Array<() => void>>();
@@ -52,7 +54,7 @@ export class JobRegistry {
   }
 
   start(jobId: string): void {
-    if (this.timers.has(jobId)) return;
+    if (this.stopping || this.timers.has(jobId)) return;
     const job = getJob(jobId);
     const handler = this.handlers.get(jobId);
     if (!job || !handler) {
@@ -110,7 +112,14 @@ export class JobRegistry {
   }
 
   stopAll(): void {
+    this.stopping = true;
     for (const jobId of [...this.timers.keys()]) this.stop(jobId);
+  }
+
+  async drain(): Promise<void> {
+    while (this.activeRuns.size > 0) {
+      await Promise.allSettled(Array.from(this.activeRuns));
+    }
   }
 
   dispose(): void {
@@ -119,6 +128,7 @@ export class JobRegistry {
   }
 
   async runNow(jobId: string): Promise<{ started: boolean; reason?: string }> {
+    if (this.stopping) return { started: false, reason: "stopping" };
     const job = getJob(jobId);
     if (!job) return { started: false, reason: "not_found" };
     if (!job.enabled) return { started: false, reason: "disabled" };
@@ -144,7 +154,7 @@ export class JobRegistry {
     ) {
       return { started: false, reason: "env_disabled" };
     }
-    void this.safeRun(jobId, handler);
+    this.launchRun(jobId, handler);
     return { started: true };
   }
 
@@ -171,6 +181,16 @@ export class JobRegistry {
 
   private getJobConfig(jobId: string): Record<string, unknown> | null {
     return getJob(jobId)?.config ?? null;
+  }
+
+  private launchRun(jobId: string, handler: () => Promise<HandlerResult>): void {
+    if (this.stopping) return;
+    const run = this.safeRun(jobId, handler);
+    this.activeRuns.add(run);
+    void run.then(
+      () => this.activeRuns.delete(run),
+      () => this.activeRuns.delete(run)
+    );
   }
 
   /** Core execution wrapper: re-entrancy guard + timing + recording + prune. */
@@ -209,8 +229,8 @@ export class JobRegistry {
     handler: () => Promise<HandlerResult>,
     intervalMs: number
   ): void {
-    void this.safeRun(jobId, handler);
-    const timer = setInterval(() => void this.safeRun(jobId, handler), intervalMs);
+    this.launchRun(jobId, handler);
+    const timer = setInterval(() => this.launchRun(jobId, handler), intervalMs);
     timer.unref?.();
     this.timers.set(jobId, timer);
   }
@@ -227,6 +247,7 @@ export class JobRegistry {
     tz: string,
     envFlag?: string | null
   ): void {
+    if (this.stopping) return;
     let delay: number;
     try {
       const interval = CronExpressionParser.parse(cronExpr, { tz });
@@ -249,6 +270,7 @@ export class JobRegistry {
       delay = 60_000;
     }
     const timer = setTimeout(() => {
+      if (this.stopping) return;
       let freshCron = cronExpr;
       const getter = this.cronGetters.get(jobId);
       if (getter) {
@@ -263,7 +285,7 @@ export class JobRegistry {
       const jobConfig = this.getJobConfig(jobId);
       if (envFlag && !isEnvEnabled(envFlag, jobConfig?.envDefault === false ? false : true)) return;
       const handler = this.handlers.get(jobId);
-      if (handler) void this.safeRun(jobId, handler);
+      if (handler) this.launchRun(jobId, handler);
     }, delay);
     timer.unref?.();
     this.timers.set(jobId, timer);

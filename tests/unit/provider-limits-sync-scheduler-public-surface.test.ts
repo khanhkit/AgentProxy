@@ -17,7 +17,8 @@ test.after(() => {
   fs.rmSync(TEST_DATA_DIR, { recursive: true, force: true, maxRetries: 5, retryDelay: 100 });
 });
 
-test("provider limits sync scheduler public surface excludes unused stop helper", () => {
-  assert.equal("startProviderLimitsSyncScheduler" in schedulerModule, true);
-  assert.equal("stopProviderLimitsSyncScheduler" in schedulerModule, false);
+test("provider limits sync scheduler exposes separate stop and drain lifecycle APIs", () => {
+  assert.equal(typeof schedulerModule.startProviderLimitsSyncScheduler, "function");
+  assert.equal(typeof schedulerModule.stopProviderLimitsSyncScheduler, "function");
+  assert.equal(typeof schedulerModule.drainProviderLimitsSyncScheduler, "function");
 });

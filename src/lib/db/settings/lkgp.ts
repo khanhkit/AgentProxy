@@ -37,22 +37,37 @@ export interface LKGPRecord {
   connectionId?: string;
 }
 
+function parseLKGPValue(value: string | undefined): LKGPRecord | null {
+  if (!value) return null;
+  try {
+    const parsed: unknown = JSON.parse(value);
+    if (typeof parsed === "string") {
+      return parsed.trim() ? { provider: parsed } : null;
+    }
+    if (typeof parsed === "number" || typeof parsed === "boolean") {
+      return { provider: String(parsed) };
+    }
+    if (typeof parsed !== "object" || parsed === null || Array.isArray(parsed)) return null;
+
+    const record = parsed as Record<string, unknown>;
+    const provider = record.provider;
+    if (typeof provider !== "string" || !provider.trim()) return null;
+    const connectionId = record.connectionId;
+    if (connectionId === undefined) return { provider };
+    if (typeof connectionId !== "string") return null;
+    return { provider, connectionId };
+  } catch {
+    return value.trim() ? { provider: value } : null;
+  }
+}
+
 export async function getLKGP(comboName: string, modelId: string): Promise<LKGPRecord | null> {
   const db = getDbInstance();
   const key = `${comboName}:${modelId}`;
   const row = db
     .prepare("SELECT value FROM key_value WHERE namespace = 'lkgp' AND key = ?")
     .get(key) as { value?: string } | undefined;
-  if (!row?.value) return null;
-  try {
-    const parsed = JSON.parse(row.value);
-    if (typeof parsed === "object" && parsed !== null && "provider" in parsed) {
-      return parsed as LKGPRecord;
-    }
-    return { provider: String(parsed) };
-  } catch {
-    return { provider: row.value };
-  }
+  return parseLKGPValue(row?.value);
 }
 
 export async function setLKGP(
@@ -93,6 +108,35 @@ export async function clearLKGP(comboName: string, modelId: string): Promise<voi
   db.prepare("DELETE FROM key_value WHERE namespace = 'lkgp' AND key = ?").run(key);
   const { invalidateCachedLKGP } = await import("../readCache");
   invalidateCachedLKGP(key);
+}
+
+/** Atomically clear one LKGP pin only if it still equals the record the caller observed. */
+export async function clearLKGPIfMatch(
+  comboName: string,
+  modelId: string,
+  expected: LKGPRecord
+): Promise<boolean> {
+  const db = getDbInstance();
+  const key = `${comboName}:${modelId}`;
+  const matchesExpected = (current: LKGPRecord | null): boolean =>
+    current?.provider === expected.provider &&
+    (current.connectionId ?? null) === (expected.connectionId ?? null);
+  let deleted = false;
+  db.immediate(() => {
+    const row = db
+      .prepare("SELECT value FROM key_value WHERE namespace = 'lkgp' AND key = ?")
+      .get(key) as { value?: string } | undefined;
+    if (!matchesExpected(parseLKGPValue(row?.value))) return;
+    const result = db
+      .prepare("DELETE FROM key_value WHERE namespace = 'lkgp' AND key = ?")
+      .run(key) as { changes?: number | bigint };
+    deleted = Number(result.changes ?? 0) > 0;
+  });
+  if (deleted) {
+    const { invalidateCachedLKGP } = await import("../readCache");
+    invalidateCachedLKGP(key);
+  }
+  return deleted;
 }
 
 /**

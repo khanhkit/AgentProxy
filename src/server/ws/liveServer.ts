@@ -17,6 +17,8 @@
  * pong control frame automatically, so a quiet-but-alive subscriber survives.
  */
 
+import { trackLifecycleBackgroundTask } from "@/lib/lifecycle/backgroundTasks";
+import { isDraining } from "@/lib/shutdownState";
 import { WebSocketServer, WebSocket } from "ws";
 import { createServer, type IncomingMessage, type ServerResponse } from "http";
 import { createHash, randomUUID } from "crypto";
@@ -102,6 +104,14 @@ interface ClientState {
 }
 
 const clients = new Map<string, ClientState>();
+let liveWsClosePromise: Promise<void> = Promise.resolve();
+
+declare global {
+  var __agentproxyLiveWsServer: import("http").Server | undefined;
+  var __agentproxyLiveWsWss: WebSocketServer | undefined;
+  var __agentproxyStopLiveWs: (() => void) | undefined;
+  var __agentproxyDrainLiveWs: (() => Promise<void>) | undefined;
+}
 
 function countClientsForPrincipal(principalKey: string): number {
   let count = 0;
@@ -598,6 +608,10 @@ export async function startLiveDashboardServer(
   port = DEFAULT_PORT,
   host = DEFAULT_HOST
 ): Promise<import("http").Server> {
+  await liveWsClosePromise;
+  if (isDraining()) {
+    throw new Error("[LiveWS] Server startup rejected during lifecycle drain");
+  }
   // Safety net: a client aborting a connection can emit `Error: aborted`/
   // ECONNRESET on the request stream; without this the single missed listener
   // becomes an uncaughtException that kills the server. Benign aborts are
@@ -647,6 +661,9 @@ export async function startLiveDashboardServer(
         .catch(() => done(false, 503, "Authentication unavailable"));
     },
   });
+
+  globalThis.__agentproxyLiveWsServer = server;
+  globalThis.__agentproxyLiveWsWss = wss;
 
   // Subscribe to EventBus
   const unsubscribe = subscribeToEventBus();
@@ -751,6 +768,9 @@ export async function startLiveDashboardServer(
   wss.on("close", () => {
     unsubscribe();
     clients.clear();
+    if (globalThis.__agentproxyLiveWsWss === wss) globalThis.__agentproxyLiveWsWss = undefined;
+    if (globalThis.__agentproxyLiveWsServer === server)
+      globalThis.__agentproxyLiveWsServer = undefined;
   });
 
   return new Promise((resolve, reject) => {
@@ -764,14 +784,74 @@ export async function startLiveDashboardServer(
     wss.once("error", (err: NodeJS.ErrnoException) => {
       unsubscribe();
       clients.clear();
+      if (globalThis.__agentproxyLiveWsServer === server)
+        globalThis.__agentproxyLiveWsServer = undefined;
+      if (globalThis.__agentproxyLiveWsWss === wss) globalThis.__agentproxyLiveWsWss = undefined;
       reject(err);
     });
+    if (globalThis.__agentproxyLiveWsServer !== server) {
+      unsubscribe();
+      try {
+        wss.close();
+      } catch {
+        // Never reached LISTENING state.
+      }
+      try {
+        server.close();
+      } catch {
+        // Never reached LISTENING state.
+      }
+      reject(new Error("[LiveWS] Server startup preempted by lifecycle stop"));
+      return;
+    }
     server.listen(port, host, () => {
       console.log("[LiveWS] Dashboard WebSocket server listening on %s:%d", host, port);
       resolve(server);
     });
   });
 }
+
+/** Stop accepting live dashboard connections; drain waits for listener close callbacks. */
+export function stopLiveDashboardServer(): void {
+  const server = globalThis.__agentproxyLiveWsServer;
+  const wss = globalThis.__agentproxyLiveWsWss;
+  globalThis.__agentproxyLiveWsServer = undefined;
+  globalThis.__agentproxyLiveWsWss = undefined;
+
+  for (const client of clients.values()) client.ws.terminate();
+  clients.clear();
+  const closeTasks: Promise<void>[] = [];
+  if (wss) {
+    closeTasks.push(
+      new Promise((resolve) => {
+        try {
+          wss.close(() => resolve());
+        } catch {
+          resolve();
+        }
+      })
+    );
+  }
+  if (server) {
+    closeTasks.push(
+      new Promise((resolve) => {
+        try {
+          server.close(() => resolve());
+        } catch {
+          resolve();
+        }
+      })
+    );
+  }
+  liveWsClosePromise = Promise.allSettled(closeTasks).then(() => undefined);
+}
+
+export async function drainLiveDashboardServer(): Promise<void> {
+  await liveWsClosePromise;
+}
+
+globalThis.__agentproxyStopLiveWs = stopLiveDashboardServer;
+globalThis.__agentproxyDrainLiveWs = drainLiveDashboardServer;
 
 // ── Auto-start on import ──────────────────────────────────────────────────
 //
@@ -797,7 +877,9 @@ export function isLiveWsEnabled(): boolean {
 if (!isBuildOrTest() && isLiveWsEnabled()) {
   const port = parseInt(process.env.LIVE_WS_PORT || String(DEFAULT_PORT), 10);
   const host = process.env.LIVE_WS_HOST || DEFAULT_HOST;
-  startLiveDashboardServer(port, host).catch((err) => {
+  void trackLifecycleBackgroundTask("live-ws-startup", () =>
+    startLiveDashboardServer(port, host)
+  )?.catch((err) => {
     console.error("[LiveWS] Failed to start: %s", err instanceof Error ? err.message : String(err));
   });
 }
