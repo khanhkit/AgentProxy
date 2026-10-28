@@ -88,6 +88,39 @@ class TestArtifactIdentity(unittest.TestCase):
             self.assertEqual(result.returncode, 1)
             self.assertIn("forbidden identity", result.stderr)
 
+    def test_immutable_dependency_license_requires_exact_unchanged_bytes(self):
+        vendor_license = REPO / "node_modules/omniglyph/LICENSE"
+        if not vendor_license.exists():
+            self.skipTest("npm dependency must be installed for immutable attribution fixture")
+        body = vendor_license.read_bytes()
+        with tempfile.TemporaryDirectory() as folder:
+            root = Path(folder)
+            package_dir = root / "node_modules/omniglyph"
+            package_dir.mkdir(parents=True)
+            target = package_dir / "LICENSE"
+            target.write_bytes(body)
+            ok = invoke("--dir", root)
+            self.assertEqual(ok.returncode, 0, ok.stderr)
+            self.assertIn("IMMUTABLE_PROVENANCE", ok.stdout)
+            target.write_bytes(body + b"x")
+            bad = invoke("--dir", root)
+            self.assertEqual(bad.returncode, 1)
+            self.assertIn("checksum mismatch", bad.stderr)
+
+    def test_immutable_dependency_license_can_be_preserved_in_tar(self):
+        vendor_license = REPO / "node_modules/omniglyph/LICENSE"
+        if not vendor_license.exists():
+            self.skipTest("npm dependency must be installed for immutable attribution fixture")
+        with tempfile.TemporaryDirectory() as folder:
+            archive = Path(folder) / "pack.tgz"
+            write_tar(archive, files={
+                "package/dist/BUILD_SHA": BUILD_SHA.encode(),
+                "package/dist/node_modules/omniglyph/LICENSE": vendor_license.read_bytes(),
+            })
+            ok = invoke("--tar", archive, "--build-sha", BUILD_SHA)
+            self.assertEqual(ok.returncode, 0, ok.stderr)
+            self.assertIn("IMMUTABLE_PROVENANCE", ok.stdout)
+
     def test_rejects_missing_or_mismatched_embedded_build_sha(self):
         with tempfile.TemporaryDirectory() as folder:
             package = Path(folder) / "package.tgz"

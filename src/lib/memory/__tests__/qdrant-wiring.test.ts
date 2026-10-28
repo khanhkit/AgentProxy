@@ -18,6 +18,7 @@ import {
   normalizeQdrantConfig,
   buildQuantizationConfig,
   searchQuantizationParams,
+  memoryReadKindMatch,
 } from "../qdrant";
 
 describe("normalizeQdrantConfig — defaults & disabled state", () => {
@@ -194,5 +195,35 @@ describe("normalizeQdrantConfig — env-var fallbacks (cluster profile: --profil
     const cfg = normalizeQdrantConfig({});
     expect(cfg.vectorSize).toBe(1536);
     expect(cfg.hnswEfConstruct).toBe(128);
+  });
+});
+
+
+describe("explicit existing-memory kind remains read-only and opt-in", () => {
+  const previous = process.env.QDRANT_EXISTING_MEMORY_KIND;
+  afterEach(() => {
+    if (previous === undefined) delete process.env.QDRANT_EXISTING_MEMORY_KIND;
+    else process.env.QDRANT_EXISTING_MEMORY_KIND = previous;
+  });
+
+  test("default and whitespace-only opt-in preserve canonical-only search", () => {
+    delete process.env.QDRANT_EXISTING_MEMORY_KIND;
+    expect(normalizeQdrantConfig({}).existingMemoryKind).toBeNull();
+    expect(memoryReadKindMatch(null)).toEqual({ value: "agentproxy_memory" });
+    process.env.QDRANT_EXISTING_MEMORY_KIND = "   ";
+    expect(normalizeQdrantConfig({}).existingMemoryKind).toBeNull();
+  });
+
+  test("overlong kind is rejected and disabled by default", () => {
+    process.env.QDRANT_EXISTING_MEMORY_KIND = "x".repeat(129);
+    expect(normalizeQdrantConfig({}).existingMemoryKind).toBeNull();
+  });
+
+  test("explicit previous metadata kind extends reads, not canonical writes or cleanup", () => {
+    process.env.QDRANT_EXISTING_MEMORY_KIND = " existing_kind_v1 ";
+    const cfg = normalizeQdrantConfig({ qdrantEnabled: true, qdrantCollection: "existing_collection" });
+    expect(cfg.existingMemoryKind).toBe("existing_kind_v1");
+    expect(memoryReadKindMatch(cfg.existingMemoryKind)).toEqual({ any: ["agentproxy_memory", "existing_kind_v1"] });
+    expect(memoryReadKindMatch("agentproxy_memory")).toEqual({ value: "agentproxy_memory" });
   });
 });

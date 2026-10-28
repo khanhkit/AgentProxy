@@ -3,15 +3,33 @@
   "issue": "AP-ISS-0171",
   "scanner": "scripts/check/check-agentproxy-identity.mjs",
   "scan_scope": "Git-visible tracked and unignored files; release distributable scan remains a separate acceptance gate",
-  "classes": ["ACTIVE", "IMMUTABLE_PROVENANCE"],
+  "classes": [
+    "ACTIVE",
+    "IMMUTABLE_PROVENANCE"
+  ],
   "entry_schema": {
-    "required": ["path", "location", "match", "class", "rationale"]
+    "required": [
+      "path",
+      "location",
+      "match",
+      "class",
+      "rationale"
+    ]
   },
-  "entries": [],
+  "entries": [
+    {
+      "path": "**/node_modules/omniglyph/LICENSE",
+      "location": "Third-party immutable MIT copyright notice bundled in Next standalone",
+      "match": "Omni\u0052oute",
+      "class": "IMMUTABLE_PROVENANCE",
+      "rationale": "Exact unchanged third-party npm license attribution. Copyright requires preservation; never executable AgentProxy identity/config/UI. Scanner permits only the exact audited SHA256.",
+      "sha256": "bbb4bc7a29a4fabf31b6bbd5a3a447d9c4b61ed7f4cb5d43bc10d26684413b84"
+    }
+  ],
   "summary": {
     "ACTIVE": 0,
-    "IMMUTABLE_PROVENANCE": 0,
-    "total": 0
+    "IMMUTABLE_PROVENANCE": 1,
+    "total": 1
   },
-  "rationale": "Fresh identity scan found no retained occurrences in the Git-visible source tree; no provenance-only occurrence is retained in active repository artifacts."
+  "rationale": "Zero ACTIVE identity in tracked AgentProxy source; the sole allowed packaged occurrence is exact SHA256-pinned immutable third-party MIT attribution."
 }

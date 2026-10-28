@@ -19,6 +19,7 @@ export type QdrantConfig = {
   port: number;
   apiKey: string | null;
   collection: string;
+  existingMemoryKind: string | null;
   embeddingModel: string;
   quantization: QdrantQuantization;
   vectorSize: number;
@@ -76,6 +77,14 @@ export function normalizeQdrantConfig(settings: Record<string, unknown>): Qdrant
     process.env.QDRANT_COLLECTION.trim().length > 0
       ? process.env.QDRANT_COLLECTION.trim()
       : undefined;
+
+  // Read-only opt-in for existing Qdrant payload kinds. Never infer a prior
+  // product identity, modify existing vectors or change the canonical writer.
+  const providedMemoryKind = process.env.QDRANT_EXISTING_MEMORY_KIND?.trim() || "";
+  const existingMemoryKind =
+    providedMemoryKind.length > 0 && providedMemoryKind.length <= 128
+      ? providedMemoryKind
+      : null;
 
   const host =
     (typeof settings.qdrantHost === "string" ? settings.qdrantHost.trim() : "") || envHost || "";
@@ -142,11 +151,20 @@ export function normalizeQdrantConfig(settings: Record<string, unknown>): Qdrant
     port,
     apiKey,
     collection,
+    existingMemoryKind,
     embeddingModel,
     quantization,
     vectorSize,
     hnswEfConstruct,
   };
+}
+
+/** Opt-in read compatibility; writes and retention only use the canonical kind. */
+export function memoryReadKindMatch(existingMemoryKind: string | null): { value: string } | { any: string[] } {
+  const current = "agentproxy_memory";
+  return existingMemoryKind && existingMemoryKind !== current
+    ? { any: [current, existingMemoryKind] }
+    : { value: current };
 }
 
 export async function getQdrantConfig(): Promise<QdrantConfig> {
@@ -241,6 +259,14 @@ async function ensureCollection(cfg: QdrantConfig, vectorSize: number): Promise<
     method: "GET",
   });
   if (getRes.ok) return;
+  // Existing-data access is an explicit read opt-in, not permission to create a
+  // new, empty collection if the operator selected the wrong previous name.
+  if (cfg.existingMemoryKind) {
+    throw new Error("Existing Qdrant memory collection is not available; verify the configured name before proceeding");
+  }
+  if (getRes.status !== 404) {
+    throw new Error(`Qdrant collection probe failed (HTTP ${getRes.status})`);
+  }
 
   // Quantization only applies to NEW collections — an existing collection is left
   // untouched (the GET above returns early). Switching modes on a populated
@@ -402,7 +428,7 @@ export async function searchSemanticMemory(
           ...(searchParams ? { params: searchParams } : {}),
           filter: {
             must: [
-              { key: "kind", match: { value: "agentproxy_memory" } },
+              { key: "kind", match: memoryReadKindMatch(cfg.existingMemoryKind) },
               ...(scope?.apiKeyId ? [{ key: "apiKeyId", match: { value: scope.apiKeyId } }] : []),
               ...(scope?.sessionId
                 ? [{ key: "sessionId", match: { value: String(scope.sessionId) } }]

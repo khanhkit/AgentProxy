@@ -12,6 +12,11 @@ import tarfile
 TOKENS = (b"omni" + b"route", b"omni" + b"router", b"ommi" + b"router")
 WINDOW = max(map(len, TOKENS)) - 1
 BLOCK_SIZE = 1024 * 1024
+# Immutable npm MIT attribution is not an AgentProxy identity contract. Preserve
+# its legally-required text unchanged; classify only the exact byte-for-byte
+# third-party license, never arbitrary content under node_modules.
+THIRD_PARTY_LICENSE = "node_modules/omniglyph/LICENSE"
+THIRD_PARTY_LICENSE_SHA256 = "bbb4bc7a29a4fabf31b6bbd5a3a447d9c4b61ed7f4cb5d43bc10d26684413b84"
 
 
 class IdentityViolation(ValueError):
@@ -33,6 +38,19 @@ def scan_content(stream, location: str) -> int:
     return count
 
 
+def classified_license(path: str, stream) -> int | None:
+    if path != THIRD_PARTY_LICENSE and not path.endswith("/" + THIRD_PARTY_LICENSE):
+        return None
+    body = stream.read(4097)
+    digest = hashlib.sha256(body).hexdigest()
+    if len(body) > 4096 or digest != THIRD_PARTY_LICENSE_SHA256:
+        raise IdentityViolation(f"third-party license checksum mismatch: {path}")
+    if not body.startswith(b"MIT License") or not any(token in body.lower() for token in TOKENS):
+        raise IdentityViolation(f"third-party attribution is not the expected immutable license: {path}")
+    print(f"[artifact-identity] IMMUTABLE_PROVENANCE: {path} sha256={digest}")
+    return len(body)
+
+
 def scan_directory(root: Path) -> tuple[int, int]:
     if not root.is_dir():
         raise ValueError(f"missing generated directory: {root}")
@@ -52,7 +70,8 @@ def scan_directory(root: Path) -> tuple[int, int]:
             if not path.is_file():
                 raise ValueError(f"unsupported artifact type: {path}")
             with path.open("rb") as f:
-                total_bytes += scan_content(f, str(path))
+                classified = classified_license(relative, f)
+                total_bytes += classified if classified is not None else scan_content(f, str(path))
             files += 1
     return files, total_bytes
 
@@ -74,7 +93,10 @@ def scan_tarball(archive: Path, expected_sha: str) -> tuple[int, int, str]:
             if stream is None:
                 raise ValueError(f"unreadable tar member: {member.name}")
             with stream:
-                if member.name == "package/dist/BUILD_SHA":
+                classified = classified_license(member.name, stream)
+                if classified is not None:
+                    total_bytes += classified
+                elif member.name == "package/dist/BUILD_SHA":
                     # Read the stamp without changing the binary-safe scanning path.
                     value = stream.read()
                     assert_clean_bytes(value, member.name)
