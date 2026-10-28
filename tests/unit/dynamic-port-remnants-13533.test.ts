@@ -31,5 +31,5 @@ test("MITM standalone router fallback derives from API_PORT/PORT and normalizes 
   const source = fs.readFileSync(path.join(root, "src/mitm/server.cjs"), "utf8");
   assert.match(source, /process\.env\.API_PORT \|\| process\.env\.PORT \|\| 20128/);
   assert.match(source, /replace\(\/\\\/v1\$\/i, ""\)/);
-  assert.doesNotMatch(source, /OMNIROUTE_BASE_URL \|\|[\s\S]{0,120}"http:\/\/localhost:20128"/);
+  assert.doesNotMatch(source, /AGENTPROXY_BASE_URL \|\|[\s\S]{0,120}"http:\/\/localhost:20128"/);
 });

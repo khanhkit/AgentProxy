@@ -10,7 +10,7 @@
 - კოდის შემდგომი განახლებების გამოქვეყნება
 - ახალი პროექტების განთავსება იმავე სამუშაო პროცესის გამოყენებით
 
-ეს სახელმძღვანელო ეფუძნება მიმდინარე პროექტისთვის შემოწმებულ და გამართულ კონფიგურაციას. აპლიკაციის სახელია `omniroute`.
+ეს სახელმძღვანელო ეფუძნება მიმდინარე პროექტისთვის შემოწმებულ და გამართულ კონფიგურაციას. აპლიკაციის სახელია `agentproxy`.
 
 ---
 
@@ -20,7 +20,7 @@
 - განთავსების მეთოდი: ადგილობრივი `flyctl`-იდან პირდაპირი გამოქვეყნება
 - შესრულების გარემო: რეპოზიტორიაში არსებული `Dockerfile`-ისა და `fly.toml`-ის გამოყენება
 - მონაცემთა მუდმივი შენახვა: `/data`-ზე დამონტაჟებული Fly Volume
-- წვდომის URL: `https://omniroute.fly.dev/`
+- წვდომის URL: `https://agentproxy.online`
 
 ---
 
@@ -29,7 +29,7 @@
 დადასტურებულია, რომ მიმდინარე რეპოზიტორიაში არსებული `fly.toml` შეიცავს შემდეგ ძირითად ელემენტებს:
 
 ```toml
-app = 'omniroute'
+app = 'agentproxy'
 primary_region = 'sin'
 
 [[mounts]]
@@ -51,7 +51,7 @@ primary_region = 'sin'
 
 შენიშვნები:
 
-- `app = 'omniroute'` განსაზღვრავს, რომელ Fly აპლიკაციაზეა მიმართული განთავსება
+- `app = 'agentproxy'` განსაზღვრავს, რომელ Fly აპლიკაციაზეა მიმართული განთავსება
 - `destination = '/data'` განსაზღვრავს მუდმივი ტომის დამონტაჟების დირექტორიას
 - ამ პროექტში აუცილებელია `DATA_DIR=/data`-ის დაყენება, წინააღმდეგ შემთხვევაში მონაცემთა ბაზა და გასაღებები კონტეინერის დროებით დირექტორიაში ჩაიწერება
 
@@ -98,29 +98,29 @@ cd AgentProxy
 გახსენით `fly.toml` და შეამოწმეთ შემდეგი სტრიქონი:
 
 ```toml
-app = 'omniroute'
+app = 'agentproxy'
 ```
 
 თუ პროექტს თქვენს ახალ აპლიკაციაში ათავსებთ, შეგიძლიათ სახელი გლობალურად უნიკალური სახელით შეცვალოთ, მაგალითად:
 
 ```toml
-app = 'omniroute-yourname'
+app = 'agentproxy-yourname'
 ```
 
 შენიშვნა:
 
 - დარწმუნდით, რომ კონსოლში ნაჩვენები აპლიკაცია ემთხვევა `fly.toml`-ში მითითებულ `app` მნიშვნელობას
-- თუ ადრე სხვა სახელს იყენებდით, მაგალითად `oroute`, არ აგერიოთ ის `omniroute`-ში
+- თუ ადრე სხვა სახელს იყენებდით, მაგალითად `oroute`, არ აგერიოთ ის `agentproxy`-ში
 
 ### 4.3 აპლიკაციის შექმნა
 
 თუ აპლიკაცია ჯერ არ არსებობს:
 
 ```powershell
-flyctl apps create omniroute
+flyctl apps create agentproxy
 ```
 
-თუ აპლიკაციის სახელი შეცვალეთ, ჩაანაცვლეთ `omniroute` თქვენ მიერ არჩეული სახელით.
+თუ აპლიკაციის სახელი შეცვალეთ, ჩაანაცვლეთ `agentproxy` თქვენ მიერ არჩეული სახელით.
 
 ### 4.4 პირველი განთავსება
 
@@ -136,14 +136,14 @@ flyctl deploy
 
 ### 5.1 შემოწმებული პარამეტრები
 
-ეს პარამეტრები გამოყენებულია მიმდინარე `omniroute` აპლიკაციის რეალური განთავსებისას:
+ეს პარამეტრები გამოყენებულია მიმდინარე `agentproxy` აპლიკაციის რეალური განთავსებისას:
 
 - `API_KEY_SECRET`
 - `DATA_DIR`
 - `JWT_SECRET`
 - `MACHINE_ID_SALT`
 - `NEXT_PUBLIC_BASE_URL`
-- `OMNIROUTE_WS_BRIDGE_SECRET` (აუცილებელია საწარმოო გარემოში — გამოიყენება WebSocket-ხიდის ავთენტიფიკაციისთვის)
+- `AGENTPROXY_WS_BRIDGE_SECRET` (აუცილებელია საწარმოო გარემოში — გამოიყენება WebSocket-ხიდის ავთენტიფიკაციისთვის)
 - `STORAGE_ENCRYPTION_KEY`
 
 ### 5.2 `INITIAL_PASSWORD`-ის შესახებ
@@ -171,7 +171,7 @@ Fly Secrets-ისათვის რეკომენდებულია შ
 | ------------------------------ | ----------------------- | ------------------------------------------------------- |
 | `API_KEY_SECRET`               | სავალდებულო             | გამოიყენება API გასაღების გენერაციისა და ვალიდაციისთვის |
 | `JWT_SECRET`                   | სავალდებულო             | გამოიყენება შესვლის სესიებისა და JWT-ის ხელმოწერისთვის  |
-| `OMNIROUTE_WS_BRIDGE_SECRET`   | სავალდებულოა წარმოებაში | WebSocket-ხიდის ავთენტიფიკაციის საიდუმლო მნიშვნელობა    |
+| `AGENTPROXY_WS_BRIDGE_SECRET`   | სავალდებულოა წარმოებაში | WebSocket-ხიდის ავთენტიფიკაციის საიდუმლო მნიშვნელობა    |
 | `STORAGE_ENCRYPTION_KEY`       | მკაცრად რეკომენდებული   | შიფრავს შენახულ სენსიტიურ კავშირის ინფორმაციას          |
 | `MACHINE_ID_SALT`              | რეკომენდებული           | ქმნის სტაბილურ მოწყობილობის იდენტიფიკატორს              |
 | `INITIAL_PASSWORD`             | არასავალდებულო          | პირველი განთავსებისას ადგენს ბექენდის საწყის პაროლს     |
@@ -182,7 +182,7 @@ Fly Secrets-ისათვის რეკომენდებულია შ
 | ცვლადი                 | რეკომენდებული მნიშვნელობა   |
 | ---------------------- | --------------------------- |
 | `DATA_DIR`             | `/data`                     |
-| `NEXT_PUBLIC_BASE_URL` | `https://omniroute.fly.dev` |
+| `NEXT_PUBLIC_BASE_URL` | `https://agentproxy.online` |
 
 შენიშვნები:
 
@@ -196,10 +196,10 @@ Fly Secrets-ისათვის რეკომენდებულია შ
 1. **დააყენეთ `NEXT_PUBLIC_BASE_URL` თქვენს საჯარო HTTPS დომენზე**
 
    ```powershell
-   flyctl secrets set NEXT_PUBLIC_BASE_URL=https://omniroute.fly.dev -a omniroute
+   flyctl secrets set NEXT_PUBLIC_BASE_URL=https://agentproxy.online -a agentproxy
    ```
 
-   თუ საკუთარ დომენს იყენებთ, ჩაანაცვლეთ ის შესაბამისი დომენით (მაგ., `https://omniroute.yourdomain.com`).
+   თუ საკუთარ დომენს იყენებთ, ჩაანაცვლეთ ის შესაბამისი დომენით (მაგ., `https://agentproxy.example.com`).
 
 2. **მომწოდებლის კონსოლში დააკონფიგურირეთ უკუგამოძახების URL**
 
@@ -210,7 +210,7 @@ Fly Secrets-ისათვის რეკომენდებულია შ
    ```
 
    მაგალითად, Gemini-ის, Antigravity-ის, Cursor-ის ან GitLab Duo-ს მიუხედავად:
-   - `https://omniroute.fly.dev/callback`
+   - `https://agentproxy.online`
 
    თუ `NEXT_PUBLIC_BASE_URL` არ ემთხვევა მომწოდებელთან რეგისტრირებულ უკუგამოძახების URL-ს, OAuth-ის პროცესი ბრაუზერის გადამისამართების ეტაპზე წარუმატებელი იქნება.
 
@@ -223,7 +223,7 @@ Fly Secrets-ისათვის რეკომენდებულია შ
 შენიშვნები:
 
 - არ მოიცავს `INITIAL_PASSWORD`-ს
-- განკუთვნილია მიმდინარე პროექტისთვის `omniroute`
+- განკუთვნილია მიმდინარე პროექტისთვის `agentproxy`
 
 ```powershell
 $apiKeySecret = [Convert]::ToHexString((1..32 | ForEach-Object { Get-Random -Minimum 0 -Maximum 256 })).ToLower()
@@ -237,26 +237,26 @@ flyctl secrets set `
   JWT_SECRET=$jwtSecret `
   MACHINE_ID_SALT=$machineIdSalt `
   STORAGE_ENCRYPTION_KEY=$storageKey `
-  OMNIROUTE_WS_BRIDGE_SECRET=$wsBridgeSecret `
+  AGENTPROXY_WS_BRIDGE_SECRET=$wsBridgeSecret `
   DATA_DIR=/data `
-  NEXT_PUBLIC_BASE_URL=https://omniroute.fly.dev `
-  -a omniroute
+  NEXT_PUBLIC_BASE_URL=https://agentproxy.online `
+  -a agentproxy
 ```
 
 Linux / macOS-ზე ასევე შეგიძლიათ გამოიყენოთ `openssl rand -hex 32`:
 
 ```bash
-flyctl secrets set OMNIROUTE_WS_BRIDGE_SECRET=$(openssl rand -hex 32) -a omniroute
+flyctl secrets set AGENTPROXY_WS_BRIDGE_SECRET=$(openssl rand -hex 32) -a agentproxy
 ```
 
 შენიშვნები:
 
-- `OMNIROUTE_WS_BRIDGE_SECRET` წარმოების გარემოში სავალდებულოა; მისი არარსებობა WebSocket-ხიდის ხელის ჩამორთმევის პროცესს დაარღვევს
+- `AGENTPROXY_WS_BRIDGE_SECRET` წარმოების გარემოში სავალდებულოა; მისი არარსებობა WebSocket-ხიდის ხელის ჩამორთმევის პროცესს დაარღვევს
 
 თუ საწყისი პაროლის დაყენებაც გსურთ:
 
 ```powershell
-flyctl secrets set INITIAL_PASSWORD=your-strong-password -a omniroute
+flyctl secrets set INITIAL_PASSWORD=your-strong-password -a agentproxy
 ```
 
 ---
@@ -264,12 +264,12 @@ flyctl secrets set INITIAL_PASSWORD=your-strong-password -a omniroute
 ## 8. მიმდინარე პარამეტრების ნახვა
 
 ```powershell
-flyctl secrets list -a omniroute
+flyctl secrets list -a agentproxy
 ```
 
 თუ კონსოლში `Secrets` გვერდი მოსალოდნელ ცვლადებს არ აჩვენებს, შეამოწმეთ:
 
-- რომ გახსნილი გაქვთ `omniroute` აპლიკაცია
+- რომ გახსნილი გაქვთ `agentproxy` აპლიკაცია
 - რომ `fly.toml`-ში `app` მნიშვნელობა ემთხვევა კონსოლში არსებულ აპლიკაციას
 
 ---
@@ -286,7 +286,7 @@ flyctl deploy
 თუ კოდის შეცვლის გარეშე მხოლოდ პარამეტრების განახლება გჭირდებათ:
 
 ```powershell
-flyctl secrets set KEY=value -a omniroute
+flyctl secrets set KEY=value -a agentproxy
 ```
 
 Fly ავტომატურად შეასრულებს მანქანების ეტაპობრივ განახლებას.
@@ -361,8 +361,8 @@ git merge-base --is-ancestor v3.4.7 upstream/main
 3. აღადგინეთ ფორკის `fly.toml`
 4. `git push origin main`
 5. `flyctl deploy`
-6. `flyctl status -a omniroute`
-7. `flyctl logs --no-tail -a omniroute`
+6. `flyctl status -a agentproxy`
+7. `flyctl logs --no-tail -a agentproxy`
 
 ეს არის რეალური სამუშაო პროცესი, რომელიც გამოყენებულ იქნა მიმდინარე პროექტის `v3.4.7`-ზე განახლებისას (მაგალითი ეხება ისტორიულ ვერსიას; მიმდინარე რეალური ვერსიაა `v3.8.0`).
 
@@ -373,20 +373,20 @@ git merge-base --is-ancestor v3.4.7 upstream/main
 ### 10.1 აპლიკაციის სტატუსის შემოწმება
 
 ```powershell
-flyctl status -a omniroute
+flyctl status -a agentproxy
 ```
 
 ### 10.2 გაშვების ჟურნალების ნახვა
 
 ```powershell
-flyctl logs --no-tail -a omniroute
+flyctl logs --no-tail -a agentproxy
 ```
 
 ### 10.3 საიტის ხელმისაწვდომობის შემოწმება
 
 ```powershell
 try {
-  (Invoke-WebRequest -Uri "https://omniroute.fly.dev" -MaximumRedirection 5 -UseBasicParsing).StatusCode
+  (Invoke-WebRequest -Uri "https://agentproxy.online" -MaximumRedirection 5 -UseBasicParsing).StatusCode
 } catch {
   if ($_.Exception.Response) {
     $_.Exception.Response.StatusCode.value__
@@ -425,14 +425,14 @@ try {
 ამას, ჩვეულებრივ, ორი მიზეზი აქვს:
 
 - ჯერ არ გაგიშვიათ `flyctl secrets set`
-- სხვა აპლიკაციას ათვალიერებთ (მაგალითად, `oroute`-ს `omniroute`-ის ნაცვლად)
+- სხვა აპლიკაციას ათვალიერებთ (მაგალითად, `oroute`-ს `agentproxy`-ის ნაცვლად)
 
 ### 12.2 `flyctl deploy` აჩვენებს შეცდომას `app not found`
 
 ჯერ შექმენით აპლიკაცია:
 
 ```powershell
-flyctl apps create omniroute
+flyctl apps create agentproxy
 ```
 
 ### 12.3 `fly.toml`-ის დამუშავება ვერ ხერხდება
@@ -475,10 +475,10 @@ flyctl apps create omniroute
 
 ```powershell
 flyctl auth whoami
-flyctl status -a omniroute
-flyctl secrets list -a omniroute
+flyctl status -a agentproxy
+flyctl secrets list -a agentproxy
 flyctl deploy
-flyctl logs --no-tail -a omniroute
+flyctl logs --no-tail -a agentproxy
 ```
 
 ჩვეულებრივი რელიზისთვის ძირითადი ბრძანება უბრალოდ ესაა:
@@ -490,7 +490,7 @@ flyctl deploy
 ახალ გარემოში პირველად განთავსების ძირითადი ნაბიჯებია:
 
 1. `flyctl auth login`
-2. `flyctl apps create omniroute`
-3. `flyctl secrets set ... -a omniroute`
+2. `flyctl apps create agentproxy`
+3. `flyctl secrets set ... -a agentproxy`
 4. `flyctl deploy`
-5. `flyctl logs --no-tail -a omniroute`
+5. `flyctl logs --no-tail -a agentproxy`

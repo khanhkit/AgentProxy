@@ -37,11 +37,11 @@ n’emeghị modulu ọhụrụ.
 Aha ndị ọzọ maka ụzọ (`tsconfig.json`):
 
 - `@/*` → `src/*`
-- `@omniroute/open-sse` → `open-sse/index.ts`
-- `@omniroute/open-sse/*` → `open-sse/*`
+- `@agentproxy/open-sse` → `open-sse/index.ts`
+- `@agentproxy/open-sse/*` → `open-sse/*`
 
 Ọdụ ụgbọ mmiri HTTP ndabara: **`20128`** (API na dashboard na-eji otu usoro ahụ). Ndekọ
-data bụ env var `DATA_DIR`, nke ndabara ya bụ `~/.omniroute/`.
+data bụ env var `DATA_DIR`, nke ndabara ya bụ `~/.agentproxy/`.
 
 ---
 
@@ -50,9 +50,9 @@ data bụ env var `DATA_DIR`, nke ndabara ya bụ `~/.omniroute/`.
 ```
 AgentProxy/
 ├── src/                  Ngwa Next.js (App Router, libs, domain, server, shared)
-├── open-sse/             Ebe ọrụ injin nkwanye data (@omniroute/open-sse)
+├── open-sse/             Ebe ọrụ injin nkwanye data (@agentproxy/open-sse)
 ├── electron/             Ihe mkpuchi desktọọpụ (Electron 41 main + preload)
-├── bin/                  Ebe mbido CLI (omniroute, reset-password)
+├── bin/                  Ebe mbido CLI (agentproxy, reset-password)
 ├── tests/                Unit, integration, e2e, protocols-e2e, translator, security, fixtures
 ├── scripts/              Skripụ enyemaka maka mwube, mmekọrịta, nyocha, mbugharị, na oge ọrụ
 ├── docs/                 Akwụkwọ nkọwa ọha (ndekọ a)
@@ -298,7 +298,7 @@ Tebụl ahụ na-achịkọta directory ndị dị adị na faịlụ ndị dị
 | `runtime/`        | Nchọpụta atụmatụ runtime                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
 | `search/`         | `executeWebSearch.ts`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
 | `services/`       | Framework ọrụ agbakwunyere: `ServiceSupervisor.ts` (onye nlekọta child-process izugbe nwere mkpọchi ọrụ, ring buffer, na onye nyocha ahụike), `bootstrap.ts` (ndebanye aha n'ogo process na mmalite akpaaka), `registry.ts` (maapụ tool → supervisor), `apiKey.ts` (ebe nchekwa igodo AES-256-GCM), `modelSync.ts` (mmekọrịta model nke oge na-aga), `ringBuffer.ts` (ebe nchekwa ndekọ okirikiri 5 MB), `healthCheck.ts` (nyocha ahụike HTTP), `types.ts`, `embedWsProxy.ts` (proxy WebSocket), `installers/{ninerouter,cliproxy}.ts`. Lee `docs/frameworks/EMBEDDED-SERVICES.md`                                                                                                             |
-| `agentSkills/`    | Katalọgụ + generator nke Agent Skills: `catalog.ts` (getCatalog/getSkillById/filterCatalog/computeCoverage), `generator.ts` (generateAgentSkills → na-ede `skills/{id}/SKILL.md`), `openapiParser.ts` (na-ewepụta endpoints REST site na nkọwapụta OpenAPI), `cliRegistryParser.ts` (na-ewepụta subcommands CLI site na bin/cli-registry), `schemas.ts` (Zod: AgentSkillSchema, SkillCoverageSchema, ListQuerySchema, GenerateBodySchema), `types.ts` (AgentSkill, SkillCoverage, SkillMarkdown, GeneratorReport). Ụzọ REST (`/api/agent-skills/*`), ngwaọrụ MCP (`omniroute_agent_skills_*`), na nka A2A `list-capabilities` na-eji ya. Lee [AGENT-SKILLS.md](../frameworks/AGENT-SKILLS.md). |
+| `agentSkills/`    | Katalọgụ + generator nke Agent Skills: `catalog.ts` (getCatalog/getSkillById/filterCatalog/computeCoverage), `generator.ts` (generateAgentSkills → na-ede `skills/{id}/SKILL.md`), `openapiParser.ts` (na-ewepụta endpoints REST site na nkọwapụta OpenAPI), `cliRegistryParser.ts` (na-ewepụta subcommands CLI site na bin/cli-registry), `schemas.ts` (Zod: AgentSkillSchema, SkillCoverageSchema, ListQuerySchema, GenerateBodySchema), `types.ts` (AgentSkill, SkillCoverage, SkillMarkdown, GeneratorReport). Ụzọ REST (`/api/agent-skills/*`), ngwaọrụ MCP (`agentproxy_agent_skills_*`), na nka A2A `list-capabilities` na-eji ya. Lee [AGENT-SKILLS.md](../frameworks/AGENT-SKILLS.md). |
 | `skills/`         | Framework nka: `registry.ts`, `executor.ts`, `interception.ts`, `injection.ts`, `sandbox.ts`, `custom.ts`, `hybrid.ts`, `builtins.ts`, `a2a.ts`, `providerSettings.ts`, `schemas.ts`, `skillssh.ts`, `types.ts`, tinyere `builtin/browser.ts`                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
 | `spend/`          | `batchWriter.ts` (buffer write-behind)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
 | `sync/`           | `bundle.ts`, `tokens.ts` (Cloud Sync)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
@@ -383,7 +383,7 @@ Ezi mgbagha azụmahịa na-enweghị I/O. Routes na handlers na-ebubata ya.
 | `degradation.ts`                           | Mgbanwe gaa na site na degraded-mode                        |
 | `providerExpiration.ts`                    | Nchọpụta account/key kubie ume                              |
 | `quotaCache.ts`                            | Mkpebi quota echekwara na cache                             |
-| `responses.ts`, `omnirouteResponseMeta.ts` | Ndị enyemaka maka ọdịdị response                            |
+| `responses.ts`, `agentproxyesponseMeta.ts` | Ndị enyemaka maka ọdịdị response                            |
 | `configAudit.ts`                           | Audit mgbanwe config                                        |
 | `assessment/`                              | Ntụle model (dịka RFC si dị, etinyere ya n'ọrụ naanị akụkụ) |
 | `types.ts`                                 | Types domain ndị a na-ekekọrịta                             |
@@ -435,7 +435,7 @@ E kewara ya n'ime subdirectories lekwasịrị anya:
 
 ## 4. `open-sse/` — Ebe ọrụ injin nkwanye data
 
-Ebe ọrụ npm dị iche e bipụtara dịka `@omniroute/open-sse`. Ọ na-ahụ maka nhazi arịrịọ, ndị mmebe, ndị ntụgharị, ọrụ, transformer, na sava MCP.
+Ebe ọrụ npm dị iche e bipụtara dịka `@agentproxy/open-sse`. Ọ na-ahụ maka nhazi arịrịọ, ndị mmebe, ndị ntụgharị, ọrụ, transformer, na sava MCP.
 
 ```
 open-sse/
@@ -597,7 +597,7 @@ E nwere script npm ise na mgbọrọgwụ workspace: `electron:dev`, `electron:b
 
 ```
 bin/
-├── omniroute.mjs           Ebe mbata isi nke CLI (Node ESM)
+├── agentproxy.mjs           Ebe mbata isi nke CLI (Node ESM)
 ├── reset-password.mjs      Tọgharịa okwuntughe njikwa site na CLI
 ├── mcp-server.mjs          Ihe mmalite sava MCP (stdio)
 ├── nodeRuntimeSupport.mjs  Nchekwa ụdị Node
@@ -620,8 +620,8 @@ bin/
 
 E gosipụtara binary abụọ na `package.json` → `bin`:
 
-- `omniroute` → `bin/omniroute.mjs`
-- `omniroute-reset-password` → `bin/reset-password.mjs`
+- `agentproxy` → `bin/agentproxy.mjs`
+- `agentproxy-reset-password` → `bin/reset-password.mjs`
 
 ---
 
@@ -777,7 +777,7 @@ Lee [A2A-SERVER.md § Ịtinye Nka Ọhụrụ](../frameworks/A2A-SERVER.md). Nk
 
 - **Ụdị koodu**: oghere 2 maka indent, akara nhota abụọ, obosara mkpụrụedemede 100, semicolon,
   trailing comma `es5` — Prettier na-amanye nke a site na `lint-staged`.
-- **Mbubata**: nke mpụga → nke ime (`@/`, `@omniroute/open-sse`) → nke metụtara ebe dị nso.
+- **Mbubata**: nke mpụga → nke ime (`@/`, `@agentproxy/open-sse`) → nke metụtara ebe dị nso.
 - **Ịkpọ aha**: faịlụ `camelCase` ma ọ bụ `kebab-case`, components `PascalCase`,
   constants `UPPER_SNAKE`.
 - **ESLint**: `no-eval`, `no-implied-eval`, `no-new-func` = `error` n'ebe niile;

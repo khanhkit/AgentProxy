@@ -642,7 +642,7 @@ O lè forúkọsílẹ̀ ìmúṣẹ `RouterStrategy` tìrẹ nípasẹ̀ API gb
 import {
   registerStrategy,
   type RouterStrategy,
-} from "@omniroute/open-sse/services/autoCombo/routerStrategy";
+} from "@agentproxy/open-sse/services/autoCombo/routerStrategy";
 
 class MyCustomStrategy implements RouterStrategy {
   readonly name = "my-custom";

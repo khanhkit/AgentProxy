@@ -22,7 +22,7 @@ function symlinkOrSkip(t: test.TestContext, target: string, link: string): boole
 }
 
 test("Codex generator refuses to follow an existing config.toml symlink", async (t) => {
-  const directory = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-codex-symlink-"));
+  const directory = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-codex-symlink-"));
   t.after(() => fs.rmSync(directory, { recursive: true, force: true }));
   const target = path.join(directory, "operator.toml");
   const configPath = path.join(directory, "config.toml");
@@ -41,7 +41,7 @@ test("Codex generator refuses to follow an existing config.toml symlink", async 
 });
 
 test("OpenCode generator refuses to follow an existing JSONC config symlink", async (t) => {
-  const directory = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-opencode-symlink-"));
+  const directory = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-opencode-symlink-"));
   t.after(() => fs.rmSync(directory, { recursive: true, force: true }));
   const target = path.join(directory, "operator.jsonc");
   const configPath = path.join(directory, "opencode.jsonc");

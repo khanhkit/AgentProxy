@@ -111,10 +111,10 @@ test("hermes: returns 'not_configured' when config points elsewhere", async () =
 
 // ── Oh My Pi (omp) tests ──────────────────────────────────────────────────
 
-test("omp: returns 'configured' when models.yml contains OmniRoute provider", async () => {
+test("omp: returns 'configured' when models.yml contains AgentProxy provider", async () => {
   const configPath = await writeTempFile(
     "models.yml",
-    `providers:\n  omniroute:\n    baseUrl: http://localhost:20128/v1\n    api: openai-completions\n`
+    `providers:\n  agentproxy:\n    baseUrl: http://localhost:20128/v1\n    api: openai-completions\n`
   );
   const result = await checkToolConfigStatus("omp", configPath);
   assert.equal(result, "configured");

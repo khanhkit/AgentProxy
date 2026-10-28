@@ -89,13 +89,13 @@ ufw enable
 ### 2.1 კონფიგურაციის დირექტორიის შექმნა
 
 ```bash
-mkdir -p /opt/omniroute
+mkdir -p /opt/agentproxy
 ```
 
 ### 2.2 გარემოს ცვლადების ფაილის შექმნა
 
 ```bash
-cat > /opt/omniroute/.env << 'EOF'
+cat > /opt/agentproxy/.env << 'EOF'
 # === უსაფრთხოება ===
 JWT_SECRET=CHANGE-TO-A-UNIQUE-64-CHAR-SECRET-KEY
 INITIAL_PASSWORD=YourSecurePassword123!
@@ -103,7 +103,7 @@ API_KEY_SECRET=REPLACE-WITH-ANOTHER-SECRET-KEY
 STORAGE_ENCRYPTION_KEY=REPLACE-WITH-THIRD-SECRET-KEY
 STORAGE_ENCRYPTION_KEY_VERSION=v1
 MACHINE_ID_SALT=CHANGE-TO-A-UNIQUE-SALT
-OMNIROUTE_WS_BRIDGE_SECRET=REPLACE-WITH-WS-BRIDGE-SECRET  # სავალდებულოა საწარმოო გარემოში: გამოიყენება Codex Responses WS bridge-ის მიერ
+AGENTPROXY_WS_BRIDGE_SECRET=REPLACE-WITH-WS-BRIDGE-SECRET  # სავალდებულოა საწარმოო გარემოში: გამოიყენება Codex Responses WS bridge-ის მიერ
 
 # === აპლიკაცია ===
 PORT=20128
@@ -120,11 +120,11 @@ BASE_URL=http://127.0.0.1:20128
 # ბრაუზერისთვის განკუთვნილი URL, რომელიც გამოიყენება OAuth-ის უკუგამოძახებებისთვის, მართვის პანელის ბმულებისა და გენერირებული საჯარო URL-ებისთვის.
 NEXT_PUBLIC_BASE_URL=https://llms.seudominio.com
 # არასავალდებულო საჯარო origin-ის აშკარა ჩანაცვლება გენერირებული საჯარო რესურსების URL-ებისთვის.
-# OMNIROUTE_PUBLIC_BASE_URL=https://llms.seudominio.com
+# AGENTPROXY_PUBLIC_BASE_URL=https://llms.seudominio.com
 
 # === ღრუბლოვანი სინქრონიზაცია (არასავალდებულო) ===
-# CLOUD_URL=https://cloud.omniroute.online
-# NEXT_PUBLIC_CLOUD_URL=https://cloud.omniroute.online
+# CLOUD_URL=https://agentproxy.online
+# NEXT_PUBLIC_CLOUD_URL=https://agentproxy.online
 EOF
 ```
 
@@ -133,22 +133,22 @@ EOF
 ### 2.3 კონტეინერის გაშვება
 
 ```bash
-docker pull diegosouzapw/omniroute:latest
+docker pull diegosouzapw/agentproxy:latest
 
 docker run -d \
-  --name omniroute \
+  --name agentproxy \
   --restart unless-stopped \
-  --env-file /opt/omniroute/.env \
+  --env-file /opt/agentproxy/.env \
   -p 20128:20128 \
-  -v omniroute-data:/app/data \
-  diegosouzapw/omniroute:latest
+  -v agentproxy-data:/app/data \
+  diegosouzapw/agentproxy:latest
 ```
 
 ### 2.4 მუშაობის შემოწმება
 
 ```bash
-docker ps | grep omniroute
-docker logs omniroute --tail 20
+docker ps | grep agentproxy
+docker logs agentproxy --tail 20
 ```
 
 უნდა გამოჩნდეს: `[DB] SQLite database ready` და `listening on port 20128`.
@@ -181,7 +181,7 @@ chmod 600 /etc/nginx/ssl/origin.key
 ### 3.2 Nginx-ის კონფიგურაცია
 
 ```bash
-cat > /etc/nginx/sites-available/omniroute << 'NGINX'
+cat > /etc/nginx/sites-available/agentproxy << 'NGINX'
 # ნაგულისხმევი სერვერი — ბლოკავს IP-ის მეშვეობით პირდაპირ წვდომას
 server {
     listen 80 default_server;
@@ -246,7 +246,7 @@ AgentProxy იყენებს `NEXT_PUBLIC_BASE_URL`-ს, როგორც 
 და სესიასთან მიბმულ CSRF დაცვას, ამიტომ მათ არ სჭირდებათ სტატიკური საჯარო საბაზისო URL. ზემოთ მოცემული
 `X-Forwarded-*` სათაურები კვლავ სასარგებლო მარშრუტიზაციის მეტამონაცემებია, თუმცა ისინი ვერ ჩაანაცვლებს
 ცხადად განსაზღვრული საჯარო URL-ის დაყენებას, როდესაც ის OAuth-ს ან გენერირებულ ბრაუზერის ბმულებს სჭირდება. ჩართეთ
-`OMNIROUTE_TRUST_PROXY` მხოლოდ იმ შემთხვევაში, თუ AgentProxy კლიენტებისთვის პირდაპირ ხელმისაწვდომი არ არის და თქვენი პროქსი
+`AGENTPROXY_TRUST_PROXY` მხოლოდ იმ შემთხვევაში, თუ AgentProxy კლიენტებისთვის პირდაპირ ხელმისაწვდომი არ არის და თქვენი პროქსი
 შემოავალ გადამისამართების სათაურებს შლის/ხელახლა აგებს.
 
 ### 3.3 ჩართვა და შემოწმება
@@ -256,7 +256,7 @@ AgentProxy იყენებს `NEXT_PUBLIC_BASE_URL`-ს, როგორც 
 rm -f /etc/nginx/sites-enabled/default
 
 # ჩართეთ AgentProxy
-ln -sf /etc/nginx/sites-available/omniroute /etc/nginx/sites-enabled/omniroute
+ln -sf /etc/nginx/sites-available/agentproxy /etc/nginx/sites-enabled/agentproxy
 
 # შეამოწმეთ და ხელახლა ჩატვირთეთ
 nginx -t && systemctl reload nginx
@@ -300,40 +300,40 @@ curl -sI https://llms.seudominio.com/health
 ### ახალ ვერსიაზე განახლება
 
 ```bash
-docker pull diegosouzapw/omniroute:latest
-docker stop omniroute && docker rm omniroute
-docker run -d --name omniroute --restart unless-stopped \
-  --env-file /opt/omniroute/.env \
+docker pull diegosouzapw/agentproxy:latest
+docker stop agentproxy && docker rm agentproxy
+docker run -d --name agentproxy --restart unless-stopped \
+  --env-file /opt/agentproxy/.env \
   -p 20128:20128 \
-  -v omniroute-data:/app/data \
-  diegosouzapw/omniroute:latest
+  -v agentproxy-data:/app/data \
+  diegosouzapw/agentproxy:latest
 ```
 
 ### ჟურნალების ნახვა
 
 ```bash
-docker logs -f omniroute          # ნაკადი რეალურ დროში
-docker logs omniroute --tail 50   # ბოლო 50 სტრიქონი
+docker logs -f agentproxy          # ნაკადი რეალურ დროში
+docker logs agentproxy --tail 50   # ბოლო 50 სტრიქონი
 ```
 
 ### მონაცემთა ბაზის ხელით სარეზერვო კოპირება
 
 ```bash
 # მონაცემების ტომიდან ჰოსტზე კოპირება
-docker cp omniroute:/app/data ./backup-$(date +%F)
+docker cp agentproxy:/app/data ./backup-$(date +%F)
 
 # ან მთელი ტომის შეკუმშვა
-docker run --rm -v omniroute-data:/data -v $(pwd):/backup \
-  alpine tar czf /backup/omniroute-data-$(date +%F).tar.gz /data
+docker run --rm -v agentproxy-data:/data -v $(pwd):/backup \
+  alpine tar czf /backup/agentproxy-data-$(date +%F).tar.gz /data
 ```
 
 ### სარეზერვო ასლიდან აღდგენა
 
 ```bash
-docker stop omniroute
-docker run --rm -v omniroute-data:/data -v $(pwd):/backup \
-  alpine sh -c "rm -rf /data/* && tar xzf /backup/omniroute-data-YYYY-MM-DD.tar.gz -C /"
-docker start omniroute
+docker stop agentproxy
+docker run --rm -v agentproxy-data:/data -v $(pwd):/backup \
+  alpine sh -c "rm -rf /data/* && tar xzf /backup/agentproxy-data-YYYY-MM-DD.tar.gz -C /"
+docker start agentproxy
 ```
 
 ---
@@ -402,13 +402,13 @@ Cloudflare Workers-ის მეშვეობით დისტანცი�
 
 ```bash
 # ლოკალურ რეპოზიტორიაში
-cd omnirouteCloud
+cd agentproxyCloud
 npm install
 npx wrangler login
 npx wrangler deploy
 ```
 
-რეპოზიტორიაში არსებული Cloudflare Tunnel-ის ნაბიჯ-ნაბიჯ სახელმძღვანელოსთვის აგრეთვე იხილეთ [TUNNELS_GUIDE.md](./TUNNELS_GUIDE.md). დამოუკიდებელი `omnirouteCloud/` worker ცალკე, თანმხლებ რეპოზიტორიაში მდებარეობს.
+რეპოზიტორიაში არსებული Cloudflare Tunnel-ის ნაბიჯ-ნაბიჯ სახელმძღვანელოსთვის აგრეთვე იხილეთ [TUNNELS_GUIDE.md](./TUNNELS_GUIDE.md). დამოუკიდებელი `agentproxyCloud/` worker ცალკე, თანმხლებ რეპოზიტორიაში მდებარეობს.
 
 ---
 
@@ -425,9 +425,9 @@ npx wrangler deploy
 
 მცირე VPS ეგზემპლარებზე (1 GB RAM ან ნაკლები) განთავსებისთვის:
 
-- **გამორთეთ ფონური სერვისები** — დააყენეთ `OMNIROUTE_DISABLE_BACKGROUND_SERVICES=1`, რათა გამოტოვოთ დამგეგმავი, MCP სერვერი და პერიოდული ტექნიკური მომსახურების ამოცანები. იხილეთ `docs/reference/ENVIRONMENT.md`.
+- **გამორთეთ ფონური სერვისები** — დააყენეთ `AGENTPROXY_DISABLE_BACKGROUND_SERVICES=1`, რათა გამოტოვოთ დამგეგმავი, MCP სერვერი და პერიოდული ტექნიკური მომსახურების ამოცანები. იხილეთ `docs/reference/ENVIRONMENT.md`.
 - **გამოიყენეთ SQLite WAL რეჟიმი** — ნაგულისხმევად ჩართულია და ამცირებს მეხსიერების პიკურ მოხმარებას პარალელური წაკითხვისას.
-- **შეზღუდეთ V8-ის გროვა** — დააყენეთ `OMNIROUTE_MEMORY_MB` (მაგ. `512`), რათა შესრულების გარემომ VM-ზე მეტი ზედა ზღვარი არ დააკალიბროს. იხილეთ `docs/reference/ENVIRONMENT.md`.
-- **მძიმე მოთხოვნების დაშვება გროვის ლიმიტის შესაბამისად ავტომატურად მასშტაბირდება** -- ზემოთ `OMNIROUTE_MEMORY_MB`-ის დაყენების შემდეგ, მიღებული მონაცემების ბაიტური ბიუჯეტი (`OMNIROUTE_CHAT_MAX_INFLIGHT_BYTES`) იმავე ზედა ზღვრის საფუძველზე გამოითვლება, ამიტომ მეხსიერებით შეზღუდული VM დამატებითი კონფიგურაციის გარეშე იღებს პარალელური მოთხოვნების უფრო მცირე ბიუჯეტს; ჭარბი მოთხოვნები მეხსიერებისთვის კონკურენციის ნაცვლად იღებენ განმეორებად `503` პასუხს `Retry-After`-ით. მემკვიდრეობითი `OMNIROUTE_CHAT_MAX_HEAVY_IN_FLIGHT` მოთხოვნების რაოდენობის ლიმიტი დააყენეთ მხოლოდ მაშინ, თუ ამის დამატებით მკაცრი ზედა ზღვარი გჭირდებათ.
+- **შეზღუდეთ V8-ის გროვა** — დააყენეთ `AGENTPROXY_MEMORY_MB` (მაგ. `512`), რათა შესრულების გარემომ VM-ზე მეტი ზედა ზღვარი არ დააკალიბროს. იხილეთ `docs/reference/ENVIRONMENT.md`.
+- **მძიმე მოთხოვნების დაშვება გროვის ლიმიტის შესაბამისად ავტომატურად მასშტაბირდება** -- ზემოთ `AGENTPROXY_MEMORY_MB`-ის დაყენების შემდეგ, მიღებული მონაცემების ბაიტური ბიუჯეტი (`AGENTPROXY_CHAT_MAX_INFLIGHT_BYTES`) იმავე ზედა ზღვრის საფუძველზე გამოითვლება, ამიტომ მეხსიერებით შეზღუდული VM დამატებითი კონფიგურაციის გარეშე იღებს პარალელური მოთხოვნების უფრო მცირე ბიუჯეტს; ჭარბი მოთხოვნები მეხსიერებისთვის კონკურენციის ნაცვლად იღებენ განმეორებად `503` პასუხს `Retry-After`-ით. მემკვიდრეობითი `AGENTPROXY_CHAT_MAX_HEAVY_IN_FLIGHT` მოთხოვნების რაოდენობის ლიმიტი დააყენეთ მხოლოდ მაშინ, თუ ამის დამატებით მკაცრი ზედა ზღვარი გჭირდებათ.
 - **არ გაუშვათ `next build` VPS-ზე** — ააგეთ ლოკალურად და განათავსეთ დამოუკიდებელი გამომავალი (`.next/standalone/`).
 - **აკონტროლეთ `top` / `free -m`-ით** — AgentProxy, როგორც წესი, უმოქმედო მდგომარეობაში 1 GB-იან VM-ზე 200-400 MB RSS-ს იყენებს.

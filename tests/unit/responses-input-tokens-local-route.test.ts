@@ -23,7 +23,7 @@ test("returns the OpenAI Responses contract shape", async () => {
   assert.equal(typeof json.input_tokens, "number");
   assert.equal(Number.isInteger(json.input_tokens), true);
   assert.ok(json.input_tokens > 0);
-  // No OmniRoute-only fields may leak into the public contract.
+  // No AgentProxy-only fields may leak into the public contract.
   assert.deepEqual(Object.keys(json).sort(), ["input_tokens", "object"]);
 });
 

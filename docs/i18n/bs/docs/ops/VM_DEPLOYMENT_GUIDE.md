@@ -91,13 +91,13 @@ ufw enable
 ### 2.1 Kreirajte direktorij za konfiguraciju
 
 ```bash
-mkdir -p /opt/omniroute
+mkdir -p /opt/agentproxy
 ```
 
 ### 2.2 Kreirajte datoteku za environment varijable
 
 ```bash
-cat > /opt/omniroute/.env << 'EOF'
+cat > /opt/agentproxy/.env << 'EOF'
 # === Security ===
 JWT_SECRET=CHANGE-TO-A-UNIQUE-64-CHAR-SECRET-KEY
 INITIAL_PASSWORD=YourSecurePassword123!
@@ -105,7 +105,7 @@ API_KEY_SECRET=REPLACE-WITH-ANOTHER-SECRET-KEY
 STORAGE_ENCRYPTION_KEY=REPLACE-WITH-THIRD-SECRET-KEY
 STORAGE_ENCRYPTION_KEY_VERSION=v1
 MACHINE_ID_SALT=CHANGE-TO-A-UNIQUE-SALT
-OMNIROUTE_WS_BRIDGE_SECRET=REPLACE-WITH-WS-BRIDGE-SECRET  # OBAVEZNO u produkciji: koristi Codex Responses WS bridge
+AGENTPROXY_WS_BRIDGE_SECRET=REPLACE-WITH-WS-BRIDGE-SECRET  # OBAVEZNO u produkciji: koristi Codex Responses WS bridge
 
 # === App ===
 PORT=20128
@@ -122,11 +122,11 @@ BASE_URL=http://127.0.0.1:20128
 # URL okrenut prema pregledniku koji se koristi za OAuth callback-ove, linkove za dashboard i generisane javne URL-ove.
 NEXT_PUBLIC_BASE_URL=https://llms.vasadomena.com
 # Opcionalno eksplicitno pregažanje javnog origina za generisane javne asset URL-ove.
-# OMNIROUTE_PUBLIC_BASE_URL=https://llms.vasadomena.com
+# AGENTPROXY_PUBLIC_BASE_URL=https://llms.vasadomena.com
 
 # === Cloud Sync (opcionalno) ===
-# CLOUD_URL=https://cloud.omniroute.online
-# NEXT_PUBLIC_CLOUD_URL=https://cloud.omniroute.online
+# CLOUD_URL=https://agentproxy.online
+# NEXT_PUBLIC_CLOUD_URL=https://agentproxy.online
 EOF
 ```
 
@@ -135,22 +135,22 @@ EOF
 ### 2.3 Pokrenite kontejner
 
 ```bash
-docker pull diegosouzapw/omniroute:latest
+docker pull diegosouzapw/agentproxy:latest
 
 docker run -d \
-  --name omniroute \
+  --name agentproxy \
   --restart unless-stopped \
-  --env-file /opt/omniroute/.env \
+  --env-file /opt/agentproxy/.env \
   -p 20128:20128 \
-  -v omniroute-data:/app/data \
-  diegosouzapw/omniroute:latest
+  -v agentproxy-data:/app/data \
+  diegosouzapw/agentproxy:latest
 ```
 
 ### 2.4 Provjerite da li radi
 
 ```bash
-docker ps | grep omniroute
-docker logs omniroute --tail 20
+docker ps | grep agentproxy
+docker logs agentproxy --tail 20
 ```
 
 Trebalo bi prikazati: `[DB] SQLite database ready` i `listening on port 20128`.
@@ -183,7 +183,7 @@ chmod 600 /etc/nginx/ssl/origin.key
 ### 3.2 Nginx Konfiguracija
 
 ```bash
-cat > /etc/nginx/sites-available/omniroute << 'NGINX'
+cat > /etc/nginx/sites-available/agentproxy << 'NGINX'
 # Default server — blokira direktan pristup putem IP adrese
 server {
     listen 80 default_server;
@@ -248,7 +248,7 @@ callback-ove i generisane javne linkove. Autentifikovano pisanje u dashboard-u k
 uz session-bound CSRF zaštitu, tako da im nije potreban statični javni bazni URL.
 `X-Forwarded-*` zaglavlja iznad su i dalje korisni metapodaci za rutiranje, ali nisu zamjena
 za postavljanje eksplicitnog javnog URL-a kada OAuth ili generisani linkovi za preglednik zahtijevaju isti. Omogućite
-`OMNIROUTE_TRUST_PROXY` samo ako AgentProxy nije direktno dostupan klijentima i ako vaš proxy
+`AGENTPROXY_TRUST_PROXY` samo ako AgentProxy nije direktno dostupan klijentima i ako vaš proxy
 uklanja/ponovo kreira dolazna forwarded zaglavlja.
 
 ### 3.3 Omogućite i Testirajte
@@ -258,7 +258,7 @@ uklanja/ponovo kreira dolazna forwarded zaglavlja.
 rm -f /etc/nginx/sites-enabled/default
 
 # Omogućite AgentProxy
-ln -sf /etc/nginx/sites-available/omniroute /etc/nginx/sites-enabled/omniroute
+ln -sf /etc/nginx/sites-available/agentproxy /etc/nginx/sites-enabled/agentproxy
 
 # Testirajte i ponovo učitajte
 nginx -t && systemctl reload nginx
@@ -302,40 +302,40 @@ curl -sI https://llms.seudominio.com/health
 ### Nadogradnja na novu verziju
 
 ```bash
-docker pull diegosouzapw/omniroute:latest
-docker stop omniroute && docker rm omniroute
-docker run -d --name omniroute --restart unless-stopped \
-  --env-file /opt/omniroute/.env \
+docker pull diegosouzapw/agentproxy:latest
+docker stop agentproxy && docker rm agentproxy
+docker run -d --name agentproxy --restart unless-stopped \
+  --env-file /opt/agentproxy/.env \
   -p 20128:20128 \
-  -v omniroute-data:/app/data \
-  diegosouzapw/omniroute:latest
+  -v agentproxy-data:/app/data \
+  diegosouzapw/agentproxy:latest
 ```
 
 ### Pregled logova
 
 ```bash
-docker logs -f omniroute          # Stream u stvarnom vremenu
-docker logs omniroute --tail 50   # Posljednjih 50 linija
+docker logs -f agentproxy          # Stream u stvarnom vremenu
+docker logs agentproxy --tail 50   # Posljednjih 50 linija
 ```
 
 ### Ručno pravljenje rezervne kopije baze podataka
 
 ```bash
 # Kopiraj podatke iz volumena na host
-docker cp omniroute:/app/data ./backup-$(date +%F)
+docker cp agentproxy:/app/data ./backup-$(date +%F)
 
 # Ili komprimiraj cijeli volumen
-docker run --rm -v omniroute-data:/data -v $(pwd):/backup \
-  alpine tar czf /backup/omniroute-data-$(date +%F).tar.gz /data
+docker run --rm -v agentproxy-data:/data -v $(pwd):/backup \
+  alpine tar czf /backup/agentproxy-data-$(date +%F).tar.gz /data
 ```
 
 ### Vraćanje iz rezervne kopije
 
 ```bash
-docker stop omniroute
-docker run --rm -v omniroute-data:/data -v $(pwd):/backup \
-  alpine sh -c "rm -rf /data/* && tar xzf /backup/omniroute-data-YYYY-MM-DD.tar.gz -C /"
-docker start omniroute
+docker stop agentproxy
+docker run --rm -v agentproxy-data:/data -v $(pwd):/backup \
+  alpine sh -c "rm -rf /data/* && tar xzf /backup/agentproxy-data-YYYY-MM-DD.tar.gz -C /"
+docker start agentproxy
 ```
 
 ---
@@ -404,13 +404,13 @@ Za udaljeni pristup putem Cloudflare Workers-a (bez direktnog izlaganja VM-a):
 
 ```bash
 # U lokalnom repozitoriju
-cd omnirouteCloud
+cd agentproxyCloud
 npm install
 npx wrangler login
 npx wrangler deploy
 ```
 
-Pogledajte također [TUNNELS_GUIDE.md](./TUNNELS_GUIDE.md) za vodič kroz Cloudflare Tunnel unutar repozitorija. Samostalni `omnirouteCloud/` worker nalazi se u zasebnom pratećem repozitoriju.
+Pogledajte također [TUNNELS_GUIDE.md](./TUNNELS_GUIDE.md) za vodič kroz Cloudflare Tunnel unutar repozitorija. Samostalni `agentproxyCloud/` worker nalazi se u zasebnom pratećem repozitoriju.
 
 ---
 
@@ -427,9 +427,9 @@ Pogledajte također [TUNNELS_GUIDE.md](./TUNNELS_GUIDE.md) za vodič kroz Cloudf
 
 Za implementacije na malim VPS instancama (1 GB RAM-a ili manje):
 
-- **Onemogućite pozadinske servise** — postavite `OMNIROUTE_DISABLE_BACKGROUND_SERVICES=1` kako biste preskočili scheduler, MCP server i periodne zadatke održavanja. Pogledajte `docs/reference/ENVIRONMENT.md`.
+- **Onemogućite pozadinske servise** — postavite `AGENTPROXY_DISABLE_BACKGROUND_SERVICES=1` kako biste preskočili scheduler, MCP server i periodne zadatke održavanja. Pogledajte `docs/reference/ENVIRONMENT.md`.
 - **Koristite SQLite WAL način rada** — omogućeno po defaultu, smanjuje vršnu potrošnju memorije tokom konkurentnog čitanja.
-- **Ograničite V8 heap** — postavite `OMNIROUTE_MEMORY_MB` (npr. `512`) kako runtime ne bi kalibrisao limit veći od VM-a. Pogledajte `docs/reference/ENVIRONMENT.md`.
-- **Teški zahtjevi se automatski skaliraju prema limitu heap-a** -- kada se `OMNIROUTE_MEMORY_MB` postavi kao gore navedeno, budžet bajtova za ingest (`OMNIROUTE_CHAT_MAX_INFLIGHT_BYTES`) se izvodi iz istog limita, tako da VM sa ograničenom memorijom već dobija manji budžet za konkurentne zahtjeve bez dodatnog podešavanja; višak zahtjeva dobija ponovljiv `503` sa `Retry-After` umjesto da se takmiče za memoriju. Postavite zastarjeli limit broja zahtjeva `OMNIROUTE_CHAT_MAX_HEAVY_IN_FLIGHT` samo ako vam je potreban strogi limit povrh toga.
+- **Ograničite V8 heap** — postavite `AGENTPROXY_MEMORY_MB` (npr. `512`) kako runtime ne bi kalibrisao limit veći od VM-a. Pogledajte `docs/reference/ENVIRONMENT.md`.
+- **Teški zahtjevi se automatski skaliraju prema limitu heap-a** -- kada se `AGENTPROXY_MEMORY_MB` postavi kao gore navedeno, budžet bajtova za ingest (`AGENTPROXY_CHAT_MAX_INFLIGHT_BYTES`) se izvodi iz istog limita, tako da VM sa ograničenom memorijom već dobija manji budžet za konkurentne zahtjeve bez dodatnog podešavanja; višak zahtjeva dobija ponovljiv `503` sa `Retry-After` umjesto da se takmiče za memoriju. Postavite zastarjeli limit broja zahtjeva `AGENTPROXY_CHAT_MAX_HEAVY_IN_FLIGHT` samo ako vam je potreban strogi limit povrh toga.
 - **Izbjegavajte `next build` na VPS-u** — build-ajte lokalno i implementirajte standalone izlaz (`.next/standalone/`).
 - **Pratite stanje pomoću `top` / `free -m`** — AgentProxy obično koristi 200-400 MB RSS u stanju mirovanja na VM-u od 1 GB.

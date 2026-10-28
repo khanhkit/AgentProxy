@@ -12,7 +12,7 @@ import type { AddressInfo } from "node:net";
 // member (already before the fire-and-forget log settles); a locally generated failure does
 // not; a provider outside the refusal scope does not. With the flag off nothing changes.
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-pool-refused-path-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-pool-refused-path-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 process.env.API_KEY_SECRET = "test-secret";
 

@@ -50,11 +50,11 @@ command တစ်ခုစီ ပါဝင်ပြီး လည်ပတ်န�
 model catalog ကို ဖတ်ကာ သင့်စက်ပေါ်ရှိ ထိုကိရိယာ၏ ကိုယ်ပိုင် config ကို ရေးပေးသည်-
 
 ```bash
-omniroute setup-codex        omniroute setup-claude       omniroute setup-opencode
-omniroute setup-cline        omniroute setup-kilo         omniroute setup-continue
-omniroute setup-cursor       omniroute setup-roo          omniroute setup-crush
-omniroute setup-goose        omniroute setup-qwen         omniroute setup-aider
-omniroute setup-5dive
+agentproxy setup-codex        agentproxy setup-claude       agentproxy setup-opencode
+agentproxy setup-cline        agentproxy setup-kilo         agentproxy setup-continue
+agentproxy setup-cursor       agentproxy setup-roo          agentproxy setup-crush
+agentproxy setup-goose        agentproxy setup-qwen         agentproxy setup-aider
+agentproxy setup-5dive
 ```
 
 တစ်ခုစီတွင် `--remote <url> --api-key <key>` (local ကိရိယာတစ်ခုကို remote
@@ -65,10 +65,10 @@ AgentProxy နှင့် ချိတ်ဆက်အသုံးပြုရ�
 root ပိုင် auth profile တစ်ခု ရေးသားခြင်းဖြင့် 5dive agent fleet ကို ပြင်ဆင်သတ်မှတ်သောကြောင့် `sudo`
 မှတစ်ဆင့် ပြန်လည် execute လုပ်ပြီး ၎င်းကိုယ်တိုင်အတွက် remote mode မရှိပါ။ မှန်ကန်သော env
 ကို ထည့်သွင်းပြီး config လုံးဝမရေးဘဲ CLI တစ်ခုကို စတင်ရန် ယေဘုယျ
-`omniroute run <target>` launcher ကို အသုံးပြုပါ (claude, codex, aider, goose, opencode, qwen,
+`agentproxy run <target>` launcher ကို အသုံးပြုပါ (claude, codex, aider, goose, opencode, qwen,
 gemini — target နှင့် alias များကို `bin/cli/cli-manifest.mjs` မှ ရယူသည်)။ အဟောင်း
-ကိရိယာအလိုက် launcher များဖြစ်သော `omniroute launch` (Claude Code) နှင့် `omniroute launch-codex`
-(Codex) ကိုလည်း ဆက်လက်အသုံးပြုနိုင်သည်။ Gemini CLI သည် launch-only ဖြစ်သည်- ၎င်းသည် `omniroute run`
+ကိရိယာအလိုက် launcher များဖြစ်သော `agentproxy launch` (Claude Code) နှင့် `agentproxy launch-codex`
+(Codex) ကိုလည်း ဆက်လက်အသုံးပြုနိုင်သည်။ Gemini CLI သည် launch-only ဖြစ်သည်- ၎င်းသည် `agentproxy run`
 target တစ်ခုဖြစ်သော်လည်း `setup-*`/`configure` recipe မရှိပါ။
 
 > **အပြည့်အစုံ ကိုးကားချက်:** command တစ်ခုစီက ရေးသားသည့်အရာ၊ flag အားလုံး၊
@@ -81,18 +81,18 @@ AgentProxy container အတွင်း execute လုပ်သော `setup-*` 
 container ၏ ကိုယ်ပိုင် home ထဲသို့ ရေးသားသည်။ ၎င်းကို host CLI မည်သည့်တစ်ခုကမျှ မဖတ်သည့်အပြင်
 container နှင့်အတူ ပျောက်ကွယ်သွားမည်ဖြစ်သည်။ AgentProxy သည် ယင်းအခြေအနေကို ရှာဖွေသိရှိပြီး
 မရေးသားဘဲ ညွှန်ကြားချက်များနှင့်အတူ `2` ဖြင့် ထွက်သည်။ ပံ့ပိုးထားသော ဆက်လက်လုပ်ဆောင်နည်း နှစ်မျိုးမှာ —
-host ပေါ်တွင် CLI ကို install လုပ်ပြီး container သို့ `omniroute connect` ဖြင့် ချိတ်ဆက်ခြင်း၊ သို့မဟုတ် config directory များကို bind-mount လုပ်ကာ
+host ပေါ်တွင် CLI ကို install လုပ်ပြီး container သို့ `agentproxy connect` ဖြင့် ချိတ်ဆက်ခြင်း၊ သို့မဟုတ် config directory များကို bind-mount လုပ်ကာ
 `CLI_CONFIG_HOME` (compose `host` profile) ကို သတ်မှတ်ခြင်းတို့ဖြစ်သည်။ `setup-*` command တိုင်းအပြင်
-`omniroute configure` နှင့် `omniroute config set` တို့တွင်လည်း container ၏ ကိုယ်ပိုင် CLI များကို
+`agentproxy configure` နှင့် `agentproxy config set` တို့တွင်လည်း container ၏ ကိုယ်ပိုင် CLI များကို
 အမှန်တကယ် ပြင်ဆင်သတ်မှတ်လိုသည့်အခါ `--allow-container-write` ကို အသုံးပြုနိုင်သည်။
-Server အတွက် `OMNIROUTE_ALLOW_CONTAINER_CONFIG_WRITE=true` သည် အလားတူလုပ်ဆောင်သည်။
-[Docker လမ်းညွှန် → Host CLI ကိရိယာများကို ပြင်ဆင်သတ်မှတ်ခြင်း](../guides/DOCKER_GUIDE.md#configuring-host-cli-tools-when-omniroute-runs-in-docker) ကို ကြည့်ပါ။
+Server အတွက် `AGENTPROXY_ALLOW_CONTAINER_CONFIG_WRITE=true` သည် အလားတူလုပ်ဆောင်သည်။
+[Docker လမ်းညွှန် → Host CLI ကိရိယာများကို ပြင်ဆင်သတ်မှတ်ခြင်း](../guides/DOCKER_GUIDE.md#configuring-host-cli-tools-when-agentproxy-runs-in-docker) ကို ကြည့်ပါ။
 
 Dashboard ၏ **apply endpoint** (`POST /api/cli-tools/apply`) သည်လည်း
 တူညီသော အကာအကွယ်ကို မဖြစ်မနေ အသုံးပြုသည်- container တစ်ခုအတွင်း host မှ bind-mount မလုပ်ထားသော
 target သို့ ရေးသားမှုတစ်ခုသည် **`422`** ကို `containerEphemeralTarget: true`၊ ဘေးကင်းသော error
 စာသားနှင့် — host recipe ရှိသည့် ကိရိယာများ (claude, codex, opencode, cline,
-kilo, continue) အတွက် — host ပေါ်တွင် အစားထိုး run ရမည့် `hostSetupCommand` (ဥပမာ `omniroute setup-opencode`) တို့နှင့်အတူ
+kilo, continue) အတွက် — host ပေါ်တွင် အစားထိုး run ရမည့် `hostSetupCommand` (ဥပမာ `agentproxy setup-opencode`) တို့နှင့်အတူ
 ပြန်ပေးပြီး မည်သည့်အရာကိုမျှ မရေးသားပါ။ `dryRun: true` သည် container
 mode တွင် ဆက်လက်အလုပ်လုပ်ပြီး disk ကို မထိဘဲ ထုတ်လုပ်ထားသော content + target path ကို ပြန်ပေးသောကြောင့်
 dashboard မှ အစမ်းကြည့်ပြီး host ပေါ်တွင် အသုံးချနိုင်သည်။ ဤအပြုအမူသည်
@@ -127,8 +127,8 @@ Catalog တွင် ပါဝင်သော tool တိုင်းကို �
 | ---------------- | ---------------------------------------------------------------------------------- | ----------------------------------------------------------------- |
 | **Cataloged**    | Dashboard catalog တွင် ပေါ်လာသည် (အမည်၊ vendor၊ docs၊ config type)                 | `src/shared/constants/cliTools.ts` (`CLI_TOOLS`)                  |
 | **Detectable**   | Binary/config ရှာဖွေခြင်း၊ health check များ၊ config path များ                     | `src/shared/services/cliRuntime.ts` (`CLI_TOOLS` runtime catalog) |
-| **Configurable** | `omniroute configure <cli>` မှ ပံ့ပိုးထားသည် (setup recipe ရှိသည်)                 | `bin/cli/cli-manifest.mjs` (`configure: true`)                    |
-| **Launchable**   | `omniroute run <target>` မှ ပံ့ပိုးထားသည် (env/args ထည့်သွင်းမှုကို သတ်မှတ်ထားသည်) | `bin/cli/cli-manifest.mjs` (`run: true`)                          |
+| **Configurable** | `agentproxy configure <cli>` မှ ပံ့ပိုးထားသည် (setup recipe ရှိသည်)                 | `bin/cli/cli-manifest.mjs` (`configure: true`)                    |
+| **Launchable**   | `agentproxy run <target>` မှ ပံ့ပိုးထားသည် (env/args ထည့်သွင်းမှုကို သတ်မှတ်ထားသည်) | `bin/cli/cli-manifest.mjs` (`run: true`)                          |
 
 `bin/cli/cli-manifest.mjs` သည် CLI command
 interface များအတွက် စံသတ်မှတ်ထားသော executable manifest ဖြစ်သည်- `run`၊ `configure` နှင့် shell-completion generator များအားလုံးသည် ၎င်းတို့၏
@@ -262,7 +262,7 @@ interface ToolBatchStatus {
 | `POST /api/cli-tools/codewhale-settings`    | CodeWhale (OPENAI_BASE_URL၊ ပင်မ + အဟောင်းစနစ် `~/.deepseek` ချိန်ကိုက်ခြင်း) |
 | `POST /api/cli-tools/smelt-settings`        | Smelt                                                                         |
 | `POST /api/cli-tools/pi-settings`           | Pi coding agent                                                               |
-| `POST /api/cli-tools/grok-build-settings`   | Grok Build (~/.grok/config.toml၊ `[model.omniroute]`)                         |
+| `POST /api/cli-tools/grok-build-settings`   | Grok Build (~/.grok/config.toml၊ `[model.agentproxy]`)                         |
 | `POST /api/cli-tools/qwen-settings`         | Qwen Code (`~/.qwen/settings.json` + သီးသန့် `.env` key)                      |
 
 Route အားလုံးသည် အမှားတုံ့ပြန်ချက်များအတွက် `sanitizeErrorMessage()` ကို အသုံးပြုသည် (မဖြစ်မနေလိုက်နာရမည့် စည်းမျဉ်း #12)။
@@ -357,7 +357,7 @@ npm install -g kilocode
 # Qwen Code
 npm install -g @qwen-code/qwen-code
 
-# Google Gemini CLI (`omniroute run gemini` မှတစ်ဆင့် စတင်နိုင်သည် → /v1beta မျက်နှာပြင်)
+# Google Gemini CLI (`agentproxy run gemini` မှတစ်ဆင့် စတင်နိုင်သည် → /v1beta မျက်နှာပြင်)
 npm install -g @google/gemini-cli
 
 # Aider
@@ -390,12 +390,12 @@ cargo install smelt  # Rust အခြေပြု
 ```bash
 # AgentProxy Universal Endpoint
 export OPENAI_BASE_URL="http://localhost:20128/v1"
-export OPENAI_API_KEY="sk-your-omniroute-key"
+export OPENAI_API_KEY="sk-your-agentproxy-key"
 export ANTHROPIC_BASE_URL="http://localhost:20128"
-export ANTHROPIC_AUTH_TOKEN="sk-your-omniroute-key"
+export ANTHROPIC_AUTH_TOKEN="sk-your-agentproxy-key"
 # Gemini CLI သည် GOOGLE_GEMINI_BASE_URL ကို ROOT တွင် ဖတ်သည် (၎င်း၏ SDK က /v1beta/... ကို ကိုယ်တိုင် ထည့်သည်)
 export GOOGLE_GEMINI_BASE_URL="http://localhost:20128"
-export GEMINI_API_KEY="sk-your-omniroute-key"
+export GEMINI_API_KEY="sk-your-agentproxy-key"
 ```
 
 > **အဝေးထိန်းဆာဗာ** အတွက် `localhost:20128` ကို ဆာဗာ IP သို့မဟုတ် domain ဖြင့် အစားထိုးပါ၊
@@ -413,7 +413,7 @@ mkdir -p ~/.claude && cat > ~/.claude/settings.json << EOF
 {
   "env": {
     "ANTHROPIC_BASE_URL": "http://localhost:20128",
-    "ANTHROPIC_AUTH_TOKEN": "sk-your-omniroute-key"
+    "ANTHROPIC_AUTH_TOKEN": "sk-your-agentproxy-key"
   }
 }
 EOF
@@ -429,20 +429,20 @@ Claude Code အတွက် ပေါင်းစည်းထားသော Ant
 
 ခေတ်မီ Codex (v0.137+) သည် `~/.codex/config.toml` ကိုသာ ဖတ်သည် — အဟောင်း
 `config.yaml` သည် legacy npm CLI အတွက်ဖြစ်ပြီး သတိပေးချက်မရှိဘဲ လျစ်လျူရှုခံရသည်။ API
-key သည် `OMNIROUTE_API_KEY` environment variable (`env_key`) ထဲတွင်သာ ရှိပြီး
+key သည် `AGENTPROXY_API_KEY` environment variable (`env_key`) ထဲတွင်သာ ရှိပြီး
 ဖိုင်အတွင်း မည်သည့်အခါမျှ မထားရပါ-
 
 ```bash
 mkdir -p ~/.codex && cat > ~/.codex/config.toml << EOF
-model_provider = "omniroute"
+model_provider = "agentproxy"
 
-[model_providers.omniroute]
+[model_providers.agentproxy]
 name                 = "AgentProxy"
 base_url             = "http://localhost:20128/v1"
-env_key              = "OMNIROUTE_API_KEY"
+env_key              = "AGENTPROXY_API_KEY"
 requires_openai_auth = false
 EOF
-export OMNIROUTE_API_KEY="sk-your-omniroute-key"
+export AGENTPROXY_API_KEY="sk-your-agentproxy-key"
 ```
 
 အကိုးအကား အပြည့်အစုံ (profile များ၊ `wire_api`၊ context window များ)- [CODEX-CLI-CONFIGURATION.md](../guides/CODEX-CLI-CONFIGURATION.md)။
@@ -458,12 +458,12 @@ mkdir -p ~/.config/opencode && cat > ~/.config/opencode/opencode.json << EOF
 {
   "\$schema": "https://opencode.ai/config.json",
   "provider": {
-    "omniroute": {
+    "agentproxy": {
       "npm": "@ai-sdk/openai-compatible",
       "name": "AgentProxy",
       "options": {
         "baseURL": "http://localhost:20128/v1",
-        "apiKey": "sk-your-omniroute-key"
+        "apiKey": "sk-your-agentproxy-key"
       },
       "models": {
         "claude-sonnet-4-5": { "name": "claude-sonnet-4-5" },
@@ -478,7 +478,7 @@ EOF
 
 **စမ်းသပ်ရန်-** `opencode`
 
-> thinking variant များကို ပေးပို့ရန် `opencode run "your prompt" --model omniroute/claude-sonnet-4-5-thinking --variant high`
+> thinking variant များကို ပေးပို့ရန် `opencode run "your prompt" --model agentproxy/claude-sonnet-4-5-thinking --variant high`
 > ကို အသုံးပြုပါ။
 
 ---
@@ -492,7 +492,7 @@ mkdir -p ~/.cline/data && cat > ~/.cline/data/globalState.json << EOF
 {
   "apiProvider": "openai",
   "openAiBaseUrl": "http://localhost:20128/v1",
-  "openAiApiKey": "sk-your-omniroute-key"
+  "openAiApiKey": "sk-your-agentproxy-key"
 }
 EOF
 ```
@@ -509,7 +509,7 @@ Cline extension ဆက်တင်များ → API Provider: `OpenAI Compati
 **CLI မုဒ်-**
 
 ```bash
-kilocode --api-base http://localhost:20128/v1 --api-key sk-your-omniroute-key
+kilocode --api-base http://localhost:20128/v1 --api-key sk-your-agentproxy-key
 ```
 
 **VS Code ဆက်တင်များ-**
@@ -517,7 +517,7 @@ kilocode --api-base http://localhost:20128/v1 --api-key sk-your-omniroute-key
 ```json
 {
   "kilo-code.openAiBaseUrl": "http://localhost:20128/v1",
-  "kilo-code.apiKey": "sk-your-omniroute-key"
+  "kilo-code.apiKey": "sk-your-agentproxy-key"
 }
 ```
 
@@ -535,7 +535,7 @@ models:
     provider: openai
     model: auto
     apiBase: http://localhost:20128/v1
-    apiKey: sk-your-omniroute-key
+    apiKey: sk-your-agentproxy-key
     default: true
 ```
 
@@ -562,8 +562,8 @@ VS Code Insiders ကို စိတ်ကြိုက် endpoint model မျ�
     "name": "AgentProxy Auto",
     "family": "gpt-4",
     "version": "1.0.0",
-    "url": "http://localhost:20128/api/v1/vscode/sk-your-omniroute-key/chat/completions",
-    "modelsUrl": "http://localhost:20128/api/v1/vscode/sk-your-omniroute-key/models",
+    "url": "http://localhost:20128/api/v1/vscode/sk-your-agentproxy-key/chat/completions",
+    "modelsUrl": "http://localhost:20128/api/v1/vscode/sk-your-agentproxy-key/models",
     "requestFormat": "openai-chat-completions",
     "contextWindow": 256000,
     "maxOutputTokens": 32768,
@@ -576,7 +576,7 @@ VS Code Insiders ကို စိတ်ကြိုက် endpoint model မျ�
 
 **မှတ်ချက်များ:**
 
-- `sk-your-omniroute-key` ကို AgentProxy တွင် ဖန်တီးထားသော API key ဖြင့် အစားထိုးပါ။
+- `sk-your-agentproxy-key` ကို AgentProxy တွင် ဖန်တီးထားသော API key ဖြင့် အစားထိုးပါ။
 - `url` အကွက်သည် `/api/v1/vscode/{token}/chat/completions` ကို ညွှန်ပြသင့်သည်။
 - `modelsUrl` အကွက်သည် `/api/v1/vscode/{token}/models` ကို ညွှန်ပြသင့်သည်။
 - client က custom headers များကို ပံ့ပိုးသည့်အခါ ပုံမှန် `/v1` + Bearer header စီးဆင်းမှုကို ဦးစားပေးအသုံးပြုပါ။
@@ -602,28 +602,28 @@ kiro-cli status
 
 ## 10. အတွင်းပိုင်း AgentProxy CLI
 
-`omniroute` binary သည် ဆာဗာ lifecycle၊ စတင်ပြင်ဆင်ခြင်း၊ ရောဂါရှာဖွေခြင်းနှင့် provider စီမံခန့်ခွဲခြင်းအတွက် command များကို ပံ့ပိုးပေးသည်။ Entry point: `bin/omniroute.mjs`။
+`agentproxy` binary သည် ဆာဗာ lifecycle၊ စတင်ပြင်ဆင်ခြင်း၊ ရောဂါရှာဖွေခြင်းနှင့် provider စီမံခန့်ခွဲခြင်းအတွက် command များကို ပံ့ပိုးပေးသည်။ Entry point: `bin/agentproxy.mjs`။
 
 ```bash
-omniroute                              # ဆာဗာကို စတင်ရန် (မူလ port 20128)
-omniroute setup                        # အပြန်အလှန်တုံ့ပြန်နိုင်သော setup wizard
-omniroute doctor                       # config၊ DB၊ port များနှင့် runtime ကို စစ်ဆေးရန်
-omniroute providers list               # ပြင်ဆင်ထားသော provider ချိတ်ဆက်မှုများ
-omniroute providers test-all           # အသုံးပြုနေသော ချိတ်ဆက်မှုတိုင်းကို စမ်းသပ်ရန်
-omniroute reset-password               # admin password ကို ပြန်လည်သတ်မှတ်ရန်
-omniroute logs                         # request log များကို တိုက်ရိုက်ကြည့်ရှုရန်
-omniroute health                       # အသေးစိတ် health အခြေအနေ (breaker များ၊ cache၊ memory)
-omniroute --version                    # version ကို ဖော်ပြရန်
-omniroute --help                       # command အားလုံးကို ပြသရန်
+agentproxy                              # ဆာဗာကို စတင်ရန် (မူလ port 20128)
+agentproxy setup                        # အပြန်အလှန်တုံ့ပြန်နိုင်သော setup wizard
+agentproxy doctor                       # config၊ DB၊ port များနှင့် runtime ကို စစ်ဆေးရန်
+agentproxy providers list               # ပြင်ဆင်ထားသော provider ချိတ်ဆက်မှုများ
+agentproxy providers test-all           # အသုံးပြုနေသော ချိတ်ဆက်မှုတိုင်းကို စမ်းသပ်ရန်
+agentproxy reset-password               # admin password ကို ပြန်လည်သတ်မှတ်ရန်
+agentproxy logs                         # request log များကို တိုက်ရိုက်ကြည့်ရှုရန်
+agentproxy health                       # အသေးစိတ် health အခြေအနေ (breaker များ၊ cache၊ memory)
+agentproxy --version                    # version ကို ဖော်ပြရန်
+agentproxy --help                       # command အားလုံးကို ပြသရန်
 ```
 
 ### စတင်ပြင်ဆင်ခြင်းနှင့် ကနဦးသတ်မှတ်ခြင်း
 
 ```bash
-omniroute setup                        # အပြန်အလှန်တုံ့ပြန်နိုင်သော setup wizard
-omniroute setup --non-interactive      # CI/အလိုအလျောက်လုပ်ဆောင်မှု mode (env var များနှင့် flag များကို ဖတ်သည်)
-omniroute setup --password '<value>'   # admin password ကို တိုက်ရိုက်သတ်မှတ်ရန်
-omniroute setup --add-provider \
+agentproxy setup                        # အပြန်အလှန်တုံ့ပြန်နိုင်သော setup wizard
+agentproxy setup --non-interactive      # CI/အလိုအလျောက်လုပ်ဆောင်မှု mode (env var များနှင့် flag များကို ဖတ်သည်)
+agentproxy setup --password '<value>'   # admin password ကို တိုက်ရိုက်သတ်မှတ်ရန်
+agentproxy setup --add-provider \
   --provider openai \
   --api-key '<value>' \
   --test-provider                      # provider တစ်ခုကို တစ်ကြိမ်တည်းဖြင့် ထည့်သွင်းပြီး စမ်းသပ်ရန်
@@ -633,21 +633,21 @@ omniroute setup --add-provider \
 
 | Var                 | ရည်ရွယ်ချက်                                                                      |
 | ------------------- | -------------------------------------------------------------------------------- |
-| `OMNIROUTE_API_KEY` | Provider API key (Commander `.env()` မှတစ်ဆင့် `--api-key` နှင့် ချိတ်ဆက်ထားသည်) |
+| `AGENTPROXY_API_KEY` | Provider API key (Commander `.env()` မှတစ်ဆင့် `--api-key` နှင့် ချိတ်ဆက်ထားသည်) |
 | `DATA_DIR`          | AgentProxy data directory ကို အစားထိုးသတ်မှတ်ရန်                                  |
 
 အခြား အပြန်အလှန်တုံ့ပြန်မှုမရှိသော input အားလုံးကို environment variable များအဖြစ် မဟုတ်ဘဲ flag များအဖြစ် ပေးပို့သည်-
 `--password`, `--provider`, `--provider-name`, `--provider-base-url`, `--default-model`
-(အထက်ရှိ `omniroute setup` option များကို ကြည့်ပါ)။
+(အထက်ရှိ `agentproxy setup` option များကို ကြည့်ပါ)။
 
 ### ရောဂါရှာဖွေခြင်း
 
 ```bash
-omniroute doctor                       # config၊ DB၊ port များ၊ runtime၊ memory နှင့် liveness ကို စစ်ဆေးရန်
-omniroute doctor --json                # စက်ဖြင့်ဖတ်ရှုနိုင်သော JSON
-omniroute doctor --no-liveness         # HTTP health probe ကို ကျော်ရန်
-omniroute doctor --host 0.0.0.0        # liveness host ကို အစားထိုးသတ်မှတ်ရန်
-omniroute doctor --liveness-url <url>  # health endpoint URL အပြည့်အစုံကို အစားထိုးသတ်မှတ်ရန်
+agentproxy doctor                       # config၊ DB၊ port များ၊ runtime၊ memory နှင့် liveness ကို စစ်ဆေးရန်
+agentproxy doctor --json                # စက်ဖြင့်ဖတ်ရှုနိုင်သော JSON
+agentproxy doctor --no-liveness         # HTTP health probe ကို ကျော်ရန်
+agentproxy doctor --host 0.0.0.0        # liveness host ကို အစားထိုးသတ်မှတ်ရန်
+agentproxy doctor --liveness-url <url>  # health endpoint URL အပြည့်အစုံကို အစားထိုးသတ်မှတ်ရန်
 ```
 
 doctor သည် အောက်ပါစစ်ဆေးမှုများကို လုပ်ဆောင်သည်- `Config`၊ `Database`၊ `Storage/encryption`၊
@@ -657,22 +657,22 @@ doctor သည် အောက်ပါစစ်ဆေးမှုများက
 ### Provider စီမံခန့်ခွဲခြင်း
 
 ```bash
-omniroute providers available                       # AgentProxy provider catalog
-omniroute providers available --search openai       # catalog ကို id/name/alias/category အလိုက် စစ်ထုတ်ရန်
-omniroute providers available --category api-key    # category အလိုက် စစ်ထုတ်ရန် (api-key, oauth, free, ...)
-omniroute providers available --json                # စက်ဖြင့်ဖတ်ရှုနိုင်သော JSON
+agentproxy providers available                       # AgentProxy provider catalog
+agentproxy providers available --search openai       # catalog ကို id/name/alias/category အလိုက် စစ်ထုတ်ရန်
+agentproxy providers available --category api-key    # category အလိုက် စစ်ထုတ်ရန် (api-key, oauth, free, ...)
+agentproxy providers available --json                # စက်ဖြင့်ဖတ်ရှုနိုင်သော JSON
 
-omniroute providers list                            # ပြင်ဆင်ထားသော provider ချိတ်ဆက်မှုများ
-omniroute providers list --json
+agentproxy providers list                            # ပြင်ဆင်ထားသော provider ချိတ်ဆက်မှုများ
+agentproxy providers list --json
 
-omniroute providers test <id|name>                  # ပြင်ဆင်ထားသော ချိတ်ဆက်မှုတစ်ခုကို စမ်းသပ်ရန်
-omniroute providers test-all                        # အသုံးပြုနေသော ချိတ်ဆက်မှုတိုင်းကို စမ်းသပ်ရန်
-omniroute providers validate                        # local အတွင်း၌သာ ဖွဲ့စည်းပုံမှန်ကန်မှုကို စစ်ဆေးရန်
-omniroute providers add <provider> --credential-env PROVIDER_KEY
-omniroute providers import ./providers.json --dry-run --json
-omniroute providers auth <provider>                 # ရှိပြီးသား OAuth flow
-omniroute providers edit <id|name> --default-model <model>
-omniroute providers remove <id|name> --yes
+agentproxy providers test <id|name>                  # ပြင်ဆင်ထားသော ချိတ်ဆက်မှုတစ်ခုကို စမ်းသပ်ရန်
+agentproxy providers test-all                        # အသုံးပြုနေသော ချိတ်ဆက်မှုတိုင်းကို စမ်းသပ်ရန်
+agentproxy providers validate                        # local အတွင်း၌သာ ဖွဲ့စည်းပုံမှန်ကန်မှုကို စစ်ဆေးရန်
+agentproxy providers add <provider> --credential-env PROVIDER_KEY
+agentproxy providers import ./providers.json --dry-run --json
+agentproxy providers auth <provider>                 # ရှိပြီးသား OAuth flow
+agentproxy providers edit <id|name> --default-model <model>
+agentproxy providers remove <id|name> --yes
 ```
 
 `providers add/import/auth/edit/remove` များသည် API-first ဖြစ်သောကြောင့်
@@ -685,19 +685,19 @@ omniroute providers remove <id|name> --yes
 ### ပြန်လည်ရယူခြင်းနှင့် ပြန်လည်သတ်မှတ်ခြင်း
 
 ```bash
-omniroute reset-password                # admin password ကို ပြန်လည်သတ်မှတ်ရန် (ထို့အပြင်- omniroute-reset-password)
-omniroute reset-encrypted-columns       # encrypted credential reset အတွက် သတိပေးချက်နှင့် dry-run ကို ပြသရန်
-omniroute reset-encrypted-columns --force  # SQLite ရှိ encrypted credential များကို အမှန်တကယ် null ပြုလုပ်ရန်
+agentproxy reset-password                # admin password ကို ပြန်လည်သတ်မှတ်ရန် (ထို့အပြင်- agentproxy-reset-password)
+agentproxy reset-encrypted-columns       # encrypted credential reset အတွက် သတိပေးချက်နှင့် dry-run ကို ပြသရန်
+agentproxy reset-encrypted-columns --force  # SQLite ရှိ encrypted credential များကို အမှန်တကယ် null ပြုလုပ်ရန်
 ```
 
 ### Credential ထုတ်ယူခြင်း (⚠ သတိဖြင့် ကိုင်တွယ်ပါ)
 
 ```bash
-omniroute auth export                                 # သတိပေးချက်နှင့် အတည်ပြုမှုအဆင့်ကို ပြသရန် — DB ကို အသုံးမပြုပါ
-omniroute auth export --force                          # ချိတ်ဆက်မှုအားလုံး၏ DECRYPTED credential များကို JSON အဖြစ် stdout သို့ ထုတ်ရန်
-omniroute auth export --force --id <id>                 # ကိုက်ညီသော ချိတ်ဆက်မှုကိုသာ ထုတ်ရန်
-omniroute auth export --force --format env               # OMNIROUTE_<PROVIDER>_<FIELD>=<value> စာကြောင်းများကို ထုတ်ရန်
-omniroute auth export --force --out creds.json           # ဖိုင်တစ်ခုသို့ ရေးရန် (0600 permission များဖြင့် ဖန်တီးသည်)
+agentproxy auth export                                 # သတိပေးချက်နှင့် အတည်ပြုမှုအဆင့်ကို ပြသရန် — DB ကို အသုံးမပြုပါ
+agentproxy auth export --force                          # ချိတ်ဆက်မှုအားလုံး၏ DECRYPTED credential များကို JSON အဖြစ် stdout သို့ ထုတ်ရန်
+agentproxy auth export --force --id <id>                 # ကိုက်ညီသော ချိတ်ဆက်မှုကိုသာ ထုတ်ရန်
+agentproxy auth export --force --format env               # AGENTPROXY_<PROVIDER>_<FIELD>=<value> စာကြောင်းများကို ထုတ်ရန်
+agentproxy auth export --force --out creds.json           # ဖိုင်တစ်ခုသို့ ရေးရန် (0600 permission များဖြင့် ဖန်တီးသည်)
 ```
 
 `auth export` သည် **local-only** ဖြစ်ပြီး (SQLite ကို တိုက်ရိုက်ဖတ်ကာ HTTP route မသုံးပါ) ရည်ရွယ်ချက်ရှိရှိ
@@ -713,33 +713,33 @@ export တစ်ခုလုံး ရပ်တန့်ခြင်း သိ�
 အခြားနည်းဖြင့် မှတ်သားထားခြင်းမရှိပါက ၎င်းတို့သည် AgentProxy ဆာဗာ လည်ပတ်နေသည်ဟု ယူဆသည်-
 
 ```bash
-omniroute status                       # လက်ရှိလုပ်ဆောင်နေမှု အခြေအနေအပြည့်အစုံ
-omniroute logs                         # တောင်းဆိုမှုမှတ်တမ်းများကို တိုက်ရိုက်ကြည့်ရှုရန် (--json, --search, --follow)
-omniroute config list                  # စီစဉ်သတ်မှတ်ထားသော CLI ကိရိယာများကို ပြသရန်
+agentproxy status                       # လက်ရှိလုပ်ဆောင်နေမှု အခြေအနေအပြည့်အစုံ
+agentproxy logs                         # တောင်းဆိုမှုမှတ်တမ်းများကို တိုက်ရိုက်ကြည့်ရှုရန် (--json, --search, --follow)
+agentproxy config list                  # စီစဉ်သတ်မှတ်ထားသော CLI ကိရိယာများကို ပြသရန်
 
-omniroute provider list                # အသုံးပြုနိုင်သော ပံ့ပိုးသူများကို စာရင်းပြုရန် (providers list ၏ အမည်ကွဲ)
-omniroute provider add                 # AgentProxy ကို ကိရိယာတစ်ခုတွင် ပံ့ပိုးသူအဖြစ် မှတ်ပုံတင်ရန်
-omniroute keys add | list | remove     # API ကီးများကို စီမံရန်
-omniroute models [provider]            # မော်ဒယ်များကို စာရင်းပြုရန် (--json, --search)
-omniroute combo list | switch | create | delete
+agentproxy provider list                # အသုံးပြုနိုင်သော ပံ့ပိုးသူများကို စာရင်းပြုရန် (providers list ၏ အမည်ကွဲ)
+agentproxy provider add                 # AgentProxy ကို ကိရိယာတစ်ခုတွင် ပံ့ပိုးသူအဖြစ် မှတ်ပုံတင်ရန်
+agentproxy keys add | list | remove     # API ကီးများကို စီမံရန်
+agentproxy models [provider]            # မော်ဒယ်များကို စာရင်းပြုရန် (--json, --search)
+agentproxy combo list | switch | create | delete
 
-omniroute backup                       # စီစဉ်သတ်မှတ်ချက်နှင့် DB ကို လက်ရှိအခြေအနေ မိတ္တူပြုလုပ်ရန်
-omniroute restore                      # ယခင်အခြေအနေမိတ္တူမှ ပြန်လည်ရယူရန်
+agentproxy backup                       # စီစဉ်သတ်မှတ်ချက်နှင့် DB ကို လက်ရှိအခြေအနေ မိတ္တူပြုလုပ်ရန်
+agentproxy restore                      # ယခင်အခြေအနေမိတ္တူမှ ပြန်လည်ရယူရန်
 
-omniroute health                       # အသေးစိတ်စနစ်အခြေအနေ (ဖြတ်တောက်ကိရိယာများ၊ ကက်ရှ်၊ မှတ်ဉာဏ်)
-omniroute quota                        # ပံ့ပိုးသူ၏ သုံးစွဲခွင့်ပမာဏ အသုံးပြုမှု
-omniroute cache                        # ကက်ရှ်အခြေအနေ
-omniroute cache clear                  # အဓိပ္ပာယ်ဆိုင်ရာနှင့် signature ကက်ရှ်များကို ရှင်းလင်းရန်
+agentproxy health                       # အသေးစိတ်စနစ်အခြေအနေ (ဖြတ်တောက်ကိရိယာများ၊ ကက်ရှ်၊ မှတ်ဉာဏ်)
+agentproxy quota                        # ပံ့ပိုးသူ၏ သုံးစွဲခွင့်ပမာဏ အသုံးပြုမှု
+agentproxy cache                        # ကက်ရှ်အခြေအနေ
+agentproxy cache clear                  # အဓိပ္ပာယ်ဆိုင်ရာနှင့် signature ကက်ရှ်များကို ရှင်းလင်းရန်
 
-omniroute mcp status | restart         # MCP ဆာဗာအခြေအနေ / ပြန်လည်စတင်ရန်
-omniroute a2a status | card            # A2A ဆာဗာအခြေအနေ / အေးဂျင့်ကတ်
+agentproxy mcp status | restart         # MCP ဆာဗာအခြေအနေ / ပြန်လည်စတင်ရန်
+agentproxy a2a status | card            # A2A ဆာဗာအခြေအနေ / အေးဂျင့်ကတ်
 
-omniroute tunnel list | create | stop  # tunnel များကို စီမံရန် (cloudflare/tailscale/ngrok)
-omniroute env show | get <k> | set <k> <v>  # ပတ်ဝန်းကျင်ကိန်းရှင်များကို စစ်ဆေးရန် / သတ်မှတ်ရန် (ယာယီ)
+agentproxy tunnel list | create | stop  # tunnel များကို စီမံရန် (cloudflare/tailscale/ngrok)
+agentproxy env show | get <k> | set <k> <v>  # ပတ်ဝန်းကျင်ကိန်းရှင်များကို စစ်ဆေးရန် / သတ်မှတ်ရန် (ယာယီ)
 
-omniroute test                         # ပံ့ပိုးသူချိတ်ဆက်မှု အခြေခံစမ်းသပ်ချက်
-omniroute update                       # အပ်ဒိတ်များကို စစ်ဆေးရန်
-omniroute completion                   # shell အလိုအလျောက်ဖြည့်စွက်မှုကို ဖန်တီးရန်
+agentproxy test                         # ပံ့ပိုးသူချိတ်ဆက်မှု အခြေခံစမ်းသပ်ချက်
+agentproxy update                       # အပ်ဒိတ်များကို စစ်ဆေးရန်
+agentproxy completion                   # shell အလိုအလျောက်ဖြည့်စွက်မှုကို ဖန်တီးရန်
 ```
 
 ### အသုံးများသော flag များ
@@ -787,7 +787,7 @@ Ollama chat: http://localhost:20128/api/v1/vscode/sk-a3ab3c080beaee3a-69f4a4-070
 
 | အမှား                                                      | အကြောင်းရင်း                       | ဖြေရှင်းနည်း                                                       |
 | ---------------------------------------------------------- | ---------------------------------- | ------------------------------------------------------------------ |
-| `Connection refused`                                       | AgentProxy အလုပ်မလုပ်နေပါ           | `omniroute serve`                                                  |
+| `Connection refused`                                       | AgentProxy အလုပ်မလုပ်နေပါ           | `agentproxy serve`                                                  |
 | `401 Unauthorized`                                         | API key မှားယွင်းနေသည်             | `/dashboard/api-manager` တွင် စစ်ဆေးပါ                             |
 | `No combo configured`                                      | အသုံးပြုနေသော routing combo မရှိပါ | `/dashboard/combos` တွင် သတ်မှတ်ပါ                                 |
 | CLI တွင် "not installed" ဟု ပြသသည်                         | Binary သည် PATH ထဲတွင် မရှိပါ      | `which <command>` ဖြင့် စစ်ဆေးပါ                                   |

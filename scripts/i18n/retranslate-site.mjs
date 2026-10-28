@@ -7,7 +7,7 @@
  * (th 25 %). For every locale, the leaves equal to lang/_source.en.json —
  * outside untranslatable-site-keys.json — are sent to the translation backend
  * in batches and written back in place (key order preserved). Same backend
- * env as sync-ui-keys (`OMNIROUTE_TRANSLATION_*`, loaded from the repo-root
+ * env as sync-ui-keys (`AGENTPROXY_TRANSLATION_*`, loaded from the repo-root
  * `.env` when present).
  *
  * A batch whose answer cannot be trusted (see `parseBatchResponse`) is retried

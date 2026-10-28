@@ -6,21 +6,21 @@
 
 > በራውቲንግ፣ ካሽ፣ መጭመቅ፣ ማህደረ ትውስታ፣ ክህሎቶች፣ ፕሮክሲ፣ ፑል፣ Radar እና የአውድ ምንጭ ክዋኔዎች ዙሪያ 110 መሣሪያዎች ያሉት Model Context Protocol ሰርቨር።
 >
-> ትክክለኛው የመረጃ ምንጭ፦ `open-sse/mcp-server/server.ts` በ`countUniqueMcpTools()` አማካኝነት **110 ልዩ መሣሪያዎችን** ያሰላል፦ 45 መደበኛ ትርጓሜዎች (ስድስቱን የCCR የሕይወት ዑደት መሣሪያዎች፣ የagent-skills ሶስትዮሽ፣ `omniroute_radar_catalog` እና `omniroute_x_search` ጨምሮ)፣ እንዲሁም ማህደረ ትውስታ (3)፣ ክህሎቶች (4)፣ GitHub ክህሎቶች (3)፣ ፑል (6)፣ የጨዋታ ባህሪያት (8)፣ ተሰኪዎች (8)፣ Notion (6)፣ Obsidian (22)፣ የአካባቢ ኮርፐስ (3) እና ለRTK ብቻ የሆኑ ሁለት የመጭመቂያ መሣሪያዎች።
+> ትክክለኛው የመረጃ ምንጭ፦ `open-sse/mcp-server/server.ts` በ`countUniqueMcpTools()` አማካኝነት **110 ልዩ መሣሪያዎችን** ያሰላል፦ 45 መደበኛ ትርጓሜዎች (ስድስቱን የCCR የሕይወት ዑደት መሣሪያዎች፣ የagent-skills ሶስትዮሽ፣ `agentproxy_radar_catalog` እና `agentproxy_x_search` ጨምሮ)፣ እንዲሁም ማህደረ ትውስታ (3)፣ ክህሎቶች (4)፣ GitHub ክህሎቶች (3)፣ ፑል (6)፣ የጨዋታ ባህሪያት (8)፣ ተሰኪዎች (8)፣ Notion (6)፣ Obsidian (22)፣ የአካባቢ ኮርፐስ (3) እና ለRTK ብቻ የሆኑ ሁለት የመጭመቂያ መሣሪያዎች።
 
 ## መጫን
 
 AgentProxy MCP አብሮ የተካተተ ነው። በሚከተለው ያስጀምሩት፦
 
 ```bash
-omniroute --mcp
+agentproxy --mcp
 ```
 
 ወይም በ open-sse ማጓጓዣ፦
 
 ```bash
 # HTTP የዥረት ማጓጓዣ (ወደብ 20130)
-omniroute --dev  # MCP በ /mcp መጨረሻ ነጥብ ላይ በራስ-ሰር ይጀምራል
+agentproxy --dev  # MCP በ /mcp መጨረሻ ነጥብ ላይ በራስ-ሰር ይጀምራል
 ```
 
 የHTTP ማጓጓዣዎቹ (`sse` / `streamable-http`፣ በዳሽቦርድ ሰርቨሩ ሂደት ውስጥ የሚቀርቡ) በነባሪነት
@@ -28,10 +28,10 @@ omniroute --dev  # MCP በ /mcp መጨረሻ ነጥብ ላይ በራስ-ሰር �
 ጀምሮ CLI ተመሳሳይ ችሎታ አለው፦
 
 ```bash
-omniroute mcp status                                  # የነቃ/መስመር ላይ፣ ማጓጓዣ፣ የመሣሪያዎች ብዛት
-omniroute mcp enable [--transport stdio|sse|streamable-http]
-omniroute mcp disable
-omniroute mcp restart                                 # ንቁ የ sse/streamable-http ክፍለ-ጊዜዎችን ዳግም ያስጀምራል
+agentproxy mcp status                                  # የነቃ/መስመር ላይ፣ ማጓጓዣ፣ የመሣሪያዎች ብዛት
+agentproxy mcp enable [--transport stdio|sse|streamable-http]
+agentproxy mcp disable
+agentproxy mcp restart                                 # ንቁ የ sse/streamable-http ክፍለ-ጊዜዎችን ዳግም ያስጀምራል
 ```
 
 `mcp enable`/`mcp disable` ዳሽቦርዱ በ`/api/settings` በኩል የሚያበራውንና የሚያጠፋውን ተመሳሳይ `mcpEnabled`
@@ -82,61 +82,61 @@ curl -i \
 
 | መሣሪያ                            | የፈቃድ ወሰኖች             | መግለጫ                                                                                                              |
 | :------------------------------ | :-------------------- | :---------------------------------------------------------------------------------------------------------------- |
-| `omniroute_get_health`          | `read:health`         | የሥራ ጊዜ፣ ማህደረ ትውስታ፣ የወረዳ ማቋረጫዎች፣ የፍጥነት ገደቦች፣ የመሸጎጫ ስታቲስቲክስ                                                         |
-| `omniroute_list_combos`         | `read:combos`         | ሁሉም የተዋቀሩ combos ከስልቶቻቸው ጋር (አማራጭ መለኪያዎች)                                                                         |
-| `omniroute_get_combo_metrics`   | `read:combos`         | ለአንድ የተወሰነ combo የአፈጻጸም መለኪያዎች                                                                                    |
-| `omniroute_switch_combo`        | `write:combos`        | comboን ማንቃት ወይም ማቦዘን                                                                                              |
-| `omniroute_create_combo`        | `write:combos`        | ነባሩን combo API በመጠቀም የተረጋገጠ combo መፍጠር                                                                            |
-| `omniroute_check_quota`         | `read:quota`          | ጥቅም ላይ የዋለ/ጠቅላላ ኮታ፣ የቀረው መቶኛ፣ የዳግም ማስጀመሪያ ጊዜ፣ የቶከን ጤንነት                                                           |
-| `omniroute_route_request`       | `execute:completions` | የውይይት ማጠናቀቂያ ጥያቄን በAgentProxy ማዘዋወሪያ በኩል መላክ                                                                       |
-| `omniroute_cost_report`         | `read:usage`          | በጊዜ ወቅት (ክፍለ ጊዜ/ቀን/ሳምንት/ወር) የተከፋፈለ የወጪ ሪፖርት                                                                       |
-| `omniroute_list_models_catalog` | `read:models`         | ችሎታዎችን፣ ሁኔታን እና ዋጋን ያካተተ ሙሉ የሞዴል ካታሎግ                                                                             |
-| `omniroute_radar_catalog`       | `read:radar`          | በአካባቢው ያለ የተፈረመ Radar ካታሎግ፤ አማራጭ የአቅራቢ/ቤተሰብ ማጣሪያዎች                                                                |
-| `omniroute_tool_search`         | `read:tools`          | ከተመዘገበው MCP ካታሎግ መሣሪያዎችን ማግኘት                                                                                     |
-| `omniroute_web_search`          | `execute:search`      | በተዋቀሩ የፍለጋ አቅራቢዎች በኩል ድርን መፈለግ። X/Twitterን አያካትትም።                                                                |
-| `omniroute_x_search`            | `execute:search`      | Xን በxAI/SuperGrok በኩል መፈለግ፣ ወይም የXquik API ውጤቶችን ለማግኘት `xquik-search`ን መምረጥ። ለተመረጠው backend የመግቢያ ማረጋገጫዎች ያስፈልጋሉ። |
-| `omniroute_web_fetch`           | `execute:search`      | በተዋቀሩ የይዘት ሰርስሮ ማምጫ አቅራቢዎች በኩል የድር ይዘትን ማምጣት                                                                      |
+| `agentproxy_get_health`          | `read:health`         | የሥራ ጊዜ፣ ማህደረ ትውስታ፣ የወረዳ ማቋረጫዎች፣ የፍጥነት ገደቦች፣ የመሸጎጫ ስታቲስቲክስ                                                         |
+| `agentproxy_list_combos`         | `read:combos`         | ሁሉም የተዋቀሩ combos ከስልቶቻቸው ጋር (አማራጭ መለኪያዎች)                                                                         |
+| `agentproxy_get_combo_metrics`   | `read:combos`         | ለአንድ የተወሰነ combo የአፈጻጸም መለኪያዎች                                                                                    |
+| `agentproxy_switch_combo`        | `write:combos`        | comboን ማንቃት ወይም ማቦዘን                                                                                              |
+| `agentproxy_create_combo`        | `write:combos`        | ነባሩን combo API በመጠቀም የተረጋገጠ combo መፍጠር                                                                            |
+| `agentproxy_check_quota`         | `read:quota`          | ጥቅም ላይ የዋለ/ጠቅላላ ኮታ፣ የቀረው መቶኛ፣ የዳግም ማስጀመሪያ ጊዜ፣ የቶከን ጤንነት                                                           |
+| `agentproxy_route_request`       | `execute:completions` | የውይይት ማጠናቀቂያ ጥያቄን በAgentProxy ማዘዋወሪያ በኩል መላክ                                                                       |
+| `agentproxy_cost_report`         | `read:usage`          | በጊዜ ወቅት (ክፍለ ጊዜ/ቀን/ሳምንት/ወር) የተከፋፈለ የወጪ ሪፖርት                                                                       |
+| `agentproxy_list_models_catalog` | `read:models`         | ችሎታዎችን፣ ሁኔታን እና ዋጋን ያካተተ ሙሉ የሞዴል ካታሎግ                                                                             |
+| `agentproxy_radar_catalog`       | `read:radar`          | በአካባቢው ያለ የተፈረመ Radar ካታሎግ፤ አማራጭ የአቅራቢ/ቤተሰብ ማጣሪያዎች                                                                |
+| `agentproxy_tool_search`         | `read:tools`          | ከተመዘገበው MCP ካታሎግ መሣሪያዎችን ማግኘት                                                                                     |
+| `agentproxy_web_search`          | `execute:search`      | በተዋቀሩ የፍለጋ አቅራቢዎች በኩል ድርን መፈለግ። X/Twitterን አያካትትም።                                                                |
+| `agentproxy_x_search`            | `execute:search`      | Xን በxAI/SuperGrok በኩል መፈለግ፣ ወይም የXquik API ውጤቶችን ለማግኘት `xquik-search`ን መምረጥ። ለተመረጠው backend የመግቢያ ማረጋገጫዎች ያስፈልጋሉ። |
+| `agentproxy_web_fetch`           | `execute:search`      | በተዋቀሩ የይዘት ሰርስሮ ማምጫ አቅራቢዎች በኩል የድር ይዘትን ማምጣት                                                                      |
 
 ## የላቁ መሣሪያዎች (11) — ደረጃ 2
 
 | መሣሪያ                               | የፈቃድ ወሰኖች                            | መግለጫ                                                                                    |
 | :--------------------------------- | :----------------------------------- | :-------------------------------------------------------------------------------------- |
-| `omniroute_simulate_route`         | `read:health`, `read:combos`         | ከአማራጭ የመውደቂያ ዛፍ ጋር ትዕዛዞችን ሳያስፈጽም የማዞሪያ ማስመሰል                                            |
-| `omniroute_set_budget_guard`       | `write:budget`                       | የክፍለ ጊዜ በጀት ከ degrade/block/alert እርምጃ ጋር                                               |
-| `omniroute_set_routing_strategy`   | `write:combos`                       | በሂደት ጊዜ የጥምረት ስልትን ያዘምኑ (priority/weighted/auto/etc.)                                   |
-| `omniroute_set_resilience_profile` | `write:resilience`                   | `aggressive` / `balanced` / `conservative` የመቋቋም ችሎታ ቅድመ-ቅንብርን ይተግብሩ                    |
-| `omniroute_test_combo`             | `execute:completions`, `read:combos` | እውነተኛ upstream ጥሪን በመጠቀም በአንድ ጥምረት ውስጥ ያለውን እያንዳንዱን አቅራቢ በቀጥታ ይፈትሹ                      |
-| `omniroute_get_provider_metrics`   | `read:health`                        | ለእያንዳንዱ አቅራቢ p50/p95/p99 መዘግየትን እና የወረዳ ሰባሪ ሁኔታን የሚያካትቱ መለኪያዎች                          |
-| `omniroute_best_combo_for_task`    | `read:combos`, `read:health`         | ከበጀት/መዘግየት ገደቦች ጋር በተግባር ዓይነት መሠረት ጥምረትን ይምከሩ                                           |
-| `omniroute_explain_route`          | `read:health`, `read:usage`          | አንድ ጥያቄ ለአቅራቢ ለምን እንደተዘዋወረ ያብራሩ (የውጤት አሰጣጥ ምክንያቶች + አማራጭ የመውደቂያ መንገዶች)                  |
-| `omniroute_get_session_snapshot`   | `read:usage`                         | ሙሉ የክፍለ ጊዜ ቅጽበታዊ እይታ፦ ወጪ፣ ቶከኖች፣ ዋና ሞዴሎች/አቅራቢዎች፣ ስህተቶች፣ የበጀት ጠባቂ                         |
-| `omniroute_db_health_check`        | `read:health`, `write:resilience`    | እንደ የተበላሹ የጥምረት ማጣቀሻዎች / ወላጅ አልባ ረድፎች ያሉ የውሂብ ጎታ መዛባቶችን ይመርምሩ (እና እንደ አማራጭ በራስ-ሰር ይጠግኑ) |
-| `omniroute_sync_pricing`           | `pricing:write`                      | የዋጋ ውሂብን ከውጫዊ ምንጮች (LiteLLM) ያመሳስሉ፤ `dryRun`ን ይደግፋል                                     |
+| `agentproxy_simulate_route`         | `read:health`, `read:combos`         | ከአማራጭ የመውደቂያ ዛፍ ጋር ትዕዛዞችን ሳያስፈጽም የማዞሪያ ማስመሰል                                            |
+| `agentproxy_set_budget_guard`       | `write:budget`                       | የክፍለ ጊዜ በጀት ከ degrade/block/alert እርምጃ ጋር                                               |
+| `agentproxy_set_routing_strategy`   | `write:combos`                       | በሂደት ጊዜ የጥምረት ስልትን ያዘምኑ (priority/weighted/auto/etc.)                                   |
+| `agentproxy_set_resilience_profile` | `write:resilience`                   | `aggressive` / `balanced` / `conservative` የመቋቋም ችሎታ ቅድመ-ቅንብርን ይተግብሩ                    |
+| `agentproxy_test_combo`             | `execute:completions`, `read:combos` | እውነተኛ upstream ጥሪን በመጠቀም በአንድ ጥምረት ውስጥ ያለውን እያንዳንዱን አቅራቢ በቀጥታ ይፈትሹ                      |
+| `agentproxy_get_provider_metrics`   | `read:health`                        | ለእያንዳንዱ አቅራቢ p50/p95/p99 መዘግየትን እና የወረዳ ሰባሪ ሁኔታን የሚያካትቱ መለኪያዎች                          |
+| `agentproxy_best_combo_for_task`    | `read:combos`, `read:health`         | ከበጀት/መዘግየት ገደቦች ጋር በተግባር ዓይነት መሠረት ጥምረትን ይምከሩ                                           |
+| `agentproxy_explain_route`          | `read:health`, `read:usage`          | አንድ ጥያቄ ለአቅራቢ ለምን እንደተዘዋወረ ያብራሩ (የውጤት አሰጣጥ ምክንያቶች + አማራጭ የመውደቂያ መንገዶች)                  |
+| `agentproxy_get_session_snapshot`   | `read:usage`                         | ሙሉ የክፍለ ጊዜ ቅጽበታዊ እይታ፦ ወጪ፣ ቶከኖች፣ ዋና ሞዴሎች/አቅራቢዎች፣ ስህተቶች፣ የበጀት ጠባቂ                         |
+| `agentproxy_db_health_check`        | `read:health`, `write:resilience`    | እንደ የተበላሹ የጥምረት ማጣቀሻዎች / ወላጅ አልባ ረድፎች ያሉ የውሂብ ጎታ መዛባቶችን ይመርምሩ (እና እንደ አማራጭ በራስ-ሰር ይጠግኑ) |
+| `agentproxy_sync_pricing`           | `pricing:write`                      | የዋጋ ውሂብን ከውጫዊ ምንጮች (LiteLLM) ያመሳስሉ፤ `dryRun`ን ይደግፋል                                     |
 
 ## የመሸጎጫ መሣሪያዎች (2)
 
 | መሣሪያ                    | የፈቃድ ወሰኖች     | መግለጫ                                           |
 | :---------------------- | :------------ | :--------------------------------------------- |
-| `omniroute_cache_stats` | `read:cache`  | የትርጉማዊ መሸጎጫ፣ የጥያቄ መሸጎጫ እና የidempotency ስታቲስቲክስ |
-| `omniroute_cache_flush` | `write:cache` | መሸጎጫን በአጠቃላይ ወይም በፊርማ/ሞዴል ያጽዱ                  |
+| `agentproxy_cache_stats` | `read:cache`  | የትርጉማዊ መሸጎጫ፣ የጥያቄ መሸጎጫ እና የidempotency ስታቲስቲክስ |
+| `agentproxy_cache_flush` | `write:cache` | መሸጎጫን በአጠቃላይ ወይም በፊርማ/ሞዴል ያጽዱ                  |
 
 ## የማመቅ መሣሪያዎች (13)
 
 | መሣሪያ                                | የፈቃድ ወሰኖች           | መግለጫ                                                                                                  |
 | :---------------------------------- | :------------------ | :---------------------------------------------------------------------------------------------------- |
-| `omniroute_compression_status`      | `read:compression`  | የማመቅ ቅንብሮች፣ የትንታኔ ማጠቃለያ እና መሸጎጫን ያገናዘቡ ስታቲስቲክሶች (`analytics.mcpDescriptionCompression` ዲበ-ውሂብን ያካትታል) |
-| `omniroute_compression_configure`   | `write:compression` | የማመቅ ሁነታን፣ ገደብን፣ የዒላማ ሬሾን፣ የስርዓት ጥያቄ ጥበቃን እና የMCP መግለጫ ማመቅ መቀያየሪያን ያዋቅሩ                               |
-| `omniroute_set_compression_engine`  | `write:compression` | ንቁውን ሞተር (off/caveman/rtk/stacked) እና የCaveman/RTK ጥንካሬን ይምረጡ                                         |
-| `omniroute_list_compression_combos` | `read:compression`  | ስም የተሰጣቸውን የማመቅ ጥምረቶች እና የሞተር ቧንቧ መስመሮቻቸውን ይዘርዝሩ                                                      |
-| `omniroute_compression_combo_stats` | `read:compression`  | በማመቅ ጥምረት እና በሞተር የተመደቡ ትንታኔዎች                                                                        |
-| `omniroute_ccr_store`               | `write:compression` | በጠሪ የተለየ ይዘትን ገደብ ባለው የማስታወሻ ውስጥ CCR ማከማቻ ያከማቹ እና ምልክት ከ`ccr://` ማጣቀሻ ጋር ይመልሱ                         |
-| `omniroute_ccr_retrieve`            | `read:compression`  | የCCR ይዘትን ሙሉ በሙሉ ወይም በhead፣ tail፣ lines፣ grep እና stats ሁነታዎች ሰርስረው ያውጡ                                |
-| `omniroute_ccr_inspect`             | `read:compression`  | ይዘቱን ሳይመልሱ በጠሪው ባለቤትነት የተያዘውን የCCR ዲበ-ውሂብ ይመርምሩ                                                       |
-| `omniroute_ccr_list`                | `read:compression`  | በጠሪው ባለቤትነት ለተያዙ የCCR ብሎኮች በገጽ የተከፋፈለ ዲበ-ውሂብን ይዘርዝሩ                                                   |
-| `omniroute_ccr_delete`              | `write:compression` | በጠሪው ባለቤትነት የተያዘ የCCR ብሎክን ይሰርዙ                                                                       |
-| `omniroute_ccr_stats`               | `read:compression`  | በጠሪ ወሰን ያለውን የማስታወሻ አጠቃቀም፣ የሕይወት ዑደት ቆጣሪዎችን እና የማከማቻ ገደቦችን ሪፖርት ያድርጉ                                  |
-| `omniroute_rtk_discover`            | `read:compression`  | በፈቃደኝነት በተካተቱ የRTK ውጤት ናሙናዎች ውስጥ ተደጋጋሚ ጫጫታን ያግኙ                                                       |
-| `omniroute_rtk_learn`               | `read:compression`  | በፈቃደኝነት ከተካተቱ ናሙናዎች ሊገመገም የሚችል የRTK ማጣሪያ ረቂቅ ይፍጠሩ                                                     |
+| `agentproxy_compression_status`      | `read:compression`  | የማመቅ ቅንብሮች፣ የትንታኔ ማጠቃለያ እና መሸጎጫን ያገናዘቡ ስታቲስቲክሶች (`analytics.mcpDescriptionCompression` ዲበ-ውሂብን ያካትታል) |
+| `agentproxy_compression_configure`   | `write:compression` | የማመቅ ሁነታን፣ ገደብን፣ የዒላማ ሬሾን፣ የስርዓት ጥያቄ ጥበቃን እና የMCP መግለጫ ማመቅ መቀያየሪያን ያዋቅሩ                               |
+| `agentproxy_set_compression_engine`  | `write:compression` | ንቁውን ሞተር (off/caveman/rtk/stacked) እና የCaveman/RTK ጥንካሬን ይምረጡ                                         |
+| `agentproxy_list_compression_combos` | `read:compression`  | ስም የተሰጣቸውን የማመቅ ጥምረቶች እና የሞተር ቧንቧ መስመሮቻቸውን ይዘርዝሩ                                                      |
+| `agentproxy_compression_combo_stats` | `read:compression`  | በማመቅ ጥምረት እና በሞተር የተመደቡ ትንታኔዎች                                                                        |
+| `agentproxy_ccr_store`               | `write:compression` | በጠሪ የተለየ ይዘትን ገደብ ባለው የማስታወሻ ውስጥ CCR ማከማቻ ያከማቹ እና ምልክት ከ`ccr://` ማጣቀሻ ጋር ይመልሱ                         |
+| `agentproxy_ccr_retrieve`            | `read:compression`  | የCCR ይዘትን ሙሉ በሙሉ ወይም በhead፣ tail፣ lines፣ grep እና stats ሁነታዎች ሰርስረው ያውጡ                                |
+| `agentproxy_ccr_inspect`             | `read:compression`  | ይዘቱን ሳይመልሱ በጠሪው ባለቤትነት የተያዘውን የCCR ዲበ-ውሂብ ይመርምሩ                                                       |
+| `agentproxy_ccr_list`                | `read:compression`  | በጠሪው ባለቤትነት ለተያዙ የCCR ብሎኮች በገጽ የተከፋፈለ ዲበ-ውሂብን ይዘርዝሩ                                                   |
+| `agentproxy_ccr_delete`              | `write:compression` | በጠሪው ባለቤትነት የተያዘ የCCR ብሎክን ይሰርዙ                                                                       |
+| `agentproxy_ccr_stats`               | `read:compression`  | በጠሪ ወሰን ያለውን የማስታወሻ አጠቃቀም፣ የሕይወት ዑደት ቆጣሪዎችን እና የማከማቻ ገደቦችን ሪፖርት ያድርጉ                                  |
+| `agentproxy_rtk_discover`            | `read:compression`  | በፈቃደኝነት በተካተቱ የRTK ውጤት ናሙናዎች ውስጥ ተደጋጋሚ ጫጫታን ያግኙ                                                       |
+| `agentproxy_rtk_learn`               | `read:compression`  | በፈቃደኝነት ከተካተቱ ናሙናዎች ሊገመገም የሚችል የRTK ማጣሪያ ረቂቅ ይፍጠሩ                                                     |
 
 የCCR ግቤቶች በማስታወሻ ውስጥ ብቻ የሚቆዩ ሲሆን ዳግም ሲጀመር ይጠፋሉ። እያንዳንዱ ብሎክ እስከ 2 MiB፣ እያንዳንዱ
 principal እስከ 16 MiB፣ እና አጠቃላይ ማከማቻው እስከ 64 MiB የተገደበ ነው። የግቤቶች ነባሪ TTL 24 ሰዓት ነው (ከፍተኛው
@@ -144,7 +144,7 @@ principal እስከ 16 MiB፣ እና አጠቃላይ ማከማቻው እስከ 6
 እና grep ሁነታዎች በኩል እንደተገኙ ይቆያሉ። ማከማቸት፣ ሰርስሮ ማውጣት፣ መዘርዘር፣ መመርመር፣ መሰረዝ እና ስታቲስቲክስ በ
 ማንነቱ የተረጋገጠው API-key principal ተለይተው ይጠበቃሉ። የኦዲት መዝገቦች hashes እና የመጠን ዲበ-ውሂብን ይይዛሉ፤ ይዘትን ፈጽሞ አይይዙም።
 
-`omniroute_compression_status` የMCP መግለጫ መጭመቅን በተናጠል በ
+`agentproxy_compression_status` የMCP መግለጫ መጭመቅን በተናጠል በ
 `analytics.mcpDescriptionCompression` ስር ያሳውቃል። እነዚህ ዋጋዎች ለMCP ሊዘረዘሩ የሚችሉ
 መግለጫዎች (`tools`፣ `prompts`፣ `resources` እና `resourceTemplates`) የሜታዳታ መጠን ግምቶች ናቸው፤ የአቅራቢ አጠቃቀም
 ደረሰኞች አይደሉም፣ እንዲሁም `source: "mcp_metadata_estimate"` ተብለው ምልክት ተደርጎባቸዋል።
@@ -174,9 +174,9 @@ principal እስከ 16 MiB፣ እና አጠቃላይ ማከማቻው እስከ 6
 
 | መሳሪያ                        | ወሰኖች           | መግለጫ                                                                  |
 | :-------------------------- | :------------- | :-------------------------------------------------------------------- |
-| `omniroute_oneproxy_fetch`  | `read:proxies` | ነጻ proxy-ዎችን ከ1proxy የገበያ ቦታ ያምጡ (የፕሮቶኮል/አገር/ጥራት/ገደብ ማጣሪያዎች)          |
-| `omniroute_oneproxy_rotate` | `read:proxies` | በስትራቴጂ (`random` / `quality` / `sequential`) መሠረት ቀጣዩን የሚገኝ proxy ያግኙ |
-| `omniroute_oneproxy_stats`  | `read:proxies` | የpool ስታቲስቲክስ፣ የማመሳሰል ሁኔታ፣ እና በፕሮቶኮልና በአገር የተከፋፈለ ስርጭት                |
+| `agentproxy_oneproxy_fetch`  | `read:proxies` | ነጻ proxy-ዎችን ከ1proxy የገበያ ቦታ ያምጡ (የፕሮቶኮል/አገር/ጥራት/ገደብ ማጣሪያዎች)          |
+| `agentproxy_oneproxy_rotate` | `read:proxies` | በስትራቴጂ (`random` / `quality` / `sequential`) መሠረት ቀጣዩን የሚገኝ proxy ያግኙ |
+| `agentproxy_oneproxy_stats`  | `read:proxies` | የpool ስታቲስቲክስ፣ የማመሳሰል ሁኔታ፣ እና በፕሮቶኮልና በአገር የተከፋፈለ ስርጭት                |
 
 ## የማስታወሻ መሳሪያዎች (3)
 
@@ -184,9 +184,9 @@ principal እስከ 16 MiB፣ እና አጠቃላይ ማከማቻው እስከ 6
 
 | መሳሪያ                      | ወሰኖች           | መግለጫ                                                                     |
 | :------------------------ | :------------- | :----------------------------------------------------------------------- |
-| `omniroute_memory_search` | `read:memory`  | የtoken በጀት ገደብን በማስከበር፣ ማስታወሻዎችን በጥያቄ / ዓይነት / API ቁልፍ ይፈልጉ              |
-| `omniroute_memory_add`    | `write:memory` | አዲስ የማስታወሻ ግቤት ያክሉ (`factual` / `episodic` / `procedural` / `semantic`)  |
-| `omniroute_memory_clear`  | `write:memory` | ለአንድ API ቁልፍ ማስታወሻዎችን ያጽዱ፤ እንደ አማራጭ በዓይነት ወይም በ`olderThan` timestamp ይጣሩ |
+| `agentproxy_memory_search` | `read:memory`  | የtoken በጀት ገደብን በማስከበር፣ ማስታወሻዎችን በጥያቄ / ዓይነት / API ቁልፍ ይፈልጉ              |
+| `agentproxy_memory_add`    | `write:memory` | አዲስ የማስታወሻ ግቤት ያክሉ (`factual` / `episodic` / `procedural` / `semantic`)  |
+| `agentproxy_memory_clear`  | `write:memory` | ለአንድ API ቁልፍ ማስታወሻዎችን ያጽዱ፤ እንደ አማራጭ በዓይነት ወይም በ`olderThan` timestamp ይጣሩ |
 
 ## የክህሎት መሳሪያዎች (4)
 
@@ -194,10 +194,10 @@ principal እስከ 16 MiB፣ እና አጠቃላይ ማከማቻው እስከ 6
 
 | መሳሪያ                          | ወሰኖች             | መግለጫ                                                          |
 | :---------------------------- | :--------------- | :------------------------------------------------------------ |
-| `omniroute_skills_list`       | `read:skills`    | የተመዘገቡ ክህሎቶችን በAPI ቁልፍ፣ በስም ወይም በነቃ/የቦዘነ ሁኔታ በአማራጭ በማጣራት ዘርዝሩ |
-| `omniroute_skills_enable`     | `write:skills`   | አንድን የተወሰነ ክህሎት በID ያንቁ ወይም ያሰናክሉ                             |
-| `omniroute_skills_execute`    | `execute:skills` | ክህሎትን በቀረበው ግቤት ያስፈጽሙ እና የአፈጻጸም መዝገቡን ይመልሱ                    |
-| `omniroute_skills_executions` | `read:skills`    | የቅርብ ጊዜ የክህሎት አፈጻጸም ታሪክን ዘርዝሩ                                 |
+| `agentproxy_skills_list`       | `read:skills`    | የተመዘገቡ ክህሎቶችን በAPI ቁልፍ፣ በስም ወይም በነቃ/የቦዘነ ሁኔታ በአማራጭ በማጣራት ዘርዝሩ |
+| `agentproxy_skills_enable`     | `write:skills`   | አንድን የተወሰነ ክህሎት በID ያንቁ ወይም ያሰናክሉ                             |
+| `agentproxy_skills_execute`    | `execute:skills` | ክህሎትን በቀረበው ግቤት ያስፈጽሙ እና የአፈጻጸም መዝገቡን ይመልሱ                    |
+| `agentproxy_skills_executions` | `read:skills`    | የቅርብ ጊዜ የክህሎት አፈጻጸም ታሪክን ዘርዝሩ                                 |
 
 ## የNotion አውድ ምንጭ (6)
 
@@ -233,9 +233,9 @@ curl -X DELETE http://localhost:20128/api/settings/notion
 
 | መሣሪያ                              | ወሰኖች           | መግለጫ                                                                                                    |
 | :-------------------------------- | :------------- | :------------------------------------------------------------------------------------------------------ |
-| `omniroute_agent_skills_list`     | `read:catalog` | ሁሉንም 45 የወኪል ክህሎቶች በአማራጭ `category` (api\|cli) እና `area` ማጣሪያዎች ይዘርዝራል፤ ሜታዳታ + ሽፋን ይመልሳል                |
-| `omniroute_agent_skills_get`      | `read:catalog` | አንድን ክህሎት በቀኖናዊ `id` በመጠቀም ሙሉ ሜታዳታውን + የSKILL.md ይዘቱን ያገኛል                                              |
-| `omniroute_agent_skills_coverage` | `read:catalog` | የሽፋን ስታቲስቲክስ፦ ከካታሎጉ ድምር ጋር ሲነጻጸር ከ23 API፣ 21 CLI እና 1 ውቅር ክህሎቶች ምን ያህሎቹ በፋይል ስርዓቱ ላይ SKILL.md ፋይሎች አሏቸው |
+| `agentproxy_agent_skills_list`     | `read:catalog` | ሁሉንም 45 የወኪል ክህሎቶች በአማራጭ `category` (api\|cli) እና `area` ማጣሪያዎች ይዘርዝራል፤ ሜታዳታ + ሽፋን ይመልሳል                |
+| `agentproxy_agent_skills_get`      | `read:catalog` | አንድን ክህሎት በቀኖናዊ `id` በመጠቀም ሙሉ ሜታዳታውን + የSKILL.md ይዘቱን ያገኛል                                              |
+| `agentproxy_agent_skills_coverage` | `read:catalog` | የሽፋን ስታቲስቲክስ፦ ከካታሎጉ ድምር ጋር ሲነጻጸር ከ23 API፣ 21 CLI እና 1 ውቅር ክህሎቶች ምን ያህሎቹ በፋይል ስርዓቱ ላይ SKILL.md ፋይሎች አሏቸው |
 
 ሙሉውን ካታሎግ እና ውጫዊ ወኪሎች እንዴት እንደሚጠቀሙበት ለማየት [AGENT-SKILLS.md](./AGENT-SKILLS.md)ን ይመልከቱ።
 
@@ -308,7 +308,7 @@ MCP አገልጋዩ በቅንብሮች (`mcpEnabled`) ውስጥ እስኪነቃ 
 | :------------------ | :-------------------------------------------------------- | :--------------- | :------------------------------------ |
 | የAPI ቁልፍ አስተዳደር     | `api_keys.scopes`                                         | `hasManageScope` | ለዚያ Bearer ቁልፍ የአስተዳደር REST           |
 | የAPI ቁልፍ ተጨማሪ       | ተመሳሳዩ ድርድር፣ አንድ ትክክለኛ ሕብረቁምፊ                              | ከታች የተሰየመው አጋዥ   | ያንን አንድ ችሎታ ብቻ                        |
-| የMCP መሣሪያ የፈቃድ ወሰኖች | ተመሳሳዩ ድርድር፣ ካልሆነ MCP `_meta`፣ ካልሆነ `OMNIROUTE_MCP_SCOPES` | `scopeMatches`   | ማስፈጸሙ ከነቃ በኋላ ያንን መሣሪያ                |
+| የMCP መሣሪያ የፈቃድ ወሰኖች | ተመሳሳዩ ድርድር፣ ካልሆነ MCP `_meta`፣ ካልሆነ `AGENTPROXY_MCP_SCOPES` | `scopeMatches`   | ማስፈጸሙ ከነቃ በኋላ ያንን መሣሪያ                |
 | የመዳረሻ ቶከን           | `oma_live_…`                                              | `scopeSatisfies` | ዘዴውና ዱካው ያንን ደረጃ የሚጠይቁበት የአስተዳደር መስመር |
 
 እያንዳንዱን ማረጋገጫ ስለመፍጠር
@@ -354,12 +354,12 @@ MCP አገልጋዩ በቅንብሮች (`mcpEnabled`) ውስጥ እስኪነቃ 
 ይወድቃል። ከመጨረሻው `*` በስተቀር በMCP መሣሪያ የፈቃድ ወሰኖች መካከል
 የደረጃ ተዋረድ የለም።
 
-`OMNIROUTE_MCP_ENFORCE_SCOPES=true` ካልሆነ በስተቀር ማስፈጸሙ ጠፍቷል (ነባሪው
+`AGENTPROXY_MCP_ENFORCE_SCOPES=true` ካልሆነ በስተቀር ማስፈጸሙ ጠፍቷል (ነባሪው
 `false`)። ጠፍቶ ባለበት ጊዜ፣ `evaluateToolScopes` ጥሪውን ይፈቅዳል እና
 ማውጫውን ይዘላል። በርቶ ባለበት ጊዜ፣ HTTP የBearer ቁልፉን `api_keys.scopes` እንደ
 `authInfo` ይጠቀማል ([በየቁልፉ የHTTP የፈቃድ ወሰን ማሰር](#per-key-http-scope-binding-7895) ይመልከቱ)።
 ምንም የቁልፍ የፈቃድ ወሰኖች ካልተገኙ፣ የተሰጠው ስብስብ ወደ MCP `_meta`፣ ከዚያም
-ወደ `OMNIROUTE_MCP_SCOPES` ያልፋል።
+ወደ `AGENTPROXY_MCP_SCOPES` ያልፋል።
 
 #### የመዳረሻ ቶከን የፈቃድ ወሰኖች
 
@@ -419,8 +419,8 @@ scope-ዎች ጋር ያስኬዳሉ። የመዳረሻ ቶከኑ rank ለ`scopeM
 | `write:skills`        | `skills_enable`                                                                                                                                                                 |
 | `execute:skills`      | `skills_execute`                                                                                                                                                                |
 | `read:catalog`        | `agent_skills_list`, `agent_skills_get`, `agent_skills_coverage`                                                                                                                |
-| `read:tools`          | `omniroute_tool_search`                                                                                                                                                         |
-| `read:radar`          | `omniroute_radar_catalog`                                                                                                                                                       |
+| `read:tools`          | `agentproxy_tool_search`                                                                                                                                                         |
+| `read:radar`          | `agentproxy_radar_catalog`                                                                                                                                                       |
 | `read:gamification`   | `gamification_profile`, `gamification_rank`, `gamification_leaderboard`, `gamification_badges`, `gamification_servers`, `gamification_anomalies`                                |
 | `write:gamification`  | `gamification_invite`, `gamification_transfer`                                                                                                                                  |
 | `read:plugins`        | `plugin_list`, `plugin_executions`                                                                                                                                              |
@@ -451,11 +451,11 @@ bypassን ብቻ የሚፈቅድ — ሌላ ምንም የmanagement-route መዳ
 በኩል ይፈታና ወደ MCP SDK `transport.handleRequest(req, { authInfo })` ያስተላልፈዋል፤ ስለዚህ
 ወደ እያንዳንዱ የመሣሪያ ጥሪ የሚደርሰው `extra.authInfo.scopes` የBearer keyን የራሱን scopes
 ያንጸባርቃል። የ`scopeEnforcement.ts` `resolveCallerScopeContext()` `authInfo`ን
-ከ`_meta` እና `OMNIROUTE_MCP_SCOPES` env fallback በላይ አስቀድሞ ይመርጥ ነበር — ይህ ለውጥ
+ከ`_meta` እና `AGENTPROXY_MCP_SCOPES` env fallback በላይ አስቀድሞ ይመርጥ ነበር — ይህ ለውጥ
 ከዚህ በፊት በHTTP ላይ ያልተሞላውን የመጀመሪያውንና ከፍተኛ ቅድሚያ ያለውን source ብቻ ይሞላል።
 ምንም API key ሳይፈታ (header ከሌለ፣ keyው ልክ ካልሆነ)፣ `authInfo` `undefined` ሆኖ
 ይቆያል፣ እና resolution ወደ ነባሩ `meta`/env ሰንሰለት ሳይቀየር ይወርዳል። ይህ
-የ`OMNIROUTE_MCP_ENFORCE_SCOPES`ን default አይቀይርም — enforcement አሁንም በግልጽ
+የ`AGENTPROXY_MCP_ENFORCE_SCOPES`ን default አይቀይርም — enforcement አሁንም በግልጽ
 መንቃት አለበት፤ ይህ ለውጥ የሚያደርገው አንዴ ከነቃ በኋላ በእያንዳንዱ key ላይ ያለው path
 ቅድሚያ እንዲወስድ ማድረግ ብቻ ነው። stdio በእያንዳንዱ caller ደረጃ ማንነት የለውም
 (`mcpCallerIdentity.ts`ን ይመልከቱ) እና አይነካም — በ`_meta`/env fallback ሰንሰለት ላይ
@@ -467,17 +467,17 @@ bypassን ብቻ የሚፈቅድ — ሌላ ምንም የmanagement-route መዳ
 
 | ተለዋዋጭ                                   | ነባሪ                         | ዓላማ                                                                                         |
 | :-------------------------------------- | :-------------------------- | :------------------------------------------------------------------------------------------ |
-| `OMNIROUTE_BASE_URL`                    | `http://localhost:20128`    | MCP አገልጋዩ የAgentProxy ውስጣዊ APIዎችን ሲጠራ የሚጠቀምበት መሠረታዊ URL                                      |
-| `OMNIROUTE_API_KEY`                     | (ባዶ)                        | ለውስጣዊ API ጥሪዎች እንደ `Authorization: Bearer` የሚተላለፍ API ቁልፍ                                   |
-| `OMNIROUTE_MCP_ENFORCE_SCOPES`          | `false` (`"true"` ብቻ ያነቃዋል) | ሲነቃ፣ የጎደሉ ወሰኖች የመሣሪያ ጥሪዎችን ይከለክላሉ፣ እንዲሁም `scope_denied:<reason>`ን በኦዲት ምዝግብ ውስጥ ይመዘግባሉ      |
-| `OMNIROUTE_MCP_SCOPES`                  | (ባዶ)                        | በነባሪነት "የሚገኙ" ተደርገው የሚቆጠሩ፣ በኮማ የተለዩ የወሰኖች የፈቃድ ዝርዝር (ጠሪው የራሱን ወሰኖች በማያቀርብበት ጊዜ ጥቅም ላይ ይውላል) |
-| `OMNIROUTE_MCP_COMPRESS_DESCRIPTIONS`   | (ካልተዋቀረ = እንደበራ ነው)         | `0/false/off/no` ተብሎ ሲዋቀር፣ በምዝገባ ጊዜ የMCP መግለጫ መጨመቅን ያሰናክላል                                  |
-| `OMNIROUTE_MCP_DESCRIPTION_COMPRESSION` | (ካልተዋቀረ = እንደበራ ነው)         | ከላይ ላለው ተመሳሳይ መቀየሪያ አማራጭ ተለዋጭ ስም                                                            |
-| `OMNIROUTE_MCP_FETCH_TIMEOUT_MS`        | `10000`                     | ለውስጣዊ አስተዳደር ንባቦች (ጤንነት፣ ጽናት፣ ጥምረቶች፣ ኮታ፣ አጠቃቀም) የማቋረጫ ጊዜ ገደብ                                |
-| `OMNIROUTE_MCP_UPSTREAM_TIMEOUT_MS`     | `60000`                     | አቅራቢን ለሚጠብቁ የጥያቄ ደረጃዎች (`route_request`፣ `web_search`፣ `web_fetch`) የማቋረጫ ጊዜ ገደብ            |
+| `AGENTPROXY_BASE_URL`                    | `http://localhost:20128`    | MCP አገልጋዩ የAgentProxy ውስጣዊ APIዎችን ሲጠራ የሚጠቀምበት መሠረታዊ URL                                      |
+| `AGENTPROXY_API_KEY`                     | (ባዶ)                        | ለውስጣዊ API ጥሪዎች እንደ `Authorization: Bearer` የሚተላለፍ API ቁልፍ                                   |
+| `AGENTPROXY_MCP_ENFORCE_SCOPES`          | `false` (`"true"` ብቻ ያነቃዋል) | ሲነቃ፣ የጎደሉ ወሰኖች የመሣሪያ ጥሪዎችን ይከለክላሉ፣ እንዲሁም `scope_denied:<reason>`ን በኦዲት ምዝግብ ውስጥ ይመዘግባሉ      |
+| `AGENTPROXY_MCP_SCOPES`                  | (ባዶ)                        | በነባሪነት "የሚገኙ" ተደርገው የሚቆጠሩ፣ በኮማ የተለዩ የወሰኖች የፈቃድ ዝርዝር (ጠሪው የራሱን ወሰኖች በማያቀርብበት ጊዜ ጥቅም ላይ ይውላል) |
+| `AGENTPROXY_MCP_COMPRESS_DESCRIPTIONS`   | (ካልተዋቀረ = እንደበራ ነው)         | `0/false/off/no` ተብሎ ሲዋቀር፣ በምዝገባ ጊዜ የMCP መግለጫ መጨመቅን ያሰናክላል                                  |
+| `AGENTPROXY_MCP_DESCRIPTION_COMPRESSION` | (ካልተዋቀረ = እንደበራ ነው)         | ከላይ ላለው ተመሳሳይ መቀየሪያ አማራጭ ተለዋጭ ስም                                                            |
+| `AGENTPROXY_MCP_FETCH_TIMEOUT_MS`        | `10000`                     | ለውስጣዊ አስተዳደር ንባቦች (ጤንነት፣ ጽናት፣ ጥምረቶች፣ ኮታ፣ አጠቃቀም) የማቋረጫ ጊዜ ገደብ                                |
+| `AGENTPROXY_MCP_UPSTREAM_TIMEOUT_MS`     | `60000`                     | አቅራቢን ለሚጠብቁ የጥያቄ ደረጃዎች (`route_request`፣ `web_search`፣ `web_fetch`) የማቋረጫ ጊዜ ገደብ            |
 | `MCP_TOOL_DENY`                         | (ካልተዋቀረ = ማጣሪያ የለም)         | ከ`tools/list` የሚወገዱ፣ በኮማ የተለዩ የመሣሪያ ስሞች (የመሣሪያ ብዛት ቅነሳ — ከታች ይመልከቱ)                         |
 | `MCP_TOOL_ALLOW`                        | (ካልተዋቀረ = ማጣሪያ የለም)         | ብቻቸውን እንዲቆዩ በኮማ የተለዩ የመሣሪያ ስሞች (የፈቃድ ዝርዝር ሁነታ — ከታች ይመልከቱ)                                  |
-| `DATA_DIR`                              | `~/.omniroute`              | የልብ ምት ፋይሉ ወደ `${DATA_DIR}/runtime/mcp-heartbeat.json` ይጻፋል                                 |
+| `DATA_DIR`                              | `~/.agentproxy`              | የልብ ምት ፋይሉ ወደ `${DATA_DIR}/runtime/mcp-heartbeat.json` ይጻፋል                                 |
 
 ---
 
@@ -487,8 +487,8 @@ bypassን ብቻ የሚፈቅድ — ሌላ ምንም የmanagement-route መዳ
 
 - መጨመቁ መዋቅራዊ ይዘት እንዳይለወጥ የተጠበቁ ብሎኮችን (የኮድ ክፍሎች፣ በአጥር የተከበቡ ብሎኮች፣ ወዘተ) በማውጣት፣ የCaveman የደንብ ስብስብን (`getRulesForContext("all", "full")`) በመጠቀም በመግለጫ ጽሑፉ ላይ ይከናወናል።
 - በ`key_value` ቅንብሮች ሰንጠረዥ ውስጥ ባለው `compression.mcpDescriptionCompressionEnabled` እሴት (ነባሪ፦ ነቅቷል) በኩል ለእያንዳንዱ ማሰማራት ይቀያይሩት — በUI ውስጥ እንደ **ትንታኔ → የMCP መግለጫ መጨመቅ** ቀርቧል።
-- `OMNIROUTE_MCP_COMPRESS_DESCRIPTIONS=false`ን ወይም `OMNIROUTE_MCP_DESCRIPTION_COMPRESSION=false`ን በመጠቀም በሂደቱ አጠቃላይ ይቀያይሩት።
-- የቅጽበታዊ ጊዜ ስታቲስቲክስ በ`omniroute_compression_status` በኩል በ`analytics.mcpDescriptionCompression` ሥር ይቀርባሉ፣ እንዲሁም ከእውነተኛ የአቅራቢ አጠቃቀም ደረሰኞች ለመለየት `source: "mcp_metadata_estimate"` የሚል መለያ ይደረግባቸዋል።
+- `AGENTPROXY_MCP_COMPRESS_DESCRIPTIONS=false`ን ወይም `AGENTPROXY_MCP_DESCRIPTION_COMPRESSION=false`ን በመጠቀም በሂደቱ አጠቃላይ ይቀያይሩት።
+- የቅጽበታዊ ጊዜ ስታቲስቲክስ በ`agentproxy_compression_status` በኩል በ`analytics.mcpDescriptionCompression` ሥር ይቀርባሉ፣ እንዲሁም ከእውነተኛ የአቅራቢ አጠቃቀም ደረሰኞች ለመለየት `source: "mcp_metadata_estimate"` የሚል መለያ ይደረግባቸዋል።
 
 ---
 
@@ -507,10 +507,10 @@ bypassን ብቻ የሚፈቅድ — ሌላ ምንም የmanagement-route መዳ
 
 ```bash
 # ሁለት መሣሪያዎችን ከካታሎጉ አስወግድ
-MCP_TOOL_DENY="omniroute_get_health,omniroute_list_combos" omniroute --mcp
+MCP_TOOL_DENY="agentproxy_get_health,agentproxy_list_combos" agentproxy --mcp
 
 # የማዞሪያ እና የኮታ መሣሪያዎችን ብቻ አሳውቅ (የፍቃድ ዝርዝር ሁነታ)
-MCP_TOOL_ALLOW="omniroute_route_request,omniroute_check_quota" omniroute --mcp
+MCP_TOOL_ALLOW="agentproxy_route_request,agentproxy_check_quota" agentproxy --mcp
 ```
 
 **የተጣሩ መሣሪያዎች የሚወገዱበት መንገድ፦** ምዝገባው ሁልጊዜ በተሳካ ሁኔታ ይጠናቀቃል፤ መገለጫው የማይቀበለው መሣሪያ ከዚያ በMCP SDK መያዣው ላይ `.disable()` ይደረጋል፣ ስለዚህ በ`tools/list` ውስጥ ፈጽሞ አይታይም፣ ነገር ግን ግንኙነቱ ሳይፈርስ ይቆያል (ንጹህ ማንቃት/ማሰናከል፣ ዳግም ምዝገባ የለም)። የመገለጫ ተንታኙ `readMcpToolProfileFromEnv(process.env)` ሲሆን፣ ሁለቱም ተለዋዋጮች ባዶ ሲሆኑ `null` (ምንም ማጣራት የለም) ይመልሳል።

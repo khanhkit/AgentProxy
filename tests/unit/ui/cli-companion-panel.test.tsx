@@ -39,7 +39,7 @@ describe("CLI companion copy-only flow", () => {
       });
       fireEvent.click(screen.getByRole("button", { name: "Copy: Preview the launch" }));
       await waitFor(() =>
-        expect(writeText).toHaveBeenCalledWith("omniroute run claude --context office --dry-run")
+        expect(writeText).toHaveBeenCalledWith("agentproxy run claude --context office --dry-run")
       );
       expect((await screen.findByText("Copied!")).getAttribute("role")).toBe("status");
       expect(fetch).not.toHaveBeenCalled();
@@ -51,7 +51,7 @@ describe("CLI companion copy-only flow", () => {
     fireEvent.change(screen.getByLabelText("CLI tool"), { target: { value: "qwen" } });
     expect(screen.queryByRole("button", { name: "Copy: Preview the launch" })).toBeNull();
     fireEvent.change(screen.getByLabelText("Model"), { target: { value: "provider/model" } });
-    expect(screen.getByText("omniroute run qwen --model provider/model --dry-run")).toBeTruthy();
+    expect(screen.getByText("agentproxy run qwen --model provider/model --dry-run")).toBeTruthy();
     fireEvent.change(screen.getByLabelText("Model"), { target: { value: "$(id)" } });
     expect(screen.queryByRole("button", { name: "Copy: Preview the launch" })).toBeNull();
     fireEvent.change(screen.getByLabelText("CLI tool"), { target: { value: "cline" } });

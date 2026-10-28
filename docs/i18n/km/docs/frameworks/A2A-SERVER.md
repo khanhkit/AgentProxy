@@ -30,7 +30,7 @@ curl http://localhost:20128/.well-known/agent.json
 រាល់សំណើ `/a2a` ទាំងអស់តម្រូវឱ្យមាន API key តាមរយៈ header `Authorization`៖
 
 ```
-Authorization: Bearer YOUR_OMNIROUTE_API_KEY
+Authorization: Bearer YOUR_AGENTPROXY_API_KEY
 ```
 
 ប្រសិនបើមិនមាន API key ត្រូវបានកំណត់នៅលើម៉ាស៊ីនមេទេ ការផ្ទៀងផ្ទាត់អត្តសញ្ញាណនឹងត្រូវបានរំលង។
@@ -187,7 +187,7 @@ AgentProxy បង្ហាញជំនាញ A2A ចំនួន 6 ដែលត�
 | `/api/a2a/tasks/[id]`        | GET         | ទាញយកកិច្ចការតាម ID                                             | ការគ្រប់គ្រង                                     |
 | `/api/a2a/tasks/[id]/cancel` | POST        | បោះបង់កិច្ចការដែលកំពុងដំណើរការ                                  | ការគ្រប់គ្រង                                     |
 | `/.well-known/agent.json`    | GET         | កាតភ្នាក់ងារ (ការស្វែងរក A2A)                                   | (សាធារណៈ, រក្សាទុកក្នុងឃ្លាំងសម្ងាត់ 3600s)      |
-| `/api/a2a/tasks`             | POST        | ការប្រគល់ការងារចូលទៅកាន់ក្រុម OmniConductor (Conductor PRD RF5) | Bearer ធៀបនឹង `OMNIROUTE_API_KEY` + `a2aEnabled` |
+| `/api/a2a/tasks`             | POST        | ការប្រគល់ការងារចូលទៅកាន់ក្រុម OmniConductor (Conductor PRD RF5) | Bearer ធៀបនឹង `AGENTPROXY_API_KEY` + `a2aEnabled` |
 
 **ការប្រគល់ការងារចូលពី Conductor (`POST /api/a2a/tasks`):** ភ្នាក់ងារ A2A ខាងក្រៅប្រគល់ការងារសរសេរកូដទៅក្រុម OmniConductor តាមរយៈ AgentProxy។ ខ្លឹមសារសំណើ៖ `{ skill: "conductor" | "conductor-cli-<profile>", messages: [{role, content}], metadata: { conductor: { repo: { url, base_ref? }, mode?, cli?, model? } } }` — មានតែជំនាញរបស់ក្រុម Conductor ប៉ុណ្ណោះ (ជំនាញដែលបានប្រកាសនៅលើកាតភ្នាក់ងារ) ដែលអាចត្រូវបានប្រគល់ការងារ; `metadata.conductor.repo.url` ត្រូវតែមាន (ក្រុមនេះធ្វើការលើ git repos)។ ផ្លូវនេះបម្លែងទៅជា `POST /v1/tasks` របស់ hub ដោយប្រើ `CONDUCTOR_ORCHESTRATOR_TOKEN` នៅផ្នែកម៉ាស៊ីនមេ (ប្រើ `CONDUCTOR_HUB_TOKEN` ជាជម្រើសបម្រុង) ហើយត្រឡប់ `201 { conductor_task_id, state: "submitted" }`; ស្ថានភាពកិច្ចការត្រូវបានបញ្ជូនត្រឡប់តាមរយៈកញ្ចក់ SSE→A2A (RF1) ហើយអាចមើលឃើញតាមរយៈ `GET /api/a2a/tasks?skill=conductor`។
 

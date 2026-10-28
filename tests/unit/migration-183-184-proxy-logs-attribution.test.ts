@@ -16,7 +16,7 @@ const repoMigrations = path.join(
   path.dirname(fileURLToPath(import.meta.url)),
   "../../src/lib/db/migrations"
 );
-const migrationsDir = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-migration-183-184-"));
+const migrationsDir = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-migration-183-184-"));
 for (const file of [
   "179_proxy_logs_upstream_status.sql",
   "181_proxy_logs_proxy_name.sql",

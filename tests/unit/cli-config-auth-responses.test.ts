@@ -4,7 +4,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 
-const dataDir = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-cli-config-auth-"));
+const dataDir = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-cli-config-auth-"));
 const originalDataDir = process.env.DATA_DIR;
 const originalPassword = process.env.INITIAL_PASSWORD;
 process.env.DATA_DIR = dataDir;

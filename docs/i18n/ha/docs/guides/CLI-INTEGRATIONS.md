@@ -12,14 +12,14 @@ sauyawa ta atomatik idan ya gaza. Kowane umarni yana karanta kundin model na **k
 Ana nuni da API key ta hanyar environment variable a duk inda kayan aikin yake goyon bayansa.
 An nuna a ƙasa umarnin da ke adana fayil ɗin environment na cikin kayan aikin.
 
-Akwai kuma launcher na gama-gari — `omniroute run <target>` — wanda ke ƙaddamar da
+Akwai kuma launcher na gama-gari — `agentproxy run <target>` — wanda ke ƙaddamar da
 `claude`, `codex`, `aider`, `goose`, `opencode`, `qwen` ko `gemini` tare da
 shigar da env da ya dace, ba tare da rubuta wani saitin ba kwata-kwata. Targets da
 aliases ɗinsu suna fitowa daga manifest na asali `bin/cli/cli-manifest.mjs`
 (`claude-code|cc|anthropic`, `codex-cli|openai-codex|openai`, `goose-cli`,
-`open-code`, `qwen-code`, `gemini-cli`), kuma `omniroute completion` yana bayar da
+`open-code`, `qwen-code`, `gemini-cli`), kuma `agentproxy completion` yana bayar da
 kalmomin target iri ɗaya waɗanda aka samo daga manifest. Tsoffin launchers na kowane kayan aiki —
-`omniroute launch` (Claude Code) da `omniroute launch-codex` (Codex) — har yanzu suna
+`agentproxy launch` (Claude Code) da `agentproxy launch-codex` (Codex) — har yanzu suna
 nan.
 
 Ana iya fara haɗa provider daga wannan yanayin na gida/nesa. Umarnin da ke ƙasa, waɗanda
@@ -27,11 +27,11 @@ suka fara da API, suna ware tabbatar da izinin gudanarwa daga bayanan shaidar pr
 kuma ba sa taɓa buga bayanin shaida a cikin structured output:
 
 ```bash
-omniroute providers add glm --credential-env GLM_API_KEY --name work
-omniroute providers import ./providers.json --dry-run --json
-omniroute providers auth openai
-omniroute providers edit <connection-id> --default-model glm/glm-5.2
-omniroute providers remove <connection-id> --yes
+agentproxy providers add glm --credential-env GLM_API_KEY --name work
+agentproxy providers import ./providers.json --dry-run --json
+agentproxy providers auth openai
+agentproxy providers edit <connection-id> --default-model glm/glm-5.2
+agentproxy providers remove <connection-id> --yes
 ```
 
 Don scripts, fi son `--credential-stdin` ko `--credential-env`; an ci gaba da riƙe `--credential`
@@ -52,7 +52,7 @@ cikakken bayani na kowane kayan aiki:
 
 ## Babban tebur
 
-Kowane umarni yana bin **active context** (wanda aka saita da `omniroute connect`,
+Kowane umarni yana bin **active context** (wanda aka saita da `agentproxy connect`,
 duba [Yanayin Nesa](./REMOTE-MODE.md)) ko flags na kai tsaye
 `--remote <url> --api-key <key>`. Ma'anar "Na gida da na nesa" a ƙasa ita ce:
 idan babu flags, yana nufar `http://localhost:20128`; idan akwai `--remote` (ko
@@ -61,28 +61,28 @@ config ɗin a cikin na'urar gida.
 
 | Umarni                     | Kayan aiki                        | Abin da yake rubutawa                                                                                                                                                                        | Muhimman flags                                                                                                                             | Na gida ko na nesa |
 | -------------------------- | --------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ | ------------------ |
-| `omniroute setup-codex`    | OpenAI Codex CLI                  | `~/.codex/<name>.config.toml` — profile ɗaya ga kowane samfurin rubutu mai jituwa (`codex --profile <name>`)                                                                                 | `--remote` `--api-key` `--only` `--dry-run` `--port` `--codex-home`                                                                        | Dukansu            |
-| `omniroute setup-claude`   | Claude Code                       | `~/.claude/profiles/<name>/settings.json` — profile ɗaya ga kowane samfurin da ya dace (`CLAUDE_CONFIG_DIR`)                                                                                 | `--remote` `--api-key` `--only` `--dry-run` `--port` `--claude-home`                                                                       | Dukansu            |
-| `omniroute setup-opencode` | OpenCode (mai jituwa da openai)   | `~/.config/opencode/opencode.json` — mai samar da `omniroute` tare da kowane samfurin kundin (`opencode -m omniroute/<model>`)                                                               | `--remote` `--api-key` `--only` `--model` `--dry-run` `--port`                                                                             | Dukansu            |
-| `omniroute setup-cline`    | Cline                             | `~/.cline/data/{globalState,secrets}.json` (yanayin CLI) + yana fitar da saitunan tsawaitawar VS Code                                                                                        | `--remote` `--api-key` `--model` `--yes` `--dry-run` `--port` `--cline-dir`                                                                | Dukansu            |
-| `omniroute setup-kilo`     | Kilo Code                         | `~/.local/share/kilo/auth.json` (CLI) + yana haɗa `kilocode.*` cikin `settings.json` na VS Code idan yana nan                                                                                | `--remote` `--api-key` `--model` `--yes` `--dry-run` `--port` `--auth-path` `--vscode-settings`                                            | Dukansu            |
-| `omniroute setup-continue` | Continue / `cn` CLI               | `~/.continue/config.yaml` — samfuran `provider: openai`, maɓalli ta `${{ secrets.OMNIROUTE_API_KEY }}`                                                                                       | `--remote` `--api-key` `--only` `--dry-run` `--port` `--config-path`                                                                       | Dukansu            |
-| `omniroute setup-cursor`   | Cursor                            | Babu komai — yana fitar da matakan da za a bi cikin manhajar (tsarin saitunan Cursor SQLite ne marar bayyana)                                                                                | `--remote` `--api-key` `--only` `--port`                                                                                                   | Dukansu            |
-| `omniroute setup-roo`      | Roo Code                          | `~/.omniroute/roo-settings.json` (takardar shigo da bayanai) + yana saita `roo-cline.autoImportSettingsPath` idan `settings.json` na VS Code yana nan                                        | `--remote` `--api-key` `--model` `--yes` `--dry-run` `--port` `--import-path` `--vscode-settings`                                          | Dukansu            |
-| `omniroute setup-crush`    | Crush                             | `~/.config/crush/crush.json` — mai samar da `openai-compat`, maɓalli ta `$OMNIROUTE_API_KEY`                                                                                                 | `--remote` `--api-key` `--only` `--dry-run` `--port` `--config-path`                                                                       | Dukansu            |
-| `omniroute setup-goose`    | Goose                             | `~/.config/goose/config.yaml` (`GOOSE_PROVIDER`/`OPENAI_HOST`/`GOOSE_MODEL`) + yana fitar da umarnin tsara env                                                                               | `--remote` `--api-key` `--model` `--yes` `--dry-run` `--port` `--config-path`                                                              | Dukansu            |
-| `omniroute setup-aider`    | Aider                             | `~/.aider.conf.yml` (`openai-api-base` + `model: openai/<id>`) + yana fitar da umarnin tsara env                                                                                             | `--remote` `--api-key` `--model` `--yes` `--dry-run` `--port` `--config-path`                                                              | Dukansu            |
-| `omniroute setup-qwen`     | Qwen Code                         | `~/.qwen/settings.json` — jerin V4 `modelProviders.openai` + `OMNIROUTE_API_KEY` a cikin `~/.qwen/.env`                                                                                      | `--remote` `--api-key` `--model` `--yes` `--dry-run` `--port` `--config-path` `--env-path`                                                 | Dukansu            |
-| `omniroute setup-5dive`    | 5dive (rukunin wakilai)           | Babu komai ƙarƙashin `$HOME` — yana rubuta **profile na auth** na 5dive (`/var/lib/5dive/auth-profiles/<name>/`) ta `5dive agent auth set`; na root kaɗai, yana aiki a kan kwamfutar rukunin | `--remote` `--api-key` `--model` `--auth-profile` `--agent` `--byo-provider` `--fivedive-bin` `--no-sudo` `--yes` `--dry-run` `--port`     | Dukansu            |
-| `omniroute run <target>`   | Ƙaddamarwa yayin aiki (gama-gari) | Babu komai — yana ƙaddamar da `claude`/`codex`/`aider`/`goose`/`opencode`/`qwen`/`gemini` tare da env da args da suka dace; Qwen da Gemini suna amfani da home na wucin gadi mai keɓewa      | `--remote` `--base-url` `--context` `--provider` `--model` `--api-key` `--api-key-env` `--dry-run` `--json` `--port` `--profile` `--token` | Dukansu            |
-| `omniroute launch`         | Claude Code                       | Babu komai — yana ƙaddamar da `claude` tare da saka `ANTHROPIC_BASE_URL`/`ANTHROPIC_AUTH_TOKEN`                                                                                              | `--remote` `--api-key` `--token` `--profile` `--port`                                                                                      | Dukansu            |
-| `omniroute launch-codex`   | OpenAI Codex CLI                  | Babu komai — yana ƙaddamar da `codex` tare da saka mai samar da `omniroute` ta flags na `-c`                                                                                                 | `--remote` `--api-key` `--profile` (`-p`) `--port`                                                                                         | Dukansu            |
+| `agentproxy setup-codex`    | OpenAI Codex CLI                  | `~/.codex/<name>.config.toml` — profile ɗaya ga kowane samfurin rubutu mai jituwa (`codex --profile <name>`)                                                                                 | `--remote` `--api-key` `--only` `--dry-run` `--port` `--codex-home`                                                                        | Dukansu            |
+| `agentproxy setup-claude`   | Claude Code                       | `~/.claude/profiles/<name>/settings.json` — profile ɗaya ga kowane samfurin da ya dace (`CLAUDE_CONFIG_DIR`)                                                                                 | `--remote` `--api-key` `--only` `--dry-run` `--port` `--claude-home`                                                                       | Dukansu            |
+| `agentproxy setup-opencode` | OpenCode (mai jituwa da openai)   | `~/.config/opencode/opencode.json` — mai samar da `agentproxy` tare da kowane samfurin kundin (`opencode -m agentproxy/<model>`)                                                               | `--remote` `--api-key` `--only` `--model` `--dry-run` `--port`                                                                             | Dukansu            |
+| `agentproxy setup-cline`    | Cline                             | `~/.cline/data/{globalState,secrets}.json` (yanayin CLI) + yana fitar da saitunan tsawaitawar VS Code                                                                                        | `--remote` `--api-key` `--model` `--yes` `--dry-run` `--port` `--cline-dir`                                                                | Dukansu            |
+| `agentproxy setup-kilo`     | Kilo Code                         | `~/.local/share/kilo/auth.json` (CLI) + yana haɗa `kilocode.*` cikin `settings.json` na VS Code idan yana nan                                                                                | `--remote` `--api-key` `--model` `--yes` `--dry-run` `--port` `--auth-path` `--vscode-settings`                                            | Dukansu            |
+| `agentproxy setup-continue` | Continue / `cn` CLI               | `~/.continue/config.yaml` — samfuran `provider: openai`, maɓalli ta `${{ secrets.AGENTPROXY_API_KEY }}`                                                                                       | `--remote` `--api-key` `--only` `--dry-run` `--port` `--config-path`                                                                       | Dukansu            |
+| `agentproxy setup-cursor`   | Cursor                            | Babu komai — yana fitar da matakan da za a bi cikin manhajar (tsarin saitunan Cursor SQLite ne marar bayyana)                                                                                | `--remote` `--api-key` `--only` `--port`                                                                                                   | Dukansu            |
+| `agentproxy setup-roo`      | Roo Code                          | `~/.agentproxy/roo-settings.json` (takardar shigo da bayanai) + yana saita `roo-cline.autoImportSettingsPath` idan `settings.json` na VS Code yana nan                                        | `--remote` `--api-key` `--model` `--yes` `--dry-run` `--port` `--import-path` `--vscode-settings`                                          | Dukansu            |
+| `agentproxy setup-crush`    | Crush                             | `~/.config/crush/crush.json` — mai samar da `openai-compat`, maɓalli ta `$AGENTPROXY_API_KEY`                                                                                                 | `--remote` `--api-key` `--only` `--dry-run` `--port` `--config-path`                                                                       | Dukansu            |
+| `agentproxy setup-goose`    | Goose                             | `~/.config/goose/config.yaml` (`GOOSE_PROVIDER`/`OPENAI_HOST`/`GOOSE_MODEL`) + yana fitar da umarnin tsara env                                                                               | `--remote` `--api-key` `--model` `--yes` `--dry-run` `--port` `--config-path`                                                              | Dukansu            |
+| `agentproxy setup-aider`    | Aider                             | `~/.aider.conf.yml` (`openai-api-base` + `model: openai/<id>`) + yana fitar da umarnin tsara env                                                                                             | `--remote` `--api-key` `--model` `--yes` `--dry-run` `--port` `--config-path`                                                              | Dukansu            |
+| `agentproxy setup-qwen`     | Qwen Code                         | `~/.qwen/settings.json` — jerin V4 `modelProviders.openai` + `AGENTPROXY_API_KEY` a cikin `~/.qwen/.env`                                                                                      | `--remote` `--api-key` `--model` `--yes` `--dry-run` `--port` `--config-path` `--env-path`                                                 | Dukansu            |
+| `agentproxy setup-5dive`    | 5dive (rukunin wakilai)           | Babu komai ƙarƙashin `$HOME` — yana rubuta **profile na auth** na 5dive (`/var/lib/5dive/auth-profiles/<name>/`) ta `5dive agent auth set`; na root kaɗai, yana aiki a kan kwamfutar rukunin | `--remote` `--api-key` `--model` `--auth-profile` `--agent` `--byo-provider` `--fivedive-bin` `--no-sudo` `--yes` `--dry-run` `--port`     | Dukansu            |
+| `agentproxy run <target>`   | Ƙaddamarwa yayin aiki (gama-gari) | Babu komai — yana ƙaddamar da `claude`/`codex`/`aider`/`goose`/`opencode`/`qwen`/`gemini` tare da env da args da suka dace; Qwen da Gemini suna amfani da home na wucin gadi mai keɓewa      | `--remote` `--base-url` `--context` `--provider` `--model` `--api-key` `--api-key-env` `--dry-run` `--json` `--port` `--profile` `--token` | Dukansu            |
+| `agentproxy launch`         | Claude Code                       | Babu komai — yana ƙaddamar da `claude` tare da saka `ANTHROPIC_BASE_URL`/`ANTHROPIC_AUTH_TOKEN`                                                                                              | `--remote` `--api-key` `--token` `--profile` `--port`                                                                                      | Dukansu            |
+| `agentproxy launch-codex`   | OpenAI Codex CLI                  | Babu komai — yana ƙaddamar da `codex` tare da saka mai samar da `agentproxy` ta flags na `-c`                                                                                                 | `--remote` `--api-key` `--profile` (`-p`) `--port`                                                                                         | Dukansu            |
 
 Bayanai kan tutoci (an tabbatar da su a tushen umarnin):
 
 - `--remote <url>` — ɗauko kundin daga AgentProxy mai nisa (yana rinjayar `--port`
   da mahallin da yake aiki). `--api-key <key>` yana samar da bayanan shaidar wannan
-  sabar (ta tsohuwa yana amfani da env var `OMNIROUTE_API_KEY`, ko token na mahallin da yake aiki).
+  sabar (ta tsohuwa yana amfani da env var `AGENTPROXY_API_KEY`, ko token na mahallin da yake aiki).
 - `--only <patterns>` — ƙananan jimloli da waƙafi ya raba; a bar ID ɗin samfura kawai waɗanda suka dace
   (misali `--only glm,kimi`). Akwai shi a kan `setup-codex`, `setup-claude`,
   `setup-opencode`, `setup-continue`, `setup-cursor`, `setup-crush`.
@@ -93,17 +93,17 @@ Bayanai kan tutoci (an tabbatar da su a tushen umarnin):
   gano samfuri ta atomatik: Cline, Kilo, Roo, Goose, Qwen, Aider, 5dive. Waɗannan kayan aikin
   kuma suna karɓar `--yes` don gudanarwa ba tare da hulɗa ba (wanda a lokacin ke buƙatar `--model`).
   `setup-opencode` yana karɓar `--model` don saita samfuri na sama a matsayin tsoho.
-- `--model <id>` a kan `omniroute run` yana bin haɗin kowane maƙasudi na manifest
+- `--model <id>` a kan `agentproxy run` yana bin haɗin kowane maƙasudi na manifest
   (`bin/cli/cli-manifest.mjs`): **aider** yana karɓar `--model openai/<id>` sannan
-  **opencode** `--model omniroute/<id>` (ana ƙara prefix ne kawai idan id
+  **opencode** `--model agentproxy/<id>` (ana ƙara prefix ne kawai idan id
   bai riga ya ƙunsa ba); **qwen** da **gemini** suna karɓar id ɗin yadda yake;
   **claude** yana samun sa ta `ANTHROPIC_MODEL`, **goose** ta `GOOSE_MODEL`, sannan
-  **codex** ta args na `-c model_providers.omniroute.*`. **Qwen ne kaɗai maƙasudin gudanarwa
-  da ke tilasta buƙatar `--model`** — `omniroute run qwen` ba tare da shi ba yana fita da
+  **codex** ta args na `-c model_providers.agentproxy.*`. **Qwen ne kaɗai maƙasudin gudanarwa
+  da ke tilasta buƙatar `--model`** — `agentproxy run qwen` ba tare da shi ba yana fita da
   `2` tare da bayyanannen kuskure.
 - `--port <port>` — tashar AgentProxy ta gida (tsoho `20128`, ana watsi da ita idan an saita `--remote`).
   Yana nan a kan duk `setup-*` da masu ƙaddamarwa biyun.
-- Lambobin fita na `omniroute run`: ana isar da lambar fita ta CLI ɗin yaro
+- Lambobin fita na `agentproxy run`: ana isar da lambar fita ta CLI ɗin yaro
   yadda take; `2` = hujjoji marasa inganci (maƙasudi mara tallafi, `--model` na wajibi da ya ɓace,
   kariyar container); `127` = binary na maƙasudin ba ya cikin `PATH`;
   `130`/`143`/`129` idan `SIGINT`/`SIGTERM`/`SIGHUP` ya kawo ƙarshen ƙaddamarwar;
@@ -116,9 +116,9 @@ Mai zaɓin hulɗa kuma ana amfani da shi tare a girke-girken saitawa:
 
 ```bash
 # Zaɓa daga kundin samfura na gida ko mai nisa da yake aiki sannan a saita maƙasudin.
-omniroute configure claude
-omniroute configure opencode --provider glm
-omniroute configure qwen --model qwen/qwen3.8-max-preview --yes
+agentproxy configure claude
+agentproxy configure opencode --provider glm
+agentproxy configure qwen --model qwen/qwen3.8-max-preview --yes
 ```
 
 A halin yanzu `configure` yana wakilta zuwa girke-girken da aka gwada na `codex`, `claude`,
@@ -128,17 +128,17 @@ MITM, da jagora kawai suna ci gaba da zama bayyanannun hanyoyin `setup-*`/na han
 ba a gabatar da su a matsayin maƙasudan da za a iya ƙaddamarwa ba.
 
 > `setup-opencode` shi ne haɗawar OpenCode mai **sauƙi kuma mai jituwa da openai**.
-> Haka kuma akwai haɗawar plugin mai ƙarin fasali — `omniroute setup opencode` — wadda
-> ke girka `@omniroute/opencode-plugin`. Umarnai ne daban-daban; jadawalin
+> Haka kuma akwai haɗawar plugin mai ƙarin fasali — `agentproxy setup opencode` — wadda
+> ke girka `@agentproxy/opencode-plugin`. Umarnai ne daban-daban; jadawalin
 > da ke sama yana bayyana `setup-opencode`.
 >
 > Plugin ɗin yana zuwa a cikin packages guda biyu, ɗaya ga kowane babban sigar OpenCode, saboda loaders biyun
 > suna tsammanin entrypoints daban-daban:
-> `@omniroute/opencode-plugin` na OpenCode v1 da
-> `@omniroute/opencode-plugin-v2` na OpenCode v2. Package na v2 sabo ne
+> `@agentproxy/opencode-plugin` na OpenCode v1 da
+> `@agentproxy/opencode-plugin-v2` na OpenCode v2. Package na v2 sabo ne
 > (`0.1.0`) kuma yana bin kwangilar host da har yanzu take sauyawa, don haka yana karanta
 > tsarin da OpenCode ya shigar cikin daftarin kundin maimakon ya ɗauka kai tsaye. Girka
-> shi ta ƙara shigarwar `plugins` zuwa `opencode.json`; `omniroute setup opencode`
+> shi ta ƙara shigarwar `plugins` zuwa `opencode.json`; `agentproxy setup opencode`
 > har yanzu yana girka package na v1. Zaɓuɓɓuka da tsarin binciken bayanan shaida suna cikin
 > README na package.
 
@@ -151,42 +151,42 @@ kayan aikinka. Ana ɗauko katalog ɗin daga sabar gida.
 
 ```bash
 # Codex: rubuta profile ɗaya ga kowane model da ya dace cikin ~/.codex/
-omniroute setup-codex
+agentproxy setup-codex
 codex --profile glm52            # yi amfani da profile da aka ƙirƙira
 
 # Claude Code: rubuta profiles na kowane model, sannan ƙaddamar da ɗaya
-omniroute setup-claude
-omniroute launch --profile glm52
+agentproxy setup-claude
+agentproxy launch --profile glm52
 
 # OpenCode: rubuta provider mai dacewa da openai tare da duk models na katalog
-omniroute setup-opencode
-export OMNIROUTE_API_KEY=sk-...  # ana ambatonsa ta {env:OMNIROUTE_API_KEY}, ba a taɓa ajiye shi a faifai ba
-opencode -m omniroute/glm/glm-5.2 "..."
+agentproxy setup-opencode
+export AGENTPROXY_API_KEY=sk-...  # ana ambatonsa ta {env:AGENTPROXY_API_KEY}, ba a taɓa ajiye shi a faifai ba
+opencode -m agentproxy/glm/glm-5.2 "..."
 
 # Kayan aikin da ba su da ganowa ta atomatik suna buƙatar a fayyace model:
-omniroute setup-aider --model glm/glm-5.2
-omniroute setup-qwen --model qwen/qwen3.8-max-preview
+agentproxy setup-aider --model glm/glm-5.2
+agentproxy setup-qwen --model qwen/qwen3.8-max-preview
 
 # Yi samfoti ba tare da rubuta komai ba:
-omniroute setup-continue --dry-run
+agentproxy setup-continue --dry-run
 ```
 
 Ƙaddamar ba tare da rubuta wani config kwata-kwata ba (allurar env kawai):
 
 ```bash
-omniroute launch                 # Claude Code → AgentProxy na gida
-omniroute launch-codex           # Codex CLI → AgentProxy na gida
-omniroute launch-codex --profile glm52
-omniroute run claude --model openai/gpt-5.4
-omniroute run codex --model openai/gpt-5.4 --dry-run --json
-omniroute run aider --model glm/glm-5.2 -- --message "reply OK"
-omniroute run goose --model glm/glm-5.2
-omniroute run opencode --model glm/glm-5.2 -- run "reply OK"
-omniroute run qwen --model glm/glm-5.2 -- -p "reply OK"
-omniroute run gemini --model glm/glm-5.2 -- --skip-trust -p "reply OK"
+agentproxy launch                 # Claude Code → AgentProxy na gida
+agentproxy launch-codex           # Codex CLI → AgentProxy na gida
+agentproxy launch-codex --profile glm52
+agentproxy run claude --model openai/gpt-5.4
+agentproxy run codex --model openai/gpt-5.4 --dry-run --json
+agentproxy run aider --model glm/glm-5.2 -- --message "reply OK"
+agentproxy run goose --model glm/glm-5.2
+agentproxy run opencode --model glm/glm-5.2 -- run "reply OK"
+agentproxy run qwen --model glm/glm-5.2 -- -p "reply OK"
+agentproxy run gemini --model glm/glm-5.2 -- --skip-trust -p "reply OK"
 
 # Takamaiman hanyar umarni: tura duk abin da ya zo bayan -- kai tsaye
-omniroute run claude -- --print-system-prompt "review this diff"
+agentproxy run claude -- --print-system-prompt "review this diff"
 ```
 
 ---
@@ -198,26 +198,26 @@ Nuna kowane umarnin saiti zuwa AgentProxy na nesa da `--remote` + `--api-key`. A
 
 ```bash
 # OpenCode da ke aiki da VPS na nesa, riƙe models na glm/kimi kawai
-omniroute setup-opencode --remote http://192.168.0.15:20128 --api-key oma_live_xxx \
+agentproxy setup-opencode --remote http://192.168.0.15:20128 --api-key oma_live_xxx \
   --only glm,kimi
-opencode -m omniroute/glm/glm-5.2 "..."   # fara export OMNIROUTE_API_KEY
+opencode -m agentproxy/glm/glm-5.2 "..."   # fara export AGENTPROXY_API_KEY
 
 # Profiles na Codex daga katalog na nesa
-omniroute setup-codex --remote http://192.168.0.15:20128 --api-key oma_live_xxx
+agentproxy setup-codex --remote http://192.168.0.15:20128 --api-key oma_live_xxx
 
 # Ƙaddamar da CLI kai tsaye da wurin nesa
-omniroute launch       --remote http://192.168.0.15:20128 --api-key oma_live_xxx
-omniroute launch-codex --remote http://192.168.0.15:20128 --api-key oma_live_xxx
+agentproxy launch       --remote http://192.168.0.15:20128 --api-key oma_live_xxx
+agentproxy launch-codex --remote http://192.168.0.15:20128 --api-key oma_live_xxx
 ```
 
 Maimakon bayar da `--remote`/`--api-key` kowane lokaci, shiga sau ɗaya ka bar
 **mahallin da ke aiki** ya samar da su ta atomatik:
 
 ```bash
-omniroute connect 192.168.0.15        # ƙirƙiri scoped token, ajiye mahallin
-omniroute setup-codex                 # ← yanzu yana amfani da katalog na nesa
-omniroute setup-opencode              # ← iri ɗaya
-omniroute launch                      # ← Claude Code da ke aiki da wurin nesa
+agentproxy connect 192.168.0.15        # ƙirƙiri scoped token, ajiye mahallin
+agentproxy setup-codex                 # ← yanzu yana amfani da katalog na nesa
+agentproxy setup-opencode              # ← iri ɗaya
+agentproxy launch                      # ← Claude Code da ke aiki da wurin nesa
 ```
 
 Duba [Yanayin Nesa](./REMOTE-MODE.md) don mahallai, scopes, da sarrafa tokens.
@@ -228,12 +228,12 @@ Duba [Yanayin Nesa](./REMOTE-MODE.md) don mahallai, scopes, da sarrafa tokens.
 
 [5dive](https://5dive.ai) yana gudanar da rundunar coding agents masu aiki na dogon
 lokaci, kowannensu systemd unit ne a ƙarƙashin nasa Unix user. Shi kansa ba coding
-CLI ba ne, saboda haka babu abin da `omniroute run` zai ƙaddamar — `5dive` manufa ce
+CLI ba ne, saboda haka babu abin da `agentproxy run` zai ƙaddamar — `5dive` manufa ce
 ta **saitawa-kawai**.
 
 ```bash
-omniroute configure 5dive --model failover-demo --yes
-omniroute setup-5dive --model failover-demo --auth-profile omniroute --agent worker1
+agentproxy configure 5dive --model failover-demo --yes
+agentproxy setup-5dive --model failover-demo --auth-profile agentproxy --agent worker1
 ```
 
 Duk siffofin biyu suna rubuta 5dive **auth profile** ɗaya, sannan kowane `claude` seat
@@ -277,7 +277,7 @@ kayan aikinta ke tsammani (an tabbatar a cikin tushen umarnin):
 | `setup-aider` (`OPENAI_API_BASE`)                                          | tushe                  | A’a — LiteLLM yana ƙara `/v1/chat/completions` |
 | `setup-kilo`, `setup-roo`, `setup-continue`, `setup-crush`, `setup-cursor` | tare da `/v1`          | E                                              |
 | `setup-claude` (`ANTHROPIC_BASE_URL`), `launch`                            | tushe                  | A’a — Claude Code yana ƙara `/v1/messages`     |
-| `setup-codex`, `launch-codex` (`model_providers.omniroute.base_url`)       | tare da `/v1`          | E                                              |
+| `setup-codex`, `launch-codex` (`model_providers.agentproxy.base_url`)       | tare da `/v1`          | E                                              |
 | `setup-qwen` (`modelProviders.openai[].baseUrl`)                           | tare da `/v1`          | E                                              |
 | `run gemini` (`GOOGLE_GEMINI_BASE_URL`)                                    | tushe                  | A’a — SDK yana ƙara `/v1beta/models/…`         |
 | `setup-5dive` (`ANTHROPIC_BASE_URL` a cikin bayanin auth)                  | tushe                  | A’a — Claude Code yana ƙara `/v1/messages`     |
@@ -286,14 +286,14 @@ kayan aikinta ke tsammani (an tabbatar a cikin tushen umarnin):
 
 ## Kiyaye native deps yayin sabuntawa: `--include=optional`
 
-Lokacin da kuka sabunta da `omniroute update` (bayan tabbatarwa, ko tare da `--apply`),
+Lokacin da kuka sabunta da `agentproxy update` (bayan tabbatarwa, ko tare da `--apply`),
 AgentProxy yana gudanar da shigarwar tare da `--include=optional` da aka riga aka haɗa:
 
 ```bash
-npm install -g omniroute@latest --include=optional
+npm install -g agentproxy@latest --include=optional
 ```
 
-Wannan **ba** flag ba ne da za ku tura wa `omniroute update` — mai sabuntawa ne
+Wannan **ba** flag ba ne da za ku tura wa `agentproxy update` — mai sabuntawa ne
 koyaushe yake amfani da shi. Yana tabbatar da cewa `optionalDependencies`
 (`better-sqlite3`, `keytar`, `tls-client`, tarin LLMLingua SLM) sun ci gaba da
 kasancewa bayan sabuntawa ko da saitin npm ɗinku yana da `omit=optional`, wanda
@@ -301,22 +301,22 @@ in ba haka ba zai cire native SQLite driver da haɗin OS-keyring a ɓoye. Don ga
 ainihin umarnin kafin aiwatar da shi:
 
 ```bash
-omniroute update --dry-run
-# [GWADAWA KAWAI] Za a gudanar da: npm install -g omniroute@latest --include=optional
+agentproxy update --dry-run
+# [GWADAWA KAWAI] Za a gudanar da: npm install -g agentproxy@latest --include=optional
 ```
 
-Sauran flags na `omniroute update` (an tabbatar a cikin tushe): `--check` (fita da
+Sauran flags na `agentproxy update` (an tabbatar a cikin tushe): `--check` (fita da
 1 idan ya tsufa), `--apply` (shigar ba tare da tambayar tabbatarwa ba), `--changelog`,
 `--no-backup`, `--yes`.
 
 ---
 
-## Google Gemini CLI ta hanyar `omniroute run gemini`
+## Google Gemini CLI ta hanyar `agentproxy run gemini`
 
 An tabbatar da ƙa’idar aiki da `@google/gemini-cli` 0.50.0: CLI yana mutunta
 `GOOGLE_GEMINI_BASE_URL` kuma yana aika `POST /v1beta/models/<model>:generateContent`
 (da `:streamGenerateContent?alt=sse`) zuwa gare shi — daidai da shimfiɗar Gemini
-ta asali ta AgentProxy (`/v1beta`). `omniroute run gemini` yana haɗa wannan ta
+ta asali ta AgentProxy (`/v1beta`). `agentproxy run gemini` yana haɗa wannan ta
 atomatik:
 
 - `GOOGLE_GEMINI_BASE_URL` → Base URL na AgentProxy mai aiki (tushe, babu `/v1`);
@@ -333,7 +333,7 @@ atomatik:
 - shigar da `--model <id>` daga `--provider`/`--model`.
 
 ```bash
-omniroute run gemini --model glm/glm-5.2 -- --skip-trust -p "hello"
+agentproxy run gemini --model glm/glm-5.2 -- --skip-trust -p "hello"
 ```
 
 Har yanzu kariyar amincewa da workspace ta Gemini tana aiki a yanayin headless —
@@ -357,21 +357,21 @@ auth / upstream / config maimakon ƙimar boolean kawai:
 
 ```bash
 RUN_CLI_SMOKE=1 \
-OMNIROUTE_SMOKE_BASE_URL="http://localhost:20128" \
-OMNIROUTE_SMOKE_MODEL="<provider/model>" \
-OMNIROUTE_SMOKE_API_KEY_ENV="OMNIROUTE_API_KEY" \
+AGENTPROXY_SMOKE_BASE_URL="http://localhost:20128" \
+AGENTPROXY_SMOKE_MODEL="<provider/model>" \
+AGENTPROXY_SMOKE_API_KEY_ENV="AGENTPROXY_API_KEY" \
 node --import tsx/esm --test tests/integration/upstream-cli-smoke.int.test.ts
 ```
 
-Na zaɓi: `OMNIROUTE_SMOKE_TARGETS="codex,opencode,qwen"` yana taƙaita gwajin;
-`OMNIROUTE_SMOKE_TIMEOUT_MS` yana maye gurbin iyakar lokacin daƙiƙa 120 ga kowace manufa.
+Na zaɓi: `AGENTPROXY_SMOKE_TARGETS="codex,opencode,qwen"` yana taƙaita gwajin;
+`AGENTPROXY_SMOKE_TIMEOUT_MS` yana maye gurbin iyakar lokacin daƙiƙa 120 ga kowace manufa.
 
 ---
 
 ## Duba kuma
 
 - [Tsarin Claude Code](./CLAUDE-CODE-CONFIGURATION.md) — cikakken jagorar Claude Code
-- [Tsarin Codex CLI](./CODEX-CLI-CONFIGURATION.md) — saitin tushe na `[model_providers.omniroute]` da ake yi sau ɗaya
+- [Tsarin Codex CLI](./CODEX-CLI-CONFIGURATION.md) — saitin tushe na `[model_providers.agentproxy]` da ake yi sau ɗaya
 - [Yanayin Nesa](./REMOTE-MODE.md) — mahallai, tokens na shiga masu iyakantaccen fage, sarrafa sabar nesa
 - [Manunin Kayan Aikin CLI](../reference/CLI-TOOLS.md) — cikakken kundin kayan aikin da ake tallafawa + shafukan dashboard
 - [Jagorar Saiti](./SETUP_GUIDE.md) — hanyoyin shigarwa da jagorancin fara amfani na farko

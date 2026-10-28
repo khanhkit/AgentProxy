@@ -64,7 +64,7 @@ Content-Type: application/json
 | Header                   | ဦးတည်ချက်     | ဖော်ပြချက်                                                                                                                                                                                                                                                                 |
 | ------------------------ | ------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `X-AgentProxy-No-Cache`   | တောင်းဆိုချက် | ကက်ရှ်ကို ကျော်လွှားရန် `true` ဟု သတ်မှတ်ပါ                                                                                                                                                                                                                                |
-| `x-omniroute-no-memory`  | တောင်းဆိုချက် | ဤတောင်းဆိုချက်အတွက် မှတ်ဉာဏ်နှင့် ကျွမ်းကျင်မှုများ ထည့်သွင်းခြင်းကို ကျော်ရန် `true` ဟု သတ်မှတ်ပါ (ကက်ရှ်မသုံးခြင်းနှင့် အလားတူပြီး ခေါ်ဆိုမှုတစ်ခုချင်းစီ၏ တိုကင်/ကုန်ကျစရိတ် အပိုဝန်ကို ရှောင်ရှားပေးသည်)                                                               |
+| `x-agentproxy-no-memory`  | တောင်းဆိုချက် | ဤတောင်းဆိုချက်အတွက် မှတ်ဉာဏ်နှင့် ကျွမ်းကျင်မှုများ ထည့်သွင်းခြင်းကို ကျော်ရန် `true` ဟု သတ်မှတ်ပါ (ကက်ရှ်မသုံးခြင်းနှင့် အလားတူပြီး ခေါ်ဆိုမှုတစ်ခုချင်းစီ၏ တိုကင်/ကုန်ကျစရိတ် အပိုဝန်ကို ရှောင်ရှားပေးသည်)                                                               |
 | `X-AgentProxy-Progress`   | တောင်းဆိုချက် | တိုးတက်မှု အဖြစ်အပျက်များအတွက် `true` ဟု သတ်မှတ်ပါ                                                                                                                                                                                                                         |
 | `X-Session-Id`           | တောင်းဆိုချက် | ပြင်ပဆက်ရှင် ဆက်နွယ်မှုအတွက် မပြောင်းလဲသော ဆက်ရှင်ကီး                                                                                                                                                                                                                      |
 | `x_session_id`           | တောင်းဆိုချက် | အောက်မျဉ်းပါ မူကွဲကိုလည်း လက်ခံသည် (တိုက်ရိုက် HTTP)                                                                                                                                                                                                                       |
@@ -159,7 +159,7 @@ X-AgentProxy-Lease-Generation: 1
 
 ဤတုံ့ပြန်မှုသည် သာမန်အရည်အချင်းပြည့်မီသော အစုံသည် အချည်းနှီးမဟုတ်ဘဲ လွတ်လပ်သော ကိုယ်စားလှယ်လောင်းတိုင်းကို ပြင်ပတက်ကြွသော lease တစ်ခုက ပိုင်ဆိုင်ထားကြောင်းသာ ဆိုလိုသည်။ ပံ့ပိုးမထားသော မော်ဒယ်များ/ပံ့ပိုးသူများ၊ မူဝါဒမကိုက်ညီမှု၊ cooldown၊ quota၊ ကျန်းမာရေးနှင့် အခြားသာမန်အရည်အချင်းပြည့်မီမှု ပျက်ကွက်မှုများသည် ၎င်းတို့၏ရှိပြီးသား AgentProxy တုံ့ပြန်မှုများကို ထိန်းသိမ်းထားသည်။
 
-### `x-omniroute-compression`
+### `x-agentproxy-compression`
 
 compression plan ကို တောင်းဆိုမှုတစ်ခုစီအတွက် ပြန်လည်ပြင်ဆင်ခြင်း။ အမြင့်ဆုံးဦးစားပေး — routing-combo override၊ active profile၊ auto-trigger နှင့် panel Default တို့ကို ကျော်လွန်သည်။ တန်ဖိုးများ-
 
@@ -394,10 +394,10 @@ field ပါရှိသည်။
 
 ### စဉ်းစားမှုမပါသော မော်ဒယ်မျိုးကွဲများ
 
-စဉ်းစားနိုင်စွမ်းရှိသော Claude မော်ဒယ်များအတွက် `/v1/models` သည် id ရှေ့တွင် `claude-3-omniroute-no-thinking/` ထည့်ထားသည့် **စဉ်းစားမှုမပါသော** မျိုးကွဲကိုလည်း ဖော်ပြပေးသည်-
+စဉ်းစားနိုင်စွမ်းရှိသော Claude မော်ဒယ်များအတွက် `/v1/models` သည် id ရှေ့တွင် `claude-3-agentproxy-no-thinking/` ထည့်ထားသည့် **စဉ်းစားမှုမပါသော** မျိုးကွဲကိုလည်း ဖော်ပြပေးသည်-
 
 ```
-claude-3-omniroute-no-thinking/<provider>/<model>
+claude-3-agentproxy-no-thinking/<provider>/<model>
 ```
 
 ဤ id ကို ရွေးချယ်ခြင်း (ဥပမာ `thinking` block ကို အမြဲပူးတွဲပေးသည့် Claude Code config တစ်ခုတွင်) သည် reasoning ကို ပိတ်ထားလျက် အမှန်တကယ် ` <provider>/<model>` သို့ ပြန်လည်ဖြေရှင်းပေးသည် — `/v1/messages` path တွင် `thinking:{type:"disabled"}` သို့မဟုတ် `/v1/chat/completions` path တွင် `reasoning`/`reasoning_effort` field များကို ဖယ်ရှားပေးခြင်းဖြစ်သည်။ ဤမျိုးကွဲကို စဉ်းစားနိုင်စွမ်းကို ပံ့ပိုးပြီး `disabled` ကိုလည်း လိုက်နာသော Claude-family မော်ဒယ်များအတွက်သာ စာရင်းသွင်းသည် (**နှင့်** `disabled` ကို ငြင်းပယ်သော adaptive-only မော်ဒယ်များကဲ့သို့သော မော်ဒယ်များကို ချန်လှပ်ထားသည်)။ Operator များသည် `ModelSpec.noThinkingAlias` မှတစ်ဆင့် မော်ဒယ်တစ်ခုချင်းစီအလိုက် ဤမျိုးကွဲကို အတင်းဖွင့် သို့မဟုတ် ပိတ်နိုင်သည်။
@@ -483,7 +483,7 @@ POST /v1/music/generations  { "model": "suno/v3.5",   "prompt": "..." }
 > node များ (`localhost`, `127.0.0.1`, `172.16.0.0/12`) ကို အမြဲတမ်း အသုံးပြုနိုင်သည်။ အခြား
 > host တစ်ခုခုရှိ node များ — LAN စက်တစ်လုံး သို့မဟုတ် Tailscale peer — ကို operator က
 > `RERANK_REMOTE_PROVIDER_NODES` feature flag ကို ဖွင့်ထားပြီး node ၏ base URL သည် provider
-> outbound URL policy (`OMNIROUTE_ALLOW_LOCAL_PROVIDER_URLS` / `OMNIROUTE_ALLOW_PRIVATE_PROVIDER_URLS`) ကို ဖြတ်သန်းနိုင်မှသာ အသုံးပြုနိုင်သည်။
+> outbound URL policy (`AGENTPROXY_ALLOW_LOCAL_PROVIDER_URLS` / `AGENTPROXY_ALLOW_PRIVATE_PROVIDER_URLS`) ကို ဖြတ်သန်းနိုင်မှသာ အသုံးပြုနိုင်သည်။
 > cloud-metadata host များသို့မူ မည်သည့်အခါမျှ route မလုပ်ပါ။ Memory engine ၏ rerank အဆင့်သည် ဤ route ကို
 > loopback မှတစ်ဆင့် ခေါ်ဆိုသောကြောင့် Memory ဆက်တင်များရှိ `rerankProviderModel` ကိုလည်း တူညီသောစည်းမျဉ်းက ထိန်းချုပ်သည်။
 >
@@ -606,8 +606,8 @@ WebSocket upgrade handshake ကို အတည်ပြုပြီး wire pro
 
 ```bash
 # HTTP API နှင့် host:port တူညီသည် (မူလသတ်မှတ်ချက် 20128)၊ connection ကို upgrade လုပ်ပါ:
-wscat -c "ws://localhost:20128/v1/responses?api_key=<OMNIROUTE_API_KEY>"
-# (သို့မဟုတ်: -H "Authorization: Bearer <OMNIROUTE_API_KEY>")
+wscat -c "ws://localhost:20128/v1/responses?api_key=<AGENTPROXY_API_KEY>"
+# (သို့မဟုတ်: -H "Authorization: Bearer <AGENTPROXY_API_KEY>")
 
 # ပထမ frame သည် response.create ဖြစ်ရမည်:
 { "type": "response.create", "model": "gpt-5.5", "input": [ { "role": "user", "content": "hi" } ] }
@@ -643,18 +643,18 @@ WebSocket ပံ့ပိုးမှုပါသော custom provider တစ�
 
 ```toml
 model = "gpt-5.5"                 # prefix မပါသော id — "codex/gpt-5.5" မဟုတ်ပါ
-model_provider = "omniroute"
+model_provider = "agentproxy"
 
-[model_providers.omniroute]
+[model_providers.agentproxy]
 name = "AgentProxy (WS)"
 base_url = "http://localhost:20128/v1"   # နောက်ဆုံး slash မထည့်ပါနှင့်၊ WS URL ကို ဆင်းသက်ဖန်တီးသည် (production တွင် https/wss ကို အသုံးပြုပါ)
 wire_api = "responses"                    # Feb 2026 မှစ၍ ပံ့ပိုးသည့် တစ်ခုတည်းသော value
 supports_websockets = true                # Responses-over-WS transport ကို ဖွင့်ပေးသည်
-env_key = "OMNIROUTE_API_KEY"             # AgentProxy API key (Bearer) ကို သိမ်းထားသည်
+env_key = "AGENTPROXY_API_KEY"             # AgentProxy API key (Bearer) ကို သိမ်းထားသည်
 ```
 
 ```bash
-export OMNIROUTE_API_KEY=sk-...           # AgentProxy API key တစ်ခု (REQUIRE_API_KEY=false ဖြစ်ပါက မည်သည့် key မဆို)
+export AGENTPROXY_API_KEY=sk-...           # AgentProxy API key တစ်ခု (REQUIRE_API_KEY=false ဖြစ်ပါက မည်သည့် key မဆို)
 codex exec "Responda apenas: PONG"
 ```
 
@@ -1016,7 +1016,7 @@ Content-Type: application/json
 {
   "success": true,
   "repaired": ["CLAUDE_CODE_OAUTH_CLIENT_ID", "CLAUDE_CODE_OAUTH_CLIENT_SECRET"],
-  "backupPath": "/home/user/.omniroute/backups/env-repair-2026-04-11.bak"
+  "backupPath": "/home/user/.agentproxy/backups/env-repair-2026-04-11.bak"
 }
 ```
 
@@ -1390,7 +1390,7 @@ AgentProxy သည် A2A (Agent-to-Agent) JSON-RPC 2.0 endpoint တစ်ခု�
 
 ```bash
 POST /a2a
-Authorization: Bearer your-api-key   # OMNIROUTE_API_KEY သတ်မှတ်ထားခြင်းမရှိပါက မလိုအပ်ပါ
+Authorization: Bearer your-api-key   # AGENTPROXY_API_KEY သတ်မှတ်ထားခြင်းမရှိပါက မလိုအပ်ပါ
 Content-Type: application/json
 
 {
@@ -1433,7 +1433,7 @@ GET /.well-known/agent.json
 | GET    | `/api/a2a/tasks/[id]`        | task တစ်ခုကို ရယူသည်                                                                                                             |
 | POST   | `/api/a2a/tasks/[id]/cancel` | task တစ်ခုကို ပယ်ဖျက်သည်                                                                                                         |
 
-**Auth:** REST helper များသည် management auth မပါဘဲ အလုပ်လုပ်သည် (dashboard မှ ဖတ်ရှုနိုင်သည်); JSON-RPC `/a2a` route သည် ပြင်ဆင်သတ်မှတ်ထားပါက Bearer `OMNIROUTE_API_KEY` ကို အသုံးပြုသည်။
+**Auth:** REST helper များသည် management auth မပါဘဲ အလုပ်လုပ်သည် (dashboard မှ ဖတ်ရှုနိုင်သည်); JSON-RPC `/a2a` route သည် ပြင်ဆင်သတ်မှတ်ထားပါက Bearer `AGENTPROXY_API_KEY` ကို အသုံးပြုသည်။
 
 ---
 
@@ -1748,7 +1748,7 @@ Provider များ၏ Shadow / A-B နှိုင်းယှဉ်မှု
 
 ## Guardrails
 
-Runtime guardrails (PII ရှာဖွေခြင်း၊ prompt injection ရှာဖွေခြင်း၊ vision bridging) ကို စစ်ဆေးပါ။ Guardrails များသည် request တိုင်းတွင် လုပ်ဆောင်သည်။ Call တစ်ခုချင်းစီအတွက် opt-out လုပ်ရန် `x-omniroute-disabled-guardrails` request header ကို အသုံးပြုနိုင်သည် — အမြဲတမ်းသိမ်းဆည်းထားသော enable/disable surface မရှိပါ။
+Runtime guardrails (PII ရှာဖွေခြင်း၊ prompt injection ရှာဖွေခြင်း၊ vision bridging) ကို စစ်ဆေးပါ။ Guardrails များသည် request တိုင်းတွင် လုပ်ဆောင်သည်။ Call တစ်ခုချင်းစီအတွက် opt-out လုပ်ရန် `x-agentproxy-disabled-guardrails` request header ကို အသုံးပြုနိုင်သည် — အမြဲတမ်းသိမ်းဆည်းထားသော enable/disable surface မရှိပါ။
 
 | Method | Path                   | Description                                                                                           |
 | ------ | ---------------------- | ----------------------------------------------------------------------------------------------------- |

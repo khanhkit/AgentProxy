@@ -164,7 +164,7 @@ export async function POST(request: NextRequest) {
     const sourceScope = getLoginSourceScope(request, auditContext.ipAddress);
 
     // #13679 (PR D, item #5): the well-known INITIAL_PASSWORD placeholder shipped
-    // in .env.example / contrib/podman/omniroute.container / docker deploy
+    // in .env.example / contrib/podman/agentproxy.container / docker deploy
     // manifests is a public, guessable credential. Anyone who knows it (i.e.
     // everyone) can otherwise sign in from anywhere the dashboard is reachable.
     // `ensurePersistentManagementPasswordHash()` already warns loudly on boot,

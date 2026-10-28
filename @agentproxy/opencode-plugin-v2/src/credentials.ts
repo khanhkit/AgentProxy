@@ -21,7 +21,6 @@ export interface ResolvedApiKey {
 }
 
 export const API_KEY_ENV_VAR = "AGENTPROXY_API_KEY";
-export const LEGACY_API_KEY_ENV_VAR = "OMNIROUTE_API_KEY";
 
 /**
  * `ctx.integration.connection` carries the stored credential. Probing the
@@ -106,10 +105,6 @@ export async function resolveApiKey(
   if (optionKey !== undefined && optionKey.length > 0) return { key: optionKey, origin: "option" };
   const fromEnv = process.env[API_KEY_ENV_VAR];
   if (fromEnv !== undefined && fromEnv.length > 0) return { key: fromEnv, origin: "env" };
-  const fromLegacyEnv = process.env[LEGACY_API_KEY_ENV_VAR];
-  if (fromLegacyEnv !== undefined && fromLegacyEnv.length > 0) {
-    return { key: fromLegacyEnv, origin: "env" };
-  }
   return { key: "", origin: "missing" };
 }
 
@@ -122,6 +117,6 @@ export function warnIfMissing(resolved: ResolvedApiKey, integrationID: string, l
   log.warn(
     `[agentproxy-v2] no API key for "${integrationID}": the catalog will be empty. ` +
       `Connect the integration from opencode, set "apiKey" in the plugin options, ` +
-      `or export ${API_KEY_ENV_VAR} (legacy ${LEGACY_API_KEY_ENV_VAR} remains accepted).`
+      `or export ${API_KEY_ENV_VAR}.`
   );
 }

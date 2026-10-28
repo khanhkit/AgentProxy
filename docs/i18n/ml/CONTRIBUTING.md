@@ -116,7 +116,7 @@ npm run build
 പുനഃസ്ഥാപിക്കുകയും ചെയ്യുന്നു. ഡാഷ്ബോർഡ് UI-യെ ബാധിക്കുന്ന മാറ്റങ്ങൾക്കോ പൂർണ്ണ
 റിലീസ് മൂല്യനിർണ്ണയത്തിനോ `npm run build` ഉപയോഗിക്കുക; സംഭാവക പ്രൊഫൈൽ റിലീസ് ബിൽഡിന് പകരമല്ല.
 
-> **VPS ഡിപ്ലോയ്മെന്റ് കുറിപ്പ്:** റിമോട്ട് ഇമേജ് ഡയറക്ടറി `/usr/lib/node_modules/omniroute/app/`
+> **VPS ഡിപ്ലോയ്മെന്റ് കുറിപ്പ്:** റിമോട്ട് ഇമേജ് ഡയറക്ടറി `/usr/lib/node_modules/agentproxy/app/`
 > മാറ്റമില്ലാതെ തുടരുന്നു. ഡിപ്ലോയ് സ്കില്ലുകൾ `dist/`-ന്റെ ഉള്ളടക്കം അതിലേക്ക് rsync ചെയ്യുന്നു.
 > റിപ്പോസിറ്ററിക്കുള്ളിലെ ബിൽഡ് ഔട്ട്പുട്ട് പാത്ത് മാത്രമാണ് മാറിയത് (`app/` → `dist/`).
 
@@ -316,7 +316,7 @@ src/                        # TypeScript (.ts / .tsx)
 │   └── validation/         # Zod v4 schemas
 └── sse/                    # SSE proxy pipeline
 
-open-sse/                   # @omniroute/open-sse workspace
+open-sse/                   # @agentproxy/open-sse workspace
 ├── executors/              # 89 executor implementation modules
 ├── handlers/               # 11 request handlers (chat, responses, embeddings, images, തുടങ്ങിയവ)
 ├── mcp-server/             # MCP server (110 വ്യത്യസ്ത tools, 3 transports, 33 scopes)

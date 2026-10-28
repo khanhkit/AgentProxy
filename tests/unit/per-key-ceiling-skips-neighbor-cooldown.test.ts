@@ -10,7 +10,7 @@ import path from "node:path";
 
 // DATA_DIR must be assigned BEFORE any transitive DB import —
 // core.ts captures resolveWritableDataDir at module-load time.
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-token-ceiling-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-token-ceiling-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 
 const core = await import("../../src/lib/db/core.ts");

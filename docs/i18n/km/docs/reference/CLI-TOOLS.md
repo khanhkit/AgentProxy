@@ -50,11 +50,11 @@ ACP Agents (លំហូរបង្កើតបញ្ច្រាស):
 AgentProxy ដែលកំពុងដំណើរការ (ក្នុងម៉ាស៊ីនមូលដ្ឋាន ឬពីចម្ងាយ) ហើយសរសេរឯកសារកំណត់រចនាសម្ព័ន្ធផ្ទាល់របស់ឧបករណ៍នៅលើម៉ាស៊ីនរបស់អ្នក៖
 
 ```bash
-omniroute setup-codex        omniroute setup-claude       omniroute setup-opencode
-omniroute setup-cline        omniroute setup-kilo         omniroute setup-continue
-omniroute setup-cursor       omniroute setup-roo          omniroute setup-crush
-omniroute setup-goose        omniroute setup-qwen         omniroute setup-aider
-omniroute setup-5dive
+agentproxy setup-codex        agentproxy setup-claude       agentproxy setup-opencode
+agentproxy setup-cline        agentproxy setup-kilo         agentproxy setup-continue
+agentproxy setup-cursor       agentproxy setup-roo          agentproxy setup-crush
+agentproxy setup-goose        agentproxy setup-qwen         agentproxy setup-aider
+agentproxy setup-5dive
 ```
 
 ពាក្យបញ្ជានីមួយៗទទួលយក `--remote <url> --api-key <key>` (កំណត់រចនាសម្ព័ន្ធឧបករណ៍ក្នុងម៉ាស៊ីនមូលដ្ឋានឱ្យប្រើជាមួយ
@@ -65,10 +65,10 @@ AgentProxy ពីចម្ងាយ), `--dry-run` (មើលជាមុនដ�
 សរសេរប្រូហ្វាល់ផ្ទៀងផ្ទាត់ដែលគ្រប់គ្រងដោយ root នៅលើម៉ាស៊ីនមេរបស់ក្រុម ដូច្នេះវាដំណើរការខ្លួនឯងឡើងវិញតាម `sudo`
 ហើយមិនមានរបៀបពីចម្ងាយផ្ទាល់ខ្លួនទេ។ ដើម្បីបើកដំណើរការ CLI ដោយបញ្ចូល env
 ដែលត្រឹមត្រូវ និងមិនសរសេរឯកសារកំណត់រចនាសម្ព័ន្ធអ្វីទាំងអស់ សូមប្រើកម្មវិធីបើកដំណើរការទូទៅ
-`omniroute run <target>` (claude, codex, aider, goose, opencode, qwen,
+`agentproxy run <target>` (claude, codex, aider, goose, opencode, qwen,
 gemini — target និង alias មកពី `bin/cli/cli-manifest.mjs`)។ កម្មវិធីបើកដំណើរការចាស់
-សម្រាប់ឧបករណ៍នីមួយៗ `omniroute launch` (Claude Code) និង `omniroute launch-codex`
-(Codex) នៅតែអាចប្រើបាន។ Gemini CLI អាចបើកដំណើរការបានតែប៉ុណ្ណោះ៖ វាជា target របស់ `omniroute run`
+សម្រាប់ឧបករណ៍នីមួយៗ `agentproxy launch` (Claude Code) និង `agentproxy launch-codex`
+(Codex) នៅតែអាចប្រើបាន។ Gemini CLI អាចបើកដំណើរការបានតែប៉ុណ្ណោះ៖ វាជា target របស់ `agentproxy run`
 ប៉ុន្តែមិនមានរូបមន្ត `setup-*`/`configure` ទេ។
 
 > **ឯកសារយោងពេញលេញ៖** តារាងមេ — អ្វីដែលពាក្យបញ្ជានីមួយៗសរសេរ flag ទាំងអស់
@@ -81,19 +81,19 @@ gemini — target និង alias មកពី `bin/cli/cli-manifest.mjs`)។ �
 home ផ្ទាល់របស់ container ដែល CLI ណាមួយនៅលើ host មិនអាន ហើយវានឹងបាត់នៅពេល
 container បាត់។ AgentProxy រកឃើញស្ថានភាពនេះ ហើយបិទដំណើរការជាមួយលេខកូដ `2` ព្រមទាំងបង្ហាញការណែនាំ ជំនួសឱ្យ
 ការសរសេរ។ មានវិធីដែលគាំទ្រចំនួនពីរដើម្បីបន្ត — ដំឡើង CLI នៅលើ host ហើយ
-ប្រើ `omniroute connect` ដើម្បីភ្ជាប់ទៅ container ឬ bind-mount ថតឯកសារកំណត់រចនាសម្ព័ន្ធ ហើយកំណត់
+ប្រើ `agentproxy connect` ដើម្បីភ្ជាប់ទៅ container ឬ bind-mount ថតឯកសារកំណត់រចនាសម្ព័ន្ធ ហើយកំណត់
 `CLI_CONFIG_HOME` (ប្រូហ្វាល់ `host` របស់ compose)។ រាល់ពាក្យបញ្ជា `setup-*` រួមទាំង
-`omniroute configure` និង `omniroute config set` ទទួលយក
+`agentproxy configure` និង `agentproxy config set` ទទួលយក
 `--allow-container-write` នៅពេលការកំណត់រចនាសម្ព័ន្ធ CLI ផ្ទាល់របស់ container គឺជាអ្វីដែលអ្នក
-ពិតជាចង់ធ្វើ។ `OMNIROUTE_ALLOW_CONTAINER_CONFIG_WRITE=true` ក៏ធ្វើដូចគ្នាសម្រាប់
+ពិតជាចង់ធ្វើ។ `AGENTPROXY_ALLOW_CONTAINER_CONFIG_WRITE=true` ក៏ធ្វើដូចគ្នាសម្រាប់
 ម៉ាស៊ីនមេផងដែរ។ សូមមើល
-[មគ្គុទ្ទេសក៍ Docker → ការកំណត់រចនាសម្ព័ន្ធឧបករណ៍ CLI របស់ host](../guides/DOCKER_GUIDE.md#configuring-host-cli-tools-when-omniroute-runs-in-docker)។
+[មគ្គុទ្ទេសក៍ Docker → ការកំណត់រចនាសម្ព័ន្ធឧបករណ៍ CLI របស់ host](../guides/DOCKER_GUIDE.md#configuring-host-cli-tools-when-agentproxy-runs-in-docker)។
 
 **apply endpoint** របស់ផ្ទាំងគ្រប់គ្រង (`POST /api/cli-tools/apply`) អនុវត្ត
 ការការពារដូចគ្នា៖ នៅក្នុង container ប្រតិបត្តិការសរសេរដែល target របស់វាមិនត្រូវបាន bind-mount ពី
 host នឹងឆ្លើយតបដោយ **`422`** ជាមួយ `containerEphemeralTarget: true` អត្ថបទកំហុស
 ដែលមានសុវត្ថិភាព និង — សម្រាប់ឧបករណ៍ដែលមានរូបមន្តសម្រាប់ host (claude, codex, opencode, cline,
-kilo, continue) — `hostSetupCommand` មួយ (ឧ. `omniroute setup-opencode`) ដើម្បីដំណើរការ
+kilo, continue) — `hostSetupCommand` មួយ (ឧ. `agentproxy setup-opencode`) ដើម្បីដំណើរការ
 នៅលើ host ជំនួសវិញ។ គ្មានអ្វីត្រូវបានសរសេរទេ។ `dryRun: true` នៅតែដំណើរការនៅក្នុងរបៀប container
 ហើយត្រឡប់មាតិកាដែលបានបង្កើត + ផ្លូវ target ដោយមិនប៉ះពាល់ដល់ថាស ដូច្នេះ
 អ្នកអាចមើលជាមុនពីផ្ទាំងគ្រប់គ្រង ហើយអនុវត្តនៅលើ host។ ឥរិយាបថនេះត្រូវបាន
@@ -129,8 +129,8 @@ kilo, continue) — `hostSetupCommand` មួយ (ឧ. `omniroute setup-opencode
 | ------------------------ | ----------------------------------------------------------------------------------------- | -------------------------------------------------------------------- |
 | **មានក្នុងកាតាឡុក**      | បង្ហាញក្នុងកាតាឡុកផ្ទាំងគ្រប់គ្រង (ឈ្មោះ អ្នកផ្គត់ផ្គង់ ឯកសារ ប្រភេទការកំណត់រចនាសម្ព័ន្ធ) | `src/shared/constants/cliTools.ts` (`CLI_TOOLS`)                     |
 | **អាចរកឃើញ**             | ការរកឃើញ binary/config ការត្រួតពិនិត្យស្ថានភាព និងទីតាំងកំណត់រចនាសម្ព័ន្ធ                 | `src/shared/services/cliRuntime.ts` (កាតាឡុកពេលដំណើរការ `CLI_TOOLS`) |
-| **អាចកំណត់រចនាសម្ព័ន្ធ** | គាំទ្រដោយ `omniroute configure <cli>` (មានរូបមន្តរៀបចំ)                                   | `bin/cli/cli-manifest.mjs` (`configure: true`)                       |
-| **អាចដំណើរការ**          | គាំទ្រដោយ `omniroute run <target>` (បានកំណត់ការបញ្ចូល env/args)                           | `bin/cli/cli-manifest.mjs` (`run: true`)                             |
+| **អាចកំណត់រចនាសម្ព័ន្ធ** | គាំទ្រដោយ `agentproxy configure <cli>` (មានរូបមន្តរៀបចំ)                                   | `bin/cli/cli-manifest.mjs` (`configure: true`)                       |
+| **អាចដំណើរការ**          | គាំទ្រដោយ `agentproxy run <target>` (បានកំណត់ការបញ្ចូល env/args)                           | `bin/cli/cli-manifest.mjs` (`run: true`)                             |
 
 `bin/cli/cli-manifest.mjs` គឺជា manifest ដែលអាចប្រតិបត្តិបានជាគោលសម្រាប់ផ្ទៃបញ្ជា CLI៖ `run`, `configure` និងកម្មវិធីបង្កើតការបំពេញពាក្យបញ្ជា shell ទាំងអស់សុទ្ធតែទាញយក
 បញ្ជីគោលដៅ ការដោះស្រាយឈ្មោះហៅក្រៅ (ឧទាហរណ៍ `kilocode`/`kilo-code`/`kilo_cli` → `kilo`)
@@ -263,7 +263,7 @@ interface ToolBatchStatus {
 | `POST /api/cli-tools/codewhale-settings`    | CodeWhale (OPENAI_BASE_URL, ចម្បង + ការធ្វើសមកាលកម្មបែបចាស់ `~/.deepseek`) |
 | `POST /api/cli-tools/smelt-settings`        | Smelt                                                                      |
 | `POST /api/cli-tools/pi-settings`           | ភ្នាក់ងារសរសេរកូដ Pi                                                       |
-| `POST /api/cli-tools/grok-build-settings`   | Grok Build (~/.grok/config.toml, `[model.omniroute]`)                      |
+| `POST /api/cli-tools/grok-build-settings`   | Grok Build (~/.grok/config.toml, `[model.agentproxy]`)                      |
 | `POST /api/cli-tools/qwen-settings`         | Qwen Code (`~/.qwen/settings.json` + គន្លឹះ `.env` ដោយឡែក)                 |
 
 ផ្លូវទាំងអស់ប្រើ `sanitizeErrorMessage()` សម្រាប់ការឆ្លើយតបកំហុស (ច្បាប់តឹងរ៉ឹង #12)។
@@ -358,7 +358,7 @@ npm install -g kilocode
 # Qwen Code
 npm install -g @qwen-code/qwen-code
 
-# Google Gemini CLI (អាចដំណើរការតាមរយៈ `omniroute run gemini` → ផ្ទៃ /v1beta)
+# Google Gemini CLI (អាចដំណើរការតាមរយៈ `agentproxy run gemini` → ផ្ទៃ /v1beta)
 npm install -g @google/gemini-cli
 
 # Aider
@@ -391,12 +391,12 @@ cargo install smelt  # ផ្អែកលើ Rust
 ```bash
 # Endpoint សកលរបស់ AgentProxy
 export OPENAI_BASE_URL="http://localhost:20128/v1"
-export OPENAI_API_KEY="sk-your-omniroute-key"
+export OPENAI_API_KEY="sk-your-agentproxy-key"
 export ANTHROPIC_BASE_URL="http://localhost:20128"
-export ANTHROPIC_AUTH_TOKEN="sk-your-omniroute-key"
+export ANTHROPIC_AUTH_TOKEN="sk-your-agentproxy-key"
 # Gemini CLI អាន GOOGLE_GEMINI_BASE_URL នៅ ROOT (SDK របស់វាភ្ជាប់ /v1beta/... ដោយខ្លួនឯង)
 export GOOGLE_GEMINI_BASE_URL="http://localhost:20128"
-export GEMINI_API_KEY="sk-your-omniroute-key"
+export GEMINI_API_KEY="sk-your-agentproxy-key"
 ```
 
 > សម្រាប់ **ម៉ាស៊ីនមេពីចម្ងាយ** សូមជំនួស `localhost:20128` ដោយ IP ឬដែនរបស់ម៉ាស៊ីនមេ
@@ -414,7 +414,7 @@ mkdir -p ~/.claude && cat > ~/.claude/settings.json << EOF
 {
   "env": {
     "ANTHROPIC_BASE_URL": "http://localhost:20128",
-    "ANTHROPIC_AUTH_TOKEN": "sk-your-omniroute-key"
+    "ANTHROPIC_AUTH_TOKEN": "sk-your-agentproxy-key"
   }
 }
 EOF
@@ -430,20 +430,20 @@ EOF
 
 Codex សម័យថ្មី (v0.137+) អានតែ `~/.codex/config.toml` ប៉ុណ្ណោះ — `config.yaml`
 ចាស់ជារបស់ npm CLI ជំនាន់មុន ហើយត្រូវបានរំលងដោយមិនបង្ហាញសារ។ API
-key ត្រូវរក្សាទុកក្នុងអថេរបរិស្ថាន `OMNIROUTE_API_KEY` (`env_key`) ជានិច្ច និងមិនត្រូវដាក់
+key ត្រូវរក្សាទុកក្នុងអថេរបរិស្ថាន `AGENTPROXY_API_KEY` (`env_key`) ជានិច្ច និងមិនត្រូវដាក់
 នៅក្នុងឯកសារឡើយ៖
 
 ```bash
 mkdir -p ~/.codex && cat > ~/.codex/config.toml << EOF
-model_provider = "omniroute"
+model_provider = "agentproxy"
 
-[model_providers.omniroute]
+[model_providers.agentproxy]
 name                 = "AgentProxy"
 base_url             = "http://localhost:20128/v1"
-env_key              = "OMNIROUTE_API_KEY"
+env_key              = "AGENTPROXY_API_KEY"
 requires_openai_auth = false
 EOF
-export OMNIROUTE_API_KEY="sk-your-omniroute-key"
+export AGENTPROXY_API_KEY="sk-your-agentproxy-key"
 ```
 
 ឯកសារយោងពេញលេញ (profiles, `wire_api`, context windows)៖ [CODEX-CLI-CONFIGURATION.md](../guides/CODEX-CLI-CONFIGURATION.md)។
@@ -459,12 +459,12 @@ mkdir -p ~/.config/opencode && cat > ~/.config/opencode/opencode.json << EOF
 {
   "\$schema": "https://opencode.ai/config.json",
   "provider": {
-    "omniroute": {
+    "agentproxy": {
       "npm": "@ai-sdk/openai-compatible",
       "name": "AgentProxy",
       "options": {
         "baseURL": "http://localhost:20128/v1",
-        "apiKey": "sk-your-omniroute-key"
+        "apiKey": "sk-your-agentproxy-key"
       },
       "models": {
         "claude-sonnet-4-5": { "name": "claude-sonnet-4-5" },
@@ -479,7 +479,7 @@ EOF
 
 **សាកល្បង៖** `opencode`
 
-> ប្រើ `opencode run "your prompt" --model omniroute/claude-sonnet-4-5-thinking --variant high`
+> ប្រើ `opencode run "your prompt" --model agentproxy/claude-sonnet-4-5-thinking --variant high`
 > ដើម្បីផ្ញើ thinking variants។
 
 ---
@@ -493,7 +493,7 @@ mkdir -p ~/.cline/data && cat > ~/.cline/data/globalState.json << EOF
 {
   "apiProvider": "openai",
   "openAiBaseUrl": "http://localhost:20128/v1",
-  "openAiApiKey": "sk-your-omniroute-key"
+  "openAiApiKey": "sk-your-agentproxy-key"
 }
 EOF
 ```
@@ -510,7 +510,7 @@ EOF
 **របៀប CLI៖**
 
 ```bash
-kilocode --api-base http://localhost:20128/v1 --api-key sk-your-omniroute-key
+kilocode --api-base http://localhost:20128/v1 --api-key sk-your-agentproxy-key
 ```
 
 **ការកំណត់ VS Code៖**
@@ -518,7 +518,7 @@ kilocode --api-base http://localhost:20128/v1 --api-key sk-your-omniroute-key
 ```json
 {
   "kilo-code.openAiBaseUrl": "http://localhost:20128/v1",
-  "kilo-code.apiKey": "sk-your-omniroute-key"
+  "kilo-code.apiKey": "sk-your-agentproxy-key"
 }
 ```
 
@@ -536,7 +536,7 @@ models:
     provider: openai
     model: auto
     apiBase: http://localhost:20128/v1
-    apiKey: sk-your-omniroute-key
+    apiKey: sk-your-agentproxy-key
     default: true
 ```
 
@@ -563,8 +563,8 @@ models:
     "name": "AgentProxy Auto",
     "family": "gpt-4",
     "version": "1.0.0",
-    "url": "http://localhost:20128/api/v1/vscode/sk-your-omniroute-key/chat/completions",
-    "modelsUrl": "http://localhost:20128/api/v1/vscode/sk-your-omniroute-key/models",
+    "url": "http://localhost:20128/api/v1/vscode/sk-your-agentproxy-key/chat/completions",
+    "modelsUrl": "http://localhost:20128/api/v1/vscode/sk-your-agentproxy-key/models",
     "requestFormat": "openai-chat-completions",
     "contextWindow": 256000,
     "maxOutputTokens": 32768,
@@ -577,7 +577,7 @@ models:
 
 **ចំណាំ៖**
 
-- ជំនួស `sk-your-omniroute-key` ដោយ API key ដែលបានបង្កើតនៅក្នុង AgentProxy។
+- ជំនួស `sk-your-agentproxy-key` ដោយ API key ដែលបានបង្កើតនៅក្នុង AgentProxy។
 - វាល `url` គួរតែចង្អុលទៅ `/api/v1/vscode/{token}/chat/completions`។
 - វាល `modelsUrl` គួរតែចង្អុលទៅ `/api/v1/vscode/{token}/models`។
 - គួរប្រើលំហូរធម្មតា `/v1` + Bearer header នៅពេល client គាំទ្រ custom headers។
@@ -603,28 +603,28 @@ kiro-cli status
 
 ## 10. AgentProxy CLI ផ្ទៃក្នុង
 
-ឯកសារប្រតិបត្តិ `omniroute` ផ្តល់ពាក្យបញ្ជាសម្រាប់វដ្តជីវិតរបស់ម៉ាស៊ីនមេ ការរៀបចំ ការធ្វើរោគវិនិច្ឆ័យ និងការគ្រប់គ្រងអ្នកផ្តល់សេវា។ ចំណុចចាប់ផ្តើម៖ `bin/omniroute.mjs`។
+ឯកសារប្រតិបត្តិ `agentproxy` ផ្តល់ពាក្យបញ្ជាសម្រាប់វដ្តជីវិតរបស់ម៉ាស៊ីនមេ ការរៀបចំ ការធ្វើរោគវិនិច្ឆ័យ និងការគ្រប់គ្រងអ្នកផ្តល់សេវា។ ចំណុចចាប់ផ្តើម៖ `bin/agentproxy.mjs`។
 
 ```bash
-omniroute                              # ចាប់ផ្តើមម៉ាស៊ីនមេ (ច្រកលំនាំដើម 20128)
-omniroute setup                        # អ្នកជំនួយការរៀបចំអន្តរកម្ម
-omniroute doctor                       # ពិនិត្យការកំណត់រចនាសម្ព័ន្ធ DB ច្រក និងបរិស្ថានពេលដំណើរការ
-omniroute providers list               # ការតភ្ជាប់អ្នកផ្តល់សេវាដែលបានកំណត់រចនាសម្ព័ន្ធ
-omniroute providers test-all           # សាកល្បងរាល់ការតភ្ជាប់ដែលសកម្ម
-omniroute reset-password               # កំណត់ពាក្យសម្ងាត់អ្នកគ្រប់គ្រងឡើងវិញ
-omniroute logs                         # ស្ទ្រីមកំណត់ហេតុសំណើ
-omniroute health                       # ស្ថានភាពសុខភាពលម្អិត (breakers, cache, memory)
-omniroute --version                    # បង្ហាញកំណែ
-omniroute --help                       # បង្ហាញពាក្យបញ្ជាទាំងអស់
+agentproxy                              # ចាប់ផ្តើមម៉ាស៊ីនមេ (ច្រកលំនាំដើម 20128)
+agentproxy setup                        # អ្នកជំនួយការរៀបចំអន្តរកម្ម
+agentproxy doctor                       # ពិនិត្យការកំណត់រចនាសម្ព័ន្ធ DB ច្រក និងបរិស្ថានពេលដំណើរការ
+agentproxy providers list               # ការតភ្ជាប់អ្នកផ្តល់សេវាដែលបានកំណត់រចនាសម្ព័ន្ធ
+agentproxy providers test-all           # សាកល្បងរាល់ការតភ្ជាប់ដែលសកម្ម
+agentproxy reset-password               # កំណត់ពាក្យសម្ងាត់អ្នកគ្រប់គ្រងឡើងវិញ
+agentproxy logs                         # ស្ទ្រីមកំណត់ហេតុសំណើ
+agentproxy health                       # ស្ថានភាពសុខភាពលម្អិត (breakers, cache, memory)
+agentproxy --version                    # បង្ហាញកំណែ
+agentproxy --help                       # បង្ហាញពាក្យបញ្ជាទាំងអស់
 ```
 
 ### ការរៀបចំ និងការចាប់ផ្តើម
 
 ```bash
-omniroute setup                        # អ្នកជំនួយការរៀបចំអន្តរកម្ម
-omniroute setup --non-interactive      # របៀប CI/ស្វ័យប្រវត្តិកម្ម (អានអថេរបរិស្ថាន + flags)
-omniroute setup --password '<value>'   # កំណត់ពាក្យសម្ងាត់អ្នកគ្រប់គ្រងដោយផ្ទាល់
-omniroute setup --add-provider \
+agentproxy setup                        # អ្នកជំនួយការរៀបចំអន្តរកម្ម
+agentproxy setup --non-interactive      # របៀប CI/ស្វ័យប្រវត្តិកម្ម (អានអថេរបរិស្ថាន + flags)
+agentproxy setup --password '<value>'   # កំណត់ពាក្យសម្ងាត់អ្នកគ្រប់គ្រងដោយផ្ទាល់
+agentproxy setup --add-provider \
   --provider openai \
   --api-key '<value>' \
   --test-provider                      # បន្ថែម និងសាកល្បងអ្នកផ្តល់សេវាក្នុងពេលតែមួយ
@@ -634,21 +634,21 @@ omniroute setup --add-provider \
 
 | អថេរ                | គោលបំណង                                                                    |
 | ------------------- | -------------------------------------------------------------------------- |
-| `OMNIROUTE_API_KEY` | API key របស់អ្នកផ្តល់សេវា (ភ្ជាប់ទៅ `--api-key` តាមរយៈ Commander `.env()`) |
+| `AGENTPROXY_API_KEY` | API key របស់អ្នកផ្តល់សេវា (ភ្ជាប់ទៅ `--api-key` តាមរយៈ Commander `.env()`) |
 | `DATA_DIR`          | កំណត់ជំនួសថតទិន្នន័យ AgentProxy                                             |
 
 ធាតុបញ្ចូលដោយគ្មានអន្តរកម្មផ្សេងទៀតទាំងអស់ត្រូវបានបញ្ជូនជា flags មិនមែនជាអថេរបរិស្ថានទេ៖
 `--password`, `--provider`, `--provider-name`, `--provider-base-url`, `--default-model`
-(សូមមើលជម្រើស `omniroute setup` ខាងលើ)។
+(សូមមើលជម្រើស `agentproxy setup` ខាងលើ)។
 
 ### ការធ្វើរោគវិនិច្ឆ័យ
 
 ```bash
-omniroute doctor                       # ពិនិត្យការកំណត់រចនាសម្ព័ន្ធ DB ច្រក បរិស្ថានពេលដំណើរការ អង្គចងចាំ និងស្ថានភាពនៅរស់
-omniroute doctor --json                # JSON ដែលម៉ាស៊ីនអាចអានបាន
-omniroute doctor --no-liveness         # រំលងការស្ទង់ពិនិត្យសុខភាពតាម HTTP
-omniroute doctor --host 0.0.0.0        # កំណត់ជំនួស host សម្រាប់ការពិនិត្យស្ថានភាពនៅរស់
-omniroute doctor --liveness-url <url>  # កំណត់ជំនួស URL ពេញលេញរបស់ endpoint សុខភាព
+agentproxy doctor                       # ពិនិត្យការកំណត់រចនាសម្ព័ន្ធ DB ច្រក បរិស្ថានពេលដំណើរការ អង្គចងចាំ និងស្ថានភាពនៅរស់
+agentproxy doctor --json                # JSON ដែលម៉ាស៊ីនអាចអានបាន
+agentproxy doctor --no-liveness         # រំលងការស្ទង់ពិនិត្យសុខភាពតាម HTTP
+agentproxy doctor --host 0.0.0.0        # កំណត់ជំនួស host សម្រាប់ការពិនិត្យស្ថានភាពនៅរស់
+agentproxy doctor --liveness-url <url>  # កំណត់ជំនួស URL ពេញលេញរបស់ endpoint សុខភាព
 ```
 
 doctor ដំណើរការការត្រួតពិនិត្យទាំងនេះ៖ `Config`, `Database`, `Storage/encryption`,
@@ -658,22 +658,22 @@ doctor ដំណើរការការត្រួតពិនិត្យទ�
 ### ការគ្រប់គ្រងអ្នកផ្តល់សេវា
 
 ```bash
-omniroute providers available                       # កាតាឡុកអ្នកផ្តល់សេវា AgentProxy
-omniroute providers available --search openai       # ត្រងកាតាឡុកតាម id/name/alias/category
-omniroute providers available --category api-key    # ត្រងតាមប្រភេទ (api-key, oauth, free, ...)
-omniroute providers available --json                # JSON ដែលម៉ាស៊ីនអាចអានបាន
+agentproxy providers available                       # កាតាឡុកអ្នកផ្តល់សេវា AgentProxy
+agentproxy providers available --search openai       # ត្រងកាតាឡុកតាម id/name/alias/category
+agentproxy providers available --category api-key    # ត្រងតាមប្រភេទ (api-key, oauth, free, ...)
+agentproxy providers available --json                # JSON ដែលម៉ាស៊ីនអាចអានបាន
 
-omniroute providers list                            # ការតភ្ជាប់អ្នកផ្តល់សេវាដែលបានកំណត់រចនាសម្ព័ន្ធ
-omniroute providers list --json
+agentproxy providers list                            # ការតភ្ជាប់អ្នកផ្តល់សេវាដែលបានកំណត់រចនាសម្ព័ន្ធ
+agentproxy providers list --json
 
-omniroute providers test <id|name>                  # សាកល្បងការតភ្ជាប់មួយដែលបានកំណត់រចនាសម្ព័ន្ធ
-omniroute providers test-all                        # សាកល្បងរាល់ការតភ្ជាប់ដែលសកម្ម
-omniroute providers validate                        # ការផ្ទៀងផ្ទាត់រចនាសម្ព័ន្ធក្នុងមូលដ្ឋានតែប៉ុណ្ណោះ
-omniroute providers add <provider> --credential-env PROVIDER_KEY
-omniroute providers import ./providers.json --dry-run --json
-omniroute providers auth <provider>                 # លំហូរ OAuth ដែលមានស្រាប់
-omniroute providers edit <id|name> --default-model <model>
-omniroute providers remove <id|name> --yes
+agentproxy providers test <id|name>                  # សាកល្បងការតភ្ជាប់មួយដែលបានកំណត់រចនាសម្ព័ន្ធ
+agentproxy providers test-all                        # សាកល្បងរាល់ការតភ្ជាប់ដែលសកម្ម
+agentproxy providers validate                        # ការផ្ទៀងផ្ទាត់រចនាសម្ព័ន្ធក្នុងមូលដ្ឋានតែប៉ុណ្ណោះ
+agentproxy providers add <provider> --credential-env PROVIDER_KEY
+agentproxy providers import ./providers.json --dry-run --json
+agentproxy providers auth <provider>                 # លំហូរ OAuth ដែលមានស្រាប់
+agentproxy providers edit <id|name> --default-model <model>
+agentproxy providers remove <id|name> --yes
 ```
 
 `providers add/import/auth/edit/remove` ផ្តោតលើ API ជាចម្បង ហេតុនេះវាដំណើរការជាមួយ
@@ -686,19 +686,19 @@ omniroute providers remove <id|name> --yes
 ### ការសង្គ្រោះ និងការកំណត់ឡើងវិញ
 
 ```bash
-omniroute reset-password                # កំណត់ពាក្យសម្ងាត់អ្នកគ្រប់គ្រងឡើងវិញ (ក៏អាចប្រើ៖ omniroute-reset-password)
-omniroute reset-encrypted-columns       # បង្ហាញការព្រមាន + dry-run សម្រាប់ការកំណត់ព័ត៌មានសម្ងាត់ដែលបានអ៊ិនគ្រីបឡើងវិញ
-omniroute reset-encrypted-columns --force  # កំណត់ព័ត៌មានសម្ងាត់ដែលបានអ៊ិនគ្រីបក្នុង SQLite ទៅជា null ពិតប្រាកដ
+agentproxy reset-password                # កំណត់ពាក្យសម្ងាត់អ្នកគ្រប់គ្រងឡើងវិញ (ក៏អាចប្រើ៖ agentproxy-reset-password)
+agentproxy reset-encrypted-columns       # បង្ហាញការព្រមាន + dry-run សម្រាប់ការកំណត់ព័ត៌មានសម្ងាត់ដែលបានអ៊ិនគ្រីបឡើងវិញ
+agentproxy reset-encrypted-columns --force  # កំណត់ព័ត៌មានសម្ងាត់ដែលបានអ៊ិនគ្រីបក្នុង SQLite ទៅជា null ពិតប្រាកដ
 ```
 
 ### ការនាំចេញព័ត៌មានសម្ងាត់ (⚠ ប្រើប្រាស់ដោយប្រុងប្រយ័ត្ន)
 
 ```bash
-omniroute auth export                                 # បង្ហាញការព្រមាន + ទាមទារការបញ្ជាក់ — មិនចូលប្រើ DB
-omniroute auth export --force                          # នាំចេញព័ត៌មានសម្ងាត់ដែលបានឌិគ្រីបរបស់ការតភ្ជាប់ទាំងអស់ទៅ stdout ជា JSON
-omniroute auth export --force --id <id>                 # នាំចេញតែការតភ្ជាប់ដែលត្រូវគ្នា
-omniroute auth export --force --format env               # បញ្ចេញបន្ទាត់ OMNIROUTE_<PROVIDER>_<FIELD>=<value>
-omniroute auth export --force --out creds.json           # សរសេរទៅឯកសារ (បង្កើតដោយមានសិទ្ធិ 0600)
+agentproxy auth export                                 # បង្ហាញការព្រមាន + ទាមទារការបញ្ជាក់ — មិនចូលប្រើ DB
+agentproxy auth export --force                          # នាំចេញព័ត៌មានសម្ងាត់ដែលបានឌិគ្រីបរបស់ការតភ្ជាប់ទាំងអស់ទៅ stdout ជា JSON
+agentproxy auth export --force --id <id>                 # នាំចេញតែការតភ្ជាប់ដែលត្រូវគ្នា
+agentproxy auth export --force --format env               # បញ្ចេញបន្ទាត់ AGENTPROXY_<PROVIDER>_<FIELD>=<value>
+agentproxy auth export --force --out creds.json           # សរសេរទៅឯកសារ (បង្កើតដោយមានសិទ្ធិ 0600)
 ```
 
 `auth export` ដំណើរការ **ក្នុងមូលដ្ឋានតែប៉ុណ្ណោះ** (អាន SQLite ដោយផ្ទាល់ គ្មាន HTTP route) ហើយដោយចេតនា វាបង្ហាញ/សរសេរ
@@ -713,33 +713,33 @@ omniroute auth export --force --out creds.json           # សរសេរទៅ
 ពាក្យបញ្ជាទាំងនេះសន្មតថាម៉ាស៊ីនមេ AgentProxy កំពុងដំណើរការ លើកលែងតែមានការកត់សម្គាល់ផ្សេង៖
 
 ```bash
-omniroute status                       # ស្ថានភាពពេលដំណើរការលម្អិត
-omniroute logs                         # បង្ហាញកំណត់ហេតុសំណើជាបន្តបន្ទាប់ (--json, --search, --follow)
-omniroute config list                  # បង្ហាញឧបករណ៍ CLI ដែលបានកំណត់រចនាសម្ព័ន្ធ
+agentproxy status                       # ស្ថានភាពពេលដំណើរការលម្អិត
+agentproxy logs                         # បង្ហាញកំណត់ហេតុសំណើជាបន្តបន្ទាប់ (--json, --search, --follow)
+agentproxy config list                  # បង្ហាញឧបករណ៍ CLI ដែលបានកំណត់រចនាសម្ព័ន្ធ
 
-omniroute provider list                # រាយបញ្ជីអ្នកផ្តល់សេវាដែលអាចប្រើបាន (ឈ្មោះក្លែងកាត់របស់ providers list)
-omniroute provider add                 # ចុះឈ្មោះ AgentProxy ជាអ្នកផ្តល់សេវានៅលើឧបករណ៍មួយ
-omniroute keys add | list | remove     # គ្រប់គ្រង API keys
-omniroute models [provider]            # រាយបញ្ជីម៉ូដែល (--json, --search)
-omniroute combo list | switch | create | delete
+agentproxy provider list                # រាយបញ្ជីអ្នកផ្តល់សេវាដែលអាចប្រើបាន (ឈ្មោះក្លែងកាត់របស់ providers list)
+agentproxy provider add                 # ចុះឈ្មោះ AgentProxy ជាអ្នកផ្តល់សេវានៅលើឧបករណ៍មួយ
+agentproxy keys add | list | remove     # គ្រប់គ្រង API keys
+agentproxy models [provider]            # រាយបញ្ជីម៉ូដែល (--json, --search)
+agentproxy combo list | switch | create | delete
 
-omniroute backup                       # ថតចម្លងរូបភាពនៃការកំណត់រចនាសម្ព័ន្ធ + មូលដ្ឋានទិន្នន័យ
-omniroute restore                      # ស្ដារពីរូបភាពថតចម្លងពីមុន
+agentproxy backup                       # ថតចម្លងរូបភាពនៃការកំណត់រចនាសម្ព័ន្ធ + មូលដ្ឋានទិន្នន័យ
+agentproxy restore                      # ស្ដារពីរូបភាពថតចម្លងពីមុន
 
-omniroute health                       # ស្ថានភាពលម្អិត (ឧបករណ៍ផ្ដាច់សៀគ្វី, ឃ្លាំងសម្ងាត់, អង្គចងចាំ)
-omniroute quota                        # ការប្រើប្រាស់កូតារបស់អ្នកផ្តល់សេវា
-omniroute cache                        # ស្ថានភាពឃ្លាំងសម្ងាត់
-omniroute cache clear                  # សម្អាតឃ្លាំងសម្ងាត់ semantic + signature
+agentproxy health                       # ស្ថានភាពលម្អិត (ឧបករណ៍ផ្ដាច់សៀគ្វី, ឃ្លាំងសម្ងាត់, អង្គចងចាំ)
+agentproxy quota                        # ការប្រើប្រាស់កូតារបស់អ្នកផ្តល់សេវា
+agentproxy cache                        # ស្ថានភាពឃ្លាំងសម្ងាត់
+agentproxy cache clear                  # សម្អាតឃ្លាំងសម្ងាត់ semantic + signature
 
-omniroute mcp status | restart         # ស្ថានភាព / ចាប់ផ្ដើមម៉ាស៊ីនមេ MCP ឡើងវិញ
-omniroute a2a status | card            # ស្ថានភាពម៉ាស៊ីនមេ A2A / កាតភ្នាក់ងារ
+agentproxy mcp status | restart         # ស្ថានភាព / ចាប់ផ្ដើមម៉ាស៊ីនមេ MCP ឡើងវិញ
+agentproxy a2a status | card            # ស្ថានភាពម៉ាស៊ីនមេ A2A / កាតភ្នាក់ងារ
 
-omniroute tunnel list | create | stop  # គ្រប់គ្រង tunnel (cloudflare/tailscale/ngrok)
-omniroute env show | get <k> | set <k> <v>  # ពិនិត្យមើល / កំណត់អថេរបរិស្ថាន (បណ្ដោះអាសន្ន)
+agentproxy tunnel list | create | stop  # គ្រប់គ្រង tunnel (cloudflare/tailscale/ngrok)
+agentproxy env show | get <k> | set <k> <v>  # ពិនិត្យមើល / កំណត់អថេរបរិស្ថាន (បណ្ដោះអាសន្ន)
 
-omniroute test                         # ការធ្វើតេស្តរហ័សលើការតភ្ជាប់ទៅអ្នកផ្តល់សេវា
-omniroute update                       # ពិនិត្យរកបច្ចុប្បន្នភាព
-omniroute completion                   # បង្កើតការបំពេញពាក្យបញ្ជា shell ដោយស្វ័យប្រវត្តិ
+agentproxy test                         # ការធ្វើតេស្តរហ័សលើការតភ្ជាប់ទៅអ្នកផ្តល់សេវា
+agentproxy update                       # ពិនិត្យរកបច្ចុប្បន្នភាព
+agentproxy completion                   # បង្កើតការបំពេញពាក្យបញ្ជា shell ដោយស្វ័យប្រវត្តិ
 ```
 
 ### ជម្រើសទូទៅ
@@ -787,7 +787,7 @@ OpenAI base ស្តង់ដារ: http://localhost:20128/v1
 
 | កំហុស                                      | មូលហេតុ                       | ដំណោះស្រាយ                                                 |
 | ------------------------------------------ | ----------------------------- | ---------------------------------------------------------- |
-| `Connection refused`                       | AgentProxy មិនកំពុងដំណើរការ    | `omniroute serve`                                          |
+| `Connection refused`                       | AgentProxy មិនកំពុងដំណើរការ    | `agentproxy serve`                                          |
 | `401 Unauthorized`                         | API key មិនត្រឹមត្រូវ         | ពិនិត្យក្នុង `/dashboard/api-manager`                      |
 | `No combo configured`                      | មិនមាន routing combo ដែលសកម្ម | រៀបចំក្នុង `/dashboard/combos`                             |
 | CLI បង្ហាញ "មិនបានដំឡើង"                   | Binary មិនស្ថិតក្នុង PATH     | ពិនិត្យ `which <command>`                                  |

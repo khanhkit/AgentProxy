@@ -30,7 +30,7 @@ AgentProxy ನ ಸಾಮರ್ಥ್ಯಗಳು, ಕೌಶಲ್ಯಗಳು �
 ಎಲ್ಲಾ `/a2a` ವಿನಂತಿಗಳಿಗೆ `Authorization` ಹೆಡರ್ ಮೂಲಕ API ಕೀ ಅಗತ್ಯವಿದೆ:
 
 ```
-Authorization: Bearer YOUR_OMNIROUTE_API_KEY
+Authorization: Bearer YOUR_AGENTPROXY_API_KEY
 ```
 
 ಸರ್ವರ್ನಲ್ಲಿ ಯಾವುದೇ API ಕೀ ಕಾನ್ಫಿಗರ್ ಮಾಡದಿದ್ದರೆ, ದೃಢೀಕರಣವನ್ನು ಬೈಪಾಸ್ ಮಾಡಲಾಗುತ್ತದೆ.
@@ -187,7 +187,7 @@ JSON-RPC ಎಂಡ್ಪಾಯಿಂಟ್ `/a2a` ಅಂಗೀಕೃತ A2A ಪ�
 | `/api/a2a/tasks/[id]`        | GET   | ID ಮೂಲಕ ಕಾರ್ಯವನ್ನು ಪಡೆಯಿರಿ                                | ನಿರ್ವಹಣೆ                                        |
 | `/api/a2a/tasks/[id]/cancel` | POST  | ಚಾಲನೆಯಲ್ಲಿರುವ ಕಾರ್ಯವನ್ನು ರದ್ದುಗೊಳಿಸಿ                      | ನಿರ್ವಹಣೆ                                        |
 | `/.well-known/agent.json`    | GET   | ಏಜೆಂಟ್ ಕಾರ್ಡ್ (A2A ಅನ್ವೇಷಣೆ)                              | (ಸಾರ್ವಜನಿಕ, 3600s ವರೆಗೆ ಕ್ಯಾಶ್ ಮಾಡಲಾಗಿದೆ)       |
-| `/api/a2a/tasks`             | POST  | OmniConductor ಫ್ಲೀಟ್ಗೆ ಒಳಬರುವ ನಿಯೋಜನೆ (Conductor PRD RF5) | Bearer ಮತ್ತು `OMNIROUTE_API_KEY` + `a2aEnabled` |
+| `/api/a2a/tasks`             | POST  | OmniConductor ಫ್ಲೀಟ್ಗೆ ಒಳಬರುವ ನಿಯೋಜನೆ (Conductor PRD RF5) | Bearer ಮತ್ತು `AGENTPROXY_API_KEY` + `a2aEnabled` |
 
 **ಒಳಬರುವ Conductor ನಿಯೋಜನೆ (`POST /api/a2a/tasks`):** ಬಾಹ್ಯ A2A ಏಜೆಂಟ್ಗಳು AgentProxy ಮೂಲಕ ಕೋಡಿಂಗ್ ಕೆಲಸವನ್ನು OmniConductor ಫ್ಲೀಟ್ಗೆ ನಿಯೋಜಿಸುತ್ತವೆ. ಬಾಡಿ: `{ skill: "conductor" | "conductor-cli-<profile>", messages: [{role, content}], metadata: { conductor: { repo: { url, base_ref? }, mode?, cli?, model? } } }` — Conductor ಫ್ಲೀಟ್ ಕೌಶಲ್ಯಗಳನ್ನು (ಏಜೆಂಟ್ ಕಾರ್ಡ್ನಲ್ಲಿ ಪ್ರಕಟಿಸಲಾದವುಗಳನ್ನು) ಮಾತ್ರ ನಿಯೋಜಿಸಬಹುದು; `metadata.conductor.repo.url` ಅಗತ್ಯವಿದೆ (ಫ್ಲೀಟ್ git ರೆಪೊಗಳಲ್ಲಿ ಕೆಲಸ ಮಾಡುತ್ತದೆ). ಈ ರೂಟ್ ಸರ್ವರ್-ಸೈಡ್ `CONDUCTOR_ORCHESTRATOR_TOKEN` (`CONDUCTOR_HUB_TOKEN` ಫಾಲ್ಬ್ಯಾಕ್) ಬಳಸಿಕೊಂಡು ಹಬ್ನ `POST /v1/tasks` ಗೆ ಅನುವಾದಿಸುತ್ತದೆ ಮತ್ತು `201 { conductor_task_id, state: "submitted" }` ಅನ್ನು ಹಿಂತಿರುಗಿಸುತ್ತದೆ; ಕಾರ್ಯದ ಸ್ಥಿತಿಗಳು SSE→A2A ಮಿರರ್ (RF1) ಮೂಲಕ ಹಿಂದಿರುಗುತ್ತವೆ ಮತ್ತು `GET /api/a2a/tasks?skill=conductor` ಮೂಲಕ ಗೋಚರಿಸುತ್ತವೆ.
 

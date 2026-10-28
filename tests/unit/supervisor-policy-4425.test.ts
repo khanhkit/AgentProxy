@@ -56,7 +56,7 @@ test("#4425 waitUntilPortFree no-ops on an invalid port", async () => {
 // #4425 follow-up: the port guard above was a no-op on macOS/BSD. Node sets SO_REUSEADDR
 // on every listener it creates, and there a specific-address bind coexists with an
 // existing wildcard bind (Linux keeps rejecting the overlap in LISTEN state). So a server
-// listening on 0.0.0.0 — which is what `omniroute serve` binds by default — was reported
+// listening on 0.0.0.0 — which is what `agentproxy serve` binds by default — was reported
 // as "free" by the loopback-only probe: the supervisor skipped the wait, the respawned
 // child hit EADDRINUSE anyway, and the crash/restart loop continued.
 test("#4425 wildcard-bound port is not reported free (SO_REUSEADDR overlap)", async () => {

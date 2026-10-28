@@ -44,7 +44,7 @@ npm run test:e2e           # നിർബന്ധമല്ല, എന്നാ�
 WS1.3 ഉറപ്പ് നിലനിർത്തിക്കൊണ്ട്, v3.8.48 വരെ പ്രോജക്റ്റിനുണ്ടായിരുന്ന പൂർണ്ണമായും ഓട്ടോമാറ്റിക് പ്രവാഹം
 ഇത് പുനഃസ്ഥാപിക്കുന്നു (ചോർന്ന ടോക്കണിന് ഒറ്റയ്ക്ക് പ്രസിദ്ധീകരിക്കാനാകില്ല — ടോക്കൺ തന്നെയില്ല).
 
-**ഒറ്റത്തവണ സജ്ജീകരണം (ഉടമ):** npmjs.com → പാക്കേജ് `omniroute` → Settings → _Trusted
+**ഒറ്റത്തവണ സജ്ജീകരണം (ഉടമ):** npmjs.com → പാക്കേജ് `agentproxy` → Settings → _Trusted
 Publisher_ → GitHub: ഉടമ `diegosouzapw`, റിപ്പോ `AgentProxy`, വർക്ക്ഫ്ലോ `npm-publish.yml`
 (എൻവയൺമെന്റ്: ഒന്നുമില്ല). ഇത് നിലവിൽ വരുന്നതുവരെ, ഓട്ടോമാറ്റിക് ഘട്ടം `ENEEDAUTH` ഉപയോഗിച്ച് പരാജയപ്പെടും:
 `publish_mode=staged` (താഴെ) അല്ലെങ്കിൽ `direct` ഉപയോഗിച്ച് വീണ്ടും ഡിസ്പാച്ച് ചെയ്യുക.
@@ -58,7 +58,7 @@ npm-publish വർക്ക്ഫ്ലോ ഇനി നേരിട്ട് �
 
 **വർക്ക്ഫ്ലോ ഗ്രീൻ ആയതിനുശേഷമുള്ള ഉടമയുടെ പ്രവാഹം:**
 
-1. `npm stage list omniroute` — സ്റ്റേജ് id കണ്ടെത്തുക (വർക്ക്ഫ്ലോ സംഗ്രഹത്തിലും ഇത് പ്രിന്റ് ചെയ്യപ്പെടും).
+1. `npm stage list agentproxy` — സ്റ്റേജ് id കണ്ടെത്തുക (വർക്ക്ഫ്ലോ സംഗ്രഹത്തിലും ഇത് പ്രിന്റ് ചെയ്യപ്പെടും).
 2. സ്റ്റേജ് ചെയ്ത ബൈറ്റുകൾ പരിശോധിക്കുക (ശുപാർശ ചെയ്യുന്നു): `npm stage download <id>`, തുടർന്ന് ഡൗൺലോഡ് ചെയ്ത
    tarball ഒരു താൽക്കാലിക prefix-ൽ ഇൻസ്റ്റാൾ ചെയ്ത് ബൂട്ട് ചെയ്യുക (`npm run check:pack-boot`, CI-യിൽ
    ഇതേ pack→install→boot പരിശോധന ഓട്ടോമേറ്റ് ചെയ്യുന്നു).
@@ -70,11 +70,11 @@ npm-publish വർക്ക്ഫ്ലോ ഇനി നേരിട്ട് �
 ഉടനടിയുള്ള `npm publish` പുനഃസ്ഥാപിക്കുന്നു (സ്റ്റേജിംഗ് തന്നെ തകരാറിലാകുമ്പോൾ മാത്രം ഉപയോഗിക്കുക; കാരണം രേഖപ്പെടുത്തുക).
 
 **ഒറ്റത്തവണ ഹാർഡനിംഗ് (ഉടമ, npmjs.com):** ചോർന്ന ദീർഘകാല ടോക്കണിന് എവിടെനിന്നും നേരിട്ട്
-`npm publish` ചെയ്യാനാകാത്തവിധം, `omniroute`-നുള്ള Trusted Publisher സ്റ്റേജ്-ഒൺലി മോഡിൽ
+`npm publish` ചെയ്യാനാകാത്തവിധം, `agentproxy`-നുള്ള Trusted Publisher സ്റ്റേജ്-ഒൺലി മോഡിൽ
 കോൺഫിഗർ ചെയ്യുക — CI-യ്ക്ക് സ്റ്റേജ് ചെയ്യാൻ മാത്രമേ കഴിയൂ; ഉടമയുടെ 2FA-യ്ക്ക് മാത്രമേ റിലീസ് ചെയ്യാനാകൂ.
 
 **തകരാറിലായ ആർട്ടിഫാക്റ്റിനുള്ള പ്ലേബുക്ക് (മാറ്റമില്ല):** ഡിഫോൾട്ട് ഉടനടി നടപടിയായി
-`npm deprecate omniroute@<bad> "<reason> — use <fixed>"` ഉപയോഗിക്കുക (മിനിറ്റുകൾക്കുള്ളിൽ, പഴയപടിയാക്കാവുന്നത്);
+`npm deprecate agentproxy@<bad> "<reason> — use <fixed>"` ഉപയോഗിക്കുക (മിനിറ്റുകൾക്കുള്ളിൽ, പഴയപടിയാക്കാവുന്നത്);
 72h/ഡിപ്പെൻഡന്റുകളില്ലാത്ത ജാലകത്തിനുള്ളിൽ മാത്രം `npm unpublish` ഉപയോഗിക്കുക, ഒരിക്കലും ആദ്യ നടപടിയായി ഉപയോഗിക്കരുത്.
 Docker: ഒരു വേർഷൻ ടാഗും ഒരിക്കലും തിരുത്തിയെഴുതരുത് — `latest` അവസാനത്തെ മികച്ച digest-ലേക്ക് വീണ്ടും പോയിന്റ് ചെയ്യുന്നതാണ് റോൾബാക്ക്.
 
@@ -192,7 +192,7 @@ Breaking changes: `BREAKING CHANGE:` footer ചേർക്കുക അല്�
 - [ ] `npm run i18n:check` 0-ോടെ exit ചെയ്യുന്നു — translation state (`.i18n-state.json`) source docs-നോട് sync ചെയ്തിരിക്കുന്നു (strict mode-ൽ drift ചെയ്ത sources ഇല്ല; അവസാന നിമിഷ doc touch-ups-ന് warn-mode advisory സ്വീകാര്യമാണ്, എന്നാൽ tagging-ന് മുമ്പ് 0 ആയിരിക്കണം)
 - [ ] `npm run i18n:check-ui-coverage` 0-ോടെ exit ചെയ്യുന്നു — എല്ലാ UI locale-കളും 80% coverage floor-ലോ അതിന് മുകളിലോ ആണ്
 - [ ] `npm run i18n:sync-ui:dry` എല്ലാ 42 locales-ലുമായി 0 missing keys റിപ്പോർട്ട് ചെയ്യുന്നു
-- [ ] source English docs മാറിയിട്ടുണ്ടെങ്കിൽ, tagging-ന് മുമ്പ് `npm run i18n:run` പ്രവർത്തിപ്പിക്കുക (`.env`-ൽ `OMNIROUTE_TRANSLATION_API_KEY` ആവശ്യമാണ്)
+- [ ] source English docs മാറിയിട്ടുണ്ടെങ്കിൽ, tagging-ന് മുമ്പ് `npm run i18n:run` പ്രവർത്തിപ്പിക്കുക (`.env`-ൽ `AGENTPROXY_TRANSLATION_API_KEY` ആവശ്യമാണ്)
 - [ ] Translation contributions ചെറുതാണെങ്കിൽ അടുത്ത release-ലേക്ക് മാറ്റിവയ്ക്കാം (CHANGELOG-ൽ track ചെയ്യുക)
 
 ### Database Migrations
@@ -201,7 +201,7 @@ Breaking changes: `BREAKING CHANGE:` footer ചേർക്കുക അല്�
   - [ ] ഓരോ migration-ഉം idempotent ആണ് (`CREATE TABLE IF NOT EXISTS` മുതലായവ)
   - [ ] Migrations transactions-ൽ പൊതിഞ്ഞിരിക്കുന്നു
   - [ ] ശരിയായി number ചെയ്തിരിക്കുന്നു (sequence-ൽ gaps ഇല്ല)
-- [ ] fresh install-ൽ test ചെയ്യുക: `~/.omniroute/omniroute.db` ഇല്ലാതാക്കി `npm run dev` പ്രവർത്തിപ്പിക്കുക
+- [ ] fresh install-ൽ test ചെയ്യുക: `~/.agentproxy/agentproxy.db` ഇല്ലാതാക്കി `npm run dev` പ്രവർത്തിപ്പിക്കുക
 - [ ] നിലവിലുള്ള install-ൽ test ചെയ്യുക: DB backup എടുക്കുക, migration പ്രവർത്തിപ്പിക്കുക, schema സ്ഥിരീകരിക്കുക
 - [ ] migration tables rewrite ചെയ്യുന്നുവെങ്കിൽ WAL files (`-wal`, `-shm`) ശരിയായി കൈകാര്യം ചെയ്യുന്നു
 
@@ -236,7 +236,7 @@ repository മൂന്ന് വ്യത്യസ്ത output directories ഉ
 | `.build/` | Build intermediates — `next build` output (`distDir`)              | ഇല്ല (gitignored)     |
 | `dist/`   | വിതരണം ചെയ്യാവുന്ന npm bundle — `assembleStandalone` സജ്ജീകരിച്ചത് | ഇല്ല (gitignored)     |
 
-> **Operator കുറിപ്പ്:** remote VPS image directory `/usr/lib/node_modules/omniroute/app/` ആയി തുടരുന്നു.
+> **Operator കുറിപ്പ്:** remote VPS image directory `/usr/lib/node_modules/agentproxy/app/` ആയി തുടരുന്നു.
 > **repository-ക്കുള്ളിലെ** build output മാത്രമാണ് മാറിയത് (`app/` → `dist/`). deploy skills,
 > `dist/`-ലെ ഉള്ളടക്കം remote `app/` dir-ലേക്ക് rsync ചെയ്യുന്നു — VPS path മാറ്റങ്ങളൊന്നും ആവശ്യമില്ല.
 
@@ -356,12 +356,12 @@ Embedded Services മാറ്റങ്ങൾ ഉൾപ്പെടുന്ന 
 
 ഏതെങ്കിലും v3.8.x റിലീസ് പുറത്തിറക്കുന്നതിന് മുമ്പ്, ഈ അധിക ഇനങ്ങൾ പരിശോധിക്കുക:
 
-- [ ] `omniroute --tray` macOS-ൽ ബൂട്ട് ചെയ്യുന്നു (`~/.omniroute/runtime/`-ലേക്ക് systray2 ഇൻസ്റ്റാൾ ചെയ്തിരിക്കണം)
-- [ ] `omniroute --tray` Linux-ൽ ബൂട്ട് ചെയ്യുന്നു (DISPLAY ആവശ്യമാണ്; സജ്ജീകരിച്ചിട്ടില്ലെങ്കിൽ മാന്യമായ പിശക്)
-- [ ] `omniroute --tray` Windows-ൽ ബൂട്ട് ചെയ്യുന്നു (PowerShell NotifyIcon, അധിക ബൈനറികളില്ല)
-- [ ] `omniroute config tray enable` ഓട്ടോസ്റ്റാർട്ട് എൻട്രി സൃഷ്ടിക്കുന്നു; disable അത് നീക്കം ചെയ്യുന്നു
-- [ ] `npm install -g omniroute@<this-version>` ഗുരുതരമായ എക്സിറ്റ് ഇല്ലാതെ postinstall പ്രവർത്തിപ്പിക്കുന്നു
-- [ ] അപ്ഡേറ്റ് പാത ഓപ്ഷണൽ ഡിപെൻഡൻസികൾ നിലനിർത്തുന്നു: `omniroute update --apply`-ഉം ഓട്ടോ-അപ്ഡേറ്ററും
+- [ ] `agentproxy --tray` macOS-ൽ ബൂട്ട് ചെയ്യുന്നു (`~/.agentproxy/runtime/`-ലേക്ക് systray2 ഇൻസ്റ്റാൾ ചെയ്തിരിക്കണം)
+- [ ] `agentproxy --tray` Linux-ൽ ബൂട്ട് ചെയ്യുന്നു (DISPLAY ആവശ്യമാണ്; സജ്ജീകരിച്ചിട്ടില്ലെങ്കിൽ മാന്യമായ പിശക്)
+- [ ] `agentproxy --tray` Windows-ൽ ബൂട്ട് ചെയ്യുന്നു (PowerShell NotifyIcon, അധിക ബൈനറികളില്ല)
+- [ ] `agentproxy config tray enable` ഓട്ടോസ്റ്റാർട്ട് എൻട്രി സൃഷ്ടിക്കുന്നു; disable അത് നീക്കം ചെയ്യുന്നു
+- [ ] `npm install -g agentproxy@<this-version>` ഗുരുതരമായ എക്സിറ്റ് ഇല്ലാതെ postinstall പ്രവർത്തിപ്പിക്കുന്നു
+- [ ] അപ്ഡേറ്റ് പാത ഓപ്ഷണൽ ഡിപെൻഡൻസികൾ നിലനിർത്തുന്നു: `agentproxy update --apply`-ഉം ഓട്ടോ-അപ്ഡേറ്ററും
       `npm install -g … --include=optional` പ്രവർത്തിപ്പിക്കുന്നതിനാൽ `optionalDependencies` (better-sqlite3,
       keytar, tls-client, കൂടാതെ llmlingua SLM സ്റ്റാക്ക്: `@atjsh/llmlingua-2@2.0.5`,
       `js-tiktoken`) അപ്ഡേറ്റിന് ശേഷവും നിലനിൽക്കുന്നു. ultra `modelPath` SLM ടയറിന് tinybert
@@ -371,13 +371,13 @@ Embedded Services മാറ്റങ്ങൾ ഉൾപ്പെടുന്ന 
       — സ്റ്റാൻഡ്അലോൺ ട്രേസ്, ഡൈനാമിക്കായി ഇംപോർട്ട് ചെയ്ത ഓപ്ഷണലുകളെയല്ല, transformers-നെ മാത്രമാണ് ബണ്ടിൽ ചെയ്യുന്നത്;
       അതിനാൽ ഇതില്ലെങ്കിൽ വർക്കർ റൂട്ടിലെ transformers-നൊപ്പം llmlingua-2 ലോഡ് ചെയ്യുകയും SLM ടയർ
       നിശ്ശബ്ദമായി fail-open ചെയ്യുകയും ചെയ്യും.
-- [ ] `.env` ഇല്ലാതെയും `omniroute status` പ്രവർത്തിക്കുന്നു (CLI ടോക്കൺ പാത, loopback മാത്രം)
+- [ ] `.env` ഇല്ലാതെയും `agentproxy status` പ്രവർത്തിക്കുന്നു (CLI ടോക്കൺ പാത, loopback മാത്രം)
 - [ ] `curl http://localhost:20128/api/shutdown` 401 നൽകുന്നു (എപ്പോഴും പരിരക്ഷിക്കപ്പെടുന്ന റൂട്ട്)
 - [ ] `curl -H "host: evil.com" http://localhost:20128/api/mcp/sse` 401 നൽകുന്നു (loopback ഗാർഡ്)
 - [ ] ആദ്യ പ്രവർത്തനത്തിൽ SQLite റൺടൈം `bundled` ആയി റെസോൾവ് ചെയ്യുന്നു (പ്ലാറ്റ്ഫോമിന് സാധുവായ ബണ്ടിൽ ചെയ്ത ബൈനറി)
 - [ ] `node_modules/better-sqlite3` ഇല്ലാതാക്കുമ്പോൾ SQLite റൺടൈം `runtime`-ലേക്ക് ഫാൾബാക്ക് ചെയ്യുന്നു
 - [ ] Smart MCP ഫിൽട്ടർ യഥാർഥ `playwright-mcp browser_snapshot` ഔട്ട്പുട്ട് കംപ്രസ് ചെയ്യുന്നു (≥50% കുറവ്)
-- [ ] എല്ലാ 10 `skills/omniroute*/SKILL.md` ഫയലുകളും raw GitHub URL വഴി പൊതുവായി ലഭ്യമാണ്
+- [ ] എല്ലാ 10 `skills/agentproxy*/SKILL.md` ഫയലുകളും raw GitHub URL വഴി പൊതുവായി ലഭ്യമാണ്
 - [ ] പുതിയ സജ്ജീകരണത്തിൽ ഓൺബോർഡിംഗ് വിസാർഡ് "ഇത് എങ്ങനെ പ്രവർത്തിക്കുന്നു" ടയർ ടൂർ ഘട്ടം കാണിക്കുന്നു
 - [ ] ഹോം ഡാഷ്ബോർഡിലെ ടയർ കവറേജ് വിജറ്റ് കോൺഫിഗർ ചെയ്ത/സജീവമായ എണ്ണങ്ങൾ കാണിക്കുന്നു
 

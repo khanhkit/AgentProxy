@@ -436,7 +436,7 @@ haɗa dabarun lockout/budget/fallback da kansu.
 - Cache na quota: `src/domain/quotaCache.ts`
 - Yanayin lalacewar aiki: `src/domain/degradation.ts`
 - Binciken configuration: `src/domain/configAudit.ts`
-- Mai gina metadata na amsar AgentProxy: `src/domain/omnirouteResponseMeta.ts`
+- Mai gina metadata na amsar AgentProxy: `src/domain/agentproxyesponseMeta.ts`
 - Ƙaramin tsarin kimantawa: `src/domain/assessment/` — ayyukan kimantawa na lokaci-lokaci
 
 ### E. Bututun Ba da Izini
@@ -517,7 +517,7 @@ Babban DB na yanayi (SQLite):
 
 - Muhimman abubuwan more rayuwa: `src/lib/db/core.ts` (better-sqlite3, ƙaura, WAL)
 - Samun damar DB: shigo da takamaiman modules na `src/lib/db/*` kai tsaye (an cire tsohon barrel na `localDb.ts`)
-- fayil: `${DATA_DIR}/storage.sqlite` (ko `$XDG_CONFIG_HOME/omniroute/storage.sqlite` idan an saita shi, in ba haka ba `~/.omniroute/storage.sqlite`)
+- fayil: `${DATA_DIR}/storage.sqlite` (ko `$XDG_CONFIG_HOME/agentproxy/storage.sqlite` idan an saita shi, in ba haka ba `~/.agentproxy/storage.sqlite`)
 - abubuwa (teburori + wuraren sunaye na KV): providerConnections, providerNodes, modelAliases, combos, apiKeys, settings, pricing, **customModels**, **proxyConfig**, **ipFilter**, **thinkingBudget**, **systemPrompt**
 
 Adana bayanan amfani:
@@ -1140,11 +1140,11 @@ Sauye-sauyen muhalli da lambar ke amfani da su kai tsaye:
 
 ## Sanannun Bayanan Tsarin Gine-gine
 
-1. `usageDb` da `localDb` suna amfani da manufa guda ta kundin tushe (`DATA_DIR` -> `XDG_CONFIG_HOME/omniroute` -> `~/.omniroute`) tare da ƙaura daga tsoffin fayiloli.
+1. `usageDb` da `localDb` suna amfani da manufa guda ta kundin tushe (`DATA_DIR` -> `XDG_CONFIG_HOME/agentproxy` -> `~/.agentproxy`) tare da ƙaura daga tsoffin fayiloli.
 2. `/api/v1/route.ts` yana miƙa aiki ga maginin kundin bayanai guda ɗaya da `/api/v1/models` (`src/app/api/v1/models/catalog.ts`) ke amfani da shi domin guje wa saɓanin ma'ana.
 3. Mai rubuta bayanan buƙata yana rubuta cikakkun headers/body idan an kunna shi; a ɗauki kundin log a matsayin mai muhimmanci ga tsaro.
 4. Halayen cloud sun dogara da daidaiton `NEXT_PUBLIC_BASE_URL` da samun damar isa wurin ƙarshen cloud.
-5. Ana wallafa kundin `open-sse/` a matsayin **npm workspace package** na `@omniroute/open-sse`. Lambar tushe tana shigo da shi ta `@omniroute/open-sse/...` (wanda Next.js `transpilePackages` ke warwarewa). Har yanzu hanyoyin fayiloli a wannan takarda suna amfani da sunan kundin `open-sse/` domin daidaito.
+5. Ana wallafa kundin `open-sse/` a matsayin **npm workspace package** na `@agentproxy/open-sse`. Lambar tushe tana shigo da shi ta `@agentproxy/open-sse/...` (wanda Next.js `transpilePackages` ke warwarewa). Har yanzu hanyoyin fayiloli a wannan takarda suna amfani da sunan kundin `open-sse/` domin daidaito.
 6. Charts da ke cikin dashboard suna amfani da **Recharts** (mai tushe a SVG) domin zane-zanen nazari masu sauƙin isa da hulɗa (bar charts na amfani da model, teburan rarrabuwar masu samarwa tare da ƙimar nasara).
 7. Gwaje-gwajen E2E suna amfani da **Playwright** (`tests/e2e/`), ana gudanar da su ta `npm run test:e2e`. Gwaje-gwajen unit suna amfani da **Node.js test runner** (`tests/unit/`), ana gudanar da su ta `npm run test:unit`. Lambar tushe da ke ƙarƙashin `src/` **TypeScript** ce (`.ts`/`.tsx`); workspace na `open-sse/` ya ci gaba da kasancewa JavaScript (`.js`).
 8. An tsara shafin saituna zuwa tabs guda 7: Gabaɗaya, Bayyanar, AI, Tsaro, Routing, Juriya, Na Ci-gaba. Shafin Juriya yana saita request queue, connection cooldown, provider breaker, da halayen wait-for-cooldown kawai; ana nuna halin breaker na runtime kai tsaye a shafin Health.
@@ -1155,7 +1155,7 @@ Sauye-sauyen muhalli da lambar ke amfani da su kai tsaye:
 ## Jerin Dubawa na Tabbatar da Aiki
 
 - Gina daga lambar tushe: `npm run build`
-- Gina hoton Docker: `docker build -t omniroute .`
+- Gina hoton Docker: `docker build -t agentproxy .`
 - Fara sabis ɗin sannan a tabbatar da:
 - `GET /api/settings`
 - `GET /api/v1/models`

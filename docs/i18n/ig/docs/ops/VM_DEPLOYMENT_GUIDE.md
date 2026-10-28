@@ -89,13 +89,13 @@ ufw enable
 ### 2.1 Mepụta ndekọ nhazi
 
 ```bash
-mkdir -p /opt/omniroute
+mkdir -p /opt/agentproxy
 ```
 
 ### 2.2 Mepụta faịlụ mgbanwe gburugburu
 
 ```bash
-cat > /opt/omniroute/.env << 'EOF'
+cat > /opt/agentproxy/.env << 'EOF'
 # === Nchekwa ===
 JWT_SECRET=CHANGE-TO-A-UNIQUE-64-CHAR-SECRET-KEY
 INITIAL_PASSWORD=YourSecurePassword123!
@@ -103,7 +103,7 @@ API_KEY_SECRET=REPLACE-WITH-ANOTHER-SECRET-KEY
 STORAGE_ENCRYPTION_KEY=REPLACE-WITH-THIRD-SECRET-KEY
 STORAGE_ENCRYPTION_KEY_VERSION=v1
 MACHINE_ID_SALT=CHANGE-TO-A-UNIQUE-SALT
-OMNIROUTE_WS_BRIDGE_SECRET=REPLACE-WITH-WS-BRIDGE-SECRET  # ACHỌRỌ na production: Codex Responses WS bridge na-eji ya
+AGENTPROXY_WS_BRIDGE_SECRET=REPLACE-WITH-WS-BRIDGE-SECRET  # ACHỌRỌ na production: Codex Responses WS bridge na-eji ya
 
 # === Ngwa ===
 PORT=20128
@@ -120,11 +120,11 @@ BASE_URL=http://127.0.0.1:20128
 # URL nke ihe nchọgharị na-ahụ, nke a na-eji maka OAuth callbacks, njikọ dashboard, na URL ọha emepụtara.
 NEXT_PUBLIC_BASE_URL=https://llms.seudominio.com
 # Nhọrọ iji kọwaa kpọmkwem public origin ga-anọchi nke ndabara maka URL asset ọha emepụtara.
-# OMNIROUTE_PUBLIC_BASE_URL=https://llms.seudominio.com
+# AGENTPROXY_PUBLIC_BASE_URL=https://llms.seudominio.com
 
 # === Cloud Sync (nhọrọ) ===
-# CLOUD_URL=https://cloud.omniroute.online
-# NEXT_PUBLIC_CLOUD_URL=https://cloud.omniroute.online
+# CLOUD_URL=https://agentproxy.online
+# NEXT_PUBLIC_CLOUD_URL=https://agentproxy.online
 EOF
 ```
 
@@ -133,22 +133,22 @@ EOF
 ### 2.3 Malite container ahụ
 
 ```bash
-docker pull diegosouzapw/omniroute:latest
+docker pull diegosouzapw/agentproxy:latest
 
 docker run -d \
-  --name omniroute \
+  --name agentproxy \
   --restart unless-stopped \
-  --env-file /opt/omniroute/.env \
+  --env-file /opt/agentproxy/.env \
   -p 20128:20128 \
-  -v omniroute-data:/app/data \
-  diegosouzapw/omniroute:latest
+  -v agentproxy-data:/app/data \
+  diegosouzapw/agentproxy:latest
 ```
 
 ### 2.4 Nyochaa na ọ na-arụ ọrụ
 
 ```bash
-docker ps | grep omniroute
-docker logs omniroute --tail 20
+docker ps | grep agentproxy
+docker logs agentproxy --tail 20
 ```
 
 O kwesịrị igosi: `[DB] SQLite database ready` na `listening on port 20128`.
@@ -181,7 +181,7 @@ chmod 600 /etc/nginx/ssl/origin.key
 ### 3.2 Nhazi Nginx
 
 ```bash
-cat > /etc/nginx/sites-available/omniroute << 'NGINX'
+cat > /etc/nginx/sites-available/agentproxy << 'NGINX'
 # Sava ndabara — na-egbochi nnweta ozugbo site na IP
 server {
     listen 80 default_server;
@@ -246,7 +246,7 @@ OAuth na njikọ ọhaneze ndị emepụtara. Arịrịọ ide na dashboard nke 
 tinyere nchedo CSRF e jikọrọ na session, ya mere ha anaghị achọ URL ntọala ọhaneze na-adịghị agbanwe agbanwe. Header
 `X-Forwarded-*` ndị dị n'elu ka bụ metadata routing bara uru, mana ha abụghị ihe nnọchi
 maka ịtọ URL ọhaneze doro anya mgbe OAuth ma ọ bụ njikọ ihe nchọgharị emepụtara chọrọ ya. Kwado naanị
-`OMNIROUTE_TRUST_PROXY` ma ọ bụrụ na ndị ahịa enweghị ike iru AgentProxy ozugbo ma proxy gị
+`AGENTPROXY_TRUST_PROXY` ma ọ bụrụ na ndị ahịa enweghị ike iru AgentProxy ozugbo ma proxy gị
 na-ewepụ/na-ewughachi header forwarded ndị na-abata.
 
 ### 3.3 Kwado ma Nwalee
@@ -256,7 +256,7 @@ na-ewepụ/na-ewughachi header forwarded ndị na-abata.
 rm -f /etc/nginx/sites-enabled/default
 
 # Kwado AgentProxy
-ln -sf /etc/nginx/sites-available/omniroute /etc/nginx/sites-enabled/omniroute
+ln -sf /etc/nginx/sites-available/agentproxy /etc/nginx/sites-enabled/agentproxy
 
 # Nwalee ma bugharịa ọzọ
 nginx -t && systemctl reload nginx
@@ -300,40 +300,40 @@ curl -sI https://llms.seudominio.com/health
 ### Kwalite gaa n'ụdị ọhụrụ
 
 ```bash
-docker pull diegosouzapw/omniroute:latest
-docker stop omniroute && docker rm omniroute
-docker run -d --name omniroute --restart unless-stopped \
-  --env-file /opt/omniroute/.env \
+docker pull diegosouzapw/agentproxy:latest
+docker stop agentproxy && docker rm agentproxy
+docker run -d --name agentproxy --restart unless-stopped \
+  --env-file /opt/agentproxy/.env \
   -p 20128:20128 \
-  -v omniroute-data:/app/data \
-  diegosouzapw/omniroute:latest
+  -v agentproxy-data:/app/data \
+  diegosouzapw/agentproxy:latest
 ```
 
 ### Lelee ndekọ
 
 ```bash
-docker logs -f omniroute          # Mgbasa ozugbo
-docker logs omniroute --tail 50   # Ahịrị 50 ikpeazụ
+docker logs -f agentproxy          # Mgbasa ozugbo
+docker logs agentproxy --tail 50   # Ahịrị 50 ikpeazụ
 ```
 
 ### Ndabere nchekwa data nke aka
 
 ```bash
 # Detuo data site na volume gaa na host
-docker cp omniroute:/app/data ./backup-$(date +%F)
+docker cp agentproxy:/app/data ./backup-$(date +%F)
 
 # Ma ọ bụ kpokọta volume ahụ niile
-docker run --rm -v omniroute-data:/data -v $(pwd):/backup \
-  alpine tar czf /backup/omniroute-data-$(date +%F).tar.gz /data
+docker run --rm -v agentproxy-data:/data -v $(pwd):/backup \
+  alpine tar czf /backup/agentproxy-data-$(date +%F).tar.gz /data
 ```
 
 ### Weghachite site na ndabere
 
 ```bash
-docker stop omniroute
-docker run --rm -v omniroute-data:/data -v $(pwd):/backup \
-  alpine sh -c "rm -rf /data/* && tar xzf /backup/omniroute-data-YYYY-MM-DD.tar.gz -C /"
-docker start omniroute
+docker stop agentproxy
+docker run --rm -v agentproxy-data:/data -v $(pwd):/backup \
+  alpine sh -c "rm -rf /data/* && tar xzf /backup/agentproxy-data-YYYY-MM-DD.tar.gz -C /"
+docker start agentproxy
 ```
 
 ---
@@ -402,13 +402,13 @@ Maka nnweta site n'ebe dị anya site na Cloudflare Workers (na-ekpugheghị VM 
 
 ```bash
 # N'ime repository mpaghara
-cd omnirouteCloud
+cd agentproxyCloud
 npm install
 npx wrangler login
 npx wrangler deploy
 ```
 
-Leekwa [TUNNELS_GUIDE.md](./TUNNELS_GUIDE.md) maka ntuziaka Cloudflare Tunnel dị n'ime repository. Worker `omnirouteCloud/` kwụụrụ onwe ya dị na repository ibe dị iche.
+Leekwa [TUNNELS_GUIDE.md](./TUNNELS_GUIDE.md) maka ntuziaka Cloudflare Tunnel dị n'ime repository. Worker `agentproxyCloud/` kwụụrụ onwe ya dị na repository ibe dị iche.
 
 ---
 
@@ -425,9 +425,9 @@ Leekwa [TUNNELS_GUIDE.md](./TUNNELS_GUIDE.md) maka ntuziaka Cloudflare Tunnel d�
 
 Maka mbugharị na obere VPS (RAM 1 GB ma ọ bụ nke na-erughị ya):
 
-- **Gbanyụọ ọrụ ndabere** — tọọ `OMNIROUTE_DISABLE_BACKGROUND_SERVICES=1` ka a ghara ịgba scheduler, MCP server, na ọrụ mmezi oge niile. Lee `docs/reference/ENVIRONMENT.md`.
+- **Gbanyụọ ọrụ ndabere** — tọọ `AGENTPROXY_DISABLE_BACKGROUND_SERVICES=1` ka a ghara ịgba scheduler, MCP server, na ọrụ mmezi oge niile. Lee `docs/reference/ENVIRONMENT.md`.
 - **Jiri ọnọdụ SQLite WAL** — agbanyere ya na ndabara, ọ na-ebelata oke ojiji ebe nchekwa n'oge ọgụgụ ndị na-eme n'otu oge.
-- **Kpaara heap V8 oke** — tọọ `OMNIROUTE_MEMORY_MB` (dịka `512`) ka runtime ghara ịhazi oke dị elu karịa nke VM. Lee `docs/reference/ENVIRONMENT.md`.
-- **Nnabata ọrụ dị arọ na-agbanwe nha n'onwe ya dabere na oke heap** -- ozugbo atọrọ `OMNIROUTE_MEMORY_MB` dịka akọwara n'elu, mmefu baitị nnabata (`OMNIROUTE_CHAT_MAX_INFLIGHT_BYTES`) na-enweta uru ya site n'otu oke ahụ, ya mere VM nwere ebe nchekwa pere mpe ga-enweta mmefu arịrịọ ndị na-eme n'otu oge nke pere mpe na-enweghị nhazi ọzọ; arịrịọ ndị karịrị oke ga-enweta `503` nke enwere ike ịnwale ọzọ, tinyere `Retry-After`, kama ịsọ mpi maka ebe nchekwa. Tọọ oke ọnụọgụ arịrịọ ochie `OMNIROUTE_CHAT_MAX_HEAVY_IN_FLIGHT` naanị ma ọ bụrụ na ịchọrọ oke siri ike n'elu nke ahụ.
+- **Kpaara heap V8 oke** — tọọ `AGENTPROXY_MEMORY_MB` (dịka `512`) ka runtime ghara ịhazi oke dị elu karịa nke VM. Lee `docs/reference/ENVIRONMENT.md`.
+- **Nnabata ọrụ dị arọ na-agbanwe nha n'onwe ya dabere na oke heap** -- ozugbo atọrọ `AGENTPROXY_MEMORY_MB` dịka akọwara n'elu, mmefu baitị nnabata (`AGENTPROXY_CHAT_MAX_INFLIGHT_BYTES`) na-enweta uru ya site n'otu oke ahụ, ya mere VM nwere ebe nchekwa pere mpe ga-enweta mmefu arịrịọ ndị na-eme n'otu oge nke pere mpe na-enweghị nhazi ọzọ; arịrịọ ndị karịrị oke ga-enweta `503` nke enwere ike ịnwale ọzọ, tinyere `Retry-After`, kama ịsọ mpi maka ebe nchekwa. Tọọ oke ọnụọgụ arịrịọ ochie `AGENTPROXY_CHAT_MAX_HEAVY_IN_FLIGHT` naanị ma ọ bụrụ na ịchọrọ oke siri ike n'elu nke ahụ.
 - **Zere `next build` na VPS** — wuo ya na kọmputa mpaghara ma bugharịa mmepụta standalone (`.next/standalone/`).
 - **Jiri `top` / `free -m` nyochaa ya** — AgentProxy na-ejikarị 200-400 MB RSS mgbe ọ naghị arụ ọrụ na VM nwere 1 GB.

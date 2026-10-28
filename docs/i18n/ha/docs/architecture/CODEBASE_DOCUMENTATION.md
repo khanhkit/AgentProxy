@@ -37,11 +37,11 @@ ba tare da ƙirƙiro sabbin modules ba.
 Laƙaban hanyoyi (`tsconfig.json`):
 
 - `@/*` → `src/*`
-- `@omniroute/open-sse` → `open-sse/index.ts`
-- `@omniroute/open-sse/*` → `open-sse/*`
+- `@agentproxy/open-sse` → `open-sse/index.ts`
+- `@agentproxy/open-sse/*` → `open-sse/*`
 
 Tsohuwar tashar HTTP: **`20128`** (API da dashboard suna amfani da process ɗaya). Kundin
-bayanai shi ne env var `DATA_DIR`, kuma tsohuwar ƙimarsa ita ce `~/.omniroute/`.
+bayanai shi ne env var `DATA_DIR`, kuma tsohuwar ƙimarsa ita ce `~/.agentproxy/`.
 
 ---
 
@@ -50,9 +50,9 @@ bayanai shi ne env var `DATA_DIR`, kuma tsohuwar ƙimarsa ita ce `~/.omniroute/`
 ```
 AgentProxy/
 ├── src/                  Manhajar Next.js (App Router, libs, domain, server, shared)
-├── open-sse/             Wurin aikin injin streaming (@omniroute/open-sse)
+├── open-sse/             Wurin aikin injin streaming (@agentproxy/open-sse)
 ├── electron/             Marufin manhajar tebur (Electron 41 main + preload)
-├── bin/                  Wuraren shigar CLI (omniroute, reset-password)
+├── bin/                  Wuraren shigar CLI (agentproxy, reset-password)
 ├── tests/                Unit, integration, e2e, protocols-e2e, translator, security, fixtures
 ├── scripts/              Rubutun taimako na build, sync, check, migration, da runtime
 ├── docs/                 Takardun jama'a (wannan kundin)
@@ -298,7 +298,7 @@ teburin yana haɗa ainihin directories da muhimman fayilolin matakin sama.
 | `runtime/`        | Gano fasalolin runtime                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
 | `search/`         | `executeWebSearch.ts`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
 | `services/`       | Tsarin ayyukan da aka haɗa: `ServiceSupervisor.ts` (mai sa ido kan child-process na gama-gari tare da operation lock, ring buffer, da health checker), `bootstrap.ts` (rajista da farawa ta atomatik a matakin process), `registry.ts` (taswirar tool → supervisor), `apiKey.ts` (ma'ajiyar maɓalli ta AES-256-GCM), `modelSync.ts` (aiki tare na model lokaci-lokaci), `ringBuffer.ts` (ma'ajiyar log mai zagayawa ta 5 MB), `healthCheck.ts` (binciken lafiyar HTTP), `types.ts`, `embedWsProxy.ts` (wakilin WebSocket), `installers/{ninerouter,cliproxy}.ts`. Duba `docs/frameworks/EMBEDDED-SERVICES.md`                                                                                               |
-| `agentSkills/`    | Kasidar Agent Skills + janareta: `catalog.ts` (getCatalog/getSkillById/filterCatalog/computeCoverage), `generator.ts` (generateAgentSkills → yana rubutawa zuwa `skills/{id}/SKILL.md`), `openapiParser.ts` (yana ciro REST endpoints daga ƙayyadaddun OpenAPI), `cliRegistryParser.ts` (yana ciro CLI subcommands daga bin/cli-registry), `schemas.ts` (Zod: AgentSkillSchema, SkillCoverageSchema, ListQuerySchema, GenerateBodySchema), `types.ts` (AgentSkill, SkillCoverage, SkillMarkdown, GeneratorReport). REST routes (`/api/agent-skills/*`), MCP tools (`omniroute_agent_skills_*`), da A2A skill `list-capabilities` suna amfani da shi. Duba [AGENT-SKILLS.md](../frameworks/AGENT-SKILLS.md). |
+| `agentSkills/`    | Kasidar Agent Skills + janareta: `catalog.ts` (getCatalog/getSkillById/filterCatalog/computeCoverage), `generator.ts` (generateAgentSkills → yana rubutawa zuwa `skills/{id}/SKILL.md`), `openapiParser.ts` (yana ciro REST endpoints daga ƙayyadaddun OpenAPI), `cliRegistryParser.ts` (yana ciro CLI subcommands daga bin/cli-registry), `schemas.ts` (Zod: AgentSkillSchema, SkillCoverageSchema, ListQuerySchema, GenerateBodySchema), `types.ts` (AgentSkill, SkillCoverage, SkillMarkdown, GeneratorReport). REST routes (`/api/agent-skills/*`), MCP tools (`agentproxy_agent_skills_*`), da A2A skill `list-capabilities` suna amfani da shi. Duba [AGENT-SKILLS.md](../frameworks/AGENT-SKILLS.md). |
 | `skills/`         | Tsarin skill: `registry.ts`, `executor.ts`, `interception.ts`, `injection.ts`, `sandbox.ts`, `custom.ts`, `hybrid.ts`, `builtins.ts`, `a2a.ts`, `providerSettings.ts`, `schemas.ts`, `skillssh.ts`, `types.ts`, tare da `builtin/browser.ts`                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
 | `spend/`          | `batchWriter.ts` (ma'ajiyar rubutu mai jinkirta aiwatarwa)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
 | `sync/`           | `bundle.ts`, `tokens.ts` (Cloud Sync)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
@@ -384,7 +384,7 @@ Tsantsar dabarun kasuwanci, ba tare da I/O ba. Routes da handlers ne ke shigo da
 | `degradation.ts`                           | Sauye-sauyen yanayin raguwar aiki                     |
 | `providerExpiration.ts`                    | Gano account/key da wa'adinsu ya ƙare                 |
 | `quotaCache.ts`                            | Shawarwarin quota da aka adana a cache                |
-| `responses.ts`, `omnirouteResponseMeta.ts` | Mataimakan tsarin response                            |
+| `responses.ts`, `agentproxyesponseMeta.ts` | Mataimakan tsarin response                            |
 | `configAudit.ts`                           | Binciken sauye-sauyen config                          |
 | `assessment/`                              | Tantance model (bisa RFC, an aiwatar da wani ɓangare) |
 | `types.ts`                                 | Nau'ikan fanni da ake rabawa                          |
@@ -436,7 +436,7 @@ An raba shi zuwa ƙananan kundin adireshi masu takamaiman ayyuka:
 
 ## 4. `open-sse/` — Wurin aikin injin yawo
 
-Wurin aikin npm ne na daban da aka wallafa a matsayin `@omniroute/open-sse`. Yana kula da sarrafa buƙatu,
+Wurin aikin npm ne na daban da aka wallafa a matsayin `@agentproxy/open-sse`. Yana kula da sarrafa buƙatu,
 masu aiwatarwa, masu fassara, ayyuka, mai sauya tsari, da uwar garken MCP.
 
 ```
@@ -599,7 +599,7 @@ Akwai rubutun npm guda biyar a tushen workspace: `electron:dev`, `electron:build
 
 ```
 bin/
-├── omniroute.mjs           Babban mashigin CLI (Node ESM)
+├── agentproxy.mjs           Babban mashigin CLI (Node ESM)
 ├── reset-password.mjs      Sake saita kalmar sirrin gudanarwa daga CLI
 ├── mcp-server.mjs          Mai ƙaddamar da sabar MCP (stdio)
 ├── nodeRuntimeSupport.mjs  Mai duba sigar Node
@@ -622,8 +622,8 @@ bin/
 
 Ana bayyanar da binaries guda biyu a cikin `package.json` → `bin`:
 
-- `omniroute` → `bin/omniroute.mjs`
-- `omniroute-reset-password` → `bin/reset-password.mjs`
+- `agentproxy` → `bin/agentproxy.mjs`
+- `agentproxy-reset-password` → `bin/reset-password.mjs`
 
 ---
 
@@ -779,7 +779,7 @@ Duba [A2A-SERVER.md § Ƙara Sabuwar Ƙwarewa](../frameworks/A2A-SERVER.md). Ƙw
 
 - **Salon code**: indent na spaces 2, double quotes, faɗin characters 100, semicolons,
   trailing commas na `es5` — Prettier yana tilasta su ta hanyar `lint-staged`.
-- **Imports**: na waje → na ciki (`@/`, `@omniroute/open-sse`) → na dangi.
+- **Imports**: na waje → na ciki (`@/`, `@agentproxy/open-sse`) → na dangi.
 - **Sanya suna**: files su kasance `camelCase` ko `kebab-case`, components su kasance `PascalCase`,
   constants su kasance `UPPER_SNAKE`.
 - **ESLint**: `no-eval`, `no-implied-eval`, `no-new-func` = `error` a ko'ina;

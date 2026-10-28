@@ -1,6 +1,6 @@
 // Repro/regression test for issue #14298 (findings 1-3).
 //
-// `omniroute oauth start --provider copilot` never completed on a healthy
+// `agentproxy oauth start --provider copilot` never completed on a healthy
 // server:
 //   1. The CLI's BACKEND_OAUTH_KEY alias map had no `copilot` entry, so the
 //      device-code request went to /api/oauth/copilot/device-code. The server
@@ -29,8 +29,8 @@ import path from "node:path";
 
 const repoRoot = path.join(path.dirname(new URL(import.meta.url).pathname), "..", "..");
 
-process.env.DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-14298-"));
-process.env.OMNIROUTE_API_KEY = "***";
+process.env.DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-14298-"));
+process.env.AGENTPROXY_API_KEY = "***";
 process.env.NODE_ENV = "test";
 
 const { runOAuthStart } = await import(path.join(repoRoot, "bin/cli/commands/oauth.mjs"));

@@ -1,7 +1,7 @@
 /**
  * Compare the four captured CLI fingerprint pins against the published CLI.
  *
- * A pin is the version OmniRoute advertises on the wire. Upstream gates new
+ * A pin is the version AgentProxy advertises on the wire. Upstream gates new
  * models on that version, so a pin behind the published CLI fails closed
  * here instead of failing as a 400 on the first request for the new model.
  *

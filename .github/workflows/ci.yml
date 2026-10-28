@@ -813,6 +813,21 @@ jobs:
             echo "- bounded staging: ${stage_elapsed}s"
             echo "- npm pack: ${elapsed}s"
           } >> "$GITHUB_STEP_SUMMARY"
+      - name: Verify generated and canonical npm artifact identity (binary-safe)
+        env:
+          AGENTPROXY_BUILD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B tests/unit/build/test-agentproxy-artifact-identity.py
+          python3 -B scripts/check/verify-agentproxy-artifacts.py \
+            --dir .build/next/standalone \
+            --dir dist \
+            --dir "$RUNNER_TEMP/canonical-package-stage" \
+            --stamp .build/next/standalone/BUILD_SHA \
+            --stamp dist/BUILD_SHA \
+            --tar "$RUNNER_TEMP/canonical-package/${{ steps.pack.outputs.tarball }}" \
+            --build-sha "${AGENTPROXY_BUILD_SHA:0:7}"
       - name: Upload canonical npm package
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:

@@ -23,10 +23,10 @@ test("release branch hygiene accepts exactly main", () => {
 });
 
 test("release branch hygiene rejects extra feature branches", () => {
-  const result = evaluateMainOnlyBranches(["kitdev1/omniroute-product-runtime-0124", "main"]);
+  const result = evaluateMainOnlyBranches(["kitdev1/agentproxy-product-runtime-0124", "main"]);
   assert.equal(result.ok, false);
   assert.equal(result.hasMain, true);
-  assert.deepEqual(result.unexpected, ["kitdev1/omniroute-product-runtime-0124"]);
+  assert.deepEqual(result.unexpected, ["kitdev1/agentproxy-product-runtime-0124"]);
 });
 
 test("release branch hygiene fails closed when main is absent", () => {

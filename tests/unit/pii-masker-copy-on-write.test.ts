@@ -10,7 +10,7 @@ import type { GuardrailContext } from "../../src/lib/guardrails/base";
 // resolves the flag once per payload and copies only the containers it
 // rewrites, so the caller's body is never mutated and non-JSON values the
 // pipeline attaches to it (a tool-name Map, for example) survive.
-const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-test-pii-masker-cow-"));
+const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-test-pii-masker-cow-"));
 process.env.DATA_DIR = tmpDir;
 delete process.env.PII_REDACTION_ENABLED;
 

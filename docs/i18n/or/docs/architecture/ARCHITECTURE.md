@@ -399,7 +399,7 @@ AgentProxy କାର୍ଯ୍ୟ କରୁଥିବା ସ୍ଥାନୀୟ AI 
 - କୋଟା କ୍ୟାଶେ: `src/domain/quotaCache.ts`
 - ଡିଗ୍ରେଡେସନ୍ ଅବସ୍ଥା: `src/domain/degradation.ts`
 - କନଫିଗ୍ ଅଡିଟ୍: `src/domain/configAudit.ts`
-- AgentProxy ପ୍ରତିକ୍ରିୟା ମେଟାଡାଟା ବିଲଡର୍: `src/domain/omnirouteResponseMeta.ts`
+- AgentProxy ପ୍ରତିକ୍ରିୟା ମେଟାଡାଟା ବିଲଡର୍: `src/domain/agentproxyesponseMeta.ts`
 - ମୂଲ୍ୟାୟନ ଉପ-ବ୍ୟବସ୍ଥା: `src/domain/assessment/` — ପର୍ଯ୍ୟାୟିକ ମୂଲ୍ୟାୟନ କାର୍ଯ୍ୟ
 
 ### E. ଅଧିକାର ପାଇପଲାଇନ୍
@@ -462,7 +462,7 @@ FSM ସଂକ୍ରମଣ ଅଟୋ କମ୍ବୋ ର ସ୍କୋରିଂର
 
 - ମୂଳ ଅବକାଠାମୋ: `src/lib/db/core.ts` (better-sqlite3, ସ୍ଥାନାନ୍ତରଣ, WAL)
 - DB ପ୍ରବେଶ: ସିଧାସଳଖ ନିର୍ଦ୍ଦିଷ୍ଟ `src/lib/db/*` ମୋଡ୍ୟୁଲ ଆମଦାନୀ କରନ୍ତୁ (ପୁରୁଣା `localDb.ts` ବ୍ୟାରେଲ ହଟାଯାଇଛି)
-- ଫାଇଲ: `${DATA_DIR}/storage.sqlite` (କିମ୍ବା ସେଟ୍ ଥିବା ସମୟରେ `$XDG_CONFIG_HOME/omniroute/storage.sqlite`, ନଚେତ୍ `~/.omniroute/storage.sqlite`)
+- ଫାଇଲ: `${DATA_DIR}/storage.sqlite` (କିମ୍ବା ସେଟ୍ ଥିବା ସମୟରେ `$XDG_CONFIG_HOME/agentproxy/storage.sqlite`, ନଚେତ୍ `~/.agentproxy/storage.sqlite`)
 - ସଂସ୍ଥା (ଟେବୁଲ୍ + KV ନାମକରଣ): providerConnections, providerNodes, modelAliases, combos, apiKeys, settings, pricing, **customModels**, **proxyConfig**, **ipFilter**, **thinkingBudget**, **systemPrompt**
 
 ବ୍ୟବହାର ସଂରକ୍ଷଣ:
@@ -1082,11 +1082,11 @@ flowchart LR
 
 ## ଜ୍ଞାତ ସ୍ଥାପତ୍ୟ ନୋଟ
 
-1. `usageDb` ଏବଂ `localDb` ସମାନ ବେସ୍ ଡାଇରେକ୍ଟୋରୀ ନୀତି ସେୟାର କରେ (`DATA_DIR` -> `XDG_CONFIG_HOME/omniroute` -> `~/.omniroute`) ଲେଗାସୀ ଫାଇଲ୍ ମାଇଗ୍ରେସନ୍ ସହିତ।
+1. `usageDb` ଏବଂ `localDb` ସମାନ ବେସ୍ ଡାଇରେକ୍ଟୋରୀ ନୀତି ସେୟାର କରେ (`DATA_DIR` -> `XDG_CONFIG_HOME/agentproxy` -> `~/.agentproxy`) ଲେଗାସୀ ଫାଇଲ୍ ମାଇଗ୍ରେସନ୍ ସହିତ।
 2. `/api/v1/route.ts` `/api/v1/models` ଦ୍ୱାରା ବ୍ୟବହୃତ ସମାନ ୟୁନିଫାଏଡ୍ କ୍ୟାଟାଲଗ୍ ବିଲ୍ଡରକୁ ଡେଲିଗେଟ୍ କରେ (`src/app/api/v1/models/catalog.ts`) ସେମାଣ୍ଟିକ୍ ଡ୍ରିଫ୍ଟ୍ ଏଡ଼ାଇବା ପାଇଁ।
 3. ରିକ୍ୱେଷ୍ଟ ଲଗର ସକ୍ଷମ ଥିବାବେଳେ ସମ୍ପୂର୍ଣ୍ଣ ହେଡର୍ସ/ବଡି ଲେଖେ; ଲଗ୍ ଡାଇରେକ୍ଟୋରୀକୁ ସମ୍ବେଦନଶୀଳ ଭାବରେ ବିବେଚନା କରନ୍ତୁ।
 4. କ୍ଲାଉଡ ବ୍ୟବହାର ସଠିକ୍ `NEXT_PUBLIC_BASE_URL` ଏବଂ କ୍ଲାଉଡ ଏଣ୍ଡପଏଣ୍ଟ ପହଞ୍ଚଯୋଗ୍ୟତା ଉପରେ ନିର୍ଭର କରେ।
-5. `open-sse/` ଡାଇରେକ୍ଟୋରୀ **npm ୱାର୍କସ୍ପେସ୍ ପ୍ୟାକେଜ୍** `@omniroute/open-sse` ଭାବରେ ପ୍ରକାଶିତ। ସୋସ୍ କୋଡ୍ ଏହାକୁ `@omniroute/open-sse/...` ମାଧ୍ୟମରେ ଇମ୍ପୋର୍ଟ କରେ (Next.js `transpilePackages` ଦ୍ୱାରା ସମାଧାନ)। ଏହି ଡକୁମେଣ୍ଟରେ ଫାଇଲ୍ ପାଥ୍ସ ସୁସଙ୍ଗତତା ପାଇଁ ଏବେ ବି ଡାଇରେକ୍ଟୋରୀ ନାମ `open-s-s/` ବ୍ୟବହାର କରେ।
+5. `open-sse/` ଡାଇରେକ୍ଟୋରୀ **npm ୱାର୍କସ୍ପେସ୍ ପ୍ୟାକେଜ୍** `@agentproxy/open-sse` ଭାବରେ ପ୍ରକାଶିତ। ସୋସ୍ କୋଡ୍ ଏହାକୁ `@agentproxy/open-sse/...` ମାଧ୍ୟମରେ ଇମ୍ପୋର୍ଟ କରେ (Next.js `transpilePackages` ଦ୍ୱାରା ସମାଧାନ)। ଏହି ଡକୁମେଣ୍ଟରେ ଫାଇଲ୍ ପାଥ୍ସ ସୁସଙ୍ଗତତା ପାଇଁ ଏବେ ବି ଡାଇରେକ୍ଟୋରୀ ନାମ `open-s-s/` ବ୍ୟବହାର କରେ।
 6. ଡ୍ୟାସବୋର୍ଡରେ ଚାର୍ଟସ୍ ଆକ୍ସେସିବଲ୍, ଇଣ୍ଟର୍ଯାକ୍ଟିଭ୍ ଆନାଲିଟିକ୍ସ୍ ଭିଜୁଆଲାଇଜେସନ୍ସ (ମଡେଲ୍ ବ୍ୟବହାର ବାର୍ ଚାର୍ଟସ୍, ସଫଳତା ହାର ସହିତ ପ୍ରଦାତା ବ୍ରେକଡାଉନ୍ ଟେବୁଲ୍ସ) ପାଇଁ **Recharts** (SVG-ଆଧାରିତ) ବ୍ୟବହାର କରେ।
 7. E2E ପରୀକ୍ଷଣ **Playwright** (`tests/e2e/`) ବ୍ୟବହାର କରେ, `npm run test:e2e` ଦ୍ୱାରା ଚଳାଯାଏ। ୟୁନିଟ୍ ପରୀକ୍ଷଣ **Node.js test runner** (`tests/unit/`) ବ୍ୟବହାର କରେ, `npm run test:unit` ଦ୍ୱାରା ଚଳାଯାଏ। `src/` ଅଧୀନରେ ସୋସ୍ କୋଡ୍ **TypeScript** (`.ts`/`.tsx`) ଅଟେ; `open-sse/` ୱାର୍କସ୍ପେସ୍ ଜାଭାସ୍କ୍ରିପ୍ଟ (`.js`) ରେ ରହିଥାଏ।
 8. ସେଟିଙ୍ଗସ୍ ପୃଷ୍ଠା 7 ଟ୍ୟାବରେ ସଂଗଠିତ: ସାଧାରଣ, ଦୃଶ୍ୟ, AI, ସୁରକ୍ଷା, ରୁଟିଙ୍ଗ୍, ରେଜିଲିଏନ୍ସ, ଉନ୍ନତ। ରେଜିଲିଏନ୍ସ ପୃଷ୍ଠା କେବଳ ଅନୁରୋଧ କ୍ୱେଉ, ସଂଯୋଗ କୁଲଡାଉନ୍, ପ୍ରଦାତା ବ୍ରେକର୍, ଏବଂ ୱେଟ୍-ଫର୍-କୁଲଡାଉନ୍ ବ୍ୟବହାର କନ୍ଫିଗର କରେ; ଲାଇଭ୍ ବ୍ରେକର୍ ରନଟାଇମ୍ ଷ୍ଟେଟ୍ ହେଲ୍ଥ ପୃଷ୍ଠାରେ ଦେଖାଯାଏ।
@@ -1097,7 +1097,7 @@ flowchart LR
 ## ପରିଚାଳନା ଯାଞ୍ଚ ତାଲିକା
 
 - ସୋର୍ସରୁ ନିର୍ମାଣ କରନ୍ତୁ: `npm run build`
-- Docker ଇମେଜ ନିର୍ମାଣ କରନ୍ତୁ: `docker build -t omniroute .`
+- Docker ଇମେଜ ନିର୍ମାଣ କରନ୍ତୁ: `docker build -t agentproxy .`
 - ସେବା ଆରମ୍ଭ କରନ୍ତୁ ଏବଂ ଯାଞ୍ଚ କରନ୍ତୁ:
 - `GET /api/settings`
 - `GET /api/v1/models`

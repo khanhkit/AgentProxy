@@ -77,7 +77,7 @@ AgentProxy ප්රමුඛතාව අනුව අනුපිළිවෙ�
 | `pii-masker`       | 10        | ඇමතුමට පෙර සහ පසු PII සංස්කරණය (විද්යුත් තැපැල්, දුරකථන, CPF, CNPJ, ක්රෙඩිට් කාඩ්පත්, SSN)     |
 | `prompt-injection` | 20        | අභිබවා යාම/භූමිකා පැහැරගැනීම/jailbreak/කාන්දු වීමේ රටා හඳුනා ගනී                               |
 
-අභිරුචි ආරක්ෂක සීමා `registerGuardrail(new MyGuardrail())` හරහා ලියාපදිංචි වේ. ආකෘතිය fail-open වේ (ව්යතිරේක කිසිවිටෙක ගමනාගමනය අවහිර නොකරයි). එක් එක් ඉල්ලීම සඳහා `x-omniroute-disabled-guardrails` ශීර්ෂකය හරහා ඉවත් විය හැක. → [`docs/security/GUARDRAILS.md`](docs/security/GUARDRAILS.md) බලන්න.
+අභිරුචි ආරක්ෂක සීමා `registerGuardrail(new MyGuardrail())` හරහා ලියාපදිංචි වේ. ආකෘතිය fail-open වේ (ව්යතිරේක කිසිවිටෙක ගමනාගමනය අවහිර නොකරයි). එක් එක් ඉල්ලීම සඳහා `x-agentproxy-disabled-guardrails` ශීර්ෂකය හරහා ඉවත් විය හැක. → [`docs/security/GUARDRAILS.md`](docs/security/GUARDRAILS.md) බලන්න.
 
 ### 🧠 ප්රොම්ප්ට් එන්නත් කිරීම් ආරක්ෂකය
 
@@ -182,15 +182,15 @@ STORAGE_ENCRYPTION_KEY=$(openssl rand -hex 32)
 
 ```bash
 docker run -d \
-  --name omniroute \
+  --name agentproxy \
   --restart unless-stopped \
   --read-only \
   -p 20128:20128 \
-  -v omniroute-data:/app/data \
+  -v agentproxy-data:/app/data \
   -e JWT_SECRET="$(openssl rand -base64 48)" \
   -e API_KEY_SECRET="$(openssl rand -hex 32)" \
   -e STORAGE_ENCRYPTION_KEY="$(openssl rand -hex 32)" \
-  diegosouzapw/omniroute:latest
+  diegosouzapw/agentproxy:latest
 ```
 
 ---
@@ -224,7 +224,7 @@ docker run -d \
 
 > **විෂය පථ සටහන:** repository root හි ඇති `socket.yml` මඟින් හැඩගස්වන්නේ ප්රකාශිත npm artifact එක පිළිබඳ Socket.dev හි registry-side post-publish scan සඳහා වන `projectIgnorePaths` පමණි — එය බලාත්මක කළ CI/PR merge gate එකක් නොවේ. `.github/workflows` තුළ ඇති කිසිදු workflow එකක්, `package.json` script එකක් හෝ `Makefile` target එකක් Socket.dev ක්රියාත්මක නොකරයි.
 
-ප්රකාශිත `omniroute` npm artifact එක Next.js `output: "standalone"`
+ප්රකාශිත `agentproxy` npm artifact එක Next.js `output: "standalone"`
 build එක bundle කරයි; එයින් අදහස් වන්නේ ලේඛනගත කර ඇති වරප්රසාදිත
 විශේෂාංග (MITM, Zed import, Cloud Sync, embedded service supervisor) ඇතුළුව සෑම
 route handler එකක්ම `.next/server/*.js` minified chunks තුළට ඇතුළත් වන බවයි. Heuristic සැපයුම් දාම ස්කෑනර්
@@ -247,7 +247,7 @@ GitHub App එක මඟින් මිස මෙම repository එකේ workf
   එම ලේඛනයම නැවත යොමු කරයි.
 
 තම pipeline එකට alert එක ලිහිල් කළ නොහැකි පරිශීලකයන් සඳහා:
-`OMNIROUTE_BUILD_PROFILE=minimal npm run build` භාවිතයෙන් build කරන්න. මෙය සංවේදී
+`AGENTPROXY_BUILD_PROFILE=minimal npm run build` භාවිතයෙන් build කරන්න. මෙය සංවේදී
 modules හතර runtime හි HTTP 503 `feature-disabled` ලබාදෙන stubs සමඟ
 ප්රතිස්ථාපනය කරයි; එබැවින් වරප්රසාදිත code paths bundle එකෙන් භෞතිකවම ඉවත් වේ.
 ප්රකාශන ක්රමවේදය සඳහා [`docs/security/SOCKET_DEV_FINDINGS.md`](docs/security/SOCKET_DEV_FINDINGS.md)

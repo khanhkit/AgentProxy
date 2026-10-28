@@ -10,7 +10,7 @@
 - Կոդի հետագա թարմացումների հրապարակումը
 - Նույն տեղակայման աշխատանքային գործընթացին հետևող նոր նախագծերը
 
-Այս ուղեցույցը հիմնված է ընթացիկ նախագծի համար ստուգված և աշխատող կազմաձևման վրա։ Հավելվածի անունն է `omniroute`։
+Այս ուղեցույցը հիմնված է ընթացիկ նախագծի համար ստուգված և աշխատող կազմաձևման վրա։ Հավելվածի անունն է `agentproxy`։
 
 ---
 
@@ -20,7 +20,7 @@
 - Տեղակայման եղանակ՝ տեղային `flyctl`-ով անմիջական հրապարակում
 - Կատարման միջավայր՝ պահոցում առկա `Dockerfile`-ի և `fly.toml`-ի օգտագործմամբ
 - Տվյալների կայուն պահպանում՝ `/data` ուղու վրա միացված Fly Volume
-- Հասանելիության URL՝ `https://omniroute.fly.dev/`
+- Հասանելիության URL՝ `https://agentproxy.online`
 
 ---
 
@@ -29,7 +29,7 @@
 Հաստատվել է, որ ընթացիկ պահոցի `fly.toml`-ը պարունակում է հետևյալ հիմնական տարրերը.
 
 ```toml
-app = 'omniroute'
+app = 'agentproxy'
 primary_region = 'sin'
 
 [[mounts]]
@@ -51,7 +51,7 @@ primary_region = 'sin'
 
 Նշումներ.
 
-- `app = 'omniroute'`-ը որոշում է, թե Fly-ի որ հավելվածին է ուղղված տեղակայումը
+- `app = 'agentproxy'`-ը որոշում է, թե Fly-ի որ հավելվածին է ուղղված տեղակայումը
 - `destination = '/data'`-ը որոշում է կայուն հատորի միացման գրացուցակը
 - Այս նախագծում անհրաժեշտ է սահմանել `DATA_DIR=/data`, հակառակ դեպքում տվյալների բազան և բանալիները կգրվեն կոնտեյների ժամանակավոր գրացուցակում
 
@@ -98,29 +98,29 @@ cd AgentProxy
 Բացեք `fly.toml`-ը և ստուգեք հետևյալ տողը.
 
 ```toml
-app = 'omniroute'
+app = 'agentproxy'
 ```
 
 Եթե տեղակայում եք ձեր սեփական նոր հավելվածում, կարող եք այն փոխել համաշխարհային մասշտաբով եզակի անունով, օրինակ՝
 
 ```toml
-app = 'omniroute-yourname'
+app = 'agentproxy-yourname'
 ```
 
 Նշում.
 
 - Համոզվեք, որ կառավարման վահանակում ցուցադրվող հավելվածը համապատասխանում է `fly.toml`-ի `app` արժեքին
-- Եթե նախկինում օգտագործել եք այլ անուն, օրինակ՝ `oroute`, մի շփոթեք այն `omniroute`-ի հետ
+- Եթե նախկինում օգտագործել եք այլ անուն, օրինակ՝ `oroute`, մի շփոթեք այն `agentproxy`-ի հետ
 
 ### 4.3 Ստեղծեք հավելվածը
 
 Եթե հավելվածը դեռ գոյություն չունի՝
 
 ```powershell
-flyctl apps create omniroute
+flyctl apps create agentproxy
 ```
 
-Եթե փոխել եք հավելվածի անունը, `omniroute`-ը փոխարինեք ձեր ընտրած անունով։
+Եթե փոխել եք հավելվածի անունը, `agentproxy`-ը փոխարինեք ձեր ընտրած անունով։
 
 ### 4.4 Առաջին տեղակայում
 
@@ -136,14 +136,14 @@ flyctl deploy
 
 ### 5.1 Ստուգված պարամետրեր
 
-Այս պարամետրերն օգտագործվել են ընթացիկ `omniroute` հավելվածի իրական տեղակայումներում.
+Այս պարամետրերն օգտագործվել են ընթացիկ `agentproxy` հավելվածի իրական տեղակայումներում.
 
 - `API_KEY_SECRET`
 - `DATA_DIR`
 - `JWT_SECRET`
 - `MACHINE_ID_SALT`
 - `NEXT_PUBLIC_BASE_URL`
-- `OMNIROUTE_WS_BRIDGE_SECRET` (պարտադիր է արտադրական միջավայրում. օգտագործվում է WebSocket կամրջակի իսկորոշման համար)
+- `AGENTPROXY_WS_BRIDGE_SECRET` (պարտադիր է արտադրական միջավայրում. օգտագործվում է WebSocket կամրջակի իսկորոշման համար)
 - `STORAGE_ENCRYPTION_KEY`
 
 ### 5.2 `INITIAL_PASSWORD`-ի մասին
@@ -171,7 +171,7 @@ Fly Secrets-ի համար առաջարկվում են հետևյալ փոփոխ�
 | -------------------------------- | ------------------------------- | -------------------------------------------------------------------- |
 | `API_KEY_SECRET`                 | Պարտադիր                        | Օգտագործվում է API բանալիների ստեղծման և վավերացման համար            |
 | `JWT_SECRET`                     | Պարտադիր                        | Օգտագործվում է մուտքի աշխատաշրջանների և JWT ստորագրման համար         |
-| `OMNIROUTE_WS_BRIDGE_SECRET`     | Արտադրական միջավայրում պարտադիր | WebSocket կամրջի նույնականացման գաղտնիք                              |
+| `AGENTPROXY_WS_BRIDGE_SECRET`     | Արտադրական միջավայրում պարտադիր | WebSocket կամրջի նույնականացման գաղտնիք                              |
 | `STORAGE_ENCRYPTION_KEY`         | Խստորեն առաջարկվում է           | Գաղտնագրում է պահպանված զգայուն կապի տվյալները                       |
 | `MACHINE_ID_SALT`                | Առաջարկվում է                   | Ստեղծում է մեքենայի կայուն նույնացուցիչ                              |
 | `INITIAL_PASSWORD`               | Ընտրովի                         | Սահմանում է backend-ի սկզբնական գաղտնաբառն առաջին տեղակայման ժամանակ |
@@ -182,7 +182,7 @@ Fly Secrets-ի համար առաջարկվում են հետևյալ փոփոխ�
 | Փոփոխական              | Առաջարկվող արժեք            |
 | ---------------------- | --------------------------- |
 | `DATA_DIR`             | `/data`                     |
-| `NEXT_PUBLIC_BASE_URL` | `https://omniroute.fly.dev` |
+| `NEXT_PUBLIC_BASE_URL` | `https://agentproxy.online` |
 
 Նշումներ.
 
@@ -196,10 +196,10 @@ Fly Secrets-ի համար առաջարկվում են հետևյալ փոփոխ�
 1. **Սահմանեք `NEXT_PUBLIC_BASE_URL`-ը որպես ձեր հանրային HTTPS տիրույթ**
 
    ```powershell
-   flyctl secrets set NEXT_PUBLIC_BASE_URL=https://omniroute.fly.dev -a omniroute
+   flyctl secrets set NEXT_PUBLIC_BASE_URL=https://agentproxy.online -a agentproxy
    ```
 
-   Եթե օգտագործում եք անհատական տիրույթ, փոխարինեք այն համապատասխան տիրույթով (օրինակ՝ `https://omniroute.yourdomain.com`)։
+   Եթե օգտագործում եք անհատական տիրույթ, փոխարինեք այն համապատասխան տիրույթով (օրինակ՝ `https://agentproxy.example.com`)։
 
 2. **Մատակարարի կառավարման վահանակում կազմաձևեք հետկանչի URL-ը**
 
@@ -210,7 +210,7 @@ Fly Secrets-ի համար առաջարկվում են հետևյալ փոփոխ�
    ```
 
    Օրինակ՝ անկախ նրանից՝ օգտագործվում է Gemini, Antigravity, Cursor, թե GitLab Duo.
-   - `https://omniroute.fly.dev/callback`
+   - `https://agentproxy.online`
 
    Եթե `NEXT_PUBLIC_BASE_URL`-ը չի համապատասխանում մատակարարի մոտ գրանցված հետկանչի URL-ին, OAuth հոսքը կձախողվի դիտարկիչի վերահղման փուլում։
 
@@ -223,7 +223,7 @@ Fly Secrets-ի համար առաջարկվում են հետևյալ փոփոխ�
 Նշումներ.
 
 - Չի ներառում `INITIAL_PASSWORD`-ը
-- Նախատեսված է ընթացիկ `omniroute` նախագծի համար
+- Նախատեսված է ընթացիկ `agentproxy` նախագծի համար
 
 ```powershell
 $apiKeySecret = [Convert]::ToHexString((1..32 | ForEach-Object { Get-Random -Minimum 0 -Maximum 256 })).ToLower()
@@ -237,26 +237,26 @@ flyctl secrets set `
   JWT_SECRET=$jwtSecret `
   MACHINE_ID_SALT=$machineIdSalt `
   STORAGE_ENCRYPTION_KEY=$storageKey `
-  OMNIROUTE_WS_BRIDGE_SECRET=$wsBridgeSecret `
+  AGENTPROXY_WS_BRIDGE_SECRET=$wsBridgeSecret `
   DATA_DIR=/data `
-  NEXT_PUBLIC_BASE_URL=https://omniroute.fly.dev `
-  -a omniroute
+  NEXT_PUBLIC_BASE_URL=https://agentproxy.online `
+  -a agentproxy
 ```
 
 Linux / macOS համակարգերում կարող եք նաև օգտագործել `openssl rand -hex 32` հրամանը.
 
 ```bash
-flyctl secrets set OMNIROUTE_WS_BRIDGE_SECRET=$(openssl rand -hex 32) -a omniroute
+flyctl secrets set AGENTPROXY_WS_BRIDGE_SECRET=$(openssl rand -hex 32) -a agentproxy
 ```
 
 Նշումներ.
 
-- `OMNIROUTE_WS_BRIDGE_SECRET`-ը պարտադիր է արտադրական միջավայրում. դրա բացակայությունը կխափանի WebSocket կամրջի հաստատման գործընթացը
+- `AGENTPROXY_WS_BRIDGE_SECRET`-ը պարտադիր է արտադրական միջավայրում. դրա բացակայությունը կխափանի WebSocket կամրջի հաստատման գործընթացը
 
 Եթե նաև ցանկանում եք սահմանել սկզբնական գաղտնաբառ.
 
 ```powershell
-flyctl secrets set INITIAL_PASSWORD=your-strong-password -a omniroute
+flyctl secrets set INITIAL_PASSWORD=your-strong-password -a agentproxy
 ```
 
 ---
@@ -264,12 +264,12 @@ flyctl secrets set INITIAL_PASSWORD=your-strong-password -a omniroute
 ## 8. Ընթացիկ պարամետրերի դիտում
 
 ```powershell
-flyctl secrets list -a omniroute
+flyctl secrets list -a agentproxy
 ```
 
 Եթե վահանակի `Secrets` էջում ակնկալվող փոփոխականները չեն ցուցադրվում, ստուգեք՝
 
-- Որ դիտում եք `omniroute` հավելվածը
+- Որ դիտում եք `agentproxy` հավելվածը
 - Որ `fly.toml`-ում `app` արժեքը համապատասխանում է վահանակի հավելվածին
 
 ---
@@ -286,7 +286,7 @@ flyctl deploy
 Եթե անհրաժեշտ է միայն թարմացնել պարամետրերը՝ առանց կոդը փոխելու՝
 
 ```powershell
-flyctl secrets set KEY=value -a omniroute
+flyctl secrets set KEY=value -a agentproxy
 ```
 
 Fly-ն ավտոմատ կերպով կիրականացնի մեքենաների փուլային թարմացում։
@@ -361,8 +361,8 @@ git merge-base --is-ancestor v3.4.7 upstream/main
 3. Վերականգնեք ֆորքի `fly.toml`-ը
 4. `git push origin main`
 5. `flyctl deploy`
-6. `flyctl status -a omniroute`
-7. `flyctl logs --no-tail -a omniroute`
+6. `flyctl status -a agentproxy`
+7. `flyctl logs --no-tail -a agentproxy`
 
 Սա այն փաստացի աշխատանքային ընթացքն է, որն օգտագործվել է ընթացիկ նախագիծը `v3.4.7`-ի թարմացնելիս (օրինակը վերաբերում է պատմական տարբերակի․ ընթացիկ փաստացի տարբերակը `v3.8.0` է)։
 
@@ -373,20 +373,20 @@ git merge-base --is-ancestor v3.4.7 upstream/main
 ### 10.1 Ստուգել հավելվածի կարգավիճակը
 
 ```powershell
-flyctl status -a omniroute
+flyctl status -a agentproxy
 ```
 
 ### 10.2 Դիտել գործարկման մատյանները
 
 ```powershell
-flyctl logs --no-tail -a omniroute
+flyctl logs --no-tail -a agentproxy
 ```
 
 ### 10.3 Ստուգել կայքի հասանելիությունը
 
 ```powershell
 try {
-  (Invoke-WebRequest -Uri "https://omniroute.fly.dev" -MaximumRedirection 5 -UseBasicParsing).StatusCode
+  (Invoke-WebRequest -Uri "https://agentproxy.online" -MaximumRedirection 5 -UseBasicParsing).StatusCode
 } catch {
   if ($_.Exception.Response) {
     $_.Exception.Response.StatusCode.value__
@@ -425,14 +425,14 @@ try {
 Սովորաբար կա երկու պատճառ․
 
 - Դեռ չեք գործարկել `flyctl secrets set` հրամանը
-- Դիտում եք այլ հավելված (օրինակ՝ `oroute`՝ `omniroute`-ի փոխարեն)
+- Դիտում եք այլ հավելված (օրինակ՝ `oroute`՝ `agentproxy`-ի փոխարեն)
 
 ### 12.2 `flyctl deploy`-ը հաղորդում է `app not found`
 
 Նախ ստեղծեք հավելվածը․
 
 ```powershell
-flyctl apps create omniroute
+flyctl apps create agentproxy
 ```
 
 ### 12.3 `fly.toml`-ի վերլուծումը ձախողվում է
@@ -475,10 +475,10 @@ flyctl apps create omniroute
 
 ```powershell
 flyctl auth whoami
-flyctl status -a omniroute
-flyctl secrets list -a omniroute
+flyctl status -a agentproxy
+flyctl secrets list -a agentproxy
 flyctl deploy
-flyctl logs --no-tail -a omniroute
+flyctl logs --no-tail -a agentproxy
 ```
 
 Սովորական թողարկման համար հիմնական հրամանն ընդամենը հետևյալն է․
@@ -490,7 +490,7 @@ flyctl deploy
 Նոր միջավայրում առաջին անգամ տեղակայելու հիմնական քայլերն են․
 
 1. `flyctl auth login`
-2. `flyctl apps create omniroute`
-3. `flyctl secrets set ... -a omniroute`
+2. `flyctl apps create agentproxy`
+3. `flyctl secrets set ... -a agentproxy`
 4. `flyctl deploy`
-5. `flyctl logs --no-tail -a omniroute`
+5. `flyctl logs --no-tail -a agentproxy`

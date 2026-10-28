@@ -64,7 +64,7 @@ Content-Type: application/json
 | हेडर                     | दिशा        | विवरण                                                                                                                                                                                                                   |
 | :----------------------- | :---------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `X-AgentProxy-No-Cache`   | अनुरोध      | क्यास बाइपास गर्न `true` मा सेट गर्नुहोस्                                                                                                                                                                               |
-| `x-omniroute-no-memory`  | अनुरोध      | यस अनुरोधको लागि मेमोरी + सीप इन्जेक्सन छोड्न `true` मा सेट गर्नुहोस् (नो-क्यासको नक्कल गर्दछ; प्रति-कल टोकन/लागत ओभरहेडबाट बच्दछ)                                                                                      |
+| `x-agentproxy-no-memory`  | अनुरोध      | यस अनुरोधको लागि मेमोरी + सीप इन्जेक्सन छोड्न `true` मा सेट गर्नुहोस् (नो-क्यासको नक्कल गर्दछ; प्रति-कल टोकन/लागत ओभरहेडबाट बच्दछ)                                                                                      |
 | `X-AgentProxy-Progress`   | अनुरोध      | प्रगति घटनाहरूको लागि `true` मा सेट गर्नुहोस्                                                                                                                                                                           |
 | `X-Session-Id`           | अनुरोध      | बाह्य सत्र आत्मीयताका लागि स्टिकी सत्र कुञ्जी                                                                                                                                                                           |
 | `x_session_id`           | अनुरोध      | अन्डरस्कोर भेरियन्ट पनि स्वीकार्य छ (प्रत्यक्ष HTTP)                                                                                                                                                                    |
@@ -159,7 +159,7 @@ X-AgentProxy-Lease-Generation: 1
 
 यो प्रतिक्रियाको अर्थ केवल यो हो कि सामान्य योग्य सेट गैर-रिक्त थियो र प्रत्येक खाली उम्मेदवार विदेशी सक्रिय लीजद्वारा राखिएको थियो। असमर्थित मोडेल/प्रदायकहरू, नीति बेमेल, कूलडाउन, कोटा, स्वास्थ्य, र अन्य सामान्य योग्यता असफलताहरूले तिनीहरूको अवस्थित AgentProxy प्रतिक्रियाहरू कायम राख्छन्।
 
-### `x-omniroute-compression`
+### `x-agentproxy-compression`
 
 सङ्कुचन योजनाको प्रति-अनुरोध ओभरराइड। उच्चतम प्राथमिकता — राउटिङ-कम्बो ओभरराइड, सक्रिय प्रोफाइल, स्वतः-ट्रिगर, र प्यानल पूर्वनिर्धारितलाई जित्छ। मानहरू:
 
@@ -358,10 +358,10 @@ GET /v1/models?prefix=canonical    # only the full provider-id prefix
 
 ### सोच्ने क्षमता नभएका मोडेल भेरियन्टहरू
 
-सोच्ने क्षमता भएका Claude मोडेलहरूका लागि, `/v1/models` ले **सोच्ने क्षमता नभएको** भेरियन्टको पनि विज्ञापन गर्छ जसको आईडी `claude-3-omniroute-no-thinking/` बाट सुरु हुन्छ:
+सोच्ने क्षमता भएका Claude मोडेलहरूका लागि, `/v1/models` ले **सोच्ने क्षमता नभएको** भेरियन्टको पनि विज्ञापन गर्छ जसको आईडी `claude-3-agentproxy-no-thinking/` बाट सुरु हुन्छ:
 
 ```
-claude-3-omniroute-no-thinking/<provider>/<model>
+claude-3-agentproxy-no-thinking/<provider>/<model>
 ```
 
 यो आईडी चयन गर्दा (जस्तै, सधैं `thinking` ब्लक संलग्न गर्ने Claude Code कन्फिगमा) वास्तविक `<provider>/<model>` मा तर्क दमन गरी समाधान हुन्छ — `/v1/messages` पाथमा `thinking:{type:"disabled"}` वा `/v1/chat/completions` पाथमा `reasoning`/`reasoning_effort` फिल्डहरू हटाइन्छन्। यो भेरियन्ट Claude-परिवारका मोडेलहरूका लागि मात्र सूचीबद्ध गरिएको छ जसले सोच्ने क्षमतालाई समर्थन गर्छन् **र** `disabled` लाई सम्मान गर्छन् (त्यसैले, उदाहरणका लागि, `disabled` अस्वीकार गर्ने अनुकूली-मात्र मोडेलहरूलाई बाहिर राखिएको छ)। अपरेटरहरूले `ModelSpec.noThinkingAlias` मार्फत प्रत्येक मोडेलमा भेरियन्टलाई अन वा अफ गर्न सक्छन्।
@@ -441,7 +441,7 @@ POST /v1/videos/generations { "model": "runway/gen-3", "prompt": "..." }
 POST /v1/music/generations  { "model": "suno/v3.5",   "prompt": "..." }
 ```
 
-> **Rerank प्रदायक नोडहरू:** `POST /v1/rerank` ले OpenAI-अनुकूल प्रदायक नोडहरू (oMLX, vLLM, Infinity, TEI गेटवे पछाडि, ...) लाई पनि `<node-prefix>/<model>` को रूपमा सम्बोधन गर्दछ। लूपब्याक नोडहरू (`localhost`, `127.0.0.1`, `172.16.0.0/12`) सधैं योग्य हुन्छन्। कुनै पनि अन्य होस्टमा रहेका नोडहरू — एउटा LAN बक्स वा Tailscale पियर — अपरेटरले `RERANK_REMOTE_PROVIDER_NODES` सुविधा फ्ल्याग सक्षम गरेमा **र** नोडको आधार URL ले प्रदायक आउटबाउन्ड URL नीति (`OMNIROUTE_ALLOW_LOCAL_PROVIDER_URLS` / `OMNIROUTE_ALLOW_PRIVATE_PROVIDER_URLS`) पास गरेमा मात्र योग्य हुन्छन्; क्लाउड-मेटाडेटा होस्टहरूमा कहिल्यै मार्गनिर्देशन गरिँदैन। मेमोरी इन्जिनको rerank चरणले लूपब्याक मार्फत यो मार्गलाई कल गर्दछ, त्यसैले मेमोरी सेटिङहरूमा `rerankProviderModel` लाई पनि यही नियमले नियन्त्रण गर्दछ।
+> **Rerank प्रदायक नोडहरू:** `POST /v1/rerank` ले OpenAI-अनुकूल प्रदायक नोडहरू (oMLX, vLLM, Infinity, TEI गेटवे पछाडि, ...) लाई पनि `<node-prefix>/<model>` को रूपमा सम्बोधन गर्दछ। लूपब्याक नोडहरू (`localhost`, `127.0.0.1`, `172.16.0.0/12`) सधैं योग्य हुन्छन्। कुनै पनि अन्य होस्टमा रहेका नोडहरू — एउटा LAN बक्स वा Tailscale पियर — अपरेटरले `RERANK_REMOTE_PROVIDER_NODES` सुविधा फ्ल्याग सक्षम गरेमा **र** नोडको आधार URL ले प्रदायक आउटबाउन्ड URL नीति (`AGENTPROXY_ALLOW_LOCAL_PROVIDER_URLS` / `AGENTPROXY_ALLOW_PRIVATE_PROVIDER_URLS`) पास गरेमा मात्र योग्य हुन्छन्; क्लाउड-मेटाडेटा होस्टहरूमा कहिल्यै मार्गनिर्देशन गरिँदैन। मेमोरी इन्जिनको rerank चरणले लूपब्याक मार्फत यो मार्गलाई कल गर्दछ, त्यसैले मेमोरी सेटिङहरूमा `rerankProviderModel` लाई पनि यही नियमले नियन्त्रण गर्दछ।
 >
 > **स्थानीय सर्भर आकारहरू:** नोडलाई `<base>/v1/rerank` मा र, 404 मा, `<base>/rerank` (Infinity, TEI) मा कल गरिन्छ। अपस्ट्रिम बडीले Cohere/OpenAI हिज्जे (`documents`, `return_documents`) र TEI हिज्जे (`texts`, `return_text`) दुवै बोक्छ, र अपस्ट्रिम प्रतिक्रिया Cohere खाममा सामान्य गरिन्छ: TEI को खाली `[{index, score, text}]`, पातलो गेटवेबाट `{results: [{index, score}]}`, र Voyage-शैली `{data: [...]}` सबै ग्राहकलाई `{results: [{index, relevance_score, document?}]}` को रूपमा फर्काइन्छ, स्कोर अनुसार क्रमबद्ध र `top_n` मा सीमित।
 
@@ -533,8 +533,8 @@ GET /v1/ws?handshake=1
 
 ```bash
 # HTTP API जस्तै होस्ट:पोर्ट (पूर्वनिर्धारित 20128); जडान अपग्रेड गर्नुहोस्:
-wscat -c "ws://localhost:20128/v1/responses?api_key=<OMNIROUTE_API_KEY>"
-# (वा: -H "Authorization: Bearer <OMNIROUTE_API_KEY>")
+wscat -c "ws://localhost:20128/v1/responses?api_key=<AGENTPROXY_API_KEY>"
+# (वा: -H "Authorization: Bearer <AGENTPROXY_API_KEY>")
 
 # पहिलो फ्रेम response.create हुनुपर्छ:
 { "type": "response.create", "model": "gpt-5.5", "input": [ { "role": "user", "content": "hi" } ] }
@@ -554,18 +554,18 @@ OpenAI **Codex CLI** ले `supports_websockets = true` हुँदा क्�
 
 ```toml
 model = "gpt-5.5"                 # खाली आईडी — "codex/gpt-5.5" होइन
-model_provider = "omniroute"
+model_provider = "agentproxy"
 
-[model_providers.omniroute]
+[model_providers.agentproxy]
 name = "AgentProxy (WS)"
 base_url = "http://localhost:20128/v1"   # कुनै ट्रेलिंग स्ल्याश छैन; WS URL व्युत्पन्न गरिएको छ (उत्पादनमा https/wss प्रयोग गर्नुहोस्)
 wire_api = "responses"                    # फेब्रुअरी 2026 देखि मात्र समर्थित मान
 supports_websockets = true                # वेबसकेटमा प्रतिक्रिया यातायात सक्षम गर्दछ
-env_key = "OMNIROUTE_API_KEY"             # AgentProxy API कुञ्जी राख्छ (Bearer)
+env_key = "AGENTPROXY_API_KEY"             # AgentProxy API कुञ्जी राख्छ (Bearer)
 ```
 
 ```bash
-export OMNIROUTE_API_KEY=sk-...           # एक AgentProxy API कुञ्जी (कुनै पनि कुञ्जी यदि REQUIRE_API_KEY=false)
+export AGENTPROXY_API_KEY=sk-...           # एक AgentProxy API कुञ्जी (कुनै पनि कुञ्जी यदि REQUIRE_API_KEY=false)
 codex exec "Responda apenas: PONG"
 ```
 
@@ -909,7 +909,7 @@ Content-Type: application/json
 {
   "success": true,
   "repaired": ["CLAUDE_CODE_OAUTH_CLIENT_ID", "CLAUDE_CODE_OAUTH_CLIENT_SECRET"],
-  "backupPath": "/home/user/.omniroute/backups/env-repair-2026-04-11.bak"
+  "backupPath": "/home/user/.agentproxy/backups/env-repair-2026-04-11.bak"
 }
 ```
 
@@ -1282,7 +1282,7 @@ AgentProxy ले निरीक्षण/ड्यासबोर्ड प्
 
 ```bash
 POST /a2a
-Authorization: Bearer your-api-key   # वैकल्पिक, OMNIROUTE_API_KEY सेट गरिएको अवस्थामा बाहेक
+Authorization: Bearer your-api-key   # वैकल्पिक, AGENTPROXY_API_KEY सेट गरिएको अवस्थामा बाहेक
 Content-Type: application/json
 
 {
@@ -1325,7 +1325,7 @@ GET /.well-known/agent.json
 | GET  | `/api/a2a/tasks/[id]`        | एउटा कार्य प्राप्त गर्नुहोस्                                                                                                    |
 | POST | `/api/a2a/tasks/[id]/cancel` | कार्य रद्द गर्नुहोस्                                                                                                            |
 
-**प्रमाणीकरण:** REST सहायकहरू व्यवस्थापन प्रमाणीकरण बिना चल्छन् (ड्यासबोर्ड-पढ्न योग्य); JSON-RPC `/a2a` मार्गले कन्फिगर गरिएको भए Bearer `OMNIROUTE_API_KEY` प्रयोग गर्दछ।
+**प्रमाणीकरण:** REST सहायकहरू व्यवस्थापन प्रमाणीकरण बिना चल्छन् (ड्यासबोर्ड-पढ्न योग्य); JSON-RPC `/a2a` मार्गले कन्फिगर गरिएको भए Bearer `AGENTPROXY_API_KEY` प्रयोग गर्दछ।
 
 ---
 
@@ -1638,7 +1638,7 @@ AI एजेन्ट सीपहरू व्यवस्थापन गर�
 
 ## गार्डरेलहरू
 
-रनटाइम गार्डरेलहरू (PII पत्ता लगाउने, प्रम्प्ट इन्जेक्सन पत्ता लगाउने, भिजन ब्रिजिङ) निरीक्षण गर्नुहोस्। गार्डरेलहरू प्रत्येक अनुरोधमा चल्छन्; प्रति-कल अप्ट-आउट `x-omniroute-disabled-guardrails` अनुरोध हेडर मार्फत हुन्छ — त्यहाँ कुनै स्थायी सक्षम/असक्षम सतह छैन।
+रनटाइम गार्डरेलहरू (PII पत्ता लगाउने, प्रम्प्ट इन्जेक्सन पत्ता लगाउने, भिजन ब्रिजिङ) निरीक्षण गर्नुहोस्। गार्डरेलहरू प्रत्येक अनुरोधमा चल्छन्; प्रति-कल अप्ट-आउट `x-agentproxy-disabled-guardrails` अनुरोध हेडर मार्फत हुन्छ — त्यहाँ कुनै स्थायी सक्षम/असक्षम सतह छैन।
 
 | Method | Path                   | विवरण                                                                                      |
 | ------ | ---------------------- | ------------------------------------------------------------------------------------------ |

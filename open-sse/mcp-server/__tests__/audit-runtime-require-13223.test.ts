@@ -8,7 +8,7 @@ describe("MCP audit runtime sqlite loader", () => {
 
   beforeEach(() => {
     vi.resetModules();
-    globalThis.__omnirouteMcpAuditDb = undefined;
+    globalThis.__agentproxyMcpAuditDb = undefined;
     dataDir = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-mcp-audit-runtime-"));
     fs.writeFileSync(path.join(dataDir, "storage.sqlite"), "");
     process.env.DATA_DIR = dataDir;
@@ -16,7 +16,7 @@ describe("MCP audit runtime sqlite loader", () => {
 
   afterEach(() => {
     delete process.env.DATA_DIR;
-    globalThis.__omnirouteMcpAuditDb = undefined;
+    globalThis.__agentproxyMcpAuditDb = undefined;
     vi.doUnmock("../../../src/lib/db/adapters/runtimeRequire.ts");
     vi.restoreAllMocks();
     fs.rmSync(dataDir, { recursive: true, force: true });
@@ -35,7 +35,7 @@ describe("MCP audit runtime sqlite loader", () => {
         }
         return {
           get: vi.fn(),
-          all: vi.fn(() => [{ tool: "omniroute_get_health", count: 7 }]),
+          all: vi.fn(() => [{ tool: "agentproxy_get_health", count: 7 }]),
           run: vi.fn(),
         };
       }
@@ -51,7 +51,7 @@ describe("MCP audit runtime sqlite loader", () => {
       totalCalls: 7,
       successRate: 0.75,
       avgDurationMs: 12,
-      topTools: [{ tool: "omniroute_get_health", count: 7 }],
+      topTools: [{ tool: "agentproxy_get_health", count: 7 }],
     });
     expect(runtimeRequire).toHaveBeenCalledWith("better-sqlite3");
   }, 30000);

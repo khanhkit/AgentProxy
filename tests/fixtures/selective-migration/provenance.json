@@ -14,8 +14,8 @@
         "src/lib/db/repos/apiKeysRepo.js"
       ]
     },
-    "omniroute": {
-      "repository": "diegosouzapw/OmniRoute",
+    "agentproxy": {
+      "repository": "khanhkit/AgentProxy",
       "commit": "7d23bcf8ecb3b43c00c024e317af9c39384a1bee",
       "ref": "release/v3.8.51",
       "evidence": [

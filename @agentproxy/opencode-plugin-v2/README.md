@@ -65,7 +65,7 @@ order:
    recommended route.
 2. **`apiKey` in the plugin options**, when you want a per-project override.
    Remember that this puts the key in a config file you may be committing.
-3. **`AGENTPROXY_API_KEY` in the environment.** `OMNIROUTE_API_KEY` remains accepted only as a legacy fallback when the canonical variable is unset.
+3. **`AGENTPROXY_API_KEY` in the environment.**
 
 If none of the three yields a key, the catalog is empty and the plugin says so
 once at startup rather than leaving you with a silent empty model list.
@@ -84,9 +84,9 @@ explicitly:
 }
 ```
 
-The token can also come from the `OMNIROUTE_MANAGEMENT_API_KEY` environment
+The token can also come from the `AGENTPROXY_MANAGEMENT_API_KEY` environment
 variable (the option wins when both are set). Resolution order:
-`managementReadToken` option, then `OMNIROUTE_MANAGEMENT_API_KEY`, then the
+`managementReadToken` option, then `AGENTPROXY_MANAGEMENT_API_KEY`, then the
 `apiKey` fallback.
 
 Left unset, `managementReadToken` falls back to `apiKey` for backwards
@@ -103,8 +103,8 @@ catalog is never a mystery.
 | -------------------------------- | ------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
 | `providerId`                     | `"agentproxy"`                                                                        | Provider id and integration id; models publish under `<providerId>/…`                                                 |
 | `baseURL`                        | required                                                                              | AgentProxy gateway root (no `/v1` suffix needed)                                                                      |
-| `apiKey`                         | connected credential, then `AGENTPROXY_API_KEY` (`OMNIROUTE_API_KEY` legacy fallback) | Chat key for `/v1/*` — see [Credentials](#credentials)                                                                |
-| `managementReadToken`            | option, then `OMNIROUTE_MANAGEMENT_API_KEY`, then `apiKey`                            | Management key for `/api/*` (combos, providers, enrichment) — usually **not** the same key                            |
+| `apiKey`                         | connected credential, then `AGENTPROXY_API_KEY` | Chat key for `/v1/*` — see [Credentials](#credentials)                                                                |
+| `managementReadToken`            | option, then `AGENTPROXY_MANAGEMENT_API_KEY`, then `apiKey`                            | Management key for `/api/*` (combos, providers, enrichment) — usually **not** the same key                            |
 | `displayName`                    | `"AgentProxy"`                                                                        | Provider display name                                                                                                 |
 | `timeoutMs`                      | `10000`                                                                               | Per-endpoint fetch timeout (auto-combos use 5s)                                                                       |
 | `modelCacheTtlMs`                | `300000`                                                                              | Catalog cache TTL; disk snapshot warms cold starts                                                                    |

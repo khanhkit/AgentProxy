@@ -189,7 +189,7 @@
 
 #### Kimi K2 (តម្លៃថេរ $9/ខែ)
 
-1. ជាវ៖ [Moonshot AI](https://platform.kimi.ai?aff=omniroute)
+1. ជាវ៖ [Moonshot AI](https://platform.kimi.ai)
 2. ទទួលយក API key → ផ្ទាំងគ្រប់គ្រង → បន្ថែម API Key
 
 **ប្រើ៖** `kimi/kimi-k2.5` — **គន្លឹះសម្រាប់អ្នកជំនាញ:** តម្លៃថេរ $9/ខែ សម្រាប់ 10M tokens = ថ្លៃដើមជាក់ស្តែង $0.90/1M!
@@ -264,7 +264,7 @@
 ```
 ការកំណត់ → ម៉ូដែល → កម្រិតខ្ពស់៖
   OpenAI API Base URL: http://localhost:20128/v1
-  OpenAI API Key: [ពីផ្ទាំងគ្រប់គ្រង omniroute]
+  OpenAI API Key: [ពីផ្ទាំងគ្រប់គ្រង agentproxy]
   Model: cc/claude-opus-4-7
 ```
 
@@ -280,7 +280,7 @@
 {
   "env": {
     "ANTHROPIC_BASE_URL": "http://localhost:20128",
-    "ANTHROPIC_AUTH_TOKEN": "your-omniroute-api-key"
+    "ANTHROPIC_AUTH_TOKEN": "your-agentproxy-api-key"
   }
 }
 ```
@@ -291,7 +291,7 @@
 
 ```bash
 export OPENAI_BASE_URL="http://localhost:20128"
-export OPENAI_API_KEY="your-omniroute-api-key"
+export OPENAI_API_KEY="your-agentproxy-api-key"
 codex "your prompt"
 ```
 
@@ -303,14 +303,14 @@ codex "your prompt"
 {
   "agents": {
     "defaults": {
-      "model": { "primary": "omniroute/if/kimi-k2.7-code" }
+      "model": { "primary": "agentproxy/if/kimi-k2.7-code" }
     }
   },
   "models": {
     "providers": {
-      "omniroute": {
+      "agentproxy": {
         "baseUrl": "http://localhost:20128/v1",
-        "apiKey": "your-omniroute-api-key",
+        "apiKey": "your-agentproxy-api-key",
         "api": "openai-completions",
         "models": [{ "id": "if/kimi-k2.7-code", "name": "Kimi K2.7 Code" }]
       }
@@ -337,28 +337,28 @@ API Key: [ពីផ្ទាំងគ្រប់គ្រង]
 ### ការដំឡើង npm ជាសកល (បានណែនាំ)
 
 ```bash
-npm install -g omniroute
+npm install -g agentproxy
 
 # បង្កើតថតកំណត់រចនាសម្ព័ន្ធ
-mkdir -p ~/.omniroute
+mkdir -p ~/.agentproxy
 
 # បង្កើតឯកសារ .env (សូមមើល .env.example)
-cp .env.example ~/.omniroute/.env
+cp .env.example ~/.agentproxy/.env
 
 # ចាប់ផ្តើមម៉ាស៊ីនមេ
-omniroute
+agentproxy
 # ឬប្រើច្រកផ្ទាល់ខ្លួន៖
-omniroute --port 3000
+agentproxy --port 3000
 ```
 
-CLI ផ្ទុក `.env` ដោយស្វ័យប្រវត្តិពី `~/.omniroute/.env` ឬ `./.env`។
+CLI ផ្ទុក `.env` ដោយស្វ័យប្រវត្តិពី `~/.agentproxy/.env` ឬ `./.env`។
 
 ### របៀប Tray
 
 ចាប់ផ្តើម AgentProxy ក្នុងថាសប្រព័ន្ធ៖
 
 ```bash
-omniroute serve --tray
+agentproxy serve --tray
 ```
 
 ពាក្យបញ្ជានឹងបញ្ចប់បន្ទាប់ពីម៉ាស៊ីនមេ និង tray រួចរាល់។
@@ -385,7 +385,7 @@ omniroute serve --tray
 បើកការចាប់ផ្តើមនៅពេលចូលប្រើម៉ាស៊ីនលើកក្រោយ៖
 
 ```bash
-omniroute autostart enable
+agentproxy autostart enable
 ```
 
 ការចាប់ផ្តើមដោយស្វ័យប្រវត្តិប្រើរបៀប tray នៅលើ macOS, Windows និងសម័យ Linux ដែលមានចំណុចប្រទាក់ក្រាហ្វិក។ Linux ដែលគ្មានចំណុចប្រទាក់ក្រាហ្វិកប្រើសេវាអ្នកប្រើ systemd ដែលមានស្រាប់។
@@ -393,7 +393,7 @@ omniroute autostart enable
 បិទការចាប់ផ្តើមនៅពេលចូលប្រើ៖
 
 ```bash
-omniroute autostart disable
+agentproxy autostart disable
 ```
 
 ### ការលុបការដំឡើង
@@ -402,10 +402,10 @@ omniroute autostart disable
 
 | ពាក្យបញ្ជា               | សកម្មភាព                                                                                          |
 | ------------------------ | ------------------------------------------------------------------------------------------------- |
-| `npm run uninstall`      | លុបកម្មវិធីប្រព័ន្ធ ប៉ុន្តែ **រក្សាទុក DB និងការកំណត់រចនាសម្ព័ន្ធរបស់អ្នក** ក្នុង `~/.omniroute`។ |
+| `npm run uninstall`      | លុបកម្មវិធីប្រព័ន្ធ ប៉ុន្តែ **រក្សាទុក DB និងការកំណត់រចនាសម្ព័ន្ធរបស់អ្នក** ក្នុង `~/.agentproxy`។ |
 | `npm run uninstall:full` | លុបកម្មវិធី ហើយ **លុបជាអចិន្ត្រៃយ៍នូវការកំណត់រចនាសម្ព័ន្ធ សោ និងមូលដ្ឋានទិន្នន័យទាំងអស់**។        |
 
-> ចំណាំ៖ ដើម្បីដំណើរការពាក្យបញ្ជាទាំងនេះ សូមចូលទៅកាន់ថតគម្រោង AgentProxy (ប្រសិនបើអ្នកបាន clone វា) រួចដំណើរការពួកវា។ ជាជម្រើស ប្រសិនបើបានដំឡើងជាសកល អ្នកអាចដំណើរការ `npm uninstall -g omniroute` បានដោយផ្ទាល់។
+> ចំណាំ៖ ដើម្បីដំណើរការពាក្យបញ្ជាទាំងនេះ សូមចូលទៅកាន់ថតគម្រោង AgentProxy (ប្រសិនបើអ្នកបាន clone វា) រួចដំណើរការពួកវា។ ជាជម្រើស ប្រសិនបើបានដំឡើងជាសកល អ្នកអាចដំណើរការ `npm uninstall -g agentproxy` បានដោយផ្ទាល់។
 
 ### ការដាក់ឱ្យដំណើរការលើ VPS
 
@@ -415,7 +415,7 @@ cd AgentProxy && npm install && npm run build
 
 export JWT_SECRET="your-secure-secret-change-this"
 export INITIAL_PASSWORD="your-password"
-export DATA_DIR="/var/lib/omniroute"
+export DATA_DIR="/var/lib/agentproxy"
 export PORT="20128"
 export HOSTNAME="0.0.0.0"
 export NODE_ENV="production"
@@ -423,7 +423,7 @@ export NEXT_PUBLIC_BASE_URL="http://localhost:20128"
 export API_KEY_SECRET="endpoint-proxy-api-key-secret"
 
 npm run start
-# ឬ៖ pm2 start npm --name omniroute -- start
+# ឬ៖ pm2 start npm --name agentproxy -- start
 ```
 
 ### ការដាក់ឱ្យដំណើរការជាមួយ PM2 (អង្គចងចាំទាប)
@@ -432,10 +432,10 @@ npm run start
 
 ```bash
 # ជាមួយដែនកំណត់ 512MB (លំនាំដើម)
-pm2 start npm --name omniroute -- start
+pm2 start npm --name agentproxy -- start
 
 # ឬជាមួយដែនកំណត់អង្គចងចាំផ្ទាល់ខ្លួន
-OMNIROUTE_MEMORY_MB=512 pm2 start npm --name omniroute -- start
+AGENTPROXY_MEMORY_MB=512 pm2 start npm --name agentproxy -- start
 
 # ឬប្រើ ecosystem.config.js
 pm2 start ecosystem.config.js
@@ -447,12 +447,12 @@ pm2 start ecosystem.config.js
 module.exports = {
   apps: [
     {
-      name: "omniroute",
+      name: "agentproxy",
       script: "npm",
       args: "start",
       env: {
         NODE_ENV: "production",
-        OMNIROUTE_MEMORY_MB: "512",
+        AGENTPROXY_MEMORY_MB: "512",
         JWT_SECRET: "your-secret",
         INITIAL_PASSWORD: "your-password",
       },
@@ -467,10 +467,10 @@ module.exports = {
 
 ```bash
 # បង្កើត image (លំនាំដើម = runner-cli ដែលបានដំឡើង codex/claude/droid ជាមុន)
-docker build -t omniroute:cli .
+docker build -t agentproxy:cli .
 
 # របៀបចល័ត (បានណែនាំ)
-docker run -d --name omniroute -p 20128:20128 --env-file ./.env -v omniroute-data:/app/data omniroute:cli
+docker run -d --name agentproxy -p 20128:20128 --env-file ./.env -v agentproxy-data:/app/data agentproxy:cli
 ```
 
 សម្រាប់របៀបរួមបញ្ចូលជាមួយ host ដែលមាន CLI binaries សូមមើលផ្នែក Docker ក្នុងឯកសារចម្បង។
@@ -483,8 +483,8 @@ docker run -d --name omniroute -p 20128:20128 --env-file ./.env -v omniroute-dat
 <summary><b>មើលគំរូ xbps-src</b></summary>
 
 ```bash
-# ឯកសារគំរូសម្រាប់ 'omniroute'
-pkgname=omniroute
+# ឯកសារគំរូសម្រាប់ 'agentproxy'
+pkgname=agentproxy
 version=3.8.0
 revision=1
 hostmakedepends="nodejs python3 make"
@@ -495,8 +495,8 @@ license="MIT"
 homepage="https://github.com/diegosouzapw/AgentProxy"
 distfiles="https://github.com/diegosouzapw/AgentProxy/archive/refs/tags/v${version}.tar.gz"
 checksum=009400afee90a9f32599d8fe734145cfd84098140b7287990183dde45ae2245b
-system_accounts="_omniroute"
-omniroute_homedir="/var/lib/omniroute"
+system_accounts="_agentproxy"
+agentproxy_homedir="/var/lib/agentproxy"
 export NODE_ENV=production
 export npm_config_engine_strict=false
 export npm_config_loglevel=error
@@ -546,26 +546,26 @@ do_check() {
 }
 
 do_install() {
-	vmkdir usr/lib/omniroute/.next
-	vcopy .next/standalone/. usr/lib/omniroute/.next/standalone
+	vmkdir usr/lib/agentproxy/.next
+	vcopy .next/standalone/. usr/lib/agentproxy/.next/standalone
 
 	# ទប់ស្កាត់ការលុបថត app router ទទេរបស់ Next.js ដោយ post-install hook
 	for _d in \
 		.next/standalone/.next/server/app/dashboard \
 		.next/standalone/.next/server/app/dashboard/settings \
 		.next/standalone/.next/server/app/dashboard/providers; do
-		touch "${DESTDIR}/usr/lib/omniroute/${_d}/.keep"
+		touch "${DESTDIR}/usr/lib/agentproxy/${_d}/.keep"
 	done
 
-	cat > "${WRKDIR}/omniroute" <<'EOF'
+	cat > "${WRKDIR}/agentproxy" <<'EOF'
 #!/bin/sh
 export PORT="${PORT:-20128}"
-export DATA_DIR="${DATA_DIR:-${XDG_DATA_HOME:-${HOME}/.local/share}/omniroute}"
+export DATA_DIR="${DATA_DIR:-${XDG_DATA_HOME:-${HOME}/.local/share}/agentproxy}"
 export APP_LOG_TO_FILE="${APP_LOG_TO_FILE:-false}"
 mkdir -p "${DATA_DIR}"
-exec node /usr/lib/omniroute/.next/standalone/server.js "$@"
+exec node /usr/lib/agentproxy/.next/standalone/server.js "$@"
 EOF
-	vbin "${WRKDIR}/omniroute"
+	vbin "${WRKDIR}/agentproxy"
 }
 
 post_install() {
@@ -579,14 +579,14 @@ post_install() {
 
 | អថេរ                                    | តម្លៃលំនាំដើម                        | ការពិពណ៌នា                                                                                                                                                   |
 | --------------------------------------- | ------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `JWT_SECRET`                            | `omniroute-default-secret-change-me` | ពាក្យសម្ងាត់សម្រាប់ចុះហត្ថលេខា JWT (**ត្រូវប្តូរនៅក្នុងបរិស្ថានផលិតកម្ម**)                                                                                   |
+| `JWT_SECRET`                            | `agentproxy-default-secret-change-me` | ពាក្យសម្ងាត់សម្រាប់ចុះហត្ថលេខា JWT (**ត្រូវប្តូរនៅក្នុងបរិស្ថានផលិតកម្ម**)                                                                                   |
 | `INITIAL_PASSWORD`                      | `CHANGEME`                           | ពាក្យសម្ងាត់សម្រាប់ការចូលប្រើលើកដំបូង                                                                                                                        |
-| `DATA_DIR`                              | `~/.omniroute`                       | ថតទិន្នន័យ (មូលដ្ឋានទិន្នន័យ ការប្រើប្រាស់ កំណត់ហេតុ)                                                                                                        |
+| `DATA_DIR`                              | `~/.agentproxy`                       | ថតទិន្នន័យ (មូលដ្ឋានទិន្នន័យ ការប្រើប្រាស់ កំណត់ហេតុ)                                                                                                        |
 | `PORT`                                  | លំនាំដើមរបស់ framework               | ច្រកសេវា (`20128` នៅក្នុងឧទាហរណ៍)                                                                                                                            |
 | `HOSTNAME`                              | លំនាំដើមរបស់ framework               | ម៉ាស៊ីនមេដែលត្រូវភ្ជាប់ (Docker ប្រើ `0.0.0.0` ជាលំនាំដើម)                                                                                                   |
 | `NODE_ENV`                              | លំនាំដើមរបស់ runtime                 | កំណត់ជា `production` សម្រាប់ការដាក់ឱ្យប្រើប្រាស់                                                                                                             |
 | `NEXT_PUBLIC_BASE_URL`                  | `http://localhost:20128`             | URL មូលដ្ឋានសាធារណៈដែលបង្ហាញទៅកាន់ dashboard និងបើកឱ្យ server ប្រើប្រាស់ (ជំនួស `BASE_URL` ចាស់)                                                             |
-| `NEXT_PUBLIC_CLOUD_URL`                 | `https://omniroute.dev`              | URL មូលដ្ឋាននៃ endpoint សមកាលកម្ម cloud (ជំនួស `CLOUD_URL` ចាស់)                                                                                             |
+| `NEXT_PUBLIC_CLOUD_URL`                 | `https://agentproxy.online`              | URL មូលដ្ឋាននៃ endpoint សមកាលកម្ម cloud (ជំនួស `CLOUD_URL` ចាស់)                                                                                             |
 | `API_KEY_SECRET`                        | `endpoint-proxy-api-key-secret`      | ពាក្យសម្ងាត់ HMAC សម្រាប់ API key ដែលបានបង្កើត                                                                                                               |
 | `REQUIRE_API_KEY`                       | `false`                              | តម្រូវឱ្យប្រើ Bearer API key នៅលើ `/v1/*`                                                                                                                    |
 | `ALLOW_API_KEY_REVEAL`                  | `false`                              | អនុញ្ញាតឱ្យអ្នកប្រើ dashboard ដែលបានផ្ទៀងផ្ទាត់ភាពត្រឹមត្រូវ បង្ហាញតម្លៃ API key ដែលបានរក្សាទុកពេញលេញតាមតម្រូវការ                                            |
@@ -596,7 +596,7 @@ post_install() {
 | `AUTH_COOKIE_SECURE`                    | `false`                              | បង្ខំឱ្យ cookie ផ្ទៀងផ្ទាត់ភាពត្រឹមត្រូវប្រើ `Secure` (នៅពីក្រោយ HTTPS reverse proxy)                                                                        |
 | `CLOUDFLARED_BIN`                       | មិនបានកំណត់                          | ប្រើ binary `cloudflared` ដែលមានស្រាប់ ជំនួសឱ្យការទាញយកដែលបានគ្រប់គ្រង                                                                                       |
 | `CLOUDFLARED_PROTOCOL`                  | `http2`                              | ការដឹកជញ្ជូនសម្រាប់ Quick Tunnels ដែលបានគ្រប់គ្រង (`http2`, `quic` ឬ `auto`)                                                                                 |
-| `OMNIROUTE_MEMORY_MB`                   | `512`                                | ដែនកំណត់ heap របស់ Node.js គិតជា MB                                                                                                                          |
+| `AGENTPROXY_MEMORY_MB`                   | `512`                                | ដែនកំណត់ heap របស់ Node.js គិតជា MB                                                                                                                          |
 | `PROMPT_CACHE_MAX_SIZE`                 | `50`                                 | ចំនួនធាតុអតិបរមាក្នុង prompt cache                                                                                                                           |
 | `SEMANTIC_CACHE_MAX_SIZE`               | `100`                                | ចំនួនធាតុអតិបរមាក្នុង semantic cache                                                                                                                         |
 
@@ -657,7 +657,7 @@ post_install() {
 
 **អ្នកផ្តល់សេវាដែលត្រូវគ្នាផ្សេងទៀត** (បានជ្រើសរើស): `cohere`, `databricks`, `snowflake`, `together`, `vertex`, `alibaba`, `alibaba-cn`, `bedrock` (តាមរយៈ `aws-bedrock`), `azure-ai`, `openrouter` (កាតាឡុកឆ្លងកាត់ដោយផ្ទាល់), `siliconflow`, `hyperbolic`, `huggingface`, `featherless-ai`, `cloudflare-ai`, `scaleway`, `deepinfra`, `vercel-ai-gateway`, `bazaarlink`, `friendliai`, `nous-research`, `reka`, `volcengine`, `ai21`, `gigachat`។ អ្នកផ្តល់សេវានីមួយៗរក្សាបញ្ជីម៉ូដែលផ្ទាល់ខ្លួននៅក្នុង `providerRegistry.ts` ហើយអាចធ្វើសមកាលកម្មដោយស្វ័យប្រវត្តិ នៅពេលអ្នកផ្តល់សេវាបង្ហាញ endpoint `/models`។
 
-**កំណត់ចំណាំអំពីលេខសម្គាល់ម៉ូដែល:** AgentProxy ប្រើលេខសម្គាល់ដើមរបស់អ្នកផ្តល់សេវា (`claude-opus-4-8`, `gpt-5.5`, `glm-5.1`, `MiniMax-M2.7`, `kimi-k2.5`, `grok-4.20-0309-reasoning`)។ លេខសម្គាល់ខ្លះមានកំណែប្រើសញ្ញាចុច ពីព្រោះ API ប្រភពដើមតម្រូវឱ្យប្រើទម្រង់នោះ។ ប្រសិនបើម៉ូដែលមួយមិនមានក្នុងបញ្ជីខាងលើ សូមដំណើរការ `omniroute models --search <term>` ឬហៅ `GET /api/models/catalog` ដើម្បីបញ្ជាក់ភាពអាចប្រើបាន។
+**កំណត់ចំណាំអំពីលេខសម្គាល់ម៉ូដែល:** AgentProxy ប្រើលេខសម្គាល់ដើមរបស់អ្នកផ្តល់សេវា (`claude-opus-4-8`, `gpt-5.5`, `glm-5.1`, `MiniMax-M2.7`, `kimi-k2.5`, `grok-4.20-0309-reasoning`)។ លេខសម្គាល់ខ្លះមានកំណែប្រើសញ្ញាចុច ពីព្រោះ API ប្រភពដើមតម្រូវឱ្យប្រើទម្រង់នោះ។ ប្រសិនបើម៉ូដែលមួយមិនមានក្នុងបញ្ជីខាងលើ សូមដំណើរការ `agentproxy models --search <term>` ឬហៅ `GET /api/models/catalog` ដើម្បីបញ្ជាក់ភាពអាចប្រើបាន។
 
 </details>
 
@@ -694,16 +694,16 @@ curl -X POST http://localhost:20128/api/provider-models \
 
 ```bash
 # gateway-a
-OMNIROUTE_INSTANCE_ID=gateway-a
-OMNIROUTE_PEER_URLS=http://gateway-b:20128/v1
-OMNIROUTE_PEER_MAX_HOPS=4
+AGENTPROXY_INSTANCE_ID=gateway-a
+AGENTPROXY_PEER_URLS=http://gateway-b:20128/v1
+AGENTPROXY_PEER_MAX_HOPS=4
 ```
 
 ```bash
 # gateway-b
-OMNIROUTE_INSTANCE_ID=gateway-b
-OMNIROUTE_PEER_URLS=http://gateway-a:20128/v1
-OMNIROUTE_PEER_MAX_HOPS=4
+AGENTPROXY_INSTANCE_ID=gateway-b
+AGENTPROXY_PEER_URLS=http://gateway-a:20128/v1
+AGENTPROXY_PEER_MAX_HOPS=4
 ```
 
 មានតែសំណើដែលផ្ញើទៅកាន់ URL របស់ដៃគូដែលបានដាក់ក្នុងបញ្ជីអនុញ្ញាតយ៉ាងច្បាស់ប៉ុណ្ណោះ ដែលនឹងទទួលបាន header `X-AgentProxy-Peer-Trace`។ ច្រកមួយនឹងបដិសេធ instance ID ដែលត្រូវបានប្រើម្តងទៀត ឬចំនួនតំណដែលអនុញ្ញាតត្រូវបានប្រើអស់ ដោយប្រើ HTTP `508 Loop Detected`; អ្នកផ្តល់សេវាខាងលើធម្មតានឹងមិនទទួលបាន metadata របស់ដៃគូឡើយ។
@@ -1091,7 +1091,7 @@ AgentProxy ភ្ជាប់មកជាមួយ **កម្មវិធីក
 
 ```bash
 curl -X POST http://localhost:20128/v1/chat/completions \
-  -H "Authorization: Bearer $OMNIROUTE_KEY" \
+  -H "Authorization: Bearer $AGENTPROXY_KEY" \
   -H "Content-Type: application/json" \
   -d '{
     "model": "auto/coding",
@@ -1112,7 +1112,7 @@ AgentProxy គឺជា **ម៉ាស៊ីនមេ MCP** (Model Context Proto
 
 - **SSE**៖ `http://localhost:20128/api/mcp/sse`
 - **HTTP ដែលអាចស្ទ្រីមបាន**៖ `http://localhost:20128/api/mcp/stream`
-- **stdio**៖ `omniroute --mcp` (សម្រាប់កម្មវិធីជំនួយ IDE ដែលផ្តល់អាទិភាពដល់ stdio)
+- **stdio**៖ `agentproxy --mcp` (សម្រាប់កម្មវិធីជំនួយ IDE ដែលផ្តល់អាទិភាពដល់ stdio)
 
 ### ភ្ជាប់ Claude Desktop
 
@@ -1121,8 +1121,8 @@ AgentProxy គឺជា **ម៉ាស៊ីនមេ MCP** (Model Context Proto
 ```json
 {
   "mcpServers": {
-    "omniroute": {
-      "command": "omniroute",
+    "agentproxy": {
+      "command": "agentproxy",
       "args": ["--mcp"]
     }
   }
@@ -1198,23 +1198,23 @@ AgentProxy រួមបញ្ចូលជាមួយភ្នាក់ងារ
 ```bash
 # រាយបញ្ជី providers
 curl http://localhost:20128/api/providers \
-  -H "Authorization: Bearer $OMNIROUTE_MANAGE_KEY"
+  -H "Authorization: Bearer $AGENTPROXY_MANAGE_KEY"
 
 # បន្ថែមការតភ្ជាប់ provider
 curl -X POST http://localhost:20128/api/providers \
-  -H "Authorization: Bearer $OMNIROUTE_MANAGE_KEY" \
+  -H "Authorization: Bearer $AGENTPROXY_MANAGE_KEY" \
   -H "Content-Type: application/json" \
   -d '{ "provider": "openai", "apiKey": "sk-...", "name": "main" }'
 
 # បង្កើត combo
 curl -X POST http://localhost:20128/api/combos \
-  -H "Authorization: Bearer $OMNIROUTE_MANAGE_KEY" \
+  -H "Authorization: Bearer $AGENTPROXY_MANAGE_KEY" \
   -H "Content-Type: application/json" \
   -d '{ "name": "premium", "strategy": "priority", "models": [{ "model": "cc/claude-opus-4-7" }, { "model": "glm/glm-5.1" }] }'
 
 # រាយបញ្ជី/បង្កើត API keys
-curl http://localhost:20128/api/keys -H "Authorization: Bearer $OMNIROUTE_MANAGE_KEY"
-curl -X POST http://localhost:20128/api/keys -H "Authorization: Bearer $OMNIROUTE_MANAGE_KEY" \
+curl http://localhost:20128/api/keys -H "Authorization: Bearer $AGENTPROXY_MANAGE_KEY"
+curl -X POST http://localhost:20128/api/keys -H "Authorization: Bearer $AGENTPROXY_MANAGE_KEY" \
   -d '{ "name": "ci-bot", "scopes": ["chat"] }'
 ```
 
@@ -1224,32 +1224,32 @@ curl -X POST http://localhost:20128/api/keys -H "Authorization: Bearer $OMNIROUT
 
 ## 💻 CLI ផ្ទៃក្នុង
 
-AgentProxy ភ្ជាប់មកជាមួយ CLI ផ្ទៃក្នុង (`omniroute …`) សម្រាប់ការដំឡើង ការធ្វើរោគវិនិច្ឆ័យ និងការគ្រប់គ្រងពេលដំណើរការ។ វា**ដាច់ដោយឡែកពីទំព័រ "CLI Tools" នៅក្នុងផ្ទាំងគ្រប់គ្រង** ដែលកំណត់រចនាសម្ព័ន្ធ CLI របស់ភាគីទីបី (Claude Code, Cursor, Codex, Cline, …) ដើម្បីឱ្យពួកវាអាចទាក់ទងជាមួយ AgentProxy បាន។
+AgentProxy ភ្ជាប់មកជាមួយ CLI ផ្ទៃក្នុង (`agentproxy …`) សម្រាប់ការដំឡើង ការធ្វើរោគវិនិច្ឆ័យ និងការគ្រប់គ្រងពេលដំណើរការ។ វា**ដាច់ដោយឡែកពីទំព័រ "CLI Tools" នៅក្នុងផ្ទាំងគ្រប់គ្រង** ដែលកំណត់រចនាសម្ព័ន្ធ CLI របស់ភាគីទីបី (Claude Code, Cursor, Codex, Cline, …) ដើម្បីឱ្យពួកវាអាចទាក់ទងជាមួយ AgentProxy បាន។
 
 ```bash
-omniroute setup                    # អ្នកជំនួយការអន្តរកម្ម (ពាក្យសម្ងាត់ អ្នកផ្តល់សេវា បន្សំ)
-omniroute setup --non-interactive  # សមស្របសម្រាប់ CI
-omniroute doctor                   # ការធ្វើរោគវិនិច្ឆ័យសុខភាព (ថតទិន្នន័យ DB អ្នកផ្តល់សេវា ច្រក)
-omniroute providers available      # រាយបញ្ជីអ្នកផ្តល់សេវាដែលគាំទ្រ
-omniroute providers list           # រាយបញ្ជីការតភ្ជាប់ដែលបានកំណត់រចនាសម្ព័ន្ធ
-omniroute providers test <id>      # សាកល្បងការតភ្ជាប់អ្នកផ្តល់សេវាដោយផ្ទាល់
-omniroute combos list              # រាយបញ្ជីបន្សំ
-omniroute combos switch <name>     # កំណត់បន្សំលំនាំដើម
-omniroute models                   # រាយបញ្ជីម៉ូដែលដែលមាន (--json, --search)
-omniroute keys add | list | remove # គ្រប់គ្រង API key ពីស្ថានីយ
-omniroute backup                   # ថតចម្លងស្ថានភាពរចនាសម្ព័ន្ធ + DB
-omniroute restore [<timestamp>]    # ស្ដារពីរូបថតចម្លងស្ថានភាព
-omniroute health                   # ព័ត៌មានសុខភាពលម្អិត (ឧបករណ៍ផ្ដាច់ cache អង្គចងចាំ)
-omniroute quota                    # ការប្រើប្រាស់កូតារបស់អ្នកផ្តល់សេវា
-omniroute mcp status               # ស្ថានភាពម៉ាស៊ីនមេ MCP
-omniroute a2a status               # ស្ថានភាពម៉ាស៊ីនមេ A2A
-omniroute tunnel list|create|stop  # ផ្លូវរូង Cloudflare/Tailscale/ngrok
-omniroute reset-password           # កំណត់ពាក្យសម្ងាត់អ្នកគ្រប់គ្រងឡើងវិញ
-omniroute --mcp                    # ចាប់ផ្ដើមម៉ាស៊ីនមេ MCP តាម stdio
-omniroute --port 3000              # ចាប់ផ្ដើមម៉ាស៊ីនមេលើច្រកផ្ទាល់ខ្លួន
+agentproxy setup                    # អ្នកជំនួយការអន្តរកម្ម (ពាក្យសម្ងាត់ អ្នកផ្តល់សេវា បន្សំ)
+agentproxy setup --non-interactive  # សមស្របសម្រាប់ CI
+agentproxy doctor                   # ការធ្វើរោគវិនិច្ឆ័យសុខភាព (ថតទិន្នន័យ DB អ្នកផ្តល់សេវា ច្រក)
+agentproxy providers available      # រាយបញ្ជីអ្នកផ្តល់សេវាដែលគាំទ្រ
+agentproxy providers list           # រាយបញ្ជីការតភ្ជាប់ដែលបានកំណត់រចនាសម្ព័ន្ធ
+agentproxy providers test <id>      # សាកល្បងការតភ្ជាប់អ្នកផ្តល់សេវាដោយផ្ទាល់
+agentproxy combos list              # រាយបញ្ជីបន្សំ
+agentproxy combos switch <name>     # កំណត់បន្សំលំនាំដើម
+agentproxy models                   # រាយបញ្ជីម៉ូដែលដែលមាន (--json, --search)
+agentproxy keys add | list | remove # គ្រប់គ្រង API key ពីស្ថានីយ
+agentproxy backup                   # ថតចម្លងស្ថានភាពរចនាសម្ព័ន្ធ + DB
+agentproxy restore [<timestamp>]    # ស្ដារពីរូបថតចម្លងស្ថានភាព
+agentproxy health                   # ព័ត៌មានសុខភាពលម្អិត (ឧបករណ៍ផ្ដាច់ cache អង្គចងចាំ)
+agentproxy quota                    # ការប្រើប្រាស់កូតារបស់អ្នកផ្តល់សេវា
+agentproxy mcp status               # ស្ថានភាពម៉ាស៊ីនមេ MCP
+agentproxy a2a status               # ស្ថានភាពម៉ាស៊ីនមេ A2A
+agentproxy tunnel list|create|stop  # ផ្លូវរូង Cloudflare/Tailscale/ngrok
+agentproxy reset-password           # កំណត់ពាក្យសម្ងាត់អ្នកគ្រប់គ្រងឡើងវិញ
+agentproxy --mcp                    # ចាប់ផ្ដើមម៉ាស៊ីនមេ MCP តាម stdio
+agentproxy --port 3000              # ចាប់ផ្ដើមម៉ាស៊ីនមេលើច្រកផ្ទាល់ខ្លួន
 ```
 
-គន្លឹះ៖ ប្រើ `omniroute doctor --json` ជាមួយឧបករណ៍ត្រួតពិនិត្យរបស់អ្នក ដើម្បីជូនដំណឹងអំពីការតភ្ជាប់អ្នកផ្តល់សេវាដែលមានបញ្ហា។
+គន្លឹះ៖ ប្រើ `agentproxy doctor --json` ជាមួយឧបករណ៍ត្រួតពិនិត្យរបស់អ្នក ដើម្បីជូនដំណឹងអំពីការតភ្ជាប់អ្នកផ្តល់សេវាដែលមានបញ្ហា។
 
 ---
 
@@ -1298,7 +1298,7 @@ npm run build:linux    # Linux (.AppImage)
 
 | អថេរ                  | លំនាំដើម | ការពិពណ៌នា                               |
 | --------------------- | -------- | ---------------------------------------- |
-| `OMNIROUTE_PORT`      | `20128`  | ច្រកម៉ាស៊ីនមេ                            |
-| `OMNIROUTE_MEMORY_MB` | `512`    | ដែនកំណត់ heap របស់ Node.js (64–16384 MB) |
+| `AGENTPROXY_PORT`      | `20128`  | ច្រកម៉ាស៊ីនមេ                            |
+| `AGENTPROXY_MEMORY_MB` | `512`    | ដែនកំណត់ heap របស់ Node.js (64–16384 MB) |
 
 📖 ឯកសារពេញលេញ៖ [`electron/README.md`](../../electron/README.md)

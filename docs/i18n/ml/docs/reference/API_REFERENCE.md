@@ -64,7 +64,7 @@ Content-Type: application/json
 | ഹെഡർ                     | ദിശ       | വിവരണം                                                                                                                                                                                                                               |
 | ------------------------ | --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | `X-AgentProxy-No-Cache`   | അഭ്യർത്ഥന | കാഷ് ഒഴിവാക്കാൻ `true` ആയി സജ്ജമാക്കുക                                                                                                                                                                                               |
-| `x-omniroute-no-memory`  | അഭ്യർത്ഥന | ഈ അഭ്യർത്ഥനയ്ക്കായി മെമ്മറി + സ്കിൽസ് ഇൻജക്ഷൻ ഒഴിവാക്കാൻ `true` ആയി സജ്ജമാക്കുക (no-cache-ന് സമാനമാണ്; ഓരോ കോളിലുമുള്ള ടോക്കൺ/ചെലവ് അധികഭാരം ഒഴിവാക്കുന്നു)                                                                          |
+| `x-agentproxy-no-memory`  | അഭ്യർത്ഥന | ഈ അഭ്യർത്ഥനയ്ക്കായി മെമ്മറി + സ്കിൽസ് ഇൻജക്ഷൻ ഒഴിവാക്കാൻ `true` ആയി സജ്ജമാക്കുക (no-cache-ന് സമാനമാണ്; ഓരോ കോളിലുമുള്ള ടോക്കൺ/ചെലവ് അധികഭാരം ഒഴിവാക്കുന്നു)                                                                          |
 | `X-AgentProxy-Progress`   | അഭ്യർത്ഥന | പുരോഗതി ഇവന്റുകൾക്കായി `true` ആയി സജ്ജമാക്കുക                                                                                                                                                                                        |
 | `X-Session-Id`           | അഭ്യർത്ഥന | ബാഹ്യ സെഷൻ അഫിനിറ്റിക്കുള്ള സ്റ്റിക്കി സെഷൻ കീ                                                                                                                                                                                       |
 | `x_session_id`           | അഭ്യർത്ഥന | അണ്ടർസ്കോർ വകഭേദവും സ്വീകരിക്കും (നേരിട്ടുള്ള HTTP)                                                                                                                                                                                  |
@@ -159,7 +159,7 @@ X-AgentProxy-Lease-Generation: 1
 
 ഈ പ്രതികരണം അർത്ഥമാക്കുന്നത് സാധാരണ യോഗ്യമായ സെറ്റ് ശൂന്യമല്ലാത്തതും ഓരോ സൗജന്യ കാൻഡിഡേറ്റും ഒരു വിദേശ സജീവ ലീസിനാൽ കൈവശം വെച്ചിരുന്നു എന്നുമാണ്. പിന്തുണയ്ക്കാത്ത മോഡലുകൾ/പ്രൊവൈഡർമാർ, പോളിസി പൊരുത്തക്കേട്, കൂൾഡൗൺ, ക്വാട്ട, ആരോഗ്യം, മറ്റ് സാധാരണ യോഗ്യതാ പരാജയങ്ങൾ എന്നിവ അവയുടെ നിലവിലുള്ള ഓമ്നിറൂട്ട് പ്രതികരണങ്ങൾ നിലനിർത്തുന്നു.
 
-### `x-omniroute-compression`
+### `x-agentproxy-compression`
 
 കംപ്രഷൻ പ്ലാനിന്റെ ഓരോ അഭ്യർത്ഥനയ്ക്കുമുള്ള ഓവർറൈഡ്. ഏറ്റവും ഉയർന്ന മുൻഗണന — റൂട്ടിംഗ്-കോംബോ ഓവർറൈഡ്, സജീവ പ്രൊഫൈൽ, ഓട്ടോ-ട്രിഗർ, പാനൽ ഡിഫോൾട്ട് എന്നിവയെ മറികടക്കുന്നു. മൂല്യങ്ങൾ:
 
@@ -395,10 +395,10 @@ GET /v1/models?prefix=canonical    # പൂർണ്ണമായ പ്രൊവ
 
 ### ചിന്തിക്കാത്ത മോഡൽ വകഭേദങ്ങൾ
 
-ചിന്തിക്കാൻ ശേഷിയുള്ള Claude മോഡലുകൾക്കായി, `/v1/models` `claude-3-omniroute-no-thinking/` എന്ന പ്രിഫിക്സുള്ള id അടങ്ങിയ ഒരു **ചിന്തിക്കാത്ത** വകഭേദവും പരസ്യപ്പെടുത്തുന്നു:
+ചിന്തിക്കാൻ ശേഷിയുള്ള Claude മോഡലുകൾക്കായി, `/v1/models` `claude-3-agentproxy-no-thinking/` എന്ന പ്രിഫിക്സുള്ള id അടങ്ങിയ ഒരു **ചിന്തിക്കാത്ത** വകഭേദവും പരസ്യപ്പെടുത്തുന്നു:
 
 ```
-claude-3-omniroute-no-thinking/<provider>/<model>
+claude-3-agentproxy-no-thinking/<provider>/<model>
 ```
 
 ഈ id തിരഞ്ഞെടുക്കുന്നത് (ഉദാ. എല്ലായ്പ്പോഴും ഒരു `thinking` ബ്ലോക്ക് ചേർക്കുന്ന Claude Code കോൺഫിഗിൽ) റീസണിംഗ് അടിച്ചമർത്തിക്കൊണ്ട് യഥാർഥ `<provider>/<model>`-ലേക്ക് തിരികെ റിസോൾവ് ചെയ്യുന്നു — `/v1/messages` പാതയിൽ `thinking:{type:"disabled"}`, അല്ലെങ്കിൽ `/v1/chat/completions` പാതയിൽ `reasoning`/`reasoning_effort` ഫീൽഡുകൾ ഒഴിവാക്കപ്പെടുന്നു. ചിന്തനത്തെ പിന്തുണയ്ക്കുകയും **അതോടൊപ്പം** `disabled` അംഗീകരിക്കുകയും ചെയ്യുന്ന Claude-ഫാമിലി മോഡലുകൾക്ക് മാത്രമാണ് ഈ വകഭേദം പട്ടികപ്പെടുത്തുന്നത് (അതിനാൽ, ഉദാ. `disabled` നിരസിക്കുന്ന അഡാപ്റ്റീവ്-ഒൺലി മോഡലുകൾ ഒഴിവാക്കപ്പെടുന്നു). `ModelSpec.noThinkingAlias` വഴി ഓപ്പറേറ്റർമാർക്ക് ഓരോ മോഡലിനും ഈ വകഭേദം നിർബന്ധമായി ഓൺ അല്ലെങ്കിൽ ഓഫ് ചെയ്യാം.
@@ -484,7 +484,7 @@ POST /v1/music/generations  { "model": "suno/v3.5",   "prompt": "..." }
 > നോഡുകൾക്ക് (`localhost`, `127.0.0.1`, `172.16.0.0/12`) എല്ലായ്പ്പോഴും യോഗ്യതയുണ്ട്. മറ്റേതെങ്കിലും
 > ഹോസ്റ്റിലുള്ള നോഡുകൾക്ക് — ഒരു LAN ബോക്സ് അല്ലെങ്കിൽ Tailscale പിയർ — ഓപ്പറേറ്റർ
 > `RERANK_REMOTE_PROVIDER_NODES` ഫീച്ചർ ഫ്ലാഗ് പ്രവർത്തനക്ഷമമാക്കുകയും നോഡിന്റെ അടിസ്ഥാന URL പ്രൊവൈഡർ
-> ഔട്ട്ബൗണ്ട് URL നയം (`OMNIROUTE_ALLOW_LOCAL_PROVIDER_URLS` / `OMNIROUTE_ALLOW_PRIVATE_PROVIDER_URLS`) പാലിക്കുകയും ചെയ്യുമ്പോൾ മാത്രമേ യോഗ്യതയുള്ളൂ;
+> ഔട്ട്ബൗണ്ട് URL നയം (`AGENTPROXY_ALLOW_LOCAL_PROVIDER_URLS` / `AGENTPROXY_ALLOW_PRIVATE_PROVIDER_URLS`) പാലിക്കുകയും ചെയ്യുമ്പോൾ മാത്രമേ യോഗ്യതയുള്ളൂ;
 > ക്ലൗഡ്-മെറ്റാഡാറ്റ ഹോസ്റ്റുകളിലേക്ക് ഒരിക്കലും റൂട്ട് ചെയ്യില്ല. മെമ്മറി എൻജിന്റെ റീറാങ്ക് ഘട്ടം ലൂപ്പ്ബാക്കിലൂടെ
 > ഈ റൂട്ടിനെ വിളിക്കുന്നതിനാൽ, Memory ക്രമീകരണങ്ങളിലെ `rerankProviderModel`-നും ഇതേ നിയമം ബാധകമാണ്.
 >
@@ -605,8 +605,8 @@ GET /v1/ws?handshake=1
 
 ```bash
 # HTTP API-യുടെ അതേ host:port (ഡിഫോൾട്ട് 20128); കണക്ഷൻ അപ്ഗ്രേഡ് ചെയ്യുക:
-wscat -c "ws://localhost:20128/v1/responses?api_key=<OMNIROUTE_API_KEY>"
-# (അല്ലെങ്കിൽ: -H "Authorization: Bearer <OMNIROUTE_API_KEY>")
+wscat -c "ws://localhost:20128/v1/responses?api_key=<AGENTPROXY_API_KEY>"
+# (അല്ലെങ്കിൽ: -H "Authorization: Bearer <AGENTPROXY_API_KEY>")
 
 # ആദ്യ ഫ്രെയിം response.create ആയിരിക്കണം:
 { "type": "response.create", "model": "gpt-5.5", "input": [ { "role": "user", "content": "hi" } ] }
@@ -642,18 +642,18 @@ AgentProxy-ലേക്ക് നയിക്കുക (നിലവിലുള
 
 ```toml
 model = "gpt-5.5"                 # ലളിതമായ id — "codex/gpt-5.5" അല്ല
-model_provider = "omniroute"
+model_provider = "agentproxy"
 
-[model_providers.omniroute]
+[model_providers.agentproxy]
 name = "AgentProxy (WS)"
 base_url = "http://localhost:20128/v1"   # അവസാനത്തിൽ സ്ലാഷ് പാടില്ല; WS URL ഇതിൽനിന്ന് നിർണ്ണയിക്കുന്നു (പ്രൊഡക്ഷനിൽ https/wss ഉപയോഗിക്കുക)
 wire_api = "responses"                    # Feb 2026 മുതൽ പിന്തുണയ്ക്കുന്ന ഏക മൂല്യം
 supports_websockets = true                # Responses-over-WS ട്രാൻസ്പോർട്ട് സജ്ജമാക്കുന്നു
-env_key = "OMNIROUTE_API_KEY"             # AgentProxy API കീ (Bearer) സൂക്ഷിക്കുന്നു
+env_key = "AGENTPROXY_API_KEY"             # AgentProxy API കീ (Bearer) സൂക്ഷിക്കുന്നു
 ```
 
 ```bash
-export OMNIROUTE_API_KEY=sk-...           # ഒരു AgentProxy API കീ (REQUIRE_API_KEY=false ആണെങ്കിൽ ഏതെങ്കിലും കീ)
+export AGENTPROXY_API_KEY=sk-...           # ഒരു AgentProxy API കീ (REQUIRE_API_KEY=false ആണെങ്കിൽ ഏതെങ്കിലും കീ)
 codex exec "Responda apenas: PONG"
 ```
 
@@ -1014,7 +1014,7 @@ Content-Type: application/json
 {
   "success": true,
   "repaired": ["CLAUDE_CODE_OAUTH_CLIENT_ID", "CLAUDE_CODE_OAUTH_CLIENT_SECRET"],
-  "backupPath": "/home/user/.omniroute/backups/env-repair-2026-04-11.bak"
+  "backupPath": "/home/user/.agentproxy/backups/env-repair-2026-04-11.bak"
 }
 ```
 
@@ -1388,7 +1388,7 @@ AgentProxy, 3 ട്രാൻസ്പോർട്ടുകളും (stdio, SSE
 
 ```bash
 POST /a2a
-Authorization: Bearer your-api-key   # OMNIROUTE_API_KEY സജ്ജമാക്കിയിട്ടില്ലെങ്കിൽ ഐച്ഛികം
+Authorization: Bearer your-api-key   # AGENTPROXY_API_KEY സജ്ജമാക്കിയിട്ടില്ലെങ്കിൽ ഐച്ഛികം
 Content-Type: application/json
 
 {
@@ -1431,7 +1431,7 @@ GET /.well-known/agent.json
 | GET  | `/api/a2a/tasks/[id]`        | ഒരു ടാസ്ക് ലഭ്യമാക്കുന്നു                                                                                                          |
 | POST | `/api/a2a/tasks/[id]/cancel` | ഒരു ടാസ്ക് റദ്ദാക്കുന്നു                                                                                                           |
 
-**പ്രാമാണീകരണം:** REST സഹായികൾ മാനേജ്മെന്റ് പ്രാമാണീകരണമില്ലാതെ പ്രവർത്തിക്കുന്നു (ഡാഷ്ബോർഡിൽ വായിക്കാവുന്നത്); ക്രമീകരിച്ചിട്ടുണ്ടെങ്കിൽ JSON-RPC `/a2a` റൂട്ട് Bearer `OMNIROUTE_API_KEY` ഉപയോഗിക്കുന്നു.
+**പ്രാമാണീകരണം:** REST സഹായികൾ മാനേജ്മെന്റ് പ്രാമാണീകരണമില്ലാതെ പ്രവർത്തിക്കുന്നു (ഡാഷ്ബോർഡിൽ വായിക്കാവുന്നത്); ക്രമീകരിച്ചിട്ടുണ്ടെങ്കിൽ JSON-RPC `/a2a` റൂട്ട് Bearer `AGENTPROXY_API_KEY` ഉപയോഗിക്കുന്നു.
 
 ---
 
@@ -1748,7 +1748,7 @@ AgentProxy പ്ലഗിനുകൾ (മൂന്നാം കക്ഷി �
 
 ## ഗാർഡ്റെയിലുകൾ
 
-റൺടൈം ഗാർഡ്റെയിലുകൾ (PII ഡിറ്റക്ഷൻ, പ്രോംപ്റ്റ് ഇൻജക്ഷൻ ഡിറ്റക്ഷൻ, വിഷൻ ബ്രിഡ്ജിംഗ്) പരിശോധിക്കുക. എല്ലാ റിക്വസ്റ്റിലും ഗാർഡ്റെയിലുകൾ പ്രവർത്തിക്കുന്നു; ഓരോ കോളിലെയും ഒഴിവാക്കൽ `x-omniroute-disabled-guardrails` റിക്വസ്റ്റ് ഹെഡർ വഴിയാണ് — നിലനിൽക്കുന്ന എനേബിൾ/ഡിസേബിൾ സർഫേസ് ഇല്ല.
+റൺടൈം ഗാർഡ്റെയിലുകൾ (PII ഡിറ്റക്ഷൻ, പ്രോംപ്റ്റ് ഇൻജക്ഷൻ ഡിറ്റക്ഷൻ, വിഷൻ ബ്രിഡ്ജിംഗ്) പരിശോധിക്കുക. എല്ലാ റിക്വസ്റ്റിലും ഗാർഡ്റെയിലുകൾ പ്രവർത്തിക്കുന്നു; ഓരോ കോളിലെയും ഒഴിവാക്കൽ `x-agentproxy-disabled-guardrails` റിക്വസ്റ്റ് ഹെഡർ വഴിയാണ് — നിലനിൽക്കുന്ന എനേബിൾ/ഡിസേബിൾ സർഫേസ് ഇല്ല.
 
 | മെത്തഡ് | പാത്ത്                 | വിവരണം                                                                                          |
 | ------- | ---------------------- | ----------------------------------------------------------------------------------------------- |

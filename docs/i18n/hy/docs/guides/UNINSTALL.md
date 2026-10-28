@@ -20,7 +20,7 @@ AgentProxy-ը տրամադրում է մաքուր հեռացման երկու �
 npm run uninstall
 ```
 
-Սա հեռացնում է AgentProxy հավելվածը, սակայն **պահպանում է** ձեր տվյալների բազան, կազմաձևումները, API բանալիները և մատակարարների կարգավորումները `~/.omniroute/`-ում։ Օգտագործեք սա, եթե նախատեսում եք հետագայում վերատեղադրել և ցանկանում եք պահպանել ձեր կարգավորումները։
+Սա հեռացնում է AgentProxy հավելվածը, սակայն **պահպանում է** ձեր տվյալների բազան, կազմաձևումները, API բանալիները և մատակարարների կարգավորումները `~/.agentproxy/`-ում։ Օգտագործեք սա, եթե նախատեսում եք հետագայում վերատեղադրել և ցանկանում եք պահպանել ձեր կարգավորումները։
 
 ### Ամբողջական հեռացում
 
@@ -34,7 +34,7 @@ npm run uninstall:full
 - Մատակարարների կազմաձևումները և API բանալիները
 - Պահուստային պատճենների ֆայլերը
 - Մատյանների ֆայլերը
-- `~/.omniroute/` գրացուցակի բոլոր ֆայլերը
+- `~/.agentproxy/` գրացուցակի բոլոր ֆայլերը
 
 > ⚠️ **Զգուշացում.** `npm run uninstall:full` գործողությունն անշրջելի է։ Մատակարարների հետ ձեր բոլոր կապերը, համակցությունները, API բանալիները և օգտագործման պատմությունը ընդմիշտ կջնջվեն։
 
@@ -46,31 +46,31 @@ npm run uninstall:full
 
 ```bash
 # Հեռացնել գլոբալ փաթեթը
-npm uninstall -g omniroute
+npm uninstall -g agentproxy
 
 # (Ըստ ցանկության) հեռացնել տվյալների գրացուցակը
-rm -rf ~/.omniroute
+rm -rf ~/.agentproxy
 ```
 
 ### pnpm-ի գլոբալ տեղադրում
 
 ```bash
-pnpm uninstall -g omniroute
-rm -rf ~/.omniroute
+pnpm uninstall -g agentproxy
+rm -rf ~/.agentproxy
 ```
 
 ### Docker
 
 ```bash
 # Կանգնեցնել և հեռացնել կոնտեյները
-docker stop omniroute
-docker rm omniroute
+docker stop agentproxy
+docker rm agentproxy
 
 # Հեռացնել հատորը (ջնջում է բոլոր տվյալները)
-docker volume rm omniroute-data
+docker volume rm agentproxy-data
 
 # (Ըստ ցանկության) հեռացնել պատկերը
-docker rmi diegosouzapw/omniroute:latest
+docker rmi diegosouzapw/agentproxy:latest
 ```
 
 ### Docker Compose
@@ -93,21 +93,21 @@ docker compose down -v
 **macOS.**
 
 - `/Applications`-ից `AgentProxy.app`-ը քաշեք Աղբարկղ
-- Հեռացրեք տվյալները՝ `rm -rf ~/Library/Application Support/omniroute`
+- Հեռացրեք տվյալները՝ `rm -rf ~/Library/Application Support/agentproxy`
 
 **Linux.**
 
 - Հեռացրեք AppImage ֆայլը
-- Հեռացրեք տվյալները՝ `rm -rf ~/.omniroute`
+- Հեռացրեք տվյալները՝ `rm -rf ~/.agentproxy`
 
 ### Աղբյուրային կոդից տեղադրում (git clone)
 
 ```bash
 # Հեռացնել կլոնավորված գրացուցակը
-rm -rf /path/to/omniroute
+rm -rf /path/to/agentproxy
 
 # (Ըստ ցանկության) հեռացնել տվյալների գրացուցակը
-rm -rf ~/.omniroute
+rm -rf ~/.agentproxy
 ```
 
 ---
@@ -118,11 +118,11 @@ rm -rf ~/.omniroute
 
 | Հարթակ         | Լռելյայն ուղի                 | Վերասահմանում                         |
 | -------------- | ----------------------------- | ------------------------------------- |
-| Linux          | `~/.omniroute/`               | `DATA_DIR` միջավայրի փոփոխական        |
-| macOS          | `~/.omniroute/`               | `DATA_DIR` միջավայրի փոփոխական        |
-| Windows        | `%APPDATA%/omniroute/`        | `DATA_DIR` միջավայրի փոփոխական        |
+| Linux          | `~/.agentproxy/`               | `DATA_DIR` միջավայրի փոփոխական        |
+| macOS          | `~/.agentproxy/`               | `DATA_DIR` միջավայրի փոփոխական        |
+| Windows        | `%APPDATA%/agentproxy/`        | `DATA_DIR` միջավայրի փոփոխական        |
 | Docker         | `/app/data/` (միացված հատոր)  | `DATA_DIR` միջավայրի փոփոխական        |
-| XDG-համատեղելի | `$XDG_CONFIG_HOME/omniroute/` | `XDG_CONFIG_HOME` միջավայրի փոփոխական |
+| XDG-համատեղելի | `$XDG_CONFIG_HOME/agentproxy/` | `XDG_CONFIG_HOME` միջավայրի փոփոխական |
 
 ### Տվյալների գրացուցակի ֆայլերը
 
@@ -143,17 +143,17 @@ rm -rf ~/.omniroute
 
 ```bash
 # Ստուգել գլոբալ npm փաթեթի առկայությունը
-npm list -g omniroute 2>/dev/null
+npm list -g agentproxy 2>/dev/null
 
 # Ստուգել տվյալների գրացուցակի առկայությունը
-ls -la ~/.omniroute/ 2>/dev/null
+ls -la ~/.agentproxy/ 2>/dev/null
 
 # Ստուգել գործող պրոցեսների առկայությունը
-pgrep -f omniroute
+pgrep -f agentproxy
 ```
 
 Եթե որևէ պրոցես դեռ գործում է, դադարեցրեք այն.
 
 ```bash
-pkill -f omniroute
+pkill -f agentproxy
 ```

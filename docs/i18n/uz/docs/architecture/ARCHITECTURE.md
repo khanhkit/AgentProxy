@@ -435,7 +435,7 @@ bloklash/byudjet/zaxira mantiqlarini oʻzlari yigʻishlari shart emas.
 - Kvota keshi: `src/domain/quotaCache.ts`
 - Degradatsiya holati: `src/domain/degradation.ts`
 - Konfiguratsiya auditi: `src/domain/configAudit.ts`
-- AgentProxy javob metamaʼlumotlari tuzuvchisi: `src/domain/omnirouteResponseMeta.ts`
+- AgentProxy javob metamaʼlumotlari tuzuvchisi: `src/domain/agentproxyesponseMeta.ts`
 - Baholash quyi tizimi: `src/domain/assessment/` — davriy baholash vazifalari
 
 ### E. Avtorizatsiya konveyeri
@@ -506,7 +506,7 @@ Asosiy holat maʼlumotlar bazasi (SQLite):
 
 - Asosiy infratuzilma: `src/lib/db/core.ts` (better-sqlite3, migratsiyalar, WAL)
 - Maʼlumotlar bazasiga kirish: muayyan `src/lib/db/*` modullarini toʻgʻridan-toʻgʻri import qiling (eski `localDb.ts` barrel moduli olib tashlangan)
-- fayl: `${DATA_DIR}/storage.sqlite` (`$XDG_CONFIG_HOME` oʻrnatilgan boʻlsa, `$XDG_CONFIG_HOME/omniroute/storage.sqlite`, aks holda `~/.omniroute/storage.sqlite`)
+- fayl: `${DATA_DIR}/storage.sqlite` (`$XDG_CONFIG_HOME` oʻrnatilgan boʻlsa, `$XDG_CONFIG_HOME/agentproxy/storage.sqlite`, aks holda `~/.agentproxy/storage.sqlite`)
 - obyektlar (jadvallar + KV nomlar makonlari): providerConnections, providerNodes, modelAliases, combos, apiKeys, settings, pricing, **customModels**, **proxyConfig**, **ipFilter**, **thinkingBudget**, **systemPrompt**
 
 Foydalanish maʼlumotlarini saqlash:
@@ -1129,11 +1129,11 @@ Kod tomonidan faol ishlatiladigan muhit oʻzgaruvchilari:
 
 ## Maʼlum arxitektura qaydlari
 
-1. `usageDb` va `localDb` eski fayllarni migratsiya qilish bilan birga bir xil asosiy katalog siyosatidan (`DATA_DIR` -> `XDG_CONFIG_HOME/omniroute` -> `~/.omniroute`) foydalanadi.
+1. `usageDb` va `localDb` eski fayllarni migratsiya qilish bilan birga bir xil asosiy katalog siyosatidan (`DATA_DIR` -> `XDG_CONFIG_HOME/agentproxy` -> `~/.agentproxy`) foydalanadi.
 2. Semantik tafovutning oldini olish uchun `/api/v1/route.ts` `/api/v1/models` tomonidan ishlatiladigan ayni yagona katalog yaratuvchisiga (`src/app/api/v1/models/catalog.ts`) vakolat beradi.
 3. Soʻrov jurnallovchisi yoqilganida toʻliq sarlavhalar va tana qismini yozadi; jurnal katalogini maxfiy maʼlumot sifatida ko‘ring.
 4. Bulut bilan ishlash `NEXT_PUBLIC_BASE_URL` toʻgʻri sozlanishi va bulut yakuniy nuqtasining mavjudligiga bogʻliq.
-5. `open-sse/` katalogi `@omniroute/open-sse` **npm ish maydoni paketi** sifatida eʼlon qilinadi. Manba kodi uni `@omniroute/open-sse/...` orqali import qiladi (Next.js `transpilePackages` tomonidan aniqlanadi). Muvofiqlikni saqlash uchun ushbu hujjatdagi fayl yoʻllarida hamon `open-sse/` katalog nomi ishlatiladi.
+5. `open-sse/` katalogi `@agentproxy/open-sse` **npm ish maydoni paketi** sifatida eʼlon qilinadi. Manba kodi uni `@agentproxy/open-sse/...` orqali import qiladi (Next.js `transpilePackages` tomonidan aniqlanadi). Muvofiqlikni saqlash uchun ushbu hujjatdagi fayl yoʻllarida hamon `open-sse/` katalog nomi ishlatiladi.
 6. Boshqaruv panelidagi diagrammalar qulay foydalaniladigan, interaktiv tahliliy vizualizatsiyalar (modeldan foydalanish ustunli diagrammalari, muvaffaqiyat ko‘rsatkichlariga ega provayderlar taqsimoti jadvallari) uchun **Recharts** (SVG asosidagi) kutubxonasidan foydalanadi.
 7. E2E testlari **Playwright** (`tests/e2e/`) dan foydalanadi va `npm run test:e2e` orqali ishga tushiriladi. Modul testlari **Node.js test ishga tushirgichi** (`tests/unit/`) dan foydalanadi va `npm run test:unit` orqali ishga tushiriladi. `src/` ichidagi manba kod **TypeScript** (`.ts`/`.tsx`) tilida yozilgan; `open-sse/` ish maydoni JavaScript (`.js`) boʻlib qoladi.
 8. Sozlamalar sahifasi 7 ta ichki oynaga ajratilgan: Umumiy, Tashqi koʻrinish, AI, Xavfsizlik, Yoʻnaltirish, Bardoshlilik, Kengaytirilgan. Bardoshlilik sahifasi faqat soʻrovlar navbati, ulanishni sovitish davri, provayder uzgichi va sovitish davrini kutish xatti-harakatini sozlaydi; uzgichning joriy ish holati Salomatlik sahifasida koʻrsatiladi.
@@ -1144,7 +1144,7 @@ Kod tomonidan faol ishlatiladigan muhit oʻzgaruvchilari:
 ## Ishlashni tekshirish roʻyxati
 
 - Manba kodidan yigʻish: `npm run build`
-- Docker tasvirini yigʻish: `docker build -t omniroute .`
+- Docker tasvirini yigʻish: `docker build -t agentproxy .`
 - Xizmatni ishga tushirish va quyidagilarni tekshirish:
 - `GET /api/settings`
 - `GET /api/v1/models`

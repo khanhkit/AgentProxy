@@ -17,7 +17,7 @@ import path from "node:path";
 // error's message. On the pre-fix code this assertion is RED: the only thing ever logged
 // is the generic "detail omitted" string, with no trace of the injected error text.
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-issue-13597-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-issue-13597-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 
 const { writeCallArtifactAsync, closeCallLogArtifactWriter, __setCallLogWorkerOverrideForTests } =

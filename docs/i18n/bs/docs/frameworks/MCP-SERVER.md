@@ -6,21 +6,21 @@
 
 > Model Context Protocol server sa 110 alata za operacije usmjeravanja, keširanja, kompresije, memorije, vještina, proxyja, poola, Radara i izvora konteksta.
 >
-> Izvor istine: `open-sse/mcp-server/server.ts` izračunava **110 jedinstvenih alata** pomoću `countUniqueMcpTools()`: 45 kanonskih definicija (uključujući šest CCR alata životnog ciklusa, trio agent-skills, `omniroute_radar_catalog` i `omniroute_x_search`), plus memorija (3), vještine (4), GitHub vještine (3), pool (6), gamifikacija (8), dodaci (8), Notion (6), Obsidian (22), lokalni korpus (3) i dva alata za kompresiju namijenjena isključivo RTK-u.
+> Izvor istine: `open-sse/mcp-server/server.ts` izračunava **110 jedinstvenih alata** pomoću `countUniqueMcpTools()`: 45 kanonskih definicija (uključujući šest CCR alata životnog ciklusa, trio agent-skills, `agentproxy_radar_catalog` i `agentproxy_x_search`), plus memorija (3), vještine (4), GitHub vještine (3), pool (6), gamifikacija (8), dodaci (8), Notion (6), Obsidian (22), lokalni korpus (3) i dva alata za kompresiju namijenjena isključivo RTK-u.
 
 ## Instalacija
 
 AgentProxy MCP je ugrađen. Pokrenite ga pomoću:
 
 ```bash
-omniroute --mcp
+agentproxy --mcp
 ```
 
 Ili putem open-sse transporta:
 
 ```bash
 # HTTP transport sa strujanjem (port 20130)
-omniroute --dev  # MCP se automatski pokreće na /mcp krajnjoj tački
+agentproxy --dev  # MCP se automatski pokreće na /mcp krajnjoj tački
 ```
 
 HTTP transporti (`sse` / `streamable-http`, koje unutar procesa poslužuje server kontrolne ploče)
@@ -28,10 +28,10 @@ podrazumijevano su isključeni i ranije su se mogli uključivati samo sa stranic
 CLI ima iste mogućnosti:
 
 ```bash
-omniroute mcp status                                  # omogućeno/na mreži, transport, broj alata
-omniroute mcp enable [--transport stdio|sse|streamable-http]
-omniroute mcp disable
-omniroute mcp restart                                 # resetuje aktivne sse/streamable-http sesije
+agentproxy mcp status                                  # omogućeno/na mreži, transport, broj alata
+agentproxy mcp enable [--transport stdio|sse|streamable-http]
+agentproxy mcp disable
+agentproxy mcp restart                                 # resetuje aktivne sse/streamable-http sesije
 ```
 
 `mcp enable`/`mcp disable` putem PATCH zahtjeva mijenjaju istu postavku `mcpEnabled` (i opcionalno `mcpTransport`)
@@ -83,61 +83,61 @@ Cursora, Clinea i kompatibilnih MCP klijenata.
 
 | Alat                            | Opsezi                | Opis                                                                                                                                                  |
 | :------------------------------ | :-------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `omniroute_get_health`          | `read:health`         | Vrijeme rada, memorija, zaštitni prekidači, ograničenja brzine, statistika predmemorije                                                               |
-| `omniroute_list_combos`         | `read:combos`         | Sve konfigurirane kombinacije sa strategijama (opcionalne metrike)                                                                                    |
-| `omniroute_get_combo_metrics`   | `read:combos`         | Metrike performansi za određenu kombinaciju                                                                                                           |
-| `omniroute_switch_combo`        | `write:combos`        | Aktiviranje ili deaktiviranje kombinacije                                                                                                             |
-| `omniroute_create_combo`        | `write:combos`        | Kreiranje validirane kombinacije putem postojećeg API-ja za kombinacije                                                                               |
-| `omniroute_check_quota`         | `read:quota`          | Iskorištena/ukupna kvota, preostali postotak, vrijeme resetiranja, stanje tokena                                                                      |
-| `omniroute_route_request`       | `execute:completions` | Slanje dovršetka razgovora putem AgentProxy usmjeravanja                                                                                               |
-| `omniroute_cost_report`         | `read:usage`          | Izvještaj o troškovima po periodu (sesija/dan/sedmica/mjesec)                                                                                         |
-| `omniroute_list_models_catalog` | `read:models`         | Potpuni katalog modela s mogućnostima, statusom i cijenama                                                                                            |
-| `omniroute_radar_catalog`       | `read:radar`          | Lokalni potpisani Radar katalog; opcionalni filteri prema pružaocu/porodici                                                                           |
-| `omniroute_tool_search`         | `read:tools`          | Otkrivanje alata iz registriranog MCP kataloga                                                                                                        |
-| `omniroute_web_search`          | `execute:search`      | Pretraživanje weba putem konfiguriranih pružalaca pretrage. Ne uključuje X/Twitter.                                                                   |
-| `omniroute_x_search`            | `execute:search`      | Pretraživanje X-a putem xAI/SuperGrok ili odabir `xquik-search` za rezultate Xquik API-ja. Zahtijeva pristupne podatke za odabrani pozadinski servis. |
-| `omniroute_web_fetch`           | `execute:search`      | Dohvatanje web-sadržaja putem konfiguriranih pružalaca za dohvaćanje                                                                                  |
+| `agentproxy_get_health`          | `read:health`         | Vrijeme rada, memorija, zaštitni prekidači, ograničenja brzine, statistika predmemorije                                                               |
+| `agentproxy_list_combos`         | `read:combos`         | Sve konfigurirane kombinacije sa strategijama (opcionalne metrike)                                                                                    |
+| `agentproxy_get_combo_metrics`   | `read:combos`         | Metrike performansi za određenu kombinaciju                                                                                                           |
+| `agentproxy_switch_combo`        | `write:combos`        | Aktiviranje ili deaktiviranje kombinacije                                                                                                             |
+| `agentproxy_create_combo`        | `write:combos`        | Kreiranje validirane kombinacije putem postojećeg API-ja za kombinacije                                                                               |
+| `agentproxy_check_quota`         | `read:quota`          | Iskorištena/ukupna kvota, preostali postotak, vrijeme resetiranja, stanje tokena                                                                      |
+| `agentproxy_route_request`       | `execute:completions` | Slanje dovršetka razgovora putem AgentProxy usmjeravanja                                                                                               |
+| `agentproxy_cost_report`         | `read:usage`          | Izvještaj o troškovima po periodu (sesija/dan/sedmica/mjesec)                                                                                         |
+| `agentproxy_list_models_catalog` | `read:models`         | Potpuni katalog modela s mogućnostima, statusom i cijenama                                                                                            |
+| `agentproxy_radar_catalog`       | `read:radar`          | Lokalni potpisani Radar katalog; opcionalni filteri prema pružaocu/porodici                                                                           |
+| `agentproxy_tool_search`         | `read:tools`          | Otkrivanje alata iz registriranog MCP kataloga                                                                                                        |
+| `agentproxy_web_search`          | `execute:search`      | Pretraživanje weba putem konfiguriranih pružalaca pretrage. Ne uključuje X/Twitter.                                                                   |
+| `agentproxy_x_search`            | `execute:search`      | Pretraživanje X-a putem xAI/SuperGrok ili odabir `xquik-search` za rezultate Xquik API-ja. Zahtijeva pristupne podatke za odabrani pozadinski servis. |
+| `agentproxy_web_fetch`           | `execute:search`      | Dohvatanje web-sadržaja putem konfiguriranih pružalaca za dohvaćanje                                                                                  |
 
 ## Napredni alati (11) — Faza 2
 
 | Alat                               | Opsezi                               | Opis                                                                                                                                              |
 | :--------------------------------- | :----------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `omniroute_simulate_route`         | `read:health`, `read:combos`         | Simulacija usmjeravanja bez izvršavanja, sa stablom rezervnih opcija                                                                              |
-| `omniroute_set_budget_guard`       | `write:budget`                       | Budžet sesije s radnjom degradiranja/blokiranja/upozorenja                                                                                        |
-| `omniroute_set_routing_strategy`   | `write:combos`                       | Ažuriranje kombinovane strategije tokom izvođenja (prioritetna/ponderisana/automatska/itd.)                                                       |
-| `omniroute_set_resilience_profile` | `write:resilience`                   | Primjena unaprijed definisanog profila otpornosti `aggressive` / `balanced` / `conservative`                                                      |
-| `omniroute_test_combo`             | `execute:completions`, `read:combos` | Testiranje uživo svakog pružatelja u kombinaciji pomoću stvarnog poziva prema vanjskom servisu                                                    |
-| `omniroute_get_provider_metrics`   | `read:health`                        | Metrike po pružatelju s p50/p95/p99 latencijom i stanjem prekidača kola                                                                           |
-| `omniroute_best_combo_for_task`    | `read:combos`, `read:health`         | Preporučivanje kombinacije prema vrsti zadatka uz ograničenja budžeta/latencije                                                                   |
-| `omniroute_explain_route`          | `read:health`, `read:usage`          | Objašnjenje zašto je zahtjev usmjeren pružatelju (faktori bodovanja + rezervne opcije)                                                            |
-| `omniroute_get_session_snapshot`   | `read:usage`                         | Potpuni snimak sesije: trošak, tokeni, najkorišteniji modeli/pružatelji, greške, zaštita budžeta                                                  |
-| `omniroute_db_health_check`        | `read:health`, `write:resilience`    | Dijagnosticiranje (i opcionalno automatsko popravljanje) odstupanja baze podataka, kao što su neispravne reference kombinacija / napušteni redovi |
-| `omniroute_sync_pricing`           | `pricing:write`                      | Sinhroniziranje podataka o cijenama iz vanjskih izvora (LiteLLM); podržava `dryRun`                                                               |
+| `agentproxy_simulate_route`         | `read:health`, `read:combos`         | Simulacija usmjeravanja bez izvršavanja, sa stablom rezervnih opcija                                                                              |
+| `agentproxy_set_budget_guard`       | `write:budget`                       | Budžet sesije s radnjom degradiranja/blokiranja/upozorenja                                                                                        |
+| `agentproxy_set_routing_strategy`   | `write:combos`                       | Ažuriranje kombinovane strategije tokom izvođenja (prioritetna/ponderisana/automatska/itd.)                                                       |
+| `agentproxy_set_resilience_profile` | `write:resilience`                   | Primjena unaprijed definisanog profila otpornosti `aggressive` / `balanced` / `conservative`                                                      |
+| `agentproxy_test_combo`             | `execute:completions`, `read:combos` | Testiranje uživo svakog pružatelja u kombinaciji pomoću stvarnog poziva prema vanjskom servisu                                                    |
+| `agentproxy_get_provider_metrics`   | `read:health`                        | Metrike po pružatelju s p50/p95/p99 latencijom i stanjem prekidača kola                                                                           |
+| `agentproxy_best_combo_for_task`    | `read:combos`, `read:health`         | Preporučivanje kombinacije prema vrsti zadatka uz ograničenja budžeta/latencije                                                                   |
+| `agentproxy_explain_route`          | `read:health`, `read:usage`          | Objašnjenje zašto je zahtjev usmjeren pružatelju (faktori bodovanja + rezervne opcije)                                                            |
+| `agentproxy_get_session_snapshot`   | `read:usage`                         | Potpuni snimak sesije: trošak, tokeni, najkorišteniji modeli/pružatelji, greške, zaštita budžeta                                                  |
+| `agentproxy_db_health_check`        | `read:health`, `write:resilience`    | Dijagnosticiranje (i opcionalno automatsko popravljanje) odstupanja baze podataka, kao što su neispravne reference kombinacija / napušteni redovi |
+| `agentproxy_sync_pricing`           | `pricing:write`                      | Sinhroniziranje podataka o cijenama iz vanjskih izvora (LiteLLM); podržava `dryRun`                                                               |
 
 ## Alati za keširanje (2)
 
 | Alat                    | Opsezi        | Opis                                                          |
 | :---------------------- | :------------ | :------------------------------------------------------------ |
-| `omniroute_cache_stats` | `read:cache`  | Statistika semantičkog keša, keša promptova i idempotentnosti |
-| `omniroute_cache_flush` | `write:cache` | Pražnjenje keša globalno ili prema potpisu/modelu             |
+| `agentproxy_cache_stats` | `read:cache`  | Statistika semantičkog keša, keša promptova i idempotentnosti |
+| `agentproxy_cache_flush` | `write:cache` | Pražnjenje keša globalno ili prema potpisu/modelu             |
 
 ## Alati za kompresiju (13)
 
 | Alat                                | Opsezi              | Opis                                                                                                                                     |
 | :---------------------------------- | :------------------ | :--------------------------------------------------------------------------------------------------------------------------------------- |
-| `omniroute_compression_status`      | `read:compression`  | Postavke kompresije, sažetak analitike i statistika koja uzima u obzir keš (uključuje metapodatke `analytics.mcpDescriptionCompression`) |
-| `omniroute_compression_configure`   | `write:compression` | Konfiguriranje načina kompresije, praga, ciljanog omjera, očuvanja sistemskog prompta i prekidača kompresije MCP opisa                   |
-| `omniroute_set_compression_engine`  | `write:compression` | Odabir aktivnog mehanizma (off/caveman/rtk/stacked) i intenziteta Caveman/RTK                                                            |
-| `omniroute_list_compression_combos` | `read:compression`  | Prikaz imenovanih kombinacija kompresije i njihovih cjevovoda mehanizama                                                                 |
-| `omniroute_compression_combo_stats` | `read:compression`  | Analitika grupisana prema kombinaciji kompresije i mehanizmu                                                                             |
-| `omniroute_ccr_store`               | `write:compression` | Pohranjivanje sadržaja izoliranog po pozivaocu u ograničeno CCR spremište u memoriji i vraćanje oznake uz `ccr://` referencu             |
-| `omniroute_ccr_retrieve`            | `read:compression`  | Dohvaćanje CCR sadržaja u cijelosti ili pomoću načina rada za početak, kraj, redove, grep i statistiku                                   |
-| `omniroute_ccr_inspect`             | `read:compression`  | Pregled metapodataka CCR-a u vlasništvu pozivaoca bez vraćanja sadržaja                                                                  |
-| `omniroute_ccr_list`                | `read:compression`  | Prikaz straničenih metapodataka za CCR blokove u vlasništvu pozivaoca                                                                    |
-| `omniroute_ccr_delete`              | `write:compression` | Brisanje CCR bloka u vlasništvu pozivaoca                                                                                                |
-| `omniroute_ccr_stats`               | `read:compression`  | Izvještavanje o upotrebi memorije po pozivaocu, brojačima životnog ciklusa i ograničenjima spremišta                                     |
-| `omniroute_rtk_discover`            | `read:compression`  | Otkrivanje ponavljajućeg šuma u dobrovoljno dostavljenim uzorcima RTK izlaza                                                             |
-| `omniroute_rtk_learn`               | `read:compression`  | Generiranje nacrta RTK filtera za pregled iz dobrovoljno dostavljenih uzoraka                                                            |
+| `agentproxy_compression_status`      | `read:compression`  | Postavke kompresije, sažetak analitike i statistika koja uzima u obzir keš (uključuje metapodatke `analytics.mcpDescriptionCompression`) |
+| `agentproxy_compression_configure`   | `write:compression` | Konfiguriranje načina kompresije, praga, ciljanog omjera, očuvanja sistemskog prompta i prekidača kompresije MCP opisa                   |
+| `agentproxy_set_compression_engine`  | `write:compression` | Odabir aktivnog mehanizma (off/caveman/rtk/stacked) i intenziteta Caveman/RTK                                                            |
+| `agentproxy_list_compression_combos` | `read:compression`  | Prikaz imenovanih kombinacija kompresije i njihovih cjevovoda mehanizama                                                                 |
+| `agentproxy_compression_combo_stats` | `read:compression`  | Analitika grupisana prema kombinaciji kompresije i mehanizmu                                                                             |
+| `agentproxy_ccr_store`               | `write:compression` | Pohranjivanje sadržaja izoliranog po pozivaocu u ograničeno CCR spremište u memoriji i vraćanje oznake uz `ccr://` referencu             |
+| `agentproxy_ccr_retrieve`            | `read:compression`  | Dohvaćanje CCR sadržaja u cijelosti ili pomoću načina rada za početak, kraj, redove, grep i statistiku                                   |
+| `agentproxy_ccr_inspect`             | `read:compression`  | Pregled metapodataka CCR-a u vlasništvu pozivaoca bez vraćanja sadržaja                                                                  |
+| `agentproxy_ccr_list`                | `read:compression`  | Prikaz straničenih metapodataka za CCR blokove u vlasništvu pozivaoca                                                                    |
+| `agentproxy_ccr_delete`              | `write:compression` | Brisanje CCR bloka u vlasništvu pozivaoca                                                                                                |
+| `agentproxy_ccr_stats`               | `read:compression`  | Izvještavanje o upotrebi memorije po pozivaocu, brojačima životnog ciklusa i ograničenjima spremišta                                     |
+| `agentproxy_rtk_discover`            | `read:compression`  | Otkrivanje ponavljajućeg šuma u dobrovoljno dostavljenim uzorcima RTK izlaza                                                             |
+| `agentproxy_rtk_learn`               | `read:compression`  | Generiranje nacrta RTK filtera za pregled iz dobrovoljno dostavljenih uzoraka                                                            |
 
 CCR unosi postoje samo u memoriji i nestaju nakon ponovnog pokretanja. Svaki blok je ograničen na 2 MiB, svaki
 principal na 16 MiB, a globalno spremište na 64 MiB. Zadani TTL unosa je 24 sata (najviše
@@ -145,7 +145,7 @@ sedam dana). Potpuno MCP dohvaćanje ograničeno je na 256 KiB; veći blokovi os
 načina rada s rasponima i grepom. Pohrana, dohvaćanje, prikaz, pregled, brisanje i statistika izolirani su prema
 autenticiranom principalu API ključa. Zapisi revizije sadrže sažetke i metapodatke o veličini, ali nikada sadržaj.
 
-`omniroute_compression_status` zasebno prijavljuje kompresiju MCP opisa pod
+`agentproxy_compression_status` zasebno prijavljuje kompresiju MCP opisa pod
 `analytics.mcpDescriptionCompression`. Te vrijednosti predstavljaju procjene veličine metapodataka za MCP opise
 koji se mogu izlistati (`tools`, `prompts`, `resources` i `resourceTemplates`); one nisu potvrde o korištenju
 pružaoca usluga i označene su sa `source: "mcp_metadata_estimate"`.
@@ -175,9 +175,9 @@ model kompresije tokom izvršavanja na kojem se zasnivaju ovi alati.
 
 | Alat                        | Opsezi         | Opis                                                                                        |
 | :-------------------------- | :------------- | :------------------------------------------------------------------------------------------ |
-| `omniroute_oneproxy_fetch`  | `read:proxies` | Dohvaća besplatne proxyje s 1proxy tržišta (filteri protokola/zemlje/kvaliteta/ograničenja) |
-| `omniroute_oneproxy_rotate` | `read:proxies` | Dohvaća sljedeći dostupni proxy prema strategiji (`random` / `quality` / `sequential`)      |
-| `omniroute_oneproxy_stats`  | `read:proxies` | Statistika skupa, status sinhronizacije i raspodjela prema protokolu i zemlji               |
+| `agentproxy_oneproxy_fetch`  | `read:proxies` | Dohvaća besplatne proxyje s 1proxy tržišta (filteri protokola/zemlje/kvaliteta/ograničenja) |
+| `agentproxy_oneproxy_rotate` | `read:proxies` | Dohvaća sljedeći dostupni proxy prema strategiji (`random` / `quality` / `sequential`)      |
+| `agentproxy_oneproxy_stats`  | `read:proxies` | Statistika skupa, status sinhronizacije i raspodjela prema protokolu i zemlji               |
 
 ## Memorijski alati (3)
 
@@ -185,9 +185,9 @@ Definisani u `open-sse/mcp-server/tools/memoryTools.ts`. Autentifikacija/opseg p
 
 | Alat                      | Opsezi         | Opis                                                                                                 |
 | :------------------------ | :------------- | :--------------------------------------------------------------------------------------------------- |
-| `omniroute_memory_search` | `read:memory`  | Pretražuje memorije prema upitu / vrsti / API ključu uz provođenje ograničenja budžeta tokena        |
-| `omniroute_memory_add`    | `write:memory` | Dodaje novi memorijski zapis (`factual` / `episodic` / `procedural` / `semantic`)                    |
-| `omniroute_memory_clear`  | `write:memory` | Briše memorije za API ključ, uz opcionalno filtriranje prema vrsti ili vremenskoj oznaci `olderThan` |
+| `agentproxy_memory_search` | `read:memory`  | Pretražuje memorije prema upitu / vrsti / API ključu uz provođenje ograničenja budžeta tokena        |
+| `agentproxy_memory_add`    | `write:memory` | Dodaje novi memorijski zapis (`factual` / `episodic` / `procedural` / `semantic`)                    |
+| `agentproxy_memory_clear`  | `write:memory` | Briše memorije za API ključ, uz opcionalno filtriranje prema vrsti ili vremenskoj oznaci `olderThan` |
 
 ## Alati vještina (4)
 
@@ -195,10 +195,10 @@ Definisani u `open-sse/mcp-server/tools/skillTools.ts`. Podržani putem `src/lib
 
 | Alat                          | Opsezi           | Opis                                                                                                    |
 | :---------------------------- | :--------------- | :------------------------------------------------------------------------------------------------------ |
-| `omniroute_skills_list`       | `read:skills`    | Navodi registrirane vještine uz opcionalno filtriranje prema API ključu, nazivu ili stanju omogućenosti |
-| `omniroute_skills_enable`     | `write:skills`   | Omogućava ili onemogućava određenu vještinu prema ID-u                                                  |
-| `omniroute_skills_execute`    | `execute:skills` | Izvršava vještinu s navedenim ulaznim podacima i vraća zapis izvršenja                                  |
-| `omniroute_skills_executions` | `read:skills`    | Navodi nedavnu historiju izvršavanja vještina                                                           |
+| `agentproxy_skills_list`       | `read:skills`    | Navodi registrirane vještine uz opcionalno filtriranje prema API ključu, nazivu ili stanju omogućenosti |
+| `agentproxy_skills_enable`     | `write:skills`   | Omogućava ili onemogućava određenu vještinu prema ID-u                                                  |
+| `agentproxy_skills_execute`    | `execute:skills` | Izvršava vještinu s navedenim ulaznim podacima i vraća zapis izvršenja                                  |
+| `agentproxy_skills_executions` | `read:skills`    | Navodi nedavnu historiju izvršavanja vještina                                                           |
 
 ## Notion izvor konteksta (6)
 
@@ -234,9 +234,9 @@ Definisani u `open-sse/mcp-server/tools/agentSkillTools.ts`. Podržani putem `sr
 
 | Alat                              | Opsezi         | Opis                                                                                                                                                         |
 | :-------------------------------- | :------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `omniroute_agent_skills_list`     | `read:catalog` | Navodi svih 45 vještina agenata uz opcionalne filtere `category` (api\|cli) i `area`; vraća metapodatke + pokrivenost                                        |
-| `omniroute_agent_skills_get`      | `read:catalog` | Dohvata potpune metapodatke + sadržaj SKILL.md za jednu vještinu prema kanonskom `id`-u                                                                      |
-| `omniroute_agent_skills_coverage` | `read:catalog` | Statistika pokrivenosti: koliko od 23 API, 21 CLI i 1 konfiguracijske vještine ima SKILL.md datoteke u datotečnom sistemu u odnosu na ukupan broj u katalogu |
+| `agentproxy_agent_skills_list`     | `read:catalog` | Navodi svih 45 vještina agenata uz opcionalne filtere `category` (api\|cli) i `area`; vraća metapodatke + pokrivenost                                        |
+| `agentproxy_agent_skills_get`      | `read:catalog` | Dohvata potpune metapodatke + sadržaj SKILL.md za jednu vještinu prema kanonskom `id`-u                                                                      |
+| `agentproxy_agent_skills_coverage` | `read:catalog` | Statistika pokrivenosti: koliko od 23 API, 21 CLI i 1 konfiguracijske vještine ima SKILL.md datoteke u datotečnom sistemu u odnosu na ukupan broj u katalogu |
 
 Pogledajte [AGENT-SKILLS.md](./AGENT-SKILLS.md) za kompletan katalog i način na koji ga vanjski agenti koriste.
 
@@ -309,7 +309,7 @@ mehanizam za podudaranje koristi.
 | :----------------------- | :-------------------------------------------------------- | :------------------------------ | :---------------------------------------------------------- |
 | Upravljanje API ključem  | `api_keys.scopes`                                         | `hasManageScope`                | Upravljački REST za taj Bearer ključ                        |
 | Dodatni opseg API ključa | isti niz, jedan potpuno podudaran niz znakova             | pomoćna funkcija navedena ispod | Samo tu jednu mogućnost                                     |
-| Opsezi MCP alata         | isti niz, inače MCP `_meta`, inače `OMNIROUTE_MCP_SCOPES` | `scopeMatches`                  | Taj alat, nakon uključivanja provođenja pravila             |
+| Opsezi MCP alata         | isti niz, inače MCP `_meta`, inače `AGENTPROXY_MCP_SCOPES` | `scopeMatches`                  | Taj alat, nakon uključivanja provođenja pravila             |
 | Pristupni token          | `oma_live_…`                                              | `scopeSatisfies`                | Upravljačku rutu čija metoda i putanja zahtijevaju taj rang |
 
 Izdavanje svake vjerodajnice opisano je u
@@ -355,12 +355,12 @@ Isti poziv ne prolazi ni za `admin`, `mcp:connect`, `read` i `write` kada su to
 jedini dodijeljeni nizovi znakova. Među opsezima MCP alata nema hijerarhije
 osim završnog znaka `*`.
 
-Provođenje pravila je isključeno osim ako je `OMNIROUTE_MCP_ENFORCE_SCOPES=true` (zadano
+Provođenje pravila je isključeno osim ako je `AGENTPROXY_MCP_ENFORCE_SCOPES=true` (zadano
 `false`). Dok je isključeno, `evaluateToolScopes` dozvoljava poziv i preskače
 katalog. Dok je uključeno, HTTP koristi `api_keys.scopes` Bearer ključa kao
 `authInfo` (pogledajte [HTTP povezivanje opsega po ključu](#per-key-http-scope-binding-7895)).
 Kada se ne razriješi nijedan opseg ključa, skup dodijeljenih opsega prelazi na MCP `_meta`, a zatim
-na `OMNIROUTE_MCP_SCOPES`.
+na `AGENTPROXY_MCP_SCOPES`.
 
 #### Opsezi pristupnog tokena
 
@@ -420,8 +420,8 @@ Svaki alat zahtijeva određene opsege:
 | `write:skills`        | `skills_enable`                                                                                                                                                                    |
 | `execute:skills`      | `skills_execute`                                                                                                                                                                   |
 | `read:catalog`        | `agent_skills_list`, `agent_skills_get`, `agent_skills_coverage`                                                                                                                   |
-| `read:tools`          | `omniroute_tool_search`                                                                                                                                                            |
-| `read:radar`          | `omniroute_radar_catalog`                                                                                                                                                          |
+| `read:tools`          | `agentproxy_tool_search`                                                                                                                                                            |
+| `read:radar`          | `agentproxy_radar_catalog`                                                                                                                                                          |
 | `read:gamification`   | `gamification_profile`, `gamification_rank`, `gamification_leaderboard`, `gamification_badges`, `gamification_servers`, `gamification_anomalies`                                   |
 | `write:gamification`  | `gamification_invite`, `gamification_transfer`                                                                                                                                     |
 | `read:plugins`        | `plugin_list`, `plugin_executions`                                                                                                                                                 |
@@ -452,10 +452,10 @@ Preko HTTP/SSE-a, `open-sse/mcp-server/httpTransport.ts` sada razrješava stvarn
 i prosljeđuje ih MCP SDK-ovom `transport.handleRequest(req, { authInfo })`, tako da
 `extra.authInfo.scopes`, koji stiže do svakog poziva alata, odražava vlastite opsege Bearer ključa.
 `resolveCallerScopeContext()` iz `scopeEnforcement.ts` već je davao prednost `authInfo` u odnosu na
-`_meta` i rezervnu vrijednost iz okruženja `OMNIROUTE_MCP_SCOPES` — ovom promjenom se samo popunjava taj prvi
+`_meta` i rezervnu vrijednost iz okruženja `AGENTPROXY_MCP_SCOPES` — ovom promjenom se samo popunjava taj prvi
 izvor najvišeg prioriteta, koji se ranije nije prosljeđivao putem HTTP-a. Kada se nijedan API ključ ne razriješi
 (nema zaglavlja, nevažeći ključ), `authInfo` ostaje `undefined`, a razrješavanje se nastavlja kroz
-postojeći lanac `meta`/okruženje bez promjena. Ovo NE mijenja zadanu vrijednost za `OMNIROUTE_MCP_ENFORCE_SCOPES` —
+postojeći lanac `meta`/okruženje bez promjena. Ovo NE mijenja zadanu vrijednost za `AGENTPROXY_MCP_ENFORCE_SCOPES` —
 provođenje se i dalje mora izričito omogućiti; ova promjena samo osigurava da putanja po ključu
 dobije prednost nakon što se to učini. stdio nema identitet po pozivaocu (pogledajte
 `mcpCallerIdentity.ts`) i ova promjena na njega ne utječe — ostaje na rezervnom lancu `_meta`/okruženje.
@@ -466,17 +466,17 @@ dobije prednost nakon što se to učini. stdio nema identitet po pozivaocu (pogl
 
 | Varijabla                               | Zadana vrijednost                    | Svrha                                                                                                                                         |
 | :-------------------------------------- | :----------------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------- |
-| `OMNIROUTE_BASE_URL`                    | `http://localhost:20128`             | Osnovni URL koji MCP server koristi prilikom pozivanja internih AgentProxy API-ja                                                              |
-| `OMNIROUTE_API_KEY`                     | (prazno)                             | API ključ koji se prosljeđuje kao `Authorization: Bearer` internim API pozivima                                                               |
-| `OMNIROUTE_MCP_ENFORCE_SCOPES`          | `false` (omogućava ga samo `"true"`) | Kada je omogućeno, nedostajući opsezi odbijaju pozive alata i bilježe `scope_denied:<reason>` u zapisnik revizije                             |
-| `OMNIROUTE_MCP_SCOPES`                  | (prazno)                             | Zarezima odvojena lista dozvoljenih opsega koji se podrazumijevano smatraju „dostupnim“ (koristi se kada pozivalac ne navede vlastite opsege) |
-| `OMNIROUTE_MCP_COMPRESS_DESCRIPTIONS`   | (nije postavljeno = uključeno)       | Kada je postavljeno na `0/false/off/no`, onemogućava kompresiju MCP opisa pri registraciji                                                    |
-| `OMNIROUTE_MCP_DESCRIPTION_COMPRESSION` | (nije postavljeno = uključeno)       | Alternativni pseudonim za istu prethodno navedenu postavku                                                                                    |
-| `OMNIROUTE_MCP_FETCH_TIMEOUT_MS`        | `10000`                              | Vremensko ograničenje za prekid internih upravljačkih čitanja (stanje, otpornost, kombinacije, kvota, upotreba)                               |
-| `OMNIROUTE_MCP_UPSTREAM_TIMEOUT_MS`     | `60000`                              | Vremensko ograničenje za prekid koraka koji čekaju pružaoca (`route_request`, `web_search`, `web_fetch`)                                      |
+| `AGENTPROXY_BASE_URL`                    | `http://localhost:20128`             | Osnovni URL koji MCP server koristi prilikom pozivanja internih AgentProxy API-ja                                                              |
+| `AGENTPROXY_API_KEY`                     | (prazno)                             | API ključ koji se prosljeđuje kao `Authorization: Bearer` internim API pozivima                                                               |
+| `AGENTPROXY_MCP_ENFORCE_SCOPES`          | `false` (omogućava ga samo `"true"`) | Kada je omogućeno, nedostajući opsezi odbijaju pozive alata i bilježe `scope_denied:<reason>` u zapisnik revizije                             |
+| `AGENTPROXY_MCP_SCOPES`                  | (prazno)                             | Zarezima odvojena lista dozvoljenih opsega koji se podrazumijevano smatraju „dostupnim“ (koristi se kada pozivalac ne navede vlastite opsege) |
+| `AGENTPROXY_MCP_COMPRESS_DESCRIPTIONS`   | (nije postavljeno = uključeno)       | Kada je postavljeno na `0/false/off/no`, onemogućava kompresiju MCP opisa pri registraciji                                                    |
+| `AGENTPROXY_MCP_DESCRIPTION_COMPRESSION` | (nije postavljeno = uključeno)       | Alternativni pseudonim za istu prethodno navedenu postavku                                                                                    |
+| `AGENTPROXY_MCP_FETCH_TIMEOUT_MS`        | `10000`                              | Vremensko ograničenje za prekid internih upravljačkih čitanja (stanje, otpornost, kombinacije, kvota, upotreba)                               |
+| `AGENTPROXY_MCP_UPSTREAM_TIMEOUT_MS`     | `60000`                              | Vremensko ograničenje za prekid koraka koji čekaju pružaoca (`route_request`, `web_search`, `web_fetch`)                                      |
 | `MCP_TOOL_DENY`                         | (nije postavljeno = bez filtera)     | Zarezima odvojeni nazivi alata koji se izostavljaju iz `tools/list` (smanjenje kardinalnosti alata — pogledajte u nastavku)                   |
 | `MCP_TOOL_ALLOW`                        | (nije postavljeno = bez filtera)     | Zarezima odvojeni nazivi alata koji se isključivo zadržavaju (režim liste dozvoljenih — pogledajte u nastavku)                                |
-| `DATA_DIR`                              | `~/.omniroute`                       | Datoteka signala aktivnosti zapisuje se u `${DATA_DIR}/runtime/mcp-heartbeat.json`                                                            |
+| `DATA_DIR`                              | `~/.agentproxy`                       | Datoteka signala aktivnosti zapisuje se u `${DATA_DIR}/runtime/mcp-heartbeat.json`                                                            |
 
 ---
 
@@ -486,8 +486,8 @@ Registri MCP alata, upita i resursa mogu kompresovati opise prilikom registracij
 
 - Kompresija se izvršava nad tekstom opisa koristeći skup pravila Caveman (`getRulesForContext("all", "full")`) uz izdvajanje sačuvanih blokova (isječci koda, ograđeni blokovi itd.) kako se strukturni sadržaj ne bi izmijenio.
 - Uključite ili isključite za pojedinačnu implementaciju putem vrijednosti `compression.mcpDescriptionCompressionEnabled` u tabeli postavki `key_value` (zadano: omogućeno) — u korisničkom interfejsu dostupno kao **Analitika → Kompresija MCP opisa**.
-- Uključite ili isključite za cijeli proces putem `OMNIROUTE_MCP_COMPRESS_DESCRIPTIONS=false` ili `OMNIROUTE_MCP_DESCRIPTION_COMPRESSION=false`.
-- Statistike u stvarnom vremenu dostupne su putem `omniroute_compression_status` pod `analytics.mcpDescriptionCompression` i označene sa `source: "mcp_metadata_estimate"` kako bi se razlikovale od stvarnih potvrda o korištenju pružaoca.
+- Uključite ili isključite za cijeli proces putem `AGENTPROXY_MCP_COMPRESS_DESCRIPTIONS=false` ili `AGENTPROXY_MCP_DESCRIPTION_COMPRESSION=false`.
+- Statistike u stvarnom vremenu dostupne su putem `agentproxy_compression_status` pod `analytics.mcpDescriptionCompression` i označene sa `source: "mcp_metadata_estimate"` kako bi se razlikovale od stvarnih potvrda o korištenju pružaoca.
 
 ---
 
@@ -506,10 +506,10 @@ Kompresija opisa smanjuje metapodatke svakog alata; **smanjenje broja alata** id
 
 ```bash
 # Ukloni dva alata iz kataloga
-MCP_TOOL_DENY="omniroute_get_health,omniroute_list_combos" omniroute --mcp
+MCP_TOOL_DENY="agentproxy_get_health,agentproxy_list_combos" agentproxy --mcp
 
 # Objavi samo alate za usmjeravanje i kvote (način rada s listom dozvoljenih)
-MCP_TOOL_ALLOW="omniroute_route_request,omniroute_check_quota" omniroute --mcp
+MCP_TOOL_ALLOW="agentproxy_route_request,agentproxy_check_quota" agentproxy --mcp
 ```
 
 **Kako se filtrirani alati uklanjaju:** registracija uvijek uspijeva; alat koji profil odbije zatim se onemogućava pomoću `.disable()` na MCP SDK ručki, tako da se nikada ne pojavljuje u `tools/list`, ali povezivanje ostaje netaknuto (uredno omogućavanje/onemogućavanje, bez ponovne registracije). Parser profila je `readMcpToolProfileFromEnv(process.env)`, koji vraća `null` (bez filtriranja) kada su obje varijable prazne.

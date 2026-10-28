@@ -50,11 +50,11 @@ ga kowane CLI da ake tallafawa, wanda ke karanta kundin model na **kai tsaye** d
 mai gudana (na gida ko na nesa), sannan ya rubuta config na kayan aikin a kan na'urarka:
 
 ```bash
-omniroute setup-codex        omniroute setup-claude       omniroute setup-opencode
-omniroute setup-cline        omniroute setup-kilo         omniroute setup-continue
-omniroute setup-cursor       omniroute setup-roo          omniroute setup-crush
-omniroute setup-goose        omniroute setup-qwen         omniroute setup-aider
-omniroute setup-5dive
+agentproxy setup-codex        agentproxy setup-claude       agentproxy setup-opencode
+agentproxy setup-cline        agentproxy setup-kilo         agentproxy setup-continue
+agentproxy setup-cursor       agentproxy setup-roo          agentproxy setup-crush
+agentproxy setup-goose        agentproxy setup-qwen         agentproxy setup-aider
+agentproxy setup-5dive
 ```
 
 Kowannensu yana karɓar `--remote <url> --api-key <key>` (saita kayan aiki na gida
@@ -66,12 +66,12 @@ gudanarwa mara hulɗa). `setup-5dive` ne kaɗai tsarin da ba ya rubutawa ƙarƙa
 root a kan host na rundunar, don haka yana sake aiwatar da kansa ta `sudo`
 kuma ba shi da nasa yanayin nesa. Don ƙaddamar da CLI tare da shigar da
 env da ya dace ba tare da rubuta wani config kwata-kwata ba, yi amfani da
-babban mai ƙaddamarwa `omniroute run <target>` (claude, codex, aider, goose,
+babban mai ƙaddamarwa `agentproxy run <target>` (claude, codex, aider, goose,
 opencode, qwen, gemini — targets da aliases suna fitowa daga
 `bin/cli/cli-manifest.mjs`); tsofaffin masu ƙaddamarwa na kowane kayan aiki,
-`omniroute launch` (Claude Code) da `omniroute launch-codex` (Codex), har yanzu
+`agentproxy launch` (Claude Code) da `agentproxy launch-codex` (Codex), har yanzu
 suna samuwa. Gemini CLI na ƙaddamarwa kaɗai ne: yana cikin targets na
-`omniroute run`, amma ba shi da tsarin `setup-*`/`configure`.
+`agentproxy run`, amma ba shi da tsarin `setup-*`/`configure`.
 
 > **Cikakken bayani:** babban tebur — abin da kowane umarni ke rubutawa, dukkan flags,
 > na gida da na nesa, da waɗanne kayan aiki ke buƙatar ƙarin `/v1` — yana cikin
@@ -83,20 +83,20 @@ Umarnin `setup-*` da aka aiwatar a cikin container na AgentProxy yana rubutawa c
 home na container ɗin kansa, wanda babu wani CLI na host da ke karantawa kuma wanda
 ke ɓacewa tare da container ɗin. AgentProxy yana gano hakan kuma ya fita da `2` tare
 da umarni maimakon yin rubutu. Akwai hanyoyi biyu da ake tallafawa — shigar da CLI
-a kan host sannan a yi `omniroute connect` zuwa container, ko a bind-mount
+a kan host sannan a yi `agentproxy connect` zuwa container, ko a bind-mount
 config dirs sannan a saita `CLI_CONFIG_HOME` (compose profile na `host`). Kowane
-umarnin `setup-*`, tare da `omniroute configure` da `omniroute config set`, yana
+umarnin `setup-*`, tare da `agentproxy configure` da `agentproxy config set`, yana
 karɓar `--allow-container-write` idan abin da kake nufi a zahiri shi ne saita CLI
-na container ɗin kansa; `OMNIROUTE_ALLOW_CONTAINER_CONFIG_WRITE=true` yana yin
+na container ɗin kansa; `AGENTPROXY_ALLOW_CONTAINER_CONFIG_WRITE=true` yana yin
 haka ga server. Duba
-[Jagorar Docker → Saita kayan aikin CLI na host](../guides/DOCKER_GUIDE.md#configuring-host-cli-tools-when-omniroute-runs-in-docker).
+[Jagorar Docker → Saita kayan aikin CLI na host](../guides/DOCKER_GUIDE.md#configuring-host-cli-tools-when-agentproxy-runs-in-docker).
 
 **apply endpoint** na dashboard (`POST /api/cli-tools/apply`) yana aiwatar da
 wannan kariyar iri ɗaya: a cikin container, rubutun da target ɗinsa ba a bind-mount
 daga host ba yana amsawa da **`422`** tare da `containerEphemeralTarget: true`,
 saƙon kuskure mai aminci da kuma — ga kayan aikin da suke da tsarin host (claude,
 codex, opencode, cline, kilo, continue) — `hostSetupCommand` (misali
-`omniroute setup-opencode`) da za a gudanar a kan host maimakon haka; ba a rubuta
+`agentproxy setup-opencode`) da za a gudanar a kan host maimakon haka; ba a rubuta
 komai. `dryRun: true` yana ci gaba da aiki a yanayin container kuma yana mayar da
 abubuwan da aka samar + target path ba tare da taɓa disk ba, don haka za ka iya
 yin samfoti daga dashboard sannan ka aiwatar a kan host. Wannan halayyar ganganci
@@ -132,8 +132,8 @@ da ke ayyana shi, kuma gwajin karkacewa yana tabbatar da cewa sun kasance daidai
 | ---------------------- | ------------------------------------------------------------------------------- | ------------------------------------------------------------------- |
 | **A cikin kundi**      | Yana bayyana a kundin dashboard (suna, mai samarwa, takardu, nau'in daidaitawa) | `src/shared/constants/cliTools.ts` (`CLI_TOOLS`)                    |
 | **Ana iya ganowa**     | Gano binary/config, binciken lafiya, hanyoyin config                            | `src/shared/services/cliRuntime.ts` (kundin runtime na `CLI_TOOLS`) |
-| **Ana iya daidaitawa** | `omniroute configure <cli>` yana goyon bayansa (akwai tsarin saitawa)           | `bin/cli/cli-manifest.mjs` (`configure: true`)                      |
-| **Ana iya ƙaddamarwa** | `omniroute run <target>` yana goyon bayansa (an ayyana shigar da env/args)      | `bin/cli/cli-manifest.mjs` (`run: true`)                            |
+| **Ana iya daidaitawa** | `agentproxy configure <cli>` yana goyon bayansa (akwai tsarin saitawa)           | `bin/cli/cli-manifest.mjs` (`configure: true`)                      |
+| **Ana iya ƙaddamarwa** | `agentproxy run <target>` yana goyon bayansa (an ayyana shigar da env/args)      | `bin/cli/cli-manifest.mjs` (`run: true`)                            |
 
 `bin/cli/cli-manifest.mjs` shi ne ingantaccen manifest mai aiwatarwa don mu'amalolin umarnin CLI:
 `run`, `configure` da masu samar da cika umarnin shell duk suna samo jerin
@@ -267,7 +267,7 @@ Sabbin kayan aiki masu `configType: "custom"` suna da keɓantattun hanyoyin API 
 | `POST /api/cli-tools/codewhale-settings`    | CodeWhale (OPENAI_BASE_URL, na farko + daidaitawar tsohon `~/.deepseek`) |
 | `POST /api/cli-tools/smelt-settings`        | Smelt                                                                    |
 | `POST /api/cli-tools/pi-settings`           | Wakilin rubuta lambar Pi                                                 |
-| `POST /api/cli-tools/grok-build-settings`   | Grok Build (~/.grok/config.toml, `[model.omniroute]`)                    |
+| `POST /api/cli-tools/grok-build-settings`   | Grok Build (~/.grok/config.toml, `[model.agentproxy]`)                    |
 | `POST /api/cli-tools/qwen-settings`         | Qwen Code (`~/.qwen/settings.json` + keɓantaccen maɓallin `.env`)        |
 
 Duk hanyoyin suna amfani da `sanitizeErrorMessage()` don amsoshin kuskure (Ƙa'ida Mai Tsauri #12).
@@ -362,7 +362,7 @@ npm install -g kilocode
 # Qwen Code
 npm install -g @qwen-code/qwen-code
 
-# Google Gemini CLI (ana iya ƙaddamar da shi ta `omniroute run gemini` → fuskar /v1beta)
+# Google Gemini CLI (ana iya ƙaddamar da shi ta `agentproxy run gemini` → fuskar /v1beta)
 npm install -g @google/gemini-cli
 
 # Aider
@@ -395,12 +395,12 @@ cargo install smelt  # Wanda aka gina da Rust
 ```bash
 # Universal Endpoint na AgentProxy
 export OPENAI_BASE_URL="http://localhost:20128/v1"
-export OPENAI_API_KEY="sk-your-omniroute-key"
+export OPENAI_API_KEY="sk-your-agentproxy-key"
 export ANTHROPIC_BASE_URL="http://localhost:20128"
-export ANTHROPIC_AUTH_TOKEN="sk-your-omniroute-key"
+export ANTHROPIC_AUTH_TOKEN="sk-your-agentproxy-key"
 # Gemini CLI yana karanta GOOGLE_GEMINI_BASE_URL a ROOT (SDK ɗinsa yana haɗa /v1beta/... da kansa)
 export GOOGLE_GEMINI_BASE_URL="http://localhost:20128"
-export GEMINI_API_KEY="sk-your-omniroute-key"
+export GEMINI_API_KEY="sk-your-agentproxy-key"
 ```
 
 > Don **uwar garken nesa**, maye gurbin `localhost:20128` da IP ko domain na uwar garken,
@@ -418,7 +418,7 @@ mkdir -p ~/.claude && cat > ~/.claude/settings.json << EOF
 {
   "env": {
     "ANTHROPIC_BASE_URL": "http://localhost:20128",
-    "ANTHROPIC_AUTH_TOKEN": "sk-your-omniroute-key"
+    "ANTHROPIC_AUTH_TOKEN": "sk-your-agentproxy-key"
   }
 }
 EOF
@@ -434,20 +434,20 @@ Yi amfani da tushen unified Anthropic gateway don Claude Code. Kada ka ƙara `/v
 
 Codex na zamani (v0.137+) yana karanta `~/.codex/config.toml` kawai — tsohon
 `config.yaml` na legacy npm CLI ne kuma ana watsi da shi ba tare da sanarwa ba. Maɓallin API
-yana ci gaba da kasancewa a cikin environment variable `OMNIROUTE_API_KEY` (`env_key`), ba ya taɓa
+yana ci gaba da kasancewa a cikin environment variable `AGENTPROXY_API_KEY` (`env_key`), ba ya taɓa
 kasancewa a cikin fayil ɗin:
 
 ```bash
 mkdir -p ~/.codex && cat > ~/.codex/config.toml << EOF
-model_provider = "omniroute"
+model_provider = "agentproxy"
 
-[model_providers.omniroute]
+[model_providers.agentproxy]
 name                 = "AgentProxy"
 base_url             = "http://localhost:20128/v1"
-env_key              = "OMNIROUTE_API_KEY"
+env_key              = "AGENTPROXY_API_KEY"
 requires_openai_auth = false
 EOF
-export OMNIROUTE_API_KEY="sk-your-omniroute-key"
+export AGENTPROXY_API_KEY="sk-your-agentproxy-key"
 ```
 
 Cikakken bayani (profiles, `wire_api`, context windows): [CODEX-CLI-CONFIGURATION.md](../guides/CODEX-CLI-CONFIGURATION.md).
@@ -463,12 +463,12 @@ mkdir -p ~/.config/opencode && cat > ~/.config/opencode/opencode.json << EOF
 {
   "\$schema": "https://opencode.ai/config.json",
   "provider": {
-    "omniroute": {
+    "agentproxy": {
       "npm": "@ai-sdk/openai-compatible",
       "name": "AgentProxy",
       "options": {
         "baseURL": "http://localhost:20128/v1",
-        "apiKey": "sk-your-omniroute-key"
+        "apiKey": "sk-your-agentproxy-key"
       },
       "models": {
         "claude-sonnet-4-5": { "name": "claude-sonnet-4-5" },
@@ -483,7 +483,7 @@ EOF
 
 **Gwaji:** `opencode`
 
-> Yi amfani da `opencode run "your prompt" --model omniroute/claude-sonnet-4-5-thinking --variant high`
+> Yi amfani da `opencode run "your prompt" --model agentproxy/claude-sonnet-4-5-thinking --variant high`
 > don aika thinking variants.
 
 ---
@@ -497,7 +497,7 @@ mkdir -p ~/.cline/data && cat > ~/.cline/data/globalState.json << EOF
 {
   "apiProvider": "openai",
   "openAiBaseUrl": "http://localhost:20128/v1",
-  "openAiApiKey": "sk-your-omniroute-key"
+  "openAiApiKey": "sk-your-agentproxy-key"
 }
 EOF
 ```
@@ -514,7 +514,7 @@ Ko kuma yi amfani da dashboard na AgentProxy → **Kayan Aikin CLI → Cline →
 **Yanayin CLI:**
 
 ```bash
-kilocode --api-base http://localhost:20128/v1 --api-key sk-your-omniroute-key
+kilocode --api-base http://localhost:20128/v1 --api-key sk-your-agentproxy-key
 ```
 
 **Saitunan VS Code:**
@@ -522,7 +522,7 @@ kilocode --api-base http://localhost:20128/v1 --api-key sk-your-omniroute-key
 ```json
 {
   "kilo-code.openAiBaseUrl": "http://localhost:20128/v1",
-  "kilo-code.apiKey": "sk-your-omniroute-key"
+  "kilo-code.apiKey": "sk-your-agentproxy-key"
 }
 ```
 
@@ -540,7 +540,7 @@ models:
     provider: openai
     model: auto
     apiBase: http://localhost:20128/v1
-    apiKey: sk-your-omniroute-key
+    apiKey: sk-your-agentproxy-key
     default: true
 ```
 
@@ -567,8 +567,8 @@ Yi amfani da wannan lokacin da aka saita VS Code Insiders don custom endpoint mo
     "name": "AgentProxy Auto",
     "family": "gpt-4",
     "version": "1.0.0",
-    "url": "http://localhost:20128/api/v1/vscode/sk-your-omniroute-key/chat/completions",
-    "modelsUrl": "http://localhost:20128/api/v1/vscode/sk-your-omniroute-key/models",
+    "url": "http://localhost:20128/api/v1/vscode/sk-your-agentproxy-key/chat/completions",
+    "modelsUrl": "http://localhost:20128/api/v1/vscode/sk-your-agentproxy-key/models",
     "requestFormat": "openai-chat-completions",
     "contextWindow": 256000,
     "maxOutputTokens": 32768,
@@ -581,7 +581,7 @@ Yi amfani da wannan lokacin da aka saita VS Code Insiders don custom endpoint mo
 
 **Bayanan kula:**
 
-- Sauya `sk-your-omniroute-key` da API key da aka ƙirƙira a AgentProxy.
+- Sauya `sk-your-agentproxy-key` da API key da aka ƙirƙira a AgentProxy.
 - Filin `url` ya kamata ya nuna zuwa `/api/v1/vscode/{token}/chat/completions`.
 - Filin `modelsUrl` ya kamata ya nuna zuwa `/api/v1/vscode/{token}/models`.
 - Fi son amfani da tsarin `/v1` na yau da kullum tare da Bearer header idan client ɗin yana goyon bayan custom headers.
@@ -607,28 +607,28 @@ a ƙarƙashin `/dashboard/cli-tools → Kiro`.
 
 ## 10. CLI na Cikin Gida na AgentProxy
 
-Binary ɗin `omniroute` yana samar da umarni don tafiyar da zagayen rayuwar sabar, saitawa, binciken matsaloli, da sarrafa masu samarwa. Mahadar farawa: `bin/omniroute.mjs`.
+Binary ɗin `agentproxy` yana samar da umarni don tafiyar da zagayen rayuwar sabar, saitawa, binciken matsaloli, da sarrafa masu samarwa. Mahadar farawa: `bin/agentproxy.mjs`.
 
 ```bash
-omniroute                              # Fara sabar (tsohuwar tashar jiragen ruwa ita ce 20128)
-omniroute setup                        # Mayen saitawa mai hulɗa
-omniroute doctor                       # Duba tsari, DB, tashoshin jiragen ruwa, da lokacin gudanarwa
-omniroute providers list               # Haɗin masu samarwa da aka tsara
-omniroute providers test-all           # Gwada kowane haɗi mai aiki
-omniroute reset-password               # Sake saita kalmar sirrin mai gudanarwa
-omniroute logs                         # Yaɗa rajistan buƙatu kai tsaye
-omniroute health                       # Cikakken bayani kan lafiya (breakers, cache, ƙwaƙwalwa)
-omniroute --version                    # Nuna sigar
-omniroute --help                       # Nuna duk umarni
+agentproxy                              # Fara sabar (tsohuwar tashar jiragen ruwa ita ce 20128)
+agentproxy setup                        # Mayen saitawa mai hulɗa
+agentproxy doctor                       # Duba tsari, DB, tashoshin jiragen ruwa, da lokacin gudanarwa
+agentproxy providers list               # Haɗin masu samarwa da aka tsara
+agentproxy providers test-all           # Gwada kowane haɗi mai aiki
+agentproxy reset-password               # Sake saita kalmar sirrin mai gudanarwa
+agentproxy logs                         # Yaɗa rajistan buƙatu kai tsaye
+agentproxy health                       # Cikakken bayani kan lafiya (breakers, cache, ƙwaƙwalwa)
+agentproxy --version                    # Nuna sigar
+agentproxy --help                       # Nuna duk umarni
 ```
 
 ### Saitawa da Farawa
 
 ```bash
-omniroute setup                        # Mayen saitawa mai hulɗa
-omniroute setup --non-interactive      # Yanayin CI/aiki ta atomatik (yana karanta env vars + flags)
-omniroute setup --password '<value>'   # Saita kalmar sirrin mai gudanarwa kai tsaye
-omniroute setup --add-provider \
+agentproxy setup                        # Mayen saitawa mai hulɗa
+agentproxy setup --non-interactive      # Yanayin CI/aiki ta atomatik (yana karanta env vars + flags)
+agentproxy setup --password '<value>'   # Saita kalmar sirrin mai gudanarwa kai tsaye
+agentproxy setup --add-provider \
   --provider openai \
   --api-key '<value>' \
   --test-provider                      # Ƙara kuma gwada mai samarwa a mataki ɗaya
@@ -638,21 +638,21 @@ Sauye-sauyen mahalli da ake ganewa don saitawa marar hulɗa:
 
 | Sauyi               | Manufa                                                                                 |
 | ------------------- | -------------------------------------------------------------------------------------- |
-| `OMNIROUTE_API_KEY` | Maɓallin API na mai samarwa (an ɗaura shi da `--api-key` ta hanyar Commander `.env()`) |
+| `AGENTPROXY_API_KEY` | Maɓallin API na mai samarwa (an ɗaura shi da `--api-key` ta hanyar Commander `.env()`) |
 | `DATA_DIR`          | Sauya kundin bayanan AgentProxy                                                         |
 
 Duk sauran bayanan shigarwa marasa hulɗa ana wuce su a matsayin flags, ba sauye-sauyen mahalli ba:
 `--password`, `--provider`, `--provider-name`, `--provider-base-url`, `--default-model`
-(duba zaɓuɓɓukan `omniroute setup` da ke sama).
+(duba zaɓuɓɓukan `agentproxy setup` da ke sama).
 
 ### Binciken Matsaloli
 
 ```bash
-omniroute doctor                       # Duba tsari, DB, tashoshin jiragen ruwa, lokacin gudanarwa, ƙwaƙwalwa, da kasancewar sabar a raye
-omniroute doctor --json                # JSON da na'ura za ta iya karantawa
-omniroute doctor --no-liveness         # Tsallake binciken lafiyar HTTP
-omniroute doctor --host 0.0.0.0        # Sauya host na binciken kasancewa a raye
-omniroute doctor --liveness-url <url>  # Sauya cikakken URL na endpoint na lafiya
+agentproxy doctor                       # Duba tsari, DB, tashoshin jiragen ruwa, lokacin gudanarwa, ƙwaƙwalwa, da kasancewar sabar a raye
+agentproxy doctor --json                # JSON da na'ura za ta iya karantawa
+agentproxy doctor --no-liveness         # Tsallake binciken lafiyar HTTP
+agentproxy doctor --host 0.0.0.0        # Sauya host na binciken kasancewa a raye
+agentproxy doctor --liveness-url <url>  # Sauya cikakken URL na endpoint na lafiya
 ```
 
 Doctor yana gudanar da waɗannan bincike: `Config`, `Database`, `Storage/encryption`,
@@ -662,22 +662,22 @@ Doctor yana gudanar da waɗannan bincike: `Config`, `Database`, `Storage/encrypt
 ### Sarrafa Masu Samarwa
 
 ```bash
-omniroute providers available                       # Kundin masu samarwa na AgentProxy
-omniroute providers available --search openai       # Tace kundin bisa id/name/alias/category
-omniroute providers available --category api-key    # Tace bisa category (api-key, oauth, free, ...)
-omniroute providers available --json                # JSON da na'ura za ta iya karantawa
+agentproxy providers available                       # Kundin masu samarwa na AgentProxy
+agentproxy providers available --search openai       # Tace kundin bisa id/name/alias/category
+agentproxy providers available --category api-key    # Tace bisa category (api-key, oauth, free, ...)
+agentproxy providers available --json                # JSON da na'ura za ta iya karantawa
 
-omniroute providers list                            # Haɗin masu samarwa da aka tsara
-omniroute providers list --json
+agentproxy providers list                            # Haɗin masu samarwa da aka tsara
+agentproxy providers list --json
 
-omniroute providers test <id|name>                  # Gwada haɗi ɗaya da aka tsara
-omniroute providers test-all                        # Gwada kowane haɗi mai aiki
-omniroute providers validate                        # Tantance tsarin da ake yi a gida kawai
-omniroute providers add <provider> --credential-env PROVIDER_KEY
-omniroute providers import ./providers.json --dry-run --json
-omniroute providers auth <provider>                 # Tsarin OAuth da yake akwai
-omniroute providers edit <id|name> --default-model <model>
-omniroute providers remove <id|name> --yes
+agentproxy providers test <id|name>                  # Gwada haɗi ɗaya da aka tsara
+agentproxy providers test-all                        # Gwada kowane haɗi mai aiki
+agentproxy providers validate                        # Tantance tsarin da ake yi a gida kawai
+agentproxy providers add <provider> --credential-env PROVIDER_KEY
+agentproxy providers import ./providers.json --dry-run --json
+agentproxy providers auth <provider>                 # Tsarin OAuth da yake akwai
+agentproxy providers edit <id|name> --default-model <model>
+agentproxy providers remove <id|name> --yes
 ```
 
 `providers add/import/auth/edit/remove` suna fara aiki ta API, saboda haka suna aiki da
@@ -690,19 +690,19 @@ ba sa buƙatar sabar ta kasance tana aiki.
 ### Maidowa da Sake Saitawa
 
 ```bash
-omniroute reset-password                # Sake saita kalmar sirrin mai gudanarwa (kuma: omniroute-reset-password)
-omniroute reset-encrypted-columns       # Nuna gargaɗi + dry-run don sake saitin bayanan shaidarka masu ɓoyewa
-omniroute reset-encrypted-columns --force  # A zahiri mayar da bayanan shaidarka masu ɓoyewa zuwa null a cikin SQLite
+agentproxy reset-password                # Sake saita kalmar sirrin mai gudanarwa (kuma: agentproxy-reset-password)
+agentproxy reset-encrypted-columns       # Nuna gargaɗi + dry-run don sake saitin bayanan shaidarka masu ɓoyewa
+agentproxy reset-encrypted-columns --force  # A zahiri mayar da bayanan shaidarka masu ɓoyewa zuwa null a cikin SQLite
 ```
 
 ### Fitar da Bayanan Shaidarka (⚠ a kula sosai)
 
 ```bash
-omniroute auth export                                 # Nuna gargaɗi + matakin tabbatarwa — babu shiga DB
-omniroute auth export --force                          # Fitar da bayanan shaidarka da aka CIRE ƁOYUWAR duk haɗin zuwa stdout a matsayin JSON
-omniroute auth export --force --id <id>                 # Fitar da haɗin da ya dace kawai
-omniroute auth export --force --format env               # Fitar da layukan OMNIROUTE_<PROVIDER>_<FIELD>=<value>
-omniroute auth export --force --out creds.json           # Rubuta zuwa fayil (wanda aka ƙirƙira da izinin 0600)
+agentproxy auth export                                 # Nuna gargaɗi + matakin tabbatarwa — babu shiga DB
+agentproxy auth export --force                          # Fitar da bayanan shaidarka da aka CIRE ƁOYUWAR duk haɗin zuwa stdout a matsayin JSON
+agentproxy auth export --force --id <id>                 # Fitar da haɗin da ya dace kawai
+agentproxy auth export --force --format env               # Fitar da layukan AGENTPROXY_<PROVIDER>_<FIELD>=<value>
+agentproxy auth export --force --out creds.json           # Rubuta zuwa fayil (wanda aka ƙirƙira da izinin 0600)
 ```
 
 `auth export` na **gida-kawai** ne (karatun SQLite kai tsaye, babu hanyar HTTP) kuma da gangan yake bugawa/rubuta
@@ -717,33 +717,33 @@ Filin da aka kasa cire ɓoyuwarsa (tsohon maɓalli, rubutun ɓoyewa da ya lalace
 Waɗannan suna ɗauka cewa sabar AgentProxy tana aiki, sai dai idan an bayyana akasin haka:
 
 ```bash
-omniroute status                       # Cikakken matsayin lokacin aiki
-omniroute logs                         # Nuna rajistan buƙatu kai tsaye (--json, --search, --follow)
-omniroute config list                  # Nuna kayan aikin CLI da aka saita
+agentproxy status                       # Cikakken matsayin lokacin aiki
+agentproxy logs                         # Nuna rajistan buƙatu kai tsaye (--json, --search, --follow)
+agentproxy config list                  # Nuna kayan aikin CLI da aka saita
 
-omniroute provider list                # Jera masu samarwa da ake da su (wani suna na providers list)
-omniroute provider add                 # Yi rajistar AgentProxy a matsayin mai samarwa a kan wani kayan aiki
-omniroute keys add | list | remove     # Sarrafa maɓallan API
-omniroute models [provider]            # Jera samfura (--json, --search)
-omniroute combo list | switch | create | delete
+agentproxy provider list                # Jera masu samarwa da ake da su (wani suna na providers list)
+agentproxy provider add                 # Yi rajistar AgentProxy a matsayin mai samarwa a kan wani kayan aiki
+agentproxy keys add | list | remove     # Sarrafa maɓallan API
+agentproxy models [provider]            # Jera samfura (--json, --search)
+agentproxy combo list | switch | create | delete
 
-omniroute backup                       # Ɗauki hoton config + DB
-omniroute restore                      # Mayar daga hoton da aka ɗauka a baya
+agentproxy backup                       # Ɗauki hoton config + DB
+agentproxy restore                      # Mayar daga hoton da aka ɗauka a baya
 
-omniroute health                       # Cikakken bayanin lafiya (breakers, cache, memory)
-omniroute quota                        # Amfanin ƙason mai samarwa
-omniroute cache                        # Matsayin cache
-omniroute cache clear                  # Goge semantic + signature caches
+agentproxy health                       # Cikakken bayanin lafiya (breakers, cache, memory)
+agentproxy quota                        # Amfanin ƙason mai samarwa
+agentproxy cache                        # Matsayin cache
+agentproxy cache clear                  # Goge semantic + signature caches
 
-omniroute mcp status | restart         # Matsayin uwar garken MCP / sake farawa
-omniroute a2a status | card            # Matsayin uwar garken A2A / katin wakili
+agentproxy mcp status | restart         # Matsayin uwar garken MCP / sake farawa
+agentproxy a2a status | card            # Matsayin uwar garken A2A / katin wakili
 
-omniroute tunnel list | create | stop  # Sarrafa tunnels (cloudflare/tailscale/ngrok)
-omniroute env show | get <k> | set <k> <v>  # Duba / saita env vars (na ɗan lokaci)
+agentproxy tunnel list | create | stop  # Sarrafa tunnels (cloudflare/tailscale/ngrok)
+agentproxy env show | get <k> | set <k> <v>  # Duba / saita env vars (na ɗan lokaci)
 
-omniroute test                         # Gwajin haɗin mai samarwa na gaggawa
-omniroute update                       # Bincika sabuntawa
-omniroute completion                   # Samar da cikar umarnin shell
+agentproxy test                         # Gwajin haɗin mai samarwa na gaggawa
+agentproxy update                       # Bincika sabuntawa
+agentproxy completion                   # Samar da cikar umarnin shell
 ```
 
 ### Tutoci na gama gari
@@ -791,7 +791,7 @@ Tattaunawar Ollama: http://localhost:20128/api/v1/vscode/sk-a3ab3c080beaee3a-69f
 
 | Kuskure                                           | Dalili                            | Gyara                                                   |
 | ------------------------------------------------- | --------------------------------- | ------------------------------------------------------- |
-| `Connection refused`                              | AgentProxy ba ya aiki              | `omniroute serve`                                       |
+| `Connection refused`                              | AgentProxy ba ya aiki              | `agentproxy serve`                                       |
 | `401 Unauthorized`                                | Maɓallin API ba daidai ba         | Duba a `/dashboard/api-manager`                         |
 | `No combo configured`                             | Babu haɗin turawa mai aiki        | Saita a `/dashboard/combos`                             |
 | CLI yana nuna "not installed"                     | Fayil ɗin binary ba ya cikin PATH | Duba `which <command>`                                  |

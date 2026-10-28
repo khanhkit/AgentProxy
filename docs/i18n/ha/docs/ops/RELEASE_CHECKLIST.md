@@ -44,7 +44,7 @@ Wannan shi ne hanyar kaucewa da npm ya amince da ita yanzu da ake janye token-to
 yana dawo da cikakken tsarin atomatik da aikin yake da shi har zuwa v3.8.48 tare da kiyaye
 tabbacin WS1.3 (token da ya fallasa ba zai iya bugawa shi kaɗai ba — domin babu token).
 
-**Saitin sau ɗaya (mai shi):** npmjs.com → fakitin `omniroute` → Settings → _Trusted
+**Saitin sau ɗaya (mai shi):** npmjs.com → fakitin `agentproxy` → Settings → _Trusted
 Publisher_ → GitHub: mai shi `diegosouzapw`, repo `AgentProxy`, workflow `npm-publish.yml`
 (environment: babu). Har sai wannan ya kasance, matakin atomatik zai gaza da `ENEEDAUTH`:
 sake ƙaddamarwa da `publish_mode=staged` (a ƙasa) ko `direct`.
@@ -58,7 +58,7 @@ rajista, **ba za a iya girka su ba** har sai mai shi ya amince. An matsar da mat
 
 **Tsarin mai shi bayan workflow ya zama lafiya:**
 
-1. `npm stage list omniroute` — nemo stage id (ana kuma buga shi a taƙaitaccen bayanin workflow).
+1. `npm stage list agentproxy` — nemo stage id (ana kuma buga shi a taƙaitaccen bayanin workflow).
 2. Tabbatar da bytes ɗin da aka ajiye (ana ba da shawara): `npm stage download <id>`, sannan girka
    tarball ɗin da aka sauke cikin prefix na wucin gadi kuma kunna shi (`npm run check:pack-boot` yana sarrafa
    irin wannan hukuncin pack→install→boot ta atomatik a CI).
@@ -70,10 +70,10 @@ rajista, **ba za a iya girka su ba** har sai mai shi ya amince. An matsar da mat
 tsohon `npm publish` na nan take (a yi amfani da shi kawai idan ajiyewar don amincewa kanta ta samu matsala; a rubuta dalili).
 
 **Ƙarfafawa na sau ɗaya (mai shi, npmjs.com):** saita Trusted Publisher na
-`omniroute` a yanayin stage-only domin token mai dogon wa'adi da ya fallasa kada ya iya yin `npm publish`
+`agentproxy` a yanayin stage-only domin token mai dogon wa'adi da ya fallasa kada ya iya yin `npm publish`
 kai tsaye daga ko'ina — CI zai iya ajiyewa don amincewa kawai; 2FA na mai shi kaɗai ne ke fitarwa.
 
-**Tsarin magance gurɓataccen artifact (bai canza ba):** `npm deprecate omniroute@<bad> "<reason> — use <fixed>"`
+**Tsarin magance gurɓataccen artifact (bai canza ba):** `npm deprecate agentproxy@<bad> "<reason> — use <fixed>"`
 a matsayin matakin farko na yau da kullum (mintuna, ana iya janyewa); `npm unpublish` kawai a cikin
 tagar awa 72/babu masu dogaro, kuma kada ya taɓa zama matakin farko. Docker: kada a sake rubuta tag na siga — komawa baya
 shi ne sake nuna `latest` zuwa digest mai kyau na ƙarshe.
@@ -192,7 +192,7 @@ Sauye-sauye masu karya jituwa: ƙara footer na `BREAKING CHANGE:` ko `!` bayan s
 - [ ] `npm run i18n:check` ya fita da 0 — matsayin fassara (`.i18n-state.json`) yana aiki daidai da takardun tushe (babu tushe da ya kauce a strict mode; gargaɗin warn-mode abin karɓa ne don gyare-gyaren takardu na minti na ƙarshe, amma ya kamata ya zama 0 kafin sanya tag)
 - [ ] `npm run i18n:check-ui-coverage` ya fita da 0 — kowane UI locale yana kan ko sama da mafi ƙarancin ɗaukar hoto na 80%
 - [ ] `npm run i18n:sync-ui:dry` ya bayar da rahoton maɓallan da suka ɓace 0 a duk locale 42
-- [ ] Idan takardun tushe na Turanci sun canza, gudanar da `npm run i18n:run` (yana buƙatar `OMNIROUTE_TRANSLATION_API_KEY` a cikin `.env`) kafin sanya tag
+- [ ] Idan takardun tushe na Turanci sun canza, gudanar da `npm run i18n:run` (yana buƙatar `AGENTPROXY_TRANSLATION_API_KEY` a cikin `.env`) kafin sanya tag
 - [ ] Ana iya ɗage gudunmawar fassara zuwa sakin gaba idan ƙanana ne (a bibiyi su a CHANGELOG)
 
 ### Ƙaurawar Bayanai
@@ -201,7 +201,7 @@ Sauye-sauye masu karya jituwa: ƙara footer na `BREAKING CHANGE:` ko `!` bayan s
   - [ ] Kowace ƙaura idempotent ce (`CREATE TABLE IF NOT EXISTS`, da sauransu)
   - [ ] An naɗe ƙaurawar cikin transactions
   - [ ] An yi musu lamba daidai (babu rata a jere)
-- [ ] Gwada kan sabon shigarwa: goge `~/.omniroute/omniroute.db` sannan gudanar da `npm run dev`
+- [ ] Gwada kan sabon shigarwa: goge `~/.agentproxy/agentproxy.db` sannan gudanar da `npm run dev`
 - [ ] Gwada kan shigarwar da ke akwai: yi madadin DB, gudanar da ƙaura, tabbatar da schema
 - [ ] An kula da fayilolin WAL (`-wal`, `-shm`) daidai idan ƙaura ta sake rubuta tables
 
@@ -236,7 +236,7 @@ Ma’ajiyar tana amfani da directories na fitarwa guda uku daban-daban — kada 
 | `.build/` | Matsakaitan build — fitarwar `next build` (`distDir`)                   | A'a (gitignored) |
 | `dist/`   | Kunshin npm mai shirye don aikawa — `assembleStandalone` ne ya haɗa shi | A'a (gitignored) |
 
-> **Bayanin mai gudanarwa:** directory na image a VPS na nesa har yanzu yana nan a `/usr/lib/node_modules/omniroute/app/`.
+> **Bayanin mai gudanarwa:** directory na image a VPS na nesa har yanzu yana nan a `/usr/lib/node_modules/agentproxy/app/`.
 > Fitarwar build ta **cikin ma’ajiya** ce kawai ta koma (`app/` → `dist/`). Deploy skills suna yin rsync na
 > abubuwan da ke cikin `dist/` zuwa dir na `app/` na nesa — babu buƙatar sauya path na VPS.
 
@@ -356,12 +356,12 @@ Kafin fitar da kowace siga da ta ƙunshi sauye-sauyen ayyukan da aka gina a ciki
 
 Kafin fitar da kowace siga ta v3.8.x, tabbatar da waɗannan ƙarin abubuwa:
 
-- [ ] `omniroute --tray` yana farawa a macOS (an shigar da systray2 cikin `~/.omniroute/runtime/`)
-- [ ] `omniroute --tray` yana farawa a Linux (yana buƙatar DISPLAY; ya bayar da kuskure cikin ladabi idan ba a saita shi ba)
-- [ ] `omniroute --tray` yana farawa a Windows (PowerShell NotifyIcon, babu ƙarin fayilolin binary)
-- [ ] `omniroute config tray enable` yana ƙirƙirar shigarwar farawa ta atomatik; disable yana cire ta
-- [ ] `npm install -g omniroute@<this-version>` yana gudanar da postinstall ba tare da fita saboda kuskure mai tsanani ba
-- [ ] Hanyar sabuntawa tana riƙe optional deps: `omniroute update --apply` da mai sabuntawa ta atomatik
+- [ ] `agentproxy --tray` yana farawa a macOS (an shigar da systray2 cikin `~/.agentproxy/runtime/`)
+- [ ] `agentproxy --tray` yana farawa a Linux (yana buƙatar DISPLAY; ya bayar da kuskure cikin ladabi idan ba a saita shi ba)
+- [ ] `agentproxy --tray` yana farawa a Windows (PowerShell NotifyIcon, babu ƙarin fayilolin binary)
+- [ ] `agentproxy config tray enable` yana ƙirƙirar shigarwar farawa ta atomatik; disable yana cire ta
+- [ ] `npm install -g agentproxy@<this-version>` yana gudanar da postinstall ba tare da fita saboda kuskure mai tsanani ba
+- [ ] Hanyar sabuntawa tana riƙe optional deps: `agentproxy update --apply` da mai sabuntawa ta atomatik
       suna gudanar da `npm install -g … --include=optional` domin `optionalDependencies` (better-sqlite3,
       keytar, tls-client, da tarin llmlingua SLM: `@atjsh/llmlingua-2@2.0.5`,
       `js-tiktoken`) su tsira daga sabuntawa. Matsayin ultra `modelPath` SLM kuma yana buƙatar
@@ -371,13 +371,13 @@ Kafin fitar da kowace siga ta v3.8.x, tabbatar da waɗannan ƙarin abubuwa:
       — trace mai zaman kansa yana haɗa transformers kawai, ba zaɓuɓɓukan da ake shigo da su a lokacin aiki ba,
       don haka idan babu wannan worker zai loda llmlingua-2 tare da transformers na tushen aikin
       kuma matakin SLM zai gaza a ɓoye tare da ci gaba ba tare da matsawa ba.
-- [ ] `omniroute status` yana aiki ba tare da `.env` ba (hanyar token ta CLI, loopback kawai)
+- [ ] `agentproxy status` yana aiki ba tare da `.env` ba (hanyar token ta CLI, loopback kawai)
 - [ ] `curl http://localhost:20128/api/shutdown` yana dawo da 401 (hanyar da ake karewa koyaushe)
 - [ ] `curl -H "host: evil.com" http://localhost:20128/api/mcp/sse` yana dawo da 401 (garkuwar loopback)
 - [ ] A lokacin farawa na farko, runtime na SQLite yana warwarewa zuwa `bundled` (binary da aka haɗa yana aiki ga dandamalin)
 - [ ] Runtime na SQLite yana koma wa `runtime` idan aka share `node_modules/better-sqlite3`
 - [ ] Tacewar Smart MCP tana matse ainihin fitarwar `playwright-mcp browser_snapshot` (raguwar ≥50%)
-- [ ] Ana iya samun duk fayiloli 10 na `skills/omniroute*/SKILL.md` a bainar jama'a ta URL na raw GitHub
+- [ ] Ana iya samun duk fayiloli 10 na `skills/agentproxy*/SKILL.md` a bainar jama'a ta URL na raw GitHub
 - [ ] Jagoran saitin farko yana nuna matakin rangadin "Yadda Yake Aiki" a sabon saiti
 - [ ] Widget na ɗaukar matakai a dashboard na farko yana nuna adadin da aka saita/masu aiki
 

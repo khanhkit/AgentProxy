@@ -30,7 +30,7 @@ Agent Card को `version` फिल्ड `process.env.npm_package_version` �
 सबै `/a2a` अनुरोधहरूलाई `Authorization` हेडरमार्फत API कुञ्जी आवश्यक पर्छ:
 
 ```
-Authorization: Bearer YOUR_OMNIROUTE_API_KEY
+Authorization: Bearer YOUR_AGENTPROXY_API_KEY
 ```
 
 सर्भरमा कुनै API कुञ्जी कन्फिगर गरिएको छैन भने प्रमाणीकरण बाइपास गरिन्छ।
@@ -187,7 +187,7 @@ JSON-RPC endpoint `/a2a` नै आधिकारिक A2A प्रवेश 
 | `/api/a2a/tasks/[id]`        | GET  | ID द्वारा task प्राप्त गर्ने                               | व्यवस्थापन                                        |
 | `/api/a2a/tasks/[id]/cancel` | POST | चलिरहेको task रद्द गर्ने                                   | व्यवस्थापन                                        |
 | `/.well-known/agent.json`    | GET  | Agent Card (A2A खोज)                                       | (सार्वजनिक, 3600s सम्म cache गरिएको)              |
-| `/api/a2a/tasks`             | POST | OmniConductor fleet मा आगमन delegation (Conductor PRD RF5) | Bearer विरुद्ध `OMNIROUTE_API_KEY` + `a2aEnabled` |
+| `/api/a2a/tasks`             | POST | OmniConductor fleet मा आगमन delegation (Conductor PRD RF5) | Bearer विरुद्ध `AGENTPROXY_API_KEY` + `a2aEnabled` |
 
 **आगमन Conductor delegation (`POST /api/a2a/tasks`):** बाह्य A2A agent हरूले AgentProxy मार्फत coding कार्य OmniConductor fleet लाई सुम्पन्छन्। Body: `{ skill: "conductor" | "conductor-cli-<profile>", messages: [{role, content}], metadata: { conductor: { repo: { url, base_ref? }, mode?, cli?, model? } } }` — केवल Conductor fleet skill हरू (Agent Card मा घोषणा गरिएका) मात्र delegate गर्न सकिन्छ; `metadata.conductor.repo.url` आवश्यक छ (fleet ले git repo हरूमा काम गर्छ)। route ले server-side `CONDUCTOR_ORCHESTRATOR_TOKEN` (fallback `CONDUCTOR_HUB_TOKEN`) प्रयोग गरेर यसलाई hub को `POST /v1/tasks` मा अनुवाद गर्छ र `201 { conductor_task_id, state: "submitted" }` फर्काउँछ; task का state हरू SSE→A2A mirror (RF1) मार्फत फिर्ता प्रवाहित हुन्छन् र `GET /api/a2a/tasks?skill=conductor` मार्फत देख्न सकिन्छ।
 

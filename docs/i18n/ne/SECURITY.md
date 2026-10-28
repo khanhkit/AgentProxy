@@ -77,7 +77,7 @@ AgentProxy सँग प्राथमिकताअनुसार क्र�
 | `pii-masker`       | 10         | कलअघि र पछिको PII संशोधन (इमेल, फोन, CPF, CNPJ, क्रेडिट कार्ड, SSN)              |
 | `prompt-injection` | 20         | ओभरराइड/भूमिका-अपहरण/जेलब्रेक/चुहावट ढाँचाहरू पत्ता लगाउँछ                       |
 
-अनुकूलित सुरक्षात्मक सीमाहरू `registerGuardrail(new MyGuardrail())` मार्फत दर्ता हुन्छन्। मोडेल fail-open छ (अपवादहरूले ट्राफिकलाई कहिल्यै अवरुद्ध गर्दैनन्)। प्रत्येक अनुरोधमा `x-omniroute-disabled-guardrails` हेडरमार्फत बाहिरिन सकिन्छ। → [`docs/security/GUARDRAILS.md`](docs/security/GUARDRAILS.md) हेर्नुहोस्।
+अनुकूलित सुरक्षात्मक सीमाहरू `registerGuardrail(new MyGuardrail())` मार्फत दर्ता हुन्छन्। मोडेल fail-open छ (अपवादहरूले ट्राफिकलाई कहिल्यै अवरुद्ध गर्दैनन्)। प्रत्येक अनुरोधमा `x-agentproxy-disabled-guardrails` हेडरमार्फत बाहिरिन सकिन्छ। → [`docs/security/GUARDRAILS.md`](docs/security/GUARDRAILS.md) हेर्नुहोस्।
 
 ### 🧠 प्रम्प्ट इन्जेक्सन गार्ड
 
@@ -182,15 +182,15 @@ STORAGE_ENCRYPTION_KEY=$(openssl rand -hex 32)
 
 ```bash
 docker run -d \
-  --name omniroute \
+  --name agentproxy \
   --restart unless-stopped \
   --read-only \
   -p 20128:20128 \
-  -v omniroute-data:/app/data \
+  -v agentproxy-data:/app/data \
   -e JWT_SECRET="$(openssl rand -base64 48)" \
   -e API_KEY_SECRET="$(openssl rand -hex 32)" \
   -e STORAGE_ENCRYPTION_KEY="$(openssl rand -hex 32)" \
-  diegosouzapw/omniroute:latest
+  diegosouzapw/agentproxy:latest
 ```
 
 ---
@@ -224,7 +224,7 @@ docker run -d \
 
 > **दायरा टिप्पणी:** रिपोजिटरीको मूलमा रहेको `socket.yml` ले प्रकाशित npm आर्टिफ्याक्टमा Socket.dev को रजिस्ट्री-पक्षीय प्रकाशनोत्तर स्क्यानका लागि `projectIgnorePaths` मात्र निर्धारण गर्छ — यो अनिवार्य CI/PR मर्ज गेट होइन। `.github/workflows` मा कुनै workflow, `package.json` मा कुनै script, र कुनै `Makefile` target ले Socket.dev आह्वान गर्दैन।
 
-प्रकाशित `omniroute` npm आर्टिफ्याक्टले Next.js को `output: "standalone"`
+प्रकाशित `agentproxy` npm आर्टिफ्याक्टले Next.js को `output: "standalone"`
 build समेट्छ, जसको अर्थ दस्तावेजीकृत विशेषाधिकारयुक्त सुविधाहरूसहित
 (MITM, Zed import, Cloud Sync, embedded service supervisor) प्रत्येक route handler
 अन्ततः `.next/server/*.js` का minified chunk हरूमा पुग्छ। ह्युरिस्टिक आपूर्ति-शृङ्खला स्क्यानरहरूले
@@ -248,7 +248,7 @@ GitHub App द्वारा सञ्चालन हुन्छ।
   सोही दस्तावेजतर्फ सङ्केत गर्छन्।
 
 जसका pipeline ले alert लाई शिथिल बनाउन सक्दैनन्, ती प्रयोगकर्ताहरूका लागि:
-`OMNIROUTE_BUILD_PROFILE=minimal npm run build` प्रयोग गरेर build गर्नुहोस्। यसले चारवटा
+`AGENTPROXY_BUILD_PROFILE=minimal npm run build` प्रयोग गरेर build गर्नुहोस्। यसले चारवटा
 संवेदनशील module लाई runtime मा HTTP 503 `feature-disabled` फर्काउने
 stub हरूले प्रतिस्थापन गर्छ, जसले गर्दा विशेषाधिकारयुक्त code path हरू bundle बाट भौतिक रूपमा अनुपस्थित हुन्छन्।
 प्रकाशन विधिका लागि [`docs/security/SOCKET_DEV_FINDINGS.md`](docs/security/SOCKET_DEV_FINDINGS.md)

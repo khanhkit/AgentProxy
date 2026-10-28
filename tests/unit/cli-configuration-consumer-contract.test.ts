@@ -31,21 +31,21 @@ test("generated CLI skill uses header previews and original-input dry-run applic
 test("configuration examples preserve unrelated bearer and dashboard-session authentication", () => {
   assert.deepEqual(buildApiOperationExample({ path: "/api/models", method: "GET" }, false), [
     "curl https://localhost:20128/api/models \\",
-    '  -H "Authorization: Bearer $OMNIROUTE_TOKEN"',
+    '  -H "Authorization: Bearer $AGENTPROXY_TOKEN"',
   ]);
 
   const login = buildApiOperationExample({ path: "/api/auth/login", method: "POST" }, true).join(
     "\n"
   );
   assert.ok(login.includes("-c cookie.jar"));
-  assert.ok(!login.includes("OMNIROUTE_TOKEN"));
+  assert.ok(!login.includes("AGENTPROXY_TOKEN"));
 
   const mutation = buildApiOperationExample(
     { path: "/api/auth/logout", method: "POST" },
     true
   ).join("\n");
   assert.ok(mutation.includes("-b cookie.jar"));
-  assert.ok(mutation.includes("x-omniroute-csrf: $CSRF_TOKEN"));
+  assert.ok(mutation.includes("x-agentproxy-csrf: $CSRF_TOKEN"));
 
   const read = buildApiOperationExample({ path: "/api/auth/status", method: "GET" }, true).join(
     "\n"

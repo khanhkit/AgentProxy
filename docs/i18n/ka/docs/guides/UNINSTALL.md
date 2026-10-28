@@ -20,7 +20,7 @@ AgentProxy სუფთა წაშლისთვის ორ ჩაშენ
 npm run uninstall
 ```
 
-ეს შლის AgentProxy აპლიკაციას, მაგრამ **ინარჩუნებს** თქვენს მონაცემთა ბაზას, კონფიგურაციებს, API გასაღებებსა და პროვაიდერის პარამეტრებს `~/.omniroute/`-ში. გამოიყენეთ ეს ვარიანტი, თუ მოგვიანებით ხელახლა ინსტალაციას გეგმავთ და გსურთ თქვენი კონფიგურაციის შენარჩუნება.
+ეს შლის AgentProxy აპლიკაციას, მაგრამ **ინარჩუნებს** თქვენს მონაცემთა ბაზას, კონფიგურაციებს, API გასაღებებსა და პროვაიდერის პარამეტრებს `~/.agentproxy/`-ში. გამოიყენეთ ეს ვარიანტი, თუ მოგვიანებით ხელახლა ინსტალაციას გეგმავთ და გსურთ თქვენი კონფიგურაციის შენარჩუნება.
 
 ### სრული წაშლა
 
@@ -34,7 +34,7 @@ npm run uninstall:full
 - პროვაიდერის კონფიგურაციებსა და API გასაღებებს
 - სარეზერვო ასლებს
 - ჟურნალის ფაილებს
-- `~/.omniroute/` დირექტორიაში არსებულ ყველა ფაილს
+- `~/.agentproxy/` დირექტორიაში არსებულ ყველა ფაილს
 
 > ⚠️ **გაფრთხილება:** `npm run uninstall:full` შეუქცევადია. თქვენი პროვაიდერების ყველა კავშირი, კომბინაცია, API გასაღები და გამოყენების ისტორია სამუდამოდ წაიშლება.
 
@@ -46,31 +46,31 @@ npm run uninstall:full
 
 ```bash
 # გლობალური პაკეტის წაშლა
-npm uninstall -g omniroute
+npm uninstall -g agentproxy
 
 # (არასავალდებულო) მონაცემთა დირექტორიის წაშლა
-rm -rf ~/.omniroute
+rm -rf ~/.agentproxy
 ```
 
 ### pnpm-ის გლობალური ინსტალაცია
 
 ```bash
-pnpm uninstall -g omniroute
-rm -rf ~/.omniroute
+pnpm uninstall -g agentproxy
+rm -rf ~/.agentproxy
 ```
 
 ### Docker
 
 ```bash
 # კონტეინერის გაჩერება და წაშლა
-docker stop omniroute
-docker rm omniroute
+docker stop agentproxy
+docker rm agentproxy
 
 # ტომის წაშლა (შლის ყველა მონაცემს)
-docker volume rm omniroute-data
+docker volume rm agentproxy-data
 
 # (არასავალდებულო) იმიჯის წაშლა
-docker rmi diegosouzapw/omniroute:latest
+docker rmi diegosouzapw/agentproxy:latest
 ```
 
 ### Docker Compose
@@ -93,21 +93,21 @@ docker compose down -v
 **macOS:**
 
 - გადაიტანეთ `AgentProxy.app` `/Applications`-დან სანაგვე ურნაში
-- წაშალეთ მონაცემები: `rm -rf ~/Library/Application Support/omniroute`
+- წაშალეთ მონაცემები: `rm -rf ~/Library/Application Support/agentproxy`
 
 **Linux:**
 
 - წაშალეთ AppImage ფაილი
-- წაშალეთ მონაცემები: `rm -rf ~/.omniroute`
+- წაშალეთ მონაცემები: `rm -rf ~/.agentproxy`
 
 ### საწყისი კოდიდან ინსტალაცია (git clone)
 
 ```bash
 # კლონირებული დირექტორიის წაშლა
-rm -rf /path/to/omniroute
+rm -rf /path/to/agentproxy
 
 # (არასავალდებულო) მონაცემთა დირექტორიის წაშლა
-rm -rf ~/.omniroute
+rm -rf ~/.agentproxy
 ```
 
 ---
@@ -118,11 +118,11 @@ rm -rf ~/.omniroute
 
 | პლატფორმა     | ნაგულისხმევი მისამართი         | გადაფარვა                        |
 | ------------- | ------------------------------ | -------------------------------- |
-| Linux         | `~/.omniroute/`                | `DATA_DIR` გარემოს ცვლადი        |
-| macOS         | `~/.omniroute/`                | `DATA_DIR` გარემოს ცვლადი        |
-| Windows       | `%APPDATA%/omniroute/`         | `DATA_DIR` გარემოს ცვლადი        |
+| Linux         | `~/.agentproxy/`                | `DATA_DIR` გარემოს ცვლადი        |
+| macOS         | `~/.agentproxy/`                | `DATA_DIR` გარემოს ცვლადი        |
+| Windows       | `%APPDATA%/agentproxy/`         | `DATA_DIR` გარემოს ცვლადი        |
 | Docker        | `/app/data/` (მიერთებული ტომი) | `DATA_DIR` გარემოს ცვლადი        |
-| XDG-თავსებადი | `$XDG_CONFIG_HOME/omniroute/`  | `XDG_CONFIG_HOME` გარემოს ცვლადი |
+| XDG-თავსებადი | `$XDG_CONFIG_HOME/agentproxy/`  | `XDG_CONFIG_HOME` გარემოს ცვლადი |
 
 ### მონაცემთა დირექტორიაში არსებული ფაილები
 
@@ -143,17 +143,17 @@ rm -rf ~/.omniroute
 
 ```bash
 # გლობალური npm პაკეტის შემოწმება
-npm list -g omniroute 2>/dev/null
+npm list -g agentproxy 2>/dev/null
 
 # მონაცემთა დირექტორიის შემოწმება
-ls -la ~/.omniroute/ 2>/dev/null
+ls -la ~/.agentproxy/ 2>/dev/null
 
 # გაშვებული პროცესების შემოწმება
-pgrep -f omniroute
+pgrep -f agentproxy
 ```
 
 თუ რომელიმე პროცესი ჯერ კიდევ გაშვებულია, გააჩერეთ:
 
 ```bash
-pkill -f omniroute
+pkill -f agentproxy
 ```

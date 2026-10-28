@@ -77,7 +77,7 @@ AgentProxy တွင် ဦးစားပေးအစီအစဉ်အလိ�
 | `pii-masker`       | 10          | ခေါ်ဆိုမှုမတိုင်မီနှင့် ခေါ်ဆိုပြီးနောက် PII ဖယ်ရှားဖုံးကွယ်ခြင်း (အီးမေးလ်၊ ဖုန်း၊ CPF၊ CNPJ၊ ခရက်ဒစ်ကတ်၊ SSN)                |
 | `prompt-injection` | 20          | အစားထိုးရေးသားမှု/အခန်းကဏ္ဍအပိုင်စီးမှု/jailbreak/ပေါက်ကြားမှုပုံစံများကို ရှာဖွေသည်                                           |
 
-စိတ်ကြိုက်ကန့်သတ်ကာကွယ်မှုများကို `registerGuardrail(new MyGuardrail())` မှတစ်ဆင့် မှတ်ပုံတင်နိုင်သည်။ မော်ဒယ်သည် fail-open ဖြစ်သည် (exception များက traffic ကို မည်သည့်အခါမျှ ပိတ်ဆို့ခြင်းမရှိပါ)။ တောင်းဆိုမှုတစ်ခုချင်းစီအတွက် `x-omniroute-disabled-guardrails` header မှတစ်ဆင့် အသုံးမပြုရန် ရွေးချယ်နိုင်သည်။ → [`docs/security/GUARDRAILS.md`](docs/security/GUARDRAILS.md) ကို ကြည့်ပါ။
+စိတ်ကြိုက်ကန့်သတ်ကာကွယ်မှုများကို `registerGuardrail(new MyGuardrail())` မှတစ်ဆင့် မှတ်ပုံတင်နိုင်သည်။ မော်ဒယ်သည် fail-open ဖြစ်သည် (exception များက traffic ကို မည်သည့်အခါမျှ ပိတ်ဆို့ခြင်းမရှိပါ)။ တောင်းဆိုမှုတစ်ခုချင်းစီအတွက် `x-agentproxy-disabled-guardrails` header မှတစ်ဆင့် အသုံးမပြုရန် ရွေးချယ်နိုင်သည်။ → [`docs/security/GUARDRAILS.md`](docs/security/GUARDRAILS.md) ကို ကြည့်ပါ။
 
 ### 🧠 Prompt Injection ကာကွယ်မှု
 
@@ -182,15 +182,15 @@ Server သည် `changeme`, `secret` သို့မဟုတ် `password` က
 
 ```bash
 docker run -d \
-  --name omniroute \
+  --name agentproxy \
   --restart unless-stopped \
   --read-only \
   -p 20128:20128 \
-  -v omniroute-data:/app/data \
+  -v agentproxy-data:/app/data \
   -e JWT_SECRET="$(openssl rand -base64 48)" \
   -e API_KEY_SECRET="$(openssl rand -hex 32)" \
   -e STORAGE_ENCRYPTION_KEY="$(openssl rand -hex 32)" \
-  diegosouzapw/omniroute:latest
+  diegosouzapw/agentproxy:latest
 ```
 
 ---
@@ -224,7 +224,7 @@ docker run -d \
 
 > **စစ်ဆေးမှုအတိုင်းအတာ မှတ်ချက်:** repository root ရှိ `socket.yml` သည် ထုတ်ဝေထားသော npm artifact ကို Socket.dev ၏ registry ဘက်ခြမ်းမှ ထုတ်ဝေပြီးနောက် စကင်ဖတ်ရာတွင် `projectIgnorePaths` ကိုသာ သတ်မှတ်ပေးသည် — ၎င်းသည် မဖြစ်မနေလိုက်နာရသော CI/PR merge gate မဟုတ်ပါ။ `.github/workflows` ရှိ မည်သည့် workflow ကမျှ၊ `package.json` script ကမျှ၊ `Makefile` target ကမျှ Socket.dev ကို ခေါ်ယူအသုံးပြုခြင်း မရှိပါ။
 
-ထုတ်ဝေထားသော `omniroute` npm artifact တွင် Next.js `output: "standalone"`
+ထုတ်ဝေထားသော `agentproxy` npm artifact တွင် Next.js `output: "standalone"`
 build ပါဝင်ထည့်သွင်းထားသည်။ ဆိုလိုသည်မှာ မှတ်တမ်းတင်ဖော်ပြထားသော အထူးအခွင့်အရေးလိုအပ်သည့်
 လုပ်ဆောင်ချက်များ (MITM၊ Zed import၊ Cloud Sync၊ ထည့်သွင်းထားသော service supervisor) အပါအဝင်
 route handler တိုင်းသည် `.next/server/*.js` minified chunk များထဲသို့
@@ -249,7 +249,7 @@ GitHub App က လုပ်ဆောင်ခြင်းဖြစ်သည်�
   အလားတူ document ကို ပြန်လည်ညွှန်းဆိုထားသည်။
 
 alert ကို လျှော့ပေါ့ခွင့်မပြုနိုင်သော pipeline အသုံးပြုသူများအတွက်-
-`OMNIROUTE_BUILD_PROFILE=minimal npm run build` ဖြင့် build လုပ်ပါ။ ၎င်းသည်
+`AGENTPROXY_BUILD_PROFILE=minimal npm run build` ဖြင့် build လုပ်ပါ။ ၎င်းသည်
 အရေးကြီးသည့် module လေးခုကို runtime တွင် HTTP 503 `feature-disabled` ပြန်ပေးသော
 stub များဖြင့် အစားထိုးသဖြင့် အထူးအခွင့်အရေးလိုအပ်သည့် code path များသည် bundle ထဲတွင်
 ရုပ်ပိုင်းဆိုင်ရာအရ လုံးဝပါဝင်တော့မည်မဟုတ်ပါ။ ထုတ်ဝေခြင်းနည်းလမ်းအတွက်

@@ -89,13 +89,13 @@ ufw enable
 ### 2.1 Ṣẹ̀dá àkójọ fáìlì ìṣètò
 
 ```bash
-mkdir -p /opt/omniroute
+mkdir -p /opt/agentproxy
 ```
 
 ### 2.2 Ṣẹ̀dá fáìlì àwọn oníyí àyíká
 
 ```bash
-cat > /opt/omniroute/.env << 'EOF'
+cat > /opt/agentproxy/.env << 'EOF'
 # === Ààbò ===
 JWT_SECRET=CHANGE-TO-A-UNIQUE-64-CHAR-SECRET-KEY
 INITIAL_PASSWORD=YourSecurePassword123!
@@ -103,7 +103,7 @@ API_KEY_SECRET=REPLACE-WITH-ANOTHER-SECRET-KEY
 STORAGE_ENCRYPTION_KEY=REPLACE-WITH-THIRD-SECRET-KEY
 STORAGE_ENCRYPTION_KEY_VERSION=v1
 MACHINE_ID_SALT=CHANGE-TO-A-UNIQUE-SALT
-OMNIROUTE_WS_BRIDGE_SECRET=REPLACE-WITH-WS-BRIDGE-SECRET  # Ó PỌNDÁN ní production: Codex Responses WS bridge ló ń lò ó
+AGENTPROXY_WS_BRIDGE_SECRET=REPLACE-WITH-WS-BRIDGE-SECRET  # Ó PỌNDÁN ní production: Codex Responses WS bridge ló ń lò ó
 
 # === Ìṣàfilọ́lẹ̀ ===
 PORT=20128
@@ -120,11 +120,11 @@ BASE_URL=http://127.0.0.1:20128
 # URL tí aṣàwákiri ń lò fún àwọn callback OAuth, àwọn ìjápọ̀ dashboard, àti àwọn URL gbogbogbò tí a ṣẹ̀dá.
 NEXT_PUBLIC_BASE_URL=https://llms.seudominio.com
 # Ìṣàtúnṣe origin gbogbogbò tó ṣe kedere, tí kò pọndandan, fún àwọn URL asset gbogbogbò tí a ṣẹ̀dá.
-# OMNIROUTE_PUBLIC_BASE_URL=https://llms.seudominio.com
+# AGENTPROXY_PUBLIC_BASE_URL=https://llms.seudominio.com
 
 # === Ìmúdójúìwọ̀n Cloud (kò pọndandan) ===
-# CLOUD_URL=https://cloud.omniroute.online
-# NEXT_PUBLIC_CLOUD_URL=https://cloud.omniroute.online
+# CLOUD_URL=https://agentproxy.online
+# NEXT_PUBLIC_CLOUD_URL=https://agentproxy.online
 EOF
 ```
 
@@ -133,22 +133,22 @@ EOF
 ### 2.3 Bẹ̀rẹ̀ container náà
 
 ```bash
-docker pull diegosouzapw/omniroute:latest
+docker pull diegosouzapw/agentproxy:latest
 
 docker run -d \
-  --name omniroute \
+  --name agentproxy \
   --restart unless-stopped \
-  --env-file /opt/omniroute/.env \
+  --env-file /opt/agentproxy/.env \
   -p 20128:20128 \
-  -v omniroute-data:/app/data \
-  diegosouzapw/omniroute:latest
+  -v agentproxy-data:/app/data \
+  diegosouzapw/agentproxy:latest
 ```
 
 ### 2.4 Ṣàyẹ̀wò pé ó ń ṣiṣẹ́
 
 ```bash
-docker ps | grep omniroute
-docker logs omniroute --tail 20
+docker ps | grep agentproxy
+docker logs agentproxy --tail 20
 ```
 
 Ó yẹ kí ó ṣàfihàn: `[DB] SQLite database ready` àti `listening on port 20128`.
@@ -181,7 +181,7 @@ chmod 600 /etc/nginx/ssl/origin.key
 ### 3.2 Ìṣètò Nginx
 
 ```bash
-cat > /etc/nginx/sites-available/omniroute << 'NGINX'
+cat > /etc/nginx/sites-available/agentproxy << 'NGINX'
 # Sẹ́fà àkọ́kọ́ — ń dí ìráyè tààrà nípasẹ̀ IP
 server {
     listen 80 default_server;
@@ -246,7 +246,7 @@ OAuth àti àwọn ìjápọ̀ gbogbogbò tí a ṣẹ̀dá. Àwọn ìkọ̀wé
 pẹ̀lú ààbò CSRF tí a so mọ́ sáà, nítorí náà wọn kò nílò URL ìpìlẹ̀ gbogbogbò tó dúró ṣinṣin. Àwọn
 àkọsori `X-Forwarded-*` tó wà lókè ṣì jẹ́ metadata ìdarí ipa tó wúlò, ṣùgbọ́n wọn kò lè rọ́pò
 ṣíṣètò URL gbogbogbò tó ṣe kedere nígbà tí OAuth tàbí àwọn ìjápọ̀ aṣàwákiri tí a ṣẹ̀dá bá nílò rẹ̀. Ṣí
-`OMNIROUTE_TRUST_PROXY` sílẹ̀ nìkan tí àwọn oníbàárà kò bá lè dé AgentProxy ní tààrà àti tí aṣojú rẹ
+`AGENTPROXY_TRUST_PROXY` sílẹ̀ nìkan tí àwọn oníbàárà kò bá lè dé AgentProxy ní tààrà àti tí aṣojú rẹ
 bá ń yọ/ń tún àwọn àkọsori ìfiranṣẹ́sí tó ń wọlé kọ́.
 
 ### 3.3 Mú Un Ṣiṣẹ́ kí o sì Dán An Wò
@@ -256,7 +256,7 @@ bá ń yọ/ń tún àwọn àkọsori ìfiranṣẹ́sí tó ń wọlé kọ́.
 rm -f /etc/nginx/sites-enabled/default
 
 # Mú AgentProxy ṣiṣẹ́
-ln -sf /etc/nginx/sites-available/omniroute /etc/nginx/sites-enabled/omniroute
+ln -sf /etc/nginx/sites-available/agentproxy /etc/nginx/sites-enabled/agentproxy
 
 # Dán an wò kí o sì tún un gbé wọlé
 nginx -t && systemctl reload nginx
@@ -300,40 +300,40 @@ curl -sI https://llms.seudominio.com/health
 ### Ṣe ìgbésókè sí ẹ̀yà tuntun
 
 ```bash
-docker pull diegosouzapw/omniroute:latest
-docker stop omniroute && docker rm omniroute
-docker run -d --name omniroute --restart unless-stopped \
-  --env-file /opt/omniroute/.env \
+docker pull diegosouzapw/agentproxy:latest
+docker stop agentproxy && docker rm agentproxy
+docker run -d --name agentproxy --restart unless-stopped \
+  --env-file /opt/agentproxy/.env \
   -p 20128:20128 \
-  -v omniroute-data:/app/data \
-  diegosouzapw/omniroute:latest
+  -v agentproxy-data:/app/data \
+  diegosouzapw/agentproxy:latest
 ```
 
 ### Wo àwọn àkọsílẹ̀ ìṣẹ̀lẹ̀
 
 ```bash
-docker logs -f omniroute          # Ìṣàn ní àkókò gidi
-docker logs omniroute --tail 50   # Àwọn ìlà 50 tó gbẹ̀yìn
+docker logs -f agentproxy          # Ìṣàn ní àkókò gidi
+docker logs agentproxy --tail 50   # Àwọn ìlà 50 tó gbẹ̀yìn
 ```
 
 ### Ìṣàfilọ́lẹ̀ ibi ìpamọ́ dátà lọ́wọ́
 
 ```bash
 # Da dátà kọ láti inú volume sí host
-docker cp omniroute:/app/data ./backup-$(date +%F)
+docker cp agentproxy:/app/data ./backup-$(date +%F)
 
 # Tàbí fún gbogbo volume náà pọ̀
-docker run --rm -v omniroute-data:/data -v $(pwd):/backup \
-  alpine tar czf /backup/omniroute-data-$(date +%F).tar.gz /data
+docker run --rm -v agentproxy-data:/data -v $(pwd):/backup \
+  alpine tar czf /backup/agentproxy-data-$(date +%F).tar.gz /data
 ```
 
 ### Mú padà láti inú ìṣàfilọ́lẹ̀
 
 ```bash
-docker stop omniroute
-docker run --rm -v omniroute-data:/data -v $(pwd):/backup \
-  alpine sh -c "rm -rf /data/* && tar xzf /backup/omniroute-data-YYYY-MM-DD.tar.gz -C /"
-docker start omniroute
+docker stop agentproxy
+docker run --rm -v agentproxy-data:/data -v $(pwd):/backup \
+  alpine sh -c "rm -rf /data/* && tar xzf /backup/agentproxy-data-YYYY-MM-DD.tar.gz -C /"
+docker start agentproxy
 ```
 
 ---
@@ -402,13 +402,13 @@ Fún ìráàyèsí láti ọ̀nà jíjìn nípasẹ̀ Cloudflare Workers (láì�
 
 ```bash
 # Nínú ibi ìpamọ́ agbègbè
-cd omnirouteCloud
+cd agentproxyCloud
 npm install
 npx wrangler login
 npx wrangler deploy
 ```
 
-Tún wo [TUNNELS_GUIDE.md](./TUNNELS_GUIDE.md) fún ìtọ́sọ́nà Cloudflare Tunnel tó wà nínú ibi ìpamọ́ náà. Worker `omnirouteCloud/` aládàáṣe náà wà nínú ibi ìpamọ́ alábàákẹ́gbẹ́ ọ̀tọ̀.
+Tún wo [TUNNELS_GUIDE.md](./TUNNELS_GUIDE.md) fún ìtọ́sọ́nà Cloudflare Tunnel tó wà nínú ibi ìpamọ́ náà. Worker `agentproxyCloud/` aládàáṣe náà wà nínú ibi ìpamọ́ alábàákẹ́gbẹ́ ọ̀tọ̀.
 
 ---
 
@@ -425,9 +425,9 @@ Tún wo [TUNNELS_GUIDE.md](./TUNNELS_GUIDE.md) fún ìtọ́sọ́nà Cloudflare
 
 Fún ìmúṣiṣẹ́ lórí àwọn VPS kékeré (1 GB RAM tàbí kéré sí i):
 
-- **Pa àwọn iṣẹ́ abẹ́lẹ̀** — ṣètò `OMNIROUTE_DISABLE_BACKGROUND_SERVICES=1` láti foju kọ olùṣètò àkókò, MCP server, àti àwọn iṣẹ́ ìtọ́jú àsìkò. Wo `docs/reference/ENVIRONMENT.md`.
+- **Pa àwọn iṣẹ́ abẹ́lẹ̀** — ṣètò `AGENTPROXY_DISABLE_BACKGROUND_SERVICES=1` láti foju kọ olùṣètò àkókò, MCP server, àti àwọn iṣẹ́ ìtọ́jú àsìkò. Wo `docs/reference/ENVIRONMENT.md`.
 - **Lo SQLite WAL mode** — ó ti ṣiṣẹ́ láìyẹsẹ̀, ó sì dín lílo ìrántí tó ga jù nígbà àwọn kíkà tó ń ṣẹlẹ̀ lẹ́ẹ̀kan náà.
-- **Fi òpin sí V8 heap** — ṣètò `OMNIROUTE_MEMORY_MB` (fún àpẹẹrẹ `512`) kí runtime má bàa ṣe ìṣírò òpin tó tóbi ju VM lọ. Wo `docs/reference/ENVIRONMENT.md`.
-- **Ìgbàwọlé iṣẹ́ wuwo máa ń ṣe ìwọ̀n ara rẹ̀ ní ìbámu pẹ̀lú òpin heap** -- ní kété tí a bá ṣètò `OMNIROUTE_MEMORY_MB` lókè, ìṣúná báìtì ìgbàwọlé (`OMNIROUTE_CHAT_MAX_INFLIGHT_BYTES`) máa ń jẹyọ láti inú òpin kan náà, nítorí náà VM tí ìrántí rẹ̀ ní ààlà yóò gba ìṣúná kékeré fún àwọn ìbéèrè tó ń ṣiṣẹ́ lẹ́ẹ̀kan náà láìsí àtúnṣe míì; àwọn ìbéèrè tó pọ̀ jù yóò gba `503` tí a lè tún gbìyànjú pẹ̀lú `Retry-After` dípò kí wọ́n díje fún ìrántí. Ṣètò òpin iye ìbéèrè àtijọ́ `OMNIROUTE_CHAT_MAX_HEAVY_IN_FLIGHT` nìkan tí o bá nílò òpin líle ní àfikún sí èyí.
+- **Fi òpin sí V8 heap** — ṣètò `AGENTPROXY_MEMORY_MB` (fún àpẹẹrẹ `512`) kí runtime má bàa ṣe ìṣírò òpin tó tóbi ju VM lọ. Wo `docs/reference/ENVIRONMENT.md`.
+- **Ìgbàwọlé iṣẹ́ wuwo máa ń ṣe ìwọ̀n ara rẹ̀ ní ìbámu pẹ̀lú òpin heap** -- ní kété tí a bá ṣètò `AGENTPROXY_MEMORY_MB` lókè, ìṣúná báìtì ìgbàwọlé (`AGENTPROXY_CHAT_MAX_INFLIGHT_BYTES`) máa ń jẹyọ láti inú òpin kan náà, nítorí náà VM tí ìrántí rẹ̀ ní ààlà yóò gba ìṣúná kékeré fún àwọn ìbéèrè tó ń ṣiṣẹ́ lẹ́ẹ̀kan náà láìsí àtúnṣe míì; àwọn ìbéèrè tó pọ̀ jù yóò gba `503` tí a lè tún gbìyànjú pẹ̀lú `Retry-After` dípò kí wọ́n díje fún ìrántí. Ṣètò òpin iye ìbéèrè àtijọ́ `AGENTPROXY_CHAT_MAX_HEAVY_IN_FLIGHT` nìkan tí o bá nílò òpin líle ní àfikún sí èyí.
 - **Yẹra fún `next build` lórí VPS** — kọ́ ọ́ ní agbègbè rẹ kí o sì fi àbájáde standalone (`.next/standalone/`) sílò.
 - **Ṣàbójútó pẹ̀lú `top` / `free -m`** — AgentProxy sábà máa ń lo 200-400 MB RSS nígbà tí kò ṣiṣẹ́ lórí VM 1 GB.

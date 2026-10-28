@@ -1,8 +1,8 @@
 {
   "common": {
     "error": "Fejl: {message}",
-    "serverOffline": "OmniRoute-serveren er offline. Start med: omniroute serve",
-    "authRequired": "Godkendelse kræves. Sæt OMNIROUTE_API_KEY eller kør: omniroute setup",
+    "serverOffline": "AgentProxy-serveren er offline. Start med: agentproxy serve",
+    "authRequired": "Godkendelse kræves. Sæt AGENTPROXY_API_KEY eller kør: agentproxy setup",
     "rateLimited": "Anmodningsgrænse overskredet. Prøv igen om {seconds}s.",
     "timeout": "Anmodningen timed ud efter {ms}ms.",
     "success": "Færdig.",
@@ -15,22 +15,22 @@
     "yesOpt": "Spring bekræftelse over"
   },
   "program": {
-    "description": "OmniRoute — Smart AI-router med automatisk fallback",
+    "description": "AgentProxy — Smart AI-router med automatisk fallback",
     "version": "Vis version og afslut",
     "output": "Outputformat (table, json, jsonl, csv)",
     "quiet": "Undertryk ikke-essentielt output",
     "no_color": "Deaktiver farvet output",
     "timeout": "HTTP-anmodnings timeout i millisekunder",
-    "api_key": "API-nøgle til OmniRoute-serveren",
-    "base_url": "OmniRoute-serverens basis-URL",
+    "api_key": "API-nøgle til AgentProxy-serveren",
+    "base_url": "AgentProxy-serverens basis-URL",
     "context": "Server-kontekst/profil til denne kommando",
-    "lang": "Angiv CLI-visningssprog (tilsidesætter OMNIROUTE_LANG)"
+    "lang": "Angiv CLI-visningssprog (tilsidesætter AGENTPROXY_LANG)"
   },
   "redis": {
-    "description": "Start en lokal Redis-container med ét klik (Podman eller Docker) til OmniRoute-caching og kvoteovervågning"
+    "description": "Start en lokal Redis-container med ét klik (Podman eller Docker) til AgentProxy-caching og kvoteovervågning"
   },
   "setup": {
-    "title": "Opsætning af OmniRoute",
+    "title": "Opsætning af AgentProxy",
     "passwordPrompt": "Administratoradgangskode",
     "providerPrompt": "Standardudbyder (lad feltet være tomt for at springe over)",
     "done": "Opsætning fuldført",
@@ -42,22 +42,22 @@
     "loginEnabled": "Login: aktiveret (adgangskode opdateret)",
     "loginDisabled": "Login: deaktiveret",
     "providerInfo": "Udbyder: {info}",
-    "opencode": "Installer og konfigurer det medfølgende @omniroute/opencode-plugin til OpenCode"
+    "opencode": "Installer og konfigurer det medfølgende @agentproxy/opencode-plugin til OpenCode"
   },
   "doctor": {
-    "title": "OmniRoute-diagnosticering",
+    "title": "AgentProxy-diagnosticering",
     "dbOk": "Database: OK ({path})",
-    "dbMissing": "Database: ikke initialiseret — kør `omniroute setup`",
+    "dbMissing": "Database: ikke initialiseret — kør `agentproxy setup`",
     "portOk": "Port {port}: tilgængelig",
     "portConflict": "Port {port}: bruges af en anden proces",
     "encryptionOk": "Krypteringsnøgle: konfigureret",
-    "encryptionMissing": "Krypteringsnøgle mangler — kør `omniroute setup`",
+    "encryptionMissing": "Krypteringsnøgle mangler — kør `agentproxy setup`",
     "allGood": "Alle kontroller bestået.",
     "warnings": "{count} advarsel/advarsler — se ovenfor."
   },
   "providers": {
     "title": "Udbydere",
-    "noProviders": "Ingen udbydere konfigureret. Kør: omniroute setup",
+    "noProviders": "Ingen udbydere konfigureret. Kør: agentproxy setup",
     "testing": "Tester {name}...",
     "available": "{count} udbyder(e) tilgængelig(e)",
     "connected": "Forbundet",
@@ -86,7 +86,7 @@
       "dryRunOpt": "Vis, hvad der ville blive ændret, uden at gemme",
       "confirmPrompt": "Erstat API-nøglen for forbindelsen \"{name}\" ({id})? [y/N]",
       "dryRunResult": "[dry-run] Ville rotere nøglen for \"{name}\" ({id}). Ingen ændringer foretaget.",
-      "oauthHint": "OAuth-forbindelse — kør: omniroute oauth {provider}",
+      "oauthHint": "OAuth-forbindelse — kør: agentproxy oauth {provider}",
       "envVarEmpty": "Miljøvariablen {var} er ikke angivet eller er tom.",
       "success": "Nøglen for \"{name}\" er roteret. Kør `providers test {id}` for at bekræfte.",
       "testPassed": "Testen efter rotation blev gennemført.",
@@ -97,7 +97,7 @@
       "providerOpt": "Filtrer efter udbydernavn",
       "header": "ID         Udbyder        Navn                     Udløbsstatus  Teststatus  Nedkøling indtil",
       "noData": "Ingen data om udbyderforbindelser tilgængelige.",
-      "requiresServer": "providers status kræver, at OmniRoute-serveren kører."
+      "requiresServer": "providers status kræver, at AgentProxy-serveren kører."
     }
   },
   "keys": {
@@ -105,8 +105,8 @@
     "addDescription": "Tilføj eller opdater en API-nøgle for en udbyder",
     "listDescription": "Vis alle konfigurerede API-nøgler",
     "removeDescription": "Fjern en API-nøgle for en udbyder",
-    "regenerateDescription": "Generér en OmniRoute API-nøgle igen",
-    "revokeDescription": "Tilbagekald en OmniRoute API-nøgle",
+    "regenerateDescription": "Generér en AgentProxy API-nøgle igen",
+    "revokeDescription": "Tilbagekald en AgentProxy API-nøgle",
     "revealDescription": "Vis den umaskerede API-nøgleværdi",
     "usageDescription": "Vis seneste brug af en API-nøgle",
     "usageLimitOpt": "Antal seneste anmodninger",
@@ -157,7 +157,7 @@
     "warning": "⚠ Dette udskriver/skriver DEKRYPTEREDE API-nøgler og OAuth-tokens i klartekst. Sørg for, at din skærm, din shellhistorik og eventuelle outputfiler forbliver private.",
     "confirmHeading": "⚠ ADVARSEL: Dette eksporterer DEKRYPTEREDE udbyderlegitimationsoplysninger i klartekst",
     "confirmBody": "Denne kommando dekrypterer og udskriver/skriver apiKey, accessToken, refreshToken og\nidToken for de valgte forbindelser. Behandl outputtet som en hemmelighed.",
-    "confirmFooter": "Kør følgende for at bekræfte:\n  omniroute auth export --force",
+    "confirmFooter": "Kør følgende for at bekræfte:\n  agentproxy auth export --force",
     "missingKey": "STORAGE_ENCRYPTION_KEY er påkrævet for at eksportere legitimationsoplysninger.",
     "notFound": "Forbindelsen blev ikke fundet: {id}",
     "invalidFormat": "Ugyldigt format: {format}. Brug json eller env."
@@ -235,10 +235,10 @@
     "reasoning": "Niveau for ræsonneringsindsats (low|medium|high)",
     "thinking": "Tokenbudget til udvidet tænkning",
     "explain": "Udskriv fallback-træ og omkostningsinterval til stderr",
-    "noCombo": "Ingen matchende kombination fundet. Konfigurer en med: omniroute combo create"
+    "noCombo": "Ingen matchende kombination fundet. Konfigurer en med: agentproxy combo create"
   },
   "chat": {
-    "description": "Send en enkeltstående chatprompt til OmniRoute",
+    "description": "Send en enkeltstående chatprompt til AgentProxy",
     "file": "Læs prompt fra fil",
     "stdin": "Læs prompt fra stdin",
     "system": "Systemprompt",
@@ -251,14 +251,14 @@
     "combo": "Gennemtving en bestemt kombination efter navn",
     "responses_api": "Brug /v1/responses i stedet for /v1/chat/completions",
     "stream": "Stream svaret løbende",
-    "no_history": "Gem ikke i ~/.omniroute/cli-history.jsonl",
+    "no_history": "Gem ikke i ~/.agentproxy/cli-history.jsonl",
     "error": {
       "empty_prompt": "Fejl: Prompt er påkrævet (positionsargument, --file eller --stdin)"
     }
   },
   "serve": {
-    "description": "Start OmniRoute-serveren (standardhandling)",
-    "starting": "Starter OmniRoute-serveren på port {port}...",
+    "description": "Start AgentProxy-serveren (standardhandling)",
+    "starting": "Starter AgentProxy-serveren på port {port}...",
     "ready": "Klar på http://localhost:{port}",
     "stopping": "Stopper serveren (PID {pid})...",
     "stopped": "Serveren er stoppet.",
@@ -272,12 +272,12 @@
     "tray": "Start i systembakken (kun desktop, tilvalg)",
     "no_tray": "Deaktivér ikonet i systembakken",
     "ready_timeout": "Timeout for klargøringstest i ms (også AGENTPROXY_READY_TIMEOUT_MS, standard 60000)",
-    "tls_cert": "Sti til et TLS-certifikat (PEM) til HTTPS (også OMNIROUTE_TLS_CERT)",
-    "tls_key": "Sti til den private TLS-nøgle (PEM) til HTTPS (også OMNIROUTE_TLS_KEY)"
+    "tls_cert": "Sti til et TLS-certifikat (PEM) til HTTPS (også AGENTPROXY_TLS_CERT)",
+    "tls_key": "Sti til den private TLS-nøgle (PEM) til HTTPS (også AGENTPROXY_TLS_KEY)"
   },
   "backup": {
     "title": "Sikkerhedskopi",
-    "description": "Opret en sikkerhedskopi af OmniRoute-data",
+    "description": "Opret en sikkerhedskopi af AgentProxy-data",
     "creating": "Opretter sikkerhedskopi...",
     "done": "Sikkerhedskopien blev gemt i {path}",
     "noFiles": "Ingen filer at sikkerhedskopiere (databasen er ikke initialiseret)",
@@ -289,7 +289,7 @@
     "noBackups": "Ingen sikkerhedskopier fundet.",
     "notFound": "Sikkerhedskopien blev ikke fundet: {name}",
     "confirmRestore": "Overskriv aktuelle data med sikkerhedskopien fra {ts}?",
-    "createDescription": "Opret en sikkerhedskopi af OmniRoute-data",
+    "createDescription": "Opret en sikkerhedskopi af AgentProxy-data",
     "nameOpt": "Brugerdefineret navn på sikkerhedskopi",
     "cloudOpt": "Upload sikkerhedskopi til cloudlager",
     "encryptOpt": "Kryptér sikkerhedskopi med AES-256-GCM",
@@ -307,14 +307,14 @@
       "statusDescription": "Vis aktuel status for tidsplanen for sikkerhedskopiering",
       "cronOpt": "Cron-udtryk for tidsplanen (standard: dagligt kl. 03.00)",
       "enabled": "Automatisk sikkerhedskopiering aktiveret (cron: {cron}).",
-      "hint": "Tidsplanen indlæses af omniroute serve ved opstart.",
+      "hint": "Tidsplanen indlæses af agentproxy serve ved opstart.",
       "disabled": "Automatisk sikkerhedskopiering deaktiveret.",
       "notConfigured": "Der er ikke konfigureret nogen tidsplan for sikkerhedskopiering."
     }
   },
   "health": {
     "description": "Kontrollér serverens tilstand og komponentstatus",
-    "noServer": "Serveren kører ikke. Start den med: omniroute serve",
+    "noServer": "Serveren kører ikke. Start den med: agentproxy serve",
     "title": "Tilstand",
     "status": "Status: {status}",
     "uptime": "Oppetid: {uptime}",
@@ -323,18 +323,18 @@
   },
   "quota": {
     "description": "Vis udbyderens kvoteforbrug",
-    "noServer": "Serveren kører ikke. Start den med: omniroute serve",
+    "noServer": "Serveren kører ikke. Start den med: agentproxy serve",
     "noData": "Ingen kvoteoplysninger tilgængelige."
   },
   "cache": {
     "description": "Administrer svarcache",
-    "noServer": "Serveren kører ikke. Start den med: omniroute serve",
+    "noServer": "Serveren kører ikke. Start den med: agentproxy serve",
     "cleared": "Cachen blev ryddet.",
     "clearFailed": "Cachen kunne ikke ryddes."
   },
   "test": {
     "description": "Test en udbyderforbindelse",
-    "noServer": "Serveren kører ikke. Start med: omniroute serve",
+    "noServer": "Serveren kører ikke. Start med: agentproxy serve",
     "testing": "Tester {provider} / {model}...",
     "passed": "Forbindelsen blev oprettet!",
     "failed": "Forbindelsen mislykkedes: {error}",
@@ -346,7 +346,7 @@
     "saved": "Resultaterne blev gemt i {path}",
     "compareTitle": "Modelsammenligning",
     "compareMinTwo": "Der kræves mindst to modeller til --compare (kommasepareret)",
-    "noProviders": "Ingen udbydere er konfigureret. Tilføj en med: omniroute keys add"
+    "noProviders": "Ingen udbydere er konfigureret. Tilføj en med: agentproxy keys add"
   },
   "update": {
     "checking": "Søger efter opdateringer...",
@@ -360,7 +360,7 @@
     "running": "MCP-serveren kører ({transport})",
     "stopped": "MCP-serveren er stoppet.",
     "restarted": "MCP-serveren er genstartet.",
-    "stoppedHint": "Kør `omniroute mcp enable` for at aktivere den.",
+    "stoppedHint": "Kør `agentproxy mcp enable` for at aktivere den.",
     "enabled": "MCP-serveren er aktiveret.",
     "disabled": "MCP-serveren er deaktiveret.",
     "enable": {
@@ -428,7 +428,7 @@
     }
   },
   "policy": {
-    "description": "Administrer OmniRoute-godkendelsespolitikker",
+    "description": "Administrer AgentProxy-godkendelsespolitikker",
     "list": {
       "description": "Vis politikker",
       "kind": "Filtrer efter type (allow|deny|rate-limit|cost-cap)",
@@ -465,7 +465,7 @@
     }
   },
   "compression": {
-    "description": "Konfigurer og inspicer OmniRoute-komprimeringspipelinen",
+    "description": "Konfigurer og inspicer AgentProxy-komprimeringspipelinen",
     "status": {
       "description": "Vis aktuel komprimeringsstatus og indstillinger"
     },
@@ -519,18 +519,18 @@
     "confirmRotate": "Skift URL for tunnel {type}? (en ny URL bliver genereret)"
   },
   "stop": {
-    "description": "Stop OmniRoute-serveren",
+    "description": "Stop AgentProxy-serveren",
     "stopping": "Stopper serveren (PID {pid})...",
     "stopped": "Serveren er stoppet.",
     "notRunning": "Der kører ingen server.",
     "portFallback": "Ingen PID-fil fundet, forsøger portbaseret stop..."
   },
   "restart": {
-    "description": "Genstart OmniRoute-serveren",
-    "restarting": "Genstarter OmniRoute-serveren..."
+    "description": "Genstart AgentProxy-serveren",
+    "restarting": "Genstarter AgentProxy-serveren..."
   },
   "dashboard": {
-    "description": "Åbn OmniRoute-dashboardet i en browser",
+    "description": "Åbn AgentProxy-dashboardet i en browser",
     "opening": "Åbner dashboardet på {url}",
     "urlOnly": "Udskriv dashboardets URL uden at åbne browseren",
     "tui": "Åbn interaktivt TUI-dashboard (terminalbrugerflade, 7 faner)"
@@ -538,7 +538,7 @@
   "models": {
     "description": "Vis tilgængelige modeller (kræver server)",
     "search": "Filtrer modeller efter id, navn, udbyder eller beskrivelse",
-    "noServer": "Serveren kører ikke. Start med: omniroute serve",
+    "noServer": "Serveren kører ikke. Start med: agentproxy serve",
     "noModels": "Ingen modeller fundet."
   },
   "audit": {
@@ -570,7 +570,7 @@
     }
   },
   "skills": {
-    "description": "Administrer OmniRoute-færdigheder (sandbox, builtin, custom, hybrid, skillssh)",
+    "description": "Administrer AgentProxy-færdigheder (sandbox, builtin, custom, hybrid, skillssh)",
     "list": {
       "description": "Vis installerede færdigheder",
       "type": "Filtrer efter type (sandbox|custom|builtin|hybrid|skillssh)",
@@ -643,7 +643,7 @@
     }
   },
   "memory": {
-    "description": "Administrer OmniRoute-samtalehukommelse (FTS5 + vector)",
+    "description": "Administrer AgentProxy-samtalehukommelse (FTS5 + vector)",
     "search": {
       "description": "Søg i hukommelsesposter med en semantisk forespørgsel",
       "type": "Filtrer efter hukommelsestype (user|feedback|project|reference)",
@@ -801,7 +801,7 @@
     }
   },
   "webhooks": {
-    "description": "Administrer OmniRoute-webhooks",
+    "description": "Administrer AgentProxy-webhooks",
     "events": {
       "description": "Vis alle tilgængelige webhook-hændelsestyper"
     },
@@ -1079,7 +1079,7 @@
     }
   },
   "openapi": {
-    "description": "Tilgå og test OmniRoute OpenAPI-specifikationen",
+    "description": "Tilgå og test AgentProxy OpenAPI-specifikationen",
     "dump": {
       "description": "Udskriv OpenAPI-specifikationen til stdout eller en fil",
       "format": "Outputformat: yaml|json (standard: yaml)",
@@ -1149,7 +1149,7 @@
     }
   },
   "open": {
-    "description": "Åbn en bestemt OmniRoute-dashboardside i browseren",
+    "description": "Åbn en bestemt AgentProxy-dashboardside i browseren",
     "url": "Udskriv kun URL, åbn ikke browseren"
   },
   "telemetry": {
@@ -1166,7 +1166,7 @@
     }
   },
   "sync": {
-    "description": "Synkroniser konfiguration mellem OmniRoute-instanser",
+    "description": "Synkroniser konfiguration mellem AgentProxy-instanser",
     "push": {
       "description": "Send konfiguration til cloud eller fjerninstans",
       "target": "Mål (cloud eller context:name)",
@@ -1222,10 +1222,10 @@
       "listTitle": "Tilgængelige sprog",
       "current": "Sprog: {code} ({name})",
       "saved": "Sproget er indstillet til {code} ({name}).",
-      "noCode": "Sprogkode er påkrævet. Kør 'omniroute config lang list' for at se tilgængelige koder.",
-      "unknown": "Ukendt sprogkode: {code}. Kør 'omniroute config lang list' for at se tilgængelige koder.",
+      "noCode": "Sprogkode er påkrævet. Kør 'agentproxy config lang list' for at se tilgængelige koder.",
+      "unknown": "Ukendt sprogkode: {code}. Kør 'agentproxy config lang list' for at se tilgængelige koder.",
       "alreadySet": "Sproget er allerede indstillet til {code}.",
-      "envHint": "Tip: Du kan også indstille OMNIROUTE_LANG={code} i dit miljø."
+      "envHint": "Tip: Du kan også indstille AGENTPROXY_LANG={code} i dit miljø."
     }
   },
   "completion": {
@@ -1242,7 +1242,7 @@
     "filter": "Filtrér efter niveau (error,warn,info) — kommasepareret",
     "lines": "Antal linjer, der skal hentes",
     "timeout": "Timeout for forbindelse i ms",
-    "baseUrl": "Basis-URL til OmniRoute API",
+    "baseUrl": "Basis-URL til AgentProxy API",
     "requestId": "Filtrér efter anmodnings-id",
     "apiKey": "Filtrér efter API-nøgle",
     "combo": "Filtrér efter kombinationsnavn",
@@ -1258,10 +1258,10 @@
     "description": "Administrer ikonet i systembakken",
     "show": "Vis ikonet i systembakken (hvis serveren kører med --tray)",
     "hide": "Skjul ikonet i systembakken",
-    "quit": "Afslut OmniRoute via systembakken"
+    "quit": "Afslut AgentProxy via systembakken"
   },
   "autostart": {
-    "description": "Administrer automatisk start af OmniRoute ved opstart (Linux: systemd-brugertjeneste)",
+    "description": "Administrer automatisk start af AgentProxy ved opstart (Linux: systemd-brugertjeneste)",
     "enable": "Aktivér automatisk start ved opstart",
     "disable": "Deaktivér automatisk start ved opstart",
     "toggle": "Slå automatisk start ved opstart til eller fra",
@@ -1283,7 +1283,7 @@
     "resume": "Genoptag en gemt session efter navn"
   },
   "plugin": {
-    "description": "Administrer CLI-plugins (omniroute-cmd-*)",
+    "description": "Administrer CLI-plugins (agentproxy-cmd-*)",
     "list": "Vis installerede plugins",
     "install": "Installer et plugin fra npm eller en lokal sti",
     "remove": "Fjern et installeret plugin",
@@ -1293,19 +1293,19 @@
     "scaffold": "Opret en skabelon til et nyt plugin"
   },
   "launch": {
-    "description": "Start Claude Code med forbindelse til OmniRoute (lokalt eller eksternt, med --profile)",
+    "description": "Start Claude Code med forbindelse til AgentProxy (lokalt eller eksternt, med --profile)",
     "token": "Token, som Claude-klienten skal sende (ANTHROPIC_AUTH_TOKEN)",
-    "notRunning": "OmniRoute kan ikke nås på {port}. Start den med 'omniroute serve'.",
+    "notRunning": "AgentProxy kan ikke nås på {port}. Start den med 'agentproxy serve'.",
     "notFound": "'claude'-CLI'en blev ikke fundet i PATH."
   },
   "run": {
-    "description": "Start et understøttet CLI-mål via OmniRoute"
+    "description": "Start et understøttet CLI-mål via AgentProxy"
   },
   "setupClaude": {
-    "description": "Generér Claude Code-profiler i ~/.claude/profiles ud fra OmniRoutes modelkatalog"
+    "description": "Generér Claude Code-profiler i ~/.claude/profiles ud fra AgentProxys modelkatalog"
   },
   "connect": {
-    "description": "Opret forbindelse til en ekstern OmniRoute-server, og skift til ekstern tilstand"
+    "description": "Opret forbindelse til en ekstern AgentProxy-server, og skift til ekstern tilstand"
   },
   "tokens": {
     "description": "Administrer afgrænsede CLI-adgangstokens (ekstern tilstand)"
@@ -1314,10 +1314,10 @@
     "description": "Vælg en udbyder og model fra den aktive server, og konfigurer en understøttet lokal CLI"
   },
   "launchCodex": {
-    "description": "Start Codex CLI med forbindelse til OmniRoute (lokalt eller på en ekstern VPS)"
+    "description": "Start Codex CLI med forbindelse til AgentProxy (lokalt eller på en ekstern VPS)"
   },
   "setupCodex": {
-    "description": "Generér profilfiler i ~/.codex ud fra OmniRoutes aktive modelkatalog"
+    "description": "Generér profilfiler i ~/.codex ud fra AgentProxys aktive modelkatalog"
   },
   "packs": {
     "description": "Administrer valgfrie runtime-pakker (ML/browserautomatisering)",
@@ -1330,7 +1330,7 @@
     "errUnknown": "ukendt pakke: {name}",
     "errNoIndex": "pakkeindekset blev ikke fundet; angiv --source <dir> med pakkedataene (desktop-pakker indeholder det ved siden af appen)",
     "installed": "pakken \"{name}\" er installeret og kontrolleret i {dir}",
-    "restartHint": "genstart OmniRoute-serveren (eller desktopappen), så runtime-miljøet registrerer pakken",
+    "restartHint": "genstart AgentProxy-serveren (eller desktopappen), så runtime-miljøet registrerer pakken",
     "removed": "pakken \"{name}\" er fjernet",
     "notInstalled": "pakken \"{name}\" var ikke installeret",
     "verifyOk": "alle installerede pakker er verificeret",

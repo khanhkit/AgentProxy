@@ -394,7 +394,7 @@ services:
 networks:
   # SECURITY (#13679): dedicated network for the unauthenticated-by-default
   # CDP proxy sidecar (docker/chatgpt-web-codex-browser/cdp-proxy.mjs) —
-  # shared only with omniroute-web, not with redis/qdrant/bifrost/cliproxyapi/
+  # shared only with agentproxy-web, not with redis/qdrant/bifrost/cliproxyapi/
   # codex-app-server or any other sibling on the implicit default network.
   chatgpt-web-codex-net: {}
 

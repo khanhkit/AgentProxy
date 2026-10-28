@@ -37,11 +37,11 @@
 ಪಥ ಅಲಿಯಾಸ್ಗಳು (`tsconfig.json`):
 
 - `@/*` → `src/*`
-- `@omniroute/open-sse` → `open-sse/index.ts`
-- `@omniroute/open-sse/*` → `open-sse/*`
+- `@agentproxy/open-sse` → `open-sse/index.ts`
+- `@agentproxy/open-sse/*` → `open-sse/*`
 
 ಡೀಫಾಲ್ಟ್ HTTP ಪೋರ್ಟ್: **`20128`** (API ಮತ್ತು ಡ್ಯಾಶ್ಬೋರ್ಡ್ ಒಂದೇ ಪ್ರಕ್ರಿಯೆಯನ್ನು ಹಂಚಿಕೊಳ್ಳುತ್ತವೆ). ಡೇಟಾ
-ಡೈರೆಕ್ಟರಿಯು `DATA_DIR` env var ಆಗಿದ್ದು, ಅದರ ಡೀಫಾಲ್ಟ್ ಮೌಲ್ಯ `~/.omniroute/` ಆಗಿದೆ.
+ಡೈರೆಕ್ಟರಿಯು `DATA_DIR` env var ಆಗಿದ್ದು, ಅದರ ಡೀಫಾಲ್ಟ್ ಮೌಲ್ಯ `~/.agentproxy/` ಆಗಿದೆ.
 
 ---
 
@@ -50,9 +50,9 @@
 ```
 AgentProxy/
 ├── src/                  Next.js ಅಪ್ಲಿಕೇಶನ್ (App Router, ಲೈಬ್ರರಿಗಳು, ಡೊಮೇನ್, ಸರ್ವರ್, ಹಂಚಿದ ಸಂಪನ್ಮೂಲಗಳು)
-├── open-sse/             ಸ್ಟ್ರೀಮಿಂಗ್ ಎಂಜಿನ್ ವರ್ಕ್ಸ್ಪೇಸ್ (@omniroute/open-sse)
+├── open-sse/             ಸ್ಟ್ರೀಮಿಂಗ್ ಎಂಜಿನ್ ವರ್ಕ್ಸ್ಪೇಸ್ (@agentproxy/open-sse)
 ├── electron/             ಡೆಸ್ಕ್ಟಾಪ್ ರ್ಯಾಪರ್ (Electron 41 main + preload)
-├── bin/                  CLI ಪ್ರವೇಶ ಬಿಂದುಗಳು (omniroute, reset-password)
+├── bin/                  CLI ಪ್ರವೇಶ ಬಿಂದುಗಳು (agentproxy, reset-password)
 ├── tests/                ಘಟಕ, ಏಕೀಕರಣ, e2e, protocols-e2e, ಅನುವಾದಕ, ಭದ್ರತೆ, fixtures
 ├── scripts/              ಬಿಲ್ಡ್, ಸಿಂಕ್, ಪರಿಶೀಲನೆ, migration ಮತ್ತು ರನ್ಟೈಮ್ ಸಹಾಯಕ ಸ್ಕ್ರಿಪ್ಟ್ಗಳು
 ├── docs/                 ಸಾರ್ವಜನಿಕ ದಸ್ತಾವೇಜೀಕರಣ (ಈ ಡೈರೆಕ್ಟರಿ)
@@ -298,7 +298,7 @@ v1/
 | `runtime/`        | ರನ್ಟೈಮ್ ವೈಶಿಷ್ಟ್ಯ ಪತ್ತೆ                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
 | `search/`         | `executeWebSearch.ts`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
 | `services/`       | ಎಂಬೆಡ್ ಮಾಡಿದ ಸೇವೆಗಳ ಫ್ರೇಮ್ವರ್ಕ್: `ServiceSupervisor.ts` (ಕಾರ್ಯಾಚರಣೆ ಲಾಕ್, ರಿಂಗ್ ಬಫರ್, ಆರೋಗ್ಯ ಪರೀಕ್ಷಕ ಹೊಂದಿರುವ ಸಾಮಾನ್ಯ ಚೈಲ್ಡ್-ಪ್ರೊಸೆಸ್ ಸೂಪರ್ವೈಸರ್), `bootstrap.ts` (ಪ್ರೊಸೆಸ್-ಮಟ್ಟದ ನೋಂದಣಿ ಮತ್ತು ಸ್ವಯಂ-ಪ್ರಾರಂಭ), `registry.ts` (ಟೂಲ್ → ಸೂಪರ್ವೈಸರ್ ಮ್ಯಾಪ್), `apiKey.ts` (AES-256-GCM ಕೀ ಸ್ಟೋರ್), `modelSync.ts` (ಆವರ್ತಕ ಮಾಡೆಲ್ ಸಿಂಕ್), `ringBuffer.ts` (5 MB ವೃತ್ತಾಕಾರದ ಲಾಗ್ ಬಫರ್), `healthCheck.ts` (HTTP ಆರೋಗ್ಯ ಪ್ರೋಬ್), `types.ts`, `embedWsProxy.ts` (WebSocket ಪ್ರಾಕ್ಸಿ), `installers/{ninerouter,cliproxy}.ts`. `docs/frameworks/EMBEDDED-SERVICES.md` ನೋಡಿ                                                                                                                                                                    |
-| `agentSkills/`    | Agent Skills ಕ್ಯಾಟಲಾಗ್ + ಜನರೇಟರ್: `catalog.ts` (getCatalog/getSkillById/filterCatalog/computeCoverage), `generator.ts` (generateAgentSkills → `skills/{id}/SKILL.md` ಗೆ ಬರೆಯುತ್ತದೆ), `openapiParser.ts` (OpenAPI ಸ್ಪೆಕ್ನಿಂದ REST ಎಂಡ್ಪಾಯಿಂಟ್ಗಳನ್ನು ಹೊರತೆಗೆಯುತ್ತದೆ), `cliRegistryParser.ts` (bin/cli-registry ಯಿಂದ CLI ಉಪಕಮಾಂಡ್ಗಳನ್ನು ಹೊರತೆಗೆಯುತ್ತದೆ), `schemas.ts` (Zod: AgentSkillSchema, SkillCoverageSchema, ListQuerySchema, GenerateBodySchema), `types.ts` (AgentSkill, SkillCoverage, SkillMarkdown, GeneratorReport). REST ರೂಟ್ಗಳು (`/api/agent-skills/*`), MCP ಟೂಲ್ಗಳು (`omniroute_agent_skills_*`), ಮತ್ತು A2A ಸ್ಕಿಲ್ `list-capabilities` ಇವುಗಳಿಂದ ಬಳಸಲ್ಪಡುತ್ತದೆ. [AGENT-SKILLS.md](../frameworks/AGENT-SKILLS.md) ನೋಡಿ. |
+| `agentSkills/`    | Agent Skills ಕ್ಯಾಟಲಾಗ್ + ಜನರೇಟರ್: `catalog.ts` (getCatalog/getSkillById/filterCatalog/computeCoverage), `generator.ts` (generateAgentSkills → `skills/{id}/SKILL.md` ಗೆ ಬರೆಯುತ್ತದೆ), `openapiParser.ts` (OpenAPI ಸ್ಪೆಕ್ನಿಂದ REST ಎಂಡ್ಪಾಯಿಂಟ್ಗಳನ್ನು ಹೊರತೆಗೆಯುತ್ತದೆ), `cliRegistryParser.ts` (bin/cli-registry ಯಿಂದ CLI ಉಪಕಮಾಂಡ್ಗಳನ್ನು ಹೊರತೆಗೆಯುತ್ತದೆ), `schemas.ts` (Zod: AgentSkillSchema, SkillCoverageSchema, ListQuerySchema, GenerateBodySchema), `types.ts` (AgentSkill, SkillCoverage, SkillMarkdown, GeneratorReport). REST ರೂಟ್ಗಳು (`/api/agent-skills/*`), MCP ಟೂಲ್ಗಳು (`agentproxy_agent_skills_*`), ಮತ್ತು A2A ಸ್ಕಿಲ್ `list-capabilities` ಇವುಗಳಿಂದ ಬಳಸಲ್ಪಡುತ್ತದೆ. [AGENT-SKILLS.md](../frameworks/AGENT-SKILLS.md) ನೋಡಿ. |
 | `skills/`         | ಸ್ಕಿಲ್ ಫ್ರೇಮ್ವರ್ಕ್: `registry.ts`, `executor.ts`, `interception.ts`, `injection.ts`, `sandbox.ts`, `custom.ts`, `hybrid.ts`, `builtins.ts`, `a2a.ts`, `providerSettings.ts`, `schemas.ts`, `skillssh.ts`, `types.ts`, ಜೊತೆಗೆ `builtin/browser.ts`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
 | `spend/`          | `batchWriter.ts` (ರೈಟ್-ಬಿಹೈಂಡ್ ಬಫರ್)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
 | `sync/`           | `bundle.ts`, `tokens.ts` (Cloud Sync)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
@@ -384,7 +384,7 @@ v1/
 | `degradation.ts`                           | ಡಿಗ್ರೇಡೆಡ್-ಮೋಡ್ ಪರಿವರ್ತನೆಗಳು                               |
 | `providerExpiration.ts`                    | ಅವಧಿ ಮೀರಿದ ಖಾತೆ/ಕೀ ಪತ್ತೆ                                   |
 | `quotaCache.ts`                            | ಕ್ಯಾಶ್ ಮಾಡಿದ ಕೋಟಾ ನಿರ್ಧಾರಗಳು                               |
-| `responses.ts`, `omnirouteResponseMeta.ts` | ಪ್ರತಿಕ್ರಿಯೆ ಆಕಾರದ ಸಹಾಯಕಗಳು                                 |
+| `responses.ts`, `agentproxyesponseMeta.ts` | ಪ್ರತಿಕ್ರಿಯೆ ಆಕಾರದ ಸಹಾಯಕಗಳು                                 |
 | `configAudit.ts`                           | ಕಾನ್ಫಿಗ್ ಬದಲಾವಣೆ ಆಡಿಟ್                                     |
 | `assessment/`                              | ಮಾಡೆಲ್ ಮೌಲ್ಯಮಾಪನ (ಪ್ರತಿ RFC ಪ್ರಕಾರ, ಭಾಗಶಃ ಅನುಷ್ಠಾನಗೊಂಡಿದೆ) |
 | `types.ts`                                 | ಹಂಚಿಕೆಯ ಡೊಮೇನ್ ಪ್ರಕಾರಗಳು                                   |
@@ -436,7 +436,7 @@ server/
 
 ## 4. `open-sse/` — ಸ್ಟ್ರೀಮಿಂಗ್ ಎಂಜಿನ್ ಕಾರ್ಯಕ್ಷೇತ್ರ
 
-`@omniroute/open-sse` ಆಗಿ ಪ್ರಕಟಿಸಲಾದ ಪ್ರತ್ಯೇಕ npm ಕಾರ್ಯಕ್ಷೇತ್ರ. ವಿನಂತಿ
+`@agentproxy/open-sse` ಆಗಿ ಪ್ರಕಟಿಸಲಾದ ಪ್ರತ್ಯೇಕ npm ಕಾರ್ಯಕ್ಷೇತ್ರ. ವಿನಂತಿ
 ಸಂಸ್ಕರಣೆ, ಎಕ್ಸಿಕ್ಯೂಟರ್ಗಳು, ಅನುವಾದಕಗಳು, ಸೇವೆಗಳು, ಟ್ರಾನ್ಸ್ಫಾರ್ಮರ್ ಮತ್ತು MCP ಸರ್ವರ್ ಅನ್ನು ನಿರ್ವಹಿಸುತ್ತದೆ.
 
 ```
@@ -599,7 +599,7 @@ GitHub ರಿಲೀಸ್ ಫೀಡ್ ಅನ್ನು ಸೂಚಿಸುವ `el
 
 ```
 bin/
-├── omniroute.mjs           ಮುಖ್ಯ CLI ಪ್ರವೇಶಬಿಂದು (Node ESM)
+├── agentproxy.mjs           ಮುಖ್ಯ CLI ಪ್ರವೇಶಬಿಂದು (Node ESM)
 ├── reset-password.mjs      CLI ಮೂಲಕ ನಿರ್ವಹಣಾ ಪಾಸ್ವರ್ಡ್ ಮರುಹೊಂದಿಸಿ
 ├── mcp-server.mjs          MCP ಸರ್ವರ್ ಲಾಂಚರ್ (stdio)
 ├── nodeRuntimeSupport.mjs  Node ಆವೃತ್ತಿ ಗಾರ್ಡ್
@@ -622,8 +622,8 @@ bin/
 
 `package.json` → `bin` ನಲ್ಲಿ ಎರಡು ಬೈನರಿಗಳನ್ನು ಬಹಿರಂಗಪಡಿಸಲಾಗಿದೆ:
 
-- `omniroute` → `bin/omniroute.mjs`
-- `omniroute-reset-password` → `bin/reset-password.mjs`
+- `agentproxy` → `bin/agentproxy.mjs`
+- `agentproxy-reset-password` → `bin/reset-password.mjs`
 
 ---
 
@@ -779,7 +779,7 @@ bin/
 
 - **Code style**: 2-space indent, double quotes, 100 char width, semicolons,
   `es5` trailing commas — `lint-staged` ಮೂಲಕ Prettier ಇದನ್ನು ಜಾರಿಗೊಳಿಸುತ್ತದೆ.
-- **Imports**: external → internal (`@/`, `@omniroute/open-sse`) → relative.
+- **Imports**: external → internal (`@/`, `@agentproxy/open-sse`) → relative.
 - **Naming**: files `camelCase` ಅಥವಾ `kebab-case`, components `PascalCase`,
   constants `UPPER_SNAKE`.
 - **ESLint**: ಎಲ್ಲೆಡೆ `no-eval`, `no-implied-eval`, `no-new-func` = `error`;

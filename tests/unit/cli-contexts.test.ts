@@ -260,7 +260,7 @@ test("context export --no-secrets overrides explicit inclusion through the real 
   try {
     await createProgram().parseAsync([
       "node",
-      "omniroute",
+      "agentproxy",
       "context",
       "export",
       "--no-secrets",
@@ -312,7 +312,7 @@ test("context export --include-secrets resolves keychain-backed credentials", as
   try {
     await createProgram().parseAsync([
       "node",
-      "omniroute",
+      "agentproxy",
       "context",
       "export",
       "--include-secrets",
@@ -337,7 +337,7 @@ test("secret-bearing context export fails closed when a keychain reference is un
     contexts: {
       missingKeychain: {
         baseUrl: "https://keychain.example.com",
-        credentialRef: "omniroute-cli:context:missingKeychain",
+        credentialRef: "agentproxy-cli:context:missingKeychain",
       },
     },
   });
@@ -375,7 +375,7 @@ test("context export defaults to a redacted atomic private output file", async (
   }) as typeof process.stdout.write;
 
   try {
-    await createProgram().parseAsync(["node", "omniroute", "context", "export", "--out", output]);
+    await createProgram().parseAsync(["node", "agentproxy", "context", "export", "--out", output]);
   } finally {
     process.stdout.write = originalWrite;
   }
@@ -415,7 +415,7 @@ test("context export rejects a symlinked output parent instead of writing outsid
   const output = join(redirectedParent, "contexts.json");
 
   await assert.rejects(
-    createProgram().parseAsync(["node", "omniroute", "context", "export", "--out", output]),
+    createProgram().parseAsync(["node", "agentproxy", "context", "export", "--out", output]),
     /symlink|symbolic|unsafe parent/i
   );
   assert.throws(() => readFileSync(join(outside, "contexts.json"), "utf8"), /ENOENT/);

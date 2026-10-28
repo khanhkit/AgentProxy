@@ -50,11 +50,11 @@ ACP Agents (գործարկման հակադարձ հոսք).
 AgentProxy-ից (տեղային կամ հեռակա) և ձեր համակարգչում գրում է տվյալ գործիքի սեփական կազմաձևումը.
 
 ```bash
-omniroute setup-codex        omniroute setup-claude       omniroute setup-opencode
-omniroute setup-cline        omniroute setup-kilo         omniroute setup-continue
-omniroute setup-cursor       omniroute setup-roo          omniroute setup-crush
-omniroute setup-goose        omniroute setup-qwen         omniroute setup-aider
-omniroute setup-5dive
+agentproxy setup-codex        agentproxy setup-claude       agentproxy setup-opencode
+agentproxy setup-cline        agentproxy setup-kilo         agentproxy setup-continue
+agentproxy setup-cursor       agentproxy setup-roo          agentproxy setup-crush
+agentproxy setup-goose        agentproxy setup-qwen         agentproxy setup-aider
+agentproxy setup-5dive
 ```
 
 Յուրաքանչյուրն ընդունում է `--remote <url> --api-key <key>` (տեղային գործիքը կազմաձևել հեռակա
@@ -65,10 +65,10 @@ AgentProxy-ի համար), `--dry-run` (նախադիտել՝ առանց գրել
 խմբի հոսթում գրելով root-ին պատկանող նույնականացման պրոֆիլ, ուստի այն վերագործարկվում է `sudo`-ի
 միջոցով և չունի սեփական հեռակա ռեժիմ։ CLI-ն համապատասխան
 միջավայրի ներմուծված փոփոխականներով և ընդհանրապես առանց կազմաձևում գրելու գործարկելու համար օգտագործեք ընդհանուր
-`omniroute run <target>` գործարկիչը (claude, codex, aider, goose, opencode, qwen,
+`agentproxy run <target>` գործարկիչը (claude, codex, aider, goose, opencode, qwen,
 gemini — թիրախներն ու կեղծանունները վերցվում են `bin/cli/cli-manifest.mjs`-ից)։ Հնացած՝
-առանձին գործիքների համար նախատեսված `omniroute launch` (Claude Code) և `omniroute launch-codex`
-(Codex) գործարկիչները շարունակում են հասանելի լինել։ Gemini CLI-ն նախատեսված է միայն գործարկման համար. այն `omniroute run`-ի
+առանձին գործիքների համար նախատեսված `agentproxy launch` (Claude Code) և `agentproxy launch-codex`
+(Codex) գործարկիչները շարունակում են հասանելի լինել։ Gemini CLI-ն նախատեսված է միայն գործարկման համար. այն `agentproxy run`-ի
 թիրախ է, սակայն չունի `setup-*`/`configure` բաղադրատոմս։
 
 > **Ամբողջական տեղեկատու.** հիմնական աղյուսակը՝ ինչ է գրում յուրաքանչյուր հրաման, բոլոր դրոշները,
@@ -81,19 +81,19 @@ AgentProxy կոնտեյների ներսում կատարված `setup-*` հրա
 կոնտեյների սեփական home-ում, որը հոսթի ոչ մի CLI չի կարդում և որը վերանում է
 կոնտեյների հետ միասին։ AgentProxy-ը հայտնաբերում է դա և գրելու փոխարեն
 հրահանգներով ավարտում է աշխատանքը `2` կոդով։ Առաջարկվում է երկու աջակցվող տարբերակ՝ CLI-ն տեղադրել հոսթում և
-կատարել `omniroute connect` դեպի կոնտեյները, կամ bind-mount անել կազմաձևման պանակները և սահմանել
+կատարել `agentproxy connect` դեպի կոնտեյները, կամ bind-mount անել կազմաձևման պանակները և սահմանել
 `CLI_CONFIG_HOME`-ը (compose-ի `host` պրոֆիլը)։ Յուրաքանչյուր `setup-*` հրաման, ինչպես նաև
-`omniroute configure`-ը և `omniroute config set`-ը, ընդունում են
+`agentproxy configure`-ը և `agentproxy config set`-ը, ընդունում են
 `--allow-container-write`, երբ իրականում ցանկանում եք կազմաձևել հենց կոնտեյների սեփական CLI-ները։
-`OMNIROUTE_ALLOW_CONTAINER_CONFIG_WRITE=true`-ը նույնն է անում
+`AGENTPROXY_ALLOW_CONTAINER_CONFIG_WRITE=true`-ը նույնն է անում
 սերվերի համար։ Տե՛ս
-[Docker ուղեցույց → Հոսթի CLI գործիքների կազմաձևում](../guides/DOCKER_GUIDE.md#configuring-host-cli-tools-when-omniroute-runs-in-docker)։
+[Docker ուղեցույց → Հոսթի CLI գործիքների կազմաձևում](../guides/DOCKER_GUIDE.md#configuring-host-cli-tools-when-agentproxy-runs-in-docker)։
 
 Կառավարման վահանակի **կիրառման endpoint-ը** (`POST /api/cli-tools/apply`) կիրառում է
 նույն սահմանափակումը. կոնտեյներում գրելու գործողությունը, որի թիրախը հոսթից bind-mounted չէ,
 պատասխանում է **`422`** կոդով՝ `containerEphemeralTarget: true`, անվտանգ սխալի
 տեքստով և հոսթի բաղադրատոմս ունեցող գործիքների համար (claude, codex, opencode, cline,
-kilo, continue)՝ `hostSetupCommand`-ով (օրինակ՝ `omniroute setup-opencode`), որը պետք է գործարկել
+kilo, continue)՝ `hostSetupCommand`-ով (օրինակ՝ `agentproxy setup-opencode`), որը պետք է գործարկել
 հոսթում. ոչինչ չի գրվում։ `dryRun: true`-ը շարունակում է աշխատել կոնտեյների
 ռեժիմում և վերադարձնում է ստեղծված բովանդակությունն ու թիրախային ուղին՝ առանց սկավառակին դիպչելու, այնպես որ
 կարող եք նախադիտել կառավարման վահանակից և կիրառել հոսթում։ Այս վարքագիծը
@@ -128,8 +128,8 @@ kilo, continue)՝ `hostSetupCommand`-ով (օրինակ՝ `omniroute setup-openc
 | ------------------ | ------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------- |
 | **Կատալոգավորված** | Հայտնվում է կառավարման վահանակի կատալոգում (անուն, մատակարար, փաստաթղթեր, կազմաձևման տեսակ)                  | `src/shared/constants/cliTools.ts` (`CLI_TOOLS`)                     |
 | **Հայտնաբերվող**   | Երկուական ֆայլի/կազմաձևման հայտնաբերում, վիճակի ստուգումներ, կազմաձևման ուղիներ                              | `src/shared/services/cliRuntime.ts` (`CLI_TOOLS` գործարկման կատալոգ) |
-| **Կազմաձևվող**     | Աջակցվում է `omniroute configure <cli>`-ի կողմից (առկա է կարգավորման բաղադրատոմս)                            | `bin/cli/cli-manifest.mjs` (`configure: true`)                       |
-| **Գործարկվող**     | Աջակցվում է `omniroute run <target>`-ի կողմից (սահմանված է միջավայրի փոփոխականների/արգումենտների ներարկումը) | `bin/cli/cli-manifest.mjs` (`run: true`)                             |
+| **Կազմաձևվող**     | Աջակցվում է `agentproxy configure <cli>`-ի կողմից (առկա է կարգավորման բաղադրատոմս)                            | `bin/cli/cli-manifest.mjs` (`configure: true`)                       |
+| **Գործարկվող**     | Աջակցվում է `agentproxy run <target>`-ի կողմից (սահմանված է միջավայրի փոփոխականների/արգումենտների ներարկումը) | `bin/cli/cli-manifest.mjs` (`run: true`)                             |
 
 `bin/cli/cli-manifest.mjs`-ը CLI հրամանների հասանելի մակերեսների կանոնական գործարկվող մանիֆեստն է․ `run`, `configure` և shell-ի ավտոլրացման գեներատորները դրանից են ստանում իրենց թիրախների ցուցակները, այլանունների լուծումը (օրինակ՝ `kilocode`/`kilo-code`/`kilo_cli` → `kilo`) և `--model` դրոշի կապակցումը։ Շեղումների պաշտպանիչ թեստը՝ `tests/unit/cli/cli-manifest-drift.test.ts`, հաստատում է, որ մանիֆեստը, գործարկման կատալոգը, UI կատալոգը և օգտագործող բոլոր մակերեսները մնում են համաժամացված․ միայն մեկ մակերեսում ավելացված թիրախը ձախողում է թեստերի փաթեթը՝ լուռ շեղվելու փոխարեն։
 
@@ -257,7 +257,7 @@ interface ToolBatchStatus {
 | `POST /api/cli-tools/codewhale-settings`    | CodeWhale (OPENAI_BASE_URL, հիմնական + հին `~/.deepseek` համաժամացում) |
 | `POST /api/cli-tools/smelt-settings`        | Smelt                                                                  |
 | `POST /api/cli-tools/pi-settings`           | Pi ծրագրավորման գործակալ                                               |
-| `POST /api/cli-tools/grok-build-settings`   | Grok Build (~/.grok/config.toml, `[model.omniroute]`)                  |
+| `POST /api/cli-tools/grok-build-settings`   | Grok Build (~/.grok/config.toml, `[model.agentproxy]`)                  |
 | `POST /api/cli-tools/qwen-settings`         | Qwen Code (`~/.qwen/settings.json` + առանձին `.env` բանալի)            |
 
 Բոլոր երթուղիները սխալների պատասխանների համար օգտագործում են `sanitizeErrorMessage()`-ը (Խիստ կանոն #12)։
@@ -352,7 +352,7 @@ npm install -g kilocode
 # Qwen Code
 npm install -g @qwen-code/qwen-code
 
-# Google Gemini CLI (գործարկվում է `omniroute run gemini`-ի միջոցով → /v1beta մակերես)
+# Google Gemini CLI (գործարկվում է `agentproxy run gemini`-ի միջոցով → /v1beta մակերես)
 npm install -g @google/gemini-cli
 
 # Aider
@@ -385,12 +385,12 @@ cargo install smelt  # Rust-ի վրա հիմնված
 ```bash
 # AgentProxy-ի համընդհանուր վերջնակետ
 export OPENAI_BASE_URL="http://localhost:20128/v1"
-export OPENAI_API_KEY="sk-your-omniroute-key"
+export OPENAI_API_KEY="sk-your-agentproxy-key"
 export ANTHROPIC_BASE_URL="http://localhost:20128"
-export ANTHROPIC_AUTH_TOKEN="sk-your-omniroute-key"
+export ANTHROPIC_AUTH_TOKEN="sk-your-agentproxy-key"
 # Gemini CLI-ն կարդում է GOOGLE_GEMINI_BASE_URL-ը ԱՐՄԱՏԱՅԻՆ մակարդակում (դրա SDK-ն ինքն է ավելացնում /v1beta/...)
 export GOOGLE_GEMINI_BASE_URL="http://localhost:20128"
-export GEMINI_API_KEY="sk-your-omniroute-key"
+export GEMINI_API_KEY="sk-your-agentproxy-key"
 ```
 
 > **Հեռակա սերվերի** դեպքում `localhost:20128`-ը փոխարինեք սերվերի IP հասցեով կամ դոմենով,
@@ -408,7 +408,7 @@ mkdir -p ~/.claude && cat > ~/.claude/settings.json << EOF
 {
   "env": {
     "ANTHROPIC_BASE_URL": "http://localhost:20128",
-    "ANTHROPIC_AUTH_TOKEN": "sk-your-omniroute-key"
+    "ANTHROPIC_AUTH_TOKEN": "sk-your-agentproxy-key"
   }
 }
 EOF
@@ -424,20 +424,20 @@ Claude Code-ի համար օգտագործեք Anthropic-ի միասնական �
 
 Ժամանակակից Codex-ը (v0.137+) կարդում է միայն `~/.codex/config.toml`-ը. հին
 `config.yaml`-ը պատկանում է հնացած npm CLI-ին և անաղմուկ անտեսվում է։ API
-բանալին մնում է `OMNIROUTE_API_KEY` միջավայրի փոփոխականում (`env_key`) և երբեք
+բանալին մնում է `AGENTPROXY_API_KEY` միջավայրի փոփոխականում (`env_key`) և երբեք
 չի պահվում ֆայլի ներսում․
 
 ```bash
 mkdir -p ~/.codex && cat > ~/.codex/config.toml << EOF
-model_provider = "omniroute"
+model_provider = "agentproxy"
 
-[model_providers.omniroute]
+[model_providers.agentproxy]
 name                 = "AgentProxy"
 base_url             = "http://localhost:20128/v1"
-env_key              = "OMNIROUTE_API_KEY"
+env_key              = "AGENTPROXY_API_KEY"
 requires_openai_auth = false
 EOF
-export OMNIROUTE_API_KEY="sk-your-omniroute-key"
+export AGENTPROXY_API_KEY="sk-your-agentproxy-key"
 ```
 
 Ամբողջական տեղեկատու (պրոֆիլներ, `wire_api`, համատեքստի պատուհաններ)՝ [CODEX-CLI-CONFIGURATION.md](../guides/CODEX-CLI-CONFIGURATION.md)։
@@ -453,12 +453,12 @@ mkdir -p ~/.config/opencode && cat > ~/.config/opencode/opencode.json << EOF
 {
   "\$schema": "https://opencode.ai/config.json",
   "provider": {
-    "omniroute": {
+    "agentproxy": {
       "npm": "@ai-sdk/openai-compatible",
       "name": "AgentProxy",
       "options": {
         "baseURL": "http://localhost:20128/v1",
-        "apiKey": "sk-your-omniroute-key"
+        "apiKey": "sk-your-agentproxy-key"
       },
       "models": {
         "claude-sonnet-4-5": { "name": "claude-sonnet-4-5" },
@@ -474,7 +474,7 @@ EOF
 **Փորձարկում՝** `opencode`
 
 > Մտածողության տարբերակներ ուղարկելու համար օգտագործեք
-> `opencode run "your prompt" --model omniroute/claude-sonnet-4-5-thinking --variant high`։
+> `opencode run "your prompt" --model agentproxy/claude-sonnet-4-5-thinking --variant high`։
 
 ---
 
@@ -487,7 +487,7 @@ mkdir -p ~/.cline/data && cat > ~/.cline/data/globalState.json << EOF
 {
   "apiProvider": "openai",
   "openAiBaseUrl": "http://localhost:20128/v1",
-  "openAiApiKey": "sk-your-omniroute-key"
+  "openAiApiKey": "sk-your-agentproxy-key"
 }
 EOF
 ```
@@ -504,7 +504,7 @@ Cline ընդլայնման կարգավորումներ → API Provider՝ `Open
 **CLI ռեժիմ՝**
 
 ```bash
-kilocode --api-base http://localhost:20128/v1 --api-key sk-your-omniroute-key
+kilocode --api-base http://localhost:20128/v1 --api-key sk-your-agentproxy-key
 ```
 
 **VS Code-ի կարգավորումներ՝**
@@ -512,7 +512,7 @@ kilocode --api-base http://localhost:20128/v1 --api-key sk-your-omniroute-key
 ```json
 {
   "kilo-code.openAiBaseUrl": "http://localhost:20128/v1",
-  "kilo-code.apiKey": "sk-your-omniroute-key"
+  "kilo-code.apiKey": "sk-your-agentproxy-key"
 }
 ```
 
@@ -530,7 +530,7 @@ models:
     provider: openai
     model: auto
     apiBase: http://localhost:20128/v1
-    apiKey: sk-your-omniroute-key
+    apiKey: sk-your-agentproxy-key
     default: true
 ```
 
@@ -557,8 +557,8 @@ models:
     "name": "AgentProxy Auto",
     "family": "gpt-4",
     "version": "1.0.0",
-    "url": "http://localhost:20128/api/v1/vscode/sk-your-omniroute-key/chat/completions",
-    "modelsUrl": "http://localhost:20128/api/v1/vscode/sk-your-omniroute-key/models",
+    "url": "http://localhost:20128/api/v1/vscode/sk-your-agentproxy-key/chat/completions",
+    "modelsUrl": "http://localhost:20128/api/v1/vscode/sk-your-agentproxy-key/models",
     "requestFormat": "openai-chat-completions",
     "contextWindow": 256000,
     "maxOutputTokens": 32768,
@@ -571,7 +571,7 @@ models:
 
 **Նշումներ՝**
 
-- `sk-your-omniroute-key`-ը փոխարինեք AgentProxy-ում ստեղծված API բանալիով։
+- `sk-your-agentproxy-key`-ը փոխարինեք AgentProxy-ում ստեղծված API բանալիով։
 - `url` դաշտը պետք է մատնանշի `/api/v1/vscode/{token}/chat/completions`։
 - `modelsUrl` դաշտը պետք է մատնանշի `/api/v1/vscode/{token}/models`։
 - Երբ հաճախորդը աջակցում է հատուկ վերնագրեր, նախընտրեք սովորական `/v1` + Bearer վերնագրի հոսքը։
@@ -597,28 +597,28 @@ kiro-cli status
 
 ## 10. Ներքին AgentProxy CLI
 
-`omniroute` գործարկվող ֆայլը տրամադրում է հրամաններ սերվերի կենսափուլի, սկզբնական կարգավորման, ախտորոշման և մատակարարների կառավարման համար։ Մուտքի կետ՝ `bin/omniroute.mjs`։
+`agentproxy` գործարկվող ֆայլը տրամադրում է հրամաններ սերվերի կենսափուլի, սկզբնական կարգավորման, ախտորոշման և մատակարարների կառավարման համար։ Մուտքի կետ՝ `bin/agentproxy.mjs`։
 
 ```bash
-omniroute                              # Գործարկել սերվերը (կանխադրված պորտը՝ 20128)
-omniroute setup                        # Ինտերակտիվ կարգավորման օգնական
-omniroute doctor                       # Ստուգել կազմաձևումը, DB-ն, պորտերը և գործարկման միջավայրը
-omniroute providers list               # Կազմաձևված մատակարարների կապերը
-omniroute providers test-all           # Փորձարկել յուրաքանչյուր ակտիվ կապ
-omniroute reset-password               # Վերակայել ադմինիստրատորի գաղտնաբառը
-omniroute logs                         # Հոսքային կերպով ցուցադրել հարցումների մատյանները
-omniroute health                       # Մանրամասն առողջական վիճակ (անջատիչներ, քեշ, հիշողություն)
-omniroute --version                    # Տպել տարբերակը
-omniroute --help                       # Ցուցադրել բոլոր հրամանները
+agentproxy                              # Գործարկել սերվերը (կանխադրված պորտը՝ 20128)
+agentproxy setup                        # Ինտերակտիվ կարգավորման օգնական
+agentproxy doctor                       # Ստուգել կազմաձևումը, DB-ն, պորտերը և գործարկման միջավայրը
+agentproxy providers list               # Կազմաձևված մատակարարների կապերը
+agentproxy providers test-all           # Փորձարկել յուրաքանչյուր ակտիվ կապ
+agentproxy reset-password               # Վերակայել ադմինիստրատորի գաղտնաբառը
+agentproxy logs                         # Հոսքային կերպով ցուցադրել հարցումների մատյանները
+agentproxy health                       # Մանրամասն առողջական վիճակ (անջատիչներ, քեշ, հիշողություն)
+agentproxy --version                    # Տպել տարբերակը
+agentproxy --help                       # Ցուցադրել բոլոր հրամանները
 ```
 
 ### Կարգավորում և սկզբնարժեքավորում
 
 ```bash
-omniroute setup                        # Ինտերակտիվ կարգավորման օգնական
-omniroute setup --non-interactive      # CI/ավտոմատացման ռեժիմ (կարդում է միջավայրի փոփոխականներն ու դրոշակները)
-omniroute setup --password '<value>'   # Ուղղակիորեն սահմանել ադմինիստրատորի գաղտնաբառը
-omniroute setup --add-provider \
+agentproxy setup                        # Ինտերակտիվ կարգավորման օգնական
+agentproxy setup --non-interactive      # CI/ավտոմատացման ռեժիմ (կարդում է միջավայրի փոփոխականներն ու դրոշակները)
+agentproxy setup --password '<value>'   # Ուղղակիորեն սահմանել ադմինիստրատորի գաղտնաբառը
+agentproxy setup --add-provider \
   --provider openai \
   --api-key '<value>' \
   --test-provider                      # Մեկ գործողությամբ ավելացնել և փորձարկել մատակարարին
@@ -628,21 +628,21 @@ omniroute setup --add-provider \
 
 | Փոփոխական           | Նպատակ                                                                         |
 | ------------------- | ------------------------------------------------------------------------------ |
-| `OMNIROUTE_API_KEY` | Մատակարարի API բանալի (Commander-ի `.env()`-ի միջոցով կապված է `--api-key`-ին) |
+| `AGENTPROXY_API_KEY` | Մատակարարի API բանալի (Commander-ի `.env()`-ի միջոցով կապված է `--api-key`-ին) |
 | `DATA_DIR`          | Վերասահմանել AgentProxy-ի տվյալների գրացուցակը                                  |
 
 Մնացած բոլոր ոչ ինտերակտիվ մուտքային տվյալները փոխանցվում են որպես դրոշակներ, այլ ոչ թե միջավայրի փոփոխականներ՝
 `--password`, `--provider`, `--provider-name`, `--provider-base-url`, `--default-model`
-(տե՛ս վերևում ներկայացված `omniroute setup` ընտրանքները)։
+(տե՛ս վերևում ներկայացված `agentproxy setup` ընտրանքները)։
 
 ### Ախտորոշում
 
 ```bash
-omniroute doctor                       # Ստուգել կազմաձևումը, DB-ն, պորտերը, գործարկման միջավայրը, հիշողությունը և հասանելիությունը
-omniroute doctor --json                # Մեքենայորեն ընթեռնելի JSON
-omniroute doctor --no-liveness         # Բաց թողնել HTTP առողջական վիճակի ստուգումը
-omniroute doctor --host 0.0.0.0        # Վերասահմանել հասանելիության հոսթը
-omniroute doctor --liveness-url <url>  # Վերասահմանել առողջական վիճակի վերջնակետի ամբողջական URL-ը
+agentproxy doctor                       # Ստուգել կազմաձևումը, DB-ն, պորտերը, գործարկման միջավայրը, հիշողությունը և հասանելիությունը
+agentproxy doctor --json                # Մեքենայորեն ընթեռնելի JSON
+agentproxy doctor --no-liveness         # Բաց թողնել HTTP առողջական վիճակի ստուգումը
+agentproxy doctor --host 0.0.0.0        # Վերասահմանել հասանելիության հոսթը
+agentproxy doctor --liveness-url <url>  # Վերասահմանել առողջական վիճակի վերջնակետի ամբողջական URL-ը
 ```
 
 Doctor-ը կատարում է հետևյալ ստուգումները՝ `Config`, `Database`, `Storage/encryption`,
@@ -652,22 +652,22 @@ Doctor-ը կատարում է հետևյալ ստուգումները՝ `Config`
 ### Մատակարարների կառավարում
 
 ```bash
-omniroute providers available                       # AgentProxy-ի մատակարարների կատալոգը
-omniroute providers available --search openai       # Զտել կատալոգն ըստ ID-ի/անվան/այլանվան/կատեգորիայի
-omniroute providers available --category api-key    # Զտել ըստ կատեգորիայի (api-key, oauth, free, ...)
-omniroute providers available --json                # Մեքենայորեն ընթեռնելի JSON
+agentproxy providers available                       # AgentProxy-ի մատակարարների կատալոգը
+agentproxy providers available --search openai       # Զտել կատալոգն ըստ ID-ի/անվան/այլանվան/կատեգորիայի
+agentproxy providers available --category api-key    # Զտել ըստ կատեգորիայի (api-key, oauth, free, ...)
+agentproxy providers available --json                # Մեքենայորեն ընթեռնելի JSON
 
-omniroute providers list                            # Կազմաձևված մատակարարների կապերը
-omniroute providers list --json
+agentproxy providers list                            # Կազմաձևված մատակարարների կապերը
+agentproxy providers list --json
 
-omniroute providers test <id|name>                  # Փորձարկել կազմաձևված մեկ կապ
-omniroute providers test-all                        # Փորձարկել յուրաքանչյուր ակտիվ կապ
-omniroute providers validate                        # Միայն տեղային կառուցվածքային վավերացում
-omniroute providers add <provider> --credential-env PROVIDER_KEY
-omniroute providers import ./providers.json --dry-run --json
-omniroute providers auth <provider>                 # Գոյություն ունեցող OAuth հոսք
-omniroute providers edit <id|name> --default-model <model>
-omniroute providers remove <id|name> --yes
+agentproxy providers test <id|name>                  # Փորձարկել կազմաձևված մեկ կապ
+agentproxy providers test-all                        # Փորձարկել յուրաքանչյուր ակտիվ կապ
+agentproxy providers validate                        # Միայն տեղային կառուցվածքային վավերացում
+agentproxy providers add <provider> --credential-env PROVIDER_KEY
+agentproxy providers import ./providers.json --dry-run --json
+agentproxy providers auth <provider>                 # Գոյություն ունեցող OAuth հոսք
+agentproxy providers edit <id|name> --default-model <model>
+agentproxy providers remove <id|name> --yes
 ```
 
 `providers add/import/auth/edit/remove` հրամաններն API-ն առաջնահերթ օգտագործող են և, հետևաբար, աշխատում են
@@ -680,19 +680,19 @@ omniroute providers remove <id|name> --yes
 ### Վերականգնում և վերակայում
 
 ```bash
-omniroute reset-password                # Վերակայել ադմինիստրատորի գաղտնաբառը (նաև՝ omniroute-reset-password)
-omniroute reset-encrypted-columns       # Ցուցադրել նախազգուշացում և փորձնական գործարկում՝ կոդավորված հավաստագրային տվյալների վերակայման համար
-omniroute reset-encrypted-columns --force  # Իրականում SQLite-ում կոդավորված հավաստագրային տվյալները դարձնել null
+agentproxy reset-password                # Վերակայել ադմինիստրատորի գաղտնաբառը (նաև՝ agentproxy-reset-password)
+agentproxy reset-encrypted-columns       # Ցուցադրել նախազգուշացում և փորձնական գործարկում՝ կոդավորված հավաստագրային տվյալների վերակայման համար
+agentproxy reset-encrypted-columns --force  # Իրականում SQLite-ում կոդավորված հավաստագրային տվյալները դարձնել null
 ```
 
 ### Հավաստագրային տվյալների արտահանում (⚠ զգույշ վարվեք)
 
 ```bash
-omniroute auth export                                 # Ցուցադրել նախազգուշացում և հաստատման քայլ՝ առանց DB-ին հասանելիության
-omniroute auth export --force                          # ԲՈԼՈՐ կապերի ԱՊԱԿՈԴԱՎՈՐՎԱԾ հավաստագրային տվյալներն արտահանել stdout՝ որպես JSON
-omniroute auth export --force --id <id>                 # Արտահանել միայն համապատասխանող կապը
-omniroute auth export --force --format env               # Արտածել OMNIROUTE_<PROVIDER>_<FIELD>=<value> տողեր
-omniroute auth export --force --out creds.json           # Գրել ֆայլում (ստեղծվում է 0600 թույլտվություններով)
+agentproxy auth export                                 # Ցուցադրել նախազգուշացում և հաստատման քայլ՝ առանց DB-ին հասանելիության
+agentproxy auth export --force                          # ԲՈԼՈՐ կապերի ԱՊԱԿՈԴԱՎՈՐՎԱԾ հավաստագրային տվյալներն արտահանել stdout՝ որպես JSON
+agentproxy auth export --force --id <id>                 # Արտահանել միայն համապատասխանող կապը
+agentproxy auth export --force --format env               # Արտածել AGENTPROXY_<PROVIDER>_<FIELD>=<value> տողեր
+agentproxy auth export --force --out creds.json           # Գրել ֆայլում (ստեղծվում է 0600 թույլտվություններով)
 ```
 
 `auth export`-ը գործում է **միայն տեղային եղանակով** (SQLite-ի ուղղակի ընթերցում՝ առանց HTTP երթուղու) և դիտավորյալ տպում/գրում է
@@ -707,33 +707,33 @@ stderr-ում միշտ տպվում է նախազգուշացնող բաններ
 Սրանք ենթադրում են, որ AgentProxy սերվերը գործարկված է, եթե այլ բան նշված չէ։
 
 ```bash
-omniroute status                       # Կատարման միջավայրի համապարփակ կարգավիճակ
-omniroute logs                         # Հարցումների մատյանների հոսքային ցուցադրում (--json, --search, --follow)
-omniroute config list                  # Ցուցադրել կարգավորված CLI գործիքները
+agentproxy status                       # Կատարման միջավայրի համապարփակ կարգավիճակ
+agentproxy logs                         # Հարցումների մատյանների հոսքային ցուցադրում (--json, --search, --follow)
+agentproxy config list                  # Ցուցադրել կարգավորված CLI գործիքները
 
-omniroute provider list                # Ցուցադրել հասանելի մատակարարները (providers list-ի այլանունը)
-omniroute provider add                 # Գրանցել AgentProxy-ը որպես մատակարար որևէ գործիքում
-omniroute keys add | list | remove     # Կառավարել API բանալիները
-omniroute models [provider]            # Ցուցադրել մոդելները (--json, --search)
-omniroute combo list | switch | create | delete
+agentproxy provider list                # Ցուցադրել հասանելի մատակարարները (providers list-ի այլանունը)
+agentproxy provider add                 # Գրանցել AgentProxy-ը որպես մատակարար որևէ գործիքում
+agentproxy keys add | list | remove     # Կառավարել API բանալիները
+agentproxy models [provider]            # Ցուցադրել մոդելները (--json, --search)
+agentproxy combo list | switch | create | delete
 
-omniroute backup                       # Ստեղծել կարգավորումների և DB-ի պահուստային պատկերը
-omniroute restore                      # Վերականգնել նախորդ պահուստային պատկերից
+agentproxy backup                       # Ստեղծել կարգավորումների և DB-ի պահուստային պատկերը
+agentproxy restore                      # Վերականգնել նախորդ պահուստային պատկերից
 
-omniroute health                       # Առողջական վիճակի մանրամասներ (անջատիչներ, քեշ, հիշողություն)
-omniroute quota                        # Մատակարարի քվոտայի օգտագործումը
-omniroute cache                        # Քեշի կարգավիճակը
-omniroute cache clear                  # Մաքրել իմաստային և ստորագրությունների քեշերը
+agentproxy health                       # Առողջական վիճակի մանրամասներ (անջատիչներ, քեշ, հիշողություն)
+agentproxy quota                        # Մատակարարի քվոտայի օգտագործումը
+agentproxy cache                        # Քեշի կարգավիճակը
+agentproxy cache clear                  # Մաքրել իմաստային և ստորագրությունների քեշերը
 
-omniroute mcp status | restart         # MCP սերվերի կարգավիճակ / վերագործարկում
-omniroute a2a status | card            # A2A սերվերի կարգավիճակ / գործակալի քարտ
+agentproxy mcp status | restart         # MCP սերվերի կարգավիճակ / վերագործարկում
+agentproxy a2a status | card            # A2A սերվերի կարգավիճակ / գործակալի քարտ
 
-omniroute tunnel list | create | stop  # Կառավարել թունելները (cloudflare/tailscale/ngrok)
-omniroute env show | get <k> | set <k> <v>  # Դիտել / սահմանել միջավայրի փոփոխականները (ժամանակավոր)
+agentproxy tunnel list | create | stop  # Կառավարել թունելները (cloudflare/tailscale/ngrok)
+agentproxy env show | get <k> | set <k> <v>  # Դիտել / սահմանել միջավայրի փոփոխականները (ժամանակավոր)
 
-omniroute test                         # Մատակարարի կապակցման արագ ստուգում
-omniroute update                       # Ստուգել թարմացումների առկայությունը
-omniroute completion                   # Ստեղծել shell-ի ինքնալրացում
+agentproxy test                         # Մատակարարի կապակցման արագ ստուգում
+agentproxy update                       # Ստուգել թարմացումների առկայությունը
+agentproxy completion                   # Ստեղծել shell-ի ինքնալրացում
 ```
 
 ### Հաճախ օգտագործվող դրոշակներ
@@ -781,7 +781,7 @@ Ollama զրույց՝ http://localhost:20128/api/v1/vscode/sk-a3ab3c080beaee3a-6
 
 | Սխալ                                                      | Պատճառ                        | Լուծում                                                 |
 | --------------------------------------------------------- | ----------------------------- | ------------------------------------------------------- |
-| `Connection refused`                                      | AgentProxy-ը գործարկված չէ     | `omniroute serve`                                       |
+| `Connection refused`                                      | AgentProxy-ը գործարկված չէ     | `agentproxy serve`                                       |
 | `401 Unauthorized`                                        | Սխալ API բանալի               | Ստուգեք `/dashboard/api-manager`-ում                    |
 | `No combo configured`                                     | Ակտիվ երթուղավորման combo չկա | Կարգավորեք `/dashboard/combos`-ում                      |
 | CLI-ը ցույց է տալիս «տեղադրված չէ»                        | Երկուական ֆայլը PATH-ում չէ   | Ստուգեք `which <command>`                               |

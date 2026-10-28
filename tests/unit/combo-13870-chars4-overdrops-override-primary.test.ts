@@ -10,7 +10,7 @@ import path from "node:path";
 // known catalog limit fits, even when the rejected target has a near-boundary manual override.
 // The rejected override remains available as an advisory fallback; it is not dropped.
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-13870-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-13870-"));
 const ORIGINAL_DATA_DIR = process.env.DATA_DIR;
 process.env.DATA_DIR = TEST_DATA_DIR;
 

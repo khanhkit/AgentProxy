@@ -36,7 +36,7 @@
 - 🚦 **Ìsọ̀rí 429 fún olùpèsè kọ̀ọ̀kan** + àṣàyàn `useUpstream429BreakerHints` — ìhùwàsí breaker tó péye sí i nípa lílo àwọn ìtọ́kasí ààlà ìwọ̀n upstream
 - 🩺 **Pátákó ìṣàkóso cooldown àwọn model** — ṣàkíyèsí ìdènà model kọ̀ọ̀kan, kí o sì tún mú wọn ṣiṣẹ́ lọ́wọ́ láti UI
 - 🔒 **Ìṣàwárí cert Linux MITM tó ń yí padà** — ó ń ṣiṣẹ́ lórí Debian/Ubuntu, Fedora/RHEL, Arch, àti àwọn distro mìíràn
-- 💻 **Àkójọpọ̀ ìmúdàgbàsókè CLI** — àwọn command tó ju 20 lọ, tó fi mọ́ `omniroute providers`, `omniroute combos`, `omniroute doctor`, `omniroute setup`
+- 💻 **Àkójọpọ̀ ìmúdàgbàsókè CLI** — àwọn command tó ju 20 lọ, tó fi mọ́ `agentproxy providers`, `agentproxy combos`, `agentproxy doctor`, `agentproxy setup`
 - 🔍 **Ìṣàwárí model embedding Qdrant** — ìdánwò model ibi ìpamọ́ vector aládàáṣe
 - 🔑 **Àwọn API Keys / Bearer keys pẹ̀lú scope `manage`** — ṣe àwọn iṣẹ́ admin lọ́nà ètò nípasẹ̀ API
 - 🏥 **Ìtúpalẹ̀ ìlera àfojúsùn combo** + **olùkọ́ combo tó ní ètò** — ìlera àfojúsùn kọ̀ọ̀kan àti olùkọ́ UI fún ṣíṣe àkójọpọ̀ àwọn ìgbésẹ̀ `(provider, model, connection)`
@@ -226,7 +226,7 @@ Wo [Ìtọ́sọ́nà Ìfúnpọ̀](../compression/COMPRESSION_GUIDE.md), [Ìfú
 
 | Àṣẹ                      | Ìgbésẹ̀                                                                                |
 | ------------------------ | ------------------------------------------------------------------------------------- |
-| `npm run uninstall`      | Ó yọ system app náà kúrò ṣùgbọ́n ó **pa DB àti àwọn àtòjọ rẹ mọ́** sínú `~/.omniroute`. |
+| `npm run uninstall`      | Ó yọ system app náà kúrò ṣùgbọ́n ó **pa DB àti àwọn àtòjọ rẹ mọ́** sínú `~/.agentproxy`. |
 | `npm run uninstall:full` | Ó yọ app náà kúrò, ó SÌ **pa gbogbo àwọn àtòjọ, key, àti database rẹ rẹ́ pátápátá**.   |
 
 ---

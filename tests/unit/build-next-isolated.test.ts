@@ -225,14 +225,14 @@ test("syncStandaloneExtraModules copies the complete wreq-js runtime", async () 
   });
 });
 
-test("shouldBuildStandalone honors OMNIROUTE_SKIP_STANDALONE and contributor profile", () => {
+test("shouldBuildStandalone honors AGENTPROXY_SKIP_STANDALONE and contributor profile", () => {
   assert.equal(shouldBuildStandalone({}), true);
-  assert.equal(shouldBuildStandalone({ OMNIROUTE_SKIP_STANDALONE: "0" }), true);
-  assert.equal(shouldBuildStandalone({ OMNIROUTE_SKIP_STANDALONE: "1" }), false);
+  assert.equal(shouldBuildStandalone({ AGENTPROXY_SKIP_STANDALONE: "0" }), true);
+  assert.equal(shouldBuildStandalone({ AGENTPROXY_SKIP_STANDALONE: "1" }), false);
   assert.equal(shouldBuildStandalone({ AGENTPROXY_BUILD_PROFILE: "contributor" }), false);
   assert.equal(
     shouldBuildStandalone({
-      OMNIROUTE_SKIP_STANDALONE: "1",
+      AGENTPROXY_SKIP_STANDALONE: "1",
       AGENTPROXY_BUILD_PROFILE: "minimal",
     }),
     false

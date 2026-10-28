@@ -89,13 +89,13 @@ ufw enable
 ### 2.1 കോൺഫിഗറേഷൻ ഡയറക്ടറി സൃഷ്ടിക്കുക
 
 ```bash
-mkdir -p /opt/omniroute
+mkdir -p /opt/agentproxy
 ```
 
 ### 2.2 എൻവയോൺമെന്റ് വേരിയബിളുകളുടെ ഫയൽ സൃഷ്ടിക്കുക
 
 ```bash
-cat > /opt/omniroute/.env << 'EOF'
+cat > /opt/agentproxy/.env << 'EOF'
 # === സുരക്ഷ ===
 JWT_SECRET=CHANGE-TO-A-UNIQUE-64-CHAR-SECRET-KEY
 INITIAL_PASSWORD=YourSecurePassword123!
@@ -103,7 +103,7 @@ API_KEY_SECRET=REPLACE-WITH-ANOTHER-SECRET-KEY
 STORAGE_ENCRYPTION_KEY=REPLACE-WITH-THIRD-SECRET-KEY
 STORAGE_ENCRYPTION_KEY_VERSION=v1
 MACHINE_ID_SALT=CHANGE-TO-A-UNIQUE-SALT
-OMNIROUTE_WS_BRIDGE_SECRET=REPLACE-WITH-WS-BRIDGE-SECRET  # പ്രൊഡക്ഷനിൽ ആവശ്യമാണ്: Codex Responses WS ബ്രിഡ്ജ് ഉപയോഗിക്കുന്നത്
+AGENTPROXY_WS_BRIDGE_SECRET=REPLACE-WITH-WS-BRIDGE-SECRET  # പ്രൊഡക്ഷനിൽ ആവശ്യമാണ്: Codex Responses WS ബ്രിഡ്ജ് ഉപയോഗിക്കുന്നത്
 
 # === ആപ്പ് ===
 PORT=20128
@@ -120,11 +120,11 @@ BASE_URL=http://127.0.0.1:20128
 # OAuth callback-കൾക്കും ഡാഷ്ബോർഡ് ലിങ്കുകൾക്കും ജനറേറ്റ് ചെയ്യുന്ന പബ്ലിക് URL-കൾക്കുമായി ഉപയോഗിക്കുന്ന ബ്രൗസർ-അഭിമുഖ URL.
 NEXT_PUBLIC_BASE_URL=https://llms.seudominio.com
 # ജനറേറ്റ് ചെയ്യുന്ന പബ്ലിക് അസറ്റ് URL-കൾക്കായുള്ള ഐച്ഛികമായ വ്യക്തമായ പബ്ലിക് origin override.
-# OMNIROUTE_PUBLIC_BASE_URL=https://llms.seudominio.com
+# AGENTPROXY_PUBLIC_BASE_URL=https://llms.seudominio.com
 
 # === ക്ലൗഡ് സമന്വയം (ഐച്ഛികം) ===
-# CLOUD_URL=https://cloud.omniroute.online
-# NEXT_PUBLIC_CLOUD_URL=https://cloud.omniroute.online
+# CLOUD_URL=https://agentproxy.online
+# NEXT_PUBLIC_CLOUD_URL=https://agentproxy.online
 EOF
 ```
 
@@ -133,22 +133,22 @@ EOF
 ### 2.3 കണ്ടെയ്നർ ആരംഭിക്കുക
 
 ```bash
-docker pull diegosouzapw/omniroute:latest
+docker pull diegosouzapw/agentproxy:latest
 
 docker run -d \
-  --name omniroute \
+  --name agentproxy \
   --restart unless-stopped \
-  --env-file /opt/omniroute/.env \
+  --env-file /opt/agentproxy/.env \
   -p 20128:20128 \
-  -v omniroute-data:/app/data \
-  diegosouzapw/omniroute:latest
+  -v agentproxy-data:/app/data \
+  diegosouzapw/agentproxy:latest
 ```
 
 ### 2.4 ഇത് പ്രവർത്തിക്കുന്നുണ്ടെന്ന് സ്ഥിരീകരിക്കുക
 
 ```bash
-docker ps | grep omniroute
-docker logs omniroute --tail 20
+docker ps | grep agentproxy
+docker logs agentproxy --tail 20
 ```
 
 ഇത് `[DB] SQLite database ready`, `listening on port 20128` എന്നിവ പ്രദർശിപ്പിക്കണം.
@@ -181,7 +181,7 @@ chmod 600 /etc/nginx/ssl/origin.key
 ### 3.2 Nginx കോൺഫിഗറേഷൻ
 
 ```bash
-cat > /etc/nginx/sites-available/omniroute << 'NGINX'
+cat > /etc/nginx/sites-available/agentproxy << 'NGINX'
 # ഡിഫോൾട്ട് സെർവർ — IP വഴിയുള്ള നേരിട്ടുള്ള ആക്സസ് തടയുന്നു
 server {
     listen 80 default_server;
@@ -241,7 +241,7 @@ NGINX
 `FETCH_TIMEOUT_MS` / `STREAM_IDLE_TIMEOUT_MS` വർധിപ്പിക്കുകയാണെങ്കിൽ, `proxy_read_timeout` / `proxy_send_timeout`
 എന്നിവ അതേ പരിധിയെക്കാൾ ഉയർന്നതാക്കുക.
 
-OAuth കോൾബാക്കുകൾക്കും സൃഷ്ടിക്കപ്പെടുന്ന പൊതു ലിങ്കുകൾക്കുമുള്ള കാനോനിക്കൽ ബ്രൗസർ-ഫേസിംഗ് ഒറിജിനായി AgentProxy `NEXT_PUBLIC_BASE_URL` ഉപയോഗിക്കുന്നു. ഓതന്റിക്കേറ്റ് ചെയ്ത ഡാഷ്ബോർഡ് റൈറ്റുകൾ സെഷനുമായി ബന്ധിപ്പിച്ച CSRF സംരക്ഷണത്തോടൊപ്പം same-origin റിക്വസ്റ്റുകൾ ഉപയോഗിക്കുന്നതിനാൽ, അവയ്ക്ക് ഒരു സ്റ്റാറ്റിക് പൊതു ബേസ് URL ആവശ്യമില്ല. മുകളിലുള്ള `X-Forwarded-*` ഹെഡറുകൾ ഇപ്പോഴും ഉപകാരപ്രദമായ റൂട്ടിംഗ് മെറ്റാഡാറ്റയാണ്, എന്നാൽ OAuth-നോ സൃഷ്ടിക്കപ്പെടുന്ന ബ്രൗസർ ലിങ്കുകൾക്കോ വ്യക്തമായ പൊതു URL ആവശ്യമായിരിക്കുമ്പോൾ അത് സജ്ജീകരിക്കുന്നതിന് ഇവ പകരമല്ല. ക്ലയന്റുകൾക്ക് AgentProxy-ൽ നേരിട്ട് എത്തിച്ചേരാൻ കഴിയുന്നില്ലെങ്കിൽ മാത്രവും, നിങ്ങളുടെ പ്രോക്സി ഇൻകമിംഗ് ഫോർവേഡഡ് ഹെഡറുകൾ നീക്കംചെയ്ത്/പുനർനിർമ്മിക്കുന്നുവെങ്കിൽ മാത്രവും `OMNIROUTE_TRUST_PROXY` പ്രവർത്തനക്ഷമമാക്കുക.
+OAuth കോൾബാക്കുകൾക്കും സൃഷ്ടിക്കപ്പെടുന്ന പൊതു ലിങ്കുകൾക്കുമുള്ള കാനോനിക്കൽ ബ്രൗസർ-ഫേസിംഗ് ഒറിജിനായി AgentProxy `NEXT_PUBLIC_BASE_URL` ഉപയോഗിക്കുന്നു. ഓതന്റിക്കേറ്റ് ചെയ്ത ഡാഷ്ബോർഡ് റൈറ്റുകൾ സെഷനുമായി ബന്ധിപ്പിച്ച CSRF സംരക്ഷണത്തോടൊപ്പം same-origin റിക്വസ്റ്റുകൾ ഉപയോഗിക്കുന്നതിനാൽ, അവയ്ക്ക് ഒരു സ്റ്റാറ്റിക് പൊതു ബേസ് URL ആവശ്യമില്ല. മുകളിലുള്ള `X-Forwarded-*` ഹെഡറുകൾ ഇപ്പോഴും ഉപകാരപ്രദമായ റൂട്ടിംഗ് മെറ്റാഡാറ്റയാണ്, എന്നാൽ OAuth-നോ സൃഷ്ടിക്കപ്പെടുന്ന ബ്രൗസർ ലിങ്കുകൾക്കോ വ്യക്തമായ പൊതു URL ആവശ്യമായിരിക്കുമ്പോൾ അത് സജ്ജീകരിക്കുന്നതിന് ഇവ പകരമല്ല. ക്ലയന്റുകൾക്ക് AgentProxy-ൽ നേരിട്ട് എത്തിച്ചേരാൻ കഴിയുന്നില്ലെങ്കിൽ മാത്രവും, നിങ്ങളുടെ പ്രോക്സി ഇൻകമിംഗ് ഫോർവേഡഡ് ഹെഡറുകൾ നീക്കംചെയ്ത്/പുനർനിർമ്മിക്കുന്നുവെങ്കിൽ മാത്രവും `AGENTPROXY_TRUST_PROXY` പ്രവർത്തനക്ഷമമാക്കുക.
 
 ### 3.3 പ്രവർത്തനക്ഷമമാക്കി പരിശോധിക്കുക
 
@@ -250,7 +250,7 @@ OAuth കോൾബാക്കുകൾക്കും സൃഷ്ടിക്�
 rm -f /etc/nginx/sites-enabled/default
 
 # AgentProxy പ്രവർത്തനക്ഷമമാക്കുക
-ln -sf /etc/nginx/sites-available/omniroute /etc/nginx/sites-enabled/omniroute
+ln -sf /etc/nginx/sites-available/agentproxy /etc/nginx/sites-enabled/agentproxy
 
 # പരിശോധിച്ച് റീലോഡ് ചെയ്യുക
 nginx -t && systemctl reload nginx
@@ -294,40 +294,40 @@ curl -sI https://llms.seudominio.com/health
 ### പുതിയ പതിപ്പിലേക്ക് അപ്ഗ്രേഡ് ചെയ്യുക
 
 ```bash
-docker pull diegosouzapw/omniroute:latest
-docker stop omniroute && docker rm omniroute
-docker run -d --name omniroute --restart unless-stopped \
-  --env-file /opt/omniroute/.env \
+docker pull diegosouzapw/agentproxy:latest
+docker stop agentproxy && docker rm agentproxy
+docker run -d --name agentproxy --restart unless-stopped \
+  --env-file /opt/agentproxy/.env \
   -p 20128:20128 \
-  -v omniroute-data:/app/data \
-  diegosouzapw/omniroute:latest
+  -v agentproxy-data:/app/data \
+  diegosouzapw/agentproxy:latest
 ```
 
 ### ലോഗുകൾ കാണുക
 
 ```bash
-docker logs -f omniroute          # തത്സമയ സ്ട്രീം
-docker logs omniroute --tail 50   # അവസാന 50 വരികൾ
+docker logs -f agentproxy          # തത്സമയ സ്ട്രീം
+docker logs agentproxy --tail 50   # അവസാന 50 വരികൾ
 ```
 
 ### ഡാറ്റാബേസ് സ്വമേധയാ ബാക്കപ്പ് ചെയ്യുക
 
 ```bash
 # വോള്യത്തിൽനിന്ന് ഹോസ്റ്റിലേക്ക് ഡാറ്റ പകർത്തുക
-docker cp omniroute:/app/data ./backup-$(date +%F)
+docker cp agentproxy:/app/data ./backup-$(date +%F)
 
 # അല്ലെങ്കിൽ മുഴുവൻ വോള്യവും കംപ്രസ് ചെയ്യുക
-docker run --rm -v omniroute-data:/data -v $(pwd):/backup \
-  alpine tar czf /backup/omniroute-data-$(date +%F).tar.gz /data
+docker run --rm -v agentproxy-data:/data -v $(pwd):/backup \
+  alpine tar czf /backup/agentproxy-data-$(date +%F).tar.gz /data
 ```
 
 ### ബാക്കപ്പിൽനിന്ന് പുനഃസ്ഥാപിക്കുക
 
 ```bash
-docker stop omniroute
-docker run --rm -v omniroute-data:/data -v $(pwd):/backup \
-  alpine sh -c "rm -rf /data/* && tar xzf /backup/omniroute-data-YYYY-MM-DD.tar.gz -C /"
-docker start omniroute
+docker stop agentproxy
+docker run --rm -v agentproxy-data:/data -v $(pwd):/backup \
+  alpine sh -c "rm -rf /data/* && tar xzf /backup/agentproxy-data-YYYY-MM-DD.tar.gz -C /"
+docker start agentproxy
 ```
 
 ---
@@ -396,13 +396,13 @@ VM നേരിട്ട് പുറത്തേക്ക് തുറന്ന
 
 ```bash
 # ലോക്കൽ റിപ്പോസിറ്ററിയിൽ
-cd omnirouteCloud
+cd agentproxyCloud
 npm install
 npx wrangler login
 npx wrangler deploy
 ```
 
-റിപ്പോസിറ്ററിയിലെ Cloudflare Tunnel ഘട്ടംഘട്ടമായുള്ള മാർഗ്ഗനിർദ്ദേശത്തിനായി [TUNNELS_GUIDE.md](./TUNNELS_GUIDE.md) കൂടി കാണുക. സ്വതന്ത്രമായ `omnirouteCloud/` worker മറ്റൊരു അനുബന്ധ റിപ്പോസിറ്ററിയിലാണ്.
+റിപ്പോസിറ്ററിയിലെ Cloudflare Tunnel ഘട്ടംഘട്ടമായുള്ള മാർഗ്ഗനിർദ്ദേശത്തിനായി [TUNNELS_GUIDE.md](./TUNNELS_GUIDE.md) കൂടി കാണുക. സ്വതന്ത്രമായ `agentproxyCloud/` worker മറ്റൊരു അനുബന്ധ റിപ്പോസിറ്ററിയിലാണ്.
 
 ---
 
@@ -419,9 +419,9 @@ npx wrangler deploy
 
 ചെറിയ VPS ഇൻസ്റ്റൻസുകളിൽ (1 GB RAM അല്ലെങ്കിൽ അതിൽ കുറവ്) ഡിപ്ലോയ് ചെയ്യുമ്പോൾ:
 
-- **പശ്ചാത്തല സേവനങ്ങൾ പ്രവർത്തനരഹിതമാക്കുക** — ഷെഡ്യൂളർ, MCP സെർവർ, ആവർത്തിച്ചുള്ള മെയിന്റനൻസ് ടാസ്ക്കുകൾ എന്നിവ ഒഴിവാക്കാൻ `OMNIROUTE_DISABLE_BACKGROUND_SERVICES=1` സജ്ജമാക്കുക. `docs/reference/ENVIRONMENT.md` കാണുക.
+- **പശ്ചാത്തല സേവനങ്ങൾ പ്രവർത്തനരഹിതമാക്കുക** — ഷെഡ്യൂളർ, MCP സെർവർ, ആവർത്തിച്ചുള്ള മെയിന്റനൻസ് ടാസ്ക്കുകൾ എന്നിവ ഒഴിവാക്കാൻ `AGENTPROXY_DISABLE_BACKGROUND_SERVICES=1` സജ്ജമാക്കുക. `docs/reference/ENVIRONMENT.md` കാണുക.
 - **SQLite WAL മോഡ് ഉപയോഗിക്കുക** — ഇത് ഡിഫോൾട്ടായി പ്രവർത്തനക്ഷമമാണ്, ഒരേസമയം നടക്കുന്ന റീഡുകളുടെ സമയത്തെ പരമാവധി മെമ്മറി ഉപയോഗം കുറയ്ക്കുന്നു.
-- **V8 ഹീപ്പിന് പരിധി നിശ്ചയിക്കുക** — റൺടൈം VM-നേക്കാൾ വലിയ പരിധി കണക്കാക്കാതിരിക്കാൻ `OMNIROUTE_MEMORY_MB` (ഉദാ. `512`) സജ്ജമാക്കുക. `docs/reference/ENVIRONMENT.md` കാണുക.
-- **ഹെവിവെയ്റ്റ് അഡ്മിഷൻ ഹീപ്പ് പരിധിക്കനുസരിച്ച് സ്വയമേവ സ്കെയിൽ ചെയ്യുന്നു** -- മുകളിൽ `OMNIROUTE_MEMORY_MB` സജ്ജമാക്കിയാൽ, ഇൻജെസ്റ്റ് ബൈറ്റ് ബജറ്റ് (`OMNIROUTE_CHAT_MAX_INFLIGHT_BYTES`) അതേ പരിധിയിൽനിന്ന് സ്വയം നിർണയിക്കപ്പെടുന്നു. അതിനാൽ, മെമ്മറി പരിമിതമായ VM-ന് അധിക ട്യൂണിങ് ഇല്ലാതെതന്നെ ഒരേസമയം കൈകാര്യം ചെയ്യാവുന്ന അഭ്യർത്ഥനകൾക്കായി ചെറിയൊരു ബജറ്റ് ലഭിക്കുന്നു; അധിക അഭ്യർത്ഥനകൾ മെമ്മറിക്കായി മത്സരിക്കുന്നതിനുപകരം `Retry-After` സഹിതം വീണ്ടും ശ്രമിക്കാവുന്ന `503` പ്രതികരണം ലഭിക്കും. ഇതിനു പുറമേ അഭ്യർത്ഥനകളുടെ എണ്ണത്തിന് കർശനമായ പരമാവധി പരിധി ആവശ്യമുണ്ടെങ്കിൽ മാത്രം പഴയ `OMNIROUTE_CHAT_MAX_HEAVY_IN_FLIGHT` പരിധി സജ്ജമാക്കുക.
+- **V8 ഹീപ്പിന് പരിധി നിശ്ചയിക്കുക** — റൺടൈം VM-നേക്കാൾ വലിയ പരിധി കണക്കാക്കാതിരിക്കാൻ `AGENTPROXY_MEMORY_MB` (ഉദാ. `512`) സജ്ജമാക്കുക. `docs/reference/ENVIRONMENT.md` കാണുക.
+- **ഹെവിവെയ്റ്റ് അഡ്മിഷൻ ഹീപ്പ് പരിധിക്കനുസരിച്ച് സ്വയമേവ സ്കെയിൽ ചെയ്യുന്നു** -- മുകളിൽ `AGENTPROXY_MEMORY_MB` സജ്ജമാക്കിയാൽ, ഇൻജെസ്റ്റ് ബൈറ്റ് ബജറ്റ് (`AGENTPROXY_CHAT_MAX_INFLIGHT_BYTES`) അതേ പരിധിയിൽനിന്ന് സ്വയം നിർണയിക്കപ്പെടുന്നു. അതിനാൽ, മെമ്മറി പരിമിതമായ VM-ന് അധിക ട്യൂണിങ് ഇല്ലാതെതന്നെ ഒരേസമയം കൈകാര്യം ചെയ്യാവുന്ന അഭ്യർത്ഥനകൾക്കായി ചെറിയൊരു ബജറ്റ് ലഭിക്കുന്നു; അധിക അഭ്യർത്ഥനകൾ മെമ്മറിക്കായി മത്സരിക്കുന്നതിനുപകരം `Retry-After` സഹിതം വീണ്ടും ശ്രമിക്കാവുന്ന `503` പ്രതികരണം ലഭിക്കും. ഇതിനു പുറമേ അഭ്യർത്ഥനകളുടെ എണ്ണത്തിന് കർശനമായ പരമാവധി പരിധി ആവശ്യമുണ്ടെങ്കിൽ മാത്രം പഴയ `AGENTPROXY_CHAT_MAX_HEAVY_IN_FLIGHT` പരിധി സജ്ജമാക്കുക.
 - **VPS-ൽ `next build` ഒഴിവാക്കുക** — ലോക്കലായി ബിൽഡ് ചെയ്ത് സ്റ്റാൻഡ്എലോൺ ഔട്ട്പുട്ട് (`.next/standalone/`) ഡിപ്ലോയ് ചെയ്യുക.
 - **`top` / `free -m` ഉപയോഗിച്ച് നിരീക്ഷിക്കുക** — 1 GB VM-ൽ നിഷ്ക്രിയാവസ്ഥയിൽ AgentProxy സാധാരണയായി 200-400 MB RSS ഉപയോഗിക്കുന്നു.

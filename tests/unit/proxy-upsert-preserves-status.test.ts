@@ -8,7 +8,7 @@ import path from "node:path";
 // that carries no valid status must leave the stored one alone, and the sync must be
 // able to refuse writing a row it does not own.
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-proxy-upsert-status-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-proxy-upsert-status-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 
 const core = await import("../../src/lib/db/core.ts");

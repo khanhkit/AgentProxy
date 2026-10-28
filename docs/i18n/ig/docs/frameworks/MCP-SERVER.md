@@ -6,21 +6,21 @@
 
 > Sava Model Context Protocol nwere ngwaọrụ 110 maka ọrụ ntụgharị ụzọ, cache, mkpakọ, ebe nchekwa, nka, proxy, pool, Radar, na isi mmalite context.
 >
-> Isi iyi nke eziokwu: `open-sse/mcp-server/server.ts` na-eji `countUniqueMcpTools()` gbakọọ **ngwaọrụ pụrụ iche 110**: nkọwa canonical 45 (gụnyere ngwaọrụ isii maka usoro ndụ CCR, ngwaọrụ atọ nke agent-skills, `omniroute_radar_catalog`, na `omniroute_x_search`), tinyere ebe nchekwa (3), nka (4), nka GitHub (3), pool (6), gamification (8), plugins (8), Notion (6), Obsidian (22), corpus mpaghara (3), na ngwaọrụ mkpakọ abụọ nke bụ naanị maka RTK.
+> Isi iyi nke eziokwu: `open-sse/mcp-server/server.ts` na-eji `countUniqueMcpTools()` gbakọọ **ngwaọrụ pụrụ iche 110**: nkọwa canonical 45 (gụnyere ngwaọrụ isii maka usoro ndụ CCR, ngwaọrụ atọ nke agent-skills, `agentproxy_radar_catalog`, na `agentproxy_x_search`), tinyere ebe nchekwa (3), nka (4), nka GitHub (3), pool (6), gamification (8), plugins (8), Notion (6), Obsidian (22), corpus mpaghara (3), na ngwaọrụ mkpakọ abụọ nke bụ naanị maka RTK.
 
 ## Nwụnye
 
 E tinyere AgentProxy MCP n’ime ya. Jiri nke a malite ya:
 
 ```bash
-omniroute --mcp
+agentproxy --mcp
 ```
 
 Ma ọ bụ site na open-sse transport:
 
 ```bash
 # HTTP transport nwere ike ibufe data n’usoro iyi (ọdụ ụgbọ mmiri 20130)
-omniroute --dev  # MCP na-amalite na-akpaghị aka na /mcp endpoint
+agentproxy --dev  # MCP na-amalite na-akpaghị aka na /mcp endpoint
 ```
 
 A na-agbanyụ HTTP transports (`sse` / `streamable-http`, nke dashboard server na-enye n’ime otu usoro ahụ)
@@ -28,10 +28,10 @@ na ndabara, ma na mbụ, naanị site na ibe `/dashboard/mcp` ka a pụrụ isi 
 CLI nwekwara otu ikike ahụ:
 
 ```bash
-omniroute mcp status                                  # agbanyere/online, transport, ọnụ ọgụgụ tools
-omniroute mcp enable [--transport stdio|sse|streamable-http]
-omniroute mcp disable
-omniroute mcp restart                                 # na-atọgharị sessions sse/streamable-http ndị na-arụ ọrụ
+agentproxy mcp status                                  # agbanyere/online, transport, ọnụ ọgụgụ tools
+agentproxy mcp enable [--transport stdio|sse|streamable-http]
+agentproxy mcp disable
+agentproxy mcp restart                                 # na-atọgharị sessions sse/streamable-http ndị na-arụ ọrụ
 ```
 
 `mcp enable`/`mcp disable` na-eji PATCH emelite otu ntọala `mcpEnabled` ahụ (yana `mcpTransport` ma ọ bụrụ na achọrọ)
@@ -83,61 +83,61 @@ Cursor, Cline, na MCP client ndị dakọtara.
 
 | Ngwaọrụ                         | Ikike                 | Nkọwa                                                                                                                             |
 | :------------------------------ | :-------------------- | :-------------------------------------------------------------------------------------------------------------------------------- |
-| `omniroute_get_health`          | `read:health`         | Oge ọrụ, ebe nchekwa, circuit breakers, oke ọsọ, ọnụ ọgụgụ cache                                                                  |
-| `omniroute_list_combos`         | `read:combos`         | Combo niile ahaziri yana usoro ha (metrics bụ nhọrọ)                                                                              |
-| `omniroute_get_combo_metrics`   | `read:combos`         | Metrics arụmọrụ maka otu combo a kapịrị ọnụ                                                                                       |
-| `omniroute_switch_combo`        | `write:combos`        | Mee ka combo rụọ ọrụ ma ọ bụ kwụsị ya                                                                                             |
-| `omniroute_create_combo`        | `write:combos`        | Mepụta combo a kwadoro site na combo API dị adị                                                                                   |
-| `omniroute_check_quota`         | `read:quota`          | Quota e ji mee ihe/ngụkọta, pasent fọdụrụ, oge nrụgharị, ọnọdụ token                                                              |
-| `omniroute_route_request`       | `execute:completions` | Zipu mmecha nkata site na ntụgharị ụzọ AgentProxy                                                                                  |
-| `omniroute_cost_report`         | `read:usage`          | Akụkọ ọnụ ahịa dịka oge si dị (nnọkọ/ụbọchị/izu/ọnwa)                                                                             |
-| `omniroute_list_models_catalog` | `read:models`         | Katalọgụ model zuru ezu nwere ikike, ọnọdụ, na ọnụ ahịa                                                                           |
-| `omniroute_radar_catalog`       | `read:radar`          | Katalọgụ Radar mpaghara e binyere aka; nzacha provider/family bụ nhọrọ                                                            |
-| `omniroute_tool_search`         | `read:tools`          | Chọpụta ngwaọrụ sitere na katalọgụ MCP edebanyere aha                                                                             |
-| `omniroute_web_search`          | `execute:search`      | Chọọ na webụ site na ndị provider ọchụchọ ahaziri. Ọ bụghị X/Twitter.                                                             |
-| `omniroute_x_search`            | `execute:search`      | Chọọ na X site na xAI/SuperGrok, ma ọ bụ họrọ `xquik-search` maka nsonaazụ Xquik API. Ọ chọrọ credentials maka backend ahọpụtara. |
-| `omniroute_web_fetch`           | `execute:search`      | Weta ọdịnaya webụ site na ndị provider fetch ahaziri                                                                              |
+| `agentproxy_get_health`          | `read:health`         | Oge ọrụ, ebe nchekwa, circuit breakers, oke ọsọ, ọnụ ọgụgụ cache                                                                  |
+| `agentproxy_list_combos`         | `read:combos`         | Combo niile ahaziri yana usoro ha (metrics bụ nhọrọ)                                                                              |
+| `agentproxy_get_combo_metrics`   | `read:combos`         | Metrics arụmọrụ maka otu combo a kapịrị ọnụ                                                                                       |
+| `agentproxy_switch_combo`        | `write:combos`        | Mee ka combo rụọ ọrụ ma ọ bụ kwụsị ya                                                                                             |
+| `agentproxy_create_combo`        | `write:combos`        | Mepụta combo a kwadoro site na combo API dị adị                                                                                   |
+| `agentproxy_check_quota`         | `read:quota`          | Quota e ji mee ihe/ngụkọta, pasent fọdụrụ, oge nrụgharị, ọnọdụ token                                                              |
+| `agentproxy_route_request`       | `execute:completions` | Zipu mmecha nkata site na ntụgharị ụzọ AgentProxy                                                                                  |
+| `agentproxy_cost_report`         | `read:usage`          | Akụkọ ọnụ ahịa dịka oge si dị (nnọkọ/ụbọchị/izu/ọnwa)                                                                             |
+| `agentproxy_list_models_catalog` | `read:models`         | Katalọgụ model zuru ezu nwere ikike, ọnọdụ, na ọnụ ahịa                                                                           |
+| `agentproxy_radar_catalog`       | `read:radar`          | Katalọgụ Radar mpaghara e binyere aka; nzacha provider/family bụ nhọrọ                                                            |
+| `agentproxy_tool_search`         | `read:tools`          | Chọpụta ngwaọrụ sitere na katalọgụ MCP edebanyere aha                                                                             |
+| `agentproxy_web_search`          | `execute:search`      | Chọọ na webụ site na ndị provider ọchụchọ ahaziri. Ọ bụghị X/Twitter.                                                             |
+| `agentproxy_x_search`            | `execute:search`      | Chọọ na X site na xAI/SuperGrok, ma ọ bụ họrọ `xquik-search` maka nsonaazụ Xquik API. Ọ chọrọ credentials maka backend ahọpụtara. |
+| `agentproxy_web_fetch`           | `execute:search`      | Weta ọdịnaya webụ site na ndị provider fetch ahaziri                                                                              |
 
 ## Ngwaọrụ Ndị Dị Elu (11) — Agba nke 2
 
 | Ngwaọrụ                            | Oke Ikike                            | Nkọwa                                                                                                 |
 | :--------------------------------- | :----------------------------------- | :---------------------------------------------------------------------------------------------------- |
-| `omniroute_simulate_route`         | `read:health`, `read:combos`         | Nnwale ịmegharị nhazi ụzọ na-enweghị mmejuputa ya, tinyere osisi ụzọ ndabere                          |
-| `omniroute_set_budget_guard`       | `write:budget`                       | Mmefu ego nnọkọ nwere omume ibelata ọrụ/igbochi/ịdọ aka ná ntị                                        |
-| `omniroute_set_routing_strategy`   | `write:combos`                       | Melite atụmatụ combo n'oge ọ na-arụ ọrụ (priority/weighted/auto/etc.)                                 |
-| `omniroute_set_resilience_profile` | `write:resilience`                   | Tinye ntọala nnagide `aggressive` / `balanced` / `conservative`                                       |
-| `omniroute_test_combo`             | `execute:completions`, `read:combos` | Nnwale ozugbo nke provider ọ bụla dị na combo site n'iji ezigbo oku upstream                          |
-| `omniroute_get_provider_metrics`   | `read:health`                        | Metrik nke provider ọ bụla nwere oge nzaghachi p50/p95/p99 na ọnọdụ circuit breaker                   |
-| `omniroute_best_combo_for_task`    | `read:combos`, `read:health`         | Tụọ aro combo dabere n'ụdị ọrụ, tinyere mmachi mmefu ego/oge nzaghachi                                |
-| `omniroute_explain_route`          | `read:health`, `read:usage`          | Kọwaa ihe mere e ji ziga arịrịọ na provider (ihe ndị e ji agbakọ akara + ụzọ ndabere)                 |
-| `omniroute_get_session_snapshot`   | `read:usage`                         | Nchịkọta nnọkọ zuru ezu: ụgwọ, token, model/provider ndị kachasị, njehie, onye nche mmefu ego         |
-| `omniroute_db_health_check`        | `read:health`, `write:resilience`    | Chọpụta (ma dozie onwe ya ma achọrọ) ndahie database dịka combo refs gbajiri agbaji / ahịrị ụmụ mgbei |
-| `omniroute_sync_pricing`           | `pricing:write`                      | Mekọrịta data ọnụahịa site na isi mmalite mpụga (LiteLLM); na-akwado `dryRun`                         |
+| `agentproxy_simulate_route`         | `read:health`, `read:combos`         | Nnwale ịmegharị nhazi ụzọ na-enweghị mmejuputa ya, tinyere osisi ụzọ ndabere                          |
+| `agentproxy_set_budget_guard`       | `write:budget`                       | Mmefu ego nnọkọ nwere omume ibelata ọrụ/igbochi/ịdọ aka ná ntị                                        |
+| `agentproxy_set_routing_strategy`   | `write:combos`                       | Melite atụmatụ combo n'oge ọ na-arụ ọrụ (priority/weighted/auto/etc.)                                 |
+| `agentproxy_set_resilience_profile` | `write:resilience`                   | Tinye ntọala nnagide `aggressive` / `balanced` / `conservative`                                       |
+| `agentproxy_test_combo`             | `execute:completions`, `read:combos` | Nnwale ozugbo nke provider ọ bụla dị na combo site n'iji ezigbo oku upstream                          |
+| `agentproxy_get_provider_metrics`   | `read:health`                        | Metrik nke provider ọ bụla nwere oge nzaghachi p50/p95/p99 na ọnọdụ circuit breaker                   |
+| `agentproxy_best_combo_for_task`    | `read:combos`, `read:health`         | Tụọ aro combo dabere n'ụdị ọrụ, tinyere mmachi mmefu ego/oge nzaghachi                                |
+| `agentproxy_explain_route`          | `read:health`, `read:usage`          | Kọwaa ihe mere e ji ziga arịrịọ na provider (ihe ndị e ji agbakọ akara + ụzọ ndabere)                 |
+| `agentproxy_get_session_snapshot`   | `read:usage`                         | Nchịkọta nnọkọ zuru ezu: ụgwọ, token, model/provider ndị kachasị, njehie, onye nche mmefu ego         |
+| `agentproxy_db_health_check`        | `read:health`, `write:resilience`    | Chọpụta (ma dozie onwe ya ma achọrọ) ndahie database dịka combo refs gbajiri agbaji / ahịrị ụmụ mgbei |
+| `agentproxy_sync_pricing`           | `pricing:write`                      | Mekọrịta data ọnụahịa site na isi mmalite mpụga (LiteLLM); na-akwado `dryRun`                         |
 
 ## Ngwaọrụ Cache (2)
 
 | Ngwaọrụ                 | Oke Ikike     | Nkọwa                                                     |
 | :---------------------- | :------------ | :-------------------------------------------------------- |
-| `omniroute_cache_stats` | `read:cache`  | Ndekọ semantic cache, prompt-cache, na idempotency        |
-| `omniroute_cache_flush` | `write:cache` | Hichapụ cache n'ebe niile ma ọ bụ site na signature/model |
+| `agentproxy_cache_stats` | `read:cache`  | Ndekọ semantic cache, prompt-cache, na idempotency        |
+| `agentproxy_cache_flush` | `write:cache` | Hichapụ cache n'ebe niile ma ọ bụ site na signature/model |
 
 ## Ngwaọrụ Mkpakọ (13)
 
 | Ngwaọrụ                             | Oke Ikike           | Nkọwa                                                                                                                                 |
 | :---------------------------------- | :------------------ | :------------------------------------------------------------------------------------------------------------------------------------ |
-| `omniroute_compression_status`      | `read:compression`  | Ntọala mkpakọ, nchịkọta nyocha, na ndekọ na-eburu cache n'uche (gụnyere metadata `analytics.mcpDescriptionCompression`)               |
-| `omniroute_compression_configure`   | `write:compression` | Hazie ọnọdụ mkpakọ, oke mbido, oke nha ebumnuche, ichekwa system-prompt, na njikwa ịgbanye/ịgbanyụ mkpakọ nkọwa MCP                   |
-| `omniroute_set_compression_engine`  | `write:compression` | Họrọ engine na-arụ ọrụ (off/caveman/rtk/stacked) na ogo ike Caveman/RTK                                                               |
-| `omniroute_list_compression_combos` | `read:compression`  | Depụta compression combo ndị akpọrọ aha na usoro engine ha                                                                            |
-| `omniroute_compression_combo_stats` | `read:compression`  | Nnyocha e kewara dịka compression combo na engine si dị                                                                               |
-| `omniroute_ccr_store`               | `write:compression` | Chekwaa ọdịnaya e kewapụrụ maka onye na-akpọ oku n'ime ebe nchekwa CCR nwere oke dị na memory, ma weghachite akara na ntụaka `ccr://` |
-| `omniroute_ccr_retrieve`            | `read:compression`  | Weghachite ọdịnaya CCR n'uju ma ọ bụ site na ọnọdụ head, tail, lines, grep, na stats                                                  |
-| `omniroute_ccr_inspect`             | `read:compression`  | Nyochaa metadata CCR nke onye na-akpọ oku nwere n'eweghachighị ọdịnaya                                                                |
-| `omniroute_ccr_list`                | `read:compression`  | Depụta metadata e kewara na peeji maka ngọngọ CCR nke onye na-akpọ oku nwere                                                          |
-| `omniroute_ccr_delete`              | `write:compression` | Hichapụ ngọngọ CCR nke onye na-akpọ oku nwere                                                                                         |
-| `omniroute_ccr_stats`               | `read:compression`  | Kọwaa ojiji memory nke onye na-akpọ oku, ọnụọgụ lifecycle, na oke ebe nchekwa                                                         |
-| `omniroute_rtk_discover`            | `read:compression`  | Chọpụta mkpọtụ na-eme ugboro ugboro n'ime sample mmepụta RTK ndị e kwere ka e jiri mee ihe                                            |
-| `omniroute_rtk_learn`               | `read:compression`  | Mepụta RTK filter draft enwere ike inyocha site na sample ndị e kwere ka e jiri mee ihe                                               |
+| `agentproxy_compression_status`      | `read:compression`  | Ntọala mkpakọ, nchịkọta nyocha, na ndekọ na-eburu cache n'uche (gụnyere metadata `analytics.mcpDescriptionCompression`)               |
+| `agentproxy_compression_configure`   | `write:compression` | Hazie ọnọdụ mkpakọ, oke mbido, oke nha ebumnuche, ichekwa system-prompt, na njikwa ịgbanye/ịgbanyụ mkpakọ nkọwa MCP                   |
+| `agentproxy_set_compression_engine`  | `write:compression` | Họrọ engine na-arụ ọrụ (off/caveman/rtk/stacked) na ogo ike Caveman/RTK                                                               |
+| `agentproxy_list_compression_combos` | `read:compression`  | Depụta compression combo ndị akpọrọ aha na usoro engine ha                                                                            |
+| `agentproxy_compression_combo_stats` | `read:compression`  | Nnyocha e kewara dịka compression combo na engine si dị                                                                               |
+| `agentproxy_ccr_store`               | `write:compression` | Chekwaa ọdịnaya e kewapụrụ maka onye na-akpọ oku n'ime ebe nchekwa CCR nwere oke dị na memory, ma weghachite akara na ntụaka `ccr://` |
+| `agentproxy_ccr_retrieve`            | `read:compression`  | Weghachite ọdịnaya CCR n'uju ma ọ bụ site na ọnọdụ head, tail, lines, grep, na stats                                                  |
+| `agentproxy_ccr_inspect`             | `read:compression`  | Nyochaa metadata CCR nke onye na-akpọ oku nwere n'eweghachighị ọdịnaya                                                                |
+| `agentproxy_ccr_list`                | `read:compression`  | Depụta metadata e kewara na peeji maka ngọngọ CCR nke onye na-akpọ oku nwere                                                          |
+| `agentproxy_ccr_delete`              | `write:compression` | Hichapụ ngọngọ CCR nke onye na-akpọ oku nwere                                                                                         |
+| `agentproxy_ccr_stats`               | `read:compression`  | Kọwaa ojiji memory nke onye na-akpọ oku, ọnụọgụ lifecycle, na oke ebe nchekwa                                                         |
+| `agentproxy_rtk_discover`            | `read:compression`  | Chọpụta mkpọtụ na-eme ugboro ugboro n'ime sample mmepụta RTK ndị e kwere ka e jiri mee ihe                                            |
+| `agentproxy_rtk_learn`               | `read:compression`  | Mepụta RTK filter draft enwere ike inyocha site na sample ndị e kwere ka e jiri mee ihe                                               |
 
 Ndenye CCR dị naanị na memory ma na-apụ n'anya mgbe a malitegharịrị sistemụ. Oke ngọngọ ọ bụla bụ 2 MiB, oke
 principal ọ bụla bụ 16 MiB, ebe oke ebe nchekwa zuru ụwa ọnụ bụ 64 MiB. Ndenye na-eji TTL nke awa 24 na ndabara (nke kachasị
@@ -145,7 +145,7 @@ bụ ụbọchị asaa). Nweghachite MCP zuru ezu nwere oke 256 KiB; ngọngọ 
 ọnọdụ ranged na grep. Nchekwa, nweghachite, ndepụta, nyocha, nhichapụ, na stats bụ ndị e kewapụrụ dịka
 principal API-key e nyochara njirimara ya si dị. Ndekọ audit nwere hash na metadata nha, ọ dịghị mgbe ha na-enwe ọdịnaya.
 
-`omniroute_compression_status` na-akọ mkpakọ nkọwa MCP iche n’okpuru
+`agentproxy_compression_status` na-akọ mkpakọ nkọwa MCP iche n’okpuru
 `analytics.mcpDescriptionCompression`. Uru ndị ahụ bụ atụmatụ nha metadata maka nkọwa MCP ndị enwere ike
 idepụta (`tools`, `prompts`, `resources`, na `resourceTemplates`); ha abụghị ndekọ ojiji sitere n’aka onye
 na-eweta ọrụ, a na-ejikwa `source: "mcp_metadata_estimate"` kaa ha akara.
@@ -175,9 +175,9 @@ usoro mkpakọ oge-ọsọ nke na-akwado ngwaọrụ ndị a.
 
 | Ngwaọrụ                     | Scopes         | Nkọwa                                                                            |
 | :-------------------------- | :------------- | :------------------------------------------------------------------------------- |
-| `omniroute_oneproxy_fetch`  | `read:proxies` | Nweta proxies efu site n'ahịa 1proxy (ihe nzacha protocol/country/quality/limit) |
-| `omniroute_oneproxy_rotate` | `read:proxies` | Nweta proxy ọzọ dịnụ site na atụmatụ (`random` / `quality` / `sequential`)       |
-| `omniroute_oneproxy_stats`  | `read:proxies` | Ndekọ ọnụ ọgụgụ pool, ọnọdụ mmekọrịta, na nkesa dịka protocol na country si dị   |
+| `agentproxy_oneproxy_fetch`  | `read:proxies` | Nweta proxies efu site n'ahịa 1proxy (ihe nzacha protocol/country/quality/limit) |
+| `agentproxy_oneproxy_rotate` | `read:proxies` | Nweta proxy ọzọ dịnụ site na atụmatụ (`random` / `quality` / `sequential`)       |
+| `agentproxy_oneproxy_stats`  | `read:proxies` | Ndekọ ọnụ ọgụgụ pool, ọnọdụ mmekọrịta, na nkesa dịka protocol na country si dị   |
 
 ## Ngwaọrụ Ebe Ncheta (3)
 
@@ -185,9 +185,9 @@ A kọwapụtara ha na `open-sse/mcp-server/tools/memoryTools.ts`. A na-amanye a
 
 | Ngwaọrụ                   | Scopes         | Nkọwa                                                                                                |
 | :------------------------ | :------------- | :--------------------------------------------------------------------------------------------------- |
-| `omniroute_memory_search` | `read:memory`  | Jiri query / type / API key chọọ ebe ncheta, tinyere mmanye oke token                                |
-| `omniroute_memory_add`    | `write:memory` | Tinye ndekọ ebe ncheta ọhụrụ (`factual` / `episodic` / `procedural` / `semantic`)                    |
-| `omniroute_memory_clear`  | `write:memory` | Hichapụ ebe ncheta maka API key, ma ọ bụrụ na achọrọ, jiri type ma ọ bụ timestamp `olderThan` zaa ha |
+| `agentproxy_memory_search` | `read:memory`  | Jiri query / type / API key chọọ ebe ncheta, tinyere mmanye oke token                                |
+| `agentproxy_memory_add`    | `write:memory` | Tinye ndekọ ebe ncheta ọhụrụ (`factual` / `episodic` / `procedural` / `semantic`)                    |
+| `agentproxy_memory_clear`  | `write:memory` | Hichapụ ebe ncheta maka API key, ma ọ bụrụ na achọrọ, jiri type ma ọ bụ timestamp `olderThan` zaa ha |
 
 ## Ngwaọrụ Nka (4)
 
@@ -195,10 +195,10 @@ A kọwapụtara ha na `open-sse/mcp-server/tools/skillTools.ts`. `src/lib/skill
 
 | Ngwaọrụ                       | Scopes           | Nkọwa                                                                                                |
 | :---------------------------- | :--------------- | :--------------------------------------------------------------------------------------------------- |
-| `omniroute_skills_list`       | `read:skills`    | Depụta nka ndị e debanyere aha, jiri API key, name, ma ọ bụ ọnọdụ enabled zaa ha ma ọ bụrụ na achọrọ |
-| `omniroute_skills_enable`     | `write:skills`   | Mee ka otu nka akọwapụtara site na ID rụọ ọrụ ma ọ bụ kwụsị ọrụ                                      |
-| `omniroute_skills_execute`    | `execute:skills` | Jiri input e nyere mee otu nka ma weghachite ndekọ mmezu ya                                          |
-| `omniroute_skills_executions` | `read:skills`    | Depụta akụkọ mmezu nka ndị mere n'oge na-adịbeghị anya                                               |
+| `agentproxy_skills_list`       | `read:skills`    | Depụta nka ndị e debanyere aha, jiri API key, name, ma ọ bụ ọnọdụ enabled zaa ha ma ọ bụrụ na achọrọ |
+| `agentproxy_skills_enable`     | `write:skills`   | Mee ka otu nka akọwapụtara site na ID rụọ ọrụ ma ọ bụ kwụsị ọrụ                                      |
+| `agentproxy_skills_execute`    | `execute:skills` | Jiri input e nyere mee otu nka ma weghachite ndekọ mmezu ya                                          |
+| `agentproxy_skills_executions` | `read:skills`    | Depụta akụkọ mmezu nka ndị mere n'oge na-adịbeghị anya                                               |
 
 ## Isi Iyi Context Notion (6)
 
@@ -234,9 +234,9 @@ A kọwara ha na `open-sse/mcp-server/tools/agentSkillTools.ts`. `src/lib/agentS
 
 | Ngwa                              | Oke            | Nkọwa                                                                                                                             |
 | :-------------------------------- | :------------- | :-------------------------------------------------------------------------------------------------------------------------------- |
-| `omniroute_agent_skills_list`     | `read:catalog` | Depụta nka agent 45 niile site na nzacha `category` (api\|cli) na `area` ndị enwere ike iji; ọ na-eweghachi metadata + mkpuchi    |
-| `omniroute_agent_skills_get`      | `read:catalog` | Nweta metadata zuru ezu + ọdịnaya SKILL.md maka otu nka site na `id` canonical ya                                                 |
-| `omniroute_agent_skills_coverage` | `read:catalog` | Ọnụọgụ mkpuchi: ole n'ime nka API 23, CLI 21 na config 1 nwere faịlụ SKILL.md na filesystem ma e jiri ya tụnyere ngụkọta katalọgụ |
+| `agentproxy_agent_skills_list`     | `read:catalog` | Depụta nka agent 45 niile site na nzacha `category` (api\|cli) na `area` ndị enwere ike iji; ọ na-eweghachi metadata + mkpuchi    |
+| `agentproxy_agent_skills_get`      | `read:catalog` | Nweta metadata zuru ezu + ọdịnaya SKILL.md maka otu nka site na `id` canonical ya                                                 |
+| `agentproxy_agent_skills_coverage` | `read:catalog` | Ọnụọgụ mkpuchi: ole n'ime nka API 23, CLI 21 na config 1 nwere faịlụ SKILL.md na filesystem ma e jiri ya tụnyere ngụkọta katalọgụ |
 
 Lee [AGENT-SKILLS.md](./AGENT-SKILLS.md) maka katalọgụ zuru ezu na otu agent ndị dị na mpụga si eji ya.
 
@@ -309,7 +309,7 @@ onye na-ejikọta ya anaghị agbakọ ya.
 | :------------------- | :------------------------------------------------------------------- | :---------------------------- | :-------------------------------------------- |
 | Nchịkwa igodo API    | `api_keys.scopes`                                                    | `hasManageScope`              | Nchịkwa REST maka igodo Bearer ahụ            |
 | Mgbakwunye igodo API | otu usoro, otu eriri kpọmkwem                                        | onye enyemaka akpọrọ n'okpuru | Naanị ikike ahụ                               |
-| MCP tool scopes      | otu usoro, ma ọ bụghị MCP `_meta`, ma ọ bụghị `OMNIROUTE_MCP_SCOPES` | `scopeMatches`                | Ngwa ọrụ ahụ, ozugbo amanye ya                |
+| MCP tool scopes      | otu usoro, ma ọ bụghị MCP `_meta`, ma ọ bụghị `AGENTPROXY_MCP_SCOPES` | `scopeMatches`                | Ngwa ọrụ ahụ, ozugbo amanye ya                |
 | Akara ngosi nnweta   | `oma_live_…`                                                         | `scopeSatisfies`              | Ụzọ njikwa nke usoro na ụzọ ya chọrọ ọkwa ahụ |
 
 Ịmepụta asambodo ọ bụla dị na
@@ -355,12 +355,12 @@ Otu oku ahụ na-ada maka `admin`, `mcp:connect`, `read`, na `write` mgbe ndị 
 bụ naanị eriri enyere. Enweghị usoro n'etiti scopes ngwa MCP
 karịa `*` na-eso.
 
-Amanye ya na-agbanyụ ma ọ bụrụ na `OMNIROUTE_MCP_ENFORCE_SCOPES=true` (ndabara
+Amanye ya na-agbanyụ ma ọ bụrụ na `AGENTPROXY_MCP_ENFORCE_SCOPES=true` (ndabara
 `false`). Mgbe ọ na-agbanyụ, `evaluateToolScopes` na-enye ohere oku ma na-awụfe
 ndepụta ahụ. Mgbe ọ na-agbanye, HTTP na-eji `api_keys.scopes` nke igodo Bearer dị ka
 `authInfo` (lee [Per-key HTTP scope binding](#per-key-http-scope-binding-7895)).
 Mgbe enweghị scopes igodo na-edozi, setịpụrụ enyere na-ada site na MCP `_meta`, mgbe ahụ
-`OMNIROUTE_MCP_SCOPES`.
+`AGENTPROXY_MCP_SCOPES`.
 
 #### Scopes akara ngosi nnweta
 
@@ -416,8 +416,8 @@ Ngwaọrụ ọ bụla chọrọ scopes akọwapụtara:
 | `write:skills`        | `skills_enable`                                                                                                                                                                 |
 | `execute:skills`      | `skills_execute`                                                                                                                                                                |
 | `read:catalog`        | `agent_skills_list`, `agent_skills_get`, `agent_skills_coverage`                                                                                                                |
-| `read:tools`          | `omniroute_tool_search`                                                                                                                                                         |
-| `read:radar`          | `omniroute_radar_catalog`                                                                                                                                                       |
+| `read:tools`          | `agentproxy_tool_search`                                                                                                                                                         |
+| `read:radar`          | `agentproxy_radar_catalog`                                                                                                                                                       |
 | `read:gamification`   | `gamification_profile`, `gamification_rank`, `gamification_leaderboard`, `gamification_badges`, `gamification_servers`, `gamification_anomalies`                                |
 | `write:gamification`  | `gamification_invite`, `gamification_transfer`                                                                                                                                  |
 | `read:plugins`        | `plugin_list`, `plugin_executions`                                                                                                                                              |
@@ -448,10 +448,10 @@ N'elu HTTP/SSE, `open-sse/mcp-server/httpTransport.ts` ugbu a na-edozi onye na-a
 ma na-enyefe ya na MCP SDK's `transport.handleRequest(req, { authInfo })`, ya mere
 `extra.authInfo.scopes` na-erute oku ngwaọrụ ọ bụla na-egosipụta oghere igodo Bearer n'onwe ya.
 `scopeEnforcement.ts`'s `resolveCallerScopeContext()` ebutelarị `authInfo` ụzọ karịa
-`_meta` na `OMNIROUTE_MCP_SCOPES` env fallback — nke a na-ejupụta naanị isi iyi ahụ mbụ,
+`_meta` na `AGENTPROXY_MCP_SCOPES` env fallback — nke a na-ejupụta naanị isi iyi ahụ mbụ,
 nke kachasị mkpa, nke na-enweghị nri na mbụ n'elu HTTP. Mgbe igodo API na-edozi
 (enweghị isi, igodo na-ezighi ezi), `authInfo` na-anọgide `undefined` ma mkpebi na-ada site na
-meta`/env chain dị ugbu a n'agbanweghị agbanwe. Nke a anaghị atụgharị `OMNIROUTE_MCP_ENFORCE_SCOPES`'s
+meta`/env chain dị ugbu a n'agbanweghị agbanwe. Nke a anaghị atụgharị `AGENTPROXY_MCP_ENFORCE_SCOPES`'s
 ndabara — a ka ga-enyere mmanye aka n'ụzọ doro anya; mgbanwe a na-eme naanị ka
 ụzọ kwa igodo buru ụzọ ozugbo ọ dị. stdio enweghị njirimara kwa onye na-akpọ oku (lee
 `mcpCallerIdentity.ts`) ma ọ naghị emetụta — ọ na-anọgide na `_meta`/env fallback chain.
@@ -462,17 +462,17 @@ ndabara — a ka ga-enyere mmanye aka n'ụzọ doro anya; mgbanwe a na-eme naan
 
 | Ngbanwe                                 | Ndabara                            | Ebumnuche                                                                                                                            |
 | :-------------------------------------- | :--------------------------------- | :----------------------------------------------------------------------------------------------------------------------------------- |
-| `OMNIROUTE_BASE_URL`                    | `http://localhost:20128`           | URL ntọala nke sava MCP na-eji mgbe ọ na-akpọ API ime AgentProxy                                                                      |
-| `OMNIROUTE_API_KEY`                     | (gụ oghere)                        | Igodo API a na-eziga dị ka `Authorization: Bearer` gaa na oku API ime                                                                |
-| `OMNIROUTE_MCP_ENFORCE_SCOPES`          | `false` (naanị `"true"` na-eme ya) | Mgbe agbanyere ya, scopes ndị na-adịghị ga-ajụ oku ngwaọrụ ma dekọọ `scope_denied:<reason>` na ndekọ nyocha                          |
-| `OMNIROUTE_MCP_SCOPES`                  | (gụ oghere)                        | Ndepụta scopes ndị e ji rikoma kewaa, nke a na-ewere dị ka ndị “dị” na ndabara (a na-eji ya mgbe onye na-akpọ enyeghị scopes nke ya) |
-| `OMNIROUTE_MCP_COMPRESS_DESCRIPTIONS`   | (edoghị = agbanyere)               | Mgbe edobere ya ka ọ bụrụ `0/false/off/no`, ọ na-agbanyụ mkpakọ nkọwa MCP n'oge ndebanye aha                                         |
-| `OMNIROUTE_MCP_DESCRIPTION_COMPRESSION` | (edoghị = agbanyere)               | Aha ọzọ maka otu njikwa ahụ dị n'elu                                                                                                 |
-| `OMNIROUTE_MCP_FETCH_TIMEOUT_MS`        | `10000`                            | Oke oge tupu a kwụsị ọgụgụ nchịkwa ime (ahụike, nkwụsi ike, ngwakọta, oke ojiji, ojiji)                                              |
-| `OMNIROUTE_MCP_UPSTREAM_TIMEOUT_MS`     | `60000`                            | Oke oge tupu a kwụsị nzọụkwụ ndị na-eche onye na-enye ọrụ (`route_request`, `web_search`, `web_fetch`)                               |
+| `AGENTPROXY_BASE_URL`                    | `http://localhost:20128`           | URL ntọala nke sava MCP na-eji mgbe ọ na-akpọ API ime AgentProxy                                                                      |
+| `AGENTPROXY_API_KEY`                     | (gụ oghere)                        | Igodo API a na-eziga dị ka `Authorization: Bearer` gaa na oku API ime                                                                |
+| `AGENTPROXY_MCP_ENFORCE_SCOPES`          | `false` (naanị `"true"` na-eme ya) | Mgbe agbanyere ya, scopes ndị na-adịghị ga-ajụ oku ngwaọrụ ma dekọọ `scope_denied:<reason>` na ndekọ nyocha                          |
+| `AGENTPROXY_MCP_SCOPES`                  | (gụ oghere)                        | Ndepụta scopes ndị e ji rikoma kewaa, nke a na-ewere dị ka ndị “dị” na ndabara (a na-eji ya mgbe onye na-akpọ enyeghị scopes nke ya) |
+| `AGENTPROXY_MCP_COMPRESS_DESCRIPTIONS`   | (edoghị = agbanyere)               | Mgbe edobere ya ka ọ bụrụ `0/false/off/no`, ọ na-agbanyụ mkpakọ nkọwa MCP n'oge ndebanye aha                                         |
+| `AGENTPROXY_MCP_DESCRIPTION_COMPRESSION` | (edoghị = agbanyere)               | Aha ọzọ maka otu njikwa ahụ dị n'elu                                                                                                 |
+| `AGENTPROXY_MCP_FETCH_TIMEOUT_MS`        | `10000`                            | Oke oge tupu a kwụsị ọgụgụ nchịkwa ime (ahụike, nkwụsi ike, ngwakọta, oke ojiji, ojiji)                                              |
+| `AGENTPROXY_MCP_UPSTREAM_TIMEOUT_MS`     | `60000`                            | Oke oge tupu a kwụsị nzọụkwụ ndị na-eche onye na-enye ọrụ (`route_request`, `web_search`, `web_fetch`)                               |
 | `MCP_TOOL_DENY`                         | (edoghị = enweghị nzacha)          | Aha ngwaọrụ ndị e ji rikoma kewaa ka ewepụ na `tools/list` (mbelata ọnụọgụ ngwaọrụ — lee n'okpuru)                                   |
 | `MCP_TOOL_ALLOW`                        | (edoghị = enweghị nzacha)          | Aha ngwaọrụ ndị e ji rikoma kewaa ka a hapụ naanị ha (ọnọdụ ndepụta ikike — lee n'okpuru)                                            |
-| `DATA_DIR`                              | `~/.omniroute`                     | A na-ede faịlụ akara ịdị ndụ na `${DATA_DIR}/runtime/mcp-heartbeat.json`                                                             |
+| `DATA_DIR`                              | `~/.agentproxy`                     | A na-ede faịlụ akara ịdị ndụ na `${DATA_DIR}/runtime/mcp-heartbeat.json`                                                             |
 
 ---
 
@@ -482,8 +482,8 @@ Ndebanye ngwaọrụ, prompt, na akụ MCP nwere ike ịchịkọta nkọwa n'og
 
 - Mkpakọ na-arụ ọrụ n'elu ederede nkọwa site n'iji usoro iwu Caveman (`getRulesForContext("all", "full")`) yana mwepụ blọk echekwara (akụkụ koodu, blọk nwere ngere, wdg.) ka ọdịnaya nhazi ghara ịgbanwe.
 - Jikwaa ya maka ntinye ọ bụla site na uru `compression.mcpDescriptionCompressionEnabled` dị na tebụl ntọala `key_value` (ndabara: agbanyere) — a na-egosi ya na UI dị ka **Nyocha → Mkpakọ nkọwa MCP**.
-- Jikwaa ya n'ofe usoro niile site na `OMNIROUTE_MCP_COMPRESS_DESCRIPTIONS=false` ma ọ bụ `OMNIROUTE_MCP_DESCRIPTION_COMPRESSION=false`.
-- A na-egosi ọnụ ọgụgụ ozugbo site na `omniroute_compression_status` n'okpuru `analytics.mcpDescriptionCompression`, tinyekwa mkpado `source: "mcp_metadata_estimate"` iji kewapụ ya na nnata ojiji onye na-enye ọrụ n'ezie.
+- Jikwaa ya n'ofe usoro niile site na `AGENTPROXY_MCP_COMPRESS_DESCRIPTIONS=false` ma ọ bụ `AGENTPROXY_MCP_DESCRIPTION_COMPRESSION=false`.
+- A na-egosi ọnụ ọgụgụ ozugbo site na `agentproxy_compression_status` n'okpuru `analytics.mcpDescriptionCompression`, tinyekwa mkpado `source: "mcp_metadata_estimate"` iji kewapụ ya na nnata ojiji onye na-enye ọrụ n'ezie.
 
 ---
 
@@ -502,10 +502,10 @@ Mkpakọ nkọwa na-ebelata metadata nke ngwaọrụ ọ bụla; **mbelata ọn�
 
 ```bash
 # Wepụ ngwaọrụ abụọ na katalọgụ ahụ
-MCP_TOOL_DENY="omniroute_get_health,omniroute_list_combos" omniroute --mcp
+MCP_TOOL_DENY="agentproxy_get_health,agentproxy_list_combos" agentproxy --mcp
 
 # Kpọsaa naanị ngwaọrụ routing + quota (ụdị allow-list)
-MCP_TOOL_ALLOW="omniroute_route_request,omniroute_check_quota" omniroute --mcp
+MCP_TOOL_ALLOW="agentproxy_route_request,agentproxy_check_quota" agentproxy --mcp
 ```
 
 **Otu e si ewepụ ngwaọrụ ndị a zachara:** ndebanye aha na-aga nke ọma mgbe niile; emesịa, a na-akpọ `.disable()` na handle MCP SDK nke ngwaọrụ profile jụrụ, ya mere ọ naghị apụta na `tools/list`, mana njikọ ya ka na-adịgide (ịgbanye/ịgbanyụ n'ụzọ dị ọcha, enweghị ndebanye aha ọzọ). Parser profile ahụ bụ `readMcpToolProfileFromEnv(process.env)`, nke na-eweghachi `null` (enweghị nzacha) mgbe vars abụọ ahụ tọgbọ chakoo.

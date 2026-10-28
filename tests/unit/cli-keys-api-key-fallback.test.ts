@@ -2,13 +2,13 @@ import assert from "node:assert/strict";
 import test from "node:test";
 
 const ORIGINAL_FETCH = globalThis.fetch;
-const ORIGINAL_BASE_URL = process.env.OMNIROUTE_BASE_URL;
+const ORIGINAL_BASE_URL = process.env.AGENTPROXY_BASE_URL;
 
 async function withFetchMock(
   handler: (url: URL, init?: RequestInit) => Response | Promise<Response>,
   run: () => Promise<void>,
 ) {
-  process.env.OMNIROUTE_BASE_URL = "http://127.0.0.1:20128";
+  process.env.AGENTPROXY_BASE_URL = "http://127.0.0.1:20128";
   globalThis.fetch = ((input: string | URL | Request, init?: RequestInit) =>
     handler(new URL(String(input)), init)) as typeof fetch;
 
@@ -16,8 +16,8 @@ async function withFetchMock(
     await run();
   } finally {
     globalThis.fetch = ORIGINAL_FETCH;
-    if (ORIGINAL_BASE_URL === undefined) delete process.env.OMNIROUTE_BASE_URL;
-    else process.env.OMNIROUTE_BASE_URL = ORIGINAL_BASE_URL;
+    if (ORIGINAL_BASE_URL === undefined) delete process.env.AGENTPROXY_BASE_URL;
+    else process.env.AGENTPROXY_BASE_URL = ORIGINAL_BASE_URL;
   }
 }
 

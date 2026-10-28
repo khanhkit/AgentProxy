@@ -131,7 +131,7 @@ test("chat import filtering keeps ordinary OpenAI models only", () => {
 });
 
 test("filterChatSelectableModels drops image endpoints during sync for cheaperinference", () => {
-  // Use OmniRoute's native 'supportedEndpoints' array instead of the pseudocode 'type'
+  // Use AgentProxy's native 'supportedEndpoints' array instead of the pseudocode 'type'
   const mockSyncFixture = [
     { id: "standard-chat-model", supportedEndpoints: ["chat"] },
     { id: "grok-imagine", supportedEndpoints: ["images/generations"] },

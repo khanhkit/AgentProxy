@@ -123,7 +123,7 @@ test("TC-MIG-API-007 previews SQLite read-only and removes the temp file", async
 
     assert.equal(response.status, 200);
     const payload = (await response.json()) as { source?: { family?: string; format?: string } };
-    assert.equal(payload.source?.family, "omniroute");
+    assert.equal(payload.source?.family, "agentproxy");
     assert.equal(payload.source?.format, "sqlite");
     assert.equal(readonly, true);
     assert.equal(closed, true);

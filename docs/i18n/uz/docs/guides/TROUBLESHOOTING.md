@@ -18,7 +18,7 @@ AgentProxy uchun keng tarqalgan muammolar va ularning yechimlari.
 
 | Men buni ko‘ryapman              | Bu nimani anglatadi                            | Nima qilish kerak                                                                                                    |
 | -------------------------------- | ---------------------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
-| "Ulanib bo‘lmadi"                | AgentProxy ishlamayapti                         | `omniroute` buyrug‘ini bajaring yoki `docker restart omniroute` buyrug‘idan foydalaning                              |
+| "Ulanib bo‘lmadi"                | AgentProxy ishlamayapti                         | `agentproxy` buyrug‘ini bajaring yoki `docker restart agentproxy` buyrug‘idan foydalaning                              |
 | "API kaliti yaroqsiz"            | Kalitingiz noto‘g‘ri yoki muddati tugagan      | Kalitni provayder veb-saytidan qayta nusxalang                                                                       |
 | "Tezlik chegarasi oshib ketdi"   | Juda ko‘p so‘rov yuboryapsiz                   | 1 daqiqa kuting yoki avtomatik zaxira variantiga o‘tish uchun `model: "auto"` dan foydalaning                        |
 | "Kvota tugadi"                   | Bepul/pullik kvotangizni sarflab bo‘ldingiz    | Ko‘proq provayder ulang yoki bepul provayderlardan (Kiro, Pollinations) foydalaning                                  |
@@ -26,7 +26,7 @@ AgentProxy uchun keng tarqalgan muammolar va ularning yechimlari.
 | "Noto‘g‘ri provayder ishlatildi" | `auto` boshqa provayderni tanladi              | Bu odatiy holat! `auto` eng yaxshisini tanlaydi. `model: "openai/gpt-4o"` bilan muayyan provayderni majburan tanlang |
 | "502 Bad Gateway"                | Provayder ishlamayapti                         | Kutib, qayta urinib ko‘ring yoki provayderni almashtirish uchun `model: "auto"` dan foydalaning                      |
 | "401 Unauthorized"               | Hisob maʼlumotlaringiz noto‘g‘ri               | API kalitingizni tekshiring yoki OAuth orqali qayta autentifikatsiyadan o‘ting                                       |
-| "omniroute tanilmadi"            | Windows PATH ichida global node modullari yo‘q | npm global prefiksini Windows PATH’ga qo‘shing. Uni `npm config get prefix` orqali toping.                           |
+| "agentproxy tanilmadi"            | Windows PATH ichida global node modullari yo‘q | npm global prefiksini Windows PATH’ga qo‘shing. Uni `npm config get prefix` orqali toping.                           |
 | "429 Too Many Requests"          | Tezlik chegarasiga duch kelindi                | 1 daqiqa kuting yoki ko‘proq provayder ulang                                                                         |
 
 **Hali ham muammo hal bo‘lmadimi?** Quyidagi [batafsil muammolarni bartaraf etish](#detailed-troubleshooting) bo‘limiga qarang yoki [Discord](https://discord.gg/U47eFqAXCn) orqali so‘rang.
@@ -50,14 +50,14 @@ AgentProxy uchun keng tarqalgan muammolar va ularning yechimlari.
 **Tasdiqlangan yechim (hamjamiyat xabariga ko‘ra, 2026-08-10)**: aylantirish, parallel bajarilish va zaxira variantiga o‘tish bepul tarifdagi beqarorlikni xato bilan yakunlanish o‘rniga bartaraf etishi uchun uchta muhit o‘zgaruvchisini sozlang:
 
 ```bash
-export OMNIROUTE_ROTATE_ON_400=true           # 400/401 holatida boshqa model/provayderga o‘tish (nosoz to‘g‘ridan-to‘g‘ri uzatiladigan modellarni o‘tkazib yuboradi)
-export OMNIROUTE_CHAT_MAX_HEAVY_IN_FLIGHT=4   # katta yukli so‘rovlarni qabul qilishning aniq yuqori chegarasi (birlamchi holatda o‘rnatilmagan: so‘rovlar soni bo‘yicha cheklov yo‘q, quyidagi izohga qarang)
-export OMNIROUTE_CHAT_ADMISSION_QUEUE_MS=5000 # darhol qayta urinish mumkin bo‘lgan 503 xatosi o‘rniga katta yukli so‘rovlar sig‘imi uchun uzoqroq, cheklangan kutish
+export AGENTPROXY_ROTATE_ON_400=true           # 400/401 holatida boshqa model/provayderga o‘tish (nosoz to‘g‘ridan-to‘g‘ri uzatiladigan modellarni o‘tkazib yuboradi)
+export AGENTPROXY_CHAT_MAX_HEAVY_IN_FLIGHT=4   # katta yukli so‘rovlarni qabul qilishning aniq yuqori chegarasi (birlamchi holatda o‘rnatilmagan: so‘rovlar soni bo‘yicha cheklov yo‘q, quyidagi izohga qarang)
+export AGENTPROXY_CHAT_ADMISSION_QUEUE_MS=5000 # darhol qayta urinish mumkin bo‘lgan 503 xatosi o‘rniga katta yukli so‘rovlar sig‘imi uchun uzoqroq, cheklangan kutish
 ```
 
 Bularni AgentProxy jarayoni muhitida (demon uchun, masalan, LaunchAgent plist yoki `systemctl edit` orqali) o‘rnating, so‘ng AgentProxy’ni qayta ishga tushiring. Aylantirish bayrog‘i eng katta taʼsirga ega vositadir: u jiddiy xatoni hovuzdagi sog‘lom provayderga shaffof tarzda qayta urinishga aylantiradi.
 
-**Izoh**: `OMNIROUTE_CHAT_MAX_HEAVY_IN_FLIGHT` bir vaqtda nechta katta yukli — uzun kontekstli — so‘rov bajarilishini cheklaydi; bu chegara provayder tezlik cheklagichi emas, balki qabul qilish darvozasidir. **#503-fanout yangilanishi:** bu o‘zgaruvchi endi birlamchi holatda o‘rnatilmaydi (endi u faqat yuqoridagidek aniq sozlanganda amal qiladi) — buning o‘rniga katta yukli so‘rovlarni qabul qilish xostning haqiqiy xotira chegarasidan kelib chiqib o‘zini masshtablaydigan, avtomatik aniqlanuvchi bayt budjeti (`OMNIROUTE_CHAT_MAX_INFLIGHT_BYTES`) orqali boshqariladi. Shu sababli yangi o‘rnatilgan tizim bu o‘zgaruvchini umuman sozlamasdan ham ancha kam `503 chat_admission_busy` rad etishlarini ko‘rishi kerak; uni bu yerda aniq o‘rnatish hujjatda ko‘rsatilganidek ishlashda davom etadi. Bayt budjetining aniq qayta belgilangan qiymatlari 8 MiB–2 GiB oralig‘i bilan cheklanadi. `413 body_exceeds_budget` vaqtinchalik holat emas: ushbu bayt budjetini oshiring, `OMNIROUTE_CHAT_HARD_MAX_BODY_BYTES` qiymatini kamaytiring yoki jarayon xotirasi chegarasini oshiring. `inflight_bytes_budget` sababli yuklamani kamaytirish vaqtinchalik resurs talashish holatidir va qayta urinish mumkin bo‘lib qoladi. Har bir provayder uchun tezlik cheklovi (`open-sse/services/rateLimitManager.ts`) alohida ravishda `RATE_LIMIT_MAX_WAIT_MS`, `RATE_LIMIT_MAX_QUEUE_DEPTH` va `RATE_LIMIT_AUTO_ENABLE` orqali boshqariladi — `.env.example` fayliga qarang.
+**Izoh**: `AGENTPROXY_CHAT_MAX_HEAVY_IN_FLIGHT` bir vaqtda nechta katta yukli — uzun kontekstli — so‘rov bajarilishini cheklaydi; bu chegara provayder tezlik cheklagichi emas, balki qabul qilish darvozasidir. **#503-fanout yangilanishi:** bu o‘zgaruvchi endi birlamchi holatda o‘rnatilmaydi (endi u faqat yuqoridagidek aniq sozlanganda amal qiladi) — buning o‘rniga katta yukli so‘rovlarni qabul qilish xostning haqiqiy xotira chegarasidan kelib chiqib o‘zini masshtablaydigan, avtomatik aniqlanuvchi bayt budjeti (`AGENTPROXY_CHAT_MAX_INFLIGHT_BYTES`) orqali boshqariladi. Shu sababli yangi o‘rnatilgan tizim bu o‘zgaruvchini umuman sozlamasdan ham ancha kam `503 chat_admission_busy` rad etishlarini ko‘rishi kerak; uni bu yerda aniq o‘rnatish hujjatda ko‘rsatilganidek ishlashda davom etadi. Bayt budjetining aniq qayta belgilangan qiymatlari 8 MiB–2 GiB oralig‘i bilan cheklanadi. `413 body_exceeds_budget` vaqtinchalik holat emas: ushbu bayt budjetini oshiring, `AGENTPROXY_CHAT_HARD_MAX_BODY_BYTES` qiymatini kamaytiring yoki jarayon xotirasi chegarasini oshiring. `inflight_bytes_budget` sababli yuklamani kamaytirish vaqtinchalik resurs talashish holatidir va qayta urinish mumkin bo‘lib qoladi. Har bir provayder uchun tezlik cheklovi (`open-sse/services/rateLimitManager.ts`) alohida ravishda `RATE_LIMIT_MAX_WAIT_MS`, `RATE_LIMIT_MAX_QUEUE_DEPTH` va `RATE_LIMIT_AUTO_ENABLE` orqali boshqariladi — `.env.example` fayliga qarang.
 
 **Ishlaganini qanday tekshirish mumkin**: agent/cron’ingizni qisqa vaqt oralig‘ida ikki marta ishga tushiring va har ikkala ishga tushirish ham muvaffaqiyatli yakunlanganini tasdiqlang. Tuzatishdan oldin ikkinchi ishga tushirish odatda `429`/`401` xatosini chiqaradi. Tuzatishdan keyin nosozliklar (agar bo‘lsa) avtomatik tarzda qayta urinib ko‘riladi va chaqiruv yakunlanadi. Shuningdek, `curl /monitoring/health` buyrug‘ini bajarib, provayder ulanishlaridagi `rateLimitedUntil` maydonini va ta’sirlangan provayderlar uchun `circuitBreakers.providerBreakers[].state` qiymatini kuzatishingiz mumkin — holat `CLOSED`, `DEGRADED`, `OPEN` yoki `HALF_OPEN` qiymatlaridan biri bo‘ladi (`src/shared/utils/circuitBreaker.ts` fayliga qarang) va qayta tiklash oynasi sinov so‘rovini o‘tkazishga imkon berishidan (`HALF_OPEN`) oldin xatolik berishda davom etayotgan provayder `CLOSED → DEGRADED → OPEN` holatlariga o‘tadi.
 
@@ -69,12 +69,12 @@ Bularni AgentProxy jarayoni muhitida (demon uchun, masalan, LaunchAgent plist yo
 
 ## npm install Ogohlantirishlari (ERESOLVE / peer / eskirgan)
 
-`npm install -g omniroute` buyrugʻini ishga tushirganingizda, `npm warn ERESOLVE`, peer-bogʻliqlik bildirishnomalari va `deprecated` xabarlari kabi koʻplab ogohlantirishlarni koʻrishingiz mumkin. **Bular kutilgan va zararsiz xabarlardir.** Agar chiqishda `added <N> packages` yozuvini koʻrsangiz, oʻrnatish muvaffaqiyatli yakunlangan.
+`npm install -g agentproxy` buyrugʻini ishga tushirganingizda, `npm warn ERESOLVE`, peer-bogʻliqlik bildirishnomalari va `deprecated` xabarlari kabi koʻplab ogohlantirishlarni koʻrishingiz mumkin. **Bular kutilgan va zararsiz xabarlardir.** Agar chiqishda `added <N> packages` yozuvini koʻrsangiz, oʻrnatish muvaffaqiyatli yakunlangan.
 
 Peer-bogʻliqliklarni aniqlash haqidagi ogohlantirishlarni yashirish uchun AgentProxy tomonidan qoʻllab-quvvatlanadigan oʻrnatish shaklidan foydalaning:
 
 ```bash
-npm install -g omniroute --legacy-peer-deps
+npm install -g agentproxy --legacy-peer-deps
 ```
 
 `--legacy-peer-deps` faqat `ERESOLVE` va peer-bogʻliqlik bildirishnomalarini yashiradi. Eskirganlik haqidagi bildirishnomalar koʻrinib turadi, chunki ular tranzitiv uchinchi tomon paketlaridan kelib chiqadi; ular oʻrnatish muvaffaqiyatsiz boʻlganini anglatmaydi.
@@ -101,7 +101,7 @@ Global npm oʻrnatilishi uchun Chromium brauzerini AgentProxy paketining
 katalogidan oʻrnating, shunda brauzer keshi aynan shu Playwright oʻrnatilishiga tegishli boʻladi:
 
 ```bash
-cd "$(npm root -g)/omniroute"
+cd "$(npm root -g)/agentproxy"
 npx playwright install chromium
 ```
 
@@ -119,10 +119,10 @@ mavjud emas.
 | Birinchi kirish ishlamayapti                               | `.env` faylida `INITIAL_PASSWORD` ni belgilang (kodga kiritilgan standart qiymat yoʻq)                                                                                                                                                     |
 | Boshqaruv paneli notoʻgʻri portda ochilmoqda               | `PORT=20128` va `NEXT_PUBLIC_BASE_URL=http://localhost:20128` ni belgilang                                                                                                                                                                 |
 | Jurnallar diskka yozilmayapti                              | `APP_LOG_TO_FILE=true` ni belgilang va chaqiruv jurnalini yozib olish yoqilganini tekshiring                                                                                                                                               |
-| EACCES: ruxsat rad etildi                                  | `~/.omniroute` qiymatini bekor qilish uchun `DATA_DIR=/path/to/writable/dir` ni belgilang                                                                                                                                                  |
+| EACCES: ruxsat rad etildi                                  | `~/.agentproxy` qiymatini bekor qilish uchun `DATA_DIR=/path/to/writable/dir` ni belgilang                                                                                                                                                  |
 | Marshrutlash strategiyasi saqlanmayapti                    | Eng soʻnggi v3.x reliziga yangilang (sozlamalarni doimiy saqlash uchun Zod sxemasi tuzatishi oldingi versiyalarda chiqarilgan)                                                                                                             |
 | Kirish paytida nosozlik / boʻsh sahifa                     | Node.js versiyasini tekshiring — quyidagi [Node.js mosligi](#nodejs-compatibility) boʻlimiga qarang                                                                                                                                        |
-| `dlopen` / `slice is not valid mach-o file` (macOS)        | `cd $(npm root -g)/omniroute/app && npm rebuild better-sqlite3 && omniroute` buyrugʻini bajaring — quyidagi [macOS mahalliy modulini qayta yigʻish](#macos-native-module-rebuild) boʻlimiga qarang                                         |
+| `dlopen` / `slice is not valid mach-o file` (macOS)        | `cd $(npm root -g)/agentproxy/app && npm rebuild better-sqlite3 && agentproxy` buyrugʻini bajaring — quyidagi [macOS mahalliy modulini qayta yigʻish](#macos-native-module-rebuild) boʻlimiga qarang                                         |
 | Proksi uchun "fetch failed"                                | Proksi konfiguratsiyasi toʻgʻri darajada oʻrnatilganiga ishonch hosil qiling — quyidagi [Proksi muammolari](#proxy-issues) boʻlimiga qarang                                                                                                |
 | Docker `curl: (56) Recv failure: Connection reset by peer` | Docker port bogʻlamangiz IPv6 manziliga tushayotgan boʻlishi mumkin. IPv4 ni majburan ishlatish uchun `-p 127.0.0.1:20128:20128` dan foydalaning yoki `curl -4` bilan sinab koʻring. Quyidagi [Docker IPv6](#docker-ipv6) boʻlimiga qarang |
 | Antivirus `README.md` faylini karantinga olmoqda           | Xato aniqlash — quyidagi [Antivirusning xato aniqlashlari](#antivirus-false-positives) boʻlimiga qarang                                                                                                                                    |
@@ -141,7 +141,7 @@ mavjud emas.
 Avast va AVG koʻplab HTTP soʻroviga oʻxshash havolalarni oʻz ichiga olgan oddiy matn/Markdown
 fayllarini belgilaydigan evristik tekshiruvni ishga tushiradi. AgentProxy'ning `README.md` fayli npm paketi ichida tarqatiladi (u
 `package.json` → `files` roʻyxatida keltirilgan), shuning uchun global oʻrnatishda u
-`node_modules/omniroute/README.md` manziliga joylashadi — va unda ~15 ta `http://localhost:20128/...` misoli (MCP
+`node_modules/agentproxy/README.md` manziliga joylashadi — va unda ~15 ta `http://localhost:20128/...` misoli (MCP
 HTTP/SSE endpointlari, A2A `.well-known` URL manzili va `curl` parchalari) mavjud. Havolalarning bunday zichligi
 evristik tekshiruvni ishga tushirish uchun yetarli.
 
@@ -156,7 +156,7 @@ xavfsiz tarzda tiklashingiz mumkin.
 
 1. **Bildirishnomalarni toʻxtating** — antivirus dasturingizda oʻrnatish katalogini istisnolar qatoriga qoʻshing
    (Avast: Settings → Exceptions), bunda global `node_modules` yoʻlingizni va/yoki
-   AgentProxy maʼlumotlar katalogini (`~/.omniroute/`) kiriting.
+   AgentProxy maʼlumotlar katalogini (`~/.agentproxy/`) kiriting.
 2. **Notoʻgʻri ijobiy aniqlash haqida xabar bering** — <https://www.avast.com/false-positive-file-form.php>,
    karantinga olingan `README.md` faylini ilova qiling. Hammaga yordam beradigan yechim shu, chunki bu
    ishlab chiqaruvchining evristik tekshiruvi matn fayliga haddan tashqari keskin munosabat bildirayotganidir.
@@ -232,8 +232,8 @@ u joriy etilguniga qadar yangi relizlarda bu holat takrorlanishi mumkin.
    nvm use 24
    ```
 2. Versiyangizni tekshiring: `node --version` 24.x LTS qatorida `v24.0.0` yoki undan yangiroq versiyani ko‘rsatishi kerak
-3. AgentProxy’ni qayta o‘rnating: `npm install -g omniroute`
-4. Qayta ishga tushiring: `omniroute`
+3. AgentProxy’ni qayta o‘rnating: `npm install -g agentproxy`
+4. Qayta ishga tushiring: `agentproxy`
 
 > **Qo‘llab-quvvatlanadigan xavfsiz versiyalar:** `>=22.22.2 <23` yoki `>=24.0.0 <27`. Node.js 24.x LTS (Krypton) va Node.js 26 to‘liq qo‘llab-quvvatlanadi.
 
@@ -271,7 +271,7 @@ ichida ko‘rsatilgani va mahalliy kompilyatsiyani (`node-gyp rebuild`) talab qi
 
 <a name="macos-native-module-rebuild"></a>
 
-**Sabab:** Global `npm install -g omniroute` bajarilganidan keyin paket ichidagi `better-sqlite3` mahalliy ikkilik fayli lokal tizimda ishlayotgan arxitektura yoki Node.js ABI’dan farqli muhit uchun kompilyatsiya qilingan bo‘lishi mumkin. Oldindan yig‘ilgan ikkilik fayl muhitingizga mos kelmaganda, bu holat macOS’da (Apple Silicon va Intel tizimlarining har ikkisida) tez-tez uchraydi.
+**Sabab:** Global `npm install -g agentproxy` bajarilganidan keyin paket ichidagi `better-sqlite3` mahalliy ikkilik fayli lokal tizimda ishlayotgan arxitektura yoki Node.js ABI’dan farqli muhit uchun kompilyatsiya qilingan bo‘lishi mumkin. Oldindan yig‘ilgan ikkilik fayl muhitingizga mos kelmaganda, bu holat macOS’da (Apple Silicon va Intel tizimlarining har ikkisida) tez-tez uchraydi.
 
 **Alomatlar:**
 
@@ -280,15 +280,15 @@ ichida ko‘rsatilgani va mahalliy kompilyatsiyani (`node-gyp rebuild`) talab qi
 - To‘liq misol:
 
 ```
-dlopen(/Users/<user>/.nvm/versions/node/v24.14.1/lib/node_modules/omniroute/app/node_modules/better-sqlite3/build/Release/better_sqlite3.node, 0x0001): tried: '...' (slice is not valid mach-o file)
+dlopen(/Users/<user>/.nvm/versions/node/v24.14.1/lib/node_modules/agentproxy/app/node_modules/better-sqlite3/build/Release/better_sqlite3.node, 0x0001): tried: '...' (slice is not valid mach-o file)
 ```
 
 **Yechim — lokal muhitingiz uchun qayta yig‘ing (Node.js versiyasini pasaytirish talab qilinmaydi):**
 
 ```bash
-cd $(npm root -g)/omniroute/app
+cd $(npm root -g)/agentproxy/app
 npm rebuild better-sqlite3
-omniroute
+agentproxy
 ```
 
 > **Eslatma:** Bu mahalliy bog‘lanishni lokal Node.js versiyangiz va CPU arxitekturangiz uchun qayta kompilyatsiya qilib, ikkilik fayl nomuvofiqligini bartaraf etadi. Rasman qo‘llab-quvvatlanadigan ishga tushirish muhiti diapazoni — **`>=22.22.2 <23` yoki `>=24.0.0 <27`** (`src/shared/utils/nodeRuntimeSupport.ts` ichidagi `SUPPORTED_NODE_RANGE`, `package.json` faylidagi `engines` maydoniga moslashtirilgan). Node.js 24.x LTS (Krypton) va Node.js 26 `better-sqlite3` v12.x bilan to‘liq qo‘llab-quvvatlanadi.
@@ -380,7 +380,7 @@ Ikki Kiro hisobini yonma-yon qo‘shish bo‘yicha to‘liq tafsilotlar va bosqi
 ### Bulutli sinxronlash xatolari
 
 1. `BASE_URL` ishlayotgan instansiyangizga yoʻnaltirilganini tekshiring (masalan, `http://localhost:20128`)
-2. `CLOUD_URL` bulutdagi endpoint’ingizga yoʻnaltirilganini tekshiring (masalan, `https://omniroute.dev`)
+2. `CLOUD_URL` bulutdagi endpoint’ingizga yoʻnaltirilganini tekshiring (masalan, `https://agentproxy.online`)
 3. `NEXT_PUBLIC_*` qiymatlarini server tomonidagi qiymatlarga mos holda saqlang
 
 ### Bulutda `stream=false` 500 xatosini qaytaradi
@@ -414,8 +414,8 @@ Ikki Kiro hisobini yonma-yon qo‘shish bo‘yicha to‘liq tafsilotlar va bosqi
 1. **Tezkor diagnostika:** `curl -4 http://localhost:20128/v1/models` buyrugʻini ishga tushiring. Agar u `-4` bilan ishlasa, ammo usiz ishlamasa, IPv6 bogʻlanishida nomuvofiqlik mavjud.
 2. **Doimiy tuzatish:** `docker run` buyrugʻida `-p 127.0.0.1:20128:20128` dan foydalanib, IPv4 manziliga aniq bogʻlang:
    ```bash
-   docker run -d --name omniroute --restart unless-stopped --stop-timeout 40 \
-     -p 127.0.0.1:20128:20128 -v omniroute-data:/app/data diegosouzapw/omniroute:latest
+   docker run -d --name agentproxy --restart unless-stopped --stop-timeout 40 \
+     -p 127.0.0.1:20128:20128 -v agentproxy-data:/app/data diegosouzapw/agentproxy:latest
    ```
    Bu IPv4 bogʻlanishini majburiy qiladi va proksining barcha host interfeyslarida ochiq boʻlishining ham oldini oladi.
 
@@ -570,7 +570,7 @@ Ko‘plab parallel so‘rovlar tezligi cheklangan provayderga yuborilganda, Agen
 - Chat yakunlash endpointi xato kodi
   `chat_admission_busy` bo‘lgan, qayta urinib ko‘rish mumkin bo‘lgan `503` javobini qaytaradi.
 - Javob `Retry-After` qiymatini o‘z ichiga oladi. #12135 dan boshlab qiymat kuzatilgan
-  bandlik asosida aniqlanadi — so‘rov allaqachon kutgan `OMNIROUTE_CHAT_ADMISSION_QUEUE_MS` oynasi
+  bandlik asosida aniqlanadi — so‘rov allaqachon kutgan `AGENTPROXY_CHAT_ADMISSION_QUEUE_MS` oynasi
   va joriy katta resurs talab qiluvchi lease’lar ushlab turilgan vaqtdan kattarog‘i olinadi — to‘liq
   soniyagacha yuqoriga yaxlitlanadi va 60 bilan cheklanadi. Bo‘sh gate holatida avvalgi minimal
   qiymatlar saqlanadi: baytga asoslangan yo‘lda 2 soniya, tuzilmaga asoslangan yo‘lda 1 soniya
@@ -604,18 +604,18 @@ resurs talab qiluvchi quvvatni band qilish uchun jarayonga lokal guard’dan foy
 resurs talab qiluvchi lease SSE javobining butun ishlash muddati davomida ushlab turiladi.
 
 **#503-fanout:** ushbu tuzatishdan oldin guard host xotirasidan qat’i nazar parallel ishlashni
-qat’iy so‘rovlar SONI (`OMNIROUTE_CHAT_MAX_HEAVY_IN_FLIGHT`, standart `1`) bilan cheklar edi,
+qat’iy so‘rovlar SONI (`AGENTPROXY_CHAT_MAX_HEAVY_IN_FLIGHT`, standart `1`) bilan cheklar edi,
 shu sababli kodlash agentlarining fan-out’i (bir nechta subagent/CLI, odatda > 256 KB hajmdagi
 tanalar) amaldagi parallellikni ~1 gacha tushirib yuborar va mutlaqo odatiy yuklama ostida
 503 xatolariga olib kelar edi. Endi guard o‘zini o‘zi sozlaydi: u jarayonning haqiqiy xotira
 chegarasidan kelib chiqib o‘lchami belgilanadigan, avtomatik aniqlangan qabul qilish BAYT budjeti
-(`OMNIROUTE_CHAT_MAX_INFLIGHT_BYTES`) bilan boshqariladi va jonli resurs bosimi signalini ham
+(`AGENTPROXY_CHAT_MAX_INFLIGHT_BYTES`) bilan boshqariladi va jonli resurs bosimi signalini ham
 hisobga oladi — shu sababli u bittadan ortiq katta so‘rov bir vaqtda kelgani uchungina emas,
 faqat host haqiqatan ham xotira bosimi ostida bo‘lganda yukni kamaytiradi. Eski son cheklovi
-(`OMNIROUTE_CHAT_MAX_HEAVY_IN_FLIGHT`) hali ham hisobga olinadi, ammo faqat uni aniq belgilasangiz.
+(`AGENTPROXY_CHAT_MAX_HEAVY_IN_FLIGHT`) hali ham hisobga olinadi, ammo faqat uni aniq belgilasangiz.
 
 Quvvat band bo‘lganda, katta resurs talab qiluvchi so‘rov qayta urinib ko‘rish mumkin bo‘lgan
-`503` javobini qaytarishdan oldin slot bo‘shashini `OMNIROUTE_CHAT_ADMISSION_QUEUE_MS` davomida
+`503` javobini qaytarishdan oldin slot bo‘shashini `AGENTPROXY_CHAT_ADMISSION_QUEUE_MS` davomida
 (standart `2000`, `0` kutishni o‘chiradi) kutadi. Cheklangan kutish agent uslubidagi mijozlar
 (OpenCode, Claude Code, Cursor) parallel yuboradigan katta subso‘rovlar oqimini ketma-ket
 bajarishga imkon beradi; aks holda ular darhol rad etilishlar sababli butun qayta urinish
@@ -639,7 +639,7 @@ false` va yetarlicha katta `maxInflightBytes` avtomatik aniqlangan budjet allaqa
 3. Faqat `/api/monitoring/health` avtomatik aniqlangan budjet hostingiz uchun haqiqatan ham
    juda kichikligini ko‘rsatsagina (bu kamdan-kam uchraydi — u allaqachon konteynerdan bare-metal’gacha
    masshtablanadi), eski so‘rovlar soni chekloviga qaytish o‘rniga uni bevosita
-   `OMNIROUTE_CHAT_MAX_INFLIGHT_BYTES` orqali qayta belgilang.
+   `AGENTPROXY_CHAT_MAX_INFLIGHT_BYTES` orqali qayta belgilang.
 
 Qabul qilish bo‘yicha rasmiy sozlamalar uchun [muhit o‘zgaruvchilari ma’lumotnomasiga](../reference/ENVIRONMENT.md#4-security--authentication)
 qarang.
@@ -726,7 +726,7 @@ v3.8.0 reliziga xos muammolar va ularning joriy vaqtinchalik yechimlari. Agar tu
 
 **Tuzatish:**
 
-- OAuth jarayonini qayta boshlash uchun CLIʼdan `omniroute providers` buyrugʻini ishga tushiring yoki
+- OAuth jarayonini qayta boshlash uchun CLIʼdan `agentproxy providers` buyrugʻini ishga tushiring yoki
 - **Dashboard → Providers → Command Code → Reconnect** orqali OAuthʼni qayta ishga tushiring
 
 ### ModelScope haddan tashqari keskin 429 kutish muddatlarini qaytaradi
@@ -743,19 +743,19 @@ v3.8.0 reliziga xos muammolar va ularning joriy vaqtinchalik yechimlari. Agar tu
 - v3.8.0 yoki undan keyingi versiyada ekaningizga ishonch hosil qiling
 - **Settings → Resilience** ostida `useUpstream429BreakerHints` almashtirgichi yoqilganini tekshiring
 
-### Ishlab chiqarish muhitida OMNIROUTE_WS_BRIDGE_SECRET mavjud emas
+### Ishlab chiqarish muhitida AGENTPROXY_WS_BRIDGE_SECRET mavjud emas
 
 **Alomatlar:**
 
 - Masofaviy ishlab chiqarish xostida ishlayotganda har bir Codex/Responses WebSocket koʻprigi soʻrovida 401 xatosi
 - WebSocket koʻprigi bilan ulanishni oʻrnatish jarayoni ulanishdan keyin darhol yopiladi
 
-**Sabab:** Ishlab chiqarish muhitida `OMNIROUTE_WS_BRIDGE_SECRET` muhit oʻzgaruvchisi mavjud emas.
+**Sabab:** Ishlab chiqarish muhitida `AGENTPROXY_WS_BRIDGE_SECRET` muhit oʻzgaruvchisi mavjud emas.
 
 **Tuzatish:**
 
 1. Tasodifiy maxfiy qiymat yarating: `openssl rand -hex 32`
-2. Ishlab chiqarish serveri muhitida (va koʻprik bilan aloqa qiluvchi har qanday mijozda) `OMNIROUTE_WS_BRIDGE_SECRET=<random-secret>` qiymatini belgilang
+2. Ishlab chiqarish serveri muhitida (va koʻprik bilan aloqa qiluvchi har qanday mijozda) `AGENTPROXY_WS_BRIDGE_SECRET=<random-secret>` qiymatini belgilang
 3. AgentProxyʼni qayta ishga tushiring
 
 ### Responses API: fon rejimi sinxron rejimga tushirilgan
@@ -786,17 +786,17 @@ katta yuklama mavjud bo‘lgan konteynerlarda yuz beradi.
 
 ```bash
 # Muhit o‘zgaruvchisi orqali (keyingi ishga tushirishlarda ham saqlanadi):
-export OMNIROUTE_READY_TIMEOUT_MS=180000   # 3 daqiqa
-omniroute serve
+export AGENTPROXY_READY_TIMEOUT_MS=180000   # 3 daqiqa
+agentproxy serve
 
 # CLI bayrog‘i orqali (bir martalik):
-omniroute serve --ready-timeout 180000
+agentproxy serve --ready-timeout 180000
 ```
 
 Standart qiymat 60 000 ms (60 s). Ogohlantirish faqat axborot uchun; server
 fonda ishga tushishda davom etadi va yuklanish tugagach undan foydalanish mumkin bo‘ladi.
 
-`OMNIROUTE_READY_TIMEOUT_MS` haqida to‘liq ma’lumot olish uchun
+`AGENTPROXY_READY_TIMEOUT_MS` haqida to‘liq ma’lumot olish uchun
 [`docs/reference/ENVIRONMENT.md`](../reference/ENVIRONMENT.md) fayliga qarang.
 
 ---

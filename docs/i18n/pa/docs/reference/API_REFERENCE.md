@@ -64,7 +64,7 @@ Content-Type: application/json
 | ਹੈਡਰ                     | ਦਿਸ਼ਾ | ਵੇਰਵਾ                                                                                                                                                                                                                                         |
 | ------------------------ | ----- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `X-AgentProxy-No-Cache`   | ਬੇਨਤੀ | ਕੈਸ਼ ਨੂੰ ਬਾਈਪਾਸ ਕਰਨ ਲਈ `true` ਸੈੱਟ ਕਰੋ                                                                                                                                                                                                        |
-| `x-omniroute-no-memory`  | ਬੇਨਤੀ | ਇਸ ਬੇਨਤੀ ਲਈ ਮੈਮੋਰੀ + ਹੁਨਰ ਇੰਜੈਕਸ਼ਨ ਛੱਡਣ ਵਾਸਤੇ `true` ਸੈੱਟ ਕਰੋ (no-cache ਦੇ ਅਨੁਰੂਪ; ਪ੍ਰਤੀ-ਕਾਲ ਟੋਕਨ/ਲਾਗਤ ਓਵਰਹੈੱਡ ਤੋਂ ਬਚਦਾ ਹੈ)                                                                                                                   |
+| `x-agentproxy-no-memory`  | ਬੇਨਤੀ | ਇਸ ਬੇਨਤੀ ਲਈ ਮੈਮੋਰੀ + ਹੁਨਰ ਇੰਜੈਕਸ਼ਨ ਛੱਡਣ ਵਾਸਤੇ `true` ਸੈੱਟ ਕਰੋ (no-cache ਦੇ ਅਨੁਰੂਪ; ਪ੍ਰਤੀ-ਕਾਲ ਟੋਕਨ/ਲਾਗਤ ਓਵਰਹੈੱਡ ਤੋਂ ਬਚਦਾ ਹੈ)                                                                                                                   |
 | `X-AgentProxy-Progress`   | ਬੇਨਤੀ | ਪ੍ਰਗਤੀ ਇਵੈਂਟਾਂ ਲਈ `true` ਸੈੱਟ ਕਰੋ                                                                                                                                                                                                             |
 | `X-Session-Id`           | ਬੇਨਤੀ | ਬਾਹਰੀ ਸੈਸ਼ਨ ਐਫ਼ਿਨਿਟੀ ਲਈ ਸਟਿੱਕੀ ਸੈਸ਼ਨ ਕੁੰਜੀ                                                                                                                                                                                                    |
 | `x_session_id`           | ਬੇਨਤੀ | ਅੰਡਰਸਕੋਰ ਰੂਪ ਵੀ ਸਵੀਕਾਰ ਕੀਤਾ ਜਾਂਦਾ ਹੈ (ਸਿੱਧਾ HTTP)                                                                                                                                                                                             |
@@ -159,7 +159,7 @@ X-AgentProxy-Lease-Generation: 1
 
 ਇਸ ਪ੍ਰਤੀਕਿਰਿਆ ਦਾ ਮਤਲਬ ਸਿਰਫ਼ ਇਹ ਹੈ ਕਿ ਆਮ ਯੋਗ ਸੈੱਟ ਗੈਰ-ਖਾਲੀ ਸੀ ਅਤੇ ਹਰ ਮੁਫਤ ਉਮੀਦਵਾਰ ਨੂੰ ਇੱਕ ਵਿਦੇਸ਼ੀ ਸਰਗਰਮ ਲੀਜ਼ ਦੁਆਰਾ ਰੱਖਿਆ ਗਿਆ ਸੀ। ਅਸਮਰਥਿਤ ਮਾਡਲ/ਪ੍ਰਦਾਤਾ, ਨੀਤੀ ਅਸੰਗਤਤਾ, ਕੂਲਡਾਊਨ, ਕੋਟਾ, ਸਿਹਤ, ਅਤੇ ਹੋਰ ਆਮ ਯੋਗਤਾ ਅਸਫਲਤਾਵਾਂ ਆਪਣੀਆਂ ਮੌਜੂਦਾ AgentProxy ਪ੍ਰਤੀਕਿਰਿਆਵਾਂ ਨੂੰ ਬਰਕਰਾਰ ਰੱਖਦੀਆਂ ਹਨ।
 
-### `x-omniroute-compression`
+### `x-agentproxy-compression`
 
 ਕੰਪਰੈਸ਼ਨ ਯੋਜਨਾ ਦੀ ਪ੍ਰਤੀ-ਬੇਨਤੀ ਓਵਰਰਾਈਡ। ਸਭ ਤੋਂ ਵੱਧ ਤਰਜੀਹ — ਰੂਟਿੰਗ-ਕੰਬੋ ਓਵਰਰਾਈਡ, ਸਰਗਰਮ ਪ੍ਰੋਫਾਈਲ, ਆਟੋ-ਟ੍ਰਿਗਰ, ਅਤੇ ਪੈਨਲ ਡਿਫੌਲਟ ਨੂੰ ਹਰਾਉਂਦੀ ਹੈ। ਮੁੱਲ:
 
@@ -396,10 +396,10 @@ GET /v1/models?prefix=canonical    # ਸਿਰਫ਼ ਪੂਰਾ provider-id �
 
 ### ਬਿਨਾਂ-ਥਿੰਕਿੰਗ ਵਾਲੇ ਮਾਡਲ ਵੇਰੀਐਂਟ
 
-ਥਿੰਕਿੰਗ ਸਮਰੱਥਾ ਵਾਲੇ Claude ਮਾਡਲਾਂ ਲਈ, `/v1/models` ਇੱਕ **ਬਿਨਾਂ-ਥਿੰਕਿੰਗ** ਵੇਰੀਐਂਟ ਵੀ ਦਰਸਾਉਂਦਾ ਹੈ, ਜਿਸਦੀ id ਦੇ ਸ਼ੁਰੂ ਵਿੱਚ `claude-3-omniroute-no-thinking/` ਹੁੰਦਾ ਹੈ:
+ਥਿੰਕਿੰਗ ਸਮਰੱਥਾ ਵਾਲੇ Claude ਮਾਡਲਾਂ ਲਈ, `/v1/models` ਇੱਕ **ਬਿਨਾਂ-ਥਿੰਕਿੰਗ** ਵੇਰੀਐਂਟ ਵੀ ਦਰਸਾਉਂਦਾ ਹੈ, ਜਿਸਦੀ id ਦੇ ਸ਼ੁਰੂ ਵਿੱਚ `claude-3-agentproxy-no-thinking/` ਹੁੰਦਾ ਹੈ:
 
 ```
-claude-3-omniroute-no-thinking/<provider>/<model>
+claude-3-agentproxy-no-thinking/<provider>/<model>
 ```
 
 ਇਸ id ਨੂੰ ਚੁਣਨ ਨਾਲ (ਉਦਾਹਰਨ ਲਈ, ਇੱਕ Claude Code ਕੌਂਫਿਗ ਵਿੱਚ ਜੋ ਹਮੇਸ਼ਾ ਇੱਕ `thinking` ਬਲਾਕ ਜੋੜਦੀ ਹੈ) ਇਹ ਰੀਜ਼ਨਿੰਗ ਨੂੰ ਦਬਾ ਕੇ ਅਸਲ `<provider>/<model>` ਵੱਲ ਮੁੜ ਰਿਜ਼ਾਲਵ ਹੁੰਦੀ ਹੈ — `/v1/messages` ਪਾਥ ਉੱਤੇ `thinking:{type:"disabled"}`, ਜਾਂ `/v1/chat/completions` ਪਾਥ ਉੱਤੇ `reasoning`/`reasoning_effort` ਫੀਲਡਾਂ ਨੂੰ ਹਟਾ ਦਿੱਤਾ ਜਾਂਦਾ ਹੈ। ਇਹ ਵੇਰੀਐਂਟ ਸਿਰਫ਼ ਉਹਨਾਂ Claude-ਪਰਿਵਾਰ ਮਾਡਲਾਂ ਲਈ ਸੂਚੀਬੱਧ ਹੁੰਦਾ ਹੈ ਜੋ ਥਿੰਕਿੰਗ ਦਾ ਸਮਰਥਨ ਕਰਦੇ ਹਨ **ਅਤੇ** `disabled` ਦੀ ਪਾਲਣਾ ਕਰਦੇ ਹਨ (ਇਸ ਲਈ, ਉਦਾਹਰਨ ਵਜੋਂ, adaptive-only ਮਾਡਲ ਜੋ `disabled` ਨੂੰ ਰੱਦ ਕਰਦੇ ਹਨ, ਸ਼ਾਮਲ ਨਹੀਂ ਕੀਤੇ ਜਾਂਦੇ)। ਓਪਰੇਟਰ `ModelSpec.noThinkingAlias` ਰਾਹੀਂ ਪ੍ਰਤੀ ਮਾਡਲ ਇਸ ਵੇਰੀਐਂਟ ਨੂੰ ਜ਼ਬਰਦਸਤੀ ਚਾਲੂ ਜਾਂ ਬੰਦ ਕਰ ਸਕਦੇ ਹਨ।
@@ -484,7 +484,7 @@ POST /v1/music/generations  { "model": "suno/v3.5",   "prompt": "..." }
 > ਨੋਡ (`localhost`, `127.0.0.1`, `172.16.0.0/12`) ਹਮੇਸ਼ਾ ਯੋਗ ਹੁੰਦੇ ਹਨ। ਕਿਸੇ ਹੋਰ
 > ਹੋਸਟ ਉੱਤੇ ਨੋਡ — ਇੱਕ LAN ਬਾਕਸ ਜਾਂ Tailscale ਪੀਅਰ — ਕੇਵਲ ਉਦੋਂ ਹੀ ਯੋਗ ਹੁੰਦੇ ਹਨ ਜਦੋਂ ਆਪਰੇਟਰ
 > `RERANK_REMOTE_PROVIDER_NODES` ਫੀਚਰ ਫਲੈਗ ਨੂੰ ਸਮਰੱਥ ਕਰਦਾ ਹੈ **ਅਤੇ** ਨੋਡ ਦਾ ਬੇਸ URL ਪ੍ਰਦਾਤਾ
-> ਆਊਟਬਾਊਂਡ URL ਨੀਤੀ (`OMNIROUTE_ALLOW_LOCAL_PROVIDER_URLS` / `OMNIROUTE_ALLOW_PRIVATE_PROVIDER_URLS`) ਨੂੰ ਪਾਸ ਕਰਦਾ ਹੈ;
+> ਆਊਟਬਾਊਂਡ URL ਨੀਤੀ (`AGENTPROXY_ALLOW_LOCAL_PROVIDER_URLS` / `AGENTPROXY_ALLOW_PRIVATE_PROVIDER_URLS`) ਨੂੰ ਪਾਸ ਕਰਦਾ ਹੈ;
 > ਕਲਾਉਡ-ਮੈਟਾਡੇਟਾ ਹੋਸਟਾਂ ਵੱਲ ਕਦੇ ਵੀ ਰੂਟ ਨਹੀਂ ਕੀਤਾ ਜਾਂਦਾ। ਮੈਮੋਰੀ ਇੰਜਣ ਦਾ ਰੀਰੈਂਕ ਪੜਾਅ ਇਸ ਰੂਟ ਨੂੰ
 > ਲੂਪਬੈਕ ਰਾਹੀਂ ਕਾਲ ਕਰਦਾ ਹੈ, ਇਸ ਲਈ ਇਹੀ ਨਿਯਮ Memory ਸੈਟਿੰਗਾਂ ਵਿੱਚ `rerankProviderModel` ਨੂੰ ਨਿਯੰਤਰਿਤ ਕਰਦਾ ਹੈ।
 >
@@ -606,8 +606,8 @@ WebSocket ਅੱਪਗ੍ਰੇਡ ਹੈਂਡਸ਼ੇਕ ਦੀ ਪੁਸ਼�
 
 ```bash
 # HTTP API ਵਾਲਾ ਉਹੀ ਹੋਸਟ:ਪੋਰਟ (ਡਿਫਾਲਟ 20128); ਕਨੈਕਸ਼ਨ ਨੂੰ ਅੱਪਗ੍ਰੇਡ ਕਰੋ:
-wscat -c "ws://localhost:20128/v1/responses?api_key=<OMNIROUTE_API_KEY>"
-# (ਜਾਂ: -H "Authorization: Bearer <OMNIROUTE_API_KEY>")
+wscat -c "ws://localhost:20128/v1/responses?api_key=<AGENTPROXY_API_KEY>"
+# (ਜਾਂ: -H "Authorization: Bearer <AGENTPROXY_API_KEY>")
 
 # ਪਹਿਲਾ ਫ੍ਰੇਮ response.create ਹੋਣਾ ਲਾਜ਼ਮੀ ਹੈ:
 { "type": "response.create", "model": "gpt-5.5", "input": [ { "role": "user", "content": "hi" } ] }
@@ -643,18 +643,18 @@ Codex CLI ਨੂੰ AgentProxy ਵੱਲ ਇਸ਼ਾਰਾ ਕਰਨ ਲਈ `~/
 
 ```toml
 model = "gpt-5.5"                 # ਸਧਾਰਨ id — "codex/gpt-5.5" ਨਹੀਂ
-model_provider = "omniroute"
+model_provider = "agentproxy"
 
-[model_providers.omniroute]
+[model_providers.agentproxy]
 name = "AgentProxy (WS)"
 base_url = "http://localhost:20128/v1"   # ਅੰਤ ਵਿੱਚ ਸਲੈਸ਼ ਨਹੀਂ; WS URL ਇਸ ਤੋਂ ਬਣਾਇਆ ਜਾਂਦਾ ਹੈ (ਪ੍ਰੋਡਕਸ਼ਨ ਵਿੱਚ https/wss ਵਰਤੋ)
 wire_api = "responses"                    # Feb 2026 ਤੋਂ ਇਕੱਲਾ ਸਮਰਥਿਤ ਮੁੱਲ
 supports_websockets = true                # Responses-over-WS ਟ੍ਰਾਂਸਪੋਰਟ ਨੂੰ ਸਮਰੱਥ ਕਰਦਾ ਹੈ
-env_key = "OMNIROUTE_API_KEY"             # AgentProxy API ਕੁੰਜੀ (Bearer) ਰੱਖਦਾ ਹੈ
+env_key = "AGENTPROXY_API_KEY"             # AgentProxy API ਕੁੰਜੀ (Bearer) ਰੱਖਦਾ ਹੈ
 ```
 
 ```bash
-export OMNIROUTE_API_KEY=sk-...           # ਇੱਕ AgentProxy API ਕੁੰਜੀ (ਜੇ REQUIRE_API_KEY=false ਹੋਵੇ ਤਾਂ ਕੋਈ ਵੀ ਕੁੰਜੀ)
+export AGENTPROXY_API_KEY=sk-...           # ਇੱਕ AgentProxy API ਕੁੰਜੀ (ਜੇ REQUIRE_API_KEY=false ਹੋਵੇ ਤਾਂ ਕੋਈ ਵੀ ਕੁੰਜੀ)
 codex exec "Responda apenas: PONG"
 ```
 
@@ -1015,7 +1015,7 @@ Content-Type: application/json
 {
   "success": true,
   "repaired": ["CLAUDE_CODE_OAUTH_CLIENT_ID", "CLAUDE_CODE_OAUTH_CLIENT_SECRET"],
-  "backupPath": "/home/user/.omniroute/backups/env-repair-2026-04-11.bak"
+  "backupPath": "/home/user/.agentproxy/backups/env-repair-2026-04-11.bak"
 }
 ```
 
@@ -1389,7 +1389,7 @@ AgentProxy ਜਾਂਚ/ਡੈਸ਼ਬੋਰਡ ਦੀ ਵਰਤੋਂ ਲਈ �
 
 ```bash
 POST /a2a
-Authorization: Bearer your-api-key   # ਵਿਕਲਪਿਕ, ਜਦੋਂ ਤੱਕ OMNIROUTE_API_KEY ਸੈੱਟ ਨਾ ਹੋਵੇ
+Authorization: Bearer your-api-key   # ਵਿਕਲਪਿਕ, ਜਦੋਂ ਤੱਕ AGENTPROXY_API_KEY ਸੈੱਟ ਨਾ ਹੋਵੇ
 Content-Type: application/json
 
 {
@@ -1432,7 +1432,7 @@ GET /.well-known/agent.json
 | GET  | `/api/a2a/tasks/[id]`        | ਇੱਕ ਟਾਸਕ ਪ੍ਰਾਪਤ ਕਰੋ                                                                                                   |
 | POST | `/api/a2a/tasks/[id]/cancel` | ਇੱਕ ਟਾਸਕ ਰੱਦ ਕਰੋ                                                                                                      |
 
-**ਪ੍ਰਮਾਣੀਕਰਨ:** REST ਸਹਾਇਕ ਮੈਨੇਜਮੈਂਟ ਪ੍ਰਮਾਣੀਕਰਨ ਤੋਂ ਬਿਨਾਂ ਚੱਲਦੇ ਹਨ (ਡੈਸ਼ਬੋਰਡ ਦੁਆਰਾ ਪੜ੍ਹਨਯੋਗ); JSON-RPC `/a2a` ਰੂਟ, ਜੇ ਸੰਰਚਿਤ ਹੋਵੇ, ਤਾਂ Bearer `OMNIROUTE_API_KEY` ਦੀ ਵਰਤੋਂ ਕਰਦਾ ਹੈ।
+**ਪ੍ਰਮਾਣੀਕਰਨ:** REST ਸਹਾਇਕ ਮੈਨੇਜਮੈਂਟ ਪ੍ਰਮਾਣੀਕਰਨ ਤੋਂ ਬਿਨਾਂ ਚੱਲਦੇ ਹਨ (ਡੈਸ਼ਬੋਰਡ ਦੁਆਰਾ ਪੜ੍ਹਨਯੋਗ); JSON-RPC `/a2a` ਰੂਟ, ਜੇ ਸੰਰਚਿਤ ਹੋਵੇ, ਤਾਂ Bearer `AGENTPROXY_API_KEY` ਦੀ ਵਰਤੋਂ ਕਰਦਾ ਹੈ।
 
 ---
 
@@ -1749,7 +1749,7 @@ AgentProxy ਪਲੱਗਇਨਾਂ (ਤੀਜੀ-ਧਿਰ ਐਕਸਟੈਂ�
 
 ## ਗਾਰਡਰੇਲਜ਼
 
-ਰਨਟਾਈਮ ਗਾਰਡਰੇਲਜ਼ (PII ਪਛਾਣ, ਪ੍ਰੌਮਪਟ ਇੰਜੈਕਸ਼ਨ ਪਛਾਣ, ਵਿਜ਼ਨ ਬ੍ਰਿਜਿੰਗ) ਦੀ ਜਾਂਚ ਕਰੋ। ਗਾਰਡਰੇਲਜ਼ ਹਰ ਬੇਨਤੀ 'ਤੇ ਚੱਲਦੇ ਹਨ; ਹਰ ਕਾਲ ਲਈ ਔਪਟ-ਆਉਟ `x-omniroute-disabled-guardrails` ਬੇਨਤੀ ਹੈਡਰ ਰਾਹੀਂ ਹੁੰਦਾ ਹੈ — ਸਮਰੱਥ/ਅਸਮਰੱਥ ਕਰਨ ਲਈ ਕੋਈ ਸਥਾਈ ਸਰਫੇਸ ਨਹੀਂ ਹੈ।
+ਰਨਟਾਈਮ ਗਾਰਡਰੇਲਜ਼ (PII ਪਛਾਣ, ਪ੍ਰੌਮਪਟ ਇੰਜੈਕਸ਼ਨ ਪਛਾਣ, ਵਿਜ਼ਨ ਬ੍ਰਿਜਿੰਗ) ਦੀ ਜਾਂਚ ਕਰੋ। ਗਾਰਡਰੇਲਜ਼ ਹਰ ਬੇਨਤੀ 'ਤੇ ਚੱਲਦੇ ਹਨ; ਹਰ ਕਾਲ ਲਈ ਔਪਟ-ਆਉਟ `x-agentproxy-disabled-guardrails` ਬੇਨਤੀ ਹੈਡਰ ਰਾਹੀਂ ਹੁੰਦਾ ਹੈ — ਸਮਰੱਥ/ਅਸਮਰੱਥ ਕਰਨ ਲਈ ਕੋਈ ਸਥਾਈ ਸਰਫੇਸ ਨਹੀਂ ਹੈ।
 
 | ਵਿਧੀ | ਪਾਥ                    | ਵੇਰਵਾ                                                                                      |
 | ---- | ---------------------- | ------------------------------------------------------------------------------------------ |

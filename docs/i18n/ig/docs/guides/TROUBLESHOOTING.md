@@ -18,7 +18,7 @@ Nsogbu ndị a na-ahụkarị na ngwọta ha maka AgentProxy.
 
 | Ihe m na-ahụ                            | Ihe ọ pụtara                                   | Ihe a ga-eme                                                                                                                 |
 | --------------------------------------- | ---------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
-| "Enweghị ike ijikọ"                     | AgentProxy anaghị arụ ọrụ                       | Gbaa `omniroute` ma ọ bụ `docker restart omniroute`                                                                          |
+| "Enweghị ike ijikọ"                     | AgentProxy anaghị arụ ọrụ                       | Gbaa `agentproxy` ma ọ bụ `docker restart agentproxy`                                                                          |
 | "Igodo API ezighi ezi"                  | Igodo gị ezighi ezi ma ọ bụ kubiela            | Detuo igodo ahụ ọzọ site na webụsaịtị onye na-eweta ọrụ                                                                      |
 | "Agafela oke ọnụego"                    | Ị na-eziga arịrịọ karịrị akarị                 | Chere nkeji 1, ma ọ bụ jiri `model: "auto"` maka ịlaghachi azụ na-akpaghị aka                                                |
 | "Agafela oke oke-nri"                   | I jirila oke-nri efu/ụgwọ gị niile             | Jikọọ ndị na-eweta ọrụ ọzọ, ma ọ bụ jiri ndị na-eweta ọrụ efu (Kiro, Pollinations)                                           |
@@ -26,7 +26,7 @@ Nsogbu ndị a na-ahụkarị na ngwọta ha maka AgentProxy.
 | "Ejiri onye na-eweta ọrụ na-ezighi ezi" | `auto` họọrọ onye na-eweta ọrụ ọzọ             | Nke ahụ bụ ihe nkịtị! `auto` na-ahọrọ nke kachasị mma. Manye otu onye na-eweta ọrụ kpọmkwem site na `model: "openai/gpt-4o"` |
 | "502 Bad Gateway"                       | Onye na-eweta ọrụ anaghị arụ ọrụ               | Chere ma nwaa ọzọ, ma ọ bụ jiri `model: "auto"` ka ịgbanwee ndị na-eweta ọrụ                                                 |
 | "401 Unauthorized"                      | Ozi njirimara gị ezighi ezi                    | Lelee igodo API gị ma ọ bụ jiri OAuth kwado njirimara ọzọ                                                                    |
-| "amataghị omniroute"                    | Windows PATH enweghị modulu node zuru ụwa ọnụ  | Tinye prefix npm zuru ụwa ọnụ gị na Windows PATH. Jiri `npm config get prefix` chọta ya.                                     |
+| "amataghị agentproxy"                    | Windows PATH enweghị modulu node zuru ụwa ọnụ  | Tinye prefix npm zuru ụwa ọnụ gị na Windows PATH. Jiri `npm config get prefix` chọta ya.                                     |
 | "429 Too Many Requests"                 | E tinyela oke ọnụego                           | Chere nkeji 1, ma ọ bụ jikọọ ndị na-eweta ọrụ ọzọ                                                                            |
 
 **Ị ka rapaara?** Hụ [ntuziaka idozi nsogbu zuru ezu](#detailed-troubleshooting) n'okpuru, ma ọ bụ jụọ na [Discord](https://discord.gg/U47eFqAXCn).
@@ -50,14 +50,14 @@ Nsogbu ndị a na-ahụkarị na ngwọta ha maka AgentProxy.
 **Ndozi a kwadoro (ndị obodo kọrọ ya, 2026-08-10)**: hazie mgbanwe gburugburu atọ ka ntụgharị, ọtụtụ ọrụ n'otu oge, na ịlaghachi azụ wee nagide mgbanwe nke ọkwa efu kama ịkwụsị n'ihi ya:
 
 ```bash
-export OMNIROUTE_ROTATE_ON_400=true           # gafee na ụdị/onye na-eweta ọrụ ọzọ mgbe 400/401 mere (na-amafe ụdị passthrough ndị mebiri emebi)
-export OMNIROUTE_CHAT_MAX_HEAVY_IN_FLIGHT=4   # oke nnabata akọwapụtara maka ọrụ dị arọ (edoghị ya na ndabara: enweghị oke ọnụọgụ arịrịọ, lee ndetu n'okpuru)
-export OMNIROUTE_CHAT_ADMISSION_QUEUE_MS=5000 # ichere nwere oke ogologo oge maka ikike ọrụ dị arọ kama 503 a pụrụ ịnwale ọzọ ozugbo
+export AGENTPROXY_ROTATE_ON_400=true           # gafee na ụdị/onye na-eweta ọrụ ọzọ mgbe 400/401 mere (na-amafe ụdị passthrough ndị mebiri emebi)
+export AGENTPROXY_CHAT_MAX_HEAVY_IN_FLIGHT=4   # oke nnabata akọwapụtara maka ọrụ dị arọ (edoghị ya na ndabara: enweghị oke ọnụọgụ arịrịọ, lee ndetu n'okpuru)
+export AGENTPROXY_CHAT_ADMISSION_QUEUE_MS=5000 # ichere nwere oke ogologo oge maka ikike ọrụ dị arọ kama 503 a pụrụ ịnwale ọzọ ozugbo
 ```
 
 Tọọ ndị a na gburugburu usoro AgentProxy (daemon ahụ, dịka ọmụmaatụ site na LaunchAgent plist ma ọ bụ `systemctl edit`), wee malitegharịa AgentProxy. Ọkọlọtọ ntụgharị ahụ bụ ihe otu kacha nwee mmetụta: ọ na-agbanwe ọdịda siri ike ka ọ bụrụ nnwale ọzọ a na-adịghị ahụ anya megide onye na-eweta ọrụ dị mma n'ime ọdọ ahụ.
 
-**Ndetu**: `OMNIROUTE_CHAT_MAX_HEAVY_IN_FLIGHT` na-amachi ọnụ ọgụgụ arịrịọ dị arọ — ndị nwere ọnọdụ ogologo — nwere ike ịrụ ọrụ n'otu oge; oke ahụ bụ ọnụ ụzọ nnabata, ọ bụghị ihe na-amachi ọnụego onye na-eweta ọrụ. **Mmelite #503-fanout:** anaghịzi edobe var a na ndabara (ugbu a ọ na-amachi naanị mgbe ahaziri ya n'ụzọ doro anya, dịka n'elu) — kama nke ahụ, mmefu byte a na-enweta na-akpaghị aka (`OMNIROUTE_CHAT_MAX_INFLIGHT_BYTES`) na-achịkwa nnabata ọrụ dị arọ, nke na-ahazi onwe ya dịka oke ebe nchekwa n'ezie nke host si dị, ya mere nrụnye ọhụrụ kwesịrị ịhụ ọdịda `503 chat_admission_busy` ole na ole nke ukwuu n'enweghị ịtọ var a ma ọlị; ịtọ ya n'ụzọ doro anya ebe a ka na-arụ ọrụ kpọmkwem dịka e dere na akwụkwọ. Mgbanwe mmefu byte akọwapụtara na-amachi n'etiti 8 MiB–2 GiB. `413 body_exceeds_budget` abụghị ihe na-adịru nwa oge: bulie mmefu byte ahụ, belata `OMNIROUTE_CHAT_HARD_MAX_BODY_BYTES`, ma ọ bụ bulie oke ebe nchekwa usoro ahụ. Mwepu `inflight_bytes_budget` bụ esemokwu nwa oge, a ka nwekwara ike ịnwale ya ọzọ. A na-achịkwa mmachi ọnụego maka onye na-eweta ọrụ ọ bụla (`open-sse/services/rateLimitManager.ts`) iche site na `RATE_LIMIT_MAX_WAIT_MS`, `RATE_LIMIT_MAX_QUEUE_DEPTH`, na `RATE_LIMIT_AUTO_ENABLE` — lee `.env.example`.
+**Ndetu**: `AGENTPROXY_CHAT_MAX_HEAVY_IN_FLIGHT` na-amachi ọnụ ọgụgụ arịrịọ dị arọ — ndị nwere ọnọdụ ogologo — nwere ike ịrụ ọrụ n'otu oge; oke ahụ bụ ọnụ ụzọ nnabata, ọ bụghị ihe na-amachi ọnụego onye na-eweta ọrụ. **Mmelite #503-fanout:** anaghịzi edobe var a na ndabara (ugbu a ọ na-amachi naanị mgbe ahaziri ya n'ụzọ doro anya, dịka n'elu) — kama nke ahụ, mmefu byte a na-enweta na-akpaghị aka (`AGENTPROXY_CHAT_MAX_INFLIGHT_BYTES`) na-achịkwa nnabata ọrụ dị arọ, nke na-ahazi onwe ya dịka oke ebe nchekwa n'ezie nke host si dị, ya mere nrụnye ọhụrụ kwesịrị ịhụ ọdịda `503 chat_admission_busy` ole na ole nke ukwuu n'enweghị ịtọ var a ma ọlị; ịtọ ya n'ụzọ doro anya ebe a ka na-arụ ọrụ kpọmkwem dịka e dere na akwụkwọ. Mgbanwe mmefu byte akọwapụtara na-amachi n'etiti 8 MiB–2 GiB. `413 body_exceeds_budget` abụghị ihe na-adịru nwa oge: bulie mmefu byte ahụ, belata `AGENTPROXY_CHAT_HARD_MAX_BODY_BYTES`, ma ọ bụ bulie oke ebe nchekwa usoro ahụ. Mwepu `inflight_bytes_budget` bụ esemokwu nwa oge, a ka nwekwara ike ịnwale ya ọzọ. A na-achịkwa mmachi ọnụego maka onye na-eweta ọrụ ọ bụla (`open-sse/services/rateLimitManager.ts`) iche site na `RATE_LIMIT_MAX_WAIT_MS`, `RATE_LIMIT_MAX_QUEUE_DEPTH`, na `RATE_LIMIT_AUTO_ENABLE` — lee `.env.example`.
 
 **Otu esi enyocha na ọ rụrụ ọrụ**: mee ka agent/cron gị gbaa ọsọ ugboro abụọ n’usoro ngwa ngwa ma gosi na ha abụọ gara nke ọma. Tupu ndozi ahụ, ọsọ nke abụọ na-ewepụtakarị `429`/`401`. Mgbe ndozi ahụ gasịrị, a na-anwale ọdịda ọ bụla ọzọ (ọ bụrụ na ọ dị) na nzuzo ma oku ahụ emechaa nke ọma. Ị nwekwara ike iji `curl /monitoring/health` wee lelee mpaghara `rateLimitedUntil` na njikọ ndị na-eweta ọrụ, yana `circuitBreakers.providerBreakers[].state` maka ndị na-eweta ọrụ emetụtara — ọnọdụ ahụ ga-abụ otu n’ime `CLOSED`, `DEGRADED`, `OPEN`, ma ọ bụ `HALF_OPEN` (lee `src/shared/utils/circuitBreaker.ts`), onye na-eweta ọrụ nke na-aga n’ihu na-ada ga-agbanwe `CLOSED → DEGRADED → OPEN` tupu oge nrụgharị ahụ ekwe ka arịrịọ nnwale gafee (`HALF_OPEN`).
 
@@ -69,12 +69,12 @@ Tọọ ndị a na gburugburu usoro AgentProxy (daemon ahụ, dịka ọmụmaat
 
 ## Ịdọ aka ná ntị npm install (ERESOLVE / peer / deprecated)
 
-Mgbe ị na-agba `npm install -g omniroute`, ị nwere ike ịhụ ọtụtụ ịdọ aka ná ntị dịka `npm warn ERESOLVE`, ọkwa gbasara peer-dependency, na ozi `deprecated`. **A na-atụ anya ihe ndị a, ha anaghịkwa emerụ ihe ọ bụla.** Nrụnye gị gara nke ọma ma ọ bụrụ na ị hụ `added <N> packages` na nsonaazụ ahụ.
+Mgbe ị na-agba `npm install -g agentproxy`, ị nwere ike ịhụ ọtụtụ ịdọ aka ná ntị dịka `npm warn ERESOLVE`, ọkwa gbasara peer-dependency, na ozi `deprecated`. **A na-atụ anya ihe ndị a, ha anaghịkwa emerụ ihe ọ bụla.** Nrụnye gị gara nke ọma ma ọ bụrụ na ị hụ `added <N> packages` na nsonaazụ ahụ.
 
 Iji gbochie ịdọ aka ná ntị gbasara idozi peer-dependency, jiri usoro nrụnye AgentProxy na-akwado:
 
 ```bash
-npm install -g omniroute --legacy-peer-deps
+npm install -g agentproxy --legacy-peer-deps
 ```
 
 `--legacy-peer-deps` na-egbochi naanị `ERESOLVE` na ọkwa peer-dependency. Ọkwa deprecation ka ga-apụta n'ihi na ha sitere na ngwugwu ndị ọzọ nọ n'okpuru; ha apụtaghị na nrụnye ahụ dara.
@@ -101,7 +101,7 @@ Maka nrụnye npm zuru ụwa ọnụ, rụnye Chromium site na
 directory ngwugwu AgentProxy ka cache browser ahụ bụrụ nke otu nrụnye Playwright ahụ:
 
 ```bash
-cd "$(npm root -g)/omniroute"
+cd "$(npm root -g)/agentproxy"
 npx playwright install chromium
 ```
 
@@ -119,10 +119,10 @@ enweghị ha.
 | Nbanye mbụ anaghị arụ ọrụ                                  | Tọọ `INITIAL_PASSWORD` na `.env` (enweghị default e dere kpọmkwem n'ime koodu)                                                                                       |
 | Dashboard na-emepe na port na-ezighi ezi                   | Tọọ `PORT=20128` na `NEXT_PUBLIC_BASE_URL=http://localhost:20128`                                                                                                    |
 | Enweghị log e dere na disk                                 | Tọọ `APP_LOG_TO_FILE=true` ma nyochaa na agbanyere ndekọ call log                                                                                                    |
-| EACCES: ajụrụ ikike                                        | Tọọ `DATA_DIR=/path/to/writable/dir` iji dochie `~/.omniroute`                                                                                                       |
+| EACCES: ajụrụ ikike                                        | Tọọ `DATA_DIR=/path/to/writable/dir` iji dochie `~/.agentproxy`                                                                                                       |
 | Atụmatụ routing anaghị echekwa                             | Melite gaa na mbipụta v3.x kachasị ọhụrụ (ndozi Zod schema maka idobe settings bịara na ụdị ndị gara aga)                                                            |
 | Nbanye na-akụda / ibe tọgbọ chakoo                         | Lelee ụdị Node.js — hụ [Ndakọrịta Node.js](#nodejs-compatibility) n'okpuru                                                                                           |
-| `dlopen` / `slice is not valid mach-o file` (macOS)        | Gbaa `cd $(npm root -g)/omniroute/app && npm rebuild better-sqlite3 && omniroute` — hụ [iwughachi native module na macOS](#macos-native-module-rebuild) n'okpuru     |
+| `dlopen` / `slice is not valid mach-o file` (macOS)        | Gbaa `cd $(npm root -g)/agentproxy/app && npm rebuild better-sqlite3 && agentproxy` — hụ [iwughachi native module na macOS](#macos-native-module-rebuild) n'okpuru     |
 | Proxy "fetch failed"                                       | Gbaa mbọ hụ na edobere nhazi proxy n'ọkwa ziri ezi — hụ [Nsogbu Proxy](#proxy-issues) n'okpuru                                                                       |
 | Docker `curl: (56) Recv failure: Connection reset by peer` | Njikọ port Docker gị nwere ike ịdakwasị IPv6. Jiri `-p 127.0.0.1:20128:20128` iji manye IPv4, ma ọ bụ jiri `curl -4` nwalee. Hụ [Docker IPv6](#docker-ipv6) n'okpuru |
 | Antivirus na-etinye `README.md` na quarantine              | Nchọpụta ụgha — hụ [nchọpụta ụgha nke antivirus](#antivirus-false-positives) n'okpuru                                                                                |
@@ -140,7 +140,7 @@ enweghị ha.
 
 Avast na AVG na-eji usoro nyocha heuristic nke na-akanye faịlụ ederede nkịtị/Markdown nwere ọtụtụ
 njikọ ndị yiri arịrịọ HTTP. `README.md` nke AgentProxy na-esonye n'ime ngwugwu npm (e depụtara ya
-na `package.json` → `files`), ya mere ọ na-abata na `node_modules/omniroute/README.md` mgbe
+na `package.json` → `files`), ya mere ọ na-abata na `node_modules/agentproxy/README.md` mgbe
 echichi zuru ụwa ọnụ gasịrị — ma o nwere ihe dịka njikọ `http://localhost:20128/...` iri na ise (ebe njedebe MCP
 HTTP/SSE, URL A2A `.well-known`, na ihe atụ `curl`). Ịba ụba nke njikọ ndị ahụ
 ezuola ịkpalite usoro heuristic ahụ.
@@ -156,7 +156,7 @@ na kwarantaini n'enweghị nsogbu.
 
 1. **Kwụsị ọkwa ndị ahụ** — wepụ ndekọ echichi ahụ na nyocha antivirus gị
    (Avast: Settings → Exceptions), site n'ịgbakwunye ụzọ `node_modules` zuru ụwa ọnụ gị na/ma ọ bụ
-   ndekọ data AgentProxy (`~/.omniroute/`).
+   ndekọ data AgentProxy (`~/.agentproxy/`).
 2. **Kọọrọ ha nchọpụta ụgha ahụ** — <https://www.avast.com/false-positive-file-form.php>,
    ma tinye `README.md` e debere na kwarantaini. Nke a bụ ndozi ga-enyere onye ọ bụla aka, ebe ọ bụ
    usoro heuristic nke onye na-eweta antivirus na-emebiga ihe ókè n'ihi faịlụ ederede.
@@ -232,8 +232,8 @@ ruo mgbe emechara ya, ụdị ọhụrụ nwere ike imeghachi nke a.
    nvm use 24
    ```
 2. Nyochaa ụdị gị: `node --version` kwesịrị igosi `v24.0.0` ma ọ bụ nke ka ọhụrụ n'ahịrị 24.x LTS
-3. Wụnyegharịa AgentProxy: `npm install -g omniroute`
-4. Malitegharịa: `omniroute`
+3. Wụnyegharịa AgentProxy: `npm install -g agentproxy`
+4. Malitegharịa: `agentproxy`
 
 > **Ụdị echekwara a na-akwado:** `>=22.22.2 <23` ma ọ bụ `>=24.0.0 <27`. A na-akwado Node.js 24.x LTS (Krypton) na Node.js 26 n'ụzọ zuru ezu.
 
@@ -271,7 +271,7 @@ ma ọ na-achọ native compilation (`node-gyp rebuild`), npm na-awụpụ ya n'
 
 <a name="macos-native-module-rebuild"></a>
 
-**Ihe kpatara ya:** Mgbe emechara `npm install -g omniroute` zuru ụwa ọnụ, binary native nke `better-sqlite3` dị n'ime package ahụ nwere ike ịbụ nke a compile-rụrụ maka architecture ma ọ bụ Node.js ABI dị iche na nke na-arụ ọrụ na kọmputa ahụ. Nke a na-emekarị na macOS (ma Apple Silicon ma Intel) mgbe binary pre-built ahụ adabaghị na gburugburu gị.
+**Ihe kpatara ya:** Mgbe emechara `npm install -g agentproxy` zuru ụwa ọnụ, binary native nke `better-sqlite3` dị n'ime package ahụ nwere ike ịbụ nke a compile-rụrụ maka architecture ma ọ bụ Node.js ABI dị iche na nke na-arụ ọrụ na kọmputa ahụ. Nke a na-emekarị na macOS (ma Apple Silicon ma Intel) mgbe binary pre-built ahụ adabaghị na gburugburu gị.
 
 **Mgbaàmà:**
 
@@ -280,15 +280,15 @@ ma ọ na-achọ native compilation (`node-gyp rebuild`), npm na-awụpụ ya n'
 - Ọmụmaatụ zuru ezu:
 
 ```
-dlopen(/Users/<user>/.nvm/versions/node/v24.14.1/lib/node_modules/omniroute/app/node_modules/better-sqlite3/build/Release/better_sqlite3.node, 0x0001): tried: '...' (slice is not valid mach-o file)
+dlopen(/Users/<user>/.nvm/versions/node/v24.14.1/lib/node_modules/agentproxy/app/node_modules/better-sqlite3/build/Release/better_sqlite3.node, 0x0001): tried: '...' (slice is not valid mach-o file)
 ```
 
 **Ndozi — rụgharịa ya maka gburugburu kọmputa gị (ọ dịghị mkpa iweda ụdị Node.js):**
 
 ```bash
-cd $(npm root -g)/omniroute/app
+cd $(npm root -g)/agentproxy/app
 npm rebuild better-sqlite3
-omniroute
+agentproxy
 ```
 
 > **Rịba ama:** Nke a na-emegharị compile nke native binding ahụ megide ụdị Node.js na CPU architecture dị na kọmputa gị, nke na-edozi enweghị ndakọrịta binary ahụ. Oke runtime a na-akwado n'ụzọ ọchịchị bụ **`>=22.22.2 <23` ma ọ bụ `>=24.0.0 <27`** (`SUPPORTED_NODE_RANGE` na `src/shared/utils/nodeRuntimeSupport.ts`, nke dabara na field `engines` nke `package.json`). A na-akwado Node.js 24.x LTS (Krypton) na Node.js 26 n'ụzọ zuru ezu site na `better-sqlite3` v12.x.
@@ -380,7 +380,7 @@ lee [`docs/guides/KIRO_SETUP.md`](./KIRO_SETUP.md).
 ### Njehie Mmekọrịta Cloud
 
 1. Nyochaa na `BASE_URL` na-atụ aka na instance gị na-agba ọsọ (dịka ọmụmaatụ, `http://localhost:20128`)
-2. Nyochaa na `CLOUD_URL` na-atụ aka na endpoint cloud gị (dịka ọmụmaatụ, `https://omniroute.dev`)
+2. Nyochaa na `CLOUD_URL` na-atụ aka na endpoint cloud gị (dịka ọmụmaatụ, `https://agentproxy.online`)
 3. Debe ụkpụrụ `NEXT_PUBLIC_*` ka ha kwekọọ na ụkpụrụ dị n'akụkụ sava
 
 ### Cloud `stream=false` Na-eweghachi 500
@@ -414,8 +414,8 @@ lee [`docs/guides/KIRO_SETUP.md`](./KIRO_SETUP.md).
 1. **Nnyocha ngwa ngwa:** Gbaa `curl -4 http://localhost:20128/v1/models`. Ọ bụrụ na ọ na-arụ ọrụ na `-4` mana ọ naghị arụ ọrụ ma ewepụ ya, ị nwere ekwekọghị n'etiti bind IPv6.
 2. **Ndozi na-adịgide adịgide:** Mee bind kpọmkwem na IPv4 site n'iji `-p 127.0.0.1:20128:20128` n'iwu `docker run` gị:
    ```bash
-   docker run -d --name omniroute --restart unless-stopped --stop-timeout 40 \
-     -p 127.0.0.1:20128:20128 -v omniroute-data:/app/data diegosouzapw/omniroute:latest
+   docker run -d --name agentproxy --restart unless-stopped --stop-timeout 40 \
+     -p 127.0.0.1:20128:20128 -v agentproxy-data:/app/data diegosouzapw/agentproxy:latest
    ```
    Nke a na-amanye bind IPv4 ma na-egbochikwa ikpughe proxy na interface host niile.
 
@@ -570,7 +570,7 @@ Mgbe ọtụtụ arịrịọ na-aga n'otu oge rutere onye na-eweta ọrụ e ti
 - Endpoint mmecha nkata na-eweghachi nzaghachi `503` enwere ike ịnwale ọzọ nke koodu njehie ya bụ
   `chat_admission_busy`.
 - Nzaghachi ahụ gụnyere `Retry-After`. Kemgbe #12135, a na-enweta uru ahụ site na njupụta a hụrụ
-  — nke ka ukwuu n'etiti windo `OMNIROUTE_CHAT_ADMISSION_QUEUE_MS` nke arịrịọ ahụ cherelarị
+  — nke ka ukwuu n'etiti windo `AGENTPROXY_CHAT_ADMISSION_QUEUE_MS` nke arịrịọ ahụ cherelarị
   na oge ejiderela heavyweight leases ndị dị ugbu a — a na-ebuli ya ruo sekọnd zuru ezu
   ma debe oke ya na 60. N'ọnụ ụzọ na-enweghị ọrụ, ọ na-edobe opekempe ndị e ji kemgbe: sekọnd 2 n'ụzọ
   dabere na byte, sekọnd 1 n'ụzọ dabere na nhazi (nke gụnyekwara
@@ -602,17 +602,17 @@ Process ọ bụla na-eji ihe nchebe dị naanị na process ahụ iji dobe ikik
 ma nyochaa nnukwu ahụ arịrịọ. A na-ejide heavyweight lease ruo ogologo ndụ nzaghachi SSE.
 
 **#503-fanout:** tupu ndozi a, ihe nchebe ahụ na-amachi concurrency na COUNT arịrịọ a kapịrị ọnụ
-(`OMNIROUTE_CHAT_MAX_HEAVY_IN_FLIGHT`, ndabara `1`) n'agbanyeghị ebe nchekwa host, ya mere fan-out nke coding-agent
+(`AGENTPROXY_CHAT_MAX_HEAVY_IN_FLIGHT`, ndabara `1`) n'agbanyeghị ebe nchekwa host, ya mere fan-out nke coding-agent
 (ọtụtụ subagent/CLI, ahụ ndị na-adịkarị > 256 KB) dara ruo concurrency dị irè
 nke ~1 ma wepụta 503 n'okpuru ibu nkịtị kpamkpam. Ugbu a ihe nchebe ahụ na-ahazi onwe ya: a na-achịkwa ya
-site na mmefu ego ingest BYTE a na-enweta na-akpaghị aka (`OMNIROUTE_CHAT_MAX_INFLIGHT_BYTES`) nke a tụrụ dabere na
+site na mmefu ego ingest BYTE a na-enweta na-akpaghị aka (`AGENTPROXY_CHAT_MAX_INFLIGHT_BYTES`) nke a tụrụ dabere na
 oke ebe nchekwa n'ezie nke process ahụ, ọ na-enyochakwa akara nrụgide akụrụngwa dị ndụ — ya mere ọ
 na-ebelata ibu naanị mgbe host nọ n'ezie n'okpuru nrụgide ebe nchekwa, ọ bụghị naanị n'ihi na ihe karịrị otu
-arịrịọ dị arọ bịara n'otu oge. A ka na-asọpụrụ oke count ochie (`OMNIROUTE_CHAT_MAX_HEAVY_IN_FLIGHT`),
+arịrịọ dị arọ bịara n'otu oge. A ka na-asọpụrụ oke count ochie (`AGENTPROXY_CHAT_MAX_HEAVY_IN_FLIGHT`),
 mana naanị ma ọ bụrụ na ị tọọ ya n'ụzọ doro anya.
 
 Mgbe ikike juru, arịrịọ heavyweight ga-ebu ụzọ chere ruo
-`OMNIROUTE_CHAT_ADMISSION_QUEUE_MS` (ndabara `2000`, `0` na-agbanyụ nchere ahụ) ka oghere tọhapụ
+`AGENTPROXY_CHAT_ADMISSION_QUEUE_MS` (ndabara `2000`, `0` na-agbanyụ nchere ahụ) ka oghere tọhapụ
 tupu ọ zaa `503` enwere ike ịnwale ọzọ. Nchere nwere oke dị ka ndị ahịa ụdị agent
 (OpenCode, Claude Code, Cursor) ndị na-ezipụ sub-request dị arọ n'otu oge wee hazie mwụpụ ahụ n'usoro
 kama imefusị mmefu ego nnwale ọzọ ha niile na ọjụjụ ozugbo ma kwụsị n'etiti ọrụ.
@@ -632,7 +632,7 @@ false` na `maxInflightBytes` sara mbara pụtara na mmefu ego e nwetara na-akpag
    enweghị ike iji admission env var dozie nke ahụ; ọ chọrọ RAM karịa ma ọ bụ ibu ọrụ pere mpe.
 3. Naanị ma ọ bụrụ na `/api/monitoring/health` gosiri na mmefu ego e nwetara na-akpaghị aka pere ezigbo mpe maka
    host gị (ọ naghị adịkarị — ọ na-agbatịworị site na container ruo bare-metal), jiri
-   `OMNIROUTE_CHAT_MAX_INFLIGHT_BYTES` dochie ya ozugbo kama ịlaghachi na oke count arịrịọ ochie.
+   `AGENTPROXY_CHAT_MAX_INFLIGHT_BYTES` dochie ya ozugbo kama ịlaghachi na oke count arịrịọ ochie.
 
 Hụ [ntụaka environment-variable](../reference/ENVIRONMENT.md#4-security--authentication)
 maka ntọala admission ndị bụ isi e ji eme ihe.
@@ -719,7 +719,7 @@ Nsogbu ndị metụtara kpọmkwem mbipụta v3.8.0 na ụzọ mgbagharị ha d�
 
 **Mmezi:**
 
-- Gbaa `omniroute providers` site na CLI iji kpalite usoro OAuth ọzọ, ma ọ bụ
+- Gbaa `agentproxy providers` site na CLI iji kpalite usoro OAuth ọzọ, ma ọ bụ
 - Gbaa OAuth ọzọ site na **Dashboard → Providers → Command Code → Reconnect**
 
 ### ModelScope na-eweghachi cooldowns 429 siri ike
@@ -736,19 +736,19 @@ Nsogbu ndị metụtara kpọmkwem mbipụta v3.8.0 na ụzọ mgbagharị ha d�
 - Gbaa mbọ hụ na ị nọ na v3.8.0 ma ọ bụ nke ọhụrụ karịa
 - Nyochaa na agbanyere toggle `useUpstream429BreakerHints` n'okpuru **Settings → Resilience**
 
-### OMNIROUTE_WS_BRIDGE_SECRET adịghị na production
+### AGENTPROXY_WS_BRIDGE_SECRET adịghị na production
 
 **Mgbaàmà:**
 
 - 401 na arịrịọ WebSocket bridge Codex/Responses ọ bụla mgbe ọ na-arụ ọrụ na remote production host
 - Handshake WebSocket bridge na-emechi ozugbo njikọ gasịrị
 
-**Ihe kpatara ya:** Env var `OMNIROUTE_WS_BRIDGE_SECRET` adịghị na production environment.
+**Ihe kpatara ya:** Env var `AGENTPROXY_WS_BRIDGE_SECRET` adịghị na production environment.
 
 **Mmezi:**
 
 1. Mepụta secret enweghị usoro: `openssl rand -hex 32`
-2. Tọọ `OMNIROUTE_WS_BRIDGE_SECRET=<random-secret>` n'ime env nke production server (yana client ọ bụla na-ekwurịta okwu na bridge)
+2. Tọọ `AGENTPROXY_WS_BRIDGE_SECRET=<random-secret>` n'ime env nke production server (yana client ọ bụla na-ekwurịta okwu na bridge)
 3. Malitegharịa AgentProxy
 
 ### Responses API: e wedatara background mode ka ọ bụrụ synchronous
@@ -777,16 +777,16 @@ Nke a na-emekarị na Windows (antivirus, ndị na-enyocha sistemụ faịlụ) 
 
 ```bash
 # Site na env var (ọ na-adịgide n'ofe mmalite dị iche iche):
-export OMNIROUTE_READY_TIMEOUT_MS=180000   # nkeji 3
-omniroute serve
+export AGENTPROXY_READY_TIMEOUT_MS=180000   # nkeji 3
+agentproxy serve
 
 # Site na ọkọlọtọ CLI (naanị otu oge):
-omniroute serve --ready-timeout 180000
+agentproxy serve --ready-timeout 180000
 ```
 
 Ntọala ndabara bụ 60 000 ms (60 s). Ịdọ aka ná ntị ahụ bụ naanị maka inye ozi; sava ahụ na-aga n'ihu ịmalite n'azụ, a ga-enwekwa ike iru ya ozugbo mmalite zuru ezu.
 
-Lee [`docs/reference/ENVIRONMENT.md`](../reference/ENVIRONMENT.md) maka nkọwa zuru ezu gbasara `OMNIROUTE_READY_TIMEOUT_MS`.
+Lee [`docs/reference/ENVIRONMENT.md`](../reference/ENVIRONMENT.md) maka nkọwa zuru ezu gbasara `AGENTPROXY_READY_TIMEOUT_MS`.
 
 ---
 

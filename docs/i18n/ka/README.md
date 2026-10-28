@@ -37,14 +37,14 @@
 
 <h3>
 
-⭐ მონიშნეთ რეპოზიტორია ვარსკვლავით, თუ OMNIROUTE დაგეხმარათ ფულის დაზოგვასა და სამუშაოს გამარტივებაში.
+⭐ მონიშნეთ რეპოზიტორია ვარსკვლავით, თუ AGENTPROXY დაგეხმარათ ფულის დაზოგვასა და სამუშაოს გამარტივებაში.
 
 </h3>
 
 [![ვარსკვლავები](https://img.shields.io/github/stars/diegosouzapw/AgentProxy?style=social)](https://github.com/diegosouzapw/AgentProxy)
 <a href="https://trendshift.io/repositories/23589" target="_blank"><img src="https://trendshift.io/api/badge/repositories/23589" alt="diegosouzapw%2FAgentProxy | Trendshift" style="width: 250px; height: 55px;" width="250" height="55"/></a>
-[![ვარსკვლავების ისტორიის რეიტინგი](https://api.star-history.com/badge?repo=diegosouzapw/AgentProxy&theme=dark)](https://www.star-history.com/diegosouzapw/omniroute)
-[![olud.ai](https://olud.ai/badge.php?tool=diegosouzapw-omniroute)](https://olud.ai/project/diegosouzapw-omniroute.html)
+[![ვარსკვლავების ისტორიის რეიტინგი](https://api.star-history.com/badge?repo=diegosouzapw/AgentProxy&theme=dark)](https://www.star-history.com/#khanhkit/AgentProxy&Date)
+[![olud.ai](https://github.com/khanhkit/AgentProxy)](https://github.com/khanhkit/AgentProxy)
 
 ### 💬 შემოუერთდით საზოგადოებას
 
@@ -54,12 +54,12 @@
 [![გამოიწერეთ @diegosouzapw GitHub-ზე](https://img.shields.io/github/followers/diegosouzapw?style=for-the-badge&logo=github&logoColor=white&label=Follow%20on%20GitHub&color=181717)](https://github.com/diegosouzapw)
 
 [![Discord](https://img.shields.io/badge/Discord-5865F2?style=for-the-badge&logo=discord&logoColor=white)](https://discord.gg/U47eFqAXCn)
-[![Telegram](https://img.shields.io/badge/Telegram-26A5E4?style=for-the-badge&logo=telegram&logoColor=white)](https://t.me/omnirouteOficial)
+[![Telegram](https://img.shields.io/badge/Telegram-26A5E4?style=for-the-badge&logo=telegram&logoColor=white)](https://github.com/khanhkit/AgentProxy/discussions)
 [![WhatsApp გლობალური](https://img.shields.io/badge/WhatsApp_Global-25D366?style=for-the-badge&logo=whatsapp&logoColor=white)](https://chat.whatsapp.com/FvuCbrpZmQ6I85n2vW5QIC?s=cl&p=a&mlu=4)
 [![WhatsApp ბრაზილია](https://img.shields.io/badge/WhatsApp_Brasil-25D366?style=for-the-badge&logo=whatsapp&logoColor=white)](https://chat.whatsapp.com/KWgatljAjmbELQory59Oti?s=cl&p=a&mlu=4)
-[![ვებსაიტი](https://img.shields.io/badge/Website-omniroute.online-blue?logo=google-chrome&logoColor=white)](https://omniroute.online)
+[![ვებსაიტი](https://img.shields.io/badge/Website-agentproxy.online-blue?logo=google-chrome&logoColor=white)](https://agentproxy.online)
 
-**კითხვები, რჩევები პროვაიდერების შესახებ, განვითარების გეგმა და მხარდაჭერა → [Discord](https://discord.gg/U47eFqAXCn) · [Telegram](https://t.me/omnirouteOficial) · WhatsApp [🌍 გლობალური](https://chat.whatsapp.com/FvuCbrpZmQ6I85n2vW5QIC?s=cl&p=a&mlu=4) / [🇧🇷 ბრაზილია](https://chat.whatsapp.com/KWgatljAjmbELQory59Oti?s=cl&p=a&mlu=4) / [პორტალი](https://portal.sthub.com.br/communities/groups/st-hub/channels/Omniroute-World-8kRjmK)**
+**კითხვები, რჩევები პროვაიდერების შესახებ, განვითარების გეგმა და მხარდაჭერა → [Discord](https://discord.gg/U47eFqAXCn) · [Telegram](https://github.com/khanhkit/AgentProxy/discussions) · WhatsApp [🌍 გლობალური](https://chat.whatsapp.com/FvuCbrpZmQ6I85n2vW5QIC?s=cl&p=a&mlu=4) / [🇧🇷 ბრაზილია](https://chat.whatsapp.com/KWgatljAjmbELQory59Oti?s=cl&p=a&mlu=4) / [პორტალი](https://github.com/khanhkit/AgentProxy/discussions)**
 
 <br/>
 
@@ -84,12 +84,12 @@
 
 ## 🧩 ხელმისაწვდომია
 
-[![npm ვერსია](https://img.shields.io/npm/v/omniroute?color=cb3837&logo=npm)](https://www.npmjs.com/package/omniroute)
-![NPM ყოველთვიურად](https://img.shields.io/npm/dm/omniroute?label=npm/month&color=cb3837&logo=npm)
-[![Docker Hub](https://img.shields.io/docker/v/diegosouzapw/omniroute?label=Docker%20Hub&logo=docker&color=2496ED)](https://hub.docker.com/r/diegosouzapw/omniroute)
+[![npm ვერსია](https://img.shields.io/npm/v/agentproxy?color=cb3837&logo=npm)](https://www.npmjs.com/package/agentproxy)
+![NPM ყოველთვიურად](https://img.shields.io/npm/dm/agentproxy?label=npm%2Fmonth&color=cb3837&logo=npm)
+[![Docker Hub](https://img.shields.io/docker/v/khanhkit/agentproxy?label=Docker+Hub&logo=docker&color=2496ED)](https://hub.docker.com/r/khanhkit/agentproxy)
 [![ლიცენზია: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=flat-square)](LICENSE)
-![Docker ჩამოტვირთვები](https://img.shields.io/docker/pulls/diegosouzapw/omniroute?label=docker%20pulls&logo=docker&color=2496ED)
-![Electron ჩამოტვირთვები](https://img.shields.io/github/downloads/diegosouzapw/omniroute/total?style=flat&label=electron%20downloads&logo=electron&color=47848F)
+![Docker ჩამოტვირთვები](https://img.shields.io/docker/pulls/khanhkit/agentproxy?label=docker+pulls&logo=docker&color=2496ED)
+![Electron ჩამოტვირთვები](https://img.shields.io/github/downloads/khanhkit/agentproxy/total?style=flat&label=electron+downloads&logo=electron&color=47848F)
 
 <table>
   <tr>
@@ -101,8 +101,8 @@
   <tr>
     <td align="right"><b>💡 სწავლა</b></td>
     <td align="center"><a href="#-the-promise">💥 დაპირება</a></td>
-    <td align="center"><a href="#-why-omniroute">🤔 რატომ AgentProxy</a></td>
-    <td align="center"><a href="#-what-sets-omniroute-apart">🏆 რით გამოირჩევა</a></td>
+    <td align="center"><a href="#-why-agentproxy">🤔 რატომ AgentProxy</a></td>
+    <td align="center"><a href="#-what-sets-agentproxy-apart">🏆 რით გამოირჩევა</a></td>
   </tr>
   <tr>
     <td align="right"><b>⚙️ შესაძლებლობები</b></td>
@@ -113,18 +113,18 @@
   <tr>
     <td align="right"></td>
     <td align="center"><a href="#%EF%B8%8F-save-1595-tokens--automatically">🗜️ შეკუმშვა</a></td>
-    <td align="center"><a href="#%EF%B8%8F-where-omniroute-runs--anywhere">🖥️ სად მუშაობს</a></td>
+    <td align="center"><a href="#%EF%B8%8F-where-agentproxy-runs--anywhere">🖥️ სად მუშაობს</a></td>
     <td align="center"><a href="#-private--local-first">🔒 კონფიდენციალური</a></td>
   </tr>
   <tr>
     <td align="right"><b>👀 ნახვა</b></td>
-    <td align="center"><a href="#-omniroute-in-action">🎬 მოქმედებაში</a></td>
+    <td align="center"><a href="#-agentproxy-in-action">🎬 მოქმედებაში</a></td>
     <td align="center"><a href="#-whats-new">✨ სიახლეები</a></td>
     <td align="center"><a href="#-compatible-clis--coding-agents">🤖 თავსებადი CLI-ები</a></td>
   </tr>
   <tr>
     <td align="right"><b>💚 მხარდაჭერა</b></td>
-    <td align="center"><a href="#-support-omniroute">💚 მხარდაჭერა / შემოწირულობა</a></td>
+    <td align="center"><a href="#-support-agentproxy">💚 მხარდაჭერა / შემოწირულობა</a></td>
     <td align="center"><a href="#-community--help">💬 საზოგადოება</a></td>
     <td align="center"><a href="#-sponsors">💖 სპონსორები</a></td>
   </tr>
@@ -216,7 +216,7 @@
 
 </div>
 
-<img src="./docs/diagrams/works-zero-config.svg" width="100%" alt="ინსტალაციისთანავე მუშაობს — ნულოვანი კონფიგურაციით. სამი ნაბიჯი: 1. დააინსტალირეთ — npm i -g omniroute, სერვერი გაეშვება მისამართზე localhost:20128. 2. მიუთითეთ თქვენს ხელსაწყოს http://localhost:20128/v1 — ნებისმიერი OpenAI-თან თავსებადი ხელსაწყო (Claude Code, Cursor, Cline). 3. ის გიპასუხებთ — მყისიერი პასუხისთვის გამოიძახეთ მოდელი auto, API გასაღების, რეგისტრაციისა და კონფიგურაციის გარეშე. გასაღების არმომთხოვნი პროვაიდერი OpenCode Free წინასწარ არის ჩართული auto კომბინაციაში, ამიტომ ახლად დაინსტალირებული სისტემა დაუყოვნებლივ პასუხობს."/>
+<img src="./docs/diagrams/works-zero-config.svg" width="100%" alt="ინსტალაციისთანავე მუშაობს — ნულოვანი კონფიგურაციით. სამი ნაბიჯი: 1. დააინსტალირეთ — npm i -g agentproxy, სერვერი გაეშვება მისამართზე localhost:20128. 2. მიუთითეთ თქვენს ხელსაწყოს http://localhost:20128/v1 — ნებისმიერი OpenAI-თან თავსებადი ხელსაწყო (Claude Code, Cursor, Cline). 3. ის გიპასუხებთ — მყისიერი პასუხისთვის გამოიძახეთ მოდელი auto, API გასაღების, რეგისტრაციისა და კონფიგურაციის გარეშე. გასაღების არმომთხოვნი პროვაიდერი OpenCode Free წინასწარ არის ჩართული auto კომბინაციაში, ამიტომ ახლად დაინსტალირებული სისტემა დაუყოვნებლივ პასუხობს."/>
 
 ```bash
 # ახალი ინსტალაცია, ავტორიზაციის მონაცემების გარეშე — `auto` უკვე მუშაობს:
@@ -265,7 +265,7 @@ curl http://localhost:20128/v1/chat/completions \
 </div>
 
 <p align="center">
-  <a href="https://platform.kimi.ai?track_id=track-8197581fdd7d4139a0f562e4a03c3798&aff=omniroute">
+  <a href="https://platform.kimi.ai?track_id=track-8197581fdd7d4139a0f562e4a03c3798">
     <img src="public/sponsors/kimi-k3-banner.png" width="100%" alt="Kimi K3 — ღია მოწინავე ინტელექტი · 2.8T პარამეტრი · 1M-ტოკენიანი კონტექსტი"/>
   </a>
 </p>
@@ -275,7 +275,7 @@ curl http://localhost:20128/v1/chat/completions \
 <table>
   <tr>
     <td align="center" width="150">
-      <a href="https://platform.kimi.ai?track_id=track-8197581fdd7d4139a0f562e4a03c3798&aff=omniroute">
+      <a href="https://platform.kimi.ai?track_id=track-8197581fdd7d4139a0f562e4a03c3798">
         <picture>
           <source media="(prefers-color-scheme: dark)" srcset="public/providers/kimi-logomark-dark.svg">
           <img src="public/providers/kimi-logomark-light.svg" width="64" alt="Kimi (Moonshot AI)"/>
@@ -287,12 +287,12 @@ curl http://localhost:20128/v1/chat/completions \
     <td>
       მადლობას ვუხდით <b>Kimi-ს (Moonshot AI)</b>, ჩვენს ღია კოდის დამფუძნებელ მეგობარს, ამ პროექტის მხარდაჭერისთვის! Kimi არის AI ლაბორატორია, რომელიც ღია წონების მქონე K2 და K3 მოდელების ოჯახებს ქმნის — <b>Kimi K3</b> უზრუნველყოფს 1M-ტოკენიან კონტექსტურ ფანჯარას, ხედვის მშობლიურ მხარდაჭერასა და მოწინავე დონის პროგრამირებას დახურული მოდელების ფასის მხოლოდ მცირე ნაწილად და პირდაპირ მუშაობს Claude Code-თან, Codex-თან და პროგრამირების ყველა ხელსაწყოსთან, რომელსაც AgentProxy ემსახურება.
       <br/><br/>
-      <b>რას უზრუნველყოფს Kimi-ს მხარდაჭერა:</b> Kimi-ს API კრედიტები უზრუნველყოფს AgentProxy-ის AI-ით ვალიდირებულ გამოშვების პროცესს — <i>Kimi K3-ზე დაფუძნებული შერწყმის ვალიდაციის</i> ეტაპს, რომელიც გამოშვებამდე ყველა pull request-ს ამოწმებს — ასევე ფუნქციების ყოველდღიურ განვითარებას. Kimi-ს სრულფასოვანი მხარდაჭერა ორივე არხზეა ხელმისაწვდომი: პირდაპირი <a href="https://platform.kimi.ai?track_id=track-8197581fdd7d4139a0f562e4a03c3798&aff=omniroute">Kimi API</a> (<code>kimi-k3</code>) და <a href="https://www.kimi.com/code?aff=omniroute">Kimi Code-ის პროგრამირების გეგმა</a> (OAuth და API გასაღები). AgentProxy ასევე პირველი ბრაზილიური ღია კოდის პროექტია Kimi-ს მხარდაჭერის პროგრამაში. <a href="https://platform.kimi.ai?track_id=track-8197581fdd7d4139a0f562e4a03c3798&aff=omniroute"><b>მიიღეთ Kimi API გასაღები 15%-ით მეტი კრედიტით →</b></a>
+      <b>რას უზრუნველყოფს Kimi-ს მხარდაჭერა:</b> Kimi-ს API კრედიტები უზრუნველყოფს AgentProxy-ის AI-ით ვალიდირებულ გამოშვების პროცესს — <i>Kimi K3-ზე დაფუძნებული შერწყმის ვალიდაციის</i> ეტაპს, რომელიც გამოშვებამდე ყველა pull request-ს ამოწმებს — ასევე ფუნქციების ყოველდღიურ განვითარებას. Kimi-ს სრულფასოვანი მხარდაჭერა ორივე არხზეა ხელმისაწვდომი: პირდაპირი <a href="https://platform.kimi.ai?track_id=track-8197581fdd7d4139a0f562e4a03c3798">Kimi API</a> (<code>kimi-k3</code>) და <a href="https://www.kimi.com/code">Kimi Code-ის პროგრამირების გეგმა</a> (OAuth და API გასაღები). AgentProxy ასევე პირველი ბრაზილიური ღია კოდის პროექტია Kimi-ს მხარდაჭერის პროგრამაში. <a href="https://platform.kimi.ai?track_id=track-8197581fdd7d4139a0f562e4a03c3798"><b>მიიღეთ Kimi API გასაღები 15%-ით მეტი კრედიტით →</b></a>
     </td>
   </tr>
   <tr>
     <td align="center" width="150">
-      <a href="https://cheaperinference.com/?utm_source=omniroute">
+      <a href="https://cheaperinference.com">
         <img src="./public/providers/cli-generic.svg" width="64" alt="Cheaper Inference"/>
       </a>
       <br/><b>Cheaper Inference</b><br/><sub>cheaperinference.com</sub><br/><br/>
@@ -301,12 +301,12 @@ curl http://localhost:20128/v1/chat/completions \
     <td>
       მადლობას ვუხდით <b>Cheaper Inference-ს</b>, AgentProxy-ის ღია კოდის მეგობარს, ამ პროექტის მხარდაჭერისთვის! Cheaper Inference არის ფასის მიხედვით რანჟირებული კარიბჭე, რომელიც ერთ OpenAI-თან თავსებადი endpoint-ის უკან 42 მოწინავე მოდელს — Claude-ს, GPT-5.x-ს, Gemini-ს, Kimi K3-ს, GLM-ს, DeepSeek-ს, Grok-სა და MiniMax-ს — ხელახლა ყიდის და თითოეულ მოთხოვნას ყველაზე იაფ შესაბამის პროვაიდერთან მიმართავს ისე, რომ მოდელის შემქმნელის ოფიციალურ ფასზე მეტს არასოდეს გაკისრებთ.
       <br/><br/>
-      <b>სრულფასოვანი მხარდაჭერა AgentProxy-ში:</b> Chat Completions, მშობლიური <code>/v1/responses</code> endpoint, ხედვა, ხელსაწყოების გამოძახება და 3 გამოსახულების მოდელი (<code>grok-imagine</code>, <code>nano-banana-pro</code>, <code>nano-banana-2</code>, რომლებიც ხელმისაწვდომია როგორც <code>cheaperinference/&lt;model&gt;</code>). <a href="https://cheaperinference.com/?utm_source=omniroute"><b>მიიღეთ API გასაღები →</b></a>
+      <b>სრულფასოვანი მხარდაჭერა AgentProxy-ში:</b> Chat Completions, მშობლიური <code>/v1/responses</code> endpoint, ხედვა, ხელსაწყოების გამოძახება და 3 გამოსახულების მოდელი (<code>grok-imagine</code>, <code>nano-banana-pro</code>, <code>nano-banana-2</code>, რომლებიც ხელმისაწვდომია როგორც <code>cheaperinference/&lt;model&gt;</code>). <a href="https://cheaperinference.com"><b>მიიღეთ API გასაღები →</b></a>
     </td>
   </tr>
 </table>
 
-<sub><code>aff=omniroute</code> ნიშნულის მქონე ბმულები პარტნიორული ბმულებია. ისინი პროექტს აფინანსებს თქვენთვის დამატებითი ხარჯის გარეშე.</sub>
+<sub><code>aff=agentproxy</code> ნიშნულის მქონე ბმულები პარტნიორული ბმულებია. ისინი პროექტს აფინანსებს თქვენთვის დამატებითი ხარჯის გარეშე.</sub>
 
 <br/>
 
@@ -492,7 +492,7 @@ curl http://localhost:20128/v1/chat/completions \
 
 <img src="./docs/diagrams/comparison-table.svg" width="100%" alt="რით გამოირჩევა AgentProxy — შესაძლებლობების დათარიღებული შედარება 9router-თან, OpenRouter-თან, CLIProxyAPI-სა და LiteLLM-თან 13 მახასიათებლის მიხედვით. AgentProxy: 356 პროვაიდერი, 150+-ზე მეტი ჩაშენებული უფასო ტარიფი, მარშრუტიზაციის 19 სტრატეგია, ტოკენების შეკუმშვის 12 ძრავა, ჩაშენებული MCP სერვერი 110 ხელსაწყოთი, A2A აგენტების პროტოკოლი, მუდმივი მეხსიერება, დამცავი მექანიზმები, ღრუბლოვანი აგენტები, TLS ანაბეჭდის ფარული რეჟიმი, Desktop/Termux/PWA და ინტერფეისის 42 i18n ლოკალი. AgentProxy ვრცელდება MIT ლიცენზიით და შესაძლებელია მისი საკუთარ სერვერზე განთავსება. კონკურენტების შესაძლებლობები და რაოდენობრივი მონაცემები შეიძლება შეიცვალოს; იხილეთ ბმულზე მოცემული მეთოდოლოგია."/>
 
-<sub>📊 სრული მეთოდოლოგია და თითოეული მახასიათებლის დეტალური შედარება 9router-თან, OpenRouter-თან, CLIProxyAPI-სა და LiteLLM-თან → [`docs/comparison/OMNIROUTE_VS_ALTERNATIVES.md`](docs/comparison/OMNIROUTE_VS_ALTERNATIVES.md)</sub>
+<sub>📊 სრული მეთოდოლოგია და თითოეული მახასიათებლის დეტალური შედარება 9router-თან, OpenRouter-თან, CLIProxyAPI-სა და LiteLLM-თან → [`docs/comparison/AGENTPROXY_VS_ALTERNATIVES.md`](docs/comparison/AGENTPROXY_VS_ALTERNATIVES.md)</sub>
 
 <br/>
 
@@ -519,7 +519,7 @@ AgentProxy ვრცელდება MIT ლიცენზიით და �
 Pix-ის დასაკოპირებელი კოდი:
 
 ```
-00020101021126580014br.gov.bcb.pix01365d865059-bc44-483a-962d-43ceb80126eb5204000053039865802BR5922OMNIROUTE CONTRIBUICAO6006BRASIL62070503***630475DD
+00020101021126580014br.gov.bcb.pix01365d865059-bc44-483a-962d-43ceb80126eb5204000053039865802BR5922AGENTPROXY CONTRIBUICAO6006BRASIL62070503***630475DD
 ```
 
 <br clear="right"/>
@@ -558,7 +558,7 @@ Pix-ის დასაკოპირებელი კოდი:
 
 Radar ნებაყოფლობითია და მხოლოდ GET-მოთხოვნებს იყენებს. AgentProxy-ის კლიენტი არ ატვირთავს მოთხოვნებს, ტრაფიკს, პროვაიდერის
 კონფიგურაციას, გამოყენების ტელემეტრიას ან განცხადების დახურვის მდგომარეობის ადგილობრივ მონაცემებს. დასაშვებობის პირობებისა და
-მიმდინარე კატალოგის შესახებ იხილეთ **[radar.omniroute.online/planos](https://radar.omniroute.online/planos)**.
+მიმდინარე კატალოგის შესახებ იხილეთ **[radar.agentproxy.online/planos](https://agentproxy.online)**.
 
 <br/>
 
@@ -576,13 +576,13 @@ Radar ნებაყოფლობითია და მხოლოდ GET-�
 - **🗜️ შეკუმშვის გაძლიერებული დაცვა** — ნაგულისხმევად ჩართული ინფლაციისგან დამცავი მექანიზმი, Caveman-ის პაკეტები DE / FR / JA + ჩინურისთვის (wényán), RTK ფილტრები Gradle-ისა და .NET-ისთვის. → [შეკუმშვა](docs/compression/COMPRESSION_ENGINES.md)
 - **💸 გამჭვირვალე ფიქსირებული ტარიფის ღირებულება** — გამოწერის / კოდირების გეგმის პროვაიდერებისთვის ხარჯების ანალიტიკაში ნაჩვენებია **$0**; ბიუჯეტის, კვოტისა და მარშრუტიზაციის შეფასება გრძელდება. → [API ცნობარი](docs/reference/API_REFERENCE.md)
 - **⚖️ კვოტის წილის მარშრუტიზაცია** — საზიარო ანგარიშის კვოტა სამართლიანად ნაწილდება გაერთიანებულ გასაღებებს შორის და რესურსის ეფექტიანად გამოყენებისთვის უმოქმედო წილები დროებით სხვებს გადაეცემა. → [მდგრადობის სახელმძღვანელო](docs/architecture/RESILIENCE_GUIDE.md)
-- **🤖 CLI-ის/აგენტის დაყენება ერთი ბრძანებით** — 13 რეგისტრირებული `setup-*` ბრძანება; `omniroute run` უშვებს 7 CLI-ს (Claude Code, Codex, Aider, Goose, OpenCode, Qwen Code, Gemini CLI); `omniroute configure` მხარს უჭერს 10 სამიზნეს, ინტერაქტიული პროვაიდერისა და მოდელის ამომრჩევლით და თითოეული კონტექსტისთვის რჩეულებით. → [CLI ინტეგრაციები](docs/guides/CLI-INTEGRATIONS.md)
+- **🤖 CLI-ის/აგენტის დაყენება ერთი ბრძანებით** — 13 რეგისტრირებული `setup-*` ბრძანება; `agentproxy run` უშვებს 7 CLI-ს (Claude Code, Codex, Aider, Goose, OpenCode, Qwen Code, Gemini CLI); `agentproxy configure` მხარს უჭერს 10 სამიზნეს, ინტერაქტიული პროვაიდერისა და მოდელის ამომრჩევლით და თითოეული კონტექსტისთვის რჩეულებით. → [CLI ინტეგრაციები](docs/guides/CLI-INTEGRATIONS.md)
 - **🛰️ დისტანციური რეჟიმი** — მართეთ დისტანციური AgentProxy შეზღუდული მოქმედების ტოკენებით (`connect` / `contexts` / `tokens`) და `antigravity` OAuth დამხმარით VPS ინსტალაციებისთვის. → [დისტანციური რეჟიმი](docs/guides/REMOTE-MODE.md)
 - **🧭 უფრო ჭკვიანი ავტომარშრუტიზაცია** — `auto/<category>:<tier>` კომბინაციები, **Fusion** (მოდელების პანელი + შემფასებელი), ამოცანის გათვალისწინებით მარშრუტიზაცია, თითოეული მოთხოვნისთვის მოდელის / რეჟიმის / USD ბიუჯეტის გადაწერა. → [Auto-Combo](docs/routing/AUTO-COMBO.md)
 - **🗜️ გაფართოებადი შეკუმშვა** — 12 კომპოზირებადი ძრავა + Compression Studios: LLMLingua-2, ორდონიანი Ultra, omniglyph, თითოეული ნაბიჯის სიზუსტის შემოწმება, GCF v3.2, გადაადგილებით დალაგების რედაქტორი. → [შეკუმშვა](docs/compression/COMPRESSION_ENGINES.md)
 - **🕵️ გამჭვირვალე MITM გაშიფვრა (TPROXY)** — იმ CLI-ების ტრაფიკის დაჭერა, რომლებიც პროქსის გარემოს ცვლადებს უგულებელყოფენ, თითოეული SNI-სთვის ცალკე CA-ითა და ნდობის საცავის ინსტალატორით. → [MITM/TPROXY](docs/security/MITM-TPROXY-DECRYPT.md)
 - **💸 ხარჯების ტელემეტრია ყველგან** — `X-AgentProxy-*` ხარჯის/გამოყენების სათაურები ყველა საბოლოო წერტილზე, cache-HIT დანაზოგის სათაური, თითოეული გასაღებისთვის USD ხარჯვის კვოტები. → [API ცნობარი](docs/reference/API_REFERENCE.md)
-- **🧠 მეხსიერება, რომელსაც თქვენ აკონტროლებთ** — ნაგულისხმევად გამორთულია, სურვილისამებრ ჩასართავი int8 ვექტორული კვანტიზაციითა და ტიპიზებული დაძველებით, თითოეული მოთხოვნისთვის `x-omniroute-no-memory`. → [მეხსიერება](docs/frameworks/MEMORY.md)
+- **🧠 მეხსიერება, რომელსაც თქვენ აკონტროლებთ** — ნაგულისხმევად გამორთულია, სურვილისამებრ ჩასართავი int8 ვექტორული კვანტიზაციითა და ტიპიზებული დაძველებით, თითოეული მოთხოვნისთვის `x-agentproxy-no-memory`. → [მეხსიერება](docs/frameworks/MEMORY.md)
 - **🛡️ უსაფრთხოება** — prompt-injection-ისგან დაცვა ყველა LLM მარშრუტზე (red-team ტესტების ნაკრები), სურვილისამებრ ჩასართავი ავტორიზაციის მონაცემების შენიღბვის დამცავი მექანიზმი (ორივე მიმართულებით გაჟონილ API გასაღებებს/საიდუმლოებებს ფარავს), უფასო DuckDuckGo ვებძებნა უკიდურესი საჭიროებისთვის და დაფისთვის არასავალდებულო OIDC შესვლის ბარიერი (პაროლით შესვლა ყოველთვის ხელმისაწვდომი რჩება). → [დამცავი მექანიზმები](docs/security/GUARDRAILS.md)
 - **🖼️ ახალი საბოლოო წერტილები** — `/v1/ocr` (Mistral OCR) და `/v1/audio/translations` (Whisper-ის სტილში) მედიის შესაძლებლობებს სრულყოფს. → [API ცნობარი](docs/reference/API_REFERENCE.md)
 - **🎨 სურათის / ვიდეოს / აუდიოს გენერირება** — ერთი API მედიისთვის: xAI Grok Imagine და Novita AI ვიდეო, ComfyUI, Magnific, Adobe Firefly, Segmind და მეტყველების ისეთი პროვაიდერები, როგორიცაა ElevenLabs. → [API ცნობარი](docs/reference/API_REFERENCE.md)
@@ -641,7 +641,7 @@ Radar ნებაყოფლობითია და მხოლოდ GET-�
 <b>＋ ასევე მუშაობს შემდეგებთან</b> · Kiro · Command Code · Antigravity · Windsurf · AMP · <b>OpenAI-სთან თავსებადი ნებისმიერი ინსტრუმენტი</b>
 </div>
 
-<sub>📖 თითოეული ხელსაწყოს კონფიგურაცია 36-ვე ხელსაწყოსთვის (26 CLI Code + 10 CLI Agent) → [`docs/reference/CLI-TOOLS.md`](docs/reference/CLI-TOOLS.md) · 🧩 OpenCode-ის პლაგინი → [`@omniroute/opencode-provider`](https://www.npmjs.com/package/@omniroute/opencode-provider)</sub>
+<sub>📖 თითოეული ხელსაწყოს კონფიგურაცია 36-ვე ხელსაწყოსთვის (26 CLI Code + 10 CLI Agent) → [`docs/reference/CLI-TOOLS.md`](docs/reference/CLI-TOOLS.md) · 🧩 OpenCode-ის პლაგინი → [`@agentproxy/opencode-provider`](https://www.npmjs.com/package/@agentproxy/opencode-provider)</sub>
 
 </div>
 
@@ -651,19 +651,19 @@ Radar ნებაყოფლობითია და მხოლოდ GET-�
 ავტორიზაციის მონაცემები თითოეულ პროცესში ცალკე გადაეცემა, ხოლო Qwen/Gemini მიიღებს დროებით, იზოლირებულ home-ს:
 
 ```bash
-omniroute run claude   --model openai/gpt-5.4          # Claude Code
-omniroute run codex    --model glm/glm-5.2             # OpenAI Codex CLI
-omniroute run aider    --model glm/glm-5.2 -- --message "reply OK"
-omniroute run goose    --model glm/glm-5.2
-omniroute run opencode --model glm/glm-5.2 -- run "reply OK"
-omniroute run qwen     --model glm/glm-5.2 -- -p "reply OK"
-omniroute run gemini   --model glm/glm-5.2 -- --skip-trust -p "reply OK"
+agentproxy run claude   --model openai/gpt-5.4          # Claude Code
+agentproxy run codex    --model glm/glm-5.2             # OpenAI Codex CLI
+agentproxy run aider    --model glm/glm-5.2 -- --message "reply OK"
+agentproxy run goose    --model glm/glm-5.2
+agentproxy run opencode --model glm/glm-5.2 -- run "reply OK"
+agentproxy run qwen     --model glm/glm-5.2 -- -p "reply OK"
+agentproxy run gemini   --model glm/glm-5.2 -- --skip-trust -p "reply OK"
 
 # ან ინტერაქციულად აირჩიეთ პროვაიდერი და მოდელი და ჩაწერეთ ხელსაწყოს საკუთარი კონფიგურაცია:
-omniroute configure codex          # ასევე: claude opencode qwen aider goose gemini cline continue kilo
+agentproxy configure codex          # ასევე: claude opencode qwen aider goose gemini cline continue kilo
 ```
 
-ყოველი ბრძანება ითვალისწინებს აქტიურ დისტანციურ კონტექსტს (`omniroute connect <host>`), `--dry-run`
+ყოველი ბრძანება ითვალისწინებს აქტიურ დისტანციურ კონტექსტს (`agentproxy connect <host>`), `--dry-run`
 შესრულების გარეშე წინასწარ აჩვენებს ზუსტ გარემოსა და არგუმენტებს, ხოლო `--api-key-env NAME` საიდუმლო მონაცემებს
 თქვენი shell-ის ისტორიაში მოხვედრისგან იცავს. → [CLI ინტეგრაციები](docs/guides/CLI-INTEGRATIONS.md)
 
@@ -748,19 +748,19 @@ omniroute configure codex          # ასევე: claude opencode qwen aider
 
 <table>
   <tr><th align="left">პლატფორმა</th><th align="left">ინსტალაცია</th><th align="left">უპირატესობები</th></tr>
-  <tr><td align="left" nowrap>📦 <b>npm (გლობალური)</b></td><td align="left" nowrap><code>npm install -g omniroute</code></td><td align="left">ერთი ბრძანება, ნებისმიერი OS</td></tr>
-  <tr><td align="left" nowrap>🐳 <b>Docker</b></td><td align="left" nowrap><code>docker run … diegosouzapw/omniroute</code></td><td align="left">მრავალარქიტექტურული <b>AMD64 + ARM64</b></td></tr>
+  <tr><td align="left" nowrap>📦 <b>npm (გლობალური)</b></td><td align="left" nowrap><code>npm install -g agentproxy</code></td><td align="left">ერთი ბრძანება, ნებისმიერი OS</td></tr>
+  <tr><td align="left" nowrap>🐳 <b>Docker</b></td><td align="left" nowrap><code>docker run … diegosouzapw/agentproxy</code></td><td align="left">მრავალარქიტექტურული <b>AMD64 + ARM64</b></td></tr>
   <tr><td align="left" nowrap>🖥️ <b>დესკტოპი (Electron)</b></td><td align="left" nowrap><code>npm run electron:build</code></td><td align="left">ნატიური ფანჯარა + სისტემური არე — <b>Windows / macOS / Linux</b></td></tr>
-  <tr><td align="left" nowrap>🎩 <b>მენიუს ზოლი (AgentProxyTray)</b></td><td align="left" nowrap><code>brew install --cask zoispag/tap/omniroute-tray</code></td><td align="left">სერვერის ზედამხედველობა და ავტომატური განახლება — <b>macOS</b></td></tr>
+  <tr><td align="left" nowrap>🎩 <b>მენიუს ზოლი (AgentProxyTray)</b></td><td align="left" nowrap><code>brew install --cask zoispag/tap/agentproxy-tray</code></td><td align="left">სერვერის ზედამხედველობა და ავტომატური განახლება — <b>macOS</b></td></tr>
   <tr><td align="left" nowrap>💪 <b>ARM</b></td><td align="left" nowrap>ნატიური <code>arm64</code></td><td align="left">Raspberry Pi, ARM სერვერები, Apple Silicon</td></tr>
-  <tr><td align="left" nowrap>📱 <b>Android (Termux)</b></td><td align="left" nowrap><code>pkg install nodejs && npx -y omniroute</code></td><td align="left">მუშაობს <b>თქვენს ტელეფონზე</b>, 24/7, root-ის გარეშე</td></tr>
+  <tr><td align="left" nowrap>📱 <b>Android (Termux)</b></td><td align="left" nowrap><code>pkg install nodejs && npx -y agentproxy</code></td><td align="left">მუშაობს <b>თქვენს ტელეფონზე</b>, 24/7, root-ის გარეშე</td></tr>
   <tr><td align="left" nowrap>📲 <b>PWA</b></td><td align="left" nowrap>"მთავარ ეკრანზე დამატება"</td><td align="left">სრულეკრანიანი, ოფლაინ რეჟიმით, ბრაუზერიდან ინსტალირებადი</td></tr>
-  <tr><td align="left" nowrap>🧩 <b>OpenCode პლაგინი</b></td><td align="left" nowrap><code>@omniroute/opencode-provider</code></td><td align="left">ნატიური OpenCode ინტეგრაცია</td></tr>
+  <tr><td align="left" nowrap>🧩 <b>OpenCode პლაგინი</b></td><td align="left" nowrap><code>@agentproxy/opencode-provider</code></td><td align="left">ნატიური OpenCode ინტეგრაცია</td></tr>
   <tr><td align="left" nowrap>🤖 <b>VS Code Copilot Chat</b></td><td align="left" nowrap>დააინსტალირეთ <b>OmniCopilot</b> გაფართოება</td><td align="left">AgentProxy-ის ყველა მოდელი Copilot Chat-ის ნატიურ ამომრჩევში — სტაბილური და Insiders</td></tr>
   <tr><td align="left" nowrap>🛠️ <b>საწყისი კოდიდან</b></td><td align="left" nowrap><code>npm install && npm run dev</code></td><td align="left">შეცვალეთ და შეიტანეთ წვლილი</td></tr>
 </table>
 
-<sub>📖 [Docker-ის სახელმძღვანელო](docs/guides/DOCKER_GUIDE.md) · [დესკტოპი](electron/README.md) · [მენიუს ზოლის აპი](https://github.com/zoispag/omniroute-tray) · [Termux](docs/guides/TERMUX_GUIDE.md) · [PWA](docs/guides/PWA_GUIDE.md) · [OpenCode](docs/frameworks/OPENCODE.md)</sub>
+<sub>📖 [Docker-ის სახელმძღვანელო](docs/guides/DOCKER_GUIDE.md) · [დესკტოპი](electron/README.md) · [მენიუს ზოლის აპი](https://github.com/zoispag/agentproxy-tray) · [Termux](docs/guides/TERMUX_GUIDE.md) · [PWA](docs/guides/PWA_GUIDE.md) · [OpenCode](docs/frameworks/OPENCODE.md)</sub>
 
 <br/>
 
@@ -799,19 +799,19 @@ omniroute configure codex          # ასევე: claude opencode qwen aider
 
 </div>
 
-> `omniroute serve` საუკეთესოდ მუშაობს, როცა მუდამ ჩართულია. **[AgentProxyTray](https://github.com/zoispag/omniroute-tray)**
+> `agentproxy serve` საუკეთესოდ მუშაობს, როცა მუდამ ჩართულია. **[AgentProxyTray](https://github.com/zoispag/agentproxy-tray)**
 > მას macOS-ის „დააყენე და დაივიწყე“ ტიპის მენიუს ზოლის აპად აქცევს: ის უშვებს სერვერს, ინარჩუნებს მის მუშაობას
 > გადატვირთვების შემდეგაც, ადგილზე აახლებს და თქვენი ტოკენების მიმდინარე ბიუჯეტს ერთი დაწკაპუნებით გაჩვენებთ — **არ არის საჭირო
-> ტერმინალის ფანჯრის ღიად დატოვება ან `npm install -g omniroute`-ზე მუდმივი ზრუნვა.**
+> ტერმინალის ფანჯრის ღიად დატოვება ან `npm install -g agentproxy`-ზე მუდმივი ზრუნვა.**
 
 [Tauri v2](https://v2.tauri.app/)-ზე აგებული (Rust-ის ბირთვით, რომლის ზომაც დამრგვალების ცდომილების ტოლია), ის მოიცავს
 საკუთარ ხელმოწერილ Node 24 გარემოს და მართავს აპის კუთვნილ AgentProxy ინსტალაციას, ამიტომ ის არასოდეს უქმნის კონფლიქტს თქვენს
-გლობალურ `node`/`bun`-ს. ის **იყენებს თქვენს არსებულ `~/.omniroute/` კონფიგურაციასა და მონაცემთა ბაზას** — ანუ ეს იგივე
+გლობალურ `node`/`bun`-ს. ის **იყენებს თქვენს არსებულ `~/.agentproxy/` კონფიგურაციასა და მონაცემთა ბაზას** — ანუ ეს იგივე
 AgentProxy-ია, რომელსაც უკვე იყენებთ, უბრალოდ ახლა ქუდით. 🎩
 
 <table>
   <tr><th align="left">რას აკეთებს</th><th align="left">როგორ</th></tr>
-  <tr><td align="left" nowrap>🟢 <b>ზედამხედველობს სერვერს</b></td><td align="left">უშვებს <code>omniroute serve</code>-ს და დუბლირების ნაცვლად უკვე გაშვებულ ეგზემპლარს იყენებს</td></tr>
+  <tr><td align="left" nowrap>🟢 <b>ზედამხედველობს სერვერს</b></td><td align="left">უშვებს <code>agentproxy serve</code>-ს და დუბლირების ნაცვლად უკვე გაშვებულ ეგზემპლარს იყენებს</td></tr>
   <tr><td align="left" nowrap>📊 <b>მიმდინარე მოხმარება ერთი შეხედვით</b></td><td align="left">პროვაიდერის კვოტის ზოლები, Claude-ის სესიის/კვირეული ლიმიტები განულებამდე დარჩენილი დროით, 30-დღიანი ხარჯების განაწილება</td></tr>
   <tr><td align="left" nowrap>🔄 <b>ავტომატურად ახლდება ადგილზე</b></td><td align="left">ეტაპობრივი ინსტალაცია, ატომური ჩანაცვლება, შეცდომისას წინა ვერსიაზე დაბრუნება — ყოველთვის უახლეს გამოშვებაზე</td></tr>
   <tr><td align="left" nowrap>🚀 <b>შესვლისას გაშვება</b></td><td align="left">სურვილისამებრ გაშვება სისტემაში შესვლისას; მხოლოდ მენიუს ზოლში, dock-ის ხატულის გარეშე</td></tr>
@@ -819,12 +819,12 @@ AgentProxy-ია, რომელსაც უკვე იყენებთ, 
 </table>
 
 ```sh
-brew install --cask zoispag/tap/omniroute-tray
+brew install --cask zoispag/tap/agentproxy-tray
 ```
 
 <sub>ჩამოტვირთვა გირჩევნიათ? უახლესი <code>.dmg</code> ჩამოტვირთეთ
-<a href="https://github.com/zoispag/omniroute-tray/releases">რელიზებიდან</a>. საწყისი კოდი, პრობლემები და აწყობის
-დოკუმენტაცია ხელმისაწვდომია <a href="https://github.com/zoispag/omniroute-tray">zoispag/omniroute-tray</a>-ზე.
+<a href="https://github.com/zoispag/agentproxy-tray/releases">რელიზებიდან</a>. საწყისი კოდი, პრობლემები და აწყობის
+დოკუმენტაცია ხელმისაწვდომია <a href="https://github.com/zoispag/agentproxy-tray">zoispag/agentproxy-tray</a>-ზე.
 <br/>💛 <a href="https://github.com/zoispag">@zoispag</a>-ის საზოგადოებრივი პროექტი — არ არის AgentProxy-ის ოფიციალური რელიზი.</sub>
 
 <br/>
@@ -852,10 +852,10 @@ brew install --cask zoispag/tap/omniroute-tray
 ### ⌨️ ნამდვილი CLI (და არა მხოლოდ `start`)
 
 ```bash
-omniroute               # კარიბჭისა და მართვის პანელის გაშვება (პორტი 20128)
-omniroute chat          # ინტერაქციული TUI ჩეთის კლიენტი (სლეშ-ბრძანებები: /model /combo /skill /memory)
-omniroute setup         # პირველი გაშვების ინტერაქციული ოსტატი
-omniroute doctor        # პროვაიდერების, პორტებისა და ნატიური დამოკიდებულებების დიაგნოსტიკა
+agentproxy               # კარიბჭისა და მართვის პანელის გაშვება (პორტი 20128)
+agentproxy chat          # ინტერაქციული TUI ჩეთის კლიენტი (სლეშ-ბრძანებები: /model /combo /skill /memory)
+agentproxy setup         # პირველი გაშვების ინტერაქციული ოსტატი
+agentproxy doctor        # პროვაიდერების, პორტებისა და ნატიური დამოკიდებულებების დიაგნოსტიკა
 ```
 
 ### 🛰️ დისტანციური რეჟიმი — გაუშვით CLI აქ, ხოლო AgentProxy — VPS-ზე
@@ -864,11 +864,11 @@ AgentProxy სერვერზე გაქვთ? მართეთ ის �
 შეზღუდული მოქმედების სფეროს მქონე წვდომის ტოკენით; ამის შემდეგ ყველა ბრძანება დისტანციურ სერვერზე შესრულდება.
 
 ```bash
-omniroute connect 192.168.0.15            # პაროლი → შეზღუდული მოქმედების სფეროს მქონე ტოკენი, შენახული კონტექსტის სახით
-omniroute models list                     # ← სრულდება დისტანციურ სერვერზე
-omniroute configure codex                 # ← ირჩევს დისტანციურ მოდელს და ქმნის ლოკალურ Codex პროფილს
-omniroute tokens create --name ci --scope read   # სხვა კომპიუტერებისთვის უფრო შეზღუდული ტოკენების შექმნა
-omniroute contexts use default            # ← ლოკალურ სერვერზე დაბრუნება
+agentproxy connect 192.168.0.15            # პაროლი → შეზღუდული მოქმედების სფეროს მქონე ტოკენი, შენახული კონტექსტის სახით
+agentproxy models list                     # ← სრულდება დისტანციურ სერვერზე
+agentproxy configure codex                 # ← ირჩევს დისტანციურ მოდელს და ქმნის ლოკალურ Codex პროფილს
+agentproxy tokens create --name ci --scope read   # სხვა კომპიუტერებისთვის უფრო შეზღუდული ტოკენების შექმნა
+agentproxy contexts use default            # ← ლოკალურ სერვერზე დაბრუნება
 ```
 
 ტოკენების მოქმედების სფეროებია `read` / `write` / `admin`; პროცესების გამშვები მარშრუტები მხოლოდ loopback-ზე რჩება.
@@ -876,7 +876,7 @@ omniroute contexts use default            # ← ლოკალურ სერ�
 
 <div align="left">
 
-<img src="./docs/diagrams/cli-terminal.svg" width="50%" alt="AgentProxy CLI-ის ანიმაციური ტერმინალის დემონსტრაცია — omniroute providers list, omniroute combo list და omniroute health — ზედა დონის 86-ბრძანებიანი შესაძლებლობების ციკლური ჩვენებით: providers · oauth · keys · combo · nodes · models · cache · compression · cost · usage · quota · health · resilience · telemetry · logs · audit · mcp · a2a · cloud · memory · skills · eval · tunnel · backup · sync · webhooks · policy · pricing · translator · simulate …"/>
+<img src="./docs/diagrams/cli-terminal.svg" width="50%" alt="AgentProxy CLI-ის ანიმაციური ტერმინალის დემონსტრაცია — agentproxy providers list, agentproxy combo list და agentproxy health — ზედა დონის 86-ბრძანებიანი შესაძლებლობების ციკლური ჩვენებით: providers · oauth · keys · combo · nodes · models · cache · compression · cost · usage · quota · health · resilience · telemetry · logs · audit · mcp · a2a · cloud · memory · skills · eval · tunnel · backup · sync · webhooks · policy · pricing · translator · simulate …"/>
 
 </div>
 
@@ -886,18 +886,18 @@ omniroute contexts use default            # ← ლოკალურ სერ�
 
 <table>
   <tr><th align="left">ინტერფეისი</th><th align="left">საბოლოო წერტილი / ბრძანება</th><th align="left">გამოიყენეთ შემდეგისთვის</th></tr>
-  <tr><td align="left" nowrap>🧰 <b>MCP (stdio)</b></td><td align="left" nowrap><code>omniroute --mcp</code></td><td align="left">დააკავშირეთ Claude Desktop-თან, Cursor-თან ან ნებისმიერ MCP კლიენტთან</td></tr>
+  <tr><td align="left" nowrap>🧰 <b>MCP (stdio)</b></td><td align="left" nowrap><code>agentproxy --mcp</code></td><td align="left">დააკავშირეთ Claude Desktop-თან, Cursor-თან ან ნებისმიერ MCP კლიენტთან</td></tr>
   <tr><td align="left" nowrap>🌊 <b>MCP (HTTP)</b></td><td align="left" nowrap><code>/api/mcp/stream</code></td><td align="left">დისტანციური MCP — <b>110 ინსტრუმენტი</b>, 33 მოქმედების სფერო (აღსრულება არჩევითია), სრული აუდიტის ჟურნალი</td></tr>
   <tr><td align="left" nowrap>📡 <b>MCP (SSE)</b></td><td align="left" nowrap><code>/api/mcp/sse</code></td><td align="left">MCP-ის ნაკადური ტრანსპორტი</td></tr>
   <tr><td align="left" nowrap>🤝 <b>A2A</b></td><td align="left" nowrap><code>/.well-known/agent.json</code></td><td align="left">აგენტებს შორის კომუნიკაცია, <b>JSON-RPC 2.0</b> + SSE, 6 უნარი</td></tr>
   <tr><td align="left" nowrap>🌐 <b>REST API</b></td><td align="left" nowrap><code>/v1/*</code></td><td align="left">OpenAI-სთან თავსებადი — ჩეთი, ემბედინგები, სურათები, აუდიო, OCR</td></tr>
   <tr><td align="left" nowrap>🔔 <b>ვებჰუკები</b></td><td align="left" nowrap><code>/api/webhooks</code></td><td align="left">მოთხოვნის / კვოტის მოვლენების გაგზავნა Slack-ში, Discord-ში, Telegram-ში ან ნებისმიერ URL-ზე</td></tr>
-  <tr><td align="left" nowrap>🛰️ <b>დისტანციური CLI</b></td><td align="left" nowrap><code>omniroute connect <host></code></td><td align="left">მართეთ დისტანციური ინსტანცია შეზღუდული მოქმედების სფეროს მქონე წვდომის ტოკენებით</td></tr>
+  <tr><td align="left" nowrap>🛰️ <b>დისტანციური CLI</b></td><td align="left" nowrap><code>agentproxy connect <host></code></td><td align="left">მართეთ დისტანციური ინსტანცია შეზღუდული მოქმედების სფეროს მქონე წვდომის ტოკენებით</td></tr>
 </table>
 
 ```bash
 # მიეცით Claude Code-ს AgentProxy-ის ინსტრუმენტების სრული ნაკრები MCP-ის მეშვეობით:
-claude mcp add-server omniroute --type http --url http://localhost:20128/api/mcp/stream
+claude mcp add-server agentproxy --type http --url http://localhost:20128/api/mcp/stream
 ```
 
 <sub>📖 [MCP სერვერი](docs/frameworks/MCP-SERVER.md) · [A2A სერვერი](docs/frameworks/A2A-SERVER.md) · [აგენტების პროტოკოლები](docs/frameworks/AGENT_PROTOCOLS_GUIDE.md)</sub>
@@ -987,7 +987,7 @@ range    = 78.4 – 94.6%
   - **მე მაქვს ADHD (ჯერ მოქმედება)** — დაიწყეთ შემდეგი მოქმედებით, დანომრეთ ნაბიჯები, მიუთითეთ ერთი კონკრეტული მომდევნო ნაბიჯი, შესავლის გარეშე.
   - **ლაკონიური CJK (文言)** — კლასიკური ჩინურის ულტრალაკონიური სტილი (ლოკალით შეზღუდული `zh`-ზე).
 - **🎯 ადაპტიური კონტექსტის ბიუჯეტი** _(რეგულატორი)_ — ერთი ჩართვა/გამორთვის ტოკენური ზღვრის ნაცვლად, ეტაპობრივად რთავს ყველაზე იაფ და ინფორმაციის ყველაზე ნაკლებად დამკარგავ ძრავებს მხოლოდ იმდენად, რამდენადაც საჭიროა **მოდელის კონტექსტურ ფანჯარაში ჩასატევად**. პოლიტიკა: `reserve-output` (ნაგულისხმევი, მოდელის გათვალისწინებით) · `percentage` · `absolute`. რეჟიმი: `floor` (ჩატევადობის გარანტია) · `replace-autotrigger` (თქვენი აშკარა არჩევანი იმარჯვებს) · `off` (ძველი ზღვარი).
-- **🎛️ სად წყდება შეკუმშვა** _(პრიორიტეტი, მაღლიდან დაბლისკენ)_ — თითოეული მოთხოვნის `x-omniroute-compression` სათაური › მარშრუტიზაციის კომბინაციის ჩანაცვლება › აქტიური სახელდებული პროფილი › ადაპტიური / ავტომატური გააქტიურება › პანელის ნაგულისხმევი პარამეტრი › გამორთული. გამოყენებული გეგმა პასუხად აისახება `X-AgentProxy-Compression: <mode>; source=<source>` სათაურში.
+- **🎛️ სად წყდება შეკუმშვა** _(პრიორიტეტი, მაღლიდან დაბლისკენ)_ — თითოეული მოთხოვნის `x-agentproxy-compression` სათაური › მარშრუტიზაციის კომბინაციის ჩანაცვლება › აქტიური სახელდებული პროფილი › ადაპტიური / ავტომატური გააქტიურება › პანელის ნაგულისხმევი პარამეტრი › გამორთული. გამოყენებული გეგმა პასუხად აისახება `X-AgentProxy-Compression: <mode>; source=<source>` სათაურში.
 
 დააყენეთ ავტომატური გააქტიურება ტოკენების ზღვრის მიხედვით, ჩართეთ ადაპტიური რეგულატორი, მიამაგრეთ სახელდებული პროფილი, მიუთითეთ ერთჯერადი პარამეტრი თითოეული მოთხოვნისთვის ან მიანიჭეთ pipeline მარშრუტიზაციის თითოეულ კომბინაციას — აირჩიეთ ის, რაც სამუშაო დატვირთვას შეესაბამება. სურვილისამებრ ჩასართავი, ოფლაინ **შეფასების ინსტრუმენტი** (`npm run eval:compression`) ცვლილების დანერგვამდე ფიქსირებულ კორპუსზე აფასებს სიზუსტესა და დანაზოგს.
 
@@ -1004,8 +1004,8 @@ range    = 78.4 – 94.6%
 **1) დააინსტალირეთ და გაუშვით**
 
 ```bash
-npm install -g omniroute
-omniroute
+npm install -g agentproxy
+agentproxy
 ```
 
 > 💡 ხედავთ `npm warn ERESOLVE`-ს ან peer-dep გაფრთხილებებს? [ისინი უვნებელია](docs/guides/TROUBLESHOOTING.md#npm-install-warnings-eresolve--peer--deprecated).
@@ -1052,39 +1052,39 @@ Ollama ტეგები:   http://localhost:20128/vscode/YOUR_KEY/api/tags
 **🐳 Docker**
 
 ```bash
-docker run -d --name omniroute --restart unless-stopped --stop-timeout 40 \
-  -p 127.0.0.1:20128:20128 -v omniroute-data:/app/data diegosouzapw/omniroute:latest
+docker run -d --name agentproxy --restart unless-stopped --stop-timeout 40 \
+  -p 127.0.0.1:20128:20128 -v agentproxy-data:/app/data diegosouzapw/agentproxy:latest
 ```
 
-`:latest` მიჰყვება ყველაზე მაღალ **გამოქვეყნებულ** სტაბილურ SemVer-ს. ის არ მიჰყვება git-ის `main` ბრენჩს. GitOps-ისთვის გამოიყენეთ ფიქსირებული `:X.Y.Z`. იხილეთ [Docker-ის გამოშვების არხები](docs/guides/DOCKER_GUIDE.md#release-channels).იმიჯში ფიქსირებულია **`OMNIROUTE_MEMORY_MB=1024`**. ეს საკმარისია მართვის პანელისა და მსუბუქი ჩატისთვის. **კოდირების აგენტებს** (`POST /v1/responses` Claude Code-იდან, Codex-იდან, Grok-იდან, …) სჭირდებათ გაცილებით დიდი V8 heap, წინააღმდეგ შემთხვევაში ორი გადაფარული გრძელი კონტექსტის დროს პროცესი დაახლოებით 12 GiB-ზე `FATAL ERROR`-ით წყდება. კონტეინერის მეხსიერება heap-ზე მეტი გამოყავით (native ბუფერები V8-ის გარეთ მდებარეობს):
+`:latest` მიჰყვება ყველაზე მაღალ **გამოქვეყნებულ** სტაბილურ SemVer-ს. ის არ მიჰყვება git-ის `main` ბრენჩს. GitOps-ისთვის გამოიყენეთ ფიქსირებული `:X.Y.Z`. იხილეთ [Docker-ის გამოშვების არხები](docs/guides/DOCKER_GUIDE.md#release-channels).იმიჯში ფიქსირებულია **`AGENTPROXY_MEMORY_MB=1024`**. ეს საკმარისია მართვის პანელისა და მსუბუქი ჩატისთვის. **კოდირების აგენტებს** (`POST /v1/responses` Claude Code-იდან, Codex-იდან, Grok-იდან, …) სჭირდებათ გაცილებით დიდი V8 heap, წინააღმდეგ შემთხვევაში ორი გადაფარული გრძელი კონტექსტის დროს პროცესი დაახლოებით 12 GiB-ზე `FATAL ERROR`-ით წყდება. კონტეინერის მეხსიერება heap-ზე მეტი გამოყავით (native ბუფერები V8-ის გარეთ მდებარეობს):
 
-| დატვირთვა                            | Heap (`-e OMNIROUTE_MEMORY_MB`)          | კონტეინერი (`--memory`) |
+| დატვირთვა                            | Heap (`-e AGENTPROXY_MEMORY_MB`)          | კონტეინერი (`--memory`) |
 | ------------------------------------ | ---------------------------------------- | ----------------------- |
 | მართვის პანელი / მსუბუქი ჩატი        | `1024` (იმიჯის ნაგულისხმევი მნიშვნელობა) | ≥2 g                    |
 | ერთი კოდირების აგენტი                | `8192`                                   | ≥10 g                   |
 | ორი ერთდროული გრძელი `/v1/responses` | `10240`–`12288`                          | ≥12–16 g                |
 
 ```bash
-docker run -d --name omniroute --restart unless-stopped --stop-timeout 40 \
-  -e OMNIROUTE_MEMORY_MB=8192 --memory=10g \
-  -p 127.0.0.1:20128:20128 -v omniroute-data:/app/data diegosouzapw/omniroute:latest
+docker run -d --name agentproxy --restart unless-stopped --stop-timeout 40 \
+  -e AGENTPROXY_MEMORY_MB=8192 --memory=10g \
+  -p 127.0.0.1:20128:20128 -v agentproxy-data:/app/data diegosouzapw/agentproxy:latest
 ```
 
 სრული ცხრილი: [Docker-ის სახელმძღვანელო — ოპერატიული მეხსიერება მუშაობის დროს](docs/guides/DOCKER_GUIDE.md#runtime-ram-for-coding-agents).
 
-> **Docker-ის წინასწარი გამოშვების არხი:** `diegosouzapw/omniroute:next` და
-> `diegosouzapw/omniroute:next-web` მიჰყვება მიმდინარე ნაგულისხმევ `release/v*`
+> **Docker-ის წინასწარი გამოშვების არხი:** `diegosouzapw/agentproxy:next` და
+> `diegosouzapw/agentproxy:next-web` მიჰყვება მიმდინარე ნაგულისხმევ `release/v*`
 > ბრენჩს. ეს ცვალებადი ტეგები განკუთვნილია მხოლოდ გამოუშვებელი შესწორებების სატესტოდ და
 > **არ არის მხარდაჭერილი საწარმოო გარემოში**. იხილეთ
 > [Docker-ის გამოშვების არხები](docs/guides/DOCKER_GUIDE.md#release-channels).
 
 **🥟 Bun**
 
-სტანდარტული `bun install` და გლობალური ინსტალაცია (`bun install -g omniroute`) მხარდაჭერილია Bun-ის გაშვების გარემოს ამოცნობის მეშვეობით:
+სტანდარტული `bun install` და გლობალური ინსტალაცია (`bun install -g agentproxy`) მხარდაჭერილია Bun-ის გაშვების გარემოს ამოცნობის მეშვეობით:
 
 - **ჩაშენებული `bun:sqlite`**: Bun-ის გარემოში მუშაობისას AgentProxy იყენებს Bun-ის ჩაშენებულ `bun:sqlite` დრაივერს, ხოლო Node.js-ზე — `better-sqlite3`-ს ან `sql.js`-ს.
-- **Webpack-ის ავტომატური არჩევა დეველოპმენტისას**: დეველოპმენტის რეჟიმი (`bun run dev`) ავტომატურად ამოიცნობს Bun-ს და native V8 binding-ებთან შეუთავსებლობის თავიდან ასაცილებლად Turbopack-ს თიშავს Webpack-ის სასარგებლოდ. საწარმოო build-ები (`bun run build`) `OMNIROUTE_USE_TURBOPACK`-ს ზუსტად ისე ემორჩილება, როგორც Node-ზე: ნაგულისხმევად Turbopack, ხოლო Webpack-ით build-ისთვის — `OMNIROUTE_USE_TURBOPACK=0` (`Dockerfile.bun` მას `--build-arg`-ის სახით ხელმისაწვდომს ხდის).
-- **Bun-ის ცალკე Dockerfile**: მრავალეტაპიანი `Dockerfile.bun` native Bun-ის საწარმოო განთავსებებისთვის (`docker build -f Dockerfile.bun -t omniroute:bun .`).
+- **Webpack-ის ავტომატური არჩევა დეველოპმენტისას**: დეველოპმენტის რეჟიმი (`bun run dev`) ავტომატურად ამოიცნობს Bun-ს და native V8 binding-ებთან შეუთავსებლობის თავიდან ასაცილებლად Turbopack-ს თიშავს Webpack-ის სასარგებლოდ. საწარმოო build-ები (`bun run build`) `AGENTPROXY_USE_TURBOPACK`-ს ზუსტად ისე ემორჩილება, როგორც Node-ზე: ნაგულისხმევად Turbopack, ხოლო Webpack-ით build-ისთვის — `AGENTPROXY_USE_TURBOPACK=0` (`Dockerfile.bun` მას `--build-arg`-ის სახით ხელმისაწვდომს ხდის).
+- **Bun-ის ცალკე Dockerfile**: მრავალეტაპიანი `Dockerfile.bun` native Bun-ის საწარმოო განთავსებებისთვის (`docker build -f Dockerfile.bun -t agentproxy:bun .`).
 
 ```bash
 # დააინსტალირეთ და გაუშვით Bun-ით
@@ -1102,13 +1102,13 @@ PORT=20128 npm run dev
 **📦 pnpm**
 
 ```bash
-pnpm add -g omniroute@latest --allow-build=better-sqlite3 --allow-build=@swc/core && omniroute
+pnpm add -g agentproxy@latest --allow-build=better-sqlite3 --allow-build=@swc/core && agentproxy
 ```
 
 **🐧 Arch Linux (AUR)**
 
 ```bash
-yay -S omniroute-bin && systemctl --user enable --now omniroute.service
+yay -S agentproxy-bin && systemctl --user enable --now agentproxy.service
 ```
 
 **🔧 Nix (Flake)**
@@ -1154,7 +1154,7 @@ native SQLite ძრავა (`better-sqlite3`) **არასავალდ�
 ინსტალაციის შემდგომი native მომზადების სრულად გამოსატოვებლად (CI, headless ან ნელი მოწყობილობები):
 
 ```bash
-OMNIROUTE_SKIP_POSTINSTALL=1 npm install -g omniroute   # CI=1-იც გამოტოვებს მას
+AGENTPROXY_SKIP_POSTINSTALL=1 npm install -g agentproxy   # CI=1-იც გამოტოვებს მას
 ```
 
 ყველაზე სწრაფი ინსტალაციისთვის უპირატესობა მიანიჭეთ **pnpm**-ს (შიგთავსზე დაფუძნებული საცავი + hard link-ები — იხილეთ ზემოთ).
@@ -1245,15 +1245,15 @@ OMNIROUTE_SKIP_POSTINSTALL=1 npm install -g omniroute   # CI=1-იც გამ�
 | 💼 **LinkedIn** — მიჰყევით პროექტის ხელმძღვანელს       | [linkedin.com/in/diegosouzapw](https://www.linkedin.com/in/diegosouzapw/)                                                          |
 | 🐙 **GitHub** — მიჰყევით განახლებებისა და რჩევებისთვის | [@diegosouzapw](https://github.com/diegosouzapw)                                                                                   |
 | 💬 **Discord**                                         | [discord.gg/U47eFqAXCn](https://discord.gg/U47eFqAXCn)                                                                             |
-| ✈️ **Telegram**                                        | [t.me/omnirouteOficial](https://t.me/omnirouteOficial)                                                                             |
+| ✈️ **Telegram**                                        | [t.me/agentproxyOficial](https://github.com/khanhkit/AgentProxy/discussions)                                                                             |
 | 🟢 **WhatsApp — 🌍 გლობალური**                         | [შეუერთდით ჯგუფს](https://chat.whatsapp.com/FvuCbrpZmQ6I85n2vW5QIC?s=cl&p=a&mlu=4)                                                 |
 | 🟢 **WhatsApp — 🇧🇷 ბრაზილია**                          | [შეუერთდით ჯგუფს](https://chat.whatsapp.com/KWgatljAjmbELQory59Oti?s=cl&p=a&mlu=4)                                                 |
-| 🌍 **ვებსაიტი**                                        | [omniroute.online](https://omniroute.online)                                                                                       |
-| 🌍 **🌍StHub AgentProxy-ის საზოგადოება (უფასო)**        | [StHub-ის პორტალი](https://portal.sthub.com.br/communities/groups/st-hub/channels/Omniroute-World-8kRjmK)                          |
+| 🌍 **ვებსაიტი**                                        | [agentproxy.online](https://agentproxy.online)                                                                                       |
+| 🌍 **🌍StHub AgentProxy-ის საზოგადოება (უფასო)**        | [StHub-ის პორტალი](https://github.com/khanhkit/AgentProxy/discussions)                          |
 | 📦 **საწყისი კოდი**                                    | [github.com/diegosouzapw/AgentProxy](https://github.com/diegosouzapw/AgentProxy)                                                     |
 | 🐛 **შეცდომის შეტყობინება**                            | [გახსენით საკითხი](https://github.com/diegosouzapw/AgentProxy/issues) — დაურთეთ `npm run system-info`-ის შედეგი                     |
 | 🤝 **წვლილის შეტანა**                                  | [CONTRIBUTING.md](CONTRIBUTING.md) · [ბრენჩებისა და გამოშვებების მოდელი](docs/ops/BRANCHING_MODEL.md) · აირჩიეთ `good first issue` |
-| 💚 **პროექტის მხარდაჭერა**                             | [მხარდაჭერის გზები ↑](#-support-omniroute) · [GitHub Sponsors](https://github.com/sponsors/diegosouzapw)                           |
+| 💚 **პროექტის მხარდაჭერა**                             | [მხარდაჭერის გზები ↑](#-support-agentproxy) · [GitHub Sponsors](https://github.com/sponsors/diegosouzapw)                           |
 
 </div>
 
@@ -1284,7 +1284,7 @@ OMNIROUTE_SKIP_POSTINSTALL=1 npm install -g omniroute   # CI=1-იც გამ�
   <tr><td nowrap><b>ტესტირება</b></td><td>Node.js ტესტების გამშვები + Vitest — <b>39,000+ სტატიკური ტესტის დეკლარაცია</b> 5,100+-ზე მეტ აღრიცხულ სატესტო ფაილში (ერთეული, ინტეგრაციული, E2E, უსაფრთხოების, ეკოსისტემის)</td></tr>
   <tr><td nowrap><b>პლატფორმები</b></td><td>დესკტოპი (Electron) · Android (Termux) · PWA (ნებისმიერი ბრაუზერი)</td></tr>
   <tr><td nowrap><b>CI/CD</b></td><td>GitHub Actions — რელიზისას ავტომატური გამოქვეყნება npm-ზე და Docker Hub-ზე</td></tr>
-  <tr><td nowrap><b>ბმულები</b></td><td><a href="https://omniroute.online">ვებსაიტი</a> · <a href="https://www.npmjs.com/package/omniroute">npm</a> · <a href="https://hub.docker.com/r/diegosouzapw/omniroute">Docker Hub</a></td></tr>
+  <tr><td nowrap><b>ბმულები</b></td><td><a href="https://agentproxy.online">ვებსაიტი</a> · <a href="https://www.npmjs.com/package/agentproxy">npm</a> · <a href="https://hub.docker.com/r/khanhkit/agentproxy">Docker Hub</a></td></tr>
 </table>
 
 <div align="center">
@@ -1602,11 +1602,11 @@ gh release create "v${VERSION}" --title "v${VERSION}" --generate-notes
 
 ## 🌍 StarMapper
 
-<a href="https://starmapper.bruniaux.com/diegosouzapw/omniroute">
+<a href="https://starmapper.bruniaux.com">
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="https://starmapper.bruniaux.com/api/map-image/diegosouzapw/omniroute?theme=dark" />
-    <source media="(prefers-color-scheme: light)" srcset="https://starmapper.bruniaux.com/api/map-image/diegosouzapw/omniroute?theme=light" />
-    <img alt="StarMapper" src="https://starmapper.bruniaux.com/api/map-image/diegosouzapw/omniroute" />
+    <source media="(prefers-color-scheme: dark)" srcset="https://starmapper.bruniaux.com" />
+    <source media="(prefers-color-scheme: light)" srcset="https://starmapper.bruniaux.com" />
+    <img alt="StarMapper" src="https://starmapper.bruniaux.com" />
   </picture>
 </a>
 </div>
@@ -1733,9 +1733,9 @@ MIT ლიცენზია — დეტალებისთვის იხ�
 
 <div align="center">
 
-**[⬆ დასაწყისში დაბრუნება](#-omniroute)** · შექმნილია ❤️-ით ღია კოდის AI-საზოგადოებისთვის.
+**[⬆ დასაწყისში დაბრუნება](#-agentproxy)** · შექმნილია ❤️-ით ღია კოდის AI-საზოგადოებისთვის.
 
-<sub>AgentProxy v3.8.51 · Node ≥22.22.2 · MIT ლიცენზია · <a href="https://omniroute.online">omniroute.online</a></sub>
+<sub>AgentProxy v3.8.51 · Node ≥22.22.2 · MIT ლიცენზია · <a href="https://agentproxy.online">agentproxy.online</a></sub>
 
 </div>
 <!-- GitHub Discussions ჩართულია საზოგადოების კითხვებისა და პასუხებისთვის -->

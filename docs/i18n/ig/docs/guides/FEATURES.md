@@ -36,7 +36,7 @@ Usoro v3.7.x → v3.8.0 tinyere ntụgharị akpaaka na-enweghị nhazi, ndị n
 - 🚦 **Nhazi 429 maka onye na-eweta ọ bụla** + ngbanwe `useUpstream429BreakerHints` — omume breaker ka mma site n'iji ntụnye oke ọnụego upstream
 - 🩺 **Dashboard oge nkwụsị model** — lelee mkpọchi nke model ọ bụla ma jiri aka mee ka ha rụọ ọrụ ọzọ site na UI
 - 🔒 **Nchọpụta cert Linux na-agbanwe agbanwe nke MITM** — na-arụ ọrụ na Debian/Ubuntu, Fedora/RHEL, Arch, na distro ndị ọzọ
-- 💻 **Ngwugwu nkwalite CLI** — iwu 20+ gụnyere `omniroute providers`, `omniroute combos`, `omniroute doctor`, `omniroute setup`
+- 💻 **Ngwugwu nkwalite CLI** — iwu 20+ gụnyere `agentproxy providers`, `agentproxy combos`, `agentproxy doctor`, `agentproxy setup`
 - 🔍 **Nchọpụta model embedding Qdrant** — nyocha model ebe nchekwa vector na-akpaghị aka
 - 🔑 **API Keys / Bearer keys nwere scope `manage`** — jiri API rụọ ọrụ nchịkwa n'usoro mmemme
 - 🏥 **Nyocha data ahụike ebumnuche ngwakọta** + **onye nrụpụta ngwakọta ahaziri ahazi** — ahụike nke ebumnuche ọ bụla na onye nrụpụta UI maka ijikọ usoro `(provider, model, connection)`
@@ -226,7 +226,7 @@ Scripts maka iwepụ ihe n'ụzọ dị ọcha maka usoro nrụnye niile:
 
 | Iwu                      | Omume                                                                          |
 | ------------------------ | ------------------------------------------------------------------------------ |
-| `npm run uninstall`      | Na-ewepụ ngwa sistemụ ahụ mana **na-edowe DB na nhazi gị** na `~/.omniroute`.  |
+| `npm run uninstall`      | Na-ewepụ ngwa sistemụ ahụ mana **na-edowe DB na nhazi gị** na `~/.agentproxy`.  |
 | `npm run uninstall:full` | Na-ewepụ ngwa ahụ MA **na-ehichapụ nhazi, keys, na databases niile kpamkpam**. |
 
 ---

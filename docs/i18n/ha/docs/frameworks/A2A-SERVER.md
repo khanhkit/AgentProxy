@@ -30,7 +30,7 @@ Ana samo filin `version` na Katin Wakili daga `process.env.npm_package_version` 
 Duk buƙatun `/a2a` suna buƙatar maɓallin API ta kanun `Authorization`:
 
 ```
-Authorization: Bearer YOUR_OMNIROUTE_API_KEY
+Authorization: Bearer YOUR_AGENTPROXY_API_KEY
 ```
 
 Idan ba a saita maɓallin API a sabar ba, za a tsallake tantancewa.
@@ -187,7 +187,7 @@ Matsayar JSON-RPC ta `/a2a` ita ce babbar mashigar A2A. Matsayoyin REST da ke ƙ
 | `/api/a2a/tasks/[id]`        | GET   | Samo aiki ta ID                                                       | gudanarwa                                    |
 | `/api/a2a/tasks/[id]/cancel` | POST  | Soke aikin da ke gudana                                               | gudanarwa                                    |
 | `/.well-known/agent.json`    | GET   | Katin Wakili (gano A2A)                                               | (na jama'a, an adana na 3600s)               |
-| `/api/a2a/tasks`             | POST  | Miƙa aiki mai shigowa zuwa rundunar OmniConductor (Conductor PRD RF5) | Bearer da `OMNIROUTE_API_KEY` + `a2aEnabled` |
+| `/api/a2a/tasks`             | POST  | Miƙa aiki mai shigowa zuwa rundunar OmniConductor (Conductor PRD RF5) | Bearer da `AGENTPROXY_API_KEY` + `a2aEnabled` |
 
 **Miƙa aiki mai shigowa na Conductor (`POST /api/a2a/tasks`):** wakilan A2A na waje suna miƙa aikin rubuta lamba ga rundunar OmniConductor ta hanyar AgentProxy. Jiki: `{ skill: "conductor" | "conductor-cli-<profile>", messages: [{role, content}], metadata: { conductor: { repo: { url, base_ref? }, mode?, cli?, model? } } }` — ƙwarewar rundunar Conductor kaɗai (waɗanda aka sanar a Katin Wakili) ake iya miƙa wa aiki; ana buƙatar `metadata.conductor.repo.url` (rundunar tana aiki a kan ma'ajin git). Hanyar tana fassara buƙatar zuwa `POST /v1/tasks` na hub ta amfani da `CONDUCTOR_ORCHESTRATOR_TOKEN` na gefen sabar (madadinsa `CONDUCTOR_HUB_TOKEN`) sannan ta mayar da `201 { conductor_task_id, state: "submitted" }`; matsayin ayyuka yana komawa ta madubin SSE→A2A (RF1), kuma ana iya ganinsa ta `GET /api/a2a/tasks?skill=conductor`.
 

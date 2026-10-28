@@ -51,11 +51,11 @@ AgentProxy-იდან (ლოკალურიდან ან დისტ�
 და თქვენს კომპიუტერზე თავად ინსტრუმენტის კონფიგურაციას წერს:
 
 ```bash
-omniroute setup-codex        omniroute setup-claude       omniroute setup-opencode
-omniroute setup-cline        omniroute setup-kilo         omniroute setup-continue
-omniroute setup-cursor       omniroute setup-roo          omniroute setup-crush
-omniroute setup-goose        omniroute setup-qwen         omniroute setup-aider
-omniroute setup-5dive
+agentproxy setup-codex        agentproxy setup-claude       agentproxy setup-opencode
+agentproxy setup-cline        agentproxy setup-kilo         agentproxy setup-continue
+agentproxy setup-cursor       agentproxy setup-roo          agentproxy setup-crush
+agentproxy setup-goose        agentproxy setup-qwen         agentproxy setup-aider
+agentproxy setup-5dive
 ```
 
 თითოეული მათგანი იღებს `--remote <url> --api-key <key>` პარამეტრებს (ლოკალური
@@ -67,12 +67,12 @@ omniroute setup-5dive
 აკონფიგურირებს ფლოტის ჰოსტზე root-ის კუთვნილი ავტორიზაციის პროფილის ჩაწერით,
 ამიტომ `sudo`-ს მეშვეობით ხელახლა ეშვება და საკუთარი დისტანციური რეჟიმი არ აქვს.
 CLI-ის სწორი გარემოს ცვლადებით გასაშვებად, ყოველგვარი კონფიგურაციის ჩაწერის
-გარეშე, გამოიყენეთ უნივერსალური `omniroute run <target>` გამშვები (claude,
+გარეშე, გამოიყენეთ უნივერსალური `agentproxy run <target>` გამშვები (claude,
 codex, aider, goose, opencode, qwen, gemini — სამიზნეები და ფსევდონიმები
 `bin/cli/cli-manifest.mjs`-დან მოდის); თითოეული ინსტრუმენტისთვის განკუთვნილი
-მოძველებული გამშვებები `omniroute launch` (Claude Code) და
-`omniroute launch-codex` (Codex) კვლავ ხელმისაწვდომია. Gemini CLI მხოლოდ
-გაშვებისთვისაა განკუთვნილი: ის `omniroute run`-ის სამიზნეა, თუმცა
+მოძველებული გამშვებები `agentproxy launch` (Claude Code) და
+`agentproxy launch-codex` (Codex) კვლავ ხელმისაწვდომია. Gemini CLI მხოლოდ
+გაშვებისთვისაა განკუთვნილი: ის `agentproxy run`-ის სამიზნეა, თუმცა
 `setup-*`/`configure` რეცეპტი არ აქვს.
 
 > **სრული ცნობარი:** მთავარი ცხრილი — რას წერს თითოეული ბრძანება, ყველა პარამეტრი,
@@ -85,21 +85,21 @@ AgentProxy-ის კონტეინერის შიგნით შეს
 საკუთარ home დირექტორიაში წერს, რომელსაც ჰოსტის არცერთი CLI არ კითხულობს და
 რომელიც კონტეინერთან ერთად ქრება. AgentProxy ამას ამოიცნობს და ჩაწერის ნაცვლად
 ინსტრუქციებთან ერთად `2` კოდით ასრულებს მუშაობას. არსებობს ორი მხარდაჭერილი
-გზა — დააინსტალირეთ CLI ჰოსტზე და გამოიყენეთ `omniroute connect` კონტეინერთან
+გზა — დააინსტალირეთ CLI ჰოსტზე და გამოიყენეთ `agentproxy connect` კონტეინერთან
 დასაკავშირებლად, ან bind-mount-ით მიამაგრეთ კონფიგურაციის დირექტორიები და
 დააყენეთ `CLI_CONFIG_HOME` (`host` პროფილი compose-ში). ყოველი `setup-*` ბრძანება,
-ასევე `omniroute configure` და `omniroute config set`, იღებს
+ასევე `agentproxy configure` და `agentproxy config set`, იღებს
 `--allow-container-write` პარამეტრს, თუ სინამდვილეში კონტეინერის საკუთარი CLI-ების
 კონფიგურირება გსურთ; სერვერისთვის იმავეს აკეთებს
-`OMNIROUTE_ALLOW_CONTAINER_CONFIG_WRITE=true`. იხილეთ
-[Docker-ის სახელმძღვანელო → ჰოსტის CLI ინსტრუმენტების კონფიგურაცია](../guides/DOCKER_GUIDE.md#configuring-host-cli-tools-when-omniroute-runs-in-docker).
+`AGENTPROXY_ALLOW_CONTAINER_CONFIG_WRITE=true`. იხილეთ
+[Docker-ის სახელმძღვანელო → ჰოსტის CLI ინსტრუმენტების კონფიგურაცია](../guides/DOCKER_GUIDE.md#configuring-host-cli-tools-when-agentproxy-runs-in-docker).
 
 დაფის **გამოყენების endpoint** (`POST /api/cli-tools/apply`) იმავე დამცავ
 მექანიზმს აღასრულებს: კონტეინერში, თუ ჩაწერის სამიზნე ჰოსტიდან bind-mount-ით
 არ არის მიმაგრებული, პასუხად ბრუნდება **`422`** `containerEphemeralTarget: true`-ით,
 უსაფრთხო შეცდომის ტექსტით და — იმ ინსტრუმენტებისთვის, რომლებსაც ჰოსტის რეცეპტი
 აქვთ (claude, codex, opencode, cline, kilo, continue) — ჰოსტზე გასაშვები
-`hostSetupCommand`-ით (მაგ., `omniroute setup-opencode`); არაფერი ჩაიწერება.
+`hostSetupCommand`-ით (მაგ., `agentproxy setup-opencode`); არაფერი ჩაიწერება.
 `dryRun: true` კონტეინერის რეჟიმშიც აგრძელებს მუშაობას და დისკზე შეხების გარეშე
 აბრუნებს გენერირებულ შიგთავსს + სამიზნე გზას, ამიტომ შეგიძლიათ წინასწარ ნახოთ
 დაფიდან და გამოიყენოთ ჰოსტზე. ეს ქცევა განზრახია და რეგრესიებისგან დაცულია
@@ -134,8 +134,8 @@ AgentProxy-ის კონტეინერის შიგნით შეს
 | ------------------- | ----------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------ |
 | **კატალოგიზებული**  | წარმოდგენილია მართვის პანელის კატალოგში (სახელი, მომწოდებელი, დოკუმენტაცია, კონფიგურაციის ტიპი) | `src/shared/constants/cliTools.ts` (`CLI_TOOLS`)                               |
 | **აღმოჩენადი**      | ბინარული ფაილის/კონფიგურაციის აღმოჩენა, მდგომარეობის შემოწმებები, კონფიგურაციის ბილიკები        | `src/shared/services/cliRuntime.ts` (`CLI_TOOLS`-ის გაშვების გარემოს კატალოგი) |
-| **კონფიგურირებადი** | მხარდაჭერილია `omniroute configure <cli>`-ის მიერ (არსებობს გამართვის რეცეპტი)                  | `bin/cli/cli-manifest.mjs` (`configure: true`)                                 |
-| **გაშვებადი**       | მხარდაჭერილია `omniroute run <target>`-ის მიერ (განსაზღვრულია გარემოს/არგუმენტების ჩასმა)       | `bin/cli/cli-manifest.mjs` (`run: true`)                                       |
+| **კონფიგურირებადი** | მხარდაჭერილია `agentproxy configure <cli>`-ის მიერ (არსებობს გამართვის რეცეპტი)                  | `bin/cli/cli-manifest.mjs` (`configure: true`)                                 |
+| **გაშვებადი**       | მხარდაჭერილია `agentproxy run <target>`-ის მიერ (განსაზღვრულია გარემოს/არგუმენტების ჩასმა)       | `bin/cli/cli-manifest.mjs` (`run: true`)                                       |
 
 `bin/cli/cli-manifest.mjs` არის კანონიკური შესრულებადი მანიფესტი CLI ბრძანებების
 ინტერფეისებისთვის: `run`, `configure` და გარსის ავტომატური შევსების გენერატორები მისგან იღებენ
@@ -269,7 +269,7 @@ interface ToolBatchStatus {
 | `POST /api/cli-tools/codewhale-settings`    | CodeWhale (OPENAI_BASE_URL, ძირითადი + მოძველებული `~/.deepseek` სინქრონიზაცია) |
 | `POST /api/cli-tools/smelt-settings`        | Smelt                                                                           |
 | `POST /api/cli-tools/pi-settings`           | Pi პროგრამირების აგენტი                                                         |
-| `POST /api/cli-tools/grok-build-settings`   | Grok Build (~/.grok/config.toml, `[model.omniroute]`)                           |
+| `POST /api/cli-tools/grok-build-settings`   | Grok Build (~/.grok/config.toml, `[model.agentproxy]`)                           |
 | `POST /api/cli-tools/qwen-settings`         | Qwen Code (`~/.qwen/settings.json` + გამოყოფილი `.env` გასაღები)                |
 
 ყველა მარშრუტი შეცდომის პასუხებისთვის იყენებს `sanitizeErrorMessage()`-ს (მკაცრი წესი #12).
@@ -364,7 +364,7 @@ npm install -g kilocode
 # Qwen Code
 npm install -g @qwen-code/qwen-code
 
-# Google Gemini CLI (`omniroute run gemini`-ის მეშვეობით გაშვებადი → /v1beta ინტერფეისი)
+# Google Gemini CLI (`agentproxy run gemini`-ის მეშვეობით გაშვებადი → /v1beta ინტერფეისი)
 npm install -g @google/gemini-cli
 
 # Aider
@@ -397,12 +397,12 @@ cargo install smelt  # Rust-ზე დაფუძნებული
 ```bash
 # AgentProxy-ის უნივერსალური საბოლოო წერტილი
 export OPENAI_BASE_URL="http://localhost:20128/v1"
-export OPENAI_API_KEY="sk-your-omniroute-key"
+export OPENAI_API_KEY="sk-your-agentproxy-key"
 export ANTHROPIC_BASE_URL="http://localhost:20128"
-export ANTHROPIC_AUTH_TOKEN="sk-your-omniroute-key"
+export ANTHROPIC_AUTH_TOKEN="sk-your-agentproxy-key"
 # Gemini CLI კითხულობს GOOGLE_GEMINI_BASE_URL-ს ROOT დონეზე (მისი SDK თავად ამატებს /v1beta/...-ს)
 export GOOGLE_GEMINI_BASE_URL="http://localhost:20128"
-export GEMINI_API_KEY="sk-your-omniroute-key"
+export GEMINI_API_KEY="sk-your-agentproxy-key"
 ```
 
 > **დისტანციური სერვერისთვის** `localhost:20128` ჩაანაცვლეთ სერვერის IP მისამართით ან დომენით,
@@ -420,7 +420,7 @@ mkdir -p ~/.claude && cat > ~/.claude/settings.json << EOF
 {
   "env": {
     "ANTHROPIC_BASE_URL": "http://localhost:20128",
-    "ANTHROPIC_AUTH_TOKEN": "sk-your-omniroute-key"
+    "ANTHROPIC_AUTH_TOKEN": "sk-your-agentproxy-key"
   }
 }
 EOF
@@ -436,20 +436,20 @@ Claude Code-ისთვის გამოიყენეთ ერთიან
 
 თანამედროვე Codex (v0.137+) მხოლოდ `~/.codex/config.toml`-ს კითხულობს — ძველი
 `config.yaml` მემკვიდრეობით npm CLI-ს ეკუთვნის და გაფრთხილების გარეშე იგნორირდება. API
-გასაღები რჩება `OMNIROUTE_API_KEY` გარემოს ცვლადში (`env_key`) და არასდროს
+გასაღები რჩება `AGENTPROXY_API_KEY` გარემოს ცვლადში (`env_key`) და არასდროს
 ფაილის შიგნით:
 
 ```bash
 mkdir -p ~/.codex && cat > ~/.codex/config.toml << EOF
-model_provider = "omniroute"
+model_provider = "agentproxy"
 
-[model_providers.omniroute]
+[model_providers.agentproxy]
 name                 = "AgentProxy"
 base_url             = "http://localhost:20128/v1"
-env_key              = "OMNIROUTE_API_KEY"
+env_key              = "AGENTPROXY_API_KEY"
 requires_openai_auth = false
 EOF
-export OMNIROUTE_API_KEY="sk-your-omniroute-key"
+export AGENTPROXY_API_KEY="sk-your-agentproxy-key"
 ```
 
 სრული ცნობარი (პროფილები, `wire_api`, კონტექსტის ფანჯრები): [CODEX-CLI-CONFIGURATION.md](../guides/CODEX-CLI-CONFIGURATION.md).
@@ -465,12 +465,12 @@ mkdir -p ~/.config/opencode && cat > ~/.config/opencode/opencode.json << EOF
 {
   "\$schema": "https://opencode.ai/config.json",
   "provider": {
-    "omniroute": {
+    "agentproxy": {
       "npm": "@ai-sdk/openai-compatible",
       "name": "AgentProxy",
       "options": {
         "baseURL": "http://localhost:20128/v1",
-        "apiKey": "sk-your-omniroute-key"
+        "apiKey": "sk-your-agentproxy-key"
       },
       "models": {
         "claude-sonnet-4-5": { "name": "claude-sonnet-4-5" },
@@ -485,7 +485,7 @@ EOF
 
 **ტესტი:** `opencode`
 
-> სააზროვნო ვარიანტების გასაგზავნად გამოიყენეთ `opencode run "your prompt" --model omniroute/claude-sonnet-4-5-thinking --variant high`.
+> სააზროვნო ვარიანტების გასაგზავნად გამოიყენეთ `opencode run "your prompt" --model agentproxy/claude-sonnet-4-5-thinking --variant high`.
 
 ---
 
@@ -498,7 +498,7 @@ mkdir -p ~/.cline/data && cat > ~/.cline/data/globalState.json << EOF
 {
   "apiProvider": "openai",
   "openAiBaseUrl": "http://localhost:20128/v1",
-  "openAiApiKey": "sk-your-omniroute-key"
+  "openAiApiKey": "sk-your-agentproxy-key"
 }
 EOF
 ```
@@ -515,7 +515,7 @@ Cline გაფართოების პარამეტრები → AP
 **CLI რეჟიმი:**
 
 ```bash
-kilocode --api-base http://localhost:20128/v1 --api-key sk-your-omniroute-key
+kilocode --api-base http://localhost:20128/v1 --api-key sk-your-agentproxy-key
 ```
 
 **VS Code-ის პარამეტრები:**
@@ -523,7 +523,7 @@ kilocode --api-base http://localhost:20128/v1 --api-key sk-your-omniroute-key
 ```json
 {
   "kilo-code.openAiBaseUrl": "http://localhost:20128/v1",
-  "kilo-code.apiKey": "sk-your-omniroute-key"
+  "kilo-code.apiKey": "sk-your-agentproxy-key"
 }
 ```
 
@@ -541,7 +541,7 @@ models:
     provider: openai
     model: auto
     apiBase: http://localhost:20128/v1
-    apiKey: sk-your-omniroute-key
+    apiKey: sk-your-agentproxy-key
     default: true
 ```
 
@@ -568,8 +568,8 @@ models:
     "name": "AgentProxy Auto",
     "family": "gpt-4",
     "version": "1.0.0",
-    "url": "http://localhost:20128/api/v1/vscode/sk-your-omniroute-key/chat/completions",
-    "modelsUrl": "http://localhost:20128/api/v1/vscode/sk-your-omniroute-key/models",
+    "url": "http://localhost:20128/api/v1/vscode/sk-your-agentproxy-key/chat/completions",
+    "modelsUrl": "http://localhost:20128/api/v1/vscode/sk-your-agentproxy-key/models",
     "requestFormat": "openai-chat-completions",
     "contextWindow": 256000,
     "maxOutputTokens": 32768,
@@ -582,7 +582,7 @@ models:
 
 **შენიშვნები:**
 
-- ჩაანაცვლეთ `sk-your-omniroute-key` AgentProxy-ში შექმნილი API გასაღებით.
+- ჩაანაცვლეთ `sk-your-agentproxy-key` AgentProxy-ში შექმნილი API გასაღებით.
 - `url` ველი უნდა მიუთითებდეს `/api/v1/vscode/{token}/chat/completions`-ზე.
 - `modelsUrl` ველი უნდა მიუთითებდეს `/api/v1/vscode/{token}/models`-ზე.
 - როდესაც კლიენტს მორგებული სათაურების მხარდაჭერა აქვს, უპირატესობა მიანიჭეთ სტანდარტულ `/v1` + Bearer სათაურის სქემას.
@@ -608,28 +608,28 @@ kiro-cli status
 
 ## 10. შიდა AgentProxy CLI
 
-`omniroute` ბინარული ფაილი უზრუნველყოფს ბრძანებებს სერვერის სასიცოცხლო ციკლის, გამართვის, დიაგნოსტიკისა და პროვაიდერების მართვისთვის. შესვლის წერტილი: `bin/omniroute.mjs`.
+`agentproxy` ბინარული ფაილი უზრუნველყოფს ბრძანებებს სერვერის სასიცოცხლო ციკლის, გამართვის, დიაგნოსტიკისა და პროვაიდერების მართვისთვის. შესვლის წერტილი: `bin/agentproxy.mjs`.
 
 ```bash
-omniroute                              # სერვერის გაშვება (ნაგულისხმევი პორტი 20128)
-omniroute setup                        # ინტერაქტიული გამართვის ოსტატი
-omniroute doctor                       # კონფიგურაციის, DB-ის, პორტებისა და გაშვების გარემოს შემოწმება
-omniroute providers list               # კონფიგურირებული პროვაიდერების კავშირები
-omniroute providers test-all           # ყველა აქტიური კავშირის შემოწმება
-omniroute reset-password               # ადმინისტრატორის პაროლის ჩამოყრა
-omniroute logs                         # მოთხოვნების ჟურნალების ნაკადის ჩვენება
-omniroute health                       # ჯანმრთელობის დეტალური მდგომარეობა (ამომრთველები, კეში, მეხსიერება)
-omniroute --version                    # ვერსიის გამოტანა
-omniroute --help                       # ყველა ბრძანების ჩვენება
+agentproxy                              # სერვერის გაშვება (ნაგულისხმევი პორტი 20128)
+agentproxy setup                        # ინტერაქტიული გამართვის ოსტატი
+agentproxy doctor                       # კონფიგურაციის, DB-ის, პორტებისა და გაშვების გარემოს შემოწმება
+agentproxy providers list               # კონფიგურირებული პროვაიდერების კავშირები
+agentproxy providers test-all           # ყველა აქტიური კავშირის შემოწმება
+agentproxy reset-password               # ადმინისტრატორის პაროლის ჩამოყრა
+agentproxy logs                         # მოთხოვნების ჟურნალების ნაკადის ჩვენება
+agentproxy health                       # ჯანმრთელობის დეტალური მდგომარეობა (ამომრთველები, კეში, მეხსიერება)
+agentproxy --version                    # ვერსიის გამოტანა
+agentproxy --help                       # ყველა ბრძანების ჩვენება
 ```
 
 ### გამართვა და ინიციალიზაცია
 
 ```bash
-omniroute setup                        # ინტერაქტიული გამართვის ოსტატი
-omniroute setup --non-interactive      # CI/ავტომატიზაციის რეჟიმი (კითხულობს გარემოს ცვლადებსა და ალმებს)
-omniroute setup --password '<value>'   # ადმინისტრატორის პაროლის პირდაპირ დაყენება
-omniroute setup --add-provider \
+agentproxy setup                        # ინტერაქტიული გამართვის ოსტატი
+agentproxy setup --non-interactive      # CI/ავტომატიზაციის რეჟიმი (კითხულობს გარემოს ცვლადებსა და ალმებს)
+agentproxy setup --password '<value>'   # ადმინისტრატორის პაროლის პირდაპირ დაყენება
+agentproxy setup --add-provider \
   --provider openai \
   --api-key '<value>' \
   --test-provider                      # პროვაიდერის დამატება და შემოწმება ერთი მოქმედებით
@@ -639,21 +639,21 @@ omniroute setup --add-provider \
 
 | ცვლადი              | დანიშნულება                                                                                  |
 | ------------------- | -------------------------------------------------------------------------------------------- |
-| `OMNIROUTE_API_KEY` | პროვაიდერის API გასაღები (დაკავშირებულია `--api-key`-თან Commander-ის `.env()`-ის მეშვეობით) |
+| `AGENTPROXY_API_KEY` | პროვაიდერის API გასაღები (დაკავშირებულია `--api-key`-თან Commander-ის `.env()`-ის მეშვეობით) |
 | `DATA_DIR`          | AgentProxy-ის მონაცემთა დირექტორიის ჩანაცვლება                                                |
 
 ყველა სხვა არაინტერაქტიული შეყვანა გადაიცემა ალმების და არა გარემოს ცვლადების სახით:
 `--password`, `--provider`, `--provider-name`, `--provider-base-url`, `--default-model`
-(იხილეთ `omniroute setup`-ის პარამეტრები ზემოთ).
+(იხილეთ `agentproxy setup`-ის პარამეტრები ზემოთ).
 
 ### დიაგნოსტიკა
 
 ```bash
-omniroute doctor                       # კონფიგურაციის, DB-ის, პორტების, გაშვების გარემოს, მეხსიერებისა და სიცოცხლისუნარიანობის შემოწმება
-omniroute doctor --json                # მანქანისთვის წაკითხვადი JSON
-omniroute doctor --no-liveness         # HTTP ჯანმრთელობის შემოწმების გამოტოვება
-omniroute doctor --host 0.0.0.0        # სიცოცხლისუნარიანობის ჰოსტის ჩანაცვლება
-omniroute doctor --liveness-url <url>  # ჯანმრთელობის საბოლოო წერტილის სრული URL-ის ჩანაცვლება
+agentproxy doctor                       # კონფიგურაციის, DB-ის, პორტების, გაშვების გარემოს, მეხსიერებისა და სიცოცხლისუნარიანობის შემოწმება
+agentproxy doctor --json                # მანქანისთვის წაკითხვადი JSON
+agentproxy doctor --no-liveness         # HTTP ჯანმრთელობის შემოწმების გამოტოვება
+agentproxy doctor --host 0.0.0.0        # სიცოცხლისუნარიანობის ჰოსტის ჩანაცვლება
+agentproxy doctor --liveness-url <url>  # ჯანმრთელობის საბოლოო წერტილის სრული URL-ის ჩანაცვლება
 ```
 
 doctor ასრულებს შემდეგ შემოწმებებს: `Config`, `Database`, `Storage/encryption`,
@@ -663,22 +663,22 @@ doctor ასრულებს შემდეგ შემოწმებე�
 ### პროვაიდერების მართვა
 
 ```bash
-omniroute providers available                       # AgentProxy-ის პროვაიდერების კატალოგი
-omniroute providers available --search openai       # კატალოგის გაფილტვრა id-ის/სახელის/ფსევდონიმის/კატეგორიის მიხედვით
-omniroute providers available --category api-key    # კატეგორიის მიხედვით გაფილტვრა (api-key, oauth, free, ...)
-omniroute providers available --json                # მანქანისთვის წაკითხვადი JSON
+agentproxy providers available                       # AgentProxy-ის პროვაიდერების კატალოგი
+agentproxy providers available --search openai       # კატალოგის გაფილტვრა id-ის/სახელის/ფსევდონიმის/კატეგორიის მიხედვით
+agentproxy providers available --category api-key    # კატეგორიის მიხედვით გაფილტვრა (api-key, oauth, free, ...)
+agentproxy providers available --json                # მანქანისთვის წაკითხვადი JSON
 
-omniroute providers list                            # კონფიგურირებული პროვაიდერების კავშირები
-omniroute providers list --json
+agentproxy providers list                            # კონფიგურირებული პროვაიდერების კავშირები
+agentproxy providers list --json
 
-omniroute providers test <id|name>                  # ერთი კონფიგურირებული კავშირის შემოწმება
-omniroute providers test-all                        # ყველა აქტიური კავშირის შემოწმება
-omniroute providers validate                        # მხოლოდ ლოკალური სტრუქტურული ვალიდაცია
-omniroute providers add <provider> --credential-env PROVIDER_KEY
-omniroute providers import ./providers.json --dry-run --json
-omniroute providers auth <provider>                 # არსებული OAuth ნაკადი
-omniroute providers edit <id|name> --default-model <model>
-omniroute providers remove <id|name> --yes
+agentproxy providers test <id|name>                  # ერთი კონფიგურირებული კავშირის შემოწმება
+agentproxy providers test-all                        # ყველა აქტიური კავშირის შემოწმება
+agentproxy providers validate                        # მხოლოდ ლოკალური სტრუქტურული ვალიდაცია
+agentproxy providers add <provider> --credential-env PROVIDER_KEY
+agentproxy providers import ./providers.json --dry-run --json
+agentproxy providers auth <provider>                 # არსებული OAuth ნაკადი
+agentproxy providers edit <id|name> --default-model <model>
+agentproxy providers remove <id|name> --yes
 ```
 
 `providers add/import/auth/edit/remove` უპირველესად API-ზეა დაფუძნებული და ამიტომ მუშაობს
@@ -691,19 +691,19 @@ omniroute providers remove <id|name> --yes
 ### აღდგენა და ჩამოყრა
 
 ```bash
-omniroute reset-password                # ადმინისტრატორის პაროლის ჩამოყრა (ასევე: omniroute-reset-password)
-omniroute reset-encrypted-columns       # დაშიფრული ავტორიზაციის მონაცემების ჩამოყრისთვის გაფრთხილებისა და საცდელი გაშვების ჩვენება
-omniroute reset-encrypted-columns --force  # SQLite-ში დაშიფრული ავტორიზაციის მონაცემების რეალურად null-ად ქცევა
+agentproxy reset-password                # ადმინისტრატორის პაროლის ჩამოყრა (ასევე: agentproxy-reset-password)
+agentproxy reset-encrypted-columns       # დაშიფრული ავტორიზაციის მონაცემების ჩამოყრისთვის გაფრთხილებისა და საცდელი გაშვების ჩვენება
+agentproxy reset-encrypted-columns --force  # SQLite-ში დაშიფრული ავტორიზაციის მონაცემების რეალურად null-ად ქცევა
 ```
 
 ### ავტორიზაციის მონაცემების ექსპორტი (⚠ სიფრთხილით მოეპყარით)
 
 ```bash
-omniroute auth export                                 # გაფრთხილებისა და დადასტურების ეტაპის ჩვენება — DB-ზე წვდომის გარეშე
-omniroute auth export --force                          # ყველა კავშირის გაშიფრული ავტორიზაციის მონაცემების stdout-ში JSON-ის სახით ექსპორტი
-omniroute auth export --force --id <id>                 # მხოლოდ შესაბამისი კავშირის ექსპორტი
-omniroute auth export --force --format env               # OMNIROUTE_<PROVIDER>_<FIELD>=<value> სტრიქონების გამოტანა
-omniroute auth export --force --out creds.json           # ფაილში ჩაწერა (იქმნება 0600 ნებართვებით)
+agentproxy auth export                                 # გაფრთხილებისა და დადასტურების ეტაპის ჩვენება — DB-ზე წვდომის გარეშე
+agentproxy auth export --force                          # ყველა კავშირის გაშიფრული ავტორიზაციის მონაცემების stdout-ში JSON-ის სახით ექსპორტი
+agentproxy auth export --force --id <id>                 # მხოლოდ შესაბამისი კავშირის ექსპორტი
+agentproxy auth export --force --format env               # AGENTPROXY_<PROVIDER>_<FIELD>=<value> სტრიქონების გამოტანა
+agentproxy auth export --force --out creds.json           # ფაილში ჩაწერა (იქმნება 0600 ნებართვებით)
 ```
 
 `auth export` **მხოლოდ ლოკალურია** (SQLite-ის პირდაპირი წაკითხვა, HTTP მარშრუტის გარეშე) და განზრახ ბეჭდავს/წერს
@@ -718,33 +718,33 @@ omniroute auth export --force --out creds.json           # ფაილში �
 თუ სხვაგვარად არ არის მითითებული, ისინი საჭიროებენ გაშვებულ AgentProxy სერვერს:
 
 ```bash
-omniroute status                       # შესრულების გარემოს სრული სტატუსი
-omniroute logs                         # მოთხოვნების ჟურნალის ნაკადის ჩვენება (--json, --search, --follow)
-omniroute config list                  # კონფიგურირებული CLI ხელსაწყოების ჩვენება
+agentproxy status                       # შესრულების გარემოს სრული სტატუსი
+agentproxy logs                         # მოთხოვნების ჟურნალის ნაკადის ჩვენება (--json, --search, --follow)
+agentproxy config list                  # კონფიგურირებული CLI ხელსაწყოების ჩვენება
 
-omniroute provider list                # ხელმისაწვდომი პროვაიდერების ჩამონათვალი (providers list-ის ფსევდონიმი)
-omniroute provider add                 # AgentProxy-ის პროვაიდერად რეგისტრაცია ხელსაწყოში
-omniroute keys add | list | remove     # API გასაღებების მართვა
-omniroute models [provider]            # მოდელების ჩამონათვალი (--json, --search)
-omniroute combo list | switch | create | delete
+agentproxy provider list                # ხელმისაწვდომი პროვაიდერების ჩამონათვალი (providers list-ის ფსევდონიმი)
+agentproxy provider add                 # AgentProxy-ის პროვაიდერად რეგისტრაცია ხელსაწყოში
+agentproxy keys add | list | remove     # API გასაღებების მართვა
+agentproxy models [provider]            # მოდელების ჩამონათვალი (--json, --search)
+agentproxy combo list | switch | create | delete
 
-omniroute backup                       # კონფიგურაციისა და DB-ის სარეზერვო ასლის შექმნა
-omniroute restore                      # წინა სარეზერვო ასლიდან აღდგენა
+agentproxy backup                       # კონფიგურაციისა და DB-ის სარეზერვო ასლის შექმნა
+agentproxy restore                      # წინა სარეზერვო ასლიდან აღდგენა
 
-omniroute health                       # მდგომარეობის დეტალები (ამომრთველები, კეში, მეხსიერება)
-omniroute quota                        # პროვაიდერის კვოტის გამოყენება
-omniroute cache                        # კეშის სტატუსი
-omniroute cache clear                  # სემანტიკური და სიგნატურების კეშების გასუფთავება
+agentproxy health                       # მდგომარეობის დეტალები (ამომრთველები, კეში, მეხსიერება)
+agentproxy quota                        # პროვაიდერის კვოტის გამოყენება
+agentproxy cache                        # კეშის სტატუსი
+agentproxy cache clear                  # სემანტიკური და სიგნატურების კეშების გასუფთავება
 
-omniroute mcp status | restart         # MCP სერვერის სტატუსი / გადატვირთვა
-omniroute a2a status | card            # A2A სერვერის სტატუსი / აგენტის ბარათი
+agentproxy mcp status | restart         # MCP სერვერის სტატუსი / გადატვირთვა
+agentproxy a2a status | card            # A2A სერვერის სტატუსი / აგენტის ბარათი
 
-omniroute tunnel list | create | stop  # გვირაბების მართვა (cloudflare/tailscale/ngrok)
-omniroute env show | get <k> | set <k> <v>  # გარემოს ცვლადების ნახვა / დაყენება (დროებით)
+agentproxy tunnel list | create | stop  # გვირაბების მართვა (cloudflare/tailscale/ngrok)
+agentproxy env show | get <k> | set <k> <v>  # გარემოს ცვლადების ნახვა / დაყენება (დროებით)
 
-omniroute test                         # პროვაიდერთან კავშირის სწრაფი ტესტი
-omniroute update                       # განახლებების შემოწმება
-omniroute completion                   # გარსისთვის ავტოდასრულების გენერირება
+agentproxy test                         # პროვაიდერთან კავშირის სწრაფი ტესტი
+agentproxy update                       # განახლებების შემოწმება
+agentproxy completion                   # გარსისთვის ავტოდასრულების გენერირება
 ```
 
 ### გავრცელებული ალმები
@@ -792,7 +792,7 @@ Ollama-ს ჩატი: http://localhost:20128/api/v1/vscode/sk-a3ab3c080beaee3
 
 | შეცდომა                                         | მიზეზი                                    | გამოსწორება                                                   |
 | ----------------------------------------------- | ----------------------------------------- | ------------------------------------------------------------- |
-| `Connection refused`                            | AgentProxy გაშვებული არ არის               | `omniroute serve`                                             |
+| `Connection refused`                            | AgentProxy გაშვებული არ არის               | `agentproxy serve`                                             |
 | `401 Unauthorized`                              | არასწორი API გასაღები                     | შეამოწმეთ `/dashboard/api-manager`-ში                         |
 | `No combo configured`                           | მარშრუტიზაციის აქტიური კომბინაცია არ არის | დააყენეთ `/dashboard/combos`-ში                               |
 | CLI აჩვენებს „not installed“                    | ბინარული ფაილი PATH-ში არ არის            | შეამოწმეთ `which <command>`                                   |

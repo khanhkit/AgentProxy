@@ -20,7 +20,7 @@ AgentProxy ସ୍ୱଚ୍ଛ ଅପସାରଣ ପାଇଁ ଦୁଇଟି �
 npm run uninstall
 ```
 
-ଏହା AgentProxy ଆପ୍ଲିକେସନକୁ ଅପସାରଣ କରେ କିନ୍ତୁ ଆପଣଙ୍କ ଡାଟାବେସ, କନଫିଗରେସନ, API କୀ ଏବଂ ପ୍ରଦାନକାରୀ ସେଟିଂସ୍ଗୁଡ଼ିକୁ `~/.omniroute/` ରେ **ସଂରକ୍ଷିତ** ରଖେ | ଯଦି ଆପଣ ପରବର୍ତ୍ତୀ ସମୟରେ ପୁନଃସ୍ଥାପନ କରିବାକୁ ଚାହାଁନ୍ତି ଏବଂ ଆପଣଙ୍କ ସେଟଅପ୍ ରଖିବାକୁ ଚାହାଁନ୍ତି ତେବେ ଏହା ବ୍ୟବହାର କରନ୍ତୁ |
+ଏହା AgentProxy ଆପ୍ଲିକେସନକୁ ଅପସାରଣ କରେ କିନ୍ତୁ ଆପଣଙ୍କ ଡାଟାବେସ, କନଫିଗରେସନ, API କୀ ଏବଂ ପ୍ରଦାନକାରୀ ସେଟିଂସ୍ଗୁଡ଼ିକୁ `~/.agentproxy/` ରେ **ସଂରକ୍ଷିତ** ରଖେ | ଯଦି ଆପଣ ପରବର୍ତ୍ତୀ ସମୟରେ ପୁନଃସ୍ଥାପନ କରିବାକୁ ଚାହାଁନ୍ତି ଏବଂ ଆପଣଙ୍କ ସେଟଅପ୍ ରଖିବାକୁ ଚାହାଁନ୍ତି ତେବେ ଏହା ବ୍ୟବହାର କରନ୍ତୁ |
 
 ### ସମ୍ପୂର୍ଣ୍ଣ ଅପସାରଣ
 
@@ -34,7 +34,7 @@ npm run uninstall:full
 - ପ୍ରଦାନକାରୀ କନଫିଗରେସନ ଏବଂ API କୀ
 - ବ୍ୟାକଅପ୍ ଫାଇଲ୍
 - ଲଗ୍ ଫାଇଲ୍
-- `~/.omniroute/` ନିର୍ଦ୍ଦେଶିକାରେ ଥିବା ସମସ୍ତ ଫାଇଲ୍
+- `~/.agentproxy/` ନିର୍ଦ୍ଦେଶିକାରେ ଥିବା ସମସ୍ତ ଫାଇଲ୍
 
 > ⚠️ **ଚେତାବନୀ:** `npm run uninstall:full` ଅପରିବର୍ତ୍ତନୀୟ | ଆପଣଙ୍କ ସମସ୍ତ ପ୍ରଦାନକାରୀ ସଂଯୋଗ, କମ୍ବୋ, API କୀ ଏବଂ ବ୍ୟବହାର ଇତିହାସ ସ୍ଥାୟୀ ଭାବେ ଡିଲିଟ୍ ହୋଇଯିବ |
 
@@ -46,31 +46,31 @@ npm run uninstall:full
 
 ```bash
 # ଗ୍ଲୋବାଲ୍ ପ୍ୟାକେଜ୍ ଅପସାରଣ କରନ୍ତୁ
-npm uninstall -g omniroute
+npm uninstall -g agentproxy
 
 # (ବିକଳ୍ପ) ତଥ୍ୟ ନିର୍ଦ୍ଦେଶିକା ଅପସାରଣ କରନ୍ତୁ
-rm -rf ~/.omniroute
+rm -rf ~/.agentproxy
 ```
 
 ### pnpm ଗ୍ଲୋବାଲ୍ ଇନ୍ଷ୍ଟଲ
 
 ```bash
-pnpm uninstall -g omniroute
-rm -rf ~/.omniroute
+pnpm uninstall -g agentproxy
+rm -rf ~/.agentproxy
 ```
 
 ### Docker
 
 ```bash
 # କନ୍ଟେନର୍ ବନ୍ଦ ଏବଂ ଅପସାରଣ କରନ୍ତୁ
-docker stop omniroute
-docker rm omniroute
+docker stop agentproxy
+docker rm agentproxy
 
 # ଭଲ୍ୟୁମ୍ ଅପସାରଣ କରନ୍ତୁ (ସମସ୍ତ ତଥ୍ୟ ଡିଲିଟ୍ କରେ)
-docker volume rm omniroute-data
+docker volume rm agentproxy-data
 
 # (ବିକଳ୍ପ) ଇମେଜ୍ ଅପସାରଣ କରନ୍ତୁ
-docker rmi diegosouzapw/omniroute:latest
+docker rmi diegosouzapw/agentproxy:latest
 ```
 
 ### Docker Compose
@@ -93,21 +93,21 @@ docker compose down -v
 **macOS:**
 
 - `/Applications` ରୁ `AgentProxy.app` କୁ ଟ୍ରାଶ୍କୁ ଡ୍ରାଗ୍ କରନ୍ତୁ
-- ତଥ୍ୟ ଅପସାରଣ: `rm -rf ~/Library/Application Support/omniroute`
+- ତଥ୍ୟ ଅପସାରଣ: `rm -rf ~/Library/Application Support/agentproxy`
 
 **Linux:**
 
 - AppImage ଫାଇଲ୍ ଅପସାରଣ କରନ୍ତୁ
-- ତଥ୍ୟ ଅପସାରଣ: `rm -rf ~/.omniroute`
+- ତଥ୍ୟ ଅପସାରଣ: `rm -rf ~/.agentproxy`
 
 ### ସୋର୍ସ ଇନ୍ଷ୍ଟଲ (git clone)
 
 ```bash
 # କ୍ଲୋନ୍ କରାଯାଇଥିବା ନିର୍ଦ୍ଦେଶିକା ଅପସାରଣ କରନ୍ତୁ
-rm -rf /path/to/omniroute
+rm -rf /path/to/agentproxy
 
 # (ବିକଳ୍ପ) ତଥ୍ୟ ନିର୍ଦ୍ଦେଶିକା ଅପସାରଣ କରନ୍ତୁ
-rm -rf ~/.omniroute
+rm -rf ~/.agentproxy
 ```
 
 ---
@@ -118,11 +118,11 @@ AgentProxy ଡିଫଲ୍ଟ ଭାବେ ନିମ୍ନଲିଖିତ ସ୍
 
 | ପ୍ଲାଟଫର୍ମ  | ଡିଫଲ୍ଟ ପାଥ                       | ଓଭରାଇଡ୍                                   |
 | ---------- | -------------------------------- | ----------------------------------------- |
-| Linux      | `~/.omniroute/`                  | `DATA_DIR` ଏନଭିରୋନ୍ମେଣ୍ଟ ଭ୍ାରିଆବଲ୍        |
-| macOS      | `~/.omniroute/`                  | `DATA_DIR` ଏନଭିରୋନ୍ମେଣ୍ଟ ଭ୍ାରିଆବଲ୍        |
-| Windows    | `%APPDATA%/omniroute/`           | `DATA_DIR` ଏନଭିରୋନ୍ମେଣ୍ଟ ଭ୍ାରିଆବଲ୍        |
+| Linux      | `~/.agentproxy/`                  | `DATA_DIR` ଏନଭିରୋନ୍ମେଣ୍ଟ ଭ୍ାରିଆବଲ୍        |
+| macOS      | `~/.agentproxy/`                  | `DATA_DIR` ଏନଭିରୋନ୍ମେଣ୍ଟ ଭ୍ାରିଆବଲ୍        |
+| Windows    | `%APPDATA%/agentproxy/`           | `DATA_DIR` ଏନଭିରୋନ୍ମେଣ୍ଟ ଭ୍ାରିଆବଲ୍        |
 | Docker     | `/app/data/` (ମାଉଣ୍ଟେଡ୍ ଭଲ୍ୟୁମ୍) | `DATA_DIR` ଏନଭିରୋନ୍ମେଣ୍ଟ ଭ୍ାରିଆବଲ୍        |
-| XDG-ଅନୁକୂଳ | `$XDG_CONFIG_HOME/omniroute/`    | `XDG_CONFIG_HOME` ଏନଭିରୋନ୍ମେଣ୍ଟ ଭ୍ାରିଆବଲ୍ |
+| XDG-ଅନୁକୂଳ | `$XDG_CONFIG_HOME/agentproxy/`    | `XDG_CONFIG_HOME` ଏନଭିରୋନ୍ମେଣ୍ଟ ଭ୍ାରିଆବଲ୍ |
 
 ### ତଥ୍ୟ ନିର୍ଦ୍ଦେଶିକାରେ ଥିବା ଫାଇଲ୍
 
@@ -143,17 +143,17 @@ AgentProxy ଡିଫଲ୍ଟ ଭାବେ ନିମ୍ନଲିଖିତ ସ୍
 
 ```bash
 # ଗ୍ଲୋବାଲ npm ପ୍ୟାକେଜ୍ ଯାଞ୍ଚ କରନ୍ତୁ
-npm list -g omniroute 2>/dev/null
+npm list -g agentproxy 2>/dev/null
 
 # ଡାଟା ନିର୍ଦ୍ଦେଶିକା ଯାଞ୍ଚ କରନ୍ତୁ
-ls -la ~/.omniroute/ 2>/dev/null
+ls -la ~/.agentproxy/ 2>/dev/null
 
 # ଚାଲୁଥିବା ପ୍ରକ୍ରିୟାଗୁଡ଼ିକ ଯାଞ୍ଚ କରନ୍ତୁ
-pgrep -f omniroute
+pgrep -f agentproxy
 ```
 
 ଯଦି କୌଣସି ପ୍ରକ୍ରିୟା ଏବେ ବି ଚାଲୁଛି, ତେବେ ଏହାକୁ ବନ୍ଦ କରନ୍ତୁ:
 
 ```bash
-pkill -f omniroute
+pkill -f agentproxy
 ```

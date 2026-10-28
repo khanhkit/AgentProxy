@@ -30,7 +30,7 @@ curl http://localhost:20128/.well-known/agent.json
 ሁሉም የ`/a2a` ጥያቄዎች በ`Authorization` ራስጌ በኩል API ቁልፍ ይፈልጋሉ፦
 
 ```
-Authorization: Bearer YOUR_OMNIROUTE_API_KEY
+Authorization: Bearer YOUR_AGENTPROXY_API_KEY
 ```
 
 በአገልጋዩ ላይ ምንም API ቁልፍ ካልተዋቀረ፣ ማረጋገጫው ይታለፋል።
@@ -187,7 +187,7 @@ AgentProxy በ`src/lib/a2a/taskExecution.ts::A2A_SKILL_HANDLERS` ውስጥ የ�
 | `/api/a2a/tasks/[id]`        | GET  | ተግባርን በID አግኝ                                      | አስተዳደር                                        |
 | `/api/a2a/tasks/[id]/cancel` | POST | እየተከናወነ ያለን ተግባር ሰርዝ                               | አስተዳደር                                        |
 | `/.well-known/agent.json`    | GET  | የወኪል ካርድ (የA2A ግኝት)                                | (ይፋዊ፣ ለ3600s የተሸጎጠ)                           |
-| `/api/a2a/tasks`             | POST | ወደ OmniConductor ቡድን የሚገባ ውክልና (Conductor PRD RF5) | Bearer ከ`OMNIROUTE_API_KEY` + `a2aEnabled` ጋር |
+| `/api/a2a/tasks`             | POST | ወደ OmniConductor ቡድን የሚገባ ውክልና (Conductor PRD RF5) | Bearer ከ`AGENTPROXY_API_KEY` + `a2aEnabled` ጋር |
 
 **ወደ Conductor የሚገባ ውክልና (`POST /api/a2a/tasks`)፦** ውጫዊ የA2A ወኪሎች በAgentProxy በኩል የኮድ ሥራን ለOmniConductor ቡድን ይወክላሉ። የጥያቄ አካል፦ `{ skill: "conductor" | "conductor-cli-<profile>", messages: [{role, content}], metadata: { conductor: { repo: { url, base_ref? }, mode?, cli?, model? } } }` — ውክልና ሊሰጥባቸው የሚችሉት የConductor ቡድን ክህሎቶች ብቻ ናቸው (በወኪል ካርዱ ላይ የታወጁት)፤ `metadata.conductor.repo.url` ያስፈልጋል (ቡድኑ በgit repos ላይ ይሠራል)። መንገዱ በአገልጋይ በኩል ያለውን `CONDUCTOR_ORCHESTRATOR_TOKEN` (ተተኪ፦ `CONDUCTOR_HUB_TOKEN`) በመጠቀም ወደ hub `POST /v1/tasks` ይተረጉማል እና `201 { conductor_task_id, state: "submitted" }` ይመልሳል፤ የተግባር ሁኔታዎች በSSE→A2A መስታወት (RF1) በኩል ወደኋላ ይፈሳሉ፣ እንዲሁም በ`GET /api/a2a/tasks?skill=conductor` በኩል ሊታዩ ይችላሉ።
 

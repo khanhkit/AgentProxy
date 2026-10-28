@@ -20,7 +20,7 @@ AgentProxy yana samar da rubutattun umarni guda biyu da aka gina a ciki don cire
 npm run uninstall
 ```
 
-Wannan yana cire manhajar AgentProxy amma yana **adana** ma'ajiyar bayananka, saitunanka, mabuɗan API, da saitunan masu samarwa a cikin `~/.omniroute/`. Yi amfani da wannan idan kana shirin sake girkawa daga baya kuma kana son riƙe saitunanka.
+Wannan yana cire manhajar AgentProxy amma yana **adana** ma'ajiyar bayananka, saitunanka, mabuɗan API, da saitunan masu samarwa a cikin `~/.agentproxy/`. Yi amfani da wannan idan kana shirin sake girkawa daga baya kuma kana son riƙe saitunanka.
 
 ### Cirewa Gaba Ɗaya
 
@@ -34,7 +34,7 @@ Wannan yana cire manhajar **kuma yana gogewa har abada** dukkan bayanai:
 - Saitunan masu samarwa da mabuɗan API
 - Fayilolin ajiyar wucin-gadi
 - Fayilolin rajista
-- Duk fayilolin da ke cikin kundin adireshin `~/.omniroute/`
+- Duk fayilolin da ke cikin kundin adireshin `~/.agentproxy/`
 
 > ⚠️ **Gargaɗi:** Ba za a iya mayar da abin da `npm run uninstall:full` ya yi ba. Za a goge duk haɗin masu samarwarka, combos, mabuɗan API, da tarihin amfani har abada.
 
@@ -46,31 +46,31 @@ Wannan yana cire manhajar **kuma yana gogewa har abada** dukkan bayanai:
 
 ```bash
 # Cire fakitin da aka girka a dukkan tsarin
-npm uninstall -g omniroute
+npm uninstall -g agentproxy
 
 # (Na zaɓi) Cire kundin adireshin bayanai
-rm -rf ~/.omniroute
+rm -rf ~/.agentproxy
 ```
 
 ### Girka ta pnpm a Dukkan Tsarin
 
 ```bash
-pnpm uninstall -g omniroute
-rm -rf ~/.omniroute
+pnpm uninstall -g agentproxy
+rm -rf ~/.agentproxy
 ```
 
 ### Docker
 
 ```bash
 # Tsayar da kuma cire container
-docker stop omniroute
-docker rm omniroute
+docker stop agentproxy
+docker rm agentproxy
 
 # Cire volume (yana goge dukkan bayanai)
-docker volume rm omniroute-data
+docker volume rm agentproxy-data
 
 # (Na zaɓi) Cire image
-docker rmi diegosouzapw/omniroute:latest
+docker rmi diegosouzapw/agentproxy:latest
 ```
 
 ### Docker Compose
@@ -93,21 +93,21 @@ docker compose down -v
 **macOS:**
 
 - Ja `AgentProxy.app` daga `/Applications` zuwa Shara
-- Cire bayanai: `rm -rf ~/Library/Application Support/omniroute`
+- Cire bayanai: `rm -rf ~/Library/Application Support/agentproxy`
 
 **Linux:**
 
 - Cire fayil ɗin AppImage
-- Cire bayanai: `rm -rf ~/.omniroute`
+- Cire bayanai: `rm -rf ~/.agentproxy`
 
 ### Girka daga Lambar Tushe (git clone)
 
 ```bash
 # Cire kundin adireshin da aka clone
-rm -rf /path/to/omniroute
+rm -rf /path/to/agentproxy
 
 # (Na zaɓi) Cire kundin adireshin bayanai
-rm -rf ~/.omniroute
+rm -rf ~/.agentproxy
 ```
 
 ---
@@ -118,11 +118,11 @@ A tsoho, AgentProxy yana adana bayanai a wurare masu zuwa:
 
 | Dandali     | Tsohuwar Hanya                    | Sauya                            |
 | ----------- | --------------------------------- | -------------------------------- |
-| Linux       | `~/.omniroute/`                   | canjin muhalli `DATA_DIR`        |
-| macOS       | `~/.omniroute/`                   | canjin muhalli `DATA_DIR`        |
-| Windows     | `%APPDATA%/omniroute/`            | canjin muhalli `DATA_DIR`        |
+| Linux       | `~/.agentproxy/`                   | canjin muhalli `DATA_DIR`        |
+| macOS       | `~/.agentproxy/`                   | canjin muhalli `DATA_DIR`        |
+| Windows     | `%APPDATA%/agentproxy/`            | canjin muhalli `DATA_DIR`        |
 | Docker      | `/app/data/` (volume da aka haɗa) | canjin muhalli `DATA_DIR`        |
-| Mai bin XDG | `$XDG_CONFIG_HOME/omniroute/`     | canjin muhalli `XDG_CONFIG_HOME` |
+| Mai bin XDG | `$XDG_CONFIG_HOME/agentproxy/`     | canjin muhalli `XDG_CONFIG_HOME` |
 
 ### Fayiloli a cikin kundin adireshin bayanai
 
@@ -143,17 +143,17 @@ Bayan cire shirin, tabbatar cewa babu sauran fayiloli:
 
 ```bash
 # Duba kunshin npm na global
-npm list -g omniroute 2>/dev/null
+npm list -g agentproxy 2>/dev/null
 
 # Duba kundin bayanai
-ls -la ~/.omniroute/ 2>/dev/null
+ls -la ~/.agentproxy/ 2>/dev/null
 
 # Duba processes da ke gudana
-pgrep -f omniroute
+pgrep -f agentproxy
 ```
 
 Idan har yanzu akwai wani process da ke gudana, dakatar da shi:
 
 ```bash
-pkill -f omniroute
+pkill -f agentproxy
 ```

@@ -96,7 +96,7 @@ test("rapid retry joins the orphaned build (one builder run, two 503s)", async (
 test("diagnostic header merges without case duplicates", async () => {
   const res = await catalogCache.resolveCachedCatalogResponse(
     request(),
-    { corsHeaders: { "X-Omniroute-Catalog": "stale-value" }, diagnosticHeaders: {} },
+    { corsHeaders: { "x-agentproxy-catalog": "stale-value" }, diagnosticHeaders: {} },
     neverResolves as (req: Request) => Promise<catalogCache.CatalogPayload>
   );
   assert.equal(res.status, 503);

@@ -37,14 +37,14 @@
 
 <h3>
 
-⭐ Fi star sí repo náà bí OMNIROUTE bá ti ràn ọ́ lọ́wọ́ láti fi owó pamọ́ àti láti mú iṣẹ́ rẹ rọrùn.
+⭐ Fi star sí repo náà bí AGENTPROXY bá ti ràn ọ́ lọ́wọ́ láti fi owó pamọ́ àti láti mú iṣẹ́ rẹ rọrùn.
 
 </h3>
 
 [![Àwọn Star](https://img.shields.io/github/stars/diegosouzapw/AgentProxy?style=social)](https://github.com/diegosouzapw/AgentProxy)
 <a href="https://trendshift.io/repositories/23589" target="_blank"><img src="https://trendshift.io/api/badge/repositories/23589" alt="diegosouzapw%2FAgentProxy | Trendshift" style="width: 250px; height: 55px;" width="250" height="55"/></a>
-[![Ipò Ìtàn Star](https://api.star-history.com/badge?repo=diegosouzapw/AgentProxy&theme=dark)](https://www.star-history.com/diegosouzapw/omniroute)
-[![olud.ai](https://olud.ai/badge.php?tool=diegosouzapw-omniroute)](https://olud.ai/project/diegosouzapw-omniroute.html)
+[![Ipò Ìtàn Star](https://api.star-history.com/badge?repo=diegosouzapw/AgentProxy&theme=dark)](https://www.star-history.com/#khanhkit/AgentProxy&Date)
+[![olud.ai](https://github.com/khanhkit/AgentProxy)](https://github.com/khanhkit/AgentProxy)
 
 ### 💬 Darapọ̀ mọ́ àwùjọ náà
 
@@ -54,12 +54,12 @@
 [![Tẹ̀lé @diegosouzapw lórí GitHub](https://img.shields.io/github/followers/diegosouzapw?style=for-the-badge&logo=github&logoColor=white&label=Follow%20on%20GitHub&color=181717)](https://github.com/diegosouzapw)
 
 [![Discord](https://img.shields.io/badge/Discord-5865F2?style=for-the-badge&logo=discord&logoColor=white)](https://discord.gg/U47eFqAXCn)
-[![Telegram](https://img.shields.io/badge/Telegram-26A5E4?style=for-the-badge&logo=telegram&logoColor=white)](https://t.me/omnirouteOficial)
+[![Telegram](https://img.shields.io/badge/Telegram-26A5E4?style=for-the-badge&logo=telegram&logoColor=white)](https://github.com/khanhkit/AgentProxy/discussions)
 [![WhatsApp Àgbáyé](https://img.shields.io/badge/WhatsApp_Global-25D366?style=for-the-badge&logo=whatsapp&logoColor=white)](https://chat.whatsapp.com/FvuCbrpZmQ6I85n2vW5QIC?s=cl&p=a&mlu=4)
 [![WhatsApp Brasil](https://img.shields.io/badge/WhatsApp_Brasil-25D366?style=for-the-badge&logo=whatsapp&logoColor=white)](https://chat.whatsapp.com/KWgatljAjmbELQory59Oti?s=cl&p=a&mlu=4)
-[![Wẹ́bùsáìtì](https://img.shields.io/badge/Website-omniroute.online-blue?logo=google-chrome&logoColor=white)](https://omniroute.online)
+[![Wẹ́bùsáìtì](https://img.shields.io/badge/Website-agentproxy.online-blue?logo=google-chrome&logoColor=white)](https://agentproxy.online)
 
-**Àwọn ìbéèrè, ìmọ̀ràn nípa olùpèsè, ètò-ọ̀nà & àtìlẹ́yìn → [Discord](https://discord.gg/U47eFqAXCn) · [Telegram](https://t.me/omnirouteOficial) · WhatsApp [🌍 Àgbáyé](https://chat.whatsapp.com/FvuCbrpZmQ6I85n2vW5QIC?s=cl&p=a&mlu=4) / [🇧🇷 Brasil](https://chat.whatsapp.com/KWgatljAjmbELQory59Oti?s=cl&p=a&mlu=4) / [Pọ́ọ̀tálì](https://portal.sthub.com.br/communities/groups/st-hub/channels/Omniroute-World-8kRjmK)**
+**Àwọn ìbéèrè, ìmọ̀ràn nípa olùpèsè, ètò-ọ̀nà & àtìlẹ́yìn → [Discord](https://discord.gg/U47eFqAXCn) · [Telegram](https://github.com/khanhkit/AgentProxy/discussions) · WhatsApp [🌍 Àgbáyé](https://chat.whatsapp.com/FvuCbrpZmQ6I85n2vW5QIC?s=cl&p=a&mlu=4) / [🇧🇷 Brasil](https://chat.whatsapp.com/KWgatljAjmbELQory59Oti?s=cl&p=a&mlu=4) / [Pọ́ọ̀tálì](https://github.com/khanhkit/AgentProxy/discussions)**
 
 <br/>
 
@@ -84,12 +84,12 @@
 
 ## 🧩 Ó Wà
 
-[![ẹ̀yà npm](https://img.shields.io/npm/v/omniroute?color=cb3837&logo=npm)](https://www.npmjs.com/package/omniroute)
-![NPM Oṣooṣù](https://img.shields.io/npm/dm/omniroute?label=npm/month&color=cb3837&logo=npm)
-[![Docker Hub](https://img.shields.io/docker/v/diegosouzapw/omniroute?label=Docker%20Hub&logo=docker&color=2496ED)](https://hub.docker.com/r/diegosouzapw/omniroute)
+[![ẹ̀yà npm](https://img.shields.io/npm/v/agentproxy?color=cb3837&logo=npm)](https://www.npmjs.com/package/agentproxy)
+![NPM Oṣooṣù](https://img.shields.io/npm/dm/agentproxy?label=npm%2Fmonth&color=cb3837&logo=npm)
+[![Docker Hub](https://img.shields.io/docker/v/khanhkit/agentproxy?label=Docker+Hub&logo=docker&color=2496ED)](https://hub.docker.com/r/khanhkit/agentproxy)
 [![Ìwé-àṣẹ: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=flat-square)](LICENSE)
-![Àwọn Ìgbàsílẹ̀ Docker](https://img.shields.io/docker/pulls/diegosouzapw/omniroute?label=docker%20pulls&logo=docker&color=2496ED)
-![Àwọn Ìgbàsílẹ̀ Electron](https://img.shields.io/github/downloads/diegosouzapw/omniroute/total?style=flat&label=electron%20downloads&logo=electron&color=47848F)
+![Àwọn Ìgbàsílẹ̀ Docker](https://img.shields.io/docker/pulls/khanhkit/agentproxy?label=docker+pulls&logo=docker&color=2496ED)
+![Àwọn Ìgbàsílẹ̀ Electron](https://img.shields.io/github/downloads/khanhkit/agentproxy/total?style=flat&label=electron+downloads&logo=electron&color=47848F)
 
 <table>
   <tr>
@@ -101,8 +101,8 @@
   <tr>
     <td align="right"><b>💡 Kọ́ Ẹ̀kọ́</b></td>
     <td align="center"><a href="#-the-promise">💥 Ìlérí Náà</a></td>
-    <td align="center"><a href="#-why-omniroute">🤔 Kí Ló Dé Tí AgentProxy</a></td>
-    <td align="center"><a href="#-what-sets-omniroute-apart">🏆 Ohun Tó Mú Un Yàtọ̀</a></td>
+    <td align="center"><a href="#-why-agentproxy">🤔 Kí Ló Dé Tí AgentProxy</a></td>
+    <td align="center"><a href="#-what-sets-agentproxy-apart">🏆 Ohun Tó Mú Un Yàtọ̀</a></td>
   </tr>
   <tr>
     <td align="right"><b>⚙️ Àwọn Ẹ̀ya</b></td>
@@ -113,18 +113,18 @@
   <tr>
     <td align="right"></td>
     <td align="center"><a href="#%EF%B8%8F-save-1595-tokens--automatically">🗜️ Ìfúnpọ̀</a></td>
-    <td align="center"><a href="#%EF%B8%8F-where-omniroute-runs--anywhere">🖥️ Ibi Tó Ti Ń Ṣiṣẹ́</a></td>
+    <td align="center"><a href="#%EF%B8%8F-where-agentproxy-runs--anywhere">🖥️ Ibi Tó Ti Ń Ṣiṣẹ́</a></td>
     <td align="center"><a href="#-private--local-first">🔒 Àṣírí</a></td>
   </tr>
   <tr>
     <td align="right"><b>👀 Wò Ó</b></td>
-    <td align="center"><a href="#-omniroute-in-action">🎬 Bí Ó Ṣe Ń Ṣiṣẹ́</a></td>
+    <td align="center"><a href="#-agentproxy-in-action">🎬 Bí Ó Ṣe Ń Ṣiṣẹ́</a></td>
     <td align="center"><a href="#-whats-new">✨ Ohun Tó Jẹ́ Tuntun</a></td>
     <td align="center"><a href="#-compatible-clis--coding-agents">🤖 Àwọn CLI Tó Bá A Mu</a></td>
   </tr>
   <tr>
     <td align="right"><b>💚 Àtìlẹ́yìn</b></td>
-    <td align="center"><a href="#-support-omniroute">💚 Ṣe Àtìlẹ́yìn / Ṣètọrẹ</a></td>
+    <td align="center"><a href="#-support-agentproxy">💚 Ṣe Àtìlẹ́yìn / Ṣètọrẹ</a></td>
     <td align="center"><a href="#-community--help">💬 Àwùjọ</a></td>
     <td align="center"><a href="#-sponsors">💖 Àwọn Olùgbọ́wọ́</a></td>
   </tr>
@@ -212,7 +212,7 @@
 
 </div>
 
-<img src="./docs/diagrams/works-zero-config.svg" width="100%" alt="Ó máa ń ṣiṣẹ́ ní kété tí o bá fi sí ẹrọ — kò nílò àtúnṣe ètò rárá. Ìgbésẹ̀ mẹ́ta: 1. Fi sí ẹrọ — npm i -g omniroute, olupin á bẹ̀rẹ̀ lórí localhost:20128. 2. Darí irinṣẹ́ rẹ sí http://localhost:20128/v1 — irinṣẹ́ èyíkéyìí tó bá OpenAI mu (Claude Code, Cursor, Cline). 3. Ó dáhùn — pe model auto fún ìdáhùn lẹ́sẹ̀kẹsẹ̀, láìsí kọ́kọ́rọ́ API, ìforúkọsílẹ̀, tàbí àtúnṣe ètò. A ti so olupèsè aláìlò-kọ́kọ́rọ́ OpenCode Free mọ́ àkójọpọ̀ auto tẹ́lẹ̀, nítorí náà fifi tuntun sí ẹrọ yóò dáhùn láìsí àfikún ètò kankan."/>
+<img src="./docs/diagrams/works-zero-config.svg" width="100%" alt="Ó máa ń ṣiṣẹ́ ní kété tí o bá fi sí ẹrọ — kò nílò àtúnṣe ètò rárá. Ìgbésẹ̀ mẹ́ta: 1. Fi sí ẹrọ — npm i -g agentproxy, olupin á bẹ̀rẹ̀ lórí localhost:20128. 2. Darí irinṣẹ́ rẹ sí http://localhost:20128/v1 — irinṣẹ́ èyíkéyìí tó bá OpenAI mu (Claude Code, Cursor, Cline). 3. Ó dáhùn — pe model auto fún ìdáhùn lẹ́sẹ̀kẹsẹ̀, láìsí kọ́kọ́rọ́ API, ìforúkọsílẹ̀, tàbí àtúnṣe ètò. A ti so olupèsè aláìlò-kọ́kọ́rọ́ OpenCode Free mọ́ àkójọpọ̀ auto tẹ́lẹ̀, nítorí náà fifi tuntun sí ẹrọ yóò dáhùn láìsí àfikún ètò kankan."/>
 
 ```bash
 # Fifi tuntun sí ẹrọ, kò nílò ẹ̀rí ìdánimọ̀ rárá — `auto` ti ń ṣiṣẹ́ tẹ́lẹ̀:
@@ -261,7 +261,7 @@ curl http://localhost:20128/v1/chat/completions \
 </div>
 
 <p align="center">
-  <a href="https://platform.kimi.ai?track_id=track-8197581fdd7d4139a0f562e4a03c3798&aff=omniroute">
+  <a href="https://platform.kimi.ai?track_id=track-8197581fdd7d4139a0f562e4a03c3798">
     <img src="public/sponsors/kimi-k3-banner.png" width="100%" alt="Kimi K3 — Ọgbọ́n Ìwájú Tí Ó Ṣí Sílẹ̀ · àwọn párámítà 2.8T · àyíká token mílíọ̀nù 1"/>
   </a>
 </p>
@@ -271,7 +271,7 @@ curl http://localhost:20128/v1/chat/completions \
 <table>
   <tr>
     <td align="center" width="150">
-      <a href="https://platform.kimi.ai?track_id=track-8197581fdd7d4139a0f562e4a03c3798&aff=omniroute">
+      <a href="https://platform.kimi.ai?track_id=track-8197581fdd7d4139a0f562e4a03c3798">
         <picture>
           <source media="(prefers-color-scheme: dark)" srcset="public/providers/kimi-logomark-dark.svg">
           <img src="public/providers/kimi-logomark-light.svg" width="64" alt="Kimi (Moonshot AI)"/>
@@ -283,12 +283,12 @@ curl http://localhost:20128/v1/chat/completions \
     <td>
       A dúpẹ́ lọ́wọ́ <b>Kimi (Moonshot AI)</b>, Ọ̀rẹ́ Olùdásílẹ̀ Orísun Ṣíṣí wa, fún ṣíṣe àtìlẹ́yìn fún iṣẹ́ yìí! Kimi ni yàrá AI tó wà lẹ́yìn àwọn ìdílé model K2 àti K3 tí weight wọn ṣí sílẹ̀ — <b>Kimi K3</b> ń pèsè fèrèsé àyíká token mílíọ̀nù 1, ìríran àbínibí àti kíkọ kóòdù ní ìpele ìwájú pẹ̀lú ìdá kékeré kan nínú iye owó àwọn model tí a ti pa mọ́, ó sì ń ṣiṣẹ́ láìsí ìṣètò àfikún pẹ̀lú Claude Code, Codex àti gbogbo irinṣẹ́ kíkọ kóòdù tí AgentProxy ń pèsè.
       <br/><br/>
-      <b>Ohun tí àtìlẹ́yìn Kimi ń fún lágbára:</b> Àwọn kirẹditi API Kimi ń fún pipeline ìtújáde AgentProxy tí AI fìdí rẹ̀ múlẹ̀ lágbára — ìpele <i>ìmúdájú merge tí Kimi K3 ń fún lágbára</i>, èyí tó ń ṣàyẹ̀wò gbogbo pull request kí a tó tú u jáde — pẹ̀lú ìdàgbàsókè àwọn ẹ̀ya ojoojúmọ́. Àtìlẹ́yìn Kimi onípò-àkọ́kọ́ ń jáde lórí ọ̀nà méjèèjì: <a href="https://platform.kimi.ai?track_id=track-8197581fdd7d4139a0f562e4a03c3798&aff=omniroute">Kimi API</a> tààrà (<code>kimi-k3</code>) àti <a href="https://www.kimi.com/code?aff=omniroute">ètò kíkọ kóòdù Kimi Code</a> (OAuth àti kọ́kọ́rọ́ API). AgentProxy tún ni iṣẹ́ àkànṣe orísun ṣíṣí ará Brazil àkọ́kọ́ nínú ètò àtìlẹ́yìn Kimi. <a href="https://platform.kimi.ai?track_id=track-8197581fdd7d4139a0f562e4a03c3798&aff=omniroute"><b>Gba kọ́kọ́rọ́ Kimi API pẹ̀lú àfikún kirẹditi 15% →</b></a>
+      <b>Ohun tí àtìlẹ́yìn Kimi ń fún lágbára:</b> Àwọn kirẹditi API Kimi ń fún pipeline ìtújáde AgentProxy tí AI fìdí rẹ̀ múlẹ̀ lágbára — ìpele <i>ìmúdájú merge tí Kimi K3 ń fún lágbára</i>, èyí tó ń ṣàyẹ̀wò gbogbo pull request kí a tó tú u jáde — pẹ̀lú ìdàgbàsókè àwọn ẹ̀ya ojoojúmọ́. Àtìlẹ́yìn Kimi onípò-àkọ́kọ́ ń jáde lórí ọ̀nà méjèèjì: <a href="https://platform.kimi.ai?track_id=track-8197581fdd7d4139a0f562e4a03c3798">Kimi API</a> tààrà (<code>kimi-k3</code>) àti <a href="https://www.kimi.com/code">ètò kíkọ kóòdù Kimi Code</a> (OAuth àti kọ́kọ́rọ́ API). AgentProxy tún ni iṣẹ́ àkànṣe orísun ṣíṣí ará Brazil àkọ́kọ́ nínú ètò àtìlẹ́yìn Kimi. <a href="https://platform.kimi.ai?track_id=track-8197581fdd7d4139a0f562e4a03c3798"><b>Gba kọ́kọ́rọ́ Kimi API pẹ̀lú àfikún kirẹditi 15% →</b></a>
     </td>
   </tr>
   <tr>
     <td align="center" width="150">
-      <a href="https://cheaperinference.com/?utm_source=omniroute">
+      <a href="https://cheaperinference.com">
         <img src="./public/providers/cli-generic.svg" width="64" alt="Cheaper Inference"/>
       </a>
       <br/><b>Cheaper Inference</b><br/><sub>cheaperinference.com</sub><br/><br/>
@@ -297,12 +297,12 @@ curl http://localhost:20128/v1/chat/completions \
     <td>
       A dúpẹ́ lọ́wọ́ <b>Cheaper Inference</b>, Ọ̀rẹ́ Orísun Ṣíṣí AgentProxy kan, fún ṣíṣe àtìlẹ́yìn fún iṣẹ́ yìí! Cheaper Inference jẹ́ gateway tí a tò gẹ́gẹ́ bí iye owó, tó sì ń tún àwọn model ìwájú 42 tà — Claude, GPT-5.x, Gemini, Kimi K3, GLM, DeepSeek, Grok àti MiniMax — lẹ́yìn endpoint kan tó bá OpenAI mu, nípa fífi request kọ̀ọ̀kan ránṣẹ́ sí provider tó yẹ tó sì din owó jù lọ, láìgba owó tó ju iye tí olùṣe model ṣe àkójọ lọ láéláé.
       <br/><br/>
-      <b>Àtìlẹ́yìn onípò-àkọ́kọ́ nínú AgentProxy:</b> Chat Completions, endpoint àbínibí <code>/v1/responses</code>, ìríran, pípè irinṣẹ́ àti àwọn model àwòrán 3 (<code>grok-imagine</code>, <code>nano-banana-pro</code>, <code>nano-banana-2</code>, tí a lè dé sí gẹ́gẹ́ bí <code>cheaperinference/&lt;model&gt;</code>). <a href="https://cheaperinference.com/?utm_source=omniroute"><b>Gba kọ́kọ́rọ́ API kan →</b></a>
+      <b>Àtìlẹ́yìn onípò-àkọ́kọ́ nínú AgentProxy:</b> Chat Completions, endpoint àbínibí <code>/v1/responses</code>, ìríran, pípè irinṣẹ́ àti àwọn model àwòrán 3 (<code>grok-imagine</code>, <code>nano-banana-pro</code>, <code>nano-banana-2</code>, tí a lè dé sí gẹ́gẹ́ bí <code>cheaperinference/&lt;model&gt;</code>). <a href="https://cheaperinference.com"><b>Gba kọ́kọ́rọ́ API kan →</b></a>
     </td>
   </tr>
 </table>
 
-<sub>Àwọn link tí a samì sí pẹ̀lú <code>aff=omniroute</code> jẹ́ àwọn link alájọṣepọ̀. Wọ́n ń pèsè owó fún iṣẹ́ náà láìfi àfikún owó kankan kún ọ.</sub>
+<sub>Àwọn link tí a samì sí pẹ̀lú <code>aff=agentproxy</code> jẹ́ àwọn link alájọṣepọ̀. Wọ́n ń pèsè owó fún iṣẹ́ náà láìfi àfikún owó kankan kún ọ.</sub>
 
 <br/>
 
@@ -488,7 +488,7 @@ Gbogbo àwọn ìlànà **19** — dapọ̀ wọn bí o ṣe fẹ́ fún ìgbés
 
 <img src="./docs/diagrams/comparison-table.svg" width="100%" alt="Ohun tó mú kí AgentProxy yàtọ̀ — àwòrán àwọn ẹ̀ya ní àkókò kan tí a fi wé 9router, OpenRouter, CLIProxyAPI àti LiteLLM lórí agbára 13. AgentProxy: àwọn olupèsè 356, ju ìpele ọ̀fẹ́ 150 lọ tí a fi sínú rẹ̀, àwọn ọ̀nà ìdarí 19, ìpọ́kù token onímọ́-ẹ̀rọ 12, server MCP tí a fi sínú rẹ̀ pẹ̀lú irinṣẹ́ 110, protocol aṣojú A2A, ìrántí tí ó dúró pẹ́, àwọn guardrail, àwọn aṣojú cloud, ìfarapamọ́ fingerprint TLS, Desktop/Termux/PWA àti locale UI i18n 42. AgentProxy ní ìwé-àṣẹ MIT, ó sì ṣeé gbalejo fúnra ẹni. Agbára àti iye àwọn olùdíje lè yí padà; wo ọ̀nà ìṣèwádìí tí a so mọ́ ọn."/>
 
-<sub>📊 Ọ̀nà ìṣèwádìí kíkún &amp; àlàyé ẹ̀ya kọ̀ọ̀kan ní ìfiwéra pẹ̀lú 9router, OpenRouter, CLIProxyAPI &amp; LiteLLM → [`docs/comparison/OMNIROUTE_VS_ALTERNATIVES.md`](docs/comparison/OMNIROUTE_VS_ALTERNATIVES.md)</sub>
+<sub>📊 Ọ̀nà ìṣèwádìí kíkún &amp; àlàyé ẹ̀ya kọ̀ọ̀kan ní ìfiwéra pẹ̀lú 9router, OpenRouter, CLIProxyAPI &amp; LiteLLM → [`docs/comparison/AGENTPROXY_VS_ALTERNATIVES.md`](docs/comparison/AGENTPROXY_VS_ALTERNATIVES.md)</sub>
 
 <br/>
 
@@ -515,7 +515,7 @@ Kọ́kọ́rọ́ (àìròtẹ́lẹ̀): `5d865059-bc44-483a-962d-43ceb80126eb`
 Da Pix kọ, kí o sì lẹ̀ ẹ́ mọ́:
 
 ```
-00020101021126580014br.gov.bcb.pix01365d865059-bc44-483a-962d-43ceb80126eb5204000053039865802BR5922OMNIROUTE CONTRIBUICAO6006BRASIL62070503***630475DD
+00020101021126580014br.gov.bcb.pix01365d865059-bc44-483a-962d-43ceb80126eb5204000053039865802BR5922AGENTPROXY CONTRIBUICAO6006BRASIL62070503***630475DD
 ```
 
 <br clear="right"/>
@@ -555,7 +555,7 @@ tí ó sì lè yí padà, jẹ́ **níwọ̀n bíi 3B token/osù ní ó pọ̀ j
 
 Radar jẹ́ ohun tí a yan láti darapọ̀ mọ́, ó sì ń lo GET nìkan. Kíláyẹ́ǹtì AgentProxy kì í ṣe àgbérù àwọn ìtọ́ni, ìrìnwọlé, àtòjọ
 olùpèsè, tẹlifíṣọ̀nù lílò, tàbí ipò ìkọ̀sílẹ̀ ìkéde àdúgbò. Kọ́ nípa ẹ̀tọ́ yíyẹ àti
-àkójọ lọ́wọ́lọ́wọ́ ní **[radar.omniroute.online/planos](https://radar.omniroute.online/planos)**.
+àkójọ lọ́wọ́lọ́wọ́ ní **[radar.agentproxy.online/planos](https://agentproxy.online)**.
 
 <br/>
 
@@ -573,13 +573,13 @@ olùpèsè, tẹlifíṣọ̀nù lílò, tàbí ipò ìkọ̀sílẹ̀ ìkéde �
 - **🗜️ Fífún ìpọ́kúrò lókun** — olùṣọ́ ìfẹ̀ síta tó máa ń ṣiṣẹ́ látìbẹ̀rẹ̀, àwọn àkójọpọ̀ Caveman fún DE / FR / JA + èdè Ṣáínà (wényán), àwọn àsẹ̀ RTK fún Gradle & .NET. → [Ìpọ́kúrò](docs/compression/COMPRESSION_ENGINES.md)
 - **💸 Iye owó alápin tó jẹ́ òótọ́** — àwọn olupèsè ètò ìforúkọsílẹ̀ / ètò kóòdù máa ń fi **$0** hàn nínú ìtúpalẹ̀ iye owó; ìṣúná, ìpín àti ìdarí ipa-ọ̀nà ṣì ń ṣe àfojúsùn. → [Ìtọ́kasí API](docs/reference/API_REFERENCE.md)
 - **⚖️ Ìdarí ipa-ọ̀nà Quota-Share** — pín ìpín àkọọ́lẹ̀ kan tí a jọ ń lò lọ́nà tó dọ́gba láàárín àwọn kọ́kọ́rọ́ tí a kó jọ, ní fífi iṣẹ́ pamọ́ kí a lè yá àwọn apá tí kò ṣiṣẹ́ jáde. → [Ìtọ́sọ́nà Ìfaradà](docs/architecture/RESILIENCE_GUIDE.md)
-- **🤖 Ìṣètò CLI/aṣojú pẹ̀lú àṣẹ kan** — àwọn àṣẹ `setup-*` 13 tí a forúkọsílẹ̀; `omniroute run` ń ṣe ìfilọ́lẹ̀ àwọn CLI 7 (Claude Code, Codex, Aider, Goose, OpenCode, Qwen Code, Gemini CLI); `omniroute configure` ń ṣàtìlẹ́yìn fún ibi àfojúsùn 10 pẹ̀lú olùyan olupèsè+àwòṣe aláṣepọ̀ àti àwọn ààyò fún àyíká kọ̀ọ̀kan. → [Àwọn Ìṣàmúlò CLI](docs/guides/CLI-INTEGRATIONS.md)
+- **🤖 Ìṣètò CLI/aṣojú pẹ̀lú àṣẹ kan** — àwọn àṣẹ `setup-*` 13 tí a forúkọsílẹ̀; `agentproxy run` ń ṣe ìfilọ́lẹ̀ àwọn CLI 7 (Claude Code, Codex, Aider, Goose, OpenCode, Qwen Code, Gemini CLI); `agentproxy configure` ń ṣàtìlẹ́yìn fún ibi àfojúsùn 10 pẹ̀lú olùyan olupèsè+àwòṣe aláṣepọ̀ àti àwọn ààyò fún àyíká kọ̀ọ̀kan. → [Àwọn Ìṣàmúlò CLI](docs/guides/CLI-INTEGRATIONS.md)
 - **🛰️ Ìpo jíjìnnà** — darí AgentProxy tó wà ní jíjìnnà pẹ̀lú àwọn token tí a fi ààlà sí (`connect` / `contexts` / `tokens`) + olùrànlọ́wọ́ OAuth `antigravity` fún àwọn ìfikún sori VPS. → [Ìpo Jíjìnnà](docs/guides/REMOTE-MODE.md)
 - **🧭 Ìdarí ipa-ọ̀nà aládàáṣiṣẹ́ tó túbọ̀ já fáfá** — àwọn combos `auto/<category>:<tier>`, **Fusion** (pánẹ́ẹ̀lì àwòṣe + adájọ́), ìdarí ipa-ọ̀nà tó mọ irú iṣẹ́, àwòṣe / ìpo / ìyípadà ààlà ìṣúná USD fún ìbéèrè kọ̀ọ̀kan. → [Auto-Combo](docs/routing/AUTO-COMBO.md)
 - **🗜️ Ìpọ́kúrò tí a lè so mọ́ ọn** — àwọn ẹ̀rọ 12 tí a lè ṣàkópọ̀ + Compression Studios: LLMLingua-2, Ultra alápele-méjì, omniglyph, ẹnu-ọ̀nà ìṣòtítọ́ fún ìgbésẹ̀ kọ̀ọ̀kan, GCF v3.2, olóòtú fífà-láti-tún-ètò. → [Ìpọ́kúrò](docs/compression/COMPRESSION_ENGINES.md)
 - **🕵️ Ìyọkúrò ìfipamọ́ MITM tó hàn gbangba (TPROXY)** — gba àwọn CLI tí kò ka àwọn oníyí àyíká proxy sí, pẹ̀lú CA fún SNI kọ̀ọ̀kan + olùṣàgbékalẹ̀ trust-store. → [MITM/TPROXY](docs/security/MITM-TPROXY-DECRYPT.md)
 - **💸 Tẹlémẹ́trì iye owó níbi gbogbo** — àwọn àkọlé iye owó/lílò `X-AgentProxy-*` lórí gbogbo endpoint, àkọlé ìfipamọ́ cache-HIT, àwọn ààlà ìnáwó USD fún kọ́kọ́rọ́ kọ̀ọ̀kan. → [Ìtọ́kasí API](docs/reference/API_REFERENCE.md)
-- **🧠 Ìrántí tí ìwọ ń ṣàkóso** — ó wà ní pípa látìbẹ̀rẹ̀, àṣàyàn ìlò quantization vector int8 + ìdínkù onírúurú, `x-omniroute-no-memory` fún ìbéèrè kọ̀ọ̀kan. → [Ìrántí](docs/frameworks/MEMORY.md)
+- **🧠 Ìrántí tí ìwọ ń ṣàkóso** — ó wà ní pípa látìbẹ̀rẹ̀, àṣàyàn ìlò quantization vector int8 + ìdínkù onírúurú, `x-agentproxy-no-memory` fún ìbéèrè kọ̀ọ̀kan. → [Ìrántí](docs/frameworks/MEMORY.md)
 - **🛡️ Ààbò** — olùṣọ́ prompt-injection lórí gbogbo ipa-ọ̀nà LLM (àkójọpọ̀ ìdánwò red-team), ọ̀nà ààbò ìbòjú-ẹ̀rí tí a lè yàn láti lò (ń pa àwọn kọ́kọ́rọ́ API/àṣírí tó tú jáde mọ́ ní ọ̀nà méjèèjì), ìṣàwárí wẹ́ẹ̀bù DuckDuckGo ọ̀fẹ́ gẹ́gẹ́ bí ìgbẹ̀yìn-gbẹ́yín, àti ẹnu-ọ̀nà ìwọlé OIDC àṣàyàn fún dasibodu (ìwọlé pẹ̀lú ọ̀rọ̀ aṣínà máa wà nígbà gbogbo). → [Àwọn Ọ̀nà Ààbò](docs/security/GUARDRAILS.md)
 - **🖼️ Àwọn endpoint tuntun** — `/v1/ocr` (Mistral OCR) àti `/v1/audio/translations` (irú Whisper) parí àgbègbè mídíà. → [Ìtọ́kasí API](docs/reference/API_REFERENCE.md)
 - **🎨 Ṣíṣẹ̀dá àwòrán / fídíò / ohun** — API kan fún mídíà: fídíò xAI Grok Imagine & Novita AI, ComfyUI, Magnific, Adobe Firefly, Segmind, àti àwọn olupèsè ọ̀rọ̀ bíi ElevenLabs. → [Ìtọ́kasí API](docs/reference/API_REFERENCE.md)
@@ -638,7 +638,7 @@ olùpèsè, tẹlifíṣọ̀nù lílò, tàbí ipò ìkọ̀sílẹ̀ ìkéde �
 <b>＋ ó tún ń ṣiṣẹ́ pẹ̀lú</b> · Kiro · Command Code · Antigravity · Windsurf · AMP · <b>ohun èlò èyíkéyìí tó bá OpenAI mu</b>
 </div>
 
-<sub>📖 Ìṣètò ẹ̀rọ̀ kọ̀ọ̀kan fún gbogbo irinṣẹ́ 36 (CLI Code 26 + CLI Agents 10) → [`docs/reference/CLI-TOOLS.md`](docs/reference/CLI-TOOLS.md) · 🧩 Plugin OpenCode → [`@omniroute/opencode-provider`](https://www.npmjs.com/package/@omniroute/opencode-provider)</sub>
+<sub>📖 Ìṣètò ẹ̀rọ̀ kọ̀ọ̀kan fún gbogbo irinṣẹ́ 36 (CLI Code 26 + CLI Agents 10) → [`docs/reference/CLI-TOOLS.md`](docs/reference/CLI-TOOLS.md) · 🧩 Plugin OpenCode → [`@agentproxy/opencode-provider`](https://www.npmjs.com/package/@agentproxy/opencode-provider)</sub>
 
 </div>
 
@@ -648,19 +648,19 @@ olùpèsè, tẹlifíṣọ̀nù lílò, tàbí ipò ìkọ̀sílẹ̀ ìkéde �
 a máa fi ẹ̀rí ìdánimọ̀ sínú process kọ̀ọ̀kan, Qwen/Gemini sì máa gba home àdádó onígbà-díẹ̀:
 
 ```bash
-omniroute run claude   --model openai/gpt-5.4          # Claude Code
-omniroute run codex    --model glm/glm-5.2             # OpenAI Codex CLI
-omniroute run aider    --model glm/glm-5.2 -- --message "reply OK"
-omniroute run goose    --model glm/glm-5.2
-omniroute run opencode --model glm/glm-5.2 -- run "reply OK"
-omniroute run qwen     --model glm/glm-5.2 -- -p "reply OK"
-omniroute run gemini   --model glm/glm-5.2 -- --skip-trust -p "reply OK"
+agentproxy run claude   --model openai/gpt-5.4          # Claude Code
+agentproxy run codex    --model glm/glm-5.2             # OpenAI Codex CLI
+agentproxy run aider    --model glm/glm-5.2 -- --message "reply OK"
+agentproxy run goose    --model glm/glm-5.2
+agentproxy run opencode --model glm/glm-5.2 -- run "reply OK"
+agentproxy run qwen     --model glm/glm-5.2 -- -p "reply OK"
+agentproxy run gemini   --model glm/glm-5.2 -- --skip-trust -p "reply OK"
 
 # Tàbí yan provider+model ní ìbánisọ̀rọ̀, kí o sì kọ ìṣètò ti irinṣẹ́ náà fúnra rẹ̀:
-omniroute configure codex          # bákan náà: claude opencode qwen aider goose gemini cline continue kilo
+agentproxy configure codex          # bákan náà: claude opencode qwen aider goose gemini cline continue kilo
 ```
 
-Gbogbo àṣẹ máa ń tẹ̀lé remote context tó ń ṣiṣẹ́ (`omniroute connect <host>`), `--dry-run`
+Gbogbo àṣẹ máa ń tẹ̀lé remote context tó ń ṣiṣẹ́ (`agentproxy connect <host>`), `--dry-run`
 máa ń ṣàfihàn env/args gangan láìṣe ìmúṣẹ, `--api-key-env NAME` sì máa ń jẹ́ kí àwọn àṣírí má wọ inú
 ìtàn shell rẹ. → [Àwọn Ìṣọ̀kan CLI](docs/guides/CLI-INTEGRATIONS.md)
 
@@ -745,19 +745,19 @@ máa ń ṣàfihàn env/args gangan láìṣe ìmúṣẹ, `--api-key-env NAME` 
 
 <table>
   <tr><th align="left">Pẹpẹ</th><th align="left">Ìfìsórí</th><th align="left">Àwọn Ànfàní Pàtàkì</th></tr>
-  <tr><td align="left" nowrap>📦 <b>npm (àgbáyé)</b></td><td align="left" nowrap><code>npm install -g omniroute</code></td><td align="left">Àṣẹ kan, OS èyíkéyìí</td></tr>
-  <tr><td align="left" nowrap>🐳 <b>Docker</b></td><td align="left" nowrap><code>docker run … diegosouzapw/omniroute</code></td><td align="left">Ọ̀pọ̀ àkitektọ̀ <b>AMD64 + ARM64</b></td></tr>
+  <tr><td align="left" nowrap>📦 <b>npm (àgbáyé)</b></td><td align="left" nowrap><code>npm install -g agentproxy</code></td><td align="left">Àṣẹ kan, OS èyíkéyìí</td></tr>
+  <tr><td align="left" nowrap>🐳 <b>Docker</b></td><td align="left" nowrap><code>docker run … diegosouzapw/agentproxy</code></td><td align="left">Ọ̀pọ̀ àkitektọ̀ <b>AMD64 + ARM64</b></td></tr>
   <tr><td align="left" nowrap>🖥️ <b>Desktop (Electron)</b></td><td align="left" nowrap><code>npm run electron:build</code></td><td align="left">Fèrèsé abínibí + àpótí ètò — <b>Windows / macOS / Linux</b></td></tr>
-  <tr><td align="left" nowrap>🎩 <b>Àkójọ-àṣàyàn (AgentProxyTray)</b></td><td align="left" nowrap><code>brew install --cask zoispag/tap/omniroute-tray</code></td><td align="left">Ń ṣàkóso &amp; ń ṣe ìmúdójúìwọ̀n olupin fúnra rẹ̀ — <b>macOS</b></td></tr>
+  <tr><td align="left" nowrap>🎩 <b>Àkójọ-àṣàyàn (AgentProxyTray)</b></td><td align="left" nowrap><code>brew install --cask zoispag/tap/agentproxy-tray</code></td><td align="left">Ń ṣàkóso &amp; ń ṣe ìmúdójúìwọ̀n olupin fúnra rẹ̀ — <b>macOS</b></td></tr>
   <tr><td align="left" nowrap>💪 <b>ARM</b></td><td align="left" nowrap>abínibí <code>arm64</code></td><td align="left">Raspberry Pi, àwọn olupin ARM, Apple Silicon</td></tr>
-  <tr><td align="left" nowrap>📱 <b>Android (Termux)</b></td><td align="left" nowrap><code>pkg install nodejs && npx -y omniroute</code></td><td align="left">Ń ṣiṣẹ́ <b>lórí fóònù rẹ</b>, 24/7, láìsí root</td></tr>
+  <tr><td align="left" nowrap>📱 <b>Android (Termux)</b></td><td align="left" nowrap><code>pkg install nodejs && npx -y agentproxy</code></td><td align="left">Ń ṣiṣẹ́ <b>lórí fóònù rẹ</b>, 24/7, láìsí root</td></tr>
   <tr><td align="left" nowrap>📲 <b>PWA</b></td><td align="left" nowrap>"Ṣàfikún sí Ojú Ìbẹ̀rẹ̀"</td><td align="left">Ojú-kíkún, láìsí ayélujára, ó ṣeé fi sórí láti inú aṣàwákiri</td></tr>
-  <tr><td align="left" nowrap>🧩 <b>Àfikún OpenCode</b></td><td align="left" nowrap><code>@omniroute/opencode-provider</code></td><td align="left">Ìṣọ̀kan OpenCode abínibí</td></tr>
+  <tr><td align="left" nowrap>🧩 <b>Àfikún OpenCode</b></td><td align="left" nowrap><code>@agentproxy/opencode-provider</code></td><td align="left">Ìṣọ̀kan OpenCode abínibí</td></tr>
   <tr><td align="left" nowrap>🤖 <b>VS Code Copilot Chat</b></td><td align="left" nowrap>fi àfikún <b>OmniCopilot</b> sórí</td><td align="left">Gbogbo àwòṣe AgentProxy nínú aṣàyàn Copilot Chat abínibí — stable &amp; Insiders</td></tr>
   <tr><td align="left" nowrap>🛠️ <b>Láti kóòdù orísun</b></td><td align="left" nowrap><code>npm install && npm run dev</code></td><td align="left">Ṣàtúnṣe rẹ̀, kópa nínú rẹ̀</td></tr>
 </table>
 
-<sub>📖 [Ìtọ́sọ́nà Docker](docs/guides/DOCKER_GUIDE.md) · [Desktop](electron/README.md) · [Àpótí àkójọ-àṣàyàn](https://github.com/zoispag/omniroute-tray) · [Termux](docs/guides/TERMUX_GUIDE.md) · [PWA](docs/guides/PWA_GUIDE.md) · [OpenCode](docs/frameworks/OPENCODE.md)</sub>
+<sub>📖 [Ìtọ́sọ́nà Docker](docs/guides/DOCKER_GUIDE.md) · [Desktop](electron/README.md) · [Àpótí àkójọ-àṣàyàn](https://github.com/zoispag/agentproxy-tray) · [Termux](docs/guides/TERMUX_GUIDE.md) · [PWA](docs/guides/PWA_GUIDE.md) · [OpenCode](docs/frameworks/OPENCODE.md)</sub>
 
 <br/>
 
@@ -795,19 +795,19 @@ Láti inú olóòtú: ṣí ojú **Àwọn Àfikún**, wá **"AgentProxy"**, t�
 
 </div>
 
-> `omniroute serve` máa ń dára jù lọ nígbà tí ó bá ń ṣiṣẹ́ ní gbogbo ìgbà. **[AgentProxyTray](https://github.com/zoispag/omniroute-tray)**
+> `agentproxy serve` máa ń dára jù lọ nígbà tí ó bá ń ṣiṣẹ́ ní gbogbo ìgbà. **[AgentProxyTray](https://github.com/zoispag/agentproxy-tray)**
 > ń yí èyí padà sí ètò ọ̀pá àkójọ-àṣàyàn fún macOS tí o lè ṣètò kí o sì gbàgbé rẹ̀: ó ń bẹ̀rẹ̀ olupin, ó ń jẹ́ kí ó máa ṣiṣẹ́
 > lẹ́yìn àwọn àtún-bẹ̀rẹ̀, ó ń ṣe ìmúdójúìwọ̀n rẹ̀ níbi kan náà, ó sì ń jẹ́ kí ìwọ̀n token rẹ ní àkókò gidi wà ní ìtẹ̀ kan — **kò sí
-> fèrèsé terminal tí a fi sílẹ̀ ní ṣíṣí, kò sí `npm install -g omniroute` tí o ní láti máa tọ́jú.**
+> fèrèsé terminal tí a fi sílẹ̀ ní ṣíṣí, kò sí `npm install -g agentproxy` tí o ní láti máa tọ́jú.**
 
 A kọ́ ọ pẹ̀lú [Tauri v2](https://v2.tauri.app/) (ìpìlẹ̀ Rust tí ó kéré gan-an), ó mú
 runtime Node 24 tirẹ̀ tí a fọwọ́sí wá, ó sì ń ṣàkóso ìfìsórí AgentProxy tí ètò náà ní, nítorí náà kò ní bá
-`node`/`bun` àgbáyé rẹ figagbága. Ó **ń pín àtòpọ̀ àti ibi ìpamọ́ dátà `~/.omniroute/` rẹ tí ó ti wà tẹ́lẹ̀** — nítorí náà,
+`node`/`bun` àgbáyé rẹ figagbága. Ó **ń pín àtòpọ̀ àti ibi ìpamọ́ dátà `~/.agentproxy/` rẹ tí ó ti wà tẹ́lẹ̀** — nítorí náà,
 AgentProxy kan náà tí o ti ń ṣiṣẹ́ ni, ó kàn wọ fìlà ni. 🎩
 
 <table>
   <tr><th align="left">Ohun tí ó ń ṣe</th><th align="left">Bí ó ṣe ń ṣe é</th></tr>
-  <tr><td align="left" nowrap>🟢 <b>Ó ń ṣàkóso olupin</b></td><td align="left">Ó ń ṣe ìpilẹ̀ṣẹ̀ <code>omniroute serve</code>, ó ń gba instance tí ó ti ń ṣiṣẹ́ dípò ṣíṣe ẹ̀dà rẹ̀ méjì</td></tr>
+  <tr><td align="left" nowrap>🟢 <b>Ó ń ṣàkóso olupin</b></td><td align="left">Ó ń ṣe ìpilẹ̀ṣẹ̀ <code>agentproxy serve</code>, ó ń gba instance tí ó ti ń ṣiṣẹ́ dípò ṣíṣe ẹ̀dà rẹ̀ méjì</td></tr>
   <tr><td align="left" nowrap>📊 <b>Ìlò ní àkókò gidi ní ojú kan</b></td><td align="left">Àwọn ọ̀pá ìpín olùpèsè, ààlà session/ọ̀sẹ̀ Claude pẹ̀lú ìṣírò àkókò tó kù sí àtúntò, ìpín iye owó ọjọ́ 30</td></tr>
   <tr><td align="left" nowrap>🔄 <b>Ó ń ṣe ìmúdójúìwọ̀n fúnra rẹ̀ níbi kan náà</b></td><td align="left">Ìfìsórí ní ìpele, ìpàrọ̀ atomic, ìpadà sí ẹ̀yà àtijọ́ nígbà ìkùnà — ó máa ń wà lórí ìtẹ̀jáde tuntun jù lọ ní gbogbo ìgbà</td></tr>
   <tr><td align="left" nowrap>🚀 <b>Bẹ̀rẹ̀ nígbà wíwọlé</b></td><td align="left">Ìpilẹ̀ṣẹ̀ àṣàyàn nígbà wíwọlé; àpótí nìkan, kò sí àmì dock</td></tr>
@@ -815,12 +815,12 @@ AgentProxy kan náà tí o ti ń ṣiṣẹ́ ni, ó kàn wọ fìlà ni. 🎩
 </table>
 
 ```sh
-brew install --cask zoispag/tap/omniroute-tray
+brew install --cask zoispag/tap/agentproxy-tray
 ```
 
 <sub>Ṣé o fẹ́ràn ìgbàsílẹ̀? Gba <code>.dmg</code> tuntun láti
-<a href="https://github.com/zoispag/omniroute-tray/releases">Àwọn Ẹ̀yà Tí A Ti Tu Sílẹ̀</a>. Kóòdù orísun, àwọn ìṣòro àti àwọn àkọsílẹ̀ ìkọ́lé
-wà ní <a href="https://github.com/zoispag/omniroute-tray">zoispag/omniroute-tray</a>.
+<a href="https://github.com/zoispag/agentproxy-tray/releases">Àwọn Ẹ̀yà Tí A Ti Tu Sílẹ̀</a>. Kóòdù orísun, àwọn ìṣòro àti àwọn àkọsílẹ̀ ìkọ́lé
+wà ní <a href="https://github.com/zoispag/agentproxy-tray">zoispag/agentproxy-tray</a>.
 <br/>💛 Iṣẹ́ àkànṣe àwùjọ láti ọwọ́ <a href="https://github.com/zoispag">@zoispag</a> — kì í ṣe ẹ̀yà AgentProxy tí a tú sílẹ̀ ní ọ̀nà ìjọba.</sub>
 
 <br/>
@@ -848,10 +848,10 @@ wà ní <a href="https://github.com/zoispag/omniroute-tray">zoispag/omniroute-tr
 ### ⌨️ CLI gidi kan (kì í ṣe `start` nìkan)
 
 ```bash
-omniroute               # ṣe ìpèsè gateway + dashboard (port 20128)
-omniroute chat          # client ìfọ̀rọ̀wérọ̀ TUI aláṣepọ̀ (slash: /model /combo /skill /memory)
-omniroute setup         # wizard ìtọ́sọ́nà fún ìṣiṣẹ́ àkọ́kọ́
-omniroute doctor        # ṣe àyẹ̀wò providers, ports, native deps
+agentproxy               # ṣe ìpèsè gateway + dashboard (port 20128)
+agentproxy chat          # client ìfọ̀rọ̀wérọ̀ TUI aláṣepọ̀ (slash: /model /combo /skill /memory)
+agentproxy setup         # wizard ìtọ́sọ́nà fún ìṣiṣẹ́ àkọ́kọ́
+agentproxy doctor        # ṣe àyẹ̀wò providers, ports, native deps
 ```
 
 ### 🛰️ Ipò jíjìn — ṣiṣẹ́ CLI níbí, AgentProxy lórí VPS kan
@@ -860,11 +860,11 @@ AgentProxy wà lórí server kan? Darí rẹ̀ láti laptop rẹ pẹ̀lú **CLI
 pẹ̀lú token ìwọlé tí a ní ìdíwọ̀n agbègbè; lẹ́yìn náà, gbogbo àṣẹ yóò tọ́ka sí èyí tí ó wà ní jíjìn.
 
 ```bash
-omniroute connect 192.168.0.15            # ọ̀rọ̀ aṣínà → token tí a ní ìdíwọ̀n agbègbè, tí a fipamọ́ gẹ́gẹ́ bí context
-omniroute models list                     # ← ń ṣiṣẹ́ lòdì sí server JÍJÌN náà
-omniroute configure codex                 # ← yan model jíjìn kan, kọ profile Codex agbègbè kan
-omniroute tokens create --name ci --scope read   # ṣẹ̀dá àwọn token tó ní ìdíwọ̀n tóóró fún àwọn ẹ̀rọ mìíràn
-omniroute contexts use default            # ← padà sí server agbègbè náà
+agentproxy connect 192.168.0.15            # ọ̀rọ̀ aṣínà → token tí a ní ìdíwọ̀n agbègbè, tí a fipamọ́ gẹ́gẹ́ bí context
+agentproxy models list                     # ← ń ṣiṣẹ́ lòdì sí server JÍJÌN náà
+agentproxy configure codex                 # ← yan model jíjìn kan, kọ profile Codex agbègbè kan
+agentproxy tokens create --name ci --scope read   # ṣẹ̀dá àwọn token tó ní ìdíwọ̀n tóóró fún àwọn ẹ̀rọ mìíràn
+agentproxy contexts use default            # ← padà sí server agbègbè náà
 ```
 
 A pín àwọn token sí agbègbè `read` / `write` / `admin`; àwọn route tó ń dá process sílẹ̀ wà fún loopback nìkan.
@@ -872,7 +872,7 @@ A pín àwọn token sí agbègbè `read` / `write` / `admin`; àwọn route tó
 
 <div align="left">
 
-<img src="./docs/diagrams/cli-terminal.svg" width="50%" alt="Àfihàn terminal alárinrin tí ń ṣe àfihàn AgentProxy CLI — omniroute providers list, omniroute combo list àti omniroute health — tí ń yí ká lórí ojú àṣẹ ìpele-òkè 86: providers · oauth · keys · combo · nodes · models · cache · compression · cost · usage · quota · health · resilience · telemetry · logs · audit · mcp · a2a · cloud · memory · skills · eval · tunnel · backup · sync · webhooks · policy · pricing · translator · simulate …"/>
+<img src="./docs/diagrams/cli-terminal.svg" width="50%" alt="Àfihàn terminal alárinrin tí ń ṣe àfihàn AgentProxy CLI — agentproxy providers list, agentproxy combo list àti agentproxy health — tí ń yí ká lórí ojú àṣẹ ìpele-òkè 86: providers · oauth · keys · combo · nodes · models · cache · compression · cost · usage · quota · health · resilience · telemetry · logs · audit · mcp · a2a · cloud · memory · skills · eval · tunnel · backup · sync · webhooks · policy · pricing · translator · simulate …"/>
 
 </div>
 
@@ -882,18 +882,18 @@ A pín àwọn token sí agbègbè `read` / `write` / `admin`; àwọn route tó
 
 <table>
   <tr><th align="left">Ojú-ìbáṣepọ̀</th><th align="left">Endpoint / àṣẹ</th><th align="left">Lò ó fún</th></tr>
-  <tr><td align="left" nowrap>🧰 <b>MCP (stdio)</b></td><td align="left" nowrap><code>omniroute --mcp</code></td><td align="left">So pọ̀ mọ́ Claude Desktop, Cursor, tàbí client MCP èyíkéyìí</td></tr>
+  <tr><td align="left" nowrap>🧰 <b>MCP (stdio)</b></td><td align="left" nowrap><code>agentproxy --mcp</code></td><td align="left">So pọ̀ mọ́ Claude Desktop, Cursor, tàbí client MCP èyíkéyìí</td></tr>
   <tr><td align="left" nowrap>🌊 <b>MCP (HTTP)</b></td><td align="left" nowrap><code>/api/mcp/stream</code></td><td align="left">MCP jíjìn — <b>irinṣẹ́ 110</b>, agbègbè 33 (ìmúlò jẹ́ àṣàyàn), àkọsílẹ̀ àyẹ̀wò kíkún</td></tr>
   <tr><td align="left" nowrap>📡 <b>MCP (SSE)</b></td><td align="left" nowrap><code>/api/mcp/sse</code></td><td align="left">Ọ̀nà ìgbékalẹ̀ MCP ṣiṣànwọlé</td></tr>
   <tr><td align="left" nowrap>🤝 <b>A2A</b></td><td align="left" nowrap><code>/.well-known/agent.json</code></td><td align="left">Agent-sí-agent, <b>JSON-RPC 2.0</b> + SSE, ọgbọ́n 6</td></tr>
   <tr><td align="left" nowrap>🌐 <b>REST API</b></td><td align="left" nowrap><code>/v1/*</code></td><td align="left">Ó bá OpenAI mu — ìfọ̀rọ̀wérọ̀, embeddings, àwòrán, ohun, OCR</td></tr>
   <tr><td align="left" nowrap>🔔 <b>Webhooks</b></td><td align="left" nowrap><code>/api/webhooks</code></td><td align="left">Fi àwọn ìṣẹ̀lẹ̀ ìbéèrè / quota ránṣẹ́ sí Slack, Discord, Telegram tàbí URL èyíkéyìí</td></tr>
-  <tr><td align="left" nowrap>🛰️ <b>CLI Jíjìn</b></td><td align="left" nowrap><code>omniroute connect <host></code></td><td align="left">Darí instance jíjìn kan pẹ̀lú àwọn token ìwọlé tí a ní ìdíwọ̀n agbègbè</td></tr>
+  <tr><td align="left" nowrap>🛰️ <b>CLI Jíjìn</b></td><td align="left" nowrap><code>agentproxy connect <host></code></td><td align="left">Darí instance jíjìn kan pẹ̀lú àwọn token ìwọlé tí a ní ìdíwọ̀n agbègbè</td></tr>
 </table>
 
 ```bash
 # Fún Claude Code ní gbogbo àkójọpọ̀ irinṣẹ́ AgentProxy nípasẹ̀ MCP:
-claude mcp add-server omniroute --type http --url http://localhost:20128/api/mcp/stream
+claude mcp add-server agentproxy --type http --url http://localhost:20128/api/mcp/stream
 ```
 
 <sub>📖 [Server MCP](docs/frameworks/MCP-SERVER.md) · [Server A2A](docs/frameworks/A2A-SERVER.md) · [Àwọn Protocol Agent](docs/frameworks/AGENT_PROTOCOLS_GUIDE.md)</sub>
@@ -983,7 +983,7 @@ A **máa ń pa** àwọn code block, URL àti dátà tí a ṣètò mọ́ ní �
   - **Mo ní ADHD (ìgbésẹ̀ kọ́kọ́)** — bẹ̀rẹ̀ pẹ̀lú ìgbésẹ̀ tó kàn, fi nọ́ńbà sí àwọn ìgbésẹ̀, ìgbésẹ̀ gidi kan tó kàn, láìsí ọ̀rọ̀ ìṣáájú.
   - **CJK ṣókí (文言)** — style Chinese àtijọ́ tó ṣókí gan-an (a fi locale ṣe ìdíwọ̀ sí `zh`).
 - **🎯 Ìṣúná context adaptive** _(dial náà)_ — dípò threshold token on/off kan ṣoṣo, mú àwọn engine tó din owó jù, tí pàdánù wọn sì kéré jù, pọ̀ sí i dé ibi tó yẹ láti **wọ inú context window model náà**. Policy: `reserve-output` (àìyẹsẹ̀, model-aware) · `percentage` · `absolute`. Mode: `floor` (ṣe ìdánilójú pé ó wọlé) · `replace-autotrigger` (àyàn kedere rẹ ló borí) · `off` (threshold àtijọ́).
-- **🎛️ Ibi tí a ti pinnu compression** _(precedence, gíga → kékeré)_ — header `x-omniroute-compression` fún request kọ̀ọ̀kan › override routing-combo › profile olórúkọ tó ń ṣiṣẹ́ › adaptive / auto-trigger › àìyẹsẹ̀ panel › off. Plan tí a lò yóò tún hàn nínú header response `X-AgentProxy-Compression: <mode>; source=<source>`.
+- **🎛️ Ibi tí a ti pinnu compression** _(precedence, gíga → kékeré)_ — header `x-agentproxy-compression` fún request kọ̀ọ̀kan › override routing-combo › profile olórúkọ tó ń ṣiṣẹ́ › adaptive / auto-trigger › àìyẹsẹ̀ panel › off. Plan tí a lò yóò tún hàn nínú header response `X-AgentProxy-Compression: <mode>; source=<source>`.
 
 Ṣètò auto-trigger nípasẹ̀ threshold token, tan dial adaptive, dì profile olórúkọ mọ́lẹ̀, ṣètò ohun ẹ̀ẹ̀kan fún request kọ̀ọ̀kan, tàbí yan pipeline fún routing combo kọ̀ọ̀kan — èyíkéyìí tó bá iṣẹ́ náà mu. **Eval harness** offline tí a ní láti yan láti lò (`npm run eval:compression`) máa ń wọ̀n fidelity sí savings lórí corpus tí a dì mọ́lẹ̀ kí o tó gbé ìyípadà kan ga.
 
@@ -1000,8 +1000,8 @@ A **máa ń pa** àwọn code block, URL àti dátà tí a ṣètò mọ́ ní �
 **1) Fi sí ẹ̀rọ, kí o sì ṣiṣẹ́**
 
 ```bash
-npm install -g omniroute
-omniroute
+npm install -g agentproxy
+agentproxy
 ```
 
 > 💡 Ṣé o rí `npm warn ERESOLVE` tàbí àwọn ìkìlọ̀ peer-dep? [Wọn kò léwu](docs/guides/TROUBLESHOOTING.md#npm-install-warnings-eresolve--peer--deprecated).
@@ -1048,39 +1048,39 @@ Lo àwọn wọ̀nyí fún àwọn client tí kò lè so `Authorization: Bearer 
 **🐳 Docker**
 
 ```bash
-docker run -d --name omniroute --restart unless-stopped --stop-timeout 40 \
-  -p 127.0.0.1:20128:20128 -v omniroute-data:/app/data diegosouzapw/omniroute:latest
+docker run -d --name agentproxy --restart unless-stopped --stop-timeout 40 \
+  -p 127.0.0.1:20128:20128 -v agentproxy-data:/app/data diegosouzapw/agentproxy:latest
 ```
 
-`:latest` ń tẹ̀lé ẹ̀yà SemVer tó dúró ṣinṣin tó ga jù lọ tí a ti **tẹ̀ jáde**. Kò tẹ̀lé git `main`. Lo `:X.Y.Z` pàtó fún GitOps. Wo [Àwọn Ikanni Ìtújáde Docker](docs/guides/DOCKER_GUIDE.md#release-channels).Àwòrán náà ṣètò **`OMNIROUTE_MEMORY_MB=1024`** gẹ́gẹ́ bí iye pàtó. Ìyẹn tó fún dashboard àti ìfọ̀rọ̀wérọ̀ kékeré. **Àwọn aṣojú coding** (`POST /v1/responses` láti Claude Code, Codex, Grok, …) nílò V8 heap tó tóbi púpọ̀ sí i, bí bẹ́ẹ̀ kọ́ process náà yóò ṣe `FATAL ERROR` ní nǹkan bí 12 GiB lábẹ́ àwọn context gígùn méjì tó bẹ̀rẹ̀ sí í lé ara wọn lórí. Ṣètò container náà kí ó tóbi ju heap lọ (àwọn native buffer wà ní òde V8):
+`:latest` ń tẹ̀lé ẹ̀yà SemVer tó dúró ṣinṣin tó ga jù lọ tí a ti **tẹ̀ jáde**. Kò tẹ̀lé git `main`. Lo `:X.Y.Z` pàtó fún GitOps. Wo [Àwọn Ikanni Ìtújáde Docker](docs/guides/DOCKER_GUIDE.md#release-channels).Àwòrán náà ṣètò **`AGENTPROXY_MEMORY_MB=1024`** gẹ́gẹ́ bí iye pàtó. Ìyẹn tó fún dashboard àti ìfọ̀rọ̀wérọ̀ kékeré. **Àwọn aṣojú coding** (`POST /v1/responses` láti Claude Code, Codex, Grok, …) nílò V8 heap tó tóbi púpọ̀ sí i, bí bẹ́ẹ̀ kọ́ process náà yóò ṣe `FATAL ERROR` ní nǹkan bí 12 GiB lábẹ́ àwọn context gígùn méjì tó bẹ̀rẹ̀ sí í lé ara wọn lórí. Ṣètò container náà kí ó tóbi ju heap lọ (àwọn native buffer wà ní òde V8):
 
-| Irú iṣẹ́                               | Heap (`-e OMNIROUTE_MEMORY_MB`) | Container (`--memory`) |
+| Irú iṣẹ́                               | Heap (`-e AGENTPROXY_MEMORY_MB`) | Container (`--memory`) |
 | ------------------------------------- | ------------------------------- | ---------------------- |
 | Dashboard / ìfọ̀rọ̀wérọ̀ kékeré          | `1024` (ìpìlẹ̀ àwòrán)           | ≥2 g                   |
 | Aṣojú coding kan                      | `8192`                          | ≥10 g                  |
 | `/v1/responses` gígùn méjì lẹ́ẹ̀kan náà | `10240`–`12288`                 | ≥12–16 g               |
 
 ```bash
-docker run -d --name omniroute --restart unless-stopped --stop-timeout 40 \
-  -e OMNIROUTE_MEMORY_MB=8192 --memory=10g \
-  -p 127.0.0.1:20128:20128 -v omniroute-data:/app/data diegosouzapw/omniroute:latest
+docker run -d --name agentproxy --restart unless-stopped --stop-timeout 40 \
+  -e AGENTPROXY_MEMORY_MB=8192 --memory=10g \
+  -p 127.0.0.1:20128:20128 -v agentproxy-data:/app/data diegosouzapw/agentproxy:latest
 ```
 
 Tábìlì kíkún: [Ìtọ́sọ́nà Docker — RAM àsìkò ìṣiṣẹ́](docs/guides/DOCKER_GUIDE.md#runtime-ram-for-coding-agents).
 
-> **Ikanni Docker ṣáájú ìtújáde:** `diegosouzapw/omniroute:next` àti
-> `diegosouzapw/omniroute:next-web` ń tẹ̀lé ẹ̀ka `release/v*` tó jẹ́ àìyẹsẹ̀ lọ́wọ́lọ́wọ́.
+> **Ikanni Docker ṣáájú ìtújáde:** `diegosouzapw/agentproxy:next` àti
+> `diegosouzapw/agentproxy:next-web` ń tẹ̀lé ẹ̀ka `release/v*` tó jẹ́ àìyẹsẹ̀ lọ́wọ́lọ́wọ́.
 > Àwọn tag tí ó lè yí padà wọ̀nyí wà fún dídán àwọn àtúnṣe tí a kò tíì tú jáde wò nìkan, wọn kò sì
 > **ní àtìlẹ́yìn fún production**. Wo
 > [Àwọn Ikanni Ìtújáde Docker](docs/guides/DOCKER_GUIDE.md#release-channels).
 
 **🥟 Bun**
 
-A ṣàtìlẹ́yìn fún `bun install` àtijọ́ àti ìfisílẹ̀ kárí-ayé (`bun install -g omniroute`) nípasẹ̀ ìṣàwárí runtime Bun:
+A ṣàtìlẹ́yìn fún `bun install` àtijọ́ àti ìfisílẹ̀ kárí-ayé (`bun install -g agentproxy`) nípasẹ̀ ìṣàwárí runtime Bun:
 
 - **`bun:sqlite` tí a kọ sínú rẹ̀**: AgentProxy máa ń lo driver `bun:sqlite` tí a kọ sínú Bun nígbà tó bá ń ṣiṣẹ́ lábẹ́ Bun, yóò sì yí padà sí `better-sqlite3` lórí Node.js tàbí `sql.js`.
-- **Yíyan bundler Webpack láìfọwọ́ṣe ní dev**: Development (`bun run dev`) máa ń ṣàwárí Bun láìfọwọ́ṣe, yóò sì pa Turbopack láti lo Webpack dípò rẹ̀ láti dènà àìbáramu native V8 binding. Àwọn build production (`bun run build`) ń tẹ̀lé `OMNIROUTE_USE_TURBOPACK` gan-an bíi ti Node: Turbopack gẹ́gẹ́ bí àìyẹsẹ̀, `OMNIROUTE_USE_TURBOPACK=0` láti build pẹ̀lú Webpack (`Dockerfile.bun` ń mú un wà gẹ́gẹ́ bí `--build-arg`).
-- **Dockerfile Bun àkànṣe**: `Dockerfile.bun` alápele-púpọ̀ fún àwọn deployment production Bun native (`docker build -f Dockerfile.bun -t omniroute:bun .`).
+- **Yíyan bundler Webpack láìfọwọ́ṣe ní dev**: Development (`bun run dev`) máa ń ṣàwárí Bun láìfọwọ́ṣe, yóò sì pa Turbopack láti lo Webpack dípò rẹ̀ láti dènà àìbáramu native V8 binding. Àwọn build production (`bun run build`) ń tẹ̀lé `AGENTPROXY_USE_TURBOPACK` gan-an bíi ti Node: Turbopack gẹ́gẹ́ bí àìyẹsẹ̀, `AGENTPROXY_USE_TURBOPACK=0` láti build pẹ̀lú Webpack (`Dockerfile.bun` ń mú un wà gẹ́gẹ́ bí `--build-arg`).
+- **Dockerfile Bun àkànṣe**: `Dockerfile.bun` alápele-púpọ̀ fún àwọn deployment production Bun native (`docker build -f Dockerfile.bun -t agentproxy:bun .`).
 
 ```bash
 # Fi sílẹ̀ kí o sì ṣiṣẹ́ pẹ̀lú Bun
@@ -1098,13 +1098,13 @@ PORT=20128 npm run dev
 **📦 pnpm**
 
 ```bash
-pnpm add -g omniroute@latest --allow-build=better-sqlite3 --allow-build=@swc/core && omniroute
+pnpm add -g agentproxy@latest --allow-build=better-sqlite3 --allow-build=@swc/core && agentproxy
 ```
 
 **🐧 Arch Linux (AUR)**
 
 ```bash
-yay -S omniroute-bin && systemctl --user enable --now omniroute.service
+yay -S agentproxy-bin && systemctl --user enable --now agentproxy.service
 ```
 
 **🔧 Nix (Flake)**
@@ -1150,7 +1150,7 @@ platform/Node rẹ mu bá wà, bí bẹ́ẹ̀ kọ́ yóò yí padà láìsí �
 Láti fo ìmúrúgbóná native lẹ́yìn ìfisílẹ̀ pátápátá (CI, headless, tàbí àwọn ẹ̀rọ tó lọ́ra):
 
 ```bash
-OMNIROUTE_SKIP_POSTINSTALL=1 npm install -g omniroute   # CI=1 náà máa ń fò ó
+AGENTPROXY_SKIP_POSTINSTALL=1 npm install -g agentproxy   # CI=1 náà máa ń fò ó
 ```
 
 Fún ìfisílẹ̀ tó yára jù lọ, yan **pnpm** (ibi ìpamọ́ tó dá lórí àkóónú + àwọn hard link — wo òkè).
@@ -1241,15 +1241,15 @@ port kan, nítorí náà kò sí package CLI-nìkan lọ́tọ̀ ní báyìí.
 | 💼 **LinkedIn** — tẹ̀lé olùtọ́jú náà            | [linkedin.com/in/diegosouzapw](https://www.linkedin.com/in/diegosouzapw/)                                             |
 | 🐙 **GitHub** — tẹ̀lé fún àwọn ìtújáde àti àbá | [@diegosouzapw](https://github.com/diegosouzapw)                                                                      |
 | 💬 **Discord**                                | [discord.gg/U47eFqAXCn](https://discord.gg/U47eFqAXCn)                                                                |
-| ✈️ **Telegram**                               | [t.me/omnirouteOficial](https://t.me/omnirouteOficial)                                                                |
+| ✈️ **Telegram**                               | [t.me/agentproxyOficial](https://github.com/khanhkit/AgentProxy/discussions)                                                                |
 | 🟢 **WhatsApp — 🌍 Àgbáyé**                   | [darapọ̀ mọ́ ẹgbẹ́ náà](https://chat.whatsapp.com/FvuCbrpZmQ6I85n2vW5QIC?s=cl&p=a&mlu=4)                                 |
 | 🟢 **WhatsApp — 🇧🇷 Brasil**                   | [darapọ̀ mọ́ ẹgbẹ́ náà](https://chat.whatsapp.com/KWgatljAjmbELQory59Oti?s=cl&p=a&mlu=4)                                 |
-| 🌍 **Ojúlé**                                  | [omniroute.online](https://omniroute.online)                                                                          |
-| 🌍 **🌍Àwùjọ StHub AgentProxy (ọ̀fẹ́)**          | [póòtù StHub](https://portal.sthub.com.br/communities/groups/st-hub/channels/Omniroute-World-8kRjmK)                  |
+| 🌍 **Ojúlé**                                  | [agentproxy.online](https://agentproxy.online)                                                                          |
+| 🌍 **🌍Àwùjọ StHub AgentProxy (ọ̀fẹ́)**          | [póòtù StHub](https://github.com/khanhkit/AgentProxy/discussions)                  |
 | 📦 **Kóòdù orísun**                           | [github.com/diegosouzapw/AgentProxy](https://github.com/diegosouzapw/AgentProxy)                                        |
 | 🐛 **Jábọ̀ àṣìṣe kan**                         | [ṣí ìṣòro kan](https://github.com/diegosouzapw/AgentProxy/issues) — so àbájáde `npm run system-info` mọ́ ọn             |
 | 🤝 **Ṣe àfikún**                              | [CONTRIBUTING.md](CONTRIBUTING.md) · [Àwoṣe Ẹ̀ka àti Ìtújáde](docs/ops/BRANCHING_MODEL.md) · yan `good first issue`    |
-| 💚 **Ṣe àtìlẹ́yìn fún iṣẹ́ náà**                | [Àwọn ọ̀nà láti ṣe àtìlẹ́yìn ↑](#-support-omniroute) · [Àwọn Olùgbọ̀wọ́ GitHub](https://github.com/sponsors/diegosouzapw) |
+| 💚 **Ṣe àtìlẹ́yìn fún iṣẹ́ náà**                | [Àwọn ọ̀nà láti ṣe àtìlẹ́yìn ↑](#-support-agentproxy) · [Àwọn Olùgbọ̀wọ́ GitHub](https://github.com/sponsors/diegosouzapw) |
 
 </div>
 
@@ -1280,7 +1280,7 @@ port kan, nítorí náà kò sí package CLI-nìkan lọ́tọ̀ ní báyìí.
   <tr><td nowrap><b>Ìdánwò</b></td><td>Ẹ̀rọ ìdánwò Node.js + Vitest — <b>àwọn ìkéde ìdánwò àìyípadà 39,000+</b> jákèjádò àwọn fáìlì ìdánwò 5,100+ tí a ń tọpinpin (ẹyọ, ìṣọ̀kan, E2E, ààbò, àyíká ẹ̀rọ)</td></tr>
   <tr><td nowrap><b>Àwọn Pẹpẹ</b></td><td>Kọ̀ǹpútà Alágbèéká (Electron) · Android (Termux) · PWA (aṣàwákiri èyíkéyìí)</td></tr>
   <tr><td nowrap><b>CI/CD</b></td><td>GitHub Actions — ìtẹ̀jáde npm aládàáṣiṣẹ́ + Docker Hub nígbà ìtújáde</td></tr>
-  <tr><td nowrap><b>Àwọn Ọ̀nà Asopọ̀</b></td><td><a href="https://omniroute.online">Ojúlé Ayelujara</a> · <a href="https://www.npmjs.com/package/omniroute">npm</a> · <a href="https://hub.docker.com/r/diegosouzapw/omniroute">Docker Hub</a></td></tr>
+  <tr><td nowrap><b>Àwọn Ọ̀nà Asopọ̀</b></td><td><a href="https://agentproxy.online">Ojúlé Ayelujara</a> · <a href="https://www.npmjs.com/package/agentproxy">npm</a> · <a href="https://hub.docker.com/r/khanhkit/agentproxy">Docker Hub</a></td></tr>
 </table>
 
 <div align="center">
@@ -1598,11 +1598,11 @@ gh release create "v${VERSION}" --title "v${VERSION}" --generate-notes
 
 ## 🌍 StarMapper
 
-<a href="https://starmapper.bruniaux.com/diegosouzapw/omniroute">
+<a href="https://starmapper.bruniaux.com">
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="https://starmapper.bruniaux.com/api/map-image/diegosouzapw/omniroute?theme=dark" />
-    <source media="(prefers-color-scheme: light)" srcset="https://starmapper.bruniaux.com/api/map-image/diegosouzapw/omniroute?theme=light" />
-    <img alt="StarMapper" src="https://starmapper.bruniaux.com/api/map-image/diegosouzapw/omniroute" />
+    <source media="(prefers-color-scheme: dark)" srcset="https://starmapper.bruniaux.com" />
+    <source media="(prefers-color-scheme: light)" srcset="https://starmapper.bruniaux.com" />
+    <img alt="StarMapper" src="https://starmapper.bruniaux.com" />
   </picture>
 </a>
 </div>
@@ -1729,9 +1729,9 @@ AgentProxy dúró lórí èjìká àwọn òmìrán. Ó bẹ̀rẹ̀ gẹ́gẹ�
 
 <div align="center">
 
-**[⬆ Padà sí òkè](#-omniroute)** · A kọ́ ọ pẹ̀lú ❤️ fún àwùjọ AI orísun-ṣíṣí.
+**[⬆ Padà sí òkè](#-agentproxy)** · A kọ́ ọ pẹ̀lú ❤️ fún àwùjọ AI orísun-ṣíṣí.
 
-<sub>AgentProxy v3.8.51 · Node ≥22.22.2 · Ìwé-àṣẹ MIT · <a href="https://omniroute.online">omniroute.online</a></sub>
+<sub>AgentProxy v3.8.51 · Node ≥22.22.2 · Ìwé-àṣẹ MIT · <a href="https://agentproxy.online">agentproxy.online</a></sub>
 
 </div>
 <!-- A ti mú GitHub Discussions ṣiṣẹ́ fún ìbéèrè àti ìdáhùn àwùjọ -->

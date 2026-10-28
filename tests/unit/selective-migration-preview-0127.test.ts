@@ -32,7 +32,7 @@ test("TC-MIG-PREVIEW-001 previews 9Router JSON without importing runtime state",
   assert.deepEqual(plan.unsupported.map((entry) => entry.category), ["usageHistory"]);
 });
 
-test("TC-MIG-PREVIEW-002 previews OmniRoute SQLite through SELECT-only adapter access", () => {
+test("TC-MIG-PREVIEW-002 previews AgentProxy SQLite through SELECT-only adapter access", () => {
   const tables = [
     "provider_connections",
     "provider_nodes",
@@ -62,7 +62,7 @@ test("TC-MIG-PREVIEW-002 previews OmniRoute SQLite through SELECT-only adapter a
 
   const plan = previewSqliteMigrationSource(adapter);
 
-  assert.equal(plan.source.family, "omniroute");
+  assert.equal(plan.source.family, "agentproxy");
   assert.equal(plan.source.format, "sqlite");
   assert.equal(plan.inventory.providerConnections.length, 3);
   assert.equal(plan.inventory.providerNodes.length, 2);

@@ -77,7 +77,7 @@ STORAGE_ENCRYPTION_KEY=$(openssl rand -hex 32)
 | `pii-masker`       | 10     | കോളിന് മുമ്പും ശേഷവും PII മറയ്ക്കൽ (ഇമെയിലുകൾ, ഫോൺ, CPF, CNPJ, ക്രെഡിറ്റ് കാർഡുകൾ, SSN)                                |
 | `prompt-injection` | 20     | ഓവർറൈഡ്/റോൾ-ഹൈജാക്ക്/ജയിൽബ്രേക്ക്/ചോർച്ച പാറ്റേണുകൾ കണ്ടെത്തുന്നു                                                      |
 
-ഇഷ്ടാനുസൃത ഗാർഡ്റെയിലുകൾ `registerGuardrail(new MyGuardrail())` വഴി രജിസ്റ്റർ ചെയ്യുന്നു. ഈ മാതൃക fail-open ആണ് (എക്സെപ്ഷനുകൾ ഒരിക്കലും ട്രാഫിക് തടയില്ല). ഓരോ അഭ്യർത്ഥനയിലും `x-omniroute-disabled-guardrails` ഹെഡർ വഴി ഒഴിവാക്കാം. → [`docs/security/GUARDRAILS.md`](docs/security/GUARDRAILS.md) കാണുക.
+ഇഷ്ടാനുസൃത ഗാർഡ്റെയിലുകൾ `registerGuardrail(new MyGuardrail())` വഴി രജിസ്റ്റർ ചെയ്യുന്നു. ഈ മാതൃക fail-open ആണ് (എക്സെപ്ഷനുകൾ ഒരിക്കലും ട്രാഫിക് തടയില്ല). ഓരോ അഭ്യർത്ഥനയിലും `x-agentproxy-disabled-guardrails` ഹെഡർ വഴി ഒഴിവാക്കാം. → [`docs/security/GUARDRAILS.md`](docs/security/GUARDRAILS.md) കാണുക.
 
 ### 🧠 പ്രോംപ്റ്റ് ഇൻജക്ഷൻ ഗാർഡ്
 
@@ -182,15 +182,15 @@ STORAGE_ENCRYPTION_KEY=$(openssl rand -hex 32)
 
 ```bash
 docker run -d \
-  --name omniroute \
+  --name agentproxy \
   --restart unless-stopped \
   --read-only \
   -p 20128:20128 \
-  -v omniroute-data:/app/data \
+  -v agentproxy-data:/app/data \
   -e JWT_SECRET="$(openssl rand -base64 48)" \
   -e API_KEY_SECRET="$(openssl rand -hex 32)" \
   -e STORAGE_ENCRYPTION_KEY="$(openssl rand -hex 32)" \
-  diegosouzapw/omniroute:latest
+  diegosouzapw/agentproxy:latest
 ```
 
 ---
@@ -224,7 +224,7 @@ docker run -d \
 
 > **വ്യാപ്തി സംബന്ധിച്ച കുറിപ്പ്:** റിപ്പോസിറ്ററിയുടെ റൂട്ടിലുള്ള `socket.yml`, പ്രസിദ്ധീകരിച്ച npm ആർട്ടിഫാക്റ്റിൽ Socket.dev നടത്തുന്ന രജിസ്ട്രി-വശത്തെ പ്രസിദ്ധീകരണാനന്തര സ്കാനിനായി `projectIgnorePaths` മാത്രം ക്രമീകരിക്കുന്നു — ഇത് നിർബന്ധിതമായ CI/PR ലയന നിയന്ത്രണമല്ല. `.github/workflows`-ലെ ഒരു വർക്ക്ഫ്ലോയും, `package.json` സ്ക്രിപ്റ്റും, `Makefile` ടാർഗറ്റും Socket.dev പ്രവർത്തിപ്പിക്കുന്നില്ല.
 
-പ്രസിദ്ധീകരിച്ച `omniroute` npm ആർട്ടിഫാക്റ്റിൽ Next.js `output: "standalone"`
+പ്രസിദ്ധീകരിച്ച `agentproxy` npm ആർട്ടിഫാക്റ്റിൽ Next.js `output: "standalone"`
 ബിൽഡ് ഉൾപ്പെടുത്തിയിരിക്കുന്നു. അതിനാൽ രേഖപ്പെടുത്തിയിട്ടുള്ള പ്രത്യേകാധികാരമുള്ള
 സവിശേഷതകൾ (MITM, Zed ഇറക്കുമതി, Cloud Sync, ഉൾച്ചേർത്ത സർവീസ് സൂപ്പർവൈസർ)
 ഉൾപ്പെടെ ഓരോ റൂട്ട് ഹാൻഡ്ലറും `.next/server/*.js` മിനിഫൈ ചെയ്ത ചങ്കുകളിൽ
@@ -250,7 +250,7 @@ docker run -d \
   സൂചിപ്പിക്കുന്നത്.
 
 അലേർട്ടിന്റെ നിയന്ത്രണം ലഘൂകരിക്കാൻ പൈപ്പ്ലൈനിൽ കഴിയാത്ത ഉപയോക്താക്കൾ:
-`OMNIROUTE_BUILD_PROFILE=minimal npm run build` ഉപയോഗിച്ച് ബിൽഡ് ചെയ്യുക.
+`AGENTPROXY_BUILD_PROFILE=minimal npm run build` ഉപയോഗിച്ച് ബിൽഡ് ചെയ്യുക.
 ഇത് നാല് സെൻസിറ്റീവ് മൊഡ്യൂളുകൾക്ക് പകരം റൺടൈമിൽ HTTP 503
 `feature-disabled` മടക്കിനൽകുന്ന സ്റ്റബുകൾ സ്ഥാപിക്കുന്നു. അതിനാൽ
 പ്രത്യേകാധികാരമുള്ള കോഡ് പാതകൾ ബണ്ടിലിൽ ഭൗതികമായി ഉണ്ടാകില്ല.

@@ -47,11 +47,11 @@ test("manifest projection omits unsupported entries and only serializes the publ
 test("copy-only runbooks use actual context/configure/run flags and never execute", () => {
   const claude = targets.find((target) => target.id === "claude")!;
   assert.deepEqual(buildCompanionCommands(claude, "office-router", ""), {
-    contexts: "omniroute contexts list\nomniroute contexts current",
-    configure: "omniroute configure claude --context office-router",
-    run: "omniroute run claude --context office-router --dry-run",
+    contexts: "agentproxy contexts list\nagentproxy contexts current",
+    configure: "agentproxy configure claude --context office-router",
+    run: "agentproxy run claude --context office-router --dry-run",
   });
-  assert.equal(buildCompanionCommands(claude, "", "").configure, "omniroute configure claude");
+  assert.equal(buildCompanionCommands(claude, "", "").configure, "agentproxy configure claude");
 });
 
 test("required model blocks launch preview until a valid literal is supplied", () => {
@@ -59,7 +59,7 @@ test("required model blocks launch preview until a valid literal is supplied", (
   assert.equal(buildCompanionCommands(qwen, "", "").run, undefined);
   assert.equal(
     buildCompanionCommands(qwen, "remote", "provider/model-v1").run,
-    "omniroute run qwen --context remote --model provider/model-v1 --dry-run"
+    "agentproxy run qwen --context remote --model provider/model-v1 --dry-run"
   );
   for (const model of ["$(id)", "a;whoami", "--api-key", "a\nwhoami", "a b", "a`id`", "a&b"]) {
     assert.equal(buildCompanionCommands(qwen, "", model).run, undefined);

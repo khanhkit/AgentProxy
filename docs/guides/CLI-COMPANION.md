@@ -26,8 +26,8 @@ The companion does not block local instructions when server detection fails.
 Start by inspecting the contexts already configured in your terminal:
 
 ```sh
-omniroute contexts list
-omniroute contexts current
+agentproxy contexts list
+agentproxy contexts current
 ```
 
 Leave the companion's context field empty to use the CLI's active context, or
@@ -36,8 +36,8 @@ server. The dashboard does not read your terminal's context store, create a
 context or copy its credentials. For example, if `office` already exists:
 
 ```sh
-omniroute configure claude --context office
-omniroute run claude --context office --dry-run
+agentproxy configure claude --context office
+agentproxy run claude --context office --dry-run
 ```
 
 `configure` is interactive and writes configuration on the machine where you

@@ -77,7 +77,7 @@ AgentProxy ପ୍ରାଥମିକତା ଅନୁଯାୟୀ କ୍ରମବ�
 | `pii-masker`       | 10         | କଲ୍ ପୂର୍ବ+ପରବର୍ତ୍ତୀ PII ଗୋପନୀକରଣ (ଇମେଲ୍, ଫୋନ୍, CPF, CNPJ, କ୍ରେଡିଟ୍ କାର୍ଡ, SSN)                |
 | `prompt-injection` | 20         | ଓଭର୍ରାଇଡ୍/ଭୂମିକା-ହାଇଜ୍ୟାକ୍/ଜେଲ୍ବ୍ରେକ୍/ଲିକ୍ ପ୍ୟାଟର୍ନ ଚିହ୍ନଟ କରେ                                |
 
-କଷ୍ଟମ୍ ଗାର୍ଡରେଲ୍ଗୁଡ଼ିକ `registerGuardrail(new MyGuardrail())` ମାଧ୍ୟମରେ ପଞ୍ଜୀକୃତ ହୁଏ। ମଡେଲ୍ଟି fail-open ଅଟେ (ବ୍ୟତିକ୍ରମଗୁଡ଼ିକ କେବେବି ଟ୍ରାଫିକ୍କୁ ଅବରୋଧ କରେ ନାହିଁ)। `x-omniroute-disabled-guardrails` ହେଡର୍ ମାଧ୍ୟମରେ ପ୍ରତି-ଅନୁରୋଧ ଅପ୍ଟ-ଆଉଟ୍। → [`docs/security/GUARDRAILS.md`](docs/security/GUARDRAILS.md) ଦେଖନ୍ତୁ।
+କଷ୍ଟମ୍ ଗାର୍ଡରେଲ୍ଗୁଡ଼ିକ `registerGuardrail(new MyGuardrail())` ମାଧ୍ୟମରେ ପଞ୍ଜୀକୃତ ହୁଏ। ମଡେଲ୍ଟି fail-open ଅଟେ (ବ୍ୟତିକ୍ରମଗୁଡ଼ିକ କେବେବି ଟ୍ରାଫିକ୍କୁ ଅବରୋଧ କରେ ନାହିଁ)। `x-agentproxy-disabled-guardrails` ହେଡର୍ ମାଧ୍ୟମରେ ପ୍ରତି-ଅନୁରୋଧ ଅପ୍ଟ-ଆଉଟ୍। → [`docs/security/GUARDRAILS.md`](docs/security/GUARDRAILS.md) ଦେଖନ୍ତୁ।
 
 ### 🧠 ପ୍ରମ୍ପ୍ଟ ଇଞ୍ଜେକ୍ସନ୍ ଗାର୍ଡ
 
@@ -182,15 +182,15 @@ STORAGE_ENCRYPTION_KEY=$(openssl rand -hex 32)
 
 ```bash
 docker run -d \
-  --name omniroute \
+  --name agentproxy \
   --restart unless-stopped \
   --read-only \
   -p 20128:20128 \
-  -v omniroute-data:/app/data \
+  -v agentproxy-data:/app/data \
   -e JWT_SECRET="$(openssl rand -base64 48)" \
   -e API_KEY_SECRET="$(openssl rand -hex 32)" \
   -e STORAGE_ENCRYPTION_KEY="$(openssl rand -hex 32)" \
-  diegosouzapw/omniroute:latest
+  diegosouzapw/agentproxy:latest
 ```
 
 ---
@@ -224,7 +224,7 @@ docker run -d \
 
 > **ପରିସର ସୂଚନା:** ରିପୋଜିଟୋରି ରୁଟ୍ରେ ଥିବା `socket.yml` କେବଳ ପ୍ରକାଶିତ npm ଆର୍ଟିଫ୍ୟାକ୍ଟର Socket.dev ର ରେଜିଷ୍ଟ୍ରି-ପାର୍ଶ୍ୱ ପ୍ରକାଶନ-ପରବର୍ତ୍ତୀ ସ୍କାନ୍ ପାଇଁ `projectIgnorePaths` କୁ ବିନ୍ୟାସ କରେ — ଏହା ବାଧ୍ୟତାମୂଳକ CI/PR ମର୍ଜ୍ ଗେଟ୍ ନୁହେଁ। `.github/workflows` ରେ କୌଣସି ୱର୍କଫ୍ଲୋ, କୌଣସି `package.json` ସ୍କ୍ରିପ୍ଟ ଏବଂ କୌଣସି `Makefile` ଟାର୍ଗେଟ୍ Socket.dev କୁ ଆହ୍ୱାନ କରେ ନାହିଁ।
 
-ପ୍ରକାଶିତ `omniroute` npm ଆର୍ଟିଫ୍ୟାକ୍ଟ Next.js `output: "standalone"`
+ପ୍ରକାଶିତ `agentproxy` npm ଆର୍ଟିଫ୍ୟାକ୍ଟ Next.js `output: "standalone"`
 ବିଲ୍ଡକୁ ବଣ୍ଡଲ୍ କରେ, ଯାହାର ଅର୍ଥ ପ୍ରତ୍ୟେକ ରୁଟ୍ ହ୍ୟାଣ୍ଡଲର୍ — ଡକ୍ୟୁମେଣ୍ଟ୍ କରାଯାଇଥିବା ବିଶେଷାଧିକାରପ୍ରାପ୍ତ
 ବୈଶିଷ୍ଟ୍ୟଗୁଡ଼ିକ (MITM, Zed ଇମ୍ପୋର୍ଟ୍, Cloud Sync, ଏମ୍ବେଡେଡ୍ ସର୍ଭିସ୍ ସୁପରଭାଇଜର୍) ସମେତ — ଶେଷରେ
 `.next/server/*.js` ମିନିଫାଇଡ୍ ଚଙ୍କ୍ଗୁଡ଼ିକରେ ସାମିଲ ହୁଏ। ହ୍ୟୁରିଷ୍ଟିକ୍ ସପ୍ଲାଇ-ଚେନ୍ ସ୍କାନର୍ଗୁଡ଼ିକ
@@ -247,7 +247,7 @@ GitHub App ଦ୍ୱାରା ଚାଳିତ ହୁଏ, ଏହି ରିପୋ�
   ସେହି ଡକ୍ୟୁମେଣ୍ଟକୁ ହିଁ ସୂଚିତ କରନ୍ତି।
 
 ଯେଉଁ ବ୍ୟବହାରକାରୀଙ୍କ ପାଇପଲାଇନ୍ରେ ସତର୍କତାକୁ ଶିଥିଳ କରାଯାଇପାରିବ ନାହିଁ:
-`OMNIROUTE_BUILD_PROFILE=minimal npm run build` ସହିତ ବିଲ୍ଡ କରନ୍ତୁ। ଏହା ଚାରୋଟି
+`AGENTPROXY_BUILD_PROFILE=minimal npm run build` ସହିତ ବିଲ୍ଡ କରନ୍ତୁ। ଏହା ଚାରୋଟି
 ସମ୍ବେଦନଶୀଳ ମଡ୍ୟୁଲ୍କୁ ଏପରି ଷ୍ଟବ୍ଗୁଡ଼ିକ ସହିତ ବଦଳାଇଦିଏ, ଯେଉଁଗୁଡ଼ିକ ରନ୍ଟାଇମ୍ରେ HTTP 503
 `feature-disabled` ଫେରାନ୍ତି, ଫଳରେ ବିଶେଷାଧିକାରପ୍ରାପ୍ତ କୋଡ୍ ପଥଗୁଡ଼ିକ ବଣ୍ଡଲ୍ରେ ଭୌତିକ ଭାବରେ ଅନୁପସ୍ଥିତ ରହେ।
 ପ୍ରକାଶନ ପ୍ରଣାଳୀ ପାଇଁ [`docs/security/SOCKET_DEV_FINDINGS.md`](docs/security/SOCKET_DEV_FINDINGS.md)

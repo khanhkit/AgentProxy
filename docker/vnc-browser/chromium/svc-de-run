@@ -9,7 +9,7 @@ if [[ "${PIXELFLUX_WAYLAND,,}" == "true" ]]; then
   done
   echo "[svc-de] ${SOCKET_PATH} found launching de"
   cd $HOME
-  # OmniRoute: bridge Chromium DevTools (127.0.0.1:9222) to 0.0.0.0:9223.
+  # AgentProxy: bridge Chromium DevTools (127.0.0.1:9222) to 0.0.0.0:9223.
   # SECURITY (#13679): only start the bridge when CDP_BRIDGE_TOKEN is
   # configured — cdp-bridge.py already fails closed for every caller when
   # it is unset (#12571), so an unconfigured container gains nothing by
@@ -62,7 +62,7 @@ chmod 777 /tmp/selkies*
 
 # run
 cd $HOME
-# OmniRoute: bridge Chromium DevTools (127.0.0.1:9222) to 0.0.0.0:9223.
+# AgentProxy: bridge Chromium DevTools (127.0.0.1:9222) to 0.0.0.0:9223.
 # SECURITY (#13679): only start the bridge when CDP_BRIDGE_TOKEN is
 # configured — cdp-bridge.py already fails closed for every caller when it
 # is unset (#12571), so an unconfigured container gains nothing by running

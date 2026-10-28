@@ -65,7 +65,7 @@ describe("#14846 - SystemStorageTab backup/export with a structured error envelo
         return new Response(
           JSON.stringify({
             driver: "sqlite",
-            dbPath: "~/.omniroute/storage.sqlite",
+            dbPath: "~/.agentproxy/storage.sqlite",
             sizeBytes: 0,
             retentionDays: { app: 7, call: 7 },
             tableMaxRows: { callLogs: 100000, proxyLogs: 100000 },

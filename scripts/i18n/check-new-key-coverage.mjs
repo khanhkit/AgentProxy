@@ -203,7 +203,7 @@ function main() {
   const codes = [...new Set(gaps.map((g) => g.locale))].sort().join(",");
   console.error(
     "\n  A `__MISSING__:<english>` marker does not count — it is an absent translation.\n" +
-      "  Translate the keys (needs OMNIROUTE_TRANSLATION_API_URL/_API_KEY/_MODEL in .env):\n" +
+      "  Translate the keys (needs AGENTPROXY_TRANSLATION_API_URL/_API_KEY/_MODEL in .env):\n" +
       `    node scripts/i18n/sync-ui-keys.mjs --locale=${codes} --translate-markers --batch-size=40\n` +
       "  or, all locales in parallel (detached runner):\n" +
       "    bash scripts/i18n/translate-new-keys.sh\n" +

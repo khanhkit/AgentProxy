@@ -395,7 +395,7 @@ test("pack gate builds, stamps dist/BUILD_SHA, then validates against the tree u
     /env: PACK_GATE_ENV/,
     "a release-branch tip is never an ancestor of origin/main mid-cycle"
   );
-  assert.match(src, /const PACK_GATE_ENV = \{ OMNIROUTE_RELEASE_REF: "HEAD" \}/);
+  assert.match(src, /const PACK_GATE_ENV = \{ AGENTPROXY_RELEASE_REF: "HEAD" \}/);
   // The provenance helper remains available for release-branch validation, while the normal
   // pre-flight package lane mirrors CI with the measured timeout/env contract below.
   assert.ok((src.match(/runPackArtifactGate\b/g)?.length ?? 0) >= 1);

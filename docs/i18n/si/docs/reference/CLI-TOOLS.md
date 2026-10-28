@@ -50,11 +50,11 @@ ACP නියෝජිතයන් (ප්රතිවිරුද්ධ ආර�
 ඔබේ යන්ත්රයේ එම මෙවලමෙහිම වින්යාසය ලියයි:
 
 ```bash
-omniroute setup-codex        omniroute setup-claude       omniroute setup-opencode
-omniroute setup-cline        omniroute setup-kilo         omniroute setup-continue
-omniroute setup-cursor       omniroute setup-roo          omniroute setup-crush
-omniroute setup-goose        omniroute setup-qwen         omniroute setup-aider
-omniroute setup-5dive
+agentproxy setup-codex        agentproxy setup-claude       agentproxy setup-opencode
+agentproxy setup-cline        agentproxy setup-kilo         agentproxy setup-continue
+agentproxy setup-cursor       agentproxy setup-roo          agentproxy setup-crush
+agentproxy setup-goose        agentproxy setup-qwen         agentproxy setup-aider
+agentproxy setup-5dive
 ```
 
 සෑම එකක්ම `--remote <url> --api-key <key>` (දුරස්ථ AgentProxy එකක් සඳහා දේශීය මෙවලමක්
@@ -64,10 +64,10 @@ omniroute setup-5dive
 නොලියන එකම ක්රමලේඛය `setup-5dive` වේ: එය fleet ධාරකයේ root හිමිකාරිත්වය ඇති සත්යාපන පැතිකඩක්
 ලිවීමෙන් 5dive නියෝජිත සමූහයක් වින්යාස කරයි. එබැවින් එය `sudo` හරහා නැවත ක්රියාත්මක වන අතර
 එයටම දුරස්ථ ප්රකාරයක් නොමැත. නිවැරදි පරිසර විචල්ය ඇතුළත් කර කිසිදු වින්යාසයක් නොලියා CLI එකක්
-ආරම්භ කිරීමට, පොදු `omniroute run <target>` ආරම්භකය භාවිත කරන්න (claude, codex, aider, goose, opencode, qwen,
+ආරම්භ කිරීමට, පොදු `agentproxy run <target>` ආරම්භකය භාවිත කරන්න (claude, codex, aider, goose, opencode, qwen,
 gemini — ඉලක්ක සහ අන්වර්ථ නාම `bin/cli/cli-manifest.mjs` වෙතින් පැමිණේ); පැරණි
-එක් එක් මෙවලමට අදාළ ආරම්භකයන් වන `omniroute launch` (Claude Code) සහ `omniroute launch-codex`
-(Codex) තවමත් ලබා ගත හැකිය. Gemini CLI ආරම්භ කිරීමට පමණි: එය `omniroute run`
+එක් එක් මෙවලමට අදාළ ආරම්භකයන් වන `agentproxy launch` (Claude Code) සහ `agentproxy launch-codex`
+(Codex) තවමත් ලබා ගත හැකිය. Gemini CLI ආරම්භ කිරීමට පමණි: එය `agentproxy run`
 ඉලක්කයක් වන නමුත් `setup-*`/`configure` ක්රමලේඛයක් නොමැත.
 
 > **සම්පූර්ණ යොමුව:** ප්රධාන වගුව — එක් එක් විධානය ලියන්නේ කුමක්ද, සෑම ධජයක්ම,
@@ -79,18 +79,18 @@ gemini — ඉලක්ක සහ අන්වර්ථ නාම `bin/cli/cli-m
 AgentProxy කන්ටේනරය තුළ ක්රියාත්මක කරන `setup-*` විධානයක් කන්ටේනරයේම home වෙත ලියයි.
 කිසිදු ධාරක CLI එකක් එය නොකියවන අතර කන්ටේනරය සමඟ එය අතුරුදහන් වේ. AgentProxy එය හඳුනාගෙන
 ලිවීම වෙනුවට උපදෙස් සමඟ `2` කේතයෙන් පිටවෙයි. ඉදිරියට යාමට සහාය දක්වන ක්රම දෙකක් ඇත —
-ධාරකයේ CLI ස්ථාපනය කර කන්ටේනරයට `omniroute connect` කිරීම, හෝ වින්යාස නාමාවලි bind-mount කර
+ධාරකයේ CLI ස්ථාපනය කර කන්ටේනරයට `agentproxy connect` කිරීම, හෝ වින්යාස නාමාවලි bind-mount කර
 `CLI_CONFIG_HOME` සැකසීම (compose `host` පැතිකඩ). සෑම `setup-*` විධානයක්ම, මෙන්ම
-`omniroute configure` සහ `omniroute config set`, කන්ටේනරයේම CLI වින්යාස කිරීම ඔබ සැබවින්ම
+`agentproxy configure` සහ `agentproxy config set`, කන්ටේනරයේම CLI වින්යාස කිරීම ඔබ සැබවින්ම
 අදහස් කළ දෙය නම් `--allow-container-write` පිළිගනී; සේවාදායකය සඳහා
-`OMNIROUTE_ALLOW_CONTAINER_CONFIG_WRITE=true` ද එයම කරයි. බලන්න:
-[Docker මාර්ගෝපදේශය → ධාරක CLI මෙවලම් වින්යාස කිරීම](../guides/DOCKER_GUIDE.md#configuring-host-cli-tools-when-omniroute-runs-in-docker).
+`AGENTPROXY_ALLOW_CONTAINER_CONFIG_WRITE=true` ද එයම කරයි. බලන්න:
+[Docker මාර්ගෝපදේශය → ධාරක CLI මෙවලම් වින්යාස කිරීම](../guides/DOCKER_GUIDE.md#configuring-host-cli-tools-when-agentproxy-runs-in-docker).
 
 උපකරණ පුවරුවේ **යෙදුම් අන්ත ලක්ෂ්යය** (`POST /api/cli-tools/apply`) ද එම ආරක්ෂණයම බලාත්මක කරයි:
 කන්ටේනරයක් තුළ, ධාරකයෙන් bind-mount කර නොමැති ඉලක්කයකට ලිවීමක් සිදු කරන විට
 **`422`**, `containerEphemeralTarget: true`, ආරක්ෂිත දෝෂ පෙළ සහ — ධාරක ක්රමලේඛයක් ඇති
 මෙවලම් සඳහා (claude, codex, opencode, cline, kilo, continue) — ඒ වෙනුවට ධාරකය මත ක්රියාත්මක කිරීමට
-`hostSetupCommand` එකක් (උදා. `omniroute setup-opencode`) සමඟ පිළිතුරු දෙයි; කිසිවක් ලියනු නොලැබේ.
+`hostSetupCommand` එකක් (උදා. `agentproxy setup-opencode`) සමඟ පිළිතුරු දෙයි; කිසිවක් ලියනු නොලැබේ.
 `dryRun: true` කන්ටේනර් ප්රකාරයේදී දිගටම ක්රියා කරන අතර තැටියට අත නොතබා උත්පාදිත අන්තර්ගතය +
 ඉලක්ක මාර්ගය ආපසු ලබා දෙයි. එබැවින් ඔබට උපකරණ පුවරුවෙන් පෙරදසුන් කර ධාරකයේ යෙදිය හැකිය.
 මෙම හැසිරීම හිතාමතාම ක්රියාත්මක කර ඇති අතර
@@ -124,8 +124,8 @@ AgentProxy කන්ටේනරය තුළ ක්රියාත්මක ක
 | ------------------- | -------------------------------------------------------------------------------- | ------------------------------------------------------------------ |
 | **නාමාවලිගත**       | උපකරණ පුවරු නාමාවලියේ දිස් වේ (නම, සැපයුම්කරු, ලේඛන, වින්යාස වර්ගය)              | `src/shared/constants/cliTools.ts` (`CLI_TOOLS`)                   |
 | **හඳුනාගත හැකි**    | ද්විමය/වින්යාස හඳුනාගැනීම, සෞඛ්ය පරීක්ෂණ, වින්යාස මාර්ග                          | `src/shared/services/cliRuntime.ts` (`CLI_TOOLS` ධාවනකාල නාමාවලිය) |
-| **වින්යාස කළ හැකි** | `omniroute configure <cli>` මඟින් සහාය දක්වයි (පිහිටුවීමේ වට්ටෝරුවක් පවතී)       | `bin/cli/cli-manifest.mjs` (`configure: true`)                     |
-| **දියත් කළ හැකි**   | `omniroute run <target>` මඟින් සහාය දක්වයි (env/args ඇතුළත් කිරීම අර්ථ දක්වා ඇත) | `bin/cli/cli-manifest.mjs` (`run: true`)                           |
+| **වින්යාස කළ හැකි** | `agentproxy configure <cli>` මඟින් සහාය දක්වයි (පිහිටුවීමේ වට්ටෝරුවක් පවතී)       | `bin/cli/cli-manifest.mjs` (`configure: true`)                     |
+| **දියත් කළ හැකි**   | `agentproxy run <target>` මඟින් සහාය දක්වයි (env/args ඇතුළත් කිරීම අර්ථ දක්වා ඇත) | `bin/cli/cli-manifest.mjs` (`run: true`)                           |
 
 `bin/cli/cli-manifest.mjs` යනු CLI විධාන අතුරුමුහුණත් සඳහා වන ප්රමිත ක්රියාත්මක කළ හැකි මැනිෆෙස්ටයයි: `run`, `configure` සහ shell-completion උත්පාදක සියල්ලම තම ඉලක්ක ලැයිස්තු, අන්වර්ථ නාම විභේදනය (උදාහරණයක් ලෙස `kilocode`/`kilo-code`/`kilo_cli` → `kilo`) සහ `--model` ධජ සම්බන්ධ කිරීම එයින් ලබා ගනී. අපගමන ආරක්ෂකය වන `tests/unit/cli/cli-manifest-drift.test.ts`, මැනිෆෙස්ටය, ධාවනකාල නාමාවලිය, UI නාමාවලිය සහ සෑම පාරිභෝගික අතුරුමුහුණතක්ම සමමුහුර්තව පවතින බව තහවුරු කරයි — අනෙක් අතුරුමුහුණත්වලට එක් නොකර එක් අතුරුමුහුණතකට පමණක් ඉලක්කයක් එක් කළහොත්, නිහඬව අපගමනය වීම වෙනුවට පරීක්ෂණ කට්ටලය අසමත් වේ.
 
@@ -253,7 +253,7 @@ interface ToolBatchStatus {
 | `POST /api/cli-tools/codewhale-settings`    | CodeWhale (OPENAI_BASE_URL, ප්රාථමික + පැරණි `~/.deepseek` සමමුහුර්තකරණය) |
 | `POST /api/cli-tools/smelt-settings`        | Smelt                                                                     |
 | `POST /api/cli-tools/pi-settings`           | Pi කේතකරණ නියෝජිතයා                                                       |
-| `POST /api/cli-tools/grok-build-settings`   | Grok Build (~/.grok/config.toml, `[model.omniroute]`)                     |
+| `POST /api/cli-tools/grok-build-settings`   | Grok Build (~/.grok/config.toml, `[model.agentproxy]`)                     |
 | `POST /api/cli-tools/qwen-settings`         | Qwen Code (`~/.qwen/settings.json` + කැපවූ `.env` යතුර)                   |
 
 සියලුම මාර්ග දෝෂ ප්රතිචාර සඳහා `sanitizeErrorMessage()` භාවිත කරයි (දැඩි රීතිය #12).
@@ -348,7 +348,7 @@ npm install -g kilocode
 # Qwen Code
 npm install -g @qwen-code/qwen-code
 
-# Google Gemini CLI (`omniroute run gemini` හරහා දියත් කළ හැක → /v1beta මතුපිට)
+# Google Gemini CLI (`agentproxy run gemini` හරහා දියත් කළ හැක → /v1beta මතුපිට)
 npm install -g @google/gemini-cli
 
 # Aider
@@ -381,12 +381,12 @@ cargo install smelt  # Rust මත පදනම් වූ
 ```bash
 # AgentProxy විශ්වීය අන්ත ලක්ෂ්යය
 export OPENAI_BASE_URL="http://localhost:20128/v1"
-export OPENAI_API_KEY="sk-your-omniroute-key"
+export OPENAI_API_KEY="sk-your-agentproxy-key"
 export ANTHROPIC_BASE_URL="http://localhost:20128"
-export ANTHROPIC_AUTH_TOKEN="sk-your-omniroute-key"
+export ANTHROPIC_AUTH_TOKEN="sk-your-agentproxy-key"
 # Gemini CLI විසින් GOOGLE_GEMINI_BASE_URL මූලයෙන් කියවයි (එහි SDK විසින් /v1beta/... ස්වයංක්රීයව එක් කරයි)
 export GOOGLE_GEMINI_BASE_URL="http://localhost:20128"
-export GEMINI_API_KEY="sk-your-omniroute-key"
+export GEMINI_API_KEY="sk-your-agentproxy-key"
 ```
 
 > **දුරස්ථ සේවාදායකයක්** සඳහා `localhost:20128` වෙනුවට සේවාදායකයේ IP ලිපිනය හෝ වසම යොදන්න,
@@ -404,7 +404,7 @@ mkdir -p ~/.claude && cat > ~/.claude/settings.json << EOF
 {
   "env": {
     "ANTHROPIC_BASE_URL": "http://localhost:20128",
-    "ANTHROPIC_AUTH_TOKEN": "sk-your-omniroute-key"
+    "ANTHROPIC_AUTH_TOKEN": "sk-your-agentproxy-key"
   }
 }
 EOF
@@ -420,19 +420,19 @@ Claude Code සඳහා ඒකාබද්ධ Anthropic ද්වාරයේ �
 
 නවීන Codex (v0.137+) කියවන්නේ `~/.codex/config.toml` පමණි — පැරණි
 `config.yaml` උරුම npm CLI එකට අයත් වන අතර එය කිසිදු දැනුම් දීමකින් තොරව නොසලකා හරිනු ලැබේ. API
-යතුර කිසිවිටෙක ගොනුව තුළ නොව, `OMNIROUTE_API_KEY` පරිසර විචල්යයේ (`env_key`) පවතී:
+යතුර කිසිවිටෙක ගොනුව තුළ නොව, `AGENTPROXY_API_KEY` පරිසර විචල්යයේ (`env_key`) පවතී:
 
 ```bash
 mkdir -p ~/.codex && cat > ~/.codex/config.toml << EOF
-model_provider = "omniroute"
+model_provider = "agentproxy"
 
-[model_providers.omniroute]
+[model_providers.agentproxy]
 name                 = "AgentProxy"
 base_url             = "http://localhost:20128/v1"
-env_key              = "OMNIROUTE_API_KEY"
+env_key              = "AGENTPROXY_API_KEY"
 requires_openai_auth = false
 EOF
-export OMNIROUTE_API_KEY="sk-your-omniroute-key"
+export AGENTPROXY_API_KEY="sk-your-agentproxy-key"
 ```
 
 සම්පූර්ණ යොමුව (පැතිකඩ, `wire_api`, සන්දර්භ කවුළු): [CODEX-CLI-CONFIGURATION.md](../guides/CODEX-CLI-CONFIGURATION.md).
@@ -448,12 +448,12 @@ mkdir -p ~/.config/opencode && cat > ~/.config/opencode/opencode.json << EOF
 {
   "\$schema": "https://opencode.ai/config.json",
   "provider": {
-    "omniroute": {
+    "agentproxy": {
       "npm": "@ai-sdk/openai-compatible",
       "name": "AgentProxy",
       "options": {
         "baseURL": "http://localhost:20128/v1",
-        "apiKey": "sk-your-omniroute-key"
+        "apiKey": "sk-your-agentproxy-key"
       },
       "models": {
         "claude-sonnet-4-5": { "name": "claude-sonnet-4-5" },
@@ -468,7 +468,7 @@ EOF
 
 **පරීක්ෂාව:** `opencode`
 
-> සිතීමේ ප්රභේද යැවීමට `opencode run "your prompt" --model omniroute/claude-sonnet-4-5-thinking --variant high`
+> සිතීමේ ප්රභේද යැවීමට `opencode run "your prompt" --model agentproxy/claude-sonnet-4-5-thinking --variant high`
 > භාවිත කරන්න.
 
 ---
@@ -482,7 +482,7 @@ mkdir -p ~/.cline/data && cat > ~/.cline/data/globalState.json << EOF
 {
   "apiProvider": "openai",
   "openAiBaseUrl": "http://localhost:20128/v1",
-  "openAiApiKey": "sk-your-omniroute-key"
+  "openAiApiKey": "sk-your-agentproxy-key"
 }
 EOF
 ```
@@ -499,7 +499,7 @@ Cline දිගුවේ සැකසුම් → API සැපයුම්ක�
 **CLI ආකාරය:**
 
 ```bash
-kilocode --api-base http://localhost:20128/v1 --api-key sk-your-omniroute-key
+kilocode --api-base http://localhost:20128/v1 --api-key sk-your-agentproxy-key
 ```
 
 **VS Code සැකසුම්:**
@@ -507,7 +507,7 @@ kilocode --api-base http://localhost:20128/v1 --api-key sk-your-omniroute-key
 ```json
 {
   "kilo-code.openAiBaseUrl": "http://localhost:20128/v1",
-  "kilo-code.apiKey": "sk-your-omniroute-key"
+  "kilo-code.apiKey": "sk-your-agentproxy-key"
 }
 ```
 
@@ -525,7 +525,7 @@ models:
     provider: openai
     model: auto
     apiBase: http://localhost:20128/v1
-    apiKey: sk-your-omniroute-key
+    apiKey: sk-your-agentproxy-key
     default: true
 ```
 
@@ -552,8 +552,8 @@ VS Code Insiders අභිරුචි අන්ත ලක්ෂ්ය ආකෘ
     "name": "AgentProxy Auto",
     "family": "gpt-4",
     "version": "1.0.0",
-    "url": "http://localhost:20128/api/v1/vscode/sk-your-omniroute-key/chat/completions",
-    "modelsUrl": "http://localhost:20128/api/v1/vscode/sk-your-omniroute-key/models",
+    "url": "http://localhost:20128/api/v1/vscode/sk-your-agentproxy-key/chat/completions",
+    "modelsUrl": "http://localhost:20128/api/v1/vscode/sk-your-agentproxy-key/models",
     "requestFormat": "openai-chat-completions",
     "contextWindow": 256000,
     "maxOutputTokens": 32768,
@@ -566,7 +566,7 @@ VS Code Insiders අභිරුචි අන්ත ලක්ෂ්ය ආකෘ
 
 **සටහන්:**
 
-- `sk-your-omniroute-key` වෙනුවට AgentProxy තුළ නිර්මාණය කළ API යතුරක් යොදන්න.
+- `sk-your-agentproxy-key` වෙනුවට AgentProxy තුළ නිර්මාණය කළ API යතුරක් යොදන්න.
 - `url` ක්ෂේත්රය `/api/v1/vscode/{token}/chat/completions` වෙත යොමු විය යුතුය.
 - `modelsUrl` ක්ෂේත්රය `/api/v1/vscode/{token}/models` වෙත යොමු විය යුතුය.
 - සේවාලාභියා අභිරුචි ශීර්ෂක සඳහා සහාය දක්වන විට, සාමාන්ය `/v1` + Bearer ශීර්ෂක ප්රවාහයට ප්රමුඛත්වය දෙන්න.
@@ -592,28 +592,28 @@ kiro-cli status
 
 ## 10. අභ්යන්තර AgentProxy CLI
 
-`omniroute` ද්විමය ගොනුව සේවාදායක ජීවන චක්රය, පිහිටුවීම, රෝග විනිශ්චය සහ සපයන්නන් කළමනාකරණය සඳහා විධාන සපයයි. ප්රවේශ ලක්ෂ්යය: `bin/omniroute.mjs`.
+`agentproxy` ද්විමය ගොනුව සේවාදායක ජීවන චක්රය, පිහිටුවීම, රෝග විනිශ්චය සහ සපයන්නන් කළමනාකරණය සඳහා විධාන සපයයි. ප්රවේශ ලක්ෂ්යය: `bin/agentproxy.mjs`.
 
 ```bash
-omniroute                              # සේවාදායකය ආරම්භ කරන්න (පෙරනිමි පෝට් එක 20128)
-omniroute setup                        # අන්තර්ක්රියාකාරී පිහිටුවීම් විශාරදය
-omniroute doctor                       # වින්යාසය, DB, පෝට් සහ ධාවන පරිසරය පරීක්ෂා කරන්න
-omniroute providers list               # වින්යාස කළ සපයන්නා සම්බන්ධතා
-omniroute providers test-all           # සෑම සක්රිය සම්බන්ධතාවක්ම පරීක්ෂා කරන්න
-omniroute reset-password               # පරිපාලක මුරපදය යළි සකසන්න
-omniroute logs                         # ඉල්ලීම් ලොග් ප්රවාහගත කරන්න
-omniroute health                       # සවිස්තරාත්මක සෞඛ්ය තත්ත්වය (බ්රේකර්, හැඹිලිය, මතකය)
-omniroute --version                    # අනුවාදය මුද්රණය කරන්න
-omniroute --help                       # සියලු විධාන පෙන්වන්න
+agentproxy                              # සේවාදායකය ආරම්භ කරන්න (පෙරනිමි පෝට් එක 20128)
+agentproxy setup                        # අන්තර්ක්රියාකාරී පිහිටුවීම් විශාරදය
+agentproxy doctor                       # වින්යාසය, DB, පෝට් සහ ධාවන පරිසරය පරීක්ෂා කරන්න
+agentproxy providers list               # වින්යාස කළ සපයන්නා සම්බන්ධතා
+agentproxy providers test-all           # සෑම සක්රිය සම්බන්ධතාවක්ම පරීක්ෂා කරන්න
+agentproxy reset-password               # පරිපාලක මුරපදය යළි සකසන්න
+agentproxy logs                         # ඉල්ලීම් ලොග් ප්රවාහගත කරන්න
+agentproxy health                       # සවිස්තරාත්මක සෞඛ්ය තත්ත්වය (බ්රේකර්, හැඹිලිය, මතකය)
+agentproxy --version                    # අනුවාදය මුද්රණය කරන්න
+agentproxy --help                       # සියලු විධාන පෙන්වන්න
 ```
 
 ### පිහිටුවීම සහ ආරම්භකරණය
 
 ```bash
-omniroute setup                        # අන්තර්ක්රියාකාරී පිහිටුවීම් විශාරදය
-omniroute setup --non-interactive      # CI/ස්වයංක්රීයකරණ ප්රකාරය (පරිසර විචල්ය + ධජ කියවයි)
-omniroute setup --password '<value>'   # පරිපාලක මුරපදය සෘජුව සකසන්න
-omniroute setup --add-provider \
+agentproxy setup                        # අන්තර්ක්රියාකාරී පිහිටුවීම් විශාරදය
+agentproxy setup --non-interactive      # CI/ස්වයංක්රීයකරණ ප්රකාරය (පරිසර විචල්ය + ධජ කියවයි)
+agentproxy setup --password '<value>'   # පරිපාලක මුරපදය සෘජුව සකසන්න
+agentproxy setup --add-provider \
   --provider openai \
   --api-key '<value>' \
   --test-provider                      # එක් වරකින් සපයන්නෙකු එකතු කර පරීක්ෂා කරන්න
@@ -623,21 +623,21 @@ omniroute setup --add-provider \
 
 | විචල්යය             | අරමුණ                                                                |
 | ------------------- | -------------------------------------------------------------------- |
-| `OMNIROUTE_API_KEY` | සපයන්නාගේ API යතුර (Commander `.env()` හරහා `--api-key` වෙත බැඳී ඇත) |
+| `AGENTPROXY_API_KEY` | සපයන්නාගේ API යතුර (Commander `.env()` හරහා `--api-key` වෙත බැඳී ඇත) |
 | `DATA_DIR`          | AgentProxy දත්ත නාමාවලිය අභිබවා සකසන්න                                |
 
 අනෙකුත් සියලු අන්තර්ක්රියාකාරී නොවන ආදාන පරිසර විචල්ය ලෙස නොව, ධජ ලෙස ලබා දෙයි:
 `--password`, `--provider`, `--provider-name`, `--provider-base-url`, `--default-model`
-(ඉහත `omniroute setup` විකල්ප බලන්න).
+(ඉහත `agentproxy setup` විකල්ප බලන්න).
 
 ### රෝග විනිශ්චය
 
 ```bash
-omniroute doctor                       # වින්යාසය, DB, පෝට්, ධාවන පරිසරය, මතකය සහ සජීවී බව පරීක්ෂා කරන්න
-omniroute doctor --json                # යන්ත්රයකට කියවිය හැකි JSON
-omniroute doctor --no-liveness         # HTTP සෞඛ්ය පරීක්ෂණය මඟ හරින්න
-omniroute doctor --host 0.0.0.0        # සජීවී බව පරීක්ෂා කරන ධාරකය අභිබවා සකසන්න
-omniroute doctor --liveness-url <url>  # සම්පූර්ණ සෞඛ්ය අන්ත ලක්ෂ්ය URL එක අභිබවා සකසන්න
+agentproxy doctor                       # වින්යාසය, DB, පෝට්, ධාවන පරිසරය, මතකය සහ සජීවී බව පරීක්ෂා කරන්න
+agentproxy doctor --json                # යන්ත්රයකට කියවිය හැකි JSON
+agentproxy doctor --no-liveness         # HTTP සෞඛ්ය පරීක්ෂණය මඟ හරින්න
+agentproxy doctor --host 0.0.0.0        # සජීවී බව පරීක්ෂා කරන ධාරකය අභිබවා සකසන්න
+agentproxy doctor --liveness-url <url>  # සම්පූර්ණ සෞඛ්ය අන්ත ලක්ෂ්ය URL එක අභිබවා සකසන්න
 ```
 
 doctor පහත පරීක්ෂණ ධාවනය කරයි: `Config`, `Database`, `Storage/encryption`,
@@ -647,22 +647,22 @@ doctor පහත පරීක්ෂණ ධාවනය කරයි: `Config`, `
 ### සපයන්නන් කළමනාකරණය
 
 ```bash
-omniroute providers available                       # AgentProxy සපයන්නන් නාමාවලිය
-omniroute providers available --search openai       # id/නම/අන්වර්ථ නාමය/ප්රවර්ගය අනුව නාමාවලිය පෙරහන් කරන්න
-omniroute providers available --category api-key    # ප්රවර්ගය අනුව පෙරහන් කරන්න (api-key, oauth, free, ...)
-omniroute providers available --json                # යන්ත්රයකට කියවිය හැකි JSON
+agentproxy providers available                       # AgentProxy සපයන්නන් නාමාවලිය
+agentproxy providers available --search openai       # id/නම/අන්වර්ථ නාමය/ප්රවර්ගය අනුව නාමාවලිය පෙරහන් කරන්න
+agentproxy providers available --category api-key    # ප්රවර්ගය අනුව පෙරහන් කරන්න (api-key, oauth, free, ...)
+agentproxy providers available --json                # යන්ත්රයකට කියවිය හැකි JSON
 
-omniroute providers list                            # වින්යාස කළ සපයන්නා සම්බන්ධතා
-omniroute providers list --json
+agentproxy providers list                            # වින්යාස කළ සපයන්නා සම්බන්ධතා
+agentproxy providers list --json
 
-omniroute providers test <id|name>                  # වින්යාස කළ එක් සම්බන්ධතාවක් පරීක්ෂා කරන්න
-omniroute providers test-all                        # සෑම සක්රිය සම්බන්ධතාවක්ම පරීක්ෂා කරන්න
-omniroute providers validate                        # දේශීය-පමණක් ව්යුහාත්මක වලංගුකරණය
-omniroute providers add <provider> --credential-env PROVIDER_KEY
-omniroute providers import ./providers.json --dry-run --json
-omniroute providers auth <provider>                 # පවතින OAuth ප්රවාහය
-omniroute providers edit <id|name> --default-model <model>
-omniroute providers remove <id|name> --yes
+agentproxy providers test <id|name>                  # වින්යාස කළ එක් සම්බන්ධතාවක් පරීක්ෂා කරන්න
+agentproxy providers test-all                        # සෑම සක්රිය සම්බන්ධතාවක්ම පරීක්ෂා කරන්න
+agentproxy providers validate                        # දේශීය-පමණක් ව්යුහාත්මක වලංගුකරණය
+agentproxy providers add <provider> --credential-env PROVIDER_KEY
+agentproxy providers import ./providers.json --dry-run --json
+agentproxy providers auth <provider>                 # පවතින OAuth ප්රවාහය
+agentproxy providers edit <id|name> --default-model <model>
+agentproxy providers remove <id|name> --yes
 ```
 
 `providers add/import/auth/edit/remove` API-ප්රමුඛ වන අතර, එබැවින් ඒවා සක්රිය
@@ -675,19 +675,19 @@ omniroute providers remove <id|name> --yes
 ### ප්රතිසාධනය සහ යළි සැකසීම
 
 ```bash
-omniroute reset-password                # පරිපාලක මුරපදය යළි සකසන්න (මෙලෙසද: omniroute-reset-password)
-omniroute reset-encrypted-columns       # සංකේතනය කළ අක්තපත්ර යළි සැකසීම සඳහා අනතුරු ඇඟවීම + අත්හදා බැලීම පෙන්වන්න
-omniroute reset-encrypted-columns --force  # SQLite තුළ සංකේතනය කළ අක්තපත්ර සැබැවින්ම null කරන්න
+agentproxy reset-password                # පරිපාලක මුරපදය යළි සකසන්න (මෙලෙසද: agentproxy-reset-password)
+agentproxy reset-encrypted-columns       # සංකේතනය කළ අක්තපත්ර යළි සැකසීම සඳහා අනතුරු ඇඟවීම + අත්හදා බැලීම පෙන්වන්න
+agentproxy reset-encrypted-columns --force  # SQLite තුළ සංකේතනය කළ අක්තපත්ර සැබැවින්ම null කරන්න
 ```
 
 ### අක්තපත්ර නිර්යාතය (⚠ ප්රවේශමෙන් හසුරුවන්න)
 
 ```bash
-omniroute auth export                                 # අනතුරු ඇඟවීම + තහවුරු කිරීමේ ද්වාරය පෙන්වන්න — DB ප්රවේශයක් නැත
-omniroute auth export --force                          # සියලු සම්බන්ධතාවල විකේතනය කළ අක්තපත්ර JSON ලෙස stdout වෙත නිර්යාත කරන්න
-omniroute auth export --force --id <id>                 # ගැළපෙන සම්බන්ධතාව පමණක් නිර්යාත කරන්න
-omniroute auth export --force --format env               # OMNIROUTE_<PROVIDER>_<FIELD>=<value> පේළි නිකුත් කරන්න
-omniroute auth export --force --out creds.json           # ගොනුවකට ලියන්න (0600 අවසර සහිතව සාදයි)
+agentproxy auth export                                 # අනතුරු ඇඟවීම + තහවුරු කිරීමේ ද්වාරය පෙන්වන්න — DB ප්රවේශයක් නැත
+agentproxy auth export --force                          # සියලු සම්බන්ධතාවල විකේතනය කළ අක්තපත්ර JSON ලෙස stdout වෙත නිර්යාත කරන්න
+agentproxy auth export --force --id <id>                 # ගැළපෙන සම්බන්ධතාව පමණක් නිර්යාත කරන්න
+agentproxy auth export --force --format env               # AGENTPROXY_<PROVIDER>_<FIELD>=<value> පේළි නිකුත් කරන්න
+agentproxy auth export --force --out creds.json           # ගොනුවකට ලියන්න (0600 අවසර සහිතව සාදයි)
 ```
 
 `auth export` **දේශීය-පමණක්** වේ (සෘජු SQLite කියවීමක්, HTTP මාර්ගයක් නැත) සහ හිතාමතාම
@@ -702,33 +702,33 @@ omniroute auth export --force --out creds.json           # ගොනුවකට
 වෙනත් ආකාරයකින් සඳහන් කර නොමැති නම්, මේවා ක්රියාත්මක වන AgentProxy සේවාදායකයක් උපකල්පනය කරයි:
 
 ```bash
-omniroute status                       # සවිස්තරාත්මක ධාවනකාල තත්ත්වය
-omniroute logs                         # ඉල්ලීම් ලොග් ප්රවාහ කරන්න (--json, --search, --follow)
-omniroute config list                  # වින්යාස කර ඇති CLI මෙවලම් පෙන්වන්න
+agentproxy status                       # සවිස්තරාත්මක ධාවනකාල තත්ත්වය
+agentproxy logs                         # ඉල්ලීම් ලොග් ප්රවාහ කරන්න (--json, --search, --follow)
+agentproxy config list                  # වින්යාස කර ඇති CLI මෙවලම් පෙන්වන්න
 
-omniroute provider list                # ලබා ගත හැකි සපයන්නන් ලැයිස්තුගත කරන්න (providers list සඳහා අන්වර්ථයකි)
-omniroute provider add                 # මෙවලමක සපයන්නෙකු ලෙස AgentProxy ලියාපදිංචි කරන්න
-omniroute keys add | list | remove     # API යතුරු කළමනාකරණය කරන්න
-omniroute models [provider]            # ආකෘති ලැයිස්තුගත කරන්න (--json, --search)
-omniroute combo list | switch | create | delete
+agentproxy provider list                # ලබා ගත හැකි සපයන්නන් ලැයිස්තුගත කරන්න (providers list සඳහා අන්වර්ථයකි)
+agentproxy provider add                 # මෙවලමක සපයන්නෙකු ලෙස AgentProxy ලියාපදිංචි කරන්න
+agentproxy keys add | list | remove     # API යතුරු කළමනාකරණය කරන්න
+agentproxy models [provider]            # ආකෘති ලැයිස්තුගත කරන්න (--json, --search)
+agentproxy combo list | switch | create | delete
 
-omniroute backup                       # වින්යාසයේ සහ DB හි සැණරුවක් සාදන්න
-omniroute restore                      # පෙර සැණරුවකින් ප්රතිසාධනය කරන්න
+agentproxy backup                       # වින්යාසයේ සහ DB හි සැණරුවක් සාදන්න
+agentproxy restore                      # පෙර සැණරුවකින් ප්රතිසාධනය කරන්න
 
-omniroute health                       # සවිස්තරාත්මක සෞඛ්ය තත්ත්වය (බිඳුම් පාලක, හැඹිලිය, මතකය)
-omniroute quota                        # සපයන්නාගේ කෝටා භාවිතය
-omniroute cache                        # හැඹිලි තත්ත්වය
-omniroute cache clear                  # අර්ථමය සහ අත්සන් හැඹිලි හිස් කරන්න
+agentproxy health                       # සවිස්තරාත්මක සෞඛ්ය තත්ත්වය (බිඳුම් පාලක, හැඹිලිය, මතකය)
+agentproxy quota                        # සපයන්නාගේ කෝටා භාවිතය
+agentproxy cache                        # හැඹිලි තත්ත්වය
+agentproxy cache clear                  # අර්ථමය සහ අත්සන් හැඹිලි හිස් කරන්න
 
-omniroute mcp status | restart         # MCP සේවාදායක තත්ත්වය / නැවත ආරම්භ කිරීම
-omniroute a2a status | card            # A2A සේවාදායක තත්ත්වය / නියෝජිත කාඩ්පත
+agentproxy mcp status | restart         # MCP සේවාදායක තත්ත්වය / නැවත ආරම්භ කිරීම
+agentproxy a2a status | card            # A2A සේවාදායක තත්ත්වය / නියෝජිත කාඩ්පත
 
-omniroute tunnel list | create | stop  # උමං කළමනාකරණය කරන්න (cloudflare/tailscale/ngrok)
-omniroute env show | get <k> | set <k> <v>  # පරිසර විචල්ය පරීක්ෂා කරන්න / සකසන්න (තාවකාලික)
+agentproxy tunnel list | create | stop  # උමං කළමනාකරණය කරන්න (cloudflare/tailscale/ngrok)
+agentproxy env show | get <k> | set <k> <v>  # පරිසර විචල්ය පරීක්ෂා කරන්න / සකසන්න (තාවකාලික)
 
-omniroute test                         # සපයන්නාගේ සම්බන්ධතාව සඳහා මූලික පරීක්ෂණය
-omniroute update                       # යාවත්කාලීන සඳහා පරීක්ෂා කරන්න
-omniroute completion                   # shell ස්වයං-සම්පූර්ණ කිරීම ජනනය කරන්න
+agentproxy test                         # සපයන්නාගේ සම්බන්ධතාව සඳහා මූලික පරීක්ෂණය
+agentproxy update                       # යාවත්කාලීන සඳහා පරීක්ෂා කරන්න
+agentproxy completion                   # shell ස්වයං-සම්පූර්ණ කිරීම ජනනය කරන්න
 ```
 
 ### පොදු සලකුණු
@@ -776,7 +776,7 @@ Ollama සංවාදය: http://localhost:20128/api/v1/vscode/sk-a3ab3c080beae
 
 | දෝෂය                                               | හේතුව                        | විසඳුම                                                      |
 | -------------------------------------------------- | ---------------------------- | ----------------------------------------------------------- |
-| `Connection refused`                               | AgentProxy ක්රියාත්මක නොවේ    | `omniroute serve`                                           |
+| `Connection refused`                               | AgentProxy ක්රියාත්මක නොවේ    | `agentproxy serve`                                           |
 | `401 Unauthorized`                                 | වැරදි API යතුරක්             | `/dashboard/api-manager` තුළ පරීක්ෂා කරන්න                  |
 | `No combo configured`                              | සක්රිය රවුටින් සංයෝජනයක් නැත | `/dashboard/combos` තුළ සකසන්න                              |
 | CLI විසින් "not installed" පෙන්වයි                 | ද්විමය ගොනුව PATH තුළ නැත    | `which <command>` පරීක්ෂා කරන්න                             |

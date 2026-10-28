@@ -407,9 +407,9 @@ export function normalize9RouterSqliteRows(input: unknown): MigrationSourceEntit
   return entities;
 }
 
-export function normalizeOmniRouteSqliteRows(input: unknown): MigrationSourceEntity[] {
+export function normalizeAgentProxySqliteRows(input: unknown): MigrationSourceEntity[] {
   const root = asRecord(input) as FixtureRows | null;
-  if (!root) throw new Error("Unsupported OmniRoute SQLite rows");
+  if (!root) throw new Error("Unsupported AgentProxy SQLite rows");
 
   const entities: MigrationSourceEntity[] = [];
 
@@ -461,7 +461,7 @@ function rows(adapter: SelectRowsAdapter, sql: string): unknown[] {
 
 export function readSqliteMigrationEntities(
   adapter: SelectRowsAdapter,
-  family: "9router" | "omniroute"
+  family: "9router" | "agentproxy"
 ): MigrationSourceEntity[] {
   if (family === "9router") {
     return normalize9RouterSqliteRows({
@@ -496,7 +496,7 @@ export function readSqliteMigrationEntities(
     });
   }
 
-  return normalizeOmniRouteSqliteRows({
+  return normalizeAgentProxySqliteRows({
     providerConnections: rows(
       adapter,
       "SELECT id, provider, auth_type, name, email, priority, is_active, display_name, default_model FROM provider_connections"

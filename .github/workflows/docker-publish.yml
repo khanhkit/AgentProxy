@@ -154,7 +154,7 @@ jobs:
           docker run -d --name agentproxy-smoke \
             -p 127.0.0.1:20128:20128 \
             -p 127.0.0.1:20129:20129 \
-            -e OMNIROUTE_AUTH_DISABLED=1 \
+            -e AGENTPROXY_AUTH_DISABLED=1 \
             "$image_ref"
           for attempt in $(seq 1 120); do
             if curl --fail --silent --max-time 2 http://127.0.0.1:20128/readyz >/dev/null \

@@ -64,7 +64,7 @@ Content-Type: application/json
 | Sarlavha                 | Yoʻnalish | Tavsif                                                                                                                                                                                                                                                                   |
 | ------------------------ | --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | `X-AgentProxy-No-Cache`   | Soʻrov    | Keshni chetlab oʻtish uchun `true` qilib belgilang                                                                                                                                                                                                                       |
-| `x-omniroute-no-memory`  | Soʻrov    | Ushbu soʻrov uchun xotira va koʻnikmalar kiritilishini oʻtkazib yuborish maqsadida `true` qilib belgilang (no-cache xatti-harakatini takrorlaydi; har bir chaqiruvdagi token/xarajat yukini kamaytiradi)                                                                 |
+| `x-agentproxy-no-memory`  | Soʻrov    | Ushbu soʻrov uchun xotira va koʻnikmalar kiritilishini oʻtkazib yuborish maqsadida `true` qilib belgilang (no-cache xatti-harakatini takrorlaydi; har bir chaqiruvdagi token/xarajat yukini kamaytiradi)                                                                 |
 | `X-AgentProxy-Progress`   | Soʻrov    | Jarayon hodisalarini olish uchun `true` qilib belgilang                                                                                                                                                                                                                  |
 | `X-Session-Id`           | Soʻrov    | Tashqi sessiya yaqinligi uchun biriktirilgan sessiya kaliti                                                                                                                                                                                                              |
 | `x_session_id`           | Soʻrov    | Pastki chiziqli variant ham qabul qilinadi (toʻgʻridan-toʻgʻri HTTP)                                                                                                                                                                                                     |
@@ -159,7 +159,7 @@ Vaqtinchalik tortishuv HTTP `429`ni `Retry-After` bilan va quyidagilarni qaytara
 
 Ushbu javob faqat oddiy mos keluvchi toʻplam boʻsh emasligini va har bir boʻsh nomzod chet el faol ijarasi tomonidan ushlab turilganligini anglatadi. Qoʻllab-quvvatlanmaydigan modellar/provayderlar, siyosat mos kelmasligi, sovutish, kvota, sogʻliq va boshqa oddiy moslik xatolari oʻzlarining mavjud AgentProxy javoblarini saqlab qoladi.
 
-### `x-omniroute-compression`
+### `x-agentproxy-compression`
 
 Siqish rejasini har bir soʻrov boʻyicha bekor qilish. Eng yuqori ustuvorlik — marshrutlash-kombinatsiyasini bekor qilish, faol profil, avtomatik trigger va panelning Standartini bekor qiladi. Qiymatlar:
 
@@ -382,10 +382,10 @@ Model tanlagichini koʻrsatadigan mijozlar `?prefix=alias` parametrini soʻrashi
 
 ### Fikrlashsiz model variantlari
 
-Fikrlash imkoniyatiga ega Claude modellari uchun `/v1/models`, shuningdek, id si `claude-3-omniroute-no-thinking/` prefiksi bilan boshlanadigan **fikrlashsiz** variantni ham taqdim etadi:
+Fikrlash imkoniyatiga ega Claude modellari uchun `/v1/models`, shuningdek, id si `claude-3-agentproxy-no-thinking/` prefiksi bilan boshlanadigan **fikrlashsiz** variantni ham taqdim etadi:
 
 ```
-claude-3-omniroute-no-thinking/<provider>/<model>
+claude-3-agentproxy-no-thinking/<provider>/<model>
 ```
 
 Ushbu id ni tanlash (masalan, doimo `thinking` blokini biriktiradigan Claude Code konfiguratsiyasida) mulohaza yuritish oʻchirilgan holda haqiqiy `<provider>/<model>` modeliga qayta yoʻnaltiriladi — `/v1/messages` yoʻlida `thinking:{type:"disabled"}` qoʻllanadi yoki `/v1/chat/completions` yoʻlida `reasoning`/`reasoning_effort` maydonlari olib tashlanadi. Variant faqat fikrlashni qoʻllab-quvvatlaydigan **va** `disabled` qiymatini qabul qiladigan Claude oilasidagi modellar uchun roʻyxatga kiritiladi (shu sababli, masalan, `disabled` qiymatini rad etadigan faqat adaptiv modellar chiqarib tashlanadi). Operatorlar `ModelSpec.noThinkingAlias` orqali har bir model uchun variantni majburan yoqishi yoki oʻchirishi mumkin.
@@ -471,7 +471,7 @@ POST /v1/music/generations  { "model": "suno/v3.5",   "prompt": "..." }
 > doim foydalanish uchun mos hisoblanadi. Boshqa har qanday hostdagi tugunlar — LAN qurilmasi
 > yoki Tailscale peeri — faqat operator `RERANK_REMOTE_PROVIDER_NODES` funksiya bayrogʻini yoqsa
 > **va** tugunning asosiy URL manzili provayderning chiquvchi URL siyosatidan
-> (`OMNIROUTE_ALLOW_LOCAL_PROVIDER_URLS` / `OMNIROUTE_ALLOW_PRIVATE_PROVIDER_URLS`) oʻtsa,
+> (`AGENTPROXY_ALLOW_LOCAL_PROVIDER_URLS` / `AGENTPROXY_ALLOW_PRIVATE_PROVIDER_URLS`) oʻtsa,
 > foydalanish uchun mos hisoblanadi; bulut metamaʼlumotlari hostlariga hech qachon soʻrov
 > yoʻnaltirilmaydi. Xotira mexanizmining qayta saralash bosqichi ushbu yoʻnalishni loopback orqali
 > chaqiradi, shuning uchun ayni qoida Xotira sozlamalaridagi `rerankProviderModel` uchun ham amal qiladi.
@@ -593,8 +593,8 @@ WebSocket ulanishini yangilash uchun qoʻl siqish jarayonini tekshiradi va simli
 
 ```bash
 # HTTP API bilan bir xil host:port (standart 20128); ulanishni yangilang:
-wscat -c "ws://localhost:20128/v1/responses?api_key=<OMNIROUTE_API_KEY>"
-# (yoki: -H "Authorization: Bearer <OMNIROUTE_API_KEY>")
+wscat -c "ws://localhost:20128/v1/responses?api_key=<AGENTPROXY_API_KEY>"
+# (yoki: -H "Authorization: Bearer <AGENTPROXY_API_KEY>")
 
 # Birinchi freym response.create BOʻLISHI SHART:
 { "type": "response.create", "model": "gpt-5.5", "input": [ { "role": "user", "content": "hi" } ] }
@@ -629,18 +629,18 @@ Codex CLIʼni AgentProxyʼga yoʻnaltiring (mavjud konfiguratsiyaga tegmaslik uc
 
 ```toml
 model = "gpt-5.5"                 # oddiy identifikator — "codex/gpt-5.5" EMAS
-model_provider = "omniroute"
+model_provider = "agentproxy"
 
-[model_providers.omniroute]
+[model_providers.agentproxy]
 name = "AgentProxy (WS)"
 base_url = "http://localhost:20128/v1"   # oxirida qiya chiziq boʻlmasin; WS URL avtomatik hosil qilinadi (ishlab chiqarishda https/wss dan foydalaning)
 wire_api = "responses"                    # 2026-yil fevralidan beri qoʻllab-quvvatlanadigan yagona qiymat
 supports_websockets = true                # Responses-over-WS transportini yoqadi
-env_key = "OMNIROUTE_API_KEY"             # AgentProxy API kalitini saqlaydi (Bearer)
+env_key = "AGENTPROXY_API_KEY"             # AgentProxy API kalitini saqlaydi (Bearer)
 ```
 
 ```bash
-export OMNIROUTE_API_KEY=sk-...           # AgentProxy API kaliti (REQUIRE_API_KEY=false boʻlsa, istalgan kalit)
+export AGENTPROXY_API_KEY=sk-...           # AgentProxy API kaliti (REQUIRE_API_KEY=false boʻlsa, istalgan kalit)
 codex exec "Responda apenas: PONG"
 ```
 
@@ -992,7 +992,7 @@ Muayyan provayder uchun yetishmayotgan yoki buzilgan OAuth muhiti oʻzgaruvchila
 {
   "success": true,
   "repaired": ["CLAUDE_CODE_OAUTH_CLIENT_ID", "CLAUDE_CODE_OAUTH_CLIENT_SECRET"],
-  "backupPath": "/home/user/.omniroute/backups/env-repair-2026-04-11.bak"
+  "backupPath": "/home/user/.agentproxy/backups/env-repair-2026-04-11.bak"
 }
 ```
 
@@ -1366,7 +1366,7 @@ AgentProxy tekshirish/boshqaruv panelida foydalanish uchun A2A (Agent-to-Agent) 
 
 ```bash
 POST /a2a
-Authorization: Bearer your-api-key   # OMNIROUTE_API_KEY o‘rnatilmagan bo‘lsa, ixtiyoriy
+Authorization: Bearer your-api-key   # AGENTPROXY_API_KEY o‘rnatilmagan bo‘lsa, ixtiyoriy
 Content-Type: application/json
 
 {
@@ -1409,7 +1409,7 @@ Ommaviy A2A agent kartasini (nomi, tavsifi, imkoniyatlari, ko‘nikmalar katalog
 | GET   | `/api/a2a/tasks/[id]`        | Bitta vazifani olish                                                                                                    |
 | POST  | `/api/a2a/tasks/[id]/cancel` | Vazifani bekor qilish                                                                                                   |
 
-**Autentifikatsiya:** REST yordamchilari boshqaruv autentifikatsiyasisiz ishlaydi (boshqaruv panelidan o‘qish mumkin); JSON-RPC `/a2a` marshruti sozlangan bo‘lsa, Bearer `OMNIROUTE_API_KEY` kalitidan foydalanadi.
+**Autentifikatsiya:** REST yordamchilari boshqaruv autentifikatsiyasisiz ishlaydi (boshqaruv panelidan o‘qish mumkin); JSON-RPC `/a2a` marshruti sozlangan bo‘lsa, Bearer `AGENTPROXY_API_KEY` kalitidan foydalanadi.
 
 ---
 
@@ -1726,7 +1726,7 @@ Provayderlarni soyali / A-B usulida taqqoslash **mustaqil REST interfeysi emas**
 
 ## Himoya cheklovlari
 
-Ish vaqtidagi himoya cheklovlarini (shaxsni aniqlash mumkin boʻlgan maʼlumotlarni aniqlash, prompt inyeksiyasini aniqlash, koʻrish vositachiligi) tekshiring. Himoya cheklovlari har bir soʻrovda ishlaydi; har bir chaqiruv uchun ulardan voz kechish `x-omniroute-disabled-guardrails` soʻrov sarlavhasi orqali amalga oshiriladi — yoqish/oʻchirish holatini doimiy saqlash interfeysi mavjud emas.
+Ish vaqtidagi himoya cheklovlarini (shaxsni aniqlash mumkin boʻlgan maʼlumotlarni aniqlash, prompt inyeksiyasini aniqlash, koʻrish vositachiligi) tekshiring. Himoya cheklovlari har bir soʻrovda ishlaydi; har bir chaqiruv uchun ulardan voz kechish `x-agentproxy-disabled-guardrails` soʻrov sarlavhasi orqali amalga oshiriladi — yoqish/oʻchirish holatini doimiy saqlash interfeysi mavjud emas.
 
 | Metod | Yoʻl                   | Tavsif                                                                                                                              |
 | ----- | ---------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |

@@ -69,13 +69,13 @@ test.beforeEach(() => {
 
 test.afterEach(() => {
   delete process.env.PROXY_SKIP_RECENTLY_FAILED;
-  delete process.env.OMNIROUTE_RETRY_BACKOFF_MS;
+  delete process.env.AGENTPROXY_RETRY_BACKOFF_MS;
   health.__setProxyHealthTcpCheckForTesting(null);
   memory.__resetTransportEvidenceForTesting();
 });
 
 async function failingAttempt() {
-  await withEnv({ PROXY_SKIP_RECENTLY_FAILED: "true", OMNIROUTE_RETRY_BACKOFF_MS: "0" }, () =>
+  await withEnv({ PROXY_SKIP_RECENTLY_FAILED: "true", AGENTPROXY_RETRY_BACKOFF_MS: "0" }, () =>
     runWithProxyContext(EGRESS_A, () =>
       assert.rejects(
         proxyFetch(
@@ -162,7 +162,7 @@ test("simulated traffic: a retried-then-recovered attempt records one success, n
     if (calls === 1) throw transportError();
     return new Response("recovered", { status: 200 });
   };
-  await withEnv({ PROXY_SKIP_RECENTLY_FAILED: "true", OMNIROUTE_RETRY_BACKOFF_MS: "0" }, () =>
+  await withEnv({ PROXY_SKIP_RECENTLY_FAILED: "true", AGENTPROXY_RETRY_BACKOFF_MS: "0" }, () =>
     runWithProxyContext(EGRESS_A, () =>
       proxyFetch("http://api.example.com/v1/chat", {}, { undiciFetch: flaky })
     )
@@ -180,7 +180,7 @@ test("simulated traffic: non-replayable body failure counts as one final failure
       c.close();
     },
   });
-  await withEnv({ PROXY_SKIP_RECENTLY_FAILED: "true", OMNIROUTE_RETRY_BACKOFF_MS: "0" }, () =>
+  await withEnv({ PROXY_SKIP_RECENTLY_FAILED: "true", AGENTPROXY_RETRY_BACKOFF_MS: "0" }, () =>
     runWithProxyContext(EGRESS_A, () =>
       assert.rejects(
         proxyFetch(

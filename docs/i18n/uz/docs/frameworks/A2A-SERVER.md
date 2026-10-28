@@ -30,7 +30,7 @@ Agent kartasining `version` maydoni `process.env.npm_package_version` dan olinad
 Barcha `/a2a` soʻrovlari `Authorization` sarlavhasi orqali API kalitini talab qiladi:
 
 ```
-Authorization: Bearer YOUR_OMNIROUTE_API_KEY
+Authorization: Bearer YOUR_AGENTPROXY_API_KEY
 ```
 
 Agar serverda hech qanday API kaliti sozlanmagan boʻlsa, autentifikatsiya chetlab oʻtiladi.
@@ -187,7 +187,7 @@ JSON-RPC endpointi `/a2a` kanonik A2A kirish nuqtasidir. Quyidagi REST endpointl
 | `/api/a2a/tasks/[id]`        | GET   | Vazifani ID boʻyicha olish                                     | boshqaruv                                    |
 | `/api/a2a/tasks/[id]/cancel` | POST  | Bajarilayotgan vazifani bekor qilish                           | boshqaruv                                    |
 | `/.well-known/agent.json`    | GET   | Agent kartasi (A2A aniqlash)                                   | (ommaviy, 3600s keshlanadi)                  |
-| `/api/a2a/tasks`             | POST  | OmniConductor parkiga kiruvchi delegatsiya (Conductor PRD RF5) | Bearer va `OMNIROUTE_API_KEY` + `a2aEnabled` |
+| `/api/a2a/tasks`             | POST  | OmniConductor parkiga kiruvchi delegatsiya (Conductor PRD RF5) | Bearer va `AGENTPROXY_API_KEY` + `a2aEnabled` |
 
 **Kiruvchi Conductor delegatsiyasi (`POST /api/a2a/tasks`):** tashqi A2A agentlari kodlash ishlarini AgentProxy orqali OmniConductor parkiga delegatsiya qiladi. Soʻrov tanasi: `{ skill: "conductor" | "conductor-cli-<profile>", messages: [{role, content}], metadata: { conductor: { repo: { url, base_ref? }, mode?, cli?, model? } } }` — faqat Conductor parki ko‘nikmalarini (Agent kartasida eʼlon qilinganlarini) delegatsiya qilish mumkin; `metadata.conductor.repo.url` talab qilinadi (park git repozitoriylari ustida ishlaydi). Marshrut server tomonidagi `CONDUCTOR_ORCHESTRATOR_TOKEN` (zaxira sifatida `CONDUCTOR_HUB_TOKEN`) yordamida hubning `POST /v1/tasks` soʻroviga aylantiriladi va `201 { conductor_task_id, state: "submitted" }` qaytaradi; vazifa holatlari SSE→A2A ko‘zgusi (RF1) orqali qaytib keladi va ularni `GET /api/a2a/tasks?skill=conductor` orqali koʻrish mumkin.
 

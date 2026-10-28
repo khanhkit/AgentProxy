@@ -89,13 +89,13 @@ ufw enable
 ### 2.1 ਕੌਂਫਿਗਰੇਸ਼ਨ ਡਾਇਰੈਕਟਰੀ ਬਣਾਓ
 
 ```bash
-mkdir -p /opt/omniroute
+mkdir -p /opt/agentproxy
 ```
 
 ### 2.2 ਵਾਤਾਵਰਣ ਵੇਰੀਏਬਲਾਂ ਦੀ ਫ਼ਾਈਲ ਬਣਾਓ
 
 ```bash
-cat > /opt/omniroute/.env << 'EOF'
+cat > /opt/agentproxy/.env << 'EOF'
 # === ਸੁਰੱਖਿਆ ===
 JWT_SECRET=CHANGE-TO-A-UNIQUE-64-CHAR-SECRET-KEY
 INITIAL_PASSWORD=YourSecurePassword123!
@@ -103,7 +103,7 @@ API_KEY_SECRET=REPLACE-WITH-ANOTHER-SECRET-KEY
 STORAGE_ENCRYPTION_KEY=REPLACE-WITH-THIRD-SECRET-KEY
 STORAGE_ENCRYPTION_KEY_VERSION=v1
 MACHINE_ID_SALT=CHANGE-TO-A-UNIQUE-SALT
-OMNIROUTE_WS_BRIDGE_SECRET=REPLACE-WITH-WS-BRIDGE-SECRET  # ਪ੍ਰੋਡਕਸ਼ਨ ਵਿੱਚ ਲਾਜ਼ਮੀ: Codex Responses WS bridge ਦੁਆਰਾ ਵਰਤਿਆ ਜਾਂਦਾ ਹੈ
+AGENTPROXY_WS_BRIDGE_SECRET=REPLACE-WITH-WS-BRIDGE-SECRET  # ਪ੍ਰੋਡਕਸ਼ਨ ਵਿੱਚ ਲਾਜ਼ਮੀ: Codex Responses WS bridge ਦੁਆਰਾ ਵਰਤਿਆ ਜਾਂਦਾ ਹੈ
 
 # === ਐਪ ===
 PORT=20128
@@ -120,11 +120,11 @@ BASE_URL=http://127.0.0.1:20128
 # OAuth callbacks, dashboard links ਅਤੇ ਤਿਆਰ ਕੀਤੇ ਪਬਲਿਕ URLs ਲਈ ਵਰਤਿਆ ਜਾਣ ਵਾਲਾ ਬ੍ਰਾਊਜ਼ਰ-ਸਾਹਮਣੇ ਵਾਲਾ URL।
 NEXT_PUBLIC_BASE_URL=https://llms.seudominio.com
 # ਤਿਆਰ ਕੀਤੇ ਪਬਲਿਕ ਐਸੈੱਟ URLs ਲਈ ਵਿਕਲਪਿਕ ਸਪਸ਼ਟ ਪਬਲਿਕ ਓਰਿਜਨ ਓਵਰਰਾਈਡ।
-# OMNIROUTE_PUBLIC_BASE_URL=https://llms.seudominio.com
+# AGENTPROXY_PUBLIC_BASE_URL=https://llms.seudominio.com
 
 # === ਕਲਾਉਡ ਸਿੰਕ (ਵਿਕਲਪਿਕ) ===
-# CLOUD_URL=https://cloud.omniroute.online
-# NEXT_PUBLIC_CLOUD_URL=https://cloud.omniroute.online
+# CLOUD_URL=https://agentproxy.online
+# NEXT_PUBLIC_CLOUD_URL=https://agentproxy.online
 EOF
 ```
 
@@ -133,22 +133,22 @@ EOF
 ### 2.3 ਕੰਟੇਨਰ ਸ਼ੁਰੂ ਕਰੋ
 
 ```bash
-docker pull diegosouzapw/omniroute:latest
+docker pull diegosouzapw/agentproxy:latest
 
 docker run -d \
-  --name omniroute \
+  --name agentproxy \
   --restart unless-stopped \
-  --env-file /opt/omniroute/.env \
+  --env-file /opt/agentproxy/.env \
   -p 20128:20128 \
-  -v omniroute-data:/app/data \
-  diegosouzapw/omniroute:latest
+  -v agentproxy-data:/app/data \
+  diegosouzapw/agentproxy:latest
 ```
 
 ### 2.4 ਪੁਸ਼ਟੀ ਕਰੋ ਕਿ ਇਹ ਚੱਲ ਰਿਹਾ ਹੈ
 
 ```bash
-docker ps | grep omniroute
-docker logs omniroute --tail 20
+docker ps | grep agentproxy
+docker logs agentproxy --tail 20
 ```
 
 ਇਸ ਵਿੱਚ ਇਹ ਦਿਖਾਈ ਦੇਣਾ ਚਾਹੀਦਾ ਹੈ: `[DB] SQLite database ready` ਅਤੇ `listening on port 20128`।
@@ -181,7 +181,7 @@ chmod 600 /etc/nginx/ssl/origin.key
 ### 3.2 Nginx ਕੌਂਫਿਗਰੇਸ਼ਨ
 
 ```bash
-cat > /etc/nginx/sites-available/omniroute << 'NGINX'
+cat > /etc/nginx/sites-available/agentproxy << 'NGINX'
 # ਡਿਫਾਲਟ ਸਰਵਰ — IP ਰਾਹੀਂ ਸਿੱਧੀ ਪਹੁੰਚ ਨੂੰ ਬਲੌਕ ਕਰਦਾ ਹੈ
 server {
     listen 80 default_server;
@@ -244,7 +244,7 @@ NGINX
 AgentProxy, OAuth ਕਾਲਬੈਕਾਂ ਅਤੇ ਤਿਆਰ ਕੀਤੇ ਜਨਤਕ ਲਿੰਕਾਂ ਲਈ ਬ੍ਰਾਊਜ਼ਰ ਨੂੰ ਦਿਖਾਈ ਦੇਣ ਵਾਲੇ ਪ੍ਰਮਾਣਿਕ ਓਰਿਜਿਨ ਵਜੋਂ `NEXT_PUBLIC_BASE_URL` ਦੀ ਵਰਤੋਂ ਕਰਦਾ ਹੈ। ਪ੍ਰਮਾਣਿਤ ਡੈਸ਼ਬੋਰਡ ਲਿਖਤਾਂ ਇੱਕੋ-ਓਰਿਜਿਨ ਬੇਨਤੀਆਂ
 ਦੇ ਨਾਲ ਸੈਸ਼ਨ-ਬੱਧ CSRF ਸੁਰੱਖਿਆ ਦੀ ਵਰਤੋਂ ਕਰਦੀਆਂ ਹਨ, ਇਸ ਲਈ ਉਹਨਾਂ ਨੂੰ ਕਿਸੇ ਸਥਿਰ ਜਨਤਕ ਬੇਸ URL ਦੀ ਲੋੜ ਨਹੀਂ ਹੁੰਦੀ। ਉਪਰੋਕਤ
 `X-Forwarded-*` ਹੈਡਰ ਫਿਰ ਵੀ ਲਾਭਦਾਇਕ ਰੂਟਿੰਗ ਮੈਟਾਡਾਟਾ ਹਨ, ਪਰ ਜਦੋਂ OAuth ਜਾਂ ਤਿਆਰ ਕੀਤੇ ਬ੍ਰਾਊਜ਼ਰ ਲਿੰਕਾਂ ਨੂੰ ਇਸਦੀ ਲੋੜ ਹੋਵੇ, ਤਾਂ ਇਹ ਸਪਸ਼ਟ ਜਨਤਕ URL ਸੈੱਟ ਕਰਨ ਦਾ ਬਦਲ
-ਨਹੀਂ ਹਨ। `OMNIROUTE_TRUST_PROXY` ਨੂੰ ਕੇਵਲ ਉਦੋਂ ਹੀ ਸਮਰੱਥ ਕਰੋ ਜੇ ਕਲਾਇੰਟ AgentProxy ਤੱਕ ਸਿੱਧੇ ਨਹੀਂ ਪਹੁੰਚ ਸਕਦੇ ਅਤੇ ਤੁਹਾਡੀ ਪ੍ਰੌਕਸੀ
+ਨਹੀਂ ਹਨ। `AGENTPROXY_TRUST_PROXY` ਨੂੰ ਕੇਵਲ ਉਦੋਂ ਹੀ ਸਮਰੱਥ ਕਰੋ ਜੇ ਕਲਾਇੰਟ AgentProxy ਤੱਕ ਸਿੱਧੇ ਨਹੀਂ ਪਹੁੰਚ ਸਕਦੇ ਅਤੇ ਤੁਹਾਡੀ ਪ੍ਰੌਕਸੀ
 ਆਉਣ ਵਾਲੇ ਫਾਰਵਰਡ ਕੀਤੇ ਹੈਡਰਾਂ ਨੂੰ ਹਟਾ ਕੇ/ਮੁੜ ਬਣਾਉਂਦੀ ਹੈ।
 
 ### 3.3 ਸਮਰੱਥ ਕਰੋ ਅਤੇ ਟੈਸਟ ਕਰੋ
@@ -254,7 +254,7 @@ AgentProxy, OAuth ਕਾਲਬੈਕਾਂ ਅਤੇ ਤਿਆਰ ਕੀਤੇ �
 rm -f /etc/nginx/sites-enabled/default
 
 # AgentProxy ਨੂੰ ਸਮਰੱਥ ਕਰੋ
-ln -sf /etc/nginx/sites-available/omniroute /etc/nginx/sites-enabled/omniroute
+ln -sf /etc/nginx/sites-available/agentproxy /etc/nginx/sites-enabled/agentproxy
 
 # ਟੈਸਟ ਕਰੋ ਅਤੇ ਮੁੜ ਲੋਡ ਕਰੋ
 nginx -t && systemctl reload nginx
@@ -298,40 +298,40 @@ curl -sI https://llms.seudominio.com/health
 ### ਨਵੇਂ ਵਰਜਨ ’ਤੇ ਅੱਪਗ੍ਰੇਡ ਕਰੋ
 
 ```bash
-docker pull diegosouzapw/omniroute:latest
-docker stop omniroute && docker rm omniroute
-docker run -d --name omniroute --restart unless-stopped \
-  --env-file /opt/omniroute/.env \
+docker pull diegosouzapw/agentproxy:latest
+docker stop agentproxy && docker rm agentproxy
+docker run -d --name agentproxy --restart unless-stopped \
+  --env-file /opt/agentproxy/.env \
   -p 20128:20128 \
-  -v omniroute-data:/app/data \
-  diegosouzapw/omniroute:latest
+  -v agentproxy-data:/app/data \
+  diegosouzapw/agentproxy:latest
 ```
 
 ### ਲੌਗ ਵੇਖੋ
 
 ```bash
-docker logs -f omniroute          # ਰੀਅਲ-ਟਾਈਮ ਸਟ੍ਰੀਮ
-docker logs omniroute --tail 50   # ਆਖਰੀ 50 ਲਾਈਨਾਂ
+docker logs -f agentproxy          # ਰੀਅਲ-ਟਾਈਮ ਸਟ੍ਰੀਮ
+docker logs agentproxy --tail 50   # ਆਖਰੀ 50 ਲਾਈਨਾਂ
 ```
 
 ### ਡੇਟਾਬੇਸ ਦਾ ਹੱਥੀਂ ਬੈਕਅੱਪ
 
 ```bash
 # ਵਾਲਿਊਮ ਤੋਂ ਹੋਸਟ ’ਤੇ ਡੇਟਾ ਕਾਪੀ ਕਰੋ
-docker cp omniroute:/app/data ./backup-$(date +%F)
+docker cp agentproxy:/app/data ./backup-$(date +%F)
 
 # ਜਾਂ ਪੂਰੇ ਵਾਲਿਊਮ ਨੂੰ ਕੰਪ੍ਰੈੱਸ ਕਰੋ
-docker run --rm -v omniroute-data:/data -v $(pwd):/backup \
-  alpine tar czf /backup/omniroute-data-$(date +%F).tar.gz /data
+docker run --rm -v agentproxy-data:/data -v $(pwd):/backup \
+  alpine tar czf /backup/agentproxy-data-$(date +%F).tar.gz /data
 ```
 
 ### ਬੈਕਅੱਪ ਤੋਂ ਰੀਸਟੋਰ ਕਰੋ
 
 ```bash
-docker stop omniroute
-docker run --rm -v omniroute-data:/data -v $(pwd):/backup \
-  alpine sh -c "rm -rf /data/* && tar xzf /backup/omniroute-data-YYYY-MM-DD.tar.gz -C /"
-docker start omniroute
+docker stop agentproxy
+docker run --rm -v agentproxy-data:/data -v $(pwd):/backup \
+  alpine sh -c "rm -rf /data/* && tar xzf /backup/agentproxy-data-YYYY-MM-DD.tar.gz -C /"
+docker start agentproxy
 ```
 
 ---
@@ -400,13 +400,13 @@ Cloudflare Workers ਰਾਹੀਂ ਰਿਮੋਟ ਪਹੁੰਚ ਲਈ (VM �
 
 ```bash
 # ਲੋਕਲ ਰਿਪੋਜ਼ਟਰੀ ਵਿੱਚ
-cd omnirouteCloud
+cd agentproxyCloud
 npm install
 npx wrangler login
 npx wrangler deploy
 ```
 
-ਰਿਪੋਜ਼ਟਰੀ ਵਿੱਚ ਮੌਜੂਦ Cloudflare Tunnel ਦੀ ਕਦਮ-ਦਰ-ਕਦਮ ਗਾਈਡ ਲਈ [TUNNELS_GUIDE.md](./TUNNELS_GUIDE.md) ਵੀ ਵੇਖੋ। ਸਟੈਂਡਅਲੋਨ `omnirouteCloud/` ਵਰਕਰ ਇੱਕ ਵੱਖਰੀ ਸਹਾਇਕ ਰਿਪੋਜ਼ਟਰੀ ਵਿੱਚ ਮੌਜੂਦ ਹੈ।
+ਰਿਪੋਜ਼ਟਰੀ ਵਿੱਚ ਮੌਜੂਦ Cloudflare Tunnel ਦੀ ਕਦਮ-ਦਰ-ਕਦਮ ਗਾਈਡ ਲਈ [TUNNELS_GUIDE.md](./TUNNELS_GUIDE.md) ਵੀ ਵੇਖੋ। ਸਟੈਂਡਅਲੋਨ `agentproxyCloud/` ਵਰਕਰ ਇੱਕ ਵੱਖਰੀ ਸਹਾਇਕ ਰਿਪੋਜ਼ਟਰੀ ਵਿੱਚ ਮੌਜੂਦ ਹੈ।
 
 ---
 
@@ -423,9 +423,9 @@ npx wrangler deploy
 
 ਛੋਟੇ VPS ਇੰਸਟੈਂਸਾਂ (1 GB RAM ਜਾਂ ਘੱਟ) ਉੱਤੇ ਡਿਪਲੌਇਮੈਂਟਾਂ ਲਈ:
 
-- **ਬੈਕਗ੍ਰਾਊਂਡ ਸੇਵਾਵਾਂ ਅਸਮਰੱਥ ਕਰੋ** — ਸ਼ੈਡਿਊਲਰ, MCP ਸਰਵਰ ਅਤੇ ਸਮੇਂ-ਸਮੇਂ ਦੀਆਂ ਰੱਖ-ਰਖਾਅ ਕਾਰਵਾਈਆਂ ਨੂੰ ਛੱਡਣ ਲਈ `OMNIROUTE_DISABLE_BACKGROUND_SERVICES=1` ਸੈੱਟ ਕਰੋ। `docs/reference/ENVIRONMENT.md` ਵੇਖੋ।
+- **ਬੈਕਗ੍ਰਾਊਂਡ ਸੇਵਾਵਾਂ ਅਸਮਰੱਥ ਕਰੋ** — ਸ਼ੈਡਿਊਲਰ, MCP ਸਰਵਰ ਅਤੇ ਸਮੇਂ-ਸਮੇਂ ਦੀਆਂ ਰੱਖ-ਰਖਾਅ ਕਾਰਵਾਈਆਂ ਨੂੰ ਛੱਡਣ ਲਈ `AGENTPROXY_DISABLE_BACKGROUND_SERVICES=1` ਸੈੱਟ ਕਰੋ। `docs/reference/ENVIRONMENT.md` ਵੇਖੋ।
 - **SQLite WAL ਮੋਡ ਵਰਤੋ** — ਇਹ ਮੂਲ ਰੂਪ ਵਿੱਚ ਸਮਰੱਥ ਹੈ ਅਤੇ ਸਮਕਾਲੀ ਰੀਡਾਂ ਦੌਰਾਨ ਸਿਖਰਲੀ ਮੈਮੋਰੀ ਵਰਤੋਂ ਘਟਾਉਂਦਾ ਹੈ।
-- **V8 ਹੀਪ ਨੂੰ ਸੀਮਿਤ ਕਰੋ** — `OMNIROUTE_MEMORY_MB` (ਉਦਾਹਰਨ ਲਈ, `512`) ਸੈੱਟ ਕਰੋ, ਤਾਂ ਜੋ ਰਨਟਾਈਮ VM ਤੋਂ ਵੱਡੀ ਉੱਪਰੀ ਸੀਮਾ ਕੈਲੀਬ੍ਰੇਟ ਨਾ ਕਰੇ। `docs/reference/ENVIRONMENT.md` ਵੇਖੋ।
-- **ਵੱਧ-ਸਰੋਤ ਵਾਲੀਆਂ ਬੇਨਤੀਆਂ ਦੀ ਸਵੀਕ੍ਰਿਤੀ ਹੀਪ ਸੀਮਾ ਅਨੁਸਾਰ ਆਪਣੇ-ਆਪ ਸਕੇਲ ਹੁੰਦੀ ਹੈ** -- ਜਦੋਂ ਉੱਪਰ `OMNIROUTE_MEMORY_MB` ਸੈੱਟ ਕਰ ਦਿੱਤਾ ਜਾਂਦਾ ਹੈ, ਤਾਂ ਇਨਜੈਸਟ ਬਾਈਟ ਬਜਟ (`OMNIROUTE_CHAT_MAX_INFLIGHT_BYTES`) ਉਸੇ ਸੀਮਾ ਤੋਂ ਆਪਣੇ-ਆਪ ਨਿਰਧਾਰਤ ਹੁੰਦਾ ਹੈ। ਇਸ ਕਰਕੇ ਮੈਮੋਰੀ-ਸੀਮਿਤ VM ਨੂੰ ਬਿਨਾਂ ਕਿਸੇ ਵਾਧੂ ਟਿਊਨਿੰਗ ਦੇ ਸਮਕਾਲੀ ਬੇਨਤੀਆਂ ਲਈ ਛੋਟਾ ਬਜਟ ਮਿਲ ਜਾਂਦਾ ਹੈ; ਵਾਧੂ ਬੇਨਤੀਆਂ ਨੂੰ ਮੈਮੋਰੀ ਲਈ ਮੁਕਾਬਲਾ ਕਰਨ ਦੀ ਬਜਾਏ `Retry-After` ਦੇ ਨਾਲ ਮੁੜ ਕੋਸ਼ਿਸ਼ਯੋਗ `503` ਜਵਾਬ ਮਿਲਦਾ ਹੈ। ਪੁਰਾਣੀ `OMNIROUTE_CHAT_MAX_HEAVY_IN_FLIGHT` ਬੇਨਤੀ-ਗਿਣਤੀ ਸੀਮਾ ਸਿਰਫ਼ ਉਦੋਂ ਸੈੱਟ ਕਰੋ ਜਦੋਂ ਤੁਹਾਨੂੰ ਇਸ ਤੋਂ ਇਲਾਵਾ ਇੱਕ ਸਖ਼ਤ ਉੱਪਰੀ ਸੀਮਾ ਦੀ ਲੋੜ ਹੋਵੇ।
+- **V8 ਹੀਪ ਨੂੰ ਸੀਮਿਤ ਕਰੋ** — `AGENTPROXY_MEMORY_MB` (ਉਦਾਹਰਨ ਲਈ, `512`) ਸੈੱਟ ਕਰੋ, ਤਾਂ ਜੋ ਰਨਟਾਈਮ VM ਤੋਂ ਵੱਡੀ ਉੱਪਰੀ ਸੀਮਾ ਕੈਲੀਬ੍ਰੇਟ ਨਾ ਕਰੇ। `docs/reference/ENVIRONMENT.md` ਵੇਖੋ।
+- **ਵੱਧ-ਸਰੋਤ ਵਾਲੀਆਂ ਬੇਨਤੀਆਂ ਦੀ ਸਵੀਕ੍ਰਿਤੀ ਹੀਪ ਸੀਮਾ ਅਨੁਸਾਰ ਆਪਣੇ-ਆਪ ਸਕੇਲ ਹੁੰਦੀ ਹੈ** -- ਜਦੋਂ ਉੱਪਰ `AGENTPROXY_MEMORY_MB` ਸੈੱਟ ਕਰ ਦਿੱਤਾ ਜਾਂਦਾ ਹੈ, ਤਾਂ ਇਨਜੈਸਟ ਬਾਈਟ ਬਜਟ (`AGENTPROXY_CHAT_MAX_INFLIGHT_BYTES`) ਉਸੇ ਸੀਮਾ ਤੋਂ ਆਪਣੇ-ਆਪ ਨਿਰਧਾਰਤ ਹੁੰਦਾ ਹੈ। ਇਸ ਕਰਕੇ ਮੈਮੋਰੀ-ਸੀਮਿਤ VM ਨੂੰ ਬਿਨਾਂ ਕਿਸੇ ਵਾਧੂ ਟਿਊਨਿੰਗ ਦੇ ਸਮਕਾਲੀ ਬੇਨਤੀਆਂ ਲਈ ਛੋਟਾ ਬਜਟ ਮਿਲ ਜਾਂਦਾ ਹੈ; ਵਾਧੂ ਬੇਨਤੀਆਂ ਨੂੰ ਮੈਮੋਰੀ ਲਈ ਮੁਕਾਬਲਾ ਕਰਨ ਦੀ ਬਜਾਏ `Retry-After` ਦੇ ਨਾਲ ਮੁੜ ਕੋਸ਼ਿਸ਼ਯੋਗ `503` ਜਵਾਬ ਮਿਲਦਾ ਹੈ। ਪੁਰਾਣੀ `AGENTPROXY_CHAT_MAX_HEAVY_IN_FLIGHT` ਬੇਨਤੀ-ਗਿਣਤੀ ਸੀਮਾ ਸਿਰਫ਼ ਉਦੋਂ ਸੈੱਟ ਕਰੋ ਜਦੋਂ ਤੁਹਾਨੂੰ ਇਸ ਤੋਂ ਇਲਾਵਾ ਇੱਕ ਸਖ਼ਤ ਉੱਪਰੀ ਸੀਮਾ ਦੀ ਲੋੜ ਹੋਵੇ।
 - **VPS ਉੱਤੇ `next build` ਤੋਂ ਬਚੋ** — ਸਥਾਨਕ ਤੌਰ ਉੱਤੇ ਬਿਲਡ ਕਰੋ ਅਤੇ ਸਟੈਂਡਅਲੋਨ ਆਉਟਪੁੱਟ (`.next/standalone/`) ਡਿਪਲੌਇ ਕਰੋ।
 - **`top` / `free -m` ਨਾਲ ਨਿਗਰਾਨੀ ਕਰੋ** — AgentProxy ਆਮ ਤੌਰ ਉੱਤੇ 1 GB VM ਵਿੱਚ ਨਿਸ਼ਕ੍ਰਿਆ ਹੋਣ ਵੇਲੇ 200-400 MB RSS ਵਰਤਦਾ ਹੈ।

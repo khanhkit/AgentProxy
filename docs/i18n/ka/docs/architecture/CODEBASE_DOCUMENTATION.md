@@ -37,11 +37,11 @@
 გზების ფსევდონიმები (`tsconfig.json`):
 
 - `@/*` → `src/*`
-- `@omniroute/open-sse` → `open-sse/index.ts`
-- `@omniroute/open-sse/*` → `open-sse/*`
+- `@agentproxy/open-sse` → `open-sse/index.ts`
+- `@agentproxy/open-sse/*` → `open-sse/*`
 
 ნაგულისხმევი HTTP პორტი: **`20128`** (API და მართვის პანელი ერთსა და იმავე პროცესს იყენებს). მონაცემთა
-დირექტორია განისაზღვრება `DATA_DIR` გარემოს ცვლადით, ხოლო ნაგულისხმევი მნიშვნელობაა `~/.omniroute/`.
+დირექტორია განისაზღვრება `DATA_DIR` გარემოს ცვლადით, ხოლო ნაგულისხმევი მნიშვნელობაა `~/.agentproxy/`.
 
 ---
 
@@ -50,9 +50,9 @@
 ```
 AgentProxy/
 ├── src/                  Next.js აპლიკაცია (App Router, ბიბლიოთეკები, დომენი, სერვერი, საზიარო რესურსები)
-├── open-sse/             ნაკადური გადაცემის ძრავის სამუშაო სივრცე (@omniroute/open-sse)
+├── open-sse/             ნაკადური გადაცემის ძრავის სამუშაო სივრცე (@agentproxy/open-sse)
 ├── electron/             დესკტოპ-გარსი (Electron 41-ის მთავარი ნაწილი + preload)
-├── bin/                  CLI-ის შესვლის წერტილები (omniroute, reset-password)
+├── bin/                  CLI-ის შესვლის წერტილები (agentproxy, reset-password)
 ├── tests/                მოდულური, ინტეგრაციული, e2e, protocols-e2e, მთარგმნელის, უსაფრთხოების ტესტები და ფიქსტურები
 ├── scripts/              აგების, სინქრონიზაციის, შემოწმების, მიგრაციისა და შესრულების გარემოს დამხმარე სკრიპტები
 ├── docs/                 საჯარო დოკუმენტაცია (ეს დირექტორია)
@@ -298,7 +298,7 @@ v1/
 | `runtime/`        | შესრულების დროის ფუნქციების აღმოჩენა                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
 | `search/`         | `executeWebSearch.ts`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
 | `services/`       | ჩაშენებული სერვისების ფრეიმვორკი: `ServiceSupervisor.ts` (შვილობილი პროცესების ზოგადი ზედამხედველი ოპერაციის ბლოკირებით, რგოლური ბუფერითა და მდგომარეობის შემმოწმებლით), `bootstrap.ts` (პროცესის დონის რეგისტრაცია და ავტომატური გაშვება), `registry.ts` (ხელსაწყო → ზედამხედველის ასახვა), `apiKey.ts` (AES-256-GCM გასაღებების საცავი), `modelSync.ts` (მოდელების პერიოდული სინქრონიზაცია), `ringBuffer.ts` (5 MB-იანი ციკლური ჟურნალის ბუფერი), `healthCheck.ts` (HTTP მდგომარეობის შემოწმება), `types.ts`, `embedWsProxy.ts` (WebSocket პროქსი), `installers/{ninerouter,cliproxy}.ts`. იხილეთ `docs/frameworks/EMBEDDED-SERVICES.md`                                                                              |
-| `agentSkills/`    | აგენტის უნარების კატალოგი + გენერატორი: `catalog.ts` (getCatalog/getSkillById/filterCatalog/computeCoverage), `generator.ts` (generateAgentSkills → წერს `skills/{id}/SKILL.md`-ში), `openapiParser.ts` (OpenAPI სპეციფიკაციიდან გამოყოფს REST ბოლო წერტილებს), `cliRegistryParser.ts` (`bin/cli-registry`-დან გამოყოფს CLI ქვეკომანდებს), `schemas.ts` (Zod: AgentSkillSchema, SkillCoverageSchema, ListQuerySchema, GenerateBodySchema), `types.ts` (AgentSkill, SkillCoverage, SkillMarkdown, GeneratorReport). გამოიყენება REST მარშრუტების (`/api/agent-skills/*`), MCP ხელსაწყოების (`omniroute_agent_skills_*`) და A2A უნარის `list-capabilities` მიერ. იხილეთ [AGENT-SKILLS.md](../frameworks/AGENT-SKILLS.md). |
+| `agentSkills/`    | აგენტის უნარების კატალოგი + გენერატორი: `catalog.ts` (getCatalog/getSkillById/filterCatalog/computeCoverage), `generator.ts` (generateAgentSkills → წერს `skills/{id}/SKILL.md`-ში), `openapiParser.ts` (OpenAPI სპეციფიკაციიდან გამოყოფს REST ბოლო წერტილებს), `cliRegistryParser.ts` (`bin/cli-registry`-დან გამოყოფს CLI ქვეკომანდებს), `schemas.ts` (Zod: AgentSkillSchema, SkillCoverageSchema, ListQuerySchema, GenerateBodySchema), `types.ts` (AgentSkill, SkillCoverage, SkillMarkdown, GeneratorReport). გამოიყენება REST მარშრუტების (`/api/agent-skills/*`), MCP ხელსაწყოების (`agentproxy_agent_skills_*`) და A2A უნარის `list-capabilities` მიერ. იხილეთ [AGENT-SKILLS.md](../frameworks/AGENT-SKILLS.md). |
 | `skills/`         | უნარების ფრეიმვორკი: `registry.ts`, `executor.ts`, `interception.ts`, `injection.ts`, `sandbox.ts`, `custom.ts`, `hybrid.ts`, `builtins.ts`, `a2a.ts`, `providerSettings.ts`, `schemas.ts`, `skillssh.ts`, `types.ts`, ასევე `builtin/browser.ts`                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
 | `spend/`          | `batchWriter.ts` (დაყოვნებული ჩაწერის ბუფერი)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
 | `sync/`           | `bundle.ts`, `tokens.ts` (ღრუბლოვანი სინქრონიზაცია)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
@@ -384,7 +384,7 @@ Singleton SQLite მონაცემთა ბაზა (`getDbInstance()` `co
 | `degradation.ts`                           | დეგრადირებულ რეჟიმში გადასვლები                                |
 | `providerExpiration.ts`                    | ვადაგასული ანგარიშის/გასაღების გამოვლენა                       |
 | `quotaCache.ts`                            | კვოტის დაკეშილი გადაწყვეტილებები                               |
-| `responses.ts`, `omnirouteResponseMeta.ts` | პასუხის სტრუქტურის დამხმარე საშუალებები                        |
+| `responses.ts`, `agentproxyesponseMeta.ts` | პასუხის სტრუქტურის დამხმარე საშუალებები                        |
 | `configAudit.ts`                           | კონფიგურაციის ცვლილებების აუდიტი                               |
 | `assessment/`                              | მოდელის შეფასება (RFC-ის მიხედვით, ნაწილობრივ განხორციელებული) |
 | `types.ts`                                 | დომენის გაზიარებული ტიპები                                     |
@@ -436,7 +436,7 @@ server/
 
 ## 4. `open-sse/` — სტრიმინგის ძრავის სამუშაო სივრცე
 
-ცალკე npm სამუშაო სივრცე, რომელიც გამოქვეყნებულია, როგორც `@omniroute/open-sse`. პასუხისმგებელია მოთხოვნების
+ცალკე npm სამუშაო სივრცე, რომელიც გამოქვეყნებულია, როგორც `@agentproxy/open-sse`. პასუხისმგებელია მოთხოვნების
 დამუშავებაზე, შემსრულებლებზე, მთარგმნელებზე, სერვისებზე, ტრანსფორმერსა და MCP სერვერზე.
 
 ```
@@ -599,7 +599,7 @@ electron/
 
 ```
 bin/
-├── omniroute.mjs           CLI-ის მთავარი შესასვლელი წერტილი (Node ESM)
+├── agentproxy.mjs           CLI-ის მთავარი შესასვლელი წერტილი (Node ESM)
 ├── reset-password.mjs      მართვის პაროლის აღდგენა CLI-დან
 ├── mcp-server.mjs          MCP სერვერის გამშვები (stdio)
 ├── nodeRuntimeSupport.mjs  Node-ის ვერსიის შემოწმება
@@ -622,8 +622,8 @@ bin/
 
 `package.json` → `bin`-ში ორი ორობითი ფაილია გამოქვეყნებული:
 
-- `omniroute` → `bin/omniroute.mjs`
-- `omniroute-reset-password` → `bin/reset-password.mjs`
+- `agentproxy` → `bin/agentproxy.mjs`
+- `agentproxy-reset-password` → `bin/reset-password.mjs`
 
 ---
 
@@ -779,7 +779,7 @@ bin/
 
 - **კოდის სტილი**: 2-ჰარიანი შეწევა, ორმაგი ბრჭყალები, 100-სიმბოლოიანი სიგანე, წერტილ-მძიმეები,
   `es5` საბოლოო მძიმეები — კონტროლდება Prettier-ით `lint-staged`-ის მეშვეობით.
-- **იმპორტები**: გარე → შიდა (`@/`, `@omniroute/open-sse`) → ფარდობითი.
+- **იმპორტები**: გარე → შიდა (`@/`, `@agentproxy/open-sse`) → ფარდობითი.
 - **დასახელება**: ფაილები — `camelCase` ან `kebab-case`, კომპონენტები — `PascalCase`,
   მუდმივები — `UPPER_SNAKE`.
 - **ESLint**: `no-eval`, `no-implied-eval`, `no-new-func` = `error` ყველგან;

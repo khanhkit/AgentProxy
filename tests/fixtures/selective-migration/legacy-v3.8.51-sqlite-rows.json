@@ -1,6 +1,6 @@
 {
   "source": {
-    "family": "omniroute",
+    "family": "agentproxy",
     "commit": "7d23bcf8ecb3b43c00c024e317af9c39384a1bee"
   },
   "providerConnections": [

@@ -232,8 +232,8 @@ test("repository contract is in sync (live data)", () => {
 
 test("isMainEntry: absolute argv[1] matches the module URL (normal CLI invocation)", () => {
   const moduleUrl =
-    "file:///home/runner/work/OmniRoute/OmniRoute/scripts/check/check-env-doc-sync.mjs";
-  const argv1 = "/home/runner/work/OmniRoute/OmniRoute/scripts/check/check-env-doc-sync.mjs";
+    "file:///home/runner/work/AgentProxy/AgentProxy/scripts/check/check-env-doc-sync.mjs";
+  const argv1 = "/home/runner/work/AgentProxy/AgentProxy/scripts/check/check-env-doc-sync.mjs";
   assert.equal(isMainEntry(argv1, moduleUrl), true);
 });
 
@@ -241,16 +241,16 @@ test("isMainEntry: path with characters that import.meta.url percent-encodes sti
   // A checkout path containing a space is the common macOS case; the module
   // URL carries %20 while process.argv[1] carries the raw character.
   const moduleUrl =
-    "file:///Users/dev/My%20Projects/OmniRoute/scripts/check/check-env-doc-sync.mjs";
-  const argv1 = "/Users/dev/My Projects/OmniRoute/scripts/check/check-env-doc-sync.mjs";
+    "file:///Users/dev/My%20Projects/AgentProxy/scripts/check/check-env-doc-sync.mjs";
+  const argv1 = "/Users/dev/My Projects/AgentProxy/scripts/check/check-env-doc-sync.mjs";
   assert.equal(isMainEntry(argv1, moduleUrl), true);
 });
 
 test("isMainEntry: different entry target or missing argv[1] does not trigger the CLI", () => {
   const moduleUrl =
-    "file:///home/runner/work/OmniRoute/OmniRoute/scripts/check/check-env-doc-sync.mjs";
+    "file:///home/runner/work/AgentProxy/AgentProxy/scripts/check/check-env-doc-sync.mjs";
   assert.equal(
-    isMainEntry("/home/runner/work/OmniRoute/OmniRoute/tests/unit/x.test.ts", moduleUrl),
+    isMainEntry("/home/runner/work/AgentProxy/AgentProxy/tests/unit/x.test.ts", moduleUrl),
     false
   );
   assert.equal(isMainEntry(undefined, moduleUrl), false);

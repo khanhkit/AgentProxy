@@ -77,7 +77,7 @@ AgentProxy na-abịa na **guardrails registry** (`src/lib/guardrails/`) nke enwe
 | `pii-masker`       | 10   | Mwepụ PII tupu+mgbe oku gachara (email, ekwentị, CPF, CNPJ, kaadị kredit, SSN)              |
 | `prompt-injection` | 20   | Na-achọpụta usoro override/role-hijack/jailbreak/leak                                       |
 
-Ihe mgbochi ahaziri onwe ya na-edebanye aha site na `registerGuardrail(new MyGuardrail())`. Model ahụ bụ fail-open (exception anaghị egbochi traffic). Enwere ike ịkwụsị ya maka arịrịọ ọ bụla site na header `x-omniroute-disabled-guardrails`. → Lee [`docs/security/GUARDRAILS.md`](docs/security/GUARDRAILS.md).
+Ihe mgbochi ahaziri onwe ya na-edebanye aha site na `registerGuardrail(new MyGuardrail())`. Model ahụ bụ fail-open (exception anaghị egbochi traffic). Enwere ike ịkwụsị ya maka arịrịọ ọ bụla site na header `x-agentproxy-disabled-guardrails`. → Lee [`docs/security/GUARDRAILS.md`](docs/security/GUARDRAILS.md).
 
 ### 🧠 Ihe Nche Megide Ntinye Prompt
 
@@ -182,15 +182,15 @@ Sava ahụ na-ajụ ụkpụrụ ndị a maara na ha esighị ike, dịka `chang
 
 ```bash
 docker run -d \
-  --name omniroute \
+  --name agentproxy \
   --restart unless-stopped \
   --read-only \
   -p 20128:20128 \
-  -v omniroute-data:/app/data \
+  -v agentproxy-data:/app/data \
   -e JWT_SECRET="$(openssl rand -base64 48)" \
   -e API_KEY_SECRET="$(openssl rand -hex 32)" \
   -e STORAGE_ENCRYPTION_KEY="$(openssl rand -hex 32)" \
-  diegosouzapw/omniroute:latest
+  diegosouzapw/agentproxy:latest
 ```
 
 ---
@@ -224,7 +224,7 @@ Tooling na ndị nyocha na-amanye iwu ndị a:
 
 > **Ndetu gbasara oke:** `socket.yml` dị na mgbọrọgwụ ebe nchekwa ahụ na-ahazi naanị `projectIgnorePaths` maka nyocha Socket.dev nke na-eme n'akụkụ ndekọ mgbe e bipụtachara ngwugwu npm — ọ bụghị ọnụ ụzọ CI/PR a na-amanye tupu e jikọta koodu. Ọ dịghị workflow dị na `.github/workflows`, ọ dịghị script `package.json`, ọ dịghịkwa target `Makefile` na-akpọ Socket.dev.
 
-Ngwugwu npm `omniroute` e bipụtara gụnyere build Next.js `output: "standalone"`,
+Ngwugwu npm `agentproxy` e bipụtara gụnyere build Next.js `output: "standalone"`,
 nke pụtara na route handler ọ bụla — gụnyere atụmatụ ndị nwere ikike pụrụ iche
 e depụtara n'akwụkwọ (MITM, mbubata Zed, Cloud Sync, na onye nlekọta ọrụ
 agbakwunyere) — na-abanye na chunks `.next/server/*.js` e belatara. Ndị nyocha
@@ -248,7 +248,7 @@ Maka ụdị nchọpụta ọ bụla, anyị na-edobe nkwenye onye nlekọta mak
   akara na-atụghachi aka n'otu akwụkwọ ahụ.
 
 Maka ndị ọrụ pipeline ha na-enweghị ike ime ka ọkwa ịdọ aka ná ntị ahụ dị mfe:
-jiri `OMNIROUTE_BUILD_PROFILE=minimal npm run build` mee build. Nke ahụ na-eji
+jiri `AGENTPROXY_BUILD_PROFILE=minimal npm run build` mee build. Nke ahụ na-eji
 stubs na-eweghachi HTTP 503 `feature-disabled` n'oge runtime dochie modules anọ
 nwere mmetụta pụrụ iche, ya mere ụzọ koodu ndị nwere ikike pụrụ iche adịghị
 n'ime bundle ahụ n'anụ ahụ. Lee

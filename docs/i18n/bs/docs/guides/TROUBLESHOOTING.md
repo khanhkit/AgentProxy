@@ -18,7 +18,7 @@ Uobičajeni problemi i rješenja za AgentProxy.
 
 | Vidim ovo                              | Šta to znači                                     | Šta uraditi                                                                                         |
 | -------------------------------------- | ------------------------------------------------ | --------------------------------------------------------------------------------------------------- |
-| "Nije moguće povezivanje"              | AgentProxy nije pokrenut                          | Pokrenite `omniroute` ili `docker restart omniroute`                                                |
+| "Nije moguće povezivanje"              | AgentProxy nije pokrenut                          | Pokrenite `agentproxy` ili `docker restart agentproxy`                                                |
 | "Nevažeći API ključ"                   | Vaš ključ je pogrešan ili je istekao             | Ponovo kopirajte ključ s web-stranice pružaoca usluge                                               |
 | "Ograničenje brzine premašeno"         | Šaljete previše zahtjeva                         | Sačekajte 1 minutu ili koristite `model: "auto"` za automatski prelazak na rezervnu opciju          |
 | "Kvota premašena"                      | Iskoristili ste svoju besplatnu/plaćenu kvotu    | Povežite više pružalaca usluga ili koristite besplatne pružaoce (Kiro, Pollinations)                |
@@ -26,7 +26,7 @@ Uobičajeni problemi i rješenja za AgentProxy.
 | "Korišten je pogrešan pružalac usluge" | `auto` je odabrao drugog pružaoca usluge         | To je normalno! `auto` bira najboljeg. Nametnite određenog pružaoca pomoću `model: "openai/gpt-4o"` |
 | "502 Bad Gateway"                      | Pružalac usluge nije dostupan                    | Sačekajte i pokušajte ponovo ili koristite `model: "auto"` za promjenu pružaoca usluge              |
 | "401 Unauthorized"                     | Vaši pristupni podaci su pogrešni                | Provjerite svoj API ključ ili se ponovo autentificirajte putem OAutha                               |
-| "omniroute nije prepoznat"             | U Windows PATH-u nedostaju globalni node moduli  | Dodajte svoj npm globalni prefiks u Windows PATH. Pronađite ga pomoću `npm config get prefix`.      |
+| "agentproxy nije prepoznat"             | U Windows PATH-u nedostaju globalni node moduli  | Dodajte svoj npm globalni prefiks u Windows PATH. Pronađite ga pomoću `npm config get prefix`.      |
 | "429 Too Many Requests"                | Brzina zahtjeva je ograničena                    | Sačekajte 1 minutu ili povežite više pružalaca usluga                                               |
 
 **I dalje imate problem?** Pogledajte [detaljno otklanjanje poteškoća](#detaljno-otklanjanje-poteškoća) u nastavku ili pitajte na [Discordu](https://discord.gg/U47eFqAXCn).
@@ -50,14 +50,14 @@ Uobičajeni problemi i rješenja za AgentProxy.
 **Provjereno rješenje (prema izvještaju zajednice, 2026-08-10)**: podesite tri varijable okruženja tako da rotacija, konkurentnost i rezervne opcije apsorbuju promjenjivost besplatnog nivoa umjesto da zbog nje prestanu raditi:
 
 ```bash
-export OMNIROUTE_ROTATE_ON_400=true           # pređi na drugi model/pružaoca usluge pri 400/401 (preskače neispravne modele za direktno prosljeđivanje)
-export OMNIROUTE_CHAT_MAX_HEAVY_IN_FLIGHT=4   # izričito ograničenje prihvatanja zahtjevnih zadataka (zadano nije postavljeno: nema ograničenja broja zahtjeva, pogledajte napomenu ispod)
-export OMNIROUTE_CHAT_ADMISSION_QUEUE_MS=5000 # duže ograničeno čekanje na kapacitet za zahtjevne zadatke umjesto trenutnog 503 koji omogućava ponovni pokušaj
+export AGENTPROXY_ROTATE_ON_400=true           # pređi na drugi model/pružaoca usluge pri 400/401 (preskače neispravne modele za direktno prosljeđivanje)
+export AGENTPROXY_CHAT_MAX_HEAVY_IN_FLIGHT=4   # izričito ograničenje prihvatanja zahtjevnih zadataka (zadano nije postavljeno: nema ograničenja broja zahtjeva, pogledajte napomenu ispod)
+export AGENTPROXY_CHAT_ADMISSION_QUEUE_MS=5000 # duže ograničeno čekanje na kapacitet za zahtjevne zadatke umjesto trenutnog 503 koji omogućava ponovni pokušaj
 ```
 
 Postavite ih u okruženju AgentProxy procesa (daemon, npr. putem LaunchAgent plist datoteke ili `systemctl edit`), a zatim ponovo pokrenite AgentProxy. Oznaka za rotaciju je pojedinačna postavka s najvećim učinkom: pretvara potpuni neuspjeh u transparentan ponovni pokušaj kod ispravnog pružaoca usluge u skupu.
 
-**Napomena**: `OMNIROUTE_CHAT_MAX_HEAVY_IN_FLIGHT` ograničava broj zahtjevnih zahtjeva — onih s dugim kontekstom — koji se izvršavaju istovremeno; ovo ograničenje predstavlja ulaznu kontrolu, a ne ograničivač brzine pružaoca usluge. **Ažuriranje #503-fanout:** ova varijabla više nije zadano postavljena (sada se primjenjuje samo kada je izričito konfigurirana, kao iznad) — prihvatanje zahtjevnih zahtjeva umjesto toga kontroliše automatski izveden budžet bajtova (`OMNIROUTE_CHAT_MAX_INFLIGHT_BYTES`) koji se samostalno prilagođava stvarnom memorijskom ograničenju hosta, tako da bi nova implementacija trebala imati znatno manje odbijanja `503 chat_admission_busy` bez ikakvog postavljanja ove varijable; njeno izričito postavljanje ovdje i dalje radi tačno onako kako je dokumentirano. Izričito zadana ograničenja budžeta bajtova svode se na raspon od 8 MiB do 2 GiB. Greška `413 body_exceeds_budget` nije privremena: povećajte taj budžet bajtova, smanjite `OMNIROUTE_CHAT_HARD_MAX_BODY_BYTES` ili povećajte memorijsko ograničenje procesa. Odbacivanje `inflight_bytes_budget` predstavlja privremeno nadmetanje za resurse i i dalje dopušta ponovni pokušaj. Ograničavanjem brzine po pružaocu usluge (`open-sse/services/rateLimitManager.ts`) zasebno upravljaju `RATE_LIMIT_MAX_WAIT_MS`, `RATE_LIMIT_MAX_QUEUE_DEPTH` i `RATE_LIMIT_AUTO_ENABLE` — pogledajte `.env.example`.
+**Napomena**: `AGENTPROXY_CHAT_MAX_HEAVY_IN_FLIGHT` ograničava broj zahtjevnih zahtjeva — onih s dugim kontekstom — koji se izvršavaju istovremeno; ovo ograničenje predstavlja ulaznu kontrolu, a ne ograničivač brzine pružaoca usluge. **Ažuriranje #503-fanout:** ova varijabla više nije zadano postavljena (sada se primjenjuje samo kada je izričito konfigurirana, kao iznad) — prihvatanje zahtjevnih zahtjeva umjesto toga kontroliše automatski izveden budžet bajtova (`AGENTPROXY_CHAT_MAX_INFLIGHT_BYTES`) koji se samostalno prilagođava stvarnom memorijskom ograničenju hosta, tako da bi nova implementacija trebala imati znatno manje odbijanja `503 chat_admission_busy` bez ikakvog postavljanja ove varijable; njeno izričito postavljanje ovdje i dalje radi tačno onako kako je dokumentirano. Izričito zadana ograničenja budžeta bajtova svode se na raspon od 8 MiB do 2 GiB. Greška `413 body_exceeds_budget` nije privremena: povećajte taj budžet bajtova, smanjite `AGENTPROXY_CHAT_HARD_MAX_BODY_BYTES` ili povećajte memorijsko ograničenje procesa. Odbacivanje `inflight_bytes_budget` predstavlja privremeno nadmetanje za resurse i i dalje dopušta ponovni pokušaj. Ograničavanjem brzine po pružaocu usluge (`open-sse/services/rateLimitManager.ts`) zasebno upravljaju `RATE_LIMIT_MAX_WAIT_MS`, `RATE_LIMIT_MAX_QUEUE_DEPTH` i `RATE_LIMIT_AUTO_ENABLE` — pogledajte `.env.example`.
 
 **Kako provjeriti da li radi**: pokrenite svoj agent/cron dvaput u kratkom vremenskom razmaku i potvrdite da su oba pokretanja uspješna. Prije ispravke, drugo pokretanje obično vraća `429`/`401`. Nakon ispravke, neuspjeli pokušaji (ako ih ima) automatski se ponavljaju i poziv se dovršava. Također možete pokrenuti `curl /monitoring/health` i pratiti polje `rateLimitedUntil` na konekcijama pružalaca usluga te `circuitBreakers.providerBreakers[].state` za pogođene pružaoce usluga — stanje je jedno od `CLOSED`, `DEGRADED`, `OPEN` ili `HALF_OPEN` (pogledajte `src/shared/utils/circuitBreaker.ts`), a pružalac usluga kod kojeg se greške nastavljaju preći će iz `CLOSED → DEGRADED → OPEN` prije nego što period za resetiranje omogući probni zahtjev (`HALF_OPEN`).
 
@@ -69,12 +69,12 @@ Postavite ih u okruženju AgentProxy procesa (daemon, npr. putem LaunchAgent pli
 
 ## Upozorenja pri npm instalaciji (ERESOLVE / peer / deprecated)
 
-Kada pokrenete `npm install -g omniroute`, možete vidjeti veliki broj upozorenja poput `npm warn ERESOLVE`, obavijesti o peer zavisnostima i poruke `deprecated`. **Ona su očekivana i bezopasna.** Instalacija je uspješna ako u izlazu vidite `added <N> packages`.
+Kada pokrenete `npm install -g agentproxy`, možete vidjeti veliki broj upozorenja poput `npm warn ERESOLVE`, obavijesti o peer zavisnostima i poruke `deprecated`. **Ona su očekivana i bezopasna.** Instalacija je uspješna ako u izlazu vidite `added <N> packages`.
 
 Da biste potisnuli upozorenja o razrješavanju peer zavisnosti, koristite podržani način instalacije za AgentProxy:
 
 ```bash
-npm install -g omniroute --legacy-peer-deps
+npm install -g agentproxy --legacy-peer-deps
 ```
 
 `--legacy-peer-deps` potiskuje samo `ERESOLVE` i obavijesti o peer zavisnostima. Obavijesti o zastarjelosti ostaju vidljive jer dolaze iz tranzitivnih paketa trećih strana; one ne znače da instalacija nije uspjela.
@@ -101,7 +101,7 @@ Za globalnu npm instalaciju instalirajte Chromium iz direktorija AgentProxy pake
 kako bi predmemorija preglednika pripadala istoj Playwright instalaciji:
 
 ```bash
-cd "$(npm root -g)/omniroute"
+cd "$(npm root -g)/agentproxy"
 npx playwright install chromium
 ```
 
@@ -119,10 +119,10 @@ ne uključuje.
 | Prva prijava ne radi                                       | Postavite `INITIAL_PASSWORD` u `.env` (nema tvrdo kodirane zadane vrijednosti)                                                                                                        |
 | Kontrolna tabla se otvara na pogrešnom portu               | Postavite `PORT=20128` i `NEXT_PUBLIC_BASE_URL=http://localhost:20128`                                                                                                                |
 | Dnevnici se ne zapisuju na disk                            | Postavite `APP_LOG_TO_FILE=true` i provjerite je li omogućeno bilježenje dnevnika poziva                                                                                              |
-| EACCES: pristup odbijen                                    | Postavite `DATA_DIR=/path/to/writable/dir` da biste nadjačali `~/.omniroute`                                                                                                          |
+| EACCES: pristup odbijen                                    | Postavite `DATA_DIR=/path/to/writable/dir` da biste nadjačali `~/.agentproxy`                                                                                                          |
 | Strategija usmjeravanja se ne čuva                         | Ažurirajte na najnovije izdanje v3.x (ispravka Zod sheme za trajno čuvanje postavki isporučena je u ranijim verzijama)                                                                |
 | Pad pri prijavi / prazna stranica                          | Provjerite verziju Node.js — pogledajte [Kompatibilnost s Node.js](#nodejs-compatibility) ispod                                                                                       |
-| `dlopen` / `slice is not valid mach-o file` (macOS)        | Pokrenite `cd $(npm root -g)/omniroute/app && npm rebuild better-sqlite3 && omniroute` — pogledajte [ponovnu izgradnju nativnog modula za macOS](#macos-native-module-rebuild) ispod  |
+| `dlopen` / `slice is not valid mach-o file` (macOS)        | Pokrenite `cd $(npm root -g)/agentproxy/app && npm rebuild better-sqlite3 && agentproxy` — pogledajte [ponovnu izgradnju nativnog modula za macOS](#macos-native-module-rebuild) ispod  |
 | Proxy „fetch failed“                                       | Provjerite je li konfiguracija proxyja postavljena na ispravnom nivou — pogledajte [Probleme s proxyjem](#proxy-issues) ispod                                                         |
 | Docker `curl: (56) Recv failure: Connection reset by peer` | Povezivanje Docker porta možda završava na IPv6. Koristite `-p 127.0.0.1:20128:20128` da prisilite IPv4 ili testirajte pomoću `curl -4`. Pogledajte [Docker IPv6](#docker-ipv6) ispod |
 | Antivirus stavlja `README.md` u karantin                   | Lažno pozitivan rezultat — pogledajte [Lažno pozitivne rezultate antivirusa](#antivirus-false-positives) ispod                                                                        |
@@ -140,7 +140,7 @@ ne uključuje.
 
 Avast i AVG koriste heuristiku koja označava obične tekstualne/Markdown datoteke koje sadrže mnogo
 linkova nalik HTTP zahtjevima. AgentProxyov `README.md` isporučuje se unutar npm paketa (naveden je
-u `package.json` → `files`), pa se pri globalnoj instalaciji smješta u `node_modules/omniroute/README.md`
+u `package.json` → `files`), pa se pri globalnoj instalaciji smješta u `node_modules/agentproxy/README.md`
 — a sadrži oko 15 primjera `http://localhost:20128/...` (MCP HTTP/SSE krajnje tačke, A2A
 `.well-known` URL i `curl` isječke). Ta gustoća linkova dovoljna je da aktivira heuristiku.
 
@@ -155,7 +155,7 @@ iz karantina.
 
 1. **Zaustavite obavještenja** — izuzmite instalacijski direktorij u svom antivirusnom programu
    (Avast: Postavke → Izuzeci), dodajući putanju do globalnog `node_modules` i/ili
-   AgentProxy direktorij podataka (`~/.omniroute/`).
+   AgentProxy direktorij podataka (`~/.agentproxy/`).
 2. **Prijavite lažno pozitivan rezultat** — <https://www.avast.com/false-positive-file-form.php>,
    prilažući `README.md` iz karantina. Ovo je rješenje koje pomaže svima jer je riječ o
    heuristici proizvođača koja pretjerano reaguje na tekstualnu datoteku.
@@ -234,8 +234,8 @@ Potpisivanje koda je planirano; dok se ne uvede, ovo se može ponavljati s novim
    nvm use 24
    ```
 2. Provjerite svoju verziju: `node --version` treba prikazati `v24.0.0` ili noviju verziju u okviru 24.x LTS linije
-3. Ponovo instalirajte AgentProxy: `npm install -g omniroute`
-4. Ponovo pokrenite: `omniroute`
+3. Ponovo instalirajte AgentProxy: `npm install -g agentproxy`
+4. Ponovo pokrenite: `agentproxy`
 
 > **Podržane sigurne verzije:** `>=22.22.2 <23` ili `>=24.0.0 <27`. Node.js 24.x LTS (Krypton) i Node.js 26 su u potpunosti podržani.
 
@@ -273,7 +273,7 @@ i zahtijeva izvornu kompilaciju (`node-gyp rebuild`), npm ga prešutno preskače
 
 <a name="macos-native-module-rebuild"></a>
 
-**Uzrok:** Nakon globalne instalacije pomoću `npm install -g omniroute`, izvorna binarna datoteka `better-sqlite3` unutar paketa možda je kompajlirana za arhitekturu ili Node.js ABI koji se razlikuje od onoga koji se lokalno izvršava. Ovo je uobičajeno na macOS-u (i na Apple Silicon i na Intel platformama) kada se unaprijed kompajlirana binarna datoteka ne podudara s vašim okruženjem.
+**Uzrok:** Nakon globalne instalacije pomoću `npm install -g agentproxy`, izvorna binarna datoteka `better-sqlite3` unutar paketa možda je kompajlirana za arhitekturu ili Node.js ABI koji se razlikuje od onoga koji se lokalno izvršava. Ovo je uobičajeno na macOS-u (i na Apple Silicon i na Intel platformama) kada se unaprijed kompajlirana binarna datoteka ne podudara s vašim okruženjem.
 
 **Simptomi:**
 
@@ -282,15 +282,15 @@ i zahtijeva izvornu kompilaciju (`node-gyp rebuild`), npm ga prešutno preskače
 - Potpuni primjer:
 
 ```
-dlopen(/Users/<user>/.nvm/versions/node/v24.14.1/lib/node_modules/omniroute/app/node_modules/better-sqlite3/build/Release/better_sqlite3.node, 0x0001): tried: '...' (slice is not valid mach-o file)
+dlopen(/Users/<user>/.nvm/versions/node/v24.14.1/lib/node_modules/agentproxy/app/node_modules/better-sqlite3/build/Release/better_sqlite3.node, 0x0001): tried: '...' (slice is not valid mach-o file)
 ```
 
 **Rješenje — ponovo kompajlirajte za svoje lokalno okruženje (nije potrebno preći na stariju verziju Node.js-a):**
 
 ```bash
-cd $(npm root -g)/omniroute/app
+cd $(npm root -g)/agentproxy/app
 npm rebuild better-sqlite3
-omniroute
+agentproxy
 ```
 
 > **Napomena:** Ovo ponovo kompajlira izvorno povezivanje za vašu lokalnu verziju Node.js-a i CPU arhitekturu, čime se rješava nepodudaranje binarnih datoteka. Zvanično podržani raspon izvršnog okruženja je **`>=22.22.2 <23` ili `>=24.0.0 <27`** (`SUPPORTED_NODE_RANGE` u `src/shared/utils/nodeRuntimeSupport.ts`, usklađen s poljem `engines` u datoteci `package.json`). Node.js 24.x LTS (Krypton) i Node.js 26 u potpunosti su podržani uz `better-sqlite3` v12.x.
@@ -382,7 +382,7 @@ pogledajte [`docs/guides/KIRO_SETUP.md`](./KIRO_SETUP.md).
 ### Greške pri sinhronizaciji s oblakom
 
 1. Provjerite da `BASE_URL` upućuje na vašu pokrenutu instancu (npr. `http://localhost:20128`)
-2. Provjerite da `CLOUD_URL` upućuje na vašu krajnju tačku u oblaku (npr. `https://omniroute.dev`)
+2. Provjerite da `CLOUD_URL` upućuje na vašu krajnju tačku u oblaku (npr. `https://agentproxy.online`)
 3. Održavajte vrijednosti `NEXT_PUBLIC_*` usklađenim s vrijednostima na strani servera
 
 ### Cloud `stream=false` vraća 500
@@ -416,8 +416,8 @@ pogledajte [`docs/guides/KIRO_SETUP.md`](./KIRO_SETUP.md).
 1. **Brza dijagnostika:** Pokrenite `curl -4 http://localhost:20128/v1/models`. Ako radi s `-4`, ali ne radi bez toga, imate nepodudaranje IPv6 povezivanja.
 2. **Trajno rješenje:** Eksplicitno se povežite na IPv4 korištenjem `-p 127.0.0.1:20128:20128` u vašoj naredbi `docker run`:
    ```bash
-   docker run -d --name omniroute --restart unless-stopped --stop-timeout 40 \
-     -p 127.0.0.1:20128:20128 -v omniroute-data:/app/data diegosouzapw/omniroute:latest
+   docker run -d --name agentproxy --restart unless-stopped --stop-timeout 40 \
+     -p 127.0.0.1:20128:20128 -v agentproxy-data:/app/data diegosouzapw/agentproxy:latest
    ```
    Ovo prisiljava povezivanje na IPv4 i također sprječava izlaganje proxyja na svim mrežnim interfejsima hosta.
 
@@ -572,7 +572,7 @@ Kada mnogo istovremenih zahtjeva pristupi pružaocu usluge s ograničenom brzino
 - Krajnja tačka za dovršavanje razgovora vraća ponovljivi odgovor `503` čiji je kod greške
   `chat_admission_busy`.
 - Odgovor uključuje `Retry-After`. Od verzije #12135 vrijednost se izvodi iz uočene
-  zauzetosti — uzima se veća vrijednost između perioda `OMNIROUTE_CHAT_ADMISSION_QUEUE_MS` tokom kojeg je zahtjev već
+  zauzetosti — uzima se veća vrijednost između perioda `AGENTPROXY_CHAT_ADMISSION_QUEUE_MS` tokom kojeg je zahtjev već
   čekao i vremena tokom kojeg se drže trenutni zahtjevni najmovi — zaokružena naviše na cijele
   sekunde i ograničena na 60. Kada je kontrolni mehanizam neaktivan, zadržavaju se historijske minimalne vrijednosti: 2 sekunde na
   putanji zasnovanoj na bajtovima i 1 sekunda na putanji zasnovanoj na strukturi (koja također uključuje
@@ -605,17 +605,17 @@ i raščlanjivanja velikog tijela zahtjeva. Zahtjevni najam ostaje zadržan toko
 odgovora.
 
 **#503-fanout:** prije ove ispravke, zaštitni mehanizam ograničavao je istovremenost na fiksni BROJ zahtjeva
-(`OMNIROUTE_CHAT_MAX_HEAVY_IN_FLIGHT`, zadano `1`) bez obzira na memoriju hosta, pa je
+(`AGENTPROXY_CHAT_MAX_HEAVY_IN_FLIGHT`, zadano `1`) bez obzira na memoriju hosta, pa je
 grananje agenta za programiranje (više podagenata/CLI-jeva, tijela rutinski > 256 KB) smanjivalo efektivnu
 istovremenost na približno 1 i uzrokovalo odgovore 503 pri potpuno normalnom opterećenju. Zaštitni mehanizam sada se samostalno podešava: njime upravlja
-automatski izveden BAJTNI budžet za unos (`OMNIROUTE_CHAT_MAX_INFLIGHT_BYTES`), dimenzioniran prema
+automatski izveden BAJTNI budžet za unos (`AGENTPROXY_CHAT_MAX_INFLIGHT_BYTES`), dimenzioniran prema
 stvarnom memorijskom ograničenju procesa, a također provjerava signal pritiska na resurse uživo — tako da
 odbacuje opterećenje samo kada je host zaista pod memorijskim pritiskom, a ne samo zato što je istovremeno
-stiglo više zahtjevnih zahtjeva. Staro ograničenje broja (`OMNIROUTE_CHAT_MAX_HEAVY_IN_FLIGHT`) i dalje se
+stiglo više zahtjevnih zahtjeva. Staro ograničenje broja (`AGENTPROXY_CHAT_MAX_HEAVY_IN_FLIGHT`) i dalje se
 poštuje, ali samo ako ga izričito postavite.
 
 Kada je kapacitet zauzet, zahtjevan zahtjev prvo čeka do
-`OMNIROUTE_CHAT_ADMISSION_QUEUE_MS` (zadano `2000`, `0` onemogućava čekanje) da se oslobodi mjesto
+`AGENTPROXY_CHAT_ADMISSION_QUEUE_MS` (zadano `2000`, `0` onemogućava čekanje) da se oslobodi mjesto
 prije nego što odgovori ponovljivim odgovorom `503`. Ograničeno čekanje postoji kako bi klijenti agentskog tipa
 (OpenCode, Claude Code, Cursor), koji istovremeno granaju zahtjevne podzahtjeve, serijalizirali nalet
 umjesto da potroše cijeli budžet za ponovne pokušaje na trenutna odbijanja i prekinu rad usred zadatka.
@@ -635,7 +635,7 @@ false` i velikodušan `maxInflightBytes` znače da automatski izveden budžet ve
    to se ne može riješiti varijablom okruženja za prihvat zahtjeva, već je potrebno više RAM-a ili manje radno opterećenje.
 3. Samo ako `/api/monitoring/health` pokaže da je automatski izveden budžet zaista premalen za
    vaš host (rijetko — već se prilagođava okruženjima od kontejnera do fizičkog servera), direktno ga nadjačajte pomoću
-   `OMNIROUTE_CHAT_MAX_INFLIGHT_BYTES` umjesto vraćanja na zastarjelo ograničenje broja zahtjeva.
+   `AGENTPROXY_CHAT_MAX_INFLIGHT_BYTES` umjesto vraćanja na zastarjelo ograničenje broja zahtjeva.
 
 Pogledajte [referencu varijabli okruženja](../reference/ENVIRONMENT.md#4-security--authentication)
 za mjerodavne postavke prihvata zahtjeva.
@@ -722,7 +722,7 @@ Problemi specifični za izdanje v3.8.0 i njihova trenutna zaobilazna rješenja. 
 
 **Rješenje:**
 
-- Pokrenite `omniroute providers` iz CLI-ja da biste ponovo pokrenuli OAuth proces ili
+- Pokrenite `agentproxy providers` iz CLI-ja da biste ponovo pokrenuli OAuth proces ili
 - Ponovo pokrenite OAuth putem **Nadzorna ploča → Pružaoci usluga → Command Code → Ponovo poveži**
 
 ### ModelScope vraća agresivne periode hlađenja za greške 429
@@ -739,19 +739,19 @@ Problemi specifični za izdanje v3.8.0 i njihova trenutna zaobilazna rješenja. 
 - Provjerite koristite li v3.8.0 ili noviju verziju
 - Provjerite je li opcija `useUpstream429BreakerHints` omogućena u odjeljku **Postavke → Otpornost**
 
-### OMNIROUTE_WS_BRIDGE_SECRET nedostaje u produkciji
+### AGENTPROXY_WS_BRIDGE_SECRET nedostaje u produkciji
 
 **Simptomi:**
 
 - Greška 401 za svaki zahtjev prema Codex/Responses WebSocket mostu prilikom pokretanja na udaljenom produkcijskom hostu
 - WebSocket most prekida uspostavljanje veze odmah nakon povezivanja
 
-**Uzrok:** Varijabla okruženja `OMNIROUTE_WS_BRIDGE_SECRET` nedostaje u produkcijskom okruženju.
+**Uzrok:** Varijabla okruženja `AGENTPROXY_WS_BRIDGE_SECRET` nedostaje u produkcijskom okruženju.
 
 **Rješenje:**
 
 1. Generišite nasumičnu tajnu: `openssl rand -hex 32`
-2. Postavite `OMNIROUTE_WS_BRIDGE_SECRET=<random-secret>` u okruženju produkcijskog servera (i svakog klijenta koji komunicira s mostom)
+2. Postavite `AGENTPROXY_WS_BRIDGE_SECRET=<random-secret>` u okruženju produkcijskog servera (i svakog klijenta koji komunicira s mostom)
 3. Ponovo pokrenite AgentProxy
 
 ### Responses API: pozadinski način rada degradiran je na sinhroni
@@ -780,16 +780,16 @@ Ovo se često događa na Windowsu (antivirusni programi, alati za praćenje sist
 
 ```bash
 # Putem varijable okruženja (ostaje primijenjeno nakon ponovnih pokretanja):
-export OMNIROUTE_READY_TIMEOUT_MS=180000   # 3 minute
-omniroute serve
+export AGENTPROXY_READY_TIMEOUT_MS=180000   # 3 minute
+agentproxy serve
 
 # Putem CLI opcije (jednokratno):
-omniroute serve --ready-timeout 180000
+agentproxy serve --ready-timeout 180000
 ```
 
 Zadana vrijednost je 60 000 ms (60 s). Upozorenje je samo informativno; server se nastavlja pokretati u pozadini i bit će dostupan kada se pokretanje završi.
 
-Za sve detalje o `OMNIROUTE_READY_TIMEOUT_MS` pogledajte [`docs/reference/ENVIRONMENT.md`](../reference/ENVIRONMENT.md).
+Za sve detalje o `AGENTPROXY_READY_TIMEOUT_MS` pogledajte [`docs/reference/ENVIRONMENT.md`](../reference/ENVIRONMENT.md).
 
 ---
 

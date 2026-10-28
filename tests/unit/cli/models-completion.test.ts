@@ -24,9 +24,9 @@ async function invoke(args: string[], dataDir: string) {
         ...process.env,
         DATA_DIR: dataDir,
         HOME: dataDir,
-        OMNIROUTE_CLI_TOKEN: "fixture",
-        OMNIROUTE_API_KEY: "ambient-not-used",
-        OMNIROUTE_BASE_URL: "http://127.0.0.1:1",
+        AGENTPROXY_CLI_TOKEN: "fixture",
+        AGENTPROXY_API_KEY: "ambient-not-used",
+        AGENTPROXY_BASE_URL: "http://127.0.0.1:1",
       },
     }
   );
