@@ -477,7 +477,7 @@ curl -X POST https://localhost:20128/api/cli-tools/apply \
 
 GET cli tools › config
 
-Returns redacted, non-cacheable previews. Send the configuration API key in x-agentproxy-config-api-key, separate from management authentication. The legacy x-agentproxy-config-api-key header remains a migration alias. API keys in query strings are rejected. Preview content must not be copied into a credential-bearing configuration or submitted as an apply payload.
+Returns redacted, non-cacheable previews. Send the configuration API key in x-agentproxy-config-api-key, separate from management authentication. Previously branded configuration-key headers are no longer supported; migrate clients to the canonical x-agentproxy-config-api-key header. API keys in query strings are rejected. Preview content must not be copied into a credential-bearing configuration or submitted as an apply payload.
 
 ```bash
 curl https://localhost:20128/api/cli-tools/config \

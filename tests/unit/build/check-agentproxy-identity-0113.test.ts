@@ -107,3 +107,17 @@ test("AP-ISS-0171 OCR regression: OpenAPI never advertises a fake canonical lega
   assert.doesNotMatch(source, /The legacy x-agentproxy-config-api-key header remains a migration alias\./u);
   assert.match(source, /x-agentproxy-config-api-key/u);
 });
+
+
+test("AP-ISS-0171 OCR regression: security repair and encryption key use the resolved data dir", () => {
+  const cli = readFileSync("bin/agentproxy.mjs", "utf8");
+  const provisionBlock = cli.split("if (shouldProvisionStorageKey(process.argv)) {")[1];
+  assert.ok(provisionBlock, "storage-key provisioning block exists");
+  assert.match(provisionBlock, /tightenDataDirSecrets\(process\.env\.DATA_DIR \|\| getDefaultDataDir\(\)\)/u);
+  assert.match(provisionBlock, /const dataDir = process\.env\.DATA_DIR \|\| getDefaultDataDir\(\)/u);
+});
+
+test("AP-ISS-0171 OCR regression: Latvian CLI database recovery uses the runnable command", () => {
+  const locale = JSON.parse(readFileSync("bin/cli/locales/lv.json", "utf8"));
+  assert.match(locale.doctor.dbMissing, /`agentproxy setup`/u);
+});

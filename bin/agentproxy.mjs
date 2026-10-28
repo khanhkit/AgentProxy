@@ -208,19 +208,18 @@ if (shouldProvisionStorageKey(process.argv)) {
   const { randomBytes } = await import("node:crypto");
   const { existsSync, readFileSync } = await import("node:fs");
   const { join } = await import("node:path");
-  const { homedir } = await import("node:os");
 
   // GHSA-2pg2-xm9r-8544: installs created before the fix have a world-readable .env and a
   // world-traversable data dir. Repair them on every run that touches encrypted storage
   // (best-effort; group bits are kept). Informational commands never reach this block.
-  tightenDataDirSecrets(process.env.DATA_DIR || join(homedir(), ".agentproxy"));
+  tightenDataDirSecrets(process.env.DATA_DIR || getDefaultDataDir());
 
   if (!process.env.STORAGE_ENCRYPTION_KEY) {
     // Persist the key into DATA_DIR when set — that's the directory mounted as a volume in
     // Docker (where storage.sqlite lives), so the key survives `docker down` / `docker pull`.
     // Writing only to ~/.agentproxy (the container home, not a volume) silently lost the key on
     // container recreation, leaving the persisted encrypted DB undecryptable (regression of #1622).
-    const dataDir = process.env.DATA_DIR || join(homedir(), ".agentproxy");
+    const dataDir = process.env.DATA_DIR || getDefaultDataDir();
     const envPath = join(dataDir, ".env");
     const dbPath = join(dataDir, "storage.sqlite");
 

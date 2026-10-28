@@ -32,7 +32,7 @@
   "doctor": {
     "title": "AgentProxy Diagnostika",
     "dbOk": "Datubāze: kārtībā ({path})",
-    "dbMissing": "Datubāze nav inicializēta — palaidiet `omnīroute setup`",
+    "dbMissing": "Datubāze nav inicializēta — palaidiet `agentproxy setup`",
     "portOk": "Ports {port}: pieejams",
     "portConflict": "Ports {port}: aizņemts ar citu procesu",
     "encryptionOk": "Šifrēšanas atslēga: konfigurēta",
