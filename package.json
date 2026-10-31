@@ -515,7 +515,7 @@
     "hono": "^4.13.7",
     "@hono/node-server": "^2.0.5",
     "fast-uri": "^4.2.1",
-    "body-parser": "^2.3.0",
+    "body-parser": "^2.4.0",
     "@yarnpkg/parsers": {
       "js-yaml": "^4.3.2"
     },
