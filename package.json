@@ -503,7 +503,7 @@
     "joi": "^18.2.9",
     "onnxruntime-node": "1.30.0",
     "eslint-plugin-react-hooks": "7.1.1",
-    "fast-xml-parser": "^5.10.1",
+    "fast-xml-parser": "^5.12.1",
     "postcss": "^8.5.18",
     "ip-address": "^10.7.2",
     "qs": "^6.16.0",
